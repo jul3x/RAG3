@@ -72,7 +72,6 @@ inline void AABB(AbstractPhysicalObject &a, AbstractPhysicalObject &b) {
 
     if (a1.x > b2.x || a2.x < b1.x || a1.y > b2.y || a2.y < b1.y)
     {
-        std::cout << " NO " << std::endl;
         return; // no collision
     }
 

@@ -15,6 +15,10 @@ std::list<Obstacle>& Map::getObstacles() {
     return obstacles_;
 }
 
+void Map::update(float time_elapsed) {
+    // TODO
+}
+
 void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     for (const auto &obstacle : obstacles_)
     {

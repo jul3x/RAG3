@@ -31,9 +31,13 @@ void Engine::update(int frame_rate) {
 
         physics_.update(time_elapsed);
         player_.update(time_elapsed);
+        map_.update(time_elapsed);
+        camera_.update(player_.getPosition(), time_elapsed);
 
         for (auto &obstacle : map_.getObstacles())
+        {
             utils::AABB(player_, obstacle);
+        }
 
         for (auto it = animation_events_.begin(); it != animation_events_.end(); ++it)
         {
@@ -48,6 +52,7 @@ void Engine::update(int frame_rate) {
         // drawing
         {
             Graphics::getInstance().clear();
+            Graphics::getInstance().setViewCenter(camera_.getViewCenter());
             Graphics::getInstance().draw(map_);
 
             Graphics::getInstance().draw(player_);

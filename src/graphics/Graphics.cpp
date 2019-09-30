@@ -31,6 +31,11 @@ void Graphics::setView(const sf::View &view) {
     window_.setView(current_view_);
 }
 
+void Graphics::setViewCenter(const sf::Vector2f &view_center) {
+    current_view_.setCenter(view_center);
+    window_.setView(current_view_);
+}
+
 void Graphics::clear() {
     window_.clear(sf::Color(CFG.getInt("background_color")));
 }

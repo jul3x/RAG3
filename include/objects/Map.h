@@ -20,6 +20,8 @@ public:
 
     std::list<Obstacle>& getObstacles();
 
+    void update(float time_elapsed);
+
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 

@@ -8,6 +8,7 @@
 #include <memory>
 
 #include <graphics/Graphics.h>
+#include <graphics/Camera.h>
 #include <graphics/AnimationEvent.h>
 #include <objects/Player.h>
 #include <objects/Map.h>
@@ -43,6 +44,7 @@ private:
     sf::Clock clock_;
     sf::Time time_;
 
+    Camera camera_;
     Player player_;
     Map map_;
     std::list<std::unique_ptr<AnimationEvent>> animation_events_;

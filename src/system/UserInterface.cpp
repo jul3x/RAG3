@@ -80,4 +80,9 @@ inline void UserInterface::handleMouse(sf::RenderWindow &graphics_window, Player
     float angle;
     std::tie(std::ignore, angle) = utils::cartesianToPolar(mouse_difference);
     player.setRotation(angle * 180.0f / M_PI);
+
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    {
+        player.shot();
+    }
 }

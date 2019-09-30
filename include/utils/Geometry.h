@@ -64,7 +64,7 @@ inline bool isPointInRectangle(const sf::Vector2f &p, const sf::Vector2f &rect_p
     return p.x >= rect_pos.x && p.x < rect_pos.x + rect_size.x && p.y >= rect_pos.y && p.y < rect_pos.y + rect_size.y;
 }
 
-inline void AABB(AbstractPhysicalObject &a, AbstractPhysicalObject &b) {
+inline bool AABB(AbstractPhysicalObject &a, AbstractPhysicalObject &b) {
     sf::Vector2f a1 = a.getPosition() - a.getSize() / 2.0f + a.getVelocity() - b.getVelocity();
     sf::Vector2f a2 = a.getPosition() + a.getSize() / 2.0f + a.getVelocity() - b.getVelocity();
     sf::Vector2f b1 = b.getPosition() - b.getSize() / 2.0f;
@@ -72,7 +72,7 @@ inline void AABB(AbstractPhysicalObject &a, AbstractPhysicalObject &b) {
 
     if (a1.x > b2.x || a2.x < b1.x || a1.y > b2.y || a2.y < b1.y)
     {
-        return; // no collision
+        return false; // no collision
     }
 
     auto angle = std::get<1>(utils::cartesianToPolar(b.getPosition() - a.getPosition()));
@@ -144,6 +144,8 @@ inline void AABB(AbstractPhysicalObject &a, AbstractPhysicalObject &b) {
             b.setPosition(a2.x - b.getSize().x / 2.0f - 1.0f, b.getPosition().y);
         }
     }
+
+    return true;
 }
 
 } // namespace utils

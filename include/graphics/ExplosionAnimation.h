@@ -14,7 +14,6 @@ public:
     ExplosionAnimation() = delete;
 
     ExplosionAnimation(const sf::Vector2f &position,
-                       const sf::Vector2f &velocity,
                        float radius);
 
 private:

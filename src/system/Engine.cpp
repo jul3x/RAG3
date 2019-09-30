@@ -5,6 +5,8 @@
 #include <chrono>
 
 #include <utils/Geometry.h>
+#include <graphics/ExplosionAnimation.h>
+#include <graphics/SpawnAnimation.h>
 
 #include <system/Engine.h>
 
@@ -15,6 +17,12 @@ Engine::Engine() : player_({500.0f, 500.0f}, {}) {
 
 Player& Engine::getPlayer() {
     return player_;
+}
+
+void Engine::spawnBullet(const sf::Vector2f &pos, const float dir) {
+    animation_events_.push_back(
+        std::make_unique<SpawnAnimation>(pos, 3.0f));
+    bullets_.emplace_back(pos, dir);
 }
 
 void Engine::update(int frame_rate) {
@@ -32,12 +40,40 @@ void Engine::update(int frame_rate) {
         physics_.update(time_elapsed);
         player_.update(time_elapsed);
         map_.update(time_elapsed);
-        camera_.update(player_.getPosition(), time_elapsed);
 
         for (auto &obstacle : map_.getObstacles())
         {
             utils::AABB(player_, obstacle);
         }
+
+        for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
+        {
+            it->update(time_elapsed);
+
+            for (auto it_ob = map_.getObstacles().begin(); it_ob != map_.getObstacles().end(); ++it_ob)
+            {
+                if (utils::AABB(*it, *it_ob))
+                {
+                    if (!it_ob->getShot())
+                    {
+                        animation_events_.push_back(
+                            std::make_unique<ExplosionAnimation>(it_ob->getPosition(), 50.0f));
+                        map_.getObstacles().erase(it_ob);
+                    }
+                    animation_events_.push_back(
+                        std::make_unique<SpawnAnimation>(it->getPosition(), 10.0f));
+
+                    auto next_it = std::next(it);
+                    bullets_.erase(it);
+                    it = next_it;
+
+
+                    break;
+                }
+            }
+        }
+
+        camera_.update(player_.getPosition(), time_elapsed);
 
         for (auto it = animation_events_.begin(); it != animation_events_.end(); ++it)
         {
@@ -53,6 +89,12 @@ void Engine::update(int frame_rate) {
         {
             Graphics::getInstance().clear();
             Graphics::getInstance().setViewCenter(camera_.getViewCenter());
+
+            for (const auto &bullet : bullets_)
+            {
+                Graphics::getInstance().draw(bullet);
+            }
+
             Graphics::getInstance().draw(map_);
 
             Graphics::getInstance().draw(player_);

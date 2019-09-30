@@ -12,6 +12,7 @@
 #include <graphics/AnimationEvent.h>
 #include <objects/Player.h>
 #include <objects/Map.h>
+#include <objects/Bullet.h>
 #include <system/UserInterface.h>
 #include <physics/Physics.h>
 
@@ -28,6 +29,7 @@ public:
     }
 
     Player& getPlayer();
+    void spawnBullet(const sf::Vector2f &pos, const float dir);
 
     void update(int frame_rate);
 
@@ -47,6 +49,7 @@ private:
     Camera camera_;
     Player player_;
     Map map_;
+    std::list<Bullet> bullets_;
     std::list<std::unique_ptr<AnimationEvent>> animation_events_;
 };
 

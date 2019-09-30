@@ -28,6 +28,7 @@ sf::View& Graphics::getView() {
 
 void Graphics::setView(const sf::View &view) {
     current_view_ = view;
+    window_.setView(current_view_);
 }
 
 void Graphics::clear() {

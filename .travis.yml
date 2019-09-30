@@ -1,0 +1,60 @@
+language: cpp
+
+env:
+  global:
+    # Ubuntu version
+    - LINUX_DIST=trusty
+    - DEPS_DIR=${TRAVIS_BUILD_DIR}/deps
+    # Global build options and C++ flags
+    - CXX_FLAGS="-Wall -pedantic -Werror -Wno-variadic-macros -Wno-long-long -Wno-shadow"
+    # Misc
+    - RUN_TESTS=true
+    - COVERAGE=false
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: true
+      compiler: gcc
+      addons:
+       apt:
+         packages: &precise_latest_boost_packages
+           - gcc-5
+           - g++-5
+         sources: &precise_latest_boost_sources
+           - ubuntu-toolchain-r-test
+
+before_install:
+    # Combine global build options with OS/compiler-dependent options
+    - export CMAKE_OPTIONS=${CMAKE_OPTIONS}" "${ENV_CMAKE_OPTIONS}
+    - export CXX_FLAGS=${CXX_FLAGS}" "${ENV_CXX_FLAGS}
+    - sudo apt-get update -qq
+
+install:
+    - export CXX="g++-5"
+
+    # Download and install recent cmake
+    - |
+      if [[ ${TRAVIS_OS_NAME} == "linux" ]]; then
+        CMAKE_URL="http://www.cmake.org/files/v3.6/cmake-3.6.0-Linux-x86_64.tar.gz"
+        mkdir -p ${DEPS_DIR}/cmake
+        travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C ${DEPS_DIR}/cmake
+        export PATH=${DEPS_DIR}/cmake/bin:${PATH}
+      fi
+
+    # Download and install SFML
+    - sudo apt-get install libudev-dev libvorbis-dev libflac-dev libopenal-dev libfreetype6-dev libx11-dev libxrandr-dev
+    - git clone https://github.com/SFML/SFML --branch master
+    - cd SFML
+    - cmake .
+    - make
+    - sudo mv include/* /usr/include/
+    - sudo mv lib/* /usr/lib/
+    - cd ..
+
+script:
+    ############################################################################
+    # Build main and tests
+    ############################################################################
+    - ./build_and_run_tests.bash

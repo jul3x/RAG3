@@ -1,0 +1,4 @@
+int auto_resolution=1
+int32 background_color=0x20202000
+float player_max_speed=6.0f
+float player_max_acceleration=20.0f

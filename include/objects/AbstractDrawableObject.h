@@ -9,6 +9,7 @@
 #include <string>
 
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 
 #include <system/ResourceManager.h>

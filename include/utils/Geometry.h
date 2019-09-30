@@ -5,11 +5,14 @@
 #ifndef RAG3_UTILS_GEOMETRY_H
 #define RAG3_UTILS_GEOMETRY_H
 
+#include <numeric>
 #include <cmath>
 #include <stdexcept>
 #include <tuple>
 
 #include <SFML/System/Vector2.hpp>
+
+#include <objects/AbstractPhysicalObject.h>
 
 
 namespace utils {
@@ -59,6 +62,89 @@ inline bool isPointInRectangle(const sf::Vector2f &p, const sf::Vector2f &rect_p
     }
 
     return p.x >= rect_pos.x && p.x < rect_pos.x + rect_size.x && p.y >= rect_pos.y && p.y < rect_pos.y + rect_size.y;
+}
+
+inline void AABB(AbstractPhysicalObject &a, AbstractPhysicalObject &b) {
+    sf::Vector2f a1 = a.getPosition() - a.getSize() / 2.0f + a.getVelocity() - b.getVelocity();
+    sf::Vector2f a2 = a.getPosition() + a.getSize() / 2.0f + a.getVelocity() - b.getVelocity();
+    sf::Vector2f b1 = b.getPosition() - b.getSize() / 2.0f;
+    sf::Vector2f b2 = b.getPosition() + b.getSize() / 2.0f;
+
+    if (a1.x > b2.x || a2.x < b1.x || a1.y > b2.y || a2.y < b1.y)
+    {
+        std::cout << " NO " << std::endl;
+        return; // no collision
+    }
+
+    auto angle = std::get<1>(utils::cartesianToPolar(b.getPosition() - a.getPosition()));
+    short int direction = 0;
+    // 0 - left, 1 - top, 2 - right, 3 - bottom
+
+    if (angle >= M_PI_4 && angle <= M_PI_4 + M_PI_2)
+    {
+        direction = 1;
+    }
+    else if (angle <= -M_PI_4 && angle >= - M_PI_4 - M_PI_2)
+    {
+        direction = 3;
+    }
+    else if ((angle >= 0.0f && angle < M_PI_4) ||
+             (angle < 0.0f && angle > -M_PI_4))
+    {
+        direction = 0;
+    }
+    else
+    {
+        direction = 2;
+    }
+
+    if (!a.isStatic())
+    {
+        if (direction == 1)
+        {
+            a.setForcedVelocity({a.getVelocity().x, 0.0f});
+            a.setPosition(a.getPosition().x, b1.y - a.getSize().y / 2.0f);
+        }
+        else if (direction == 3)
+        {
+            a.setForcedVelocity({a.getVelocity().x, 0.0f});
+            a.setPosition(a.getPosition().x, b2.y + a.getSize().y / 2.0f);
+        }
+        else if (direction == 2)
+        {
+            a.setForcedVelocity({0.0f, a.getVelocity().y});
+            a.setPosition(b2.x + a.getSize().x / 2.0f, a.getPosition().y);
+        }
+        else
+        {
+            a.setForcedVelocity({0.0f, a.getVelocity().y});
+            a.setPosition(b1.x - a.getSize().x / 2.0f, a.getPosition().y);
+        }
+    }
+
+    if (!b.isStatic())
+    {
+        if (direction == 1)
+        {
+            b.setForcedVelocity({b.getVelocity().x, 0.0f});
+            b.setPosition(b.getPosition().x, a2.y + b.getSize().y / 2.0f);
+        }
+        else if (direction == 3)
+        {
+            b.setForcedVelocity({b.getVelocity().x, 0.0f});
+            b.setPosition(b.getPosition().x, a1.y - b.getSize().y / 2.0f);
+        }
+        else if (direction == 2)
+        {
+            b.setForcedVelocity({0.0f, b.getVelocity().y});
+            b.setPosition(a1.x + b.getSize().x / 2.0f, b.getPosition().y);
+        }
+        else
+        {
+            b.setForcedVelocity({0.0f, b.getVelocity().y});
+            b.setPosition(a2.x - b.getSize().x / 2.0f, b.getPosition().y);
+        }
+    }
 }
 
 } // namespace utils

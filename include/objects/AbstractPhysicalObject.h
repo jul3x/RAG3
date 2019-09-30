@@ -52,8 +52,9 @@ public:
     void update(float time_elapsed) {
         if (!this->isStatic())
         {
+            last_position_ = this->getPosition();
             if (utils::isNearlyEqual(set_v_.x, 0.0f, 0.01f) &&
-                utils::isNearlyEqual(curr_v_.x, 0.0f, 0.1f))
+                utils::isNearlyEqual(curr_v_.x, 0.0f, 0.05f))
             {
                 curr_v_.x = 0.0f;
             }
@@ -62,7 +63,7 @@ public:
                 curr_v_.x = curr_v_.x - std::copysign(acceleration_ * time_elapsed, curr_v_.x - set_v_.x);
             }
             if (utils::isNearlyEqual(set_v_.y, 0.0f, 0.01f) &&
-                utils::isNearlyEqual(curr_v_.y, 0.0f, 0.1f))
+                utils::isNearlyEqual(curr_v_.y, 0.0f, 0.05f))
             {
                 curr_v_.y = 0.0f;
             }
@@ -78,6 +79,7 @@ public:
 private:
     float acceleration_;
 
+    sf::Vector2f last_position_;
     sf::Vector2f curr_v_, set_v_;
     bool is_static_;
 

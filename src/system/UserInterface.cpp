@@ -65,10 +65,11 @@ inline void UserInterface::handleKeys(Player &player) {
     {
         delta.y += CFG.getFloat("player_max_speed");
     }
-    auto yaw = player.getRotation() * M_PI / 180.0f + M_PI_2;
+  //  auto yaw = player.getRotation() * M_PI / 180.0f + M_PI_2;
 
-    player.setVelocity(delta.x * std::cos(yaw) - delta.y * std::sin(yaw),
-                       delta.x * std::sin(yaw) + delta.y * std::cos(yaw));
+   /// player.setVelocity(delta.x * std::cos(yaw) - delta.y * std::sin(yaw),
+  //                     delta.x * std::sin(yaw) + delta.y * std::cos(yaw));
+    player.setVelocity(delta.x, delta.y);
 }
 
 inline void UserInterface::handleMouse(sf::RenderWindow &graphics_window, Player &player) {

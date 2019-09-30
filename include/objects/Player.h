@@ -21,8 +21,8 @@ public:
                                                                   false) {}
 
 private:
-    static constexpr float SIZE_X_ = 141.0f;
-    static constexpr float SIZE_Y_ = 76.0f;
+    static constexpr float SIZE_X_ = 70.0f;
+    static constexpr float SIZE_Y_ = 70.0f;
 };
 
 #endif // RAG3_OBJECTS_PLAYER_H

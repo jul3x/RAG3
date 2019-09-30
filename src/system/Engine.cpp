@@ -9,7 +9,9 @@
 #include <system/Engine.h>
 
 
-Engine::Engine() : player_({500.0f, 500.0f}, {}), obstacle_({800.0f, 800.0f}, 1) {}
+Engine::Engine() : player_({500.0f, 500.0f}, {}) {
+    map_.loadMap("map");
+}
 
 Player& Engine::getPlayer() {
     return player_;
@@ -29,9 +31,9 @@ void Engine::update(int frame_rate) {
 
         physics_.update(time_elapsed);
         player_.update(time_elapsed);
-        obstacle_.update(time_elapsed);
 
-        utils::AABB(player_, obstacle_);
+        for (auto &obstacle : map_.getObstacles())
+            utils::AABB(player_, obstacle);
 
         for (auto it = animation_events_.begin(); it != animation_events_.end(); ++it)
         {
@@ -46,9 +48,9 @@ void Engine::update(int frame_rate) {
         // drawing
         {
             Graphics::getInstance().clear();
+            Graphics::getInstance().draw(map_);
 
             Graphics::getInstance().draw(player_);
-            Graphics::getInstance().draw(obstacle_);
             for (const auto &animation : animation_events_)
             {
                 Graphics::getInstance().draw(*animation);

@@ -10,7 +10,7 @@
 #include <graphics/Graphics.h>
 #include <graphics/AnimationEvent.h>
 #include <objects/Player.h>
-#include <objects/Obstacle.h>
+#include <objects/Map.h>
 #include <system/UserInterface.h>
 #include <physics/Physics.h>
 
@@ -44,7 +44,7 @@ private:
     sf::Time time_;
 
     Player player_;
-    Obstacle obstacle_;
+    Map map_;
     std::list<std::unique_ptr<AnimationEvent>> animation_events_;
 };
 

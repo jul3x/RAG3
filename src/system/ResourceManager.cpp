@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <fstream>
 
 #include <system/ResourceManager.h>
 
@@ -29,6 +30,17 @@ sf::Texture& ResourceManager::getTexture(const std::string &key) {
     return textures_.at(key);
 }
 
+std::list<Obstacle> ResourceManager::getMap(const std::string &key) {
+    try
+    {
+        return loadMap(key);
+    }
+    catch (std::logic_error &e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+}
+
 void ResourceManager::lazyLoadTexture(const std::string &key) {
     loadTexture(key);
 }
@@ -38,4 +50,43 @@ void ResourceManager::loadTexture(const std::string &key) {
     {
         throw std::runtime_error("[ResourceManager] " + key + " texture file not successfully loaded.");
     }
+}
+
+std::list<Obstacle> ResourceManager::loadMap(const std::string &key) {
+    std::ifstream file("data/" + key + ".j3x");
+    std::list<Obstacle> obstacles;
+
+    if (file)
+    {
+        int w, h;
+        file >> w >> h;
+
+        int max_number = w * h;
+        int count = 0;
+        short int type = 0;
+
+        while (file >> type)
+        {
+            if (type < 10 && type != 0)
+            {
+                obstacles.push_back({{(count % w) * Obstacle::SIZE_X_, (count / w) * Obstacle::SIZE_Y_}, type});
+            }
+            else if (type != 0)
+            {
+                throw std::logic_error("[ResourceManager] For now, not handled type of obstacle!");
+            }
+            ++count;
+        }
+
+        if (count != max_number)
+        {
+            throw std::logic_error("[ResourceManager] Wrong number of tiles!");
+        }
+    }
+    else
+    {
+        throw std::logic_error("[ResourceManager] Map file not found! This should not happen during standard runtime.");
+    }
+
+    return obstacles;
 }

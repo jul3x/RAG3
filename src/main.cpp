@@ -4,6 +4,7 @@
 
 #include <system/Config.h>
 #include <system/Engine.h>
+#include <system/ResourceManager.h>
 
 int main()
 {

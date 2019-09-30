@@ -10,8 +10,6 @@
 
 #include <objects/AbstractDrawableObject.h>
 
-#include <system/ResourceManager.h>
-
 
 class AnimationEvent : public AbstractDrawableObject {
 

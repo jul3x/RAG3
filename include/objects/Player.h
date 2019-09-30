@@ -13,12 +13,7 @@
 class Player : public AbstractPhysicalObject {
 public:
     Player(const sf::Vector2f &position,
-           const sf::Vector2f &velocity) : AbstractPhysicalObject(position,
-                                                                  velocity,
-                                                                  {SIZE_X_, SIZE_Y_},
-                                                                  "player",
-                                                                  CFG.getFloat("player_max_acceleration"),
-                                                                  false) {}
+           const sf::Vector2f &velocity);
 
 private:
     static constexpr float SIZE_X_ = 70.0f;

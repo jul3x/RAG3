@@ -2,6 +2,9 @@
 // Created by jprolejko on 05.09.19.
 //
 
+#include <cmath>
+#include <stdexcept>
+
 #include <graphics/AnimationEvent.h>
 
 

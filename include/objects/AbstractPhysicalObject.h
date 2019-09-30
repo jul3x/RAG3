@@ -9,7 +9,6 @@
 #include <iostream>
 #include <cmath>
 
-#include <utils/Numeric.h>
 #include <objects/AbstractDrawableObject.h>
 
 
@@ -22,59 +21,16 @@ public:
                            const sf::Vector2f &size,
                            const std::string &texture_name,
                            const double acceleration,
-                           const bool is_static = true) :
-        AbstractDrawableObject(position, size, texture_name),
-        curr_v_(velocity), set_v_(velocity),
-        acceleration_(acceleration),
-        is_static_(is_static) {}
+                           const bool is_static = true);
 
-    const bool isStatic() const {
-        return is_static_;
-    }
+    const bool isStatic() const;
+    const sf::Vector2f& getVelocity() const;
 
-    const sf::Vector2f& getVelocity() const {
-        return curr_v_;
-    }
+    void setVelocity(const sf::Vector2f &velocity);
+    void setVelocity(const float x, const float y);
+    void setForcedVelocity(const sf::Vector2f &velocity);
 
-    void setVelocity(const sf::Vector2f &velocity) {
-        set_v_ = velocity;
-    }
-
-    void setVelocity(const float x, const float y) {
-        set_v_.x = x;
-        set_v_.y = y;
-    }
-
-    void setForcedVelocity(const sf::Vector2f &velocity) {
-        curr_v_ = velocity;
-    }
-
-    void update(float time_elapsed) {
-        if (!this->isStatic())
-        {
-            last_position_ = this->getPosition();
-            if (utils::isNearlyEqual(set_v_.x, 0.0f, 0.01f) &&
-                utils::isNearlyEqual(curr_v_.x, 0.0f, 0.05f))
-            {
-                curr_v_.x = 0.0f;
-            }
-            else
-            {
-                curr_v_.x = curr_v_.x - std::copysign(acceleration_ * time_elapsed, curr_v_.x - set_v_.x);
-            }
-            if (utils::isNearlyEqual(set_v_.y, 0.0f, 0.01f) &&
-                utils::isNearlyEqual(curr_v_.y, 0.0f, 0.05f))
-            {
-                curr_v_.y = 0.0f;
-            }
-            else
-            {
-                curr_v_.y = curr_v_.y - std::copysign(acceleration_ * time_elapsed, curr_v_.y - set_v_.y);
-            }
-
-            this->setPosition(this->getPosition() + curr_v_);
-        }
-    }
+    void update(float time_elapsed);
 
 private:
     float acceleration_;

@@ -9,7 +9,7 @@
 
 
 void Map::loadMap(const std::string &name) {
-    obstacles_ = ResourceManager::getInstance().getMap(name);
+    std::tie(obstacles_, decorations_) = ResourceManager::getInstance().getMap(name);
     visible_obstacles_.clear();
 }
 
@@ -26,6 +26,10 @@ void Map::setVisibility(const sf::View &view) {
     {
         it->setVisibility(view);
     }
+    for (auto it = decorations_.begin(); it != decorations_.end(); ++it)
+    {
+        it->setVisibility(view);
+    }
 }
 
 void Map::update(float time_elapsed) {
@@ -38,7 +42,9 @@ void Map::update(float time_elapsed) {
 
             if (!it->updateObstacle(time_elapsed))
             {
-                Engine::getInstance().spawnExplosionAnimation(it->getPosition(), 40.0f);
+                // draw on this place destruction
+                decorations_.emplace_back(it->getPosition(), 2);
+                Engine::getInstance().spawnExplosionAnimation(it->getPosition(), 25.0f);
 
                 auto next_it = std::next(it);
                 obstacles_.erase(it);
@@ -49,6 +55,10 @@ void Map::update(float time_elapsed) {
 }
 
 void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    for (const auto &decoration : decorations_)
+    {
+        target.draw(decoration, states);
+    }
     for (const auto &obstacle : obstacles_)
     {
         target.draw(obstacle, states);

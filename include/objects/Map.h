@@ -9,6 +9,7 @@
 #include <list>
 
 #include <objects/Obstacle.h>
+#include <objects/Decoration.h>
 #include <objects/AbstractDrawableObject.h>
 
 
@@ -29,6 +30,8 @@ private:
 
     std::list<Obstacle> obstacles_;
     std::list<Obstacle*> visible_obstacles_;
+
+    std::list<Decoration> decorations_;
 };
 
 #endif // RAG3_OBJECTS_MAP_H

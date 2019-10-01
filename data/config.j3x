@@ -1,10 +1,11 @@
 int auto_resolution=1
-int32 background_color=0x10101000
+int32 background_color=0x55000000
+int32 trail_color=0xFF000050
 float player_max_speed=10.0f
 float player_max_acceleration=15.0f
-float camera_speed=3.0f;
-float bullet_speed=30.0f;
-float bullet_timeout=50.0f;
-float recoil=2.0f;
-float camera_recoil=5.0f;
+float camera_speed=4.0f;
+float bullet_speed=50.0f;
+float bullet_timeout=100.0f;
+float recoil=3.0f;
+float camera_recoil=4.0f;
 int obstacles_endurance_factor=4;

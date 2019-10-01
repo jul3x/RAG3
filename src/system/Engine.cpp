@@ -61,10 +61,6 @@ void Engine::update(int frame_rate) {
         for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
         {
             bool remove_bullet = false;
-            if (!it->updateBullet(time_elapsed))
-            {
-                remove_bullet = true;
-            }
 
             for (auto it_ob = map_.getVisibleObstacles().begin();
                  it_ob != map_.getVisibleObstacles().end(); ++it_ob)
@@ -79,6 +75,11 @@ void Engine::update(int frame_rate) {
 
                     break;
                 }
+            }
+
+            if (!it->updateBullet(time_elapsed))
+            {
+                remove_bullet = true;
             }
 
             if (remove_bullet)

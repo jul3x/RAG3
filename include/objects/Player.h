@@ -12,7 +12,7 @@
 #include <objects/AbstractPhysicalObject.h>
 
 
-class Player : public AbstractPhysicalObject {
+class Player : public DynamicObject {
 public:
     Player(const sf::Vector2f &position,
            const sf::Vector2f &velocity);

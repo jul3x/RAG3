@@ -64,85 +64,118 @@ inline bool isPointInRectangle(const sf::Vector2f &p, const sf::Vector2f &rect_p
     return p.x >= rect_pos.x && p.x < rect_pos.x + rect_size.x && p.y >= rect_pos.y && p.y < rect_pos.y + rect_size.y;
 }
 
-inline bool AABB(AbstractPhysicalObject &a, AbstractPhysicalObject &b) {
-    sf::Vector2f a1 = a.getPosition() - a.getSize() / 2.0f + a.getVelocity() - b.getVelocity();
-    sf::Vector2f a2 = a.getPosition() + a.getSize() / 2.0f + a.getVelocity() - b.getVelocity();
-    sf::Vector2f b1 = b.getPosition() - b.getSize() / 2.0f;
-    sf::Vector2f b2 = b.getPosition() + b.getSize() / 2.0f;
+inline short int AABB(const sf::Vector2f &a_origin, const sf::Vector2f &a_size,
+                      const sf::Vector2f &b_origin, const sf::Vector2f &b_size) {
+    sf::Vector2f a1 = a_origin - a_size / 2.0f;
+    sf::Vector2f a2 = a_origin + a_size / 2.0f;
+    sf::Vector2f b1 = b_origin - b_size / 2.0f;
+    sf::Vector2f b2 = b_origin + b_size / 2.0f;
 
+    short int direction = 0;
+    // 0 - none, 1 - left, 2 - top, 3 - right, 4 - bottom
     if (a1.x > b2.x || a2.x < b1.x || a1.y > b2.y || a2.y < b1.y)
     {
-        return false; // no collision
+        return direction; // no collision
     }
 
-    auto angle = std::get<1>(utils::cartesianToPolar(b.getPosition() - a.getPosition()));
-    short int direction = 0;
-    // 0 - left, 1 - top, 2 - right, 3 - bottom
+    auto angle = std::get<1>(utils::cartesianToPolar(b_origin - a_origin));
 
     if (angle >= M_PI_4 && angle <= M_PI_4 + M_PI_2)
     {
-        direction = 1;
+        direction = 2;
     }
     else if (angle <= -M_PI_4 && angle >= - M_PI_4 - M_PI_2)
     {
-        direction = 3;
+        direction = 4;
     }
     else if ((angle >= 0.0f && angle < M_PI_4) ||
              (angle < 0.0f && angle > -M_PI_4))
     {
-        direction = 0;
+        direction = 1;
     }
     else
     {
-        direction = 2;
+        direction = 3;
     }
 
-    if (!a.isStatic())
+    return direction;
+}
+
+inline bool AABBwithDS(DynamicObject &a, const StaticObject &b) {
+    sf::Vector2f a1 = a.getPosition() + a.getVelocity() - a.getSize() / 2.0f;
+    sf::Vector2f a2 = a.getPosition() + a.getVelocity() + a.getSize() / 2.0f;
+    sf::Vector2f b1 = b.getPosition() - b.getSize() / 2.0f;
+    sf::Vector2f b2 = b.getPosition() + b.getSize() / 2.0f;
+
+    short int direction = AABB(a.getPosition() + a.getVelocity(), a.getSize(),
+                               b.getPosition(), b.getSize());
+    if (direction == 2)
     {
-        if (direction == 1)
-        {
-            a.setForcedVelocity({a.getVelocity().x, 0.0f});
-            a.setPosition(a.getPosition().x, b1.y - a.getSize().y / 2.0f - 1.0f);
-        }
-        else if (direction == 3)
-        {
-            a.setForcedVelocity({a.getVelocity().x, 0.0f});
-            a.setPosition(a.getPosition().x, b2.y + a.getSize().y / 2.0f + 1.0f);
-        }
-        else if (direction == 2)
-        {
-            a.setForcedVelocity({0.0f, a.getVelocity().y});
-            a.setPosition(b2.x + a.getSize().x / 2.0f + 1.0f, a.getPosition().y);
-        }
-        else
-        {
-            a.setForcedVelocity({0.0f, a.getVelocity().y});
-            a.setPosition(b1.x - a.getSize().x / 2.0f - 1.0f, a.getPosition().y);
-        }
+        a.setForcedVelocity({a.getVelocity().x, 0.0f});
+        a.setPosition(a.getPosition().x, b1.y - a.getSize().y / 2.0f - 1.0f);
+    }
+    else if (direction == 4)
+    {
+        a.setForcedVelocity({a.getVelocity().x, 0.0f});
+        a.setPosition(a.getPosition().x, b2.y + a.getSize().y / 2.0f + 1.0f);
+    }
+    else if (direction == 3)
+    {
+        a.setForcedVelocity({0.0f, a.getVelocity().y});
+        a.setPosition(b2.x + a.getSize().x / 2.0f + 1.0f, a.getPosition().y);
+    }
+    else if (direction == 1)
+    {
+        a.setForcedVelocity({0.0f, a.getVelocity().y});
+        a.setPosition(b1.x - a.getSize().x / 2.0f - 1.0f, a.getPosition().y);
+    }
+    else
+    {
+        return false;
     }
 
-    if (!b.isStatic())
+    return true;
+}
+
+inline bool AABBwithDD(DynamicObject &a, DynamicObject &b) {
+    sf::Vector2f a1 = a.getPosition() + a.getVelocity() - b.getVelocity() - a.getSize() / 2.0f;
+    sf::Vector2f a2 = a.getPosition() + a.getVelocity() - b.getVelocity() + a.getSize() / 2.0f;
+    sf::Vector2f b1 = b.getPosition() - b.getSize() / 2.0f;
+    sf::Vector2f b2 = b.getPosition() + b.getSize() / 2.0f;
+
+    short int direction = AABB(a.getPosition() + a.getVelocity() - b.getVelocity(), a.getSize(),
+                               b.getPosition(), b.getSize());
+    if (direction == 2)
     {
-        if (direction == 1)
-        {
-            b.setForcedVelocity({b.getVelocity().x, 0.0f});
-            b.setPosition(b.getPosition().x, a2.y + b.getSize().y / 2.0f + 1.0f);
-        }
-        else if (direction == 3)
-        {
-            b.setForcedVelocity({b.getVelocity().x, 0.0f});
-            b.setPosition(b.getPosition().x, a1.y - b.getSize().y / 2.0f - 1.0f);
-        }
-        else if (direction == 2)
-        {
-            b.setForcedVelocity({0.0f, b.getVelocity().y});
-            b.setPosition(a1.x + b.getSize().x / 2.0f + 1.0f, b.getPosition().y);
-        }
-        else
-        {
-            b.setForcedVelocity({0.0f, b.getVelocity().y});
-            b.setPosition(a2.x - b.getSize().x / 2.0f - 1.0f, b.getPosition().y);
-        }
+        a.setForcedVelocity({a.getVelocity().x, 0.0f});
+        a.setPosition(a.getPosition().x, b1.y - a.getSize().y / 2.0f - 1.0f);
+        b.setForcedVelocity({b.getVelocity().x, 0.0f});
+        b.setPosition(b.getPosition().x, a2.y + b.getSize().y / 2.0f + 1.0f);
+    }
+    else if (direction == 4)
+    {
+        a.setForcedVelocity({a.getVelocity().x, 0.0f});
+        a.setPosition(a.getPosition().x, b2.y + a.getSize().y / 2.0f + 1.0f);
+        b.setForcedVelocity({b.getVelocity().x, 0.0f});
+        b.setPosition(b.getPosition().x, a1.y - b.getSize().y / 2.0f - 1.0f);
+    }
+    else if (direction == 3)
+    {
+        a.setForcedVelocity({0.0f, a.getVelocity().y});
+        a.setPosition(b2.x + a.getSize().x / 2.0f + 1.0f, a.getPosition().y);
+        b.setForcedVelocity({0.0f, b.getVelocity().y});
+        b.setPosition(a1.x + b.getSize().x / 2.0f + 1.0f, b.getPosition().y);
+    }
+    else if (direction == 1)
+    {
+        a.setForcedVelocity({0.0f, a.getVelocity().y});
+        a.setPosition(b1.x - a.getSize().x / 2.0f - 1.0f, a.getPosition().y);
+        b.setForcedVelocity({0.0f, b.getVelocity().y});
+        b.setPosition(a2.x - b.getSize().x / 2.0f - 1.0f, b.getPosition().y);
+    }
+    else
+    {
+        return false;
     }
 
     return true;

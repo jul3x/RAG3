@@ -1,6 +1,6 @@
 int auto_resolution=1
 int32 background_color=0x10101000
-float player_max_speed=7.0f
+float player_max_speed=10.0f
 float player_max_acceleration=15.0f
 float camera_speed=3.0f;
 float bullet_speed=30.0f;

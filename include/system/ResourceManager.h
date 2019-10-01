@@ -12,6 +12,7 @@
 #include <SFML/Graphics/Texture.hpp>
 
 #include <objects/Obstacle.h>
+#include <objects/Decoration.h>
 
 
 class ResourceManager {
@@ -23,7 +24,7 @@ public:
     static ResourceManager& getInstance();
 
     sf::Texture& getTexture(const std::string &key);
-    std::list<Obstacle> getMap(const std::string &key);
+    std::tuple<std::list<Obstacle>, std::list<Decoration>> getMap(const std::string &key);
 
     void lazyLoadTexture(const std::string &key);
 
@@ -31,7 +32,7 @@ private:
     ResourceManager() = default;
 
     void loadTexture(const std::string &key);
-    std::list<Obstacle> loadMap(const std::string &key);
+    std::tuple<std::list<Obstacle>, std::list<Decoration>> loadMap(const std::string &key);
 
     std::map<std::string, sf::Texture> textures_;
 };

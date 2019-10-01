@@ -106,14 +106,15 @@ void Engine::update(int frame_rate) {
             Graphics::getInstance().clear();
             Graphics::getInstance().setViewCenter(camera_.getViewCenter());
 
+            Graphics::getInstance().draw(map_);
+
+            Graphics::getInstance().draw(player_);
+
             for (const auto &bullet : bullets_)
             {
                 Graphics::getInstance().draw(bullet);
             }
 
-            Graphics::getInstance().draw(map_);
-
-            Graphics::getInstance().draw(player_);
             for (const auto &animation : animation_events_)
             {
                 Graphics::getInstance().draw(*animation);

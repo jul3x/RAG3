@@ -22,11 +22,16 @@ Player& Engine::getPlayer() {
 void Engine::forceCameraShaking() {
     camera_.setShaking();
 }
+void Engine::spawnExplosionAnimation(const sf::Vector2f &pos, const float r) {
+    animation_events_.push_back(
+        std::make_unique<ExplosionAnimation>(pos, r));
+}
 
 void Engine::spawnBullet(const sf::Vector2f &pos, const float dir) {
+    static constexpr float LIFETIME = 600.0f;
     animation_events_.push_back(
         std::make_unique<SpawnAnimation>(pos, 3.0f));
-    bullets_.emplace_back(pos, dir);
+    bullets_.emplace_back(pos, dir, LIFETIME);
 }
 
 void Engine::update(int frame_rate) {
@@ -41,38 +46,46 @@ void Engine::update(int frame_rate) {
 
         ui_.handleEvents();
 
-        physics_.update(time_elapsed);
-        player_.update(time_elapsed);
-        map_.update(time_elapsed);
+        map_.setVisibility(Graphics::getInstance().getView());
+        player_.setVisibility(Graphics::getInstance().getView());
 
-        for (auto &obstacle : map_.getObstacles())
+        map_.update(time_elapsed);
+        if (player_.isVisible())
+            player_.update(time_elapsed);
+
+        for (auto &obstacle : map_.getVisibleObstacles())
         {
-            utils::AABBwithDS(player_, obstacle);
+            utils::AABBwithDS(player_, *obstacle);
         }
 
         for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
         {
-            it->update(time_elapsed);
-
-            for (auto it_ob = map_.getObstacles().begin(); it_ob != map_.getObstacles().end(); ++it_ob)
+            bool remove_bullet = false;
+            if (!it->updateBullet(time_elapsed))
             {
-                if (utils::AABBwithDS(*it, *it_ob))
+                remove_bullet = true;
+            }
+
+            for (auto it_ob = map_.getVisibleObstacles().begin();
+                 it_ob != map_.getVisibleObstacles().end(); ++it_ob)
+            {
+                if (utils::AABBwithDS(*it, **it_ob))
                 {
-                    if (!it_ob->getShot())
-                    {
-                        animation_events_.push_back(
-                            std::make_unique<ExplosionAnimation>(it_ob->getPosition(), 50.0f));
-                        map_.getObstacles().erase(it_ob);
-                    }
+                    (*it_ob)->getShot();
+
+                    remove_bullet = true;
                     animation_events_.push_back(
                         std::make_unique<SpawnAnimation>(it->getPosition(), 10.0f));
 
-                    auto next_it = std::next(it);
-                    bullets_.erase(it);
-                    it = next_it;
-
                     break;
                 }
+            }
+
+            if (remove_bullet)
+            {
+                auto next_it = std::next(it);
+                bullets_.erase(it);
+                it = next_it;
             }
         }
 

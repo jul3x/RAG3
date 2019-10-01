@@ -14,7 +14,6 @@
 #include <objects/Map.h>
 #include <objects/Bullet.h>
 #include <system/UserInterface.h>
-#include <physics/Physics.h>
 
 
 class Engine {
@@ -30,6 +29,7 @@ public:
 
     Player& getPlayer();
     void spawnBullet(const sf::Vector2f &pos, const float dir);
+    void spawnExplosionAnimation(const sf::Vector2f &pos, const float r);
     void forceCameraShaking();
 
     void update(int frame_rate);
@@ -42,7 +42,6 @@ private:
     void ensureConstantFrameRate(int frame_rate);
     void restartClock();
 
-    Physics physics_;
     UserInterface ui_;
     sf::Clock clock_;
     sf::Time time_;
@@ -51,7 +50,9 @@ private:
     Player player_;
     Map map_;
     std::list<Bullet> bullets_;
+
     std::list<std::unique_ptr<AnimationEvent>> animation_events_;
+
 };
 
 

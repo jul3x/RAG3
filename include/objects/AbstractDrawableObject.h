@@ -24,10 +24,12 @@ public:
     const sf::Vector2f& getPosition() const;
     const sf::Vector2f& getSize() const;
     const float getRotation() const;
+    bool isVisible() const;
 
     void setPosition(const sf::Vector2f &position);
     void setPosition(const float x, const float y);
     void setRotation(const float angle_deg);
+    virtual void setVisibility(const sf::View &view);
 
 protected:
     sf::RectangleShape shape_;
@@ -36,7 +38,7 @@ private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     sf::Texture *texture_;
-
+    bool is_visible_;
 };
 
 #endif // RAG3_OBJECTS_ABSTRACTDRAWABLEOBJECT_H

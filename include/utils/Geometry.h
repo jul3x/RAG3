@@ -64,11 +64,12 @@ inline bool isPointInRectangle(const sf::Vector2f &p, const sf::Vector2f &rect_p
     return p.x >= rect_pos.x && p.x < rect_pos.x + rect_size.x && p.y >= rect_pos.y && p.y < rect_pos.y + rect_size.y;
 }
 
-inline short int AABB(const AbstractPhysicalObject &a, const AbstractPhysicalObject &b) {
-    sf::Vector2f a1 = a.getPosition() - a.getSize() / 2.0f;
-    sf::Vector2f a2 = a.getPosition() + a.getSize() / 2.0f;
-    sf::Vector2f b1 = b.getPosition() - b.getSize() / 2.0f;
-    sf::Vector2f b2 = b.getPosition() + b.getSize() / 2.0f;
+inline short int AABB(const sf::Vector2f &a_origin, const sf::Vector2f &a_size,
+                      const sf::Vector2f &b_origin, const sf::Vector2f &b_size) {
+    sf::Vector2f a1 = a_origin - a_size / 2.0f;
+    sf::Vector2f a2 = a_origin + a_size / 2.0f;
+    sf::Vector2f b1 = b_origin - b_size / 2.0f;
+    sf::Vector2f b2 = b_origin + b_size / 2.0f;
 
     short int direction = 0;
     // 0 - none, 1 - left, 2 - top, 3 - right, 4 - bottom
@@ -77,7 +78,7 @@ inline short int AABB(const AbstractPhysicalObject &a, const AbstractPhysicalObj
         return direction; // no collision
     }
 
-    auto angle = std::get<1>(utils::cartesianToPolar(b.getPosition() - a.getPosition()));
+    auto angle = std::get<1>(utils::cartesianToPolar(b_origin - a_origin));
 
     if (angle >= M_PI_4 && angle <= M_PI_4 + M_PI_2)
     {
@@ -101,15 +102,13 @@ inline short int AABB(const AbstractPhysicalObject &a, const AbstractPhysicalObj
 }
 
 inline bool AABBwithDS(DynamicObject &a, const StaticObject &b) {
-    DynamicObject future_object = a;
-    future_object.setPosition(a.getPosition() + a.getVelocity());
-
-    sf::Vector2f a1 = future_object.getPosition() - future_object.getSize() / 2.0f;
-    sf::Vector2f a2 = future_object.getPosition() + future_object.getSize() / 2.0f;
+    sf::Vector2f a1 = a.getPosition() + a.getVelocity() - a.getSize() / 2.0f;
+    sf::Vector2f a2 = a.getPosition() + a.getVelocity() + a.getSize() / 2.0f;
     sf::Vector2f b1 = b.getPosition() - b.getSize() / 2.0f;
     sf::Vector2f b2 = b.getPosition() + b.getSize() / 2.0f;
 
-    short int direction = AABB(future_object, b);
+    short int direction = AABB(a.getPosition() + a.getVelocity(), a.getSize(),
+                               b.getPosition(), b.getSize());
     if (direction == 2)
     {
         a.setForcedVelocity({a.getVelocity().x, 0.0f});
@@ -139,15 +138,13 @@ inline bool AABBwithDS(DynamicObject &a, const StaticObject &b) {
 }
 
 inline bool AABBwithDD(DynamicObject &a, DynamicObject &b) {
-    DynamicObject future_object = a;
-    future_object.setPosition(a.getPosition() + a.getVelocity() - b.getVelocity());
-
-    sf::Vector2f a1 = future_object.getPosition() - future_object.getSize() / 2.0f;
-    sf::Vector2f a2 = future_object.getPosition() + future_object.getSize() / 2.0f;
+    sf::Vector2f a1 = a.getPosition() + a.getVelocity() - b.getVelocity() - a.getSize() / 2.0f;
+    sf::Vector2f a2 = a.getPosition() + a.getVelocity() - b.getVelocity() + a.getSize() / 2.0f;
     sf::Vector2f b1 = b.getPosition() - b.getSize() / 2.0f;
     sf::Vector2f b2 = b.getPosition() + b.getSize() / 2.0f;
 
-    short int direction = AABB(future_object, b);
+    short int direction = AABB(a.getPosition() + a.getVelocity() - b.getVelocity(), a.getSize(),
+                               b.getPosition(), b.getSize());
     if (direction == 2)
     {
         a.setForcedVelocity({a.getVelocity().x, 0.0f});

@@ -16,8 +16,10 @@ Obstacle::Obstacle(const sf::Vector2f &position,
     // type_number determines if wall is solid (for now)
 }
 
-bool Obstacle::getShot() {
+void Obstacle::getShot() {
     --shots_left_;
+}
 
-    return shots_left_ > 0;
+bool Obstacle::updateObstacle(float time_elapsed) {
+    return shots_left_;
 }

@@ -27,7 +27,7 @@ public:
     sf::View& getView();
 
     void setView(const sf::View &view);
-    void setViewCenter(const sf::Vector2f &view);
+    void setViewCenter(const sf::Vector3f &view);
 
     void clear();
     void draw(const AbstractDrawableObject &object);

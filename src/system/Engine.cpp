@@ -19,6 +19,10 @@ Player& Engine::getPlayer() {
     return player_;
 }
 
+void Engine::forceCameraShaking() {
+    camera_.setShaking();
+}
+
 void Engine::spawnBullet(const sf::Vector2f &pos, const float dir) {
     animation_events_.push_back(
         std::make_unique<SpawnAnimation>(pos, 3.0f));

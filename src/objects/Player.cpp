@@ -32,5 +32,6 @@ void Player::shot() {
         last_bullet_time_ = time_now;
 
         this->setForcedVelocity({-CFG.getFloat("recoil") * cosine, -CFG.getFloat("recoil") * sine});
+        Engine::getInstance().forceCameraShaking();
     }
 }

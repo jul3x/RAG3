@@ -31,8 +31,9 @@ void Graphics::setView(const sf::View &view) {
     window_.setView(current_view_);
 }
 
-void Graphics::setViewCenter(const sf::Vector2f &view_center) {
-    current_view_.setCenter(view_center);
+void Graphics::setViewCenter(const sf::Vector3f &view_center) {
+    current_view_.setCenter(view_center.x, view_center.y);
+    current_view_.setRotation(view_center.z);
     window_.setView(current_view_);
 }
 

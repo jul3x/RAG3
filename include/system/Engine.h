@@ -30,6 +30,7 @@ public:
 
     Player& getPlayer();
     void spawnBullet(const sf::Vector2f &pos, const float dir);
+    void forceCameraShaking();
 
     void update(int frame_rate);
 

@@ -6,6 +6,7 @@
 #ifndef RAG3_OBJECTS_ABSTRACTPHYSICALOBJECT_H
 #define RAG3_OBJECTS_ABSTRACTPHYSICALOBJECT_H
 
+#include <deque>
 #include <iostream>
 #include <cmath>
 
@@ -55,7 +56,13 @@ public:
     virtual void update(float time_elapsed);
 
 private:
+    virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;
+
     float acceleration_;
+
+    static constexpr size_t TRAIL_COUNT_ = 10;
+
+    std::deque<sf::Vector2f> trail_;
 
     sf::Vector2f curr_v_, set_v_;
 

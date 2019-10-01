@@ -23,6 +23,8 @@ private:
     static constexpr float SIZE_X_ = 10.0f;
     static constexpr float SIZE_Y_ = 4.0f;
 
+    static constexpr size_t TRAIL_COUNT_ = 4;
+
     float life_;
     std::chrono::system_clock::time_point spawn_time_;
 };

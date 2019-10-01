@@ -47,7 +47,7 @@ void Engine::update(int frame_rate) {
 
         for (auto &obstacle : map_.getObstacles())
         {
-            utils::AABB(player_, obstacle);
+            utils::AABBwithDS(player_, obstacle);
         }
 
         for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
@@ -56,7 +56,7 @@ void Engine::update(int frame_rate) {
 
             for (auto it_ob = map_.getObstacles().begin(); it_ob != map_.getObstacles().end(); ++it_ob)
             {
-                if (utils::AABB(*it, *it_ob))
+                if (utils::AABBwithDS(*it, *it_ob))
                 {
                     if (!it_ob->getShot())
                     {
@@ -70,7 +70,6 @@ void Engine::update(int frame_rate) {
                     auto next_it = std::next(it);
                     bullets_.erase(it);
                     it = next_it;
-
 
                     break;
                 }

@@ -9,7 +9,7 @@
 #include <objects/AbstractPhysicalObject.h>
 
 
-class Bullet : public AbstractPhysicalObject {
+class Bullet : public HoveringObject {
 public:
     Bullet(const sf::Vector2f &position,
            const float direction);

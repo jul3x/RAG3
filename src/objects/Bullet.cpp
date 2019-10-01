@@ -8,11 +8,11 @@
 
 Bullet::Bullet(const sf::Vector2f &position,
                const float direction) :
-        AbstractPhysicalObject(position,
-                               {CFG.getFloat("bullet_speed") * std::cos(direction),
-                                CFG.getFloat("bullet_speed") * std::sin(direction)},
-                                {SIZE_X_, SIZE_Y_},
-                                "bullet",
-                                100.0f, false) {
+        HoveringObject(position,
+                       {CFG.getFloat("bullet_speed") * std::cos(direction),
+                        CFG.getFloat("bullet_speed") * std::sin(direction)},
+                       {SIZE_X_, SIZE_Y_},
+                       "bullet",
+                       100.0f) {
     this->setRotation(direction * 180.0f / M_PI);
 }

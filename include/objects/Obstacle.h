@@ -9,7 +9,7 @@
 #include <objects/AbstractPhysicalObject.h>
 
 
-class Obstacle : public AbstractPhysicalObject {
+class Obstacle : public StaticObject {
 public:
     Obstacle(const sf::Vector2f &position,
              const int type_number);

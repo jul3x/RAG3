@@ -17,28 +17,59 @@ public:
     AbstractPhysicalObject() = default;
 
     AbstractPhysicalObject(const sf::Vector2f &position,
-                           const sf::Vector2f &velocity,
                            const sf::Vector2f &size,
-                           const std::string &texture_name,
-                           const double acceleration,
-                           const bool is_static = true);
+                           const std::string &texture_name);
 
-    const bool isStatic() const;
+    virtual void update(float time_elapsed) = 0;
+
+};
+
+class StaticObject : public AbstractPhysicalObject {
+public:
+    StaticObject() = default;
+
+    StaticObject(const sf::Vector2f &position,
+                 const sf::Vector2f &size,
+                 const std::string &texture_name);
+
+    virtual void update(float time_elapsed);
+
+};
+
+class DynamicObject : public StaticObject {
+public:
+    DynamicObject() = default;
+
+    DynamicObject(const sf::Vector2f &position,
+                  const sf::Vector2f &velocity,
+                  const sf::Vector2f &size,
+                  const std::string &texture_name,
+                  const double acceleration);
+
     const sf::Vector2f& getVelocity() const;
 
     void setVelocity(const sf::Vector2f &velocity);
     void setVelocity(const float x, const float y);
     void setForcedVelocity(const sf::Vector2f &velocity);
 
-    void update(float time_elapsed);
+    virtual void update(float time_elapsed);
 
 private:
     float acceleration_;
 
-    sf::Vector2f last_position_;
     sf::Vector2f curr_v_, set_v_;
-    bool is_static_;
 
+};
+
+class HoveringObject : public DynamicObject {
+public:
+    HoveringObject() = default;
+
+    HoveringObject(const sf::Vector2f &position,
+                   const sf::Vector2f &velocity,
+                   const sf::Vector2f &size,
+                   const std::string &texture_name,
+                   const double acceleration);
 };
 
 #endif // RAG3_OBJECTS_ABSTRACTPHYSICALOBJECT_H

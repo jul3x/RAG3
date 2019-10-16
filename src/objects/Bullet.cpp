@@ -8,7 +8,8 @@
 
 Bullet::Bullet(const sf::Vector2f &position,
                const float direction,
-               const float bullet_life) :
+               const float bullet_life,
+               const int deadly_factor) :
         HoveringObject(position,
                        {CFG.getFloat("bullet_speed") * std::cos(direction),
                         CFG.getFloat("bullet_speed") * std::sin(direction)},
@@ -18,6 +19,11 @@ Bullet::Bullet(const sf::Vector2f &position,
     this->setRotation(direction * 180.0f / M_PI);
     life_ = bullet_life;
     spawn_time_ = std::chrono::system_clock::now();
+    deadly_factor_ = deadly_factor;
+}
+
+const int Bullet::getDeadlyFactor() const {
+    return deadly_factor_;
 }
 
 bool Bullet::updateBullet(float time_elapsed) {

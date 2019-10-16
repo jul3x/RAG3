@@ -28,7 +28,7 @@ public:
     }
 
     Player& getPlayer();
-    void spawnBullet(const sf::Vector2f &pos, const float dir);
+    void spawnBullet(const sf::Vector2f &pos, const float dir, const int deadly_factor);
     void spawnExplosionAnimation(const sf::Vector2f &pos, const float r);
     void forceCameraShaking();
 

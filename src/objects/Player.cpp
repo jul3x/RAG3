@@ -3,7 +3,7 @@
 //
 
 #include <system/Engine.h>
-
+#include <utils/Numeric.h>
 #include <objects/Player.h>
 
 
@@ -13,42 +13,38 @@ Player::Player(const sf::Vector2f &position,
                       velocity,
                       {SIZE_X_, SIZE_Y_},
                       "player",
-                      CFG.getFloat("player_max_acceleration")) {
-    last_bullet_time_ = std::chrono::system_clock::now();
-}
-
-void Player::update(float time_elapsed) {
-    trail_.push_back(this->getPosition());
-
-    if (trail_.size() > TRAIL_COUNT_)
-    {
-        trail_.pop_front();
-    }
-
-    DynamicObject::update(time_elapsed);
+                      CFG.getFloat("player_max_acceleration")),
+        weapon_(CFG.getFloat("bullet_timeout"),
+                CFG.getFloat("recoil"),
+                10000, //amunition
+                {100, 35}, // size
+                "m4")  {
 }
 
 void Player::shot() {
-    auto time_now = std::chrono::system_clock::now();
-    if (std::chrono::duration_cast<std::chrono::milliseconds>(
-            time_now - last_bullet_time_).count() >= CFG.getFloat("bullet_timeout"))
-    {
-        float sine = std::sin(this->getRotation() * M_PI / 180.0f);
-        float cosine = std::cos(this->getRotation() * M_PI / 180.0f);
-        auto offset_position = this->getPosition();
-        offset_position.x += GUN_OFFSET_X_ * cosine;
-        offset_position.y += GUN_OFFSET_X_ * sine;
-        Engine::getInstance().spawnBullet(offset_position, this->getRotation() * M_PI / 180.0f);
-        last_bullet_time_ = time_now;
+    auto new_velocity = weapon_.shot(this->getPosition(), this->getRotation(),
+                                     {GUN_OFFSET_X_, 0.0f});
 
-        this->setForcedVelocity(- CFG.getFloat("recoil") * sf::Vector2f{cosine, sine});
+    if (!utils::isNearlyEqual(new_velocity, {0.0f, 0.0f}))
+    {
+        this->setForcedVelocity(new_velocity);
         Engine::getInstance().forceCameraShaking();
     }
+}
+
+
+void Player::update(float time_elapsed) {
+    DynamicObject::update(time_elapsed);
+
+    weapon_.setPosition(this->getPosition());
+    weapon_.setRotation(this->getRotation());
 }
 
 void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     if (this->isVisible())
     {
+        target.draw(weapon_, states);
+
         auto pixel_size = this->getSize().x / 5.0f;
 
         {

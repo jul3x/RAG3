@@ -7,9 +7,9 @@
 #define RAG3_OBJECTS_PLAYER_H
 
 #include <chrono>
-#include <deque>
 
 #include <system/Config.h>
+#include <objects/Weapon.h>
 #include <objects/AbstractPhysicalObject.h>
 
 
@@ -22,18 +22,13 @@ public:
     virtual void update(float time_elapsed);
 
 private:
-    virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 
     static constexpr float SIZE_X_ = 70.0f;
     static constexpr float SIZE_Y_ = 70.0f;
-    static constexpr float GUN_OFFSET_X_ = 30.0f;
+    static constexpr float GUN_OFFSET_X_ = 40.0f;
 
-    static constexpr size_t TRAIL_COUNT_ = 10;
-
-    std::deque<sf::Vector2f> trail_;
-
-    // TODO - make weapon class
-    std::chrono::system_clock::time_point last_bullet_time_;
+    Weapon weapon_;
 };
 
 #endif // RAG3_OBJECTS_PLAYER_H

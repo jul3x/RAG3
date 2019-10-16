@@ -8,4 +8,4 @@ float bullet_speed=50.0f;
 float bullet_timeout=100.0f;
 float recoil=3.0f;
 float camera_recoil=4.0f;
-int obstacles_endurance_factor=4;
+int obstacles_endurance_factor=1;

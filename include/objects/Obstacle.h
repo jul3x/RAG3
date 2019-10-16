@@ -7,6 +7,7 @@
 #define RAG3_OBJECTS_OBSTACLE_H
 
 #include <objects/AbstractPhysicalObject.h>
+#include <objects/Bullet.h>
 
 
 class Obstacle : public StaticObject {
@@ -14,7 +15,7 @@ public:
     Obstacle(const sf::Vector2f &position,
              const int type_number);
 
-    void getShot();
+    void getShot(const Bullet &bullet);
     bool updateObstacle(float time_elapsed);
 
     static constexpr float SIZE_X_ = 50.0f;

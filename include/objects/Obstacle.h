@@ -18,8 +18,8 @@ public:
     void getShot(const Bullet &bullet);
     bool updateObstacle(float time_elapsed);
 
-    static constexpr float SIZE_X_ = 50.0f;
-    static constexpr float SIZE_Y_ = 50.0f;
+    static constexpr float SIZE_X_ = 100.0f;
+    static constexpr float SIZE_Y_ = 100.0f;
 
 private:
     int shots_left_;

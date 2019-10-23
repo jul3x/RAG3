@@ -4,6 +4,8 @@
 
 #include <system/Engine.h>
 #include <utils/Numeric.h>
+#include <system/ResourceManager.h>
+
 #include <objects/Player.h>
 
 
@@ -14,11 +16,7 @@ Player::Player(const sf::Vector2f &position,
                       {SIZE_X_, SIZE_Y_},
                       "player",
                       CFG.getFloat("player_max_acceleration")),
-        weapon_(CFG.getFloat("bullet_timeout"),
-                CFG.getFloat("recoil"),
-                10000, //amunition
-                {100, 35}, // size
-                "m4")  {
+        weapon_(ResourceManager::getInstance().getWeapon("rocket_launcher")) {
 }
 
 void Player::shot() {

@@ -13,6 +13,7 @@
 
 #include <objects/Obstacle.h>
 #include <objects/Decoration.h>
+#include <objects/Weapon.h>
 
 
 class ResourceManager {
@@ -23,6 +24,7 @@ public:
 
     static ResourceManager& getInstance();
 
+    Weapon& getWeapon(const std::string &key);
     sf::Texture& getTexture(const std::string &key);
     std::tuple<std::list<Obstacle>, std::list<Decoration>> getMap(const std::string &key);
 
@@ -31,10 +33,12 @@ public:
 private:
     ResourceManager() = default;
 
+    void loadWeapon(const std::string &key);
     void loadTexture(const std::string &key);
     std::tuple<std::list<Obstacle>, std::list<Decoration>> loadMap(const std::string &key);
 
     std::map<std::string, sf::Texture> textures_;
+    std::map<std::string, Weapon> weapons_;
 };
 
 

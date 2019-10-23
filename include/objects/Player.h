@@ -28,7 +28,7 @@ private:
     static constexpr float SIZE_Y_ = 70.0f;
     static constexpr float GUN_OFFSET_X_ = 40.0f;
 
-    Weapon weapon_;
+    Weapon &weapon_;
 };
 
 #endif // RAG3_OBJECTS_PLAYER_H

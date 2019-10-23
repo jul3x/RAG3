@@ -5,12 +5,31 @@
 #include <iostream>
 #include <fstream>
 
+#include <utils/Parser.h>
+
 #include <system/ResourceManager.h>
 
 
 ResourceManager& ResourceManager::getInstance() {
     static ResourceManager resource_manager_instance;
     return resource_manager_instance;
+}
+
+Weapon& ResourceManager::getWeapon(const std::string &key) {
+    if (weapons_.find(key) == weapons_.end())
+    {
+        try
+        {
+            loadWeapon(key);
+            std::cout << "[ResourceManager] Weapon " << key << " is loaded!" << std::endl;
+        }
+        catch (std::runtime_error &e)
+        {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+
+    return weapons_.at(key);
 }
 
 sf::Texture& ResourceManager::getTexture(const std::string &key) {
@@ -43,6 +62,19 @@ std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::getMap(c
 
 void ResourceManager::lazyLoadTexture(const std::string &key) {
     loadTexture(key);
+}
+
+void ResourceManager::loadWeapon(const std::string &key) {
+    utils::J3XIParameters int_params;
+    utils::J3XFParameters float_params;
+    std::tie(int_params, float_params) = utils::parse("data/weapons/" + key + ".j3x");
+
+    weapons_.emplace(key, Weapon{utils::getFloat(float_params, "bullet_timeout"),
+                           utils::getFloat(float_params, "recoil"),
+                           utils::getInt(int_params, "max_ammo"),
+                           {utils::getFloat(float_params, "size_x"),
+                            utils::getFloat(float_params, "size_y")},
+                           key});
 }
 
 void ResourceManager::loadTexture(const std::string &key) {

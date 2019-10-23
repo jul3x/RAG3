@@ -1,0 +1,5 @@
+float recoil=6.0f;
+int max_ammo=20;
+float bullet_timeout=500.0f;
+float size_x=50.0f;
+float size_y=25.0f;

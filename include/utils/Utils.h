@@ -7,5 +7,6 @@
 
 #include <utils/Geometry.h>
 #include <utils/Numeric.h>
+#include <utils/Parser.h>
 
 #endif // RAG3_UTILS_UTILS_H

@@ -91,7 +91,7 @@ inline J3XParameters parse(const std::string &filename) {
         throw std::logic_error("J3X " + filename + " file not found!");
     }
 
-    return {int_params, float_params};
+    return std::make_tuple(int_params, float_params);
 }
 
 inline int getInt(const J3XIParameters &int_params, const std::string &key) {

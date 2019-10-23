@@ -20,8 +20,7 @@ Player::Player(const sf::Vector2f &position,
 }
 
 void Player::shot() {
-    auto new_velocity = weapon_.shot(this->getPosition(), this->getRotation(),
-                                     {GUN_OFFSET_X_, 0.0f});
+    auto new_velocity = weapon_.shot();
 
     if (!utils::isNearlyEqual(new_velocity, {0.0f, 0.0f}))
     {
@@ -41,8 +40,6 @@ void Player::update(float time_elapsed) {
 void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     if (this->isVisible())
     {
-        target.draw(weapon_, states);
-
         auto pixel_size = this->getSize().x / 5.0f;
 
         {
@@ -73,5 +70,6 @@ void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const {
             target.draw(&trail_vert[0], trail_vert.size(), sf::TriangleStrip, states);
         }
         target.draw(shape_, states);
+        target.draw(weapon_, states);
     }
 }

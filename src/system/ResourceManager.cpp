@@ -74,6 +74,8 @@ void ResourceManager::loadWeapon(const std::string &key) {
                            utils::getInt(int_params, "max_ammo"),
                            {utils::getFloat(float_params, "size_x"),
                             utils::getFloat(float_params, "size_y")},
+                           {utils::getFloat(float_params, "offset_x"),
+                            utils::getFloat(float_params, "offset_y")},
                            key});
 }
 

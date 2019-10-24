@@ -6,20 +6,19 @@
 #include <objects/Bullet.h>
 
 
-Bullet::Bullet(const sf::Vector2f &position,
-               const float direction,
-               const float bullet_life,
-               const int deadly_factor) :
+Bullet::Bullet(const BulletDescription &description,
+               const sf::Vector2f &position,
+               const float direction) :
         HoveringObject(position,
-                       {CFG.getFloat("bullet_speed") * std::cos(direction),
-                        CFG.getFloat("bullet_speed") * std::sin(direction)},
+                       {description.speed_ * std::cos(direction),
+                        description.speed_ * std::sin(direction)},
                        {SIZE_X_, SIZE_Y_},
-                       "bullet",
+                       "bullet_" + description.name_,
                        100.0f) {
     this->setRotation(direction * 180.0f / M_PI);
-    life_ = bullet_life;
+    life_ = description.life_;
     spawn_time_ = std::chrono::system_clock::now();
-    deadly_factor_ = deadly_factor;
+    deadly_factor_ = description.deadly_factor_;
 }
 
 const int Bullet::getDeadlyFactor() const {

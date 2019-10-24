@@ -11,12 +11,20 @@
 #include <objects/AbstractPhysicalObject.h>
 
 
+struct BulletDescription {
+    float speed_;
+    float life_;
+    int deadly_factor_;
+
+    std::string name_;
+};
+
+
 class Bullet : public HoveringObject {
 public:
-    Bullet(const sf::Vector2f &position,
-           const float direction,
-           const float bullet_life,
-           const int deadly_factor);
+    Bullet(const BulletDescription &description,
+           const sf::Vector2f &position,
+           const float direction);
 
     bool updateBullet(float time_elapsed);
     const int getDeadlyFactor() const;

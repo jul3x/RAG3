@@ -10,11 +10,13 @@ Weapon::Weapon(float bullet_timeout,
                int amunition,
                const sf::Vector2f &size,
                const sf::Vector2f &weapon_offset,
+               const std::string &bullet_type,
                const std::string &texture_name) :
     weapon_offset_(weapon_offset),
     bullet_timeout_(bullet_timeout),
     recoil_(recoil),
     amunition_(amunition),
+    bullet_type_(bullet_type),
     AbstractDrawableObject({}, size,
                            "weapon_" + texture_name) {
     shape_.setOrigin(size / 2.0f - weapon_offset_);
@@ -33,7 +35,7 @@ sf::Vector2f Weapon::shot() {
         offset_position.x += weapon_size.x * cosine - weapon_size.y * sine;
         offset_position.y += weapon_size.x * sine + weapon_size.y * cosine;
 
-        Engine::getInstance().spawnBullet(offset_position, this->getRotation() * M_PI / 180.0f, 1);
+        Engine::getInstance().spawnBullet(bullet_type_, offset_position, this->getRotation() * M_PI / 180.0f);
         last_bullet_time_ = time_now;
 
         --amunition_;

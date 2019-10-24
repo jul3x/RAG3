@@ -15,6 +15,24 @@ ResourceManager& ResourceManager::getInstance() {
     return resource_manager_instance;
 }
 
+BulletDescription& ResourceManager::getBulletDescription(const std::string &key) {
+    if (bullets_.find(key) == bullets_.end())
+    {
+        try
+        {
+            loadBulletDescription(key);
+            std::cout << "[ResourceManager] Bullet description " << key << " is loaded!" << std::endl;
+        }
+        catch (std::runtime_error &e)
+        {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+
+    return bullets_.at(key);
+}
+
+
 Weapon& ResourceManager::getWeapon(const std::string &key) {
     if (weapons_.find(key) == weapons_.end())
     {
@@ -64,19 +82,31 @@ void ResourceManager::lazyLoadTexture(const std::string &key) {
     loadTexture(key);
 }
 
+void ResourceManager::loadBulletDescription(const std::string &key) {
+    utils::J3XIParameters int_params;
+    utils::J3XFParameters float_params;
+    std::tie(int_params, float_params) = utils::parse("data/bullets/" + key + ".j3x");
+
+    bullets_.emplace(key, BulletDescription{utils::getFloat(float_params, "speed"),
+                                            utils::getFloat(float_params, "life"),
+                                            utils::getInt(int_params, "deadly_factor"),
+                                            key});
+}
+
 void ResourceManager::loadWeapon(const std::string &key) {
     utils::J3XIParameters int_params;
     utils::J3XFParameters float_params;
     std::tie(int_params, float_params) = utils::parse("data/weapons/" + key + ".j3x");
 
     weapons_.emplace(key, Weapon{utils::getFloat(float_params, "bullet_timeout"),
-                           utils::getFloat(float_params, "recoil"),
-                           utils::getInt(int_params, "max_ammo"),
-                           {utils::getFloat(float_params, "size_x"),
-                            utils::getFloat(float_params, "size_y")},
-                           {utils::getFloat(float_params, "offset_x"),
-                            utils::getFloat(float_params, "offset_y")},
-                           key});
+                                 utils::getFloat(float_params, "recoil"),
+                                 utils::getInt(int_params, "max_ammo"),
+                                 {utils::getFloat(float_params, "size_x"),
+                                  utils::getFloat(float_params, "size_y")},
+                                 {utils::getFloat(float_params, "offset_x"),
+                                  utils::getFloat(float_params, "offset_y")},
+                                 "light", // TODO CHANGE
+                                 key});
 }
 
 void ResourceManager::loadTexture(const std::string &key) {

@@ -20,6 +20,7 @@ public:
            int amunition,
            const sf::Vector2f &size,
            const sf::Vector2f &weapon_offset,
+           const std::string &bullet_type,
            const std::string &texture_name);
 
     sf::Vector2f shot();
@@ -27,6 +28,7 @@ public:
 private:
     // weapon parameters
     sf::Vector2f weapon_offset_;
+    std::string bullet_type_;
     float bullet_timeout_;
     float recoil_;
     int amunition_;

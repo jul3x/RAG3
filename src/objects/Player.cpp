@@ -87,6 +87,7 @@ void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 
             target.draw(&trail_vert[0], trail_vert.size(), sf::TriangleStrip, states);
         }
+
         target.draw(shape_, states);
         target.draw(*current_weapon_, states);
     }

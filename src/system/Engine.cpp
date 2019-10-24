@@ -7,6 +7,7 @@
 #include <utils/Geometry.h>
 #include <graphics/ExplosionAnimation.h>
 #include <graphics/SpawnAnimation.h>
+#include <system/ResourceManager.h>
 
 #include <system/Engine.h>
 
@@ -27,11 +28,11 @@ void Engine::spawnExplosionAnimation(const sf::Vector2f &pos, const float r) {
         std::make_unique<ExplosionAnimation>(pos, r));
 }
 
-void Engine::spawnBullet(const sf::Vector2f &pos, const float dir, const int deadly_factor) {
-    static constexpr float LIFETIME = 600.0f;
+void Engine::spawnBullet(const std::string &name, const sf::Vector2f &pos, const float dir) {
     animation_events_.push_back(
         std::make_unique<SpawnAnimation>(pos, 3.0f));
-    bullets_.emplace_back(pos, dir, LIFETIME, deadly_factor);
+
+    bullets_.emplace_back(ResourceManager::getInstance().getBulletDescription(name), pos, dir);
 }
 
 void Engine::update(int frame_rate) {

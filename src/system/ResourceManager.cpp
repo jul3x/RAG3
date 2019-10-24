@@ -90,7 +90,9 @@ void ResourceManager::loadBulletDescription(const std::string &key) {
     bullets_.emplace(key, BulletDescription{utils::getFloat(float_params, "speed"),
                                             utils::getFloat(float_params, "life"),
                                             utils::getInt(int_params, "deadly_factor"),
-                                            key});
+                                            key,
+                                            utils::getFloat(float_params, "size_x"),
+                                            utils::getFloat(float_params, "size_y")});
 }
 
 void ResourceManager::loadWeapon(const std::string &key) {
@@ -105,7 +107,7 @@ void ResourceManager::loadWeapon(const std::string &key) {
                                   utils::getFloat(float_params, "size_y")},
                                  {utils::getFloat(float_params, "offset_x"),
                                   utils::getFloat(float_params, "offset_y")},
-                                 "light", // TODO CHANGE
+                                 "rocket", // TODO CHANGE
                                  key});
 }
 

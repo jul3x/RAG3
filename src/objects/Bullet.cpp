@@ -12,7 +12,7 @@ Bullet::Bullet(const BulletDescription &description,
         HoveringObject(position,
                        {description.speed_ * std::cos(direction),
                         description.speed_ * std::sin(direction)},
-                       {SIZE_X_, SIZE_Y_},
+                       {description.size_x_, description.size_y_},
                        "bullet_" + description.name_,
                        0.0f) {
     this->setRotation(direction * 180.0f / M_PI);

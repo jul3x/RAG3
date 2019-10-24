@@ -1,0 +1,5 @@
+float speed=10.0f;
+float life=2000.0f;
+int deadly_factor=5;
+float size_x=20.0f;
+float size_y=10.0f;

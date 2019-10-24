@@ -110,12 +110,12 @@ void Engine::update(int frame_rate) {
 
             Graphics::getInstance().draw(map_);
 
-            Graphics::getInstance().draw(player_);
-
             for (const auto &bullet : bullets_)
             {
                 Graphics::getInstance().draw(bullet);
             }
+
+            Graphics::getInstance().draw(player_);
 
             for (const auto &animation : animation_events_)
             {

@@ -14,7 +14,7 @@ Bullet::Bullet(const BulletDescription &description,
                         description.speed_ * std::sin(direction)},
                        {SIZE_X_, SIZE_Y_},
                        "bullet_" + description.name_,
-                       100.0f) {
+                       0.0f) {
     this->setRotation(direction * 180.0f / M_PI);
     life_ = description.life_;
     spawn_time_ = std::chrono::system_clock::now();

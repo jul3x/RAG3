@@ -16,17 +16,19 @@ namespace utils {
 
 using J3XIParameters = std::map<std::string, int>;
 using J3XFParameters = std::map<std::string, float>;
-using J3XParameters = std::tuple<J3XIParameters, J3XFParameters>;
+using J3XSParameters = std::map<std::string, std::string>;
+using J3XParameters = std::tuple<J3XIParameters, J3XFParameters, J3XSParameters>;
 
 inline J3XParameters parse(const std::string &filename) {
     std::ifstream config_file(filename);
 
     J3XFParameters float_params;
     J3XIParameters int_params;
+    J3XSParameters string_params;
 
     if (config_file)
     {
-        std::cout << "Started parsing of " + filename + " file." << std::endl;
+        std::cout << "[J3X] Started parsing of " + filename + " file." << std::endl;
         std::stringstream s_file;
         s_file << config_file.rdbuf();
 
@@ -58,19 +60,23 @@ inline J3XParameters parse(const std::string &filename) {
                             {
                                 float_params[key] = std::stof(value);
                             }
+                            else if (type == "string")
+                            {
+                                string_params[key] = value;
+                            }
                             else if (type == "bool")
                             {
                                 int_params[key] = std::stoi(value);
                             }
                             else
                             {
-                                throw std::logic_error("Not handled type " + type +
+                                throw std::logic_error("[J3X] Not handled type " + type +
                                         " on line " + std::to_string(line_count));
                             }
                         }
                         catch (std::invalid_argument &e)
                         {
-                            throw std::invalid_argument("Parse error: Wrong type " + type +
+                            throw std::invalid_argument("[J3X] Parse error: Wrong type " + type +
                                         " of parameter on line " +
                                         std::to_string(line_count));
                         }
@@ -78,40 +84,55 @@ inline J3XParameters parse(const std::string &filename) {
                 }
                 else
                 {
-                    throw std::invalid_argument("Parse error on line " +
+                    throw std::invalid_argument("[J3X] Parse error on line " +
                             std::to_string(line_count));
                 }
             }
         }
-        std::cout << "Parsing of " + filename + " successful!" << std::endl;
+        std::cout << "[J3X] Parsing of " + filename + " successful!" << std::endl;
         config_file.close();
     }
     else
     {
-        throw std::logic_error("J3X " + filename + " file not found!");
+        throw std::logic_error("[J3X] J3X " + filename + " file not found!");
     }
 
-    return std::make_tuple(int_params, float_params);
+    return std::make_tuple(int_params, float_params, string_params);
 }
 
 inline int getInt(const J3XIParameters &int_params, const std::string &key) {
-    if (int_params.find(key) == int_params.end())
+    auto it = int_params.find(key);
+    if (it == int_params.end())
     {
         std::cerr << "[J3X] Param " << key << " not found!" << std::endl;
         return 0;
     }
 
-    return int_params.at(key);
+    return it->second;
 }
 
 inline float getFloat(const J3XFParameters &float_params, const std::string &key) {
-    if (float_params.find(key) == float_params.end())
+    auto it = float_params.find(key);
+    if (it == float_params.end())
     {
         std::cerr << "[J3X] Param " << key << " not found!" << std::endl;
         return 0.0f;
     }
 
-    return float_params.at(key);
+    return it->second;
+}
+
+inline const std::string& getString(const J3XSParameters &string_params, const std::string &key) {
+    static const std::string ERROR_STRING = "";
+
+    auto it = string_params.find(key);
+    if (it == string_params.end())
+    {
+        std::cerr << "[J3X] Param " << key << " not found!" << std::endl;
+        return ERROR_STRING;
+    }
+
+    return it->second;
 }
 
 inline void setInt(J3XIParameters &int_params, const std::string &key, int value) {
@@ -120,6 +141,10 @@ inline void setInt(J3XIParameters &int_params, const std::string &key, int value
 
 inline void setFloat(J3XFParameters &float_params, const std::string &key, float value) {
     float_params[key] = value;
+}
+
+inline void setString(J3XSParameters &string_params, const std::string &key, const std::string &value) {
+    string_params[key] = value;
 }
 
 } // namespace utils

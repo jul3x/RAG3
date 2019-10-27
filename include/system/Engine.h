@@ -29,6 +29,7 @@ public:
 
     Player& getPlayer();
     void spawnBullet(const std::string &name, const sf::Vector2f &pos, const float dir);
+    void spawnSmokeAnimation(const sf::Vector2f &pos, const float r);
     void spawnExplosionAnimation(const sf::Vector2f &pos, const float r);
     void forceCameraShaking();
 

@@ -23,15 +23,18 @@ Player& Engine::getPlayer() {
 void Engine::forceCameraShaking() {
     camera_.setShaking();
 }
+
 void Engine::spawnExplosionAnimation(const sf::Vector2f &pos, const float r) {
     animation_events_.push_back(
         std::make_unique<ExplosionAnimation>(pos, r));
 }
 
-void Engine::spawnBullet(const std::string &name, const sf::Vector2f &pos, const float dir) {
+void Engine::spawnSmokeAnimation(const sf::Vector2f &pos, const float r) {
     animation_events_.push_back(
-        std::make_unique<SpawnAnimation>(pos, 3.0f));
+        std::make_unique<SpawnAnimation>(pos, r));
+}
 
+void Engine::spawnBullet(const std::string &name, const sf::Vector2f &pos, const float dir) {
     bullets_.emplace_back(ResourceManager::getInstance().getBulletDescription(name), pos, dir);
 }
 
@@ -71,8 +74,7 @@ void Engine::update(int frame_rate) {
                     (*it_ob)->getShot(*it);
 
                     remove_bullet = true;
-                    animation_events_.push_back(
-                        std::make_unique<SpawnAnimation>(it->getPosition(), 10.0f));
+                    spawnSmokeAnimation(it->getPosition(), 10.0f);
 
                     break;
                 }

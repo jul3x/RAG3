@@ -91,7 +91,9 @@ void ResourceManager::lazyLoadTexture(const std::string &key) {
 void ResourceManager::loadBulletDescription(const std::string &key) {
     utils::J3XIParameters int_params;
     utils::J3XFParameters float_params;
-    std::tie(int_params, float_params) = utils::parse("data/bullets/" + key + ".j3x");
+    utils::J3XSParameters string_params;
+
+    std::tie(int_params, float_params, string_params) = utils::parse("data/bullets/" + key + ".j3x");
 
     bullets_.emplace(key, BulletDescription{utils::getFloat(float_params, "speed"),
                                             utils::getFloat(float_params, "life"),
@@ -106,7 +108,8 @@ void ResourceManager::loadBulletDescription(const std::string &key) {
 void ResourceManager::loadWeapon(const std::string &key) {
     utils::J3XIParameters int_params;
     utils::J3XFParameters float_params;
-    std::tie(int_params, float_params) = utils::parse("data/weapons/" + key + ".j3x");
+    utils::J3XSParameters string_params;
+    std::tie(int_params, float_params, string_params) = utils::parse("data/weapons/" + key + ".j3x");
 
     weapons_.emplace(key, Weapon{utils::getFloat(float_params, "bullet_timeout"),
                                  utils::getFloat(float_params, "recoil"),
@@ -115,7 +118,9 @@ void ResourceManager::loadWeapon(const std::string &key) {
                                   utils::getFloat(float_params, "size_y")},
                                  {utils::getFloat(float_params, "offset_x"),
                                   utils::getFloat(float_params, "offset_y")},
-                                 "rocket", // TODO CHANGE
+                                 utils::getString(string_params, "bullet_type"),
+                                 utils::getInt(int_params, "bullet_quantity"),
+                                 utils::getFloat(float_params, "bullet_angular_diff"),
                                  key});
 
     std::cout << "[ResourceManager] Weapon " << key << " is loaded!" << std::endl;

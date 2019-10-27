@@ -16,12 +16,14 @@ ResourceManager& ResourceManager::getInstance() {
 }
 
 BulletDescription& ResourceManager::getBulletDescription(const std::string &key) {
-    if (bullets_.find(key) == bullets_.end())
+    auto it = bullets_.find(key);
+    if (it == bullets_.end())
     {
         try
         {
             loadBulletDescription(key);
-            std::cout << "[ResourceManager] Bullet description " << key << " is loaded!" << std::endl;
+
+            return bullets_.at(key);
         }
         catch (std::runtime_error &e)
         {
@@ -29,17 +31,19 @@ BulletDescription& ResourceManager::getBulletDescription(const std::string &key)
         }
     }
 
-    return bullets_.at(key);
+    return it->second;
 }
 
 
 Weapon& ResourceManager::getWeapon(const std::string &key) {
-    if (weapons_.find(key) == weapons_.end())
+    auto it = weapons_.find(key);
+    if (it == weapons_.end())
     {
         try
         {
             loadWeapon(key);
-            std::cout << "[ResourceManager] Weapon " << key << " is loaded!" << std::endl;
+
+            return weapons_.at(key);
         }
         catch (std::runtime_error &e)
         {
@@ -47,16 +51,18 @@ Weapon& ResourceManager::getWeapon(const std::string &key) {
         }
     }
 
-    return weapons_.at(key);
+    return it->second;
 }
 
 sf::Texture& ResourceManager::getTexture(const std::string &key) {
-    if (textures_.find(key) == textures_.end())
+    auto it = textures_.find(key);
+    if (it == textures_.end())
     {
         try
         {
             loadTexture(key);
-            std::cout << "[ResourceManager] Texture " << key << " is loaded!" << std::endl;
+
+            return textures_.at(key);
         }
         catch (std::runtime_error &e)
         {
@@ -64,7 +70,7 @@ sf::Texture& ResourceManager::getTexture(const std::string &key) {
         }
     }
 
-    return textures_.at(key);
+    return it->second;
 }
 
 std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::getMap(const std::string &key) {
@@ -93,6 +99,8 @@ void ResourceManager::loadBulletDescription(const std::string &key) {
                                             key,
                                             utils::getFloat(float_params, "size_x"),
                                             utils::getFloat(float_params, "size_y")});
+
+    std::cout << "[ResourceManager] Bullet description " << key << " is loaded!" << std::endl;
 }
 
 void ResourceManager::loadWeapon(const std::string &key) {
@@ -109,6 +117,8 @@ void ResourceManager::loadWeapon(const std::string &key) {
                                   utils::getFloat(float_params, "offset_y")},
                                  "rocket", // TODO CHANGE
                                  key});
+
+    std::cout << "[ResourceManager] Weapon " << key << " is loaded!" << std::endl;
 }
 
 void ResourceManager::loadTexture(const std::string &key) {
@@ -116,6 +126,8 @@ void ResourceManager::loadTexture(const std::string &key) {
     {
         throw std::runtime_error("[ResourceManager] " + key + " texture file not successfully loaded.");
     }
+
+    std::cout << "[ResourceManager] Texture " << key << " is loaded!" << std::endl;
 }
 
 std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(const std::string &key) {
@@ -158,6 +170,8 @@ std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(
     {
         throw std::logic_error("[ResourceManager] Map file not found! This should not happen during standard runtime.");
     }
+
+    std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
 
     return std::make_tuple(obstacles, decorations);
 }

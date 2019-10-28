@@ -1,4 +1,4 @@
-float speed=50.0f
+float speed=40.0f
 float life=1000.0f
 int deadly_factor=1
 float size_x=10.0f

@@ -1,0 +1,10 @@
+float recoil=9.0f
+int max_ammo=12
+float bullet_timeout=1000.0f
+float size_x=45.0f
+float size_y=20.0f
+float offset_x=20.0f
+float offset_y=10.0f
+string bullet_type=light
+int bullet_quantity=5
+float bullet_angular_diff=10.0f

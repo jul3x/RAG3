@@ -5,6 +5,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <utils/Parser.h>
+
 #include <system/ResourceManager.h>
 
 
@@ -13,13 +15,15 @@ ResourceManager& ResourceManager::getInstance() {
     return resource_manager_instance;
 }
 
-sf::Texture& ResourceManager::getTexture(const std::string &key) {
-    if (textures_.find(key) == textures_.end())
+BulletDescription& ResourceManager::getBulletDescription(const std::string &key) {
+    auto it = bullets_.find(key);
+    if (it == bullets_.end())
     {
         try
         {
-            loadTexture(key);
-            std::cout << "[ResourceManager] Texture " << key << " is loaded!" << std::endl;
+            loadBulletDescription(key);
+
+            return bullets_.at(key);
         }
         catch (std::runtime_error &e)
         {
@@ -27,7 +31,46 @@ sf::Texture& ResourceManager::getTexture(const std::string &key) {
         }
     }
 
-    return textures_.at(key);
+    return it->second;
+}
+
+
+Weapon& ResourceManager::getWeapon(const std::string &key) {
+    auto it = weapons_.find(key);
+    if (it == weapons_.end())
+    {
+        try
+        {
+            loadWeapon(key);
+
+            return weapons_.at(key);
+        }
+        catch (std::runtime_error &e)
+        {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+
+    return it->second;
+}
+
+sf::Texture& ResourceManager::getTexture(const std::string &key) {
+    auto it = textures_.find(key);
+    if (it == textures_.end())
+    {
+        try
+        {
+            loadTexture(key);
+
+            return textures_.at(key);
+        }
+        catch (std::runtime_error &e)
+        {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+
+    return it->second;
 }
 
 std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::getMap(const std::string &key) {
@@ -45,11 +88,51 @@ void ResourceManager::lazyLoadTexture(const std::string &key) {
     loadTexture(key);
 }
 
+void ResourceManager::loadBulletDescription(const std::string &key) {
+    utils::J3XIParameters int_params;
+    utils::J3XFParameters float_params;
+    utils::J3XSParameters string_params;
+
+    std::tie(int_params, float_params, string_params) = utils::parse("data/bullets/" + key + ".j3x");
+
+    bullets_.emplace(key, BulletDescription{utils::getFloat(float_params, "speed"),
+                                            utils::getFloat(float_params, "life"),
+                                            utils::getInt(int_params, "deadly_factor"),
+                                            key,
+                                            utils::getFloat(float_params, "size_x"),
+                                            utils::getFloat(float_params, "size_y")});
+
+    std::cout << "[ResourceManager] Bullet description " << key << " is loaded!" << std::endl;
+}
+
+void ResourceManager::loadWeapon(const std::string &key) {
+    utils::J3XIParameters int_params;
+    utils::J3XFParameters float_params;
+    utils::J3XSParameters string_params;
+    std::tie(int_params, float_params, string_params) = utils::parse("data/weapons/" + key + ".j3x");
+
+    weapons_.emplace(key, Weapon{utils::getFloat(float_params, "bullet_timeout"),
+                                 utils::getFloat(float_params, "recoil"),
+                                 utils::getInt(int_params, "max_ammo"),
+                                 {utils::getFloat(float_params, "size_x"),
+                                  utils::getFloat(float_params, "size_y")},
+                                 {utils::getFloat(float_params, "offset_x"),
+                                  utils::getFloat(float_params, "offset_y")},
+                                 utils::getString(string_params, "bullet_type"),
+                                 utils::getInt(int_params, "bullet_quantity"),
+                                 utils::getFloat(float_params, "bullet_angular_diff"),
+                                 key});
+
+    std::cout << "[ResourceManager] Weapon " << key << " is loaded!" << std::endl;
+}
+
 void ResourceManager::loadTexture(const std::string &key) {
     if (!textures_[key].loadFromFile("data/textures/" + key + ".png"))
     {
         throw std::runtime_error("[ResourceManager] " + key + " texture file not successfully loaded.");
     }
+
+    std::cout << "[ResourceManager] Texture " << key << " is loaded!" << std::endl;
 }
 
 std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(const std::string &key) {
@@ -92,6 +175,8 @@ std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(
     {
         throw std::logic_error("[ResourceManager] Map file not found! This should not happen during standard runtime.");
     }
+
+    std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
 
     return std::make_tuple(obstacles, decorations);
 }

@@ -4,6 +4,8 @@
 
 #include <system/Engine.h>
 #include <utils/Numeric.h>
+#include <system/ResourceManager.h>
+
 #include <objects/Player.h>
 
 
@@ -13,17 +15,17 @@ Player::Player(const sf::Vector2f &position,
                       velocity,
                       {SIZE_X_, SIZE_Y_},
                       "player",
-                      CFG.getFloat("player_max_acceleration")),
-        weapon_(CFG.getFloat("bullet_timeout"),
-                CFG.getFloat("recoil"),
-                10000, //amunition
-                {100, 35}, // size
-                "m4")  {
+                      CFG.getFloat("player_max_acceleration")) {
+    weapons_in_backpack_.emplace_back(ResourceManager::getInstance().getWeapon("m4"));
+    weapons_in_backpack_.emplace_back(ResourceManager::getInstance().getWeapon("desert_eagle"));
+    weapons_in_backpack_.emplace_back(ResourceManager::getInstance().getWeapon("shotgun"));
+    weapons_in_backpack_.emplace_back(ResourceManager::getInstance().getWeapon("rocket_launcher"));
+
+    current_weapon_ = weapons_in_backpack_.begin();
 }
 
 void Player::shot() {
-    auto new_velocity = weapon_.shot(this->getPosition(), this->getRotation(),
-                                     {GUN_OFFSET_X_, 0.0f});
+    auto new_velocity = current_weapon_->shot();
 
     if (!utils::isNearlyEqual(new_velocity, {0.0f, 0.0f}))
     {
@@ -32,19 +34,30 @@ void Player::shot() {
     }
 }
 
+void Player::switchWeapon(int relative_position_backpack) {
+    current_weapon_ = current_weapon_ + relative_position_backpack;
+
+    if (current_weapon_ >= weapons_in_backpack_.end())
+    {
+        current_weapon_ = weapons_in_backpack_.begin();
+    }
+
+    if (current_weapon_ < weapons_in_backpack_.begin())
+    {
+        current_weapon_ = weapons_in_backpack_.end() - 1;
+    }
+}
 
 void Player::update(float time_elapsed) {
     DynamicObject::update(time_elapsed);
 
-    weapon_.setPosition(this->getPosition());
-    weapon_.setRotation(this->getRotation());
+    current_weapon_->setPosition(this->getPosition());
+    current_weapon_->setRotation(this->getRotation());
 }
 
 void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     if (this->isVisible())
     {
-        target.draw(weapon_, states);
-
         auto pixel_size = this->getSize().x / 5.0f;
 
         {
@@ -74,6 +87,8 @@ void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 
             target.draw(&trail_vert[0], trail_vert.size(), sf::TriangleStrip, states);
         }
+
         target.draw(shape_, states);
+        target.draw(*current_weapon_, states);
     }
 }

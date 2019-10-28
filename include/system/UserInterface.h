@@ -19,8 +19,11 @@ public:
     void handleEvents();
 
 private:
+    inline void handleScrolling(Player &player, float delta);
     inline void handleKeys(Player &player);
     inline void handleMouse(sf::RenderWindow &graphics_window, Player &player);
+
+    int current_weapon_number_;
 };
 
 

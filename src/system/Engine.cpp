@@ -7,6 +7,7 @@
 #include <utils/Geometry.h>
 #include <graphics/ExplosionAnimation.h>
 #include <graphics/SpawnAnimation.h>
+#include <system/ResourceManager.h>
 
 #include <system/Engine.h>
 
@@ -22,16 +23,19 @@ Player& Engine::getPlayer() {
 void Engine::forceCameraShaking() {
     camera_.setShaking();
 }
+
 void Engine::spawnExplosionAnimation(const sf::Vector2f &pos, const float r) {
     animation_events_.push_back(
         std::make_unique<ExplosionAnimation>(pos, r));
 }
 
-void Engine::spawnBullet(const sf::Vector2f &pos, const float dir, const int deadly_factor) {
-    static constexpr float LIFETIME = 600.0f;
+void Engine::spawnSmokeAnimation(const sf::Vector2f &pos, const float r) {
     animation_events_.push_back(
-        std::make_unique<SpawnAnimation>(pos, 3.0f));
-    bullets_.emplace_back(pos, dir, LIFETIME, deadly_factor);
+        std::make_unique<SpawnAnimation>(pos, r));
+}
+
+void Engine::spawnBullet(const std::string &name, const sf::Vector2f &pos, const float dir) {
+    bullets_.emplace_back(ResourceManager::getInstance().getBulletDescription(name), pos, dir);
 }
 
 void Engine::update(int frame_rate) {
@@ -70,8 +74,7 @@ void Engine::update(int frame_rate) {
                     (*it_ob)->getShot(*it);
 
                     remove_bullet = true;
-                    animation_events_.push_back(
-                        std::make_unique<SpawnAnimation>(it->getPosition(), 10.0f));
+                    spawnSmokeAnimation(it->getPosition(), 10.0f);
 
                     break;
                 }
@@ -109,12 +112,12 @@ void Engine::update(int frame_rate) {
 
             Graphics::getInstance().draw(map_);
 
-            Graphics::getInstance().draw(player_);
-
             for (const auto &bullet : bullets_)
             {
                 Graphics::getInstance().draw(bullet);
             }
+
+            Graphics::getInstance().draw(player_);
 
             for (const auto &animation : animation_events_)
             {

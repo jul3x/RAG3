@@ -13,6 +13,8 @@
 
 #include <objects/Obstacle.h>
 #include <objects/Decoration.h>
+#include <objects/Weapon.h>
+#include <objects/Bullet.h>
 
 
 class ResourceManager {
@@ -23,18 +25,25 @@ public:
 
     static ResourceManager& getInstance();
 
+    BulletDescription& getBulletDescription(const std::string &key);
+    Weapon& getWeapon(const std::string &key);
     sf::Texture& getTexture(const std::string &key);
     std::tuple<std::list<Obstacle>, std::list<Decoration>> getMap(const std::string &key);
 
+    // TODO LazyLoad every type of objects
     void lazyLoadTexture(const std::string &key);
 
 private:
     ResourceManager() = default;
 
+    void loadBulletDescription(const std::string &key);
+    void loadWeapon(const std::string &key);
     void loadTexture(const std::string &key);
     std::tuple<std::list<Obstacle>, std::list<Decoration>> loadMap(const std::string &key);
 
     std::map<std::string, sf::Texture> textures_;
+    std::map<std::string, Weapon> weapons_;
+    std::map<std::string, BulletDescription> bullets_;
 };
 
 

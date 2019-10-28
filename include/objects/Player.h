@@ -19,6 +19,7 @@ public:
            const sf::Vector2f &velocity);
 
     void shot();
+    void switchWeapon(int relative_position_backpack);
     virtual void update(float time_elapsed);
 
 private:
@@ -26,9 +27,9 @@ private:
 
     static constexpr float SIZE_X_ = 70.0f;
     static constexpr float SIZE_Y_ = 70.0f;
-    static constexpr float GUN_OFFSET_X_ = 40.0f;
 
-    Weapon weapon_;
+    std::vector<Weapon> weapons_in_backpack_;
+    std::vector<Weapon>::iterator current_weapon_;
 };
 
 #endif // RAG3_OBJECTS_PLAYER_H

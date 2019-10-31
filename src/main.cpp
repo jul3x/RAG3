@@ -19,10 +19,10 @@ int main()
         CFG.setInt("window_height_px", res.y);
     }
 
-    ResourceManager::getInstance().lazyLoadTexture("spawn");
-    ResourceManager::getInstance().lazyLoadTexture("explosion1");
-    ResourceManager::getInstance().lazyLoadTexture("explosion2");
-    ResourceManager::getInstance().lazyLoadTexture("explosion3");
+    ResourceManager::getInstance().lazyLoadTexture("animation_shot");
+    ResourceManager::getInstance().lazyLoadTexture("animation_explosion1");
+    ResourceManager::getInstance().lazyLoadTexture("animation_explosion2");
+    ResourceManager::getInstance().lazyLoadTexture("animation_explosion3");
     Engine::getInstance().update(FRAME_RATE);
 
     return 0;

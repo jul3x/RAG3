@@ -6,7 +6,8 @@
 
 #include <utils/Geometry.h>
 #include <graphics/ExplosionAnimation.h>
-#include <graphics/SpawnAnimation.h>
+#include <graphics/ShotAnimation.h>
+#include <graphics/SparksAnimation.h>
 #include <system/ResourceManager.h>
 
 #include <system/Engine.h>
@@ -24,14 +25,19 @@ void Engine::forceCameraShaking() {
     camera_.setShaking();
 }
 
+void Engine::spawnSparksAnimation(const sf::Vector2f &pos, const float dir, const float r) {
+    animation_events_.push_back(
+        std::make_unique<SparksAnimation>(pos, dir, r));
+}
+
 void Engine::spawnExplosionAnimation(const sf::Vector2f &pos, const float r) {
     animation_events_.push_back(
         std::make_unique<ExplosionAnimation>(pos, r));
 }
 
-void Engine::spawnSmokeAnimation(const sf::Vector2f &pos, const float r) {
+void Engine::spawnShotAnimation(const sf::Vector2f &pos, const float dir, const float r) {
     animation_events_.push_back(
-        std::make_unique<SpawnAnimation>(pos, r));
+        std::make_unique<ShotAnimation>(pos, dir, r));
 }
 
 void Engine::spawnBullet(const std::string &name, const sf::Vector2f &pos, const float dir) {
@@ -74,7 +80,7 @@ void Engine::update(int frame_rate) {
                     (*it_ob)->getShot(*it);
 
                     remove_bullet = true;
-                    spawnSmokeAnimation(it->getPosition(), 10.0f);
+                    spawnSparksAnimation(it->getPosition(), it->getRotation() - 90.0f, std::pow(it->getDeadlyFactor(), 0.4f));
 
                     break;
                 }

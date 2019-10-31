@@ -25,8 +25,8 @@ public:
 private:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 
-    static constexpr float SIZE_X_ = 70.0f;
-    static constexpr float SIZE_Y_ = 70.0f;
+    static constexpr float SIZE_X_ = 125.0f;
+    static constexpr float SIZE_Y_ = 125.0f;
 
     std::vector<Weapon> weapons_in_backpack_;
     std::vector<Weapon>::iterator current_weapon_;

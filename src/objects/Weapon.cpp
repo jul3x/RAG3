@@ -41,7 +41,7 @@ sf::Vector2f Weapon::shot() {
 
         auto primary_rotation = this->getRotation() - bullet_angular_diff_ * (bullet_quantity_ - 1) / 2.0f;
 
-        Engine::getInstance().spawnSmokeAnimation(offset_position, 2.0f);
+        Engine::getInstance().spawnShotAnimation(offset_position, this->getRotation(), std::sqrt(recoil_) / 2.0f);
         for (int i = 0; i < bullet_quantity_; ++i)
         {
             auto rotation = (primary_rotation + i * bullet_angular_diff_) * M_PI / 180.0f;

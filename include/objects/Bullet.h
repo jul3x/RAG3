@@ -29,7 +29,7 @@ public:
            const sf::Vector2f &position,
            const float direction);
 
-    bool updateBullet(float time_elapsed);
+    bool update(float time_elapsed);
     const int getDeadlyFactor() const;
 
 private:

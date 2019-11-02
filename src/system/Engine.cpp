@@ -13,8 +13,9 @@
 #include <system/Engine.h>
 
 
-Engine::Engine() : player_({500.0f, 500.0f}, {}) {
+Engine::Engine() : player_({400.0f, 500.0f}, {}) {
     map_.loadMap("map");
+    player_.initialize();
 }
 
 Player& Engine::getPlayer() {
@@ -63,30 +64,63 @@ void Engine::update(int frame_rate) {
         if (player_.isVisible())
             player_.update(time_elapsed);
 
+        auto visible_enemies = map_.getVisibleEnemies();
+        auto visible_obstacles = map_.getVisibleObstacles();
+
         for (auto &obstacle : map_.getVisibleObstacles())
         {
             utils::AABBwithDS(player_, *obstacle);
+
+            // obstacles -> enemies
+            for (auto it_ob = visible_enemies.begin();
+                 it_ob != visible_enemies.end(); ++it_ob)
+            {
+                utils::AABBwithDS(**it_ob, *obstacle);
+            }
         }
 
         for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
         {
             bool remove_bullet = false;
+            bool shooted = false;
 
-            for (auto it_ob = map_.getVisibleObstacles().begin();
-                 it_ob != map_.getVisibleObstacles().end(); ++it_ob)
+            // bullet -> obstacle
+            for (auto it_ob = visible_obstacles.begin(); it_ob != visible_obstacles.end(); ++it_ob)
             {
-                if (utils::AABBwithDS(*it, **it_ob))
+                if (utils::AABB(*it, **it_ob))
                 {
                     (*it_ob)->getShot(*it);
-
-                    remove_bullet = true;
-                    spawnSparksAnimation(it->getPosition(), it->getRotation() - 90.0f, std::pow(it->getDeadlyFactor(), 0.4f));
+                    shooted = true;
 
                     break;
                 }
             }
 
-            if (!it->updateBullet(time_elapsed))
+            // bullet -> player
+            if (utils::AABB(*it, player_))
+            {
+                player_.getShot(*it);
+                shooted = true;
+            }
+
+            // bullet -> enemies
+            for (auto it_ob = visible_enemies.begin(); it_ob != visible_enemies.end(); ++it_ob)
+            {
+                if (utils::AABB(*it, **it_ob))
+                {
+                    (*it_ob)->getShot(*it);
+                    shooted = true;
+
+                    break;
+                }
+            }
+
+            if (shooted)
+            {
+                spawnSparksAnimation(it->getPosition(), it->getRotation() - 90.0f, std::pow(it->getDeadlyFactor(), 0.4f));
+            }
+
+            if (!it->update(time_elapsed) || shooted)
             {
                 remove_bullet = true;
             }

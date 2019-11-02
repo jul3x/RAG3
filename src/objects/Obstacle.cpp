@@ -20,6 +20,6 @@ void Obstacle::getShot(const Bullet &bullet) {
     shots_left_ -= bullet.getDeadlyFactor();
 }
 
-bool Obstacle::updateObstacle(float time_elapsed) {
+bool Obstacle::update(float time_elapsed) {
     return shots_left_ > 0;
 }

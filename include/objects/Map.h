@@ -8,6 +8,7 @@
 
 #include <list>
 
+#include <objects/Enemy.h>
 #include <objects/Obstacle.h>
 #include <objects/Decoration.h>
 #include <objects/AbstractDrawableObject.h>
@@ -21,15 +22,20 @@ public:
 
     std::list<Obstacle>& getObstacles();
     std::list<Obstacle*>& getVisibleObstacles();
+    std::list<Enemy>& getEnemies();
+    std::list<Enemy*>& getVisibleEnemies();
     virtual void setVisibility(const sf::View &view);
 
-    void update(float time_elapsed);
+    bool update(float time_elapsed);
 
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     std::list<Obstacle> obstacles_;
     std::list<Obstacle*> visible_obstacles_;
+
+    std::list<Enemy> enemies_;
+    std::list<Enemy*> visible_enemies_;
 
     std::list<Decoration> decorations_;
 };

@@ -2,7 +2,9 @@
 // Created by jprolejko on 30.09.19.
 //
 
-#include <system/Engine.h>
+#include <iostream>
+
+#include <utils/Geometry.h>
 #include <utils/Numeric.h>
 #include <system/ResourceManager.h>
 
@@ -15,7 +17,10 @@ Player::Player(const sf::Vector2f &position,
                       velocity,
                       {SIZE_X_, SIZE_Y_},
                       "player",
-                      CFG.getFloat("player_max_acceleration")) {
+                      CFG.getFloat("player_max_acceleration")),
+        life_(10) {}
+
+void Player::initialize() {
     weapons_in_backpack_.emplace_back(ResourceManager::getInstance().getWeapon("m4"));
     weapons_in_backpack_.emplace_back(ResourceManager::getInstance().getWeapon("desert_eagle"));
     weapons_in_backpack_.emplace_back(ResourceManager::getInstance().getWeapon("shotgun"));
@@ -24,14 +29,24 @@ Player::Player(const sf::Vector2f &position,
     current_weapon_ = weapons_in_backpack_.begin();
 }
 
-void Player::shot() {
+bool Player::shot() {
     auto new_velocity = current_weapon_->shot();
 
     if (!utils::isNearlyEqual(new_velocity, {0.0f, 0.0f}))
     {
         this->setForcedVelocity(new_velocity);
-        Engine::getInstance().forceCameraShaking();
+        return true;
     }
+
+    return false;
+}
+
+void Player::getShot(const Bullet &bullet) {
+    //Engine::spawnBloodAnimation();
+    this->setForcedVelocity(this->getVelocity() +
+        utils::getNormalized(bullet.getVelocity()) * static_cast<float>(bullet.getDeadlyFactor()) * 2.0f);
+    
+    life_ -= bullet.getDeadlyFactor();
 }
 
 void Player::switchWeapon(int relative_position_backpack) {
@@ -48,11 +63,13 @@ void Player::switchWeapon(int relative_position_backpack) {
     }
 }
 
-void Player::update(float time_elapsed) {
+bool Player::update(float time_elapsed) {
     DynamicObject::update(time_elapsed);
 
     current_weapon_->setPosition(this->getPosition());
     current_weapon_->setRotation(this->getRotation());
+
+    return life_ > 0;
 }
 
 void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const {

@@ -55,34 +55,6 @@ inline void UserInterface::handleScrolling(Player &player, float delta) {
     auto do_increase = delta > 0 ? 1 : -1;
 
     player.switchWeapon(do_increase);
-    /*
-    current_weapon_number_ = (current_weapon_number_ + do_increase) % WEAPONS_NUMBER;
-
-    switch (current_weapon_number_)
-    {
-        case 0:
-        {
-            player.setWeapon("m4");
-            break;
-        }
-        case 1:
-        {
-            break;
-        }
-        case 2:
-        {
-            break;
-        }
-        case 3:
-        {
-            break;
-        }
-        default:
-        {
-            throw std::runtime_error("Dude! Current weapon is not supposed to be different "
-                                     "than all possible weapons!");
-        }
-    }*/
 }
 
 inline void UserInterface::handleKeys(Player &player) {
@@ -123,6 +95,9 @@ inline void UserInterface::handleMouse(sf::RenderWindow &graphics_window, Player
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        player.shot();
+        if (player.shot())
+        {
+            Engine::getInstance().forceCameraShaking();
+        }
     }
 }

@@ -10,6 +10,7 @@
 
 #include <system/Config.h>
 #include <objects/Weapon.h>
+#include <objects/Bullet.h>
 #include <objects/AbstractPhysicalObject.h>
 
 
@@ -18,9 +19,16 @@ public:
     Player(const sf::Vector2f &position,
            const sf::Vector2f &velocity);
 
-    void shot();
+    void initialize();
+
+    bool shot();
+    void getShot(const Bullet &bullet);
     void switchWeapon(int relative_position_backpack);
-    virtual void update(float time_elapsed);
+    virtual bool update(float time_elapsed);
+
+protected:
+    std::vector<Weapon> weapons_in_backpack_;
+    std::vector<Weapon>::iterator current_weapon_;
 
 private:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const;
@@ -28,8 +36,7 @@ private:
     static constexpr float SIZE_X_ = 125.0f;
     static constexpr float SIZE_Y_ = 125.0f;
 
-    std::vector<Weapon> weapons_in_backpack_;
-    std::vector<Weapon>::iterator current_weapon_;
+    int life_;
 };
 
 #endif // RAG3_OBJECTS_PLAYER_H

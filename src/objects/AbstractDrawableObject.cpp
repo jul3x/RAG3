@@ -48,7 +48,9 @@ void AbstractDrawableObject::setRotation(const float angle_deg) {
 }
 
 void AbstractDrawableObject::setVisibility(const sf::View &view) {
-    is_visible_ = utils::AABB(view.getCenter(), view.getSize(), this->getPosition(), this->getSize());
+    // visibility is checked on bigger view (e.g. to avoid tunnelling of enemies)
+    is_visible_ = utils::AABB(view.getCenter(), view.getSize() + sf::Vector2f{300.0f, 300.0f},
+                              this->getPosition(), this->getSize());
 }
 
 void AbstractDrawableObject::draw(sf::RenderTarget& target, sf::RenderStates states) const {

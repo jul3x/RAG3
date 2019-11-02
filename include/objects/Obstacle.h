@@ -16,7 +16,7 @@ public:
              const int type_number);
 
     void getShot(const Bullet &bullet);
-    bool updateObstacle(float time_elapsed);
+    bool update(float time_elapsed);
 
     static constexpr float SIZE_X_ = 100.0f;
     static constexpr float SIZE_Y_ = 100.0f;

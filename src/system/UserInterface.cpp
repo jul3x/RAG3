@@ -8,7 +8,8 @@
 #include <system/UserInterface.h>
 
 
-UserInterface::UserInterface() {}
+UserInterface::UserInterface() : 
+    weapons_bar_({CFG.getInt("window_width_px") / 2.0f, CFG.getInt("window_height_px") - 70.0f}) {}
 
 void UserInterface::handleEvents() {
     static sf::Event event;
@@ -50,8 +51,11 @@ void UserInterface::handleEvents() {
     }
 }
 
+void UserInterface::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+    target.draw(weapons_bar_, states);
+}
+
 inline void UserInterface::handleScrolling(Player &player, float delta) {
-    static const int WEAPONS_NUMBER = 4;
     auto do_increase = delta > 0 ? 1 : -1;
 
     player.switchWeapon(do_increase);
@@ -77,10 +81,7 @@ inline void UserInterface::handleKeys(Player &player) {
     {
         delta.y += CFG.getFloat("player_max_speed");
     }
-  //  auto yaw = player.getRotation() * M_PI / 180.0f + M_PI_2;
 
-   /// player.setVelocity(delta.x * std::cos(yaw) - delta.y * std::sin(yaw),
-  //                     delta.x * std::sin(yaw) + delta.y * std::cos(yaw));
     player.setVelocity(delta.x, delta.y);
 }
 

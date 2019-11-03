@@ -11,6 +11,7 @@ Graphics::Graphics() : settings_(0, 0, 8),
     current_view_ = window_.getView();
     current_view_.setSize(CFG.getInt("window_width_px"), CFG.getInt("window_height_px"));
     current_view_.setCenter(CFG.getInt("window_width_px") / 2.0f, CFG.getInt("window_height_px") / 2.0f);
+    static_view_ = current_view_;
     window_.setView(current_view_);
 }
 
@@ -28,6 +29,14 @@ sf::View& Graphics::getView() {
 
 void Graphics::setView(const sf::View &view) {
     current_view_ = view;
+    window_.setView(current_view_);
+}
+
+void Graphics::setStaticView() {
+    window_.setView(static_view_);
+}
+
+void Graphics::setCurrentView() {
     window_.setView(current_view_);
 }
 

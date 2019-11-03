@@ -163,6 +163,10 @@ void Engine::update(int frame_rate) {
                 Graphics::getInstance().draw(*animation);
             }
 
+            Graphics::getInstance().setStaticView();
+            Graphics::getInstance().draw(ui_);
+            Graphics::getInstance().setCurrentView();
+
             Graphics::getInstance().display();
         }
 

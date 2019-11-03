@@ -6,9 +6,10 @@
 #define RAG3_SYSTEM_USERINTERFACE_H
 
 #include <system/Config.h>
+#include <objects/WeaponsBar.h>
+#include <objects/AbstractDrawableObject.h>
 
-
-class UserInterface {
+class UserInterface : public AbstractDrawableObject {
 
 public:
     explicit UserInterface();
@@ -19,11 +20,13 @@ public:
     void handleEvents();
 
 private:
+    virtual void draw(sf::RenderTarget &targer, sf::RenderStates states) const;
+
     inline void handleScrolling(Player &player, float delta);
     inline void handleKeys(Player &player);
     inline void handleMouse(sf::RenderWindow &graphics_window, Player &player);
 
-    int current_weapon_number_;
+    WeaponsBar weapons_bar_;
 };
 
 

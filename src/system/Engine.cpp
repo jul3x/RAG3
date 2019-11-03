@@ -15,7 +15,6 @@
 
 Engine::Engine() : player_({400.0f, 500.0f}, {}) {
     map_.loadMap("map");
-    player_.initialize();
 }
 
 Player& Engine::getPlayer() {

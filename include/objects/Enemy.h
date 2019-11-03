@@ -6,10 +6,10 @@
 #ifndef RAG3_OBJECTS_ENEMY_H
 #define RAG3_OBJECTS_ENEMY_H
 
-#include <objects/Player.h>
+#include <objects/Character.h>
 
 
-class Enemy : public Player {
+class Enemy : public Character {
 public:
     Enemy(const sf::Vector2f &position,
           const sf::Vector2f &velocity);

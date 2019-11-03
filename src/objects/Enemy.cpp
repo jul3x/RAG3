@@ -10,15 +10,15 @@
 
 Enemy::Enemy(const sf::Vector2f &position,
              const sf::Vector2f &velocity) :
-        Player(position,
-               velocity) {
+        Character(position,
+                  velocity) {
     weapons_in_backpack_.emplace_back(ResourceManager::getInstance().getWeapon("desert_eagle"));
 
     current_weapon_ = weapons_in_backpack_.begin();
 }
 
 bool Enemy::update(float time_elapsed) {
-    bool is_alive = Player::update(time_elapsed);
+    bool is_alive = Character::update(time_elapsed);
     float rotation;
     std::tie(std::ignore, rotation) =
         utils::cartesianToPolar(Engine::getInstance().getPlayer().getPosition() - this->getPosition());

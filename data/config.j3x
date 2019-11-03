@@ -6,3 +6,4 @@ float player_max_acceleration=15.0f
 float camera_speed=4.0f
 float camera_recoil=4.0f
 int obstacles_endurance_factor=3
+float get_shot_factor=1.5f

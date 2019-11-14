@@ -26,6 +26,8 @@ private:
     inline void handleKeys(Player &player);
     inline void handleMouse(sf::RenderWindow &graphics_window, Player &player);
 
+    inline void updatePlayerStates(const Player &player);
+
     WeaponsBar weapons_bar_;
 };
 

@@ -21,6 +21,7 @@ Weapon::Weapon(float bullet_timeout,
     bullet_type_(bullet_type),
     bullet_quantity_(bullet_quantity),
     bullet_angular_diff_(bullet_angular_diff),
+    name_(texture_name),
     AbstractDrawableObject({}, size,
                            "weapon_" + texture_name) {
     shape_.setOrigin(size / 2.0f - weapon_offset_);
@@ -54,4 +55,8 @@ sf::Vector2f Weapon::shot() {
         return -recoil_ * sf::Vector2f{cosine, sine};
     }
     return {0.0f, 0.0f};
+}
+
+const std::string& Weapon::getName() const {
+    return name_;
 }

@@ -27,10 +27,13 @@ public:
 
     sf::Vector2f shot();
 
+    const std::string& getName() const;
+
 private:
     // weapon parameters
     sf::Vector2f weapon_offset_;
     std::string bullet_type_;
+    std::string name_;
     int bullet_quantity_;
     float bullet_angular_diff_;
     float bullet_timeout_;

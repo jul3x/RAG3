@@ -41,6 +41,15 @@ void Character::getShot(const Bullet &bullet) {
     life_ -= bullet.getDeadlyFactor();
 }
 
+int Character::getCurrentWeapon() const {
+    return std::distance<std::vector<Weapon>::const_iterator>(
+        this->weapons_in_backpack_.begin(), this->current_weapon_);
+}
+
+const std::vector<Weapon>& Character::getWeapons() const {
+    return this->weapons_in_backpack_;
+}
+
 void Character::switchWeapon(int relative_position_backpack) {
     current_weapon_ = current_weapon_ + relative_position_backpack;
 

@@ -16,6 +16,7 @@ void UserInterface::handleEvents() {
     static auto &graphics_window = Graphics::getInstance().getWindow();
     static auto& player = Engine::getInstance().getPlayer();
 
+    updatePlayerStates(player);
     handleMouse(graphics_window, player);
     handleKeys(player);
 
@@ -101,4 +102,8 @@ inline void UserInterface::handleMouse(sf::RenderWindow &graphics_window, Player
             Engine::getInstance().forceCameraShaking();
         }
     }
+}
+
+inline void UserInterface::updatePlayerStates(const Player &player) {
+    weapons_bar_.updateWeaponsList(player.getWeapons());
 }

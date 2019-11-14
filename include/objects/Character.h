@@ -20,6 +20,10 @@ public:
     bool shot();
     void getShot(const Bullet &bullet);
     void switchWeapon(int relative_position_backpack);
+
+    int getCurrentWeapon() const;
+    const std::vector<Weapon>& getWeapons() const;
+
     virtual bool update(float time_elapsed);
 
 protected:

@@ -31,6 +31,7 @@ private:
     static constexpr float SIZE_Y_ = WEAPON_SIZE_Y_;
 
     std::list<AbstractDrawableObject> weapons_;
+    AbstractDrawableObject current_highlight_;
 
 };
 

@@ -106,4 +106,5 @@ inline void UserInterface::handleMouse(sf::RenderWindow &graphics_window, Player
 
 inline void UserInterface::updatePlayerStates(const Player &player) {
     weapons_bar_.updateWeaponsList(player.getWeapons());
+    weapons_bar_.updateCurrentWeapon(player.getCurrentWeapon());
 }

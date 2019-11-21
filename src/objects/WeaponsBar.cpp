@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include <system/ResourceManager.h>
+#include <system/Config.h>
 #include <objects/ShootingWeapon.h>
 #include <objects/WeaponsBar.h>
 
@@ -14,8 +15,8 @@ WeaponsBar::WeaponsBar(const sf::Vector2f &position) :
         AbstractDrawableObject(position, {SIZE_X_, SIZE_Y_}, "weapons_bar") {
     for (int i = 0; i < SLOTS_; ++i)
     {
-        ammo_.emplace_back("0", ResourceManager::getInstance().getFont(), 20);
-        ammo_.at(i).setFillColor(sf::Color::White);
+        ammo_.emplace_back("0", ResourceManager::getInstance().getFont(), 16);
+        ammo_.at(i).setFillColor(sf::Color(CFG.getInt("font_color")));
     }
 }
 
@@ -31,17 +32,19 @@ void WeaponsBar::updateWeaponsList(const std::vector<std::unique_ptr<AbstractWea
 
         if (weapon_cast != nullptr)
         {
-            weapons_.push_back({base_position + static_cast<float>(i) * sf::Vector2f{WEAPON_SIZE_X_, 0.0f},
-                               {WEAPON_SIZE_X_, WEAPON_SIZE_Y_}, "weapon_mini_" + weapon_cast->getName()});
+            auto weapon_pos = base_position + static_cast<float>(i) * sf::Vector2f{WEAPON_SIZE_X_, 0.0f};
+            weapons_.push_back({weapon_pos, {WEAPON_SIZE_X_, WEAPON_SIZE_Y_}, "weapon_mini_" + weapon_cast->getName()});
 
             ammo_.at(i).setString(std::to_string(weapon_cast->getAmunition()));
-            ammo_.at(i).setPosition({base_position + static_cast<float>(i) * sf::Vector2f{WEAPON_SIZE_X_, 0.0f}});
+            sf::FloatRect text_rect = ammo_.at(i).getLocalBounds();
+            ammo_.at(i).setOrigin(text_rect.left + text_rect.width / 2.0f,
+                                  text_rect.top + text_rect.height / 2.0f);
+            ammo_.at(i).setPosition(weapon_pos + sf::Vector2f{0.0f, -20.0f});
         }
         else
         {
             ammo_.at(i).setString("");
         }
-        
 
         ++i;
     }

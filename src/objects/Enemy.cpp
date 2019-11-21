@@ -10,8 +10,7 @@
 
 Enemy::Enemy(const sf::Vector2f &position,
              const sf::Vector2f &velocity) :
-        Character(position,
-                  velocity) {
+        Character(position, velocity, 10) {
     weapons_in_backpack_.push_back(
         std::make_unique<ShootingWeapon>(ResourceManager::getInstance().getWeapon("desert_eagle")));
 

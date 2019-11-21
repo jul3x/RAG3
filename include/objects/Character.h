@@ -17,7 +17,8 @@
 class Character : public DynamicObject {
 public:
     Character(const sf::Vector2f &position,
-              const sf::Vector2f &velocity);
+              const sf::Vector2f &velocity,
+              const int max_life);
 
     bool shot();
     void getShot(const Bullet &bullet);
@@ -25,6 +26,8 @@ public:
 
     int getCurrentWeapon() const;
     const std::vector<std::unique_ptr<AbstractWeapon>>& getWeapons() const;
+    int getHealth() const;
+    int getMaxHealth() const;
 
     virtual bool update(float time_elapsed);
 
@@ -38,6 +41,7 @@ private:
     static constexpr float SIZE_X_ = 125.0f;
     static constexpr float SIZE_Y_ = 125.0f;
 
+    int max_life_;
     int life_;
 };
 

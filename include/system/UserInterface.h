@@ -7,6 +7,7 @@
 
 #include <system/Config.h>
 #include <objects/WeaponsBar.h>
+#include <objects/HealthBar.h>
 #include <objects/AbstractDrawableObject.h>
 
 class UserInterface : public AbstractDrawableObject {
@@ -17,6 +18,7 @@ public:
     UserInterface(const UserInterface&) = delete;
     UserInterface& operator=(const UserInterface&) = delete;
 
+    void initialize();
     void handleEvents();
 
 private:
@@ -29,8 +31,11 @@ private:
     inline void updatePlayerStates(const Player &player);
 
     static constexpr float WEAPONS_BAR_OFF_Y_ = 70.0f;
+    static constexpr float HEALTH_BAR_X_ = 150.0f;
+    static constexpr float HEALTH_BAR_Y_ = 50.0f;
 
     WeaponsBar weapons_bar_;
+    HealthBar health_bar_;
 };
 
 

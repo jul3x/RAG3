@@ -12,13 +12,15 @@
 
 
 Character::Character(const sf::Vector2f &position,
-                     const sf::Vector2f &velocity) :
+                     const sf::Vector2f &velocity,
+                     const int max_life) :
         DynamicObject(position,
                       velocity,
                       {SIZE_X_, SIZE_Y_},
                       "player",
                       CFG.getFloat("player_max_acceleration")),
-        life_(10) {}
+        max_life_(max_life),
+        life_(max_life) {}
 
 bool Character::shot() {
     auto new_velocity = (*current_weapon_)->use();
@@ -48,6 +50,14 @@ int Character::getCurrentWeapon() const {
 
 const std::vector<std::unique_ptr<AbstractWeapon>>& Character::getWeapons() const {
     return this->weapons_in_backpack_;
+}
+
+int Character::getHealth() const {
+    return this->life_;
+}
+
+int Character::getMaxHealth() const {
+    return this->max_life_;
 }
 
 void Character::switchWeapon(int relative_position_backpack) {

@@ -9,12 +9,17 @@
 
 
 UserInterface::UserInterface() : 
-    weapons_bar_({CFG.getInt("window_width_px") / 2.0f, CFG.getInt("window_height_px") - WEAPONS_BAR_OFF_Y_}) {}
+    weapons_bar_({CFG.getInt("window_width_px") / 2.0f, CFG.getInt("window_height_px") - WEAPONS_BAR_OFF_Y_}),
+    health_bar_({HEALTH_BAR_X_, HEALTH_BAR_Y_}) {}
+
+void UserInterface::initialize() {
+    health_bar_.setMaxHealth(Engine::getInstance().getPlayer().getMaxHealth());
+}
 
 void UserInterface::handleEvents() {
     static sf::Event event;
     static auto &graphics_window = Graphics::getInstance().getWindow();
-    static auto& player = Engine::getInstance().getPlayer();
+    static auto &player = Engine::getInstance().getPlayer();
 
     updatePlayerStates(player);
     handleMouse(graphics_window, player);
@@ -61,6 +66,7 @@ void UserInterface::handleEvents() {
 
 void UserInterface::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     target.draw(weapons_bar_, states);
+    target.draw(health_bar_, states);
 }
 
 inline void UserInterface::handleScrolling(Player &player, float delta) {
@@ -114,4 +120,6 @@ inline void UserInterface::handleMouse(sf::RenderWindow &graphics_window, Player
 inline void UserInterface::updatePlayerStates(const Player &player) {
     weapons_bar_.updateWeaponsList(player.getWeapons());
     weapons_bar_.updateCurrentWeapon(player.getCurrentWeapon());
+    
+    health_bar_.updateHealth(player.getHealth());
 }

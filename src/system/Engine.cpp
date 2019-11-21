@@ -13,6 +13,8 @@
 #include <system/Engine.h>
 
 
+// TODO - Make all of huge components constructors -> initialization -> loop -> destruction
+
 Engine::Engine() : player_({400.0f, 500.0f}, {}) {
     map_.loadMap("map");
 }
@@ -46,6 +48,9 @@ void Engine::spawnBullet(const std::string &name, const sf::Vector2f &pos, const
 
 void Engine::update(int frame_rate) {
     restartClock();
+
+    ui_.initialize();
+
     auto time_start = std::chrono::system_clock::now();
 
     while (Graphics::getInstance().isWindowOpen())

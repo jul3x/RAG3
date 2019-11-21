@@ -8,8 +8,7 @@
 AbstractWeapon::AbstractWeapon(const sf::Vector2f &size,
                                const std::string &name) :
     name_(name),
-    AbstractDrawableObject({}, size,
-                           "weapon_" + name) {
+    AbstractDrawableObject({}, size, name == "" ? "" : "weapon_" + name) {
 }
 
 const std::string& AbstractWeapon::getName() const {

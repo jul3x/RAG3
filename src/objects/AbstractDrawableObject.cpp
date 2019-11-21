@@ -10,13 +10,16 @@
 
 AbstractDrawableObject::AbstractDrawableObject(const sf::Vector2f &position,
                                                const sf::Vector2f &size,
-                                               const std::string &texture_name) : 
-        texture_(&ResourceManager::getInstance().getTexture(texture_name)),
+                                               const std::string &texture_name) :
         is_visible_(true) {
-    shape_.setPosition(position);
-    shape_.setSize(size);
-    shape_.setOrigin(size.x / 2.0f, size.y / 2.0f);
-    shape_.setTexture(texture_);
+    if (texture_name != "")
+    {
+        texture_ = &ResourceManager::getInstance().getTexture(texture_name);
+        shape_.setPosition(position);
+        shape_.setSize(size);
+        shape_.setOrigin(size.x / 2.0f, size.y / 2.0f);
+        shape_.setTexture(texture_);
+    }
 }
 
 const sf::Vector2f& AbstractDrawableObject::getPosition() const {

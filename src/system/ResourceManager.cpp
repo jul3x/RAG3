@@ -73,6 +73,29 @@ sf::Texture& ResourceManager::getTexture(const std::string &key) {
     return it->second;
 }
 
+sf::Font& ResourceManager::getFont(const std::string &key) {
+    auto it = fonts_.find(key);
+    if (it == fonts_.end())
+    {
+        try
+        {
+            loadFont(key);
+
+            return fonts_.at(key);
+        }
+        catch (std::runtime_error &e)
+        {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+
+    return it->second;
+}
+
+sf::Font& ResourceManager::getFont() {
+    return this->getFont("default");
+}
+
 std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::getMap(const std::string &key) {
     try
     {
@@ -133,6 +156,15 @@ void ResourceManager::loadTexture(const std::string &key) {
     }
 
     std::cout << "[ResourceManager] Texture " << key << " is loaded!" << std::endl;
+}
+
+void ResourceManager::loadFont(const std::string &key) {
+    if (!fonts_[key].loadFromFile("data/fonts/" + key + ".ttf"))
+    {
+        throw std::runtime_error("[ResourceManager] " + key + " font file not successfully loaded.");
+    }
+
+    std::cout << "[ResourceManager] Font " << key << " is loaded!" << std::endl;
 }
 
 std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(const std::string &key) {

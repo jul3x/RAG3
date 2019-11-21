@@ -55,3 +55,7 @@ sf::Vector2f ShootingWeapon::use() {
     }
     return {0.0f, 0.0f};
 }
+
+int ShootingWeapon::getAmunition() const {
+    return amunition_;
+}

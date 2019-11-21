@@ -9,6 +9,9 @@
 #include <list>
 #include <vector>
 #include <memory>
+#include <string>
+
+#include <SFML/Graphics/Text.hpp>
 
 #include <objects/AbstractWeapon.h>
 #include <objects/AbstractDrawableObject.h>
@@ -32,6 +35,7 @@ private:
     static constexpr float SIZE_Y_ = WEAPON_SIZE_Y_;
 
     std::list<AbstractDrawableObject> weapons_;
+    std::vector<sf::Text> ammo_;
     AbstractDrawableObject current_highlight_;
 
 };

@@ -26,6 +26,7 @@ public:
                    const std::string &texture_name);
 
     virtual sf::Vector2f use();
+    int getAmunition() const;
 
 private:
     // weapon parameters

@@ -6,14 +6,14 @@
 #ifndef RAG3_OBJECTS_NOWEAPON_H
 #define RAG3_OBJECTS_NOWEAPON_H
 
-#include <objects/Weapon.h>
+#include <objects/AbstractWeapon.h>
 
 
-class NoWeapon : public Weapon  {
+class NoWeapon : public AbstractWeapon  {
 public:
     NoWeapon();
 
-    virtual sf::Vector2f shot();
+    virtual sf::Vector2f use();
 
 };
 

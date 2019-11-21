@@ -13,7 +13,7 @@
 
 #include <objects/Obstacle.h>
 #include <objects/Decoration.h>
-#include <objects/Weapon.h>
+#include <objects/ShootingWeapon.h>
 #include <objects/Bullet.h>
 
 
@@ -26,7 +26,7 @@ public:
     static ResourceManager& getInstance();
 
     BulletDescription& getBulletDescription(const std::string &key);
-    Weapon& getWeapon(const std::string &key);
+    ShootingWeapon& getWeapon(const std::string &key);
     sf::Texture& getTexture(const std::string &key);
     std::tuple<std::list<Obstacle>, std::list<Decoration>> getMap(const std::string &key);
 
@@ -42,7 +42,7 @@ private:
     std::tuple<std::list<Obstacle>, std::list<Decoration>> loadMap(const std::string &key);
 
     std::map<std::string, sf::Texture> textures_;
-    std::map<std::string, Weapon> weapons_;
+    std::map<std::string, ShootingWeapon> weapons_;
     std::map<std::string, BulletDescription> bullets_;
 };
 

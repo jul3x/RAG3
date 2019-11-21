@@ -4,8 +4,8 @@
 
 #include <objects/NoWeapon.h>
 
-NoWeapon::NoWeapon() : Weapon(0.0f, 0.0f, 0, {}, {}, "", 0, 0.0f, "noweapon") {}
+NoWeapon::NoWeapon() : AbstractWeapon({}, "") {}
 
-sf::Vector2f NoWeapon::shot() {
+sf::Vector2f NoWeapon::use() {
     return {0.0f, 0.0f};
 }

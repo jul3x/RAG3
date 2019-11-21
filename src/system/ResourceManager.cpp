@@ -35,7 +35,7 @@ BulletDescription& ResourceManager::getBulletDescription(const std::string &key)
 }
 
 
-Weapon& ResourceManager::getWeapon(const std::string &key) {
+ShootingWeapon& ResourceManager::getWeapon(const std::string &key) {
     auto it = weapons_.find(key);
     if (it == weapons_.end())
     {
@@ -111,17 +111,17 @@ void ResourceManager::loadWeapon(const std::string &key) {
     utils::J3XSParameters string_params;
     std::tie(int_params, float_params, string_params) = utils::parse("data/weapons/" + key + ".j3x");
 
-    weapons_.emplace(key, Weapon{utils::getFloat(float_params, "bullet_timeout"),
-                                 utils::getFloat(float_params, "recoil"),
-                                 utils::getInt(int_params, "max_ammo"),
-                                 {utils::getFloat(float_params, "size_x"),
-                                  utils::getFloat(float_params, "size_y")},
-                                 {utils::getFloat(float_params, "offset_x"),
-                                  utils::getFloat(float_params, "offset_y")},
-                                 utils::getString(string_params, "bullet_type"),
-                                 utils::getInt(int_params, "bullet_quantity"),
-                                 utils::getFloat(float_params, "bullet_angular_diff"),
-                                 key});
+    weapons_.emplace(key, ShootingWeapon{utils::getFloat(float_params, "bullet_timeout"),
+                                         utils::getFloat(float_params, "recoil"),
+                                         utils::getInt(int_params, "max_ammo"),
+                                         {utils::getFloat(float_params, "size_x"),
+                                          utils::getFloat(float_params, "size_y")},
+                                         {utils::getFloat(float_params, "offset_x"),
+                                          utils::getFloat(float_params, "offset_y")},
+                                         utils::getString(string_params, "bullet_type"),
+                                         utils::getInt(int_params, "bullet_quantity"),
+                                         utils::getFloat(float_params, "bullet_angular_diff"),
+                                         key});
 
     std::cout << "[ResourceManager] Weapon " << key << " is loaded!" << std::endl;
 }

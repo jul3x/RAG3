@@ -21,7 +21,7 @@ Character::Character(const sf::Vector2f &position,
         life_(10) {}
 
 bool Character::shot() {
-    auto new_velocity = (*current_weapon_)->shot();
+    auto new_velocity = (*current_weapon_)->use();
 
     if (!utils::isNearlyEqual(new_velocity, {0.0f, 0.0f}))
     {
@@ -42,11 +42,11 @@ void Character::getShot(const Bullet &bullet) {
 }
 
 int Character::getCurrentWeapon() const {
-    return std::distance<std::vector<std::unique_ptr<Weapon>>::const_iterator>(
+    return std::distance<std::vector<std::unique_ptr<AbstractWeapon>>::const_iterator>(
         this->weapons_in_backpack_.begin(), this->current_weapon_);
 }
 
-const std::vector<std::unique_ptr<Weapon>>& Character::getWeapons() const {
+const std::vector<std::unique_ptr<AbstractWeapon>>& Character::getWeapons() const {
     return this->weapons_in_backpack_;
 }
 

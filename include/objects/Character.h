@@ -9,7 +9,7 @@
 #include <memory>
 
 #include <system/Config.h>
-#include <objects/Weapon.h>
+#include <objects/AbstractWeapon.h>
 #include <objects/Bullet.h>
 #include <objects/AbstractPhysicalObject.h>
 
@@ -24,13 +24,13 @@ public:
     void switchWeapon(int relative_position_backpack);
 
     int getCurrentWeapon() const;
-    const std::vector<std::unique_ptr<Weapon>>& getWeapons() const;
+    const std::vector<std::unique_ptr<AbstractWeapon>>& getWeapons() const;
 
     virtual bool update(float time_elapsed);
 
 protected:
-    std::vector<std::unique_ptr<Weapon>> weapons_in_backpack_;
-    std::vector<std::unique_ptr<Weapon>>::iterator current_weapon_;
+    std::vector<std::unique_ptr<AbstractWeapon>> weapons_in_backpack_;
+    std::vector<std::unique_ptr<AbstractWeapon>>::iterator current_weapon_;
 
 private:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const;

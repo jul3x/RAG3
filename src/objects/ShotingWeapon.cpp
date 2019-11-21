@@ -2,32 +2,31 @@
 // Created by jprolejko on 16.10.19.
 //
 
-#include <objects/Weapon.h>
+#include <objects/ShootingWeapon.h>
 #include <system/Engine.h>
 
-Weapon::Weapon(float bullet_timeout,
-               float recoil,
-               int amunition,
-               const sf::Vector2f &size,
-               const sf::Vector2f &weapon_offset,
-               const std::string &bullet_type,
-               int bullet_quantity,
-               float bullet_angular_diff,
-               const std::string &texture_name) :
-    weapon_offset_(weapon_offset),
-    bullet_timeout_(bullet_timeout),
-    recoil_(recoil),
-    amunition_(amunition),
-    bullet_type_(bullet_type),
-    bullet_quantity_(bullet_quantity),
-    bullet_angular_diff_(bullet_angular_diff),
-    name_(texture_name),
-    AbstractDrawableObject({}, size,
-                           "weapon_" + texture_name) {
+
+ShootingWeapon::ShootingWeapon(float bullet_timeout,
+                               float recoil,
+                               int amunition,
+                               const sf::Vector2f &size,
+                               const sf::Vector2f &weapon_offset,
+                               const std::string &bullet_type,
+                               int bullet_quantity,
+                               float bullet_angular_diff,
+                               const std::string &texture_name) :
+        weapon_offset_(weapon_offset),
+        bullet_timeout_(bullet_timeout),
+        recoil_(recoil),
+        amunition_(amunition),
+        bullet_type_(bullet_type),
+        bullet_quantity_(bullet_quantity),
+        bullet_angular_diff_(bullet_angular_diff),
+        AbstractWeapon(size, texture_name) {
     shape_.setOrigin(size / 2.0f - weapon_offset_);
 }
 
-sf::Vector2f Weapon::shot() {
+sf::Vector2f ShootingWeapon::use() {
     auto time_now = std::chrono::system_clock::now();
     if (amunition_ > 0 &&
         std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -55,8 +54,4 @@ sf::Vector2f Weapon::shot() {
         return -recoil_ * sf::Vector2f{cosine, sine};
     }
     return {0.0f, 0.0f};
-}
-
-const std::string& Weapon::getName() const {
-    return name_;
 }

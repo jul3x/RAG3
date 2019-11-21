@@ -10,7 +10,7 @@
 #include <vector>
 #include <memory>
 
-#include <objects/Weapon.h>
+#include <objects/AbstractWeapon.h>
 #include <objects/AbstractDrawableObject.h>
 
 
@@ -18,7 +18,7 @@ class WeaponsBar : public AbstractDrawableObject {
 public:
     WeaponsBar(const sf::Vector2f &position);
 
-    void updateWeaponsList(const std::vector<std::unique_ptr<Weapon>> &weapons);
+    void updateWeaponsList(const std::vector<std::unique_ptr<AbstractWeapon>> &weapons);
     void updateCurrentWeapon(int curr_weapon);
 
 private:

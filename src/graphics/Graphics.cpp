@@ -23,13 +23,20 @@ sf::RenderWindow& Graphics::getWindow() {
     return window_;
 }
 
-sf::View& Graphics::getView() {
+sf::View& Graphics::getCurrentView() {
     return current_view_;
 }
 
-void Graphics::setView(const sf::View &view) {
+sf::View& Graphics::getStaticView() {
+    return static_view_;
+}
+
+void Graphics::modifyCurrentView(const sf::View &view) {
     current_view_ = view;
-    window_.setView(current_view_);
+}
+
+void Graphics::modifyStaticView(const sf::View &view) {
+    static_view_ = view;
 }
 
 void Graphics::setStaticView() {

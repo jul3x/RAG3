@@ -13,7 +13,7 @@ void WeaponsBar::updateWeaponsList(const std::vector<std::unique_ptr<AbstractWea
     weapons_.clear();
 
     int i = 0;
-    static auto base_position = this->getPosition() + sf::Vector2f{WEAPON_SIZE_X_ / 2.0f, 0.0f}
+    auto base_position = this->getPosition() + sf::Vector2f{WEAPON_SIZE_X_ / 2.0f, 0.0f}
         - SLOTS_ / 2.0f * sf::Vector2f{WEAPON_SIZE_X_, 0.0f};
     for (const auto &weapon : weapons)
     {
@@ -28,7 +28,7 @@ void WeaponsBar::updateWeaponsList(const std::vector<std::unique_ptr<AbstractWea
 }
 
 void WeaponsBar::updateCurrentWeapon(int curr_weapon) {
-    static auto base_position = this->getPosition() + sf::Vector2f{WEAPON_SIZE_X_ / 2.0f, 0.0f}
+    auto base_position = this->getPosition() + sf::Vector2f{WEAPON_SIZE_X_ / 2.0f, 0.0f}
         - SLOTS_ / 2.0f * sf::Vector2f{WEAPON_SIZE_X_, 0.0f};
     current_highlight_.setPosition(base_position + static_cast<float>(curr_weapon) * sf::Vector2f{WEAPON_SIZE_X_, 0.0f});
 }

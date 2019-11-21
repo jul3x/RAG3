@@ -28,6 +28,8 @@ private:
 
     inline void updatePlayerStates(const Player &player);
 
+    static constexpr float WEAPONS_BAR_OFF_Y_ = 70.0f;
+
     WeaponsBar weapons_bar_;
 };
 

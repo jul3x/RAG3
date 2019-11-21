@@ -24,11 +24,13 @@ public:
 
     const bool isWindowOpen() const;
     sf::RenderWindow& getWindow();
-    sf::View& getView();
+    sf::View& getCurrentView();
+    sf::View& getStaticView();
 
     void setStaticView();
     void setCurrentView();
-    void setView(const sf::View &view);
+    void modifyCurrentView(const sf::View &view);
+    void modifyStaticView(const sf::View &view);
     void setViewCenter(const sf::Vector3f &view);
 
     void clear();

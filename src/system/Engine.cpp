@@ -56,8 +56,8 @@ void Engine::update(int frame_rate) {
 
         ui_.handleEvents();
 
-        map_.setVisibility(Graphics::getInstance().getView());
-        player_.setVisibility(Graphics::getInstance().getView());
+        map_.setVisibility(Graphics::getInstance().getCurrentView());
+        player_.setVisibility(Graphics::getInstance().getCurrentView());
 
         map_.update(time_elapsed);
         if (player_.isVisible())

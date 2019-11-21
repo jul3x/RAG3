@@ -9,7 +9,7 @@ WeaponsBar::WeaponsBar(const sf::Vector2f &position) :
         current_highlight_(position, {WEAPON_SIZE_X_, WEAPON_SIZE_Y_}, "current_weapon_highlight"),
         AbstractDrawableObject(position, {SIZE_X_, SIZE_Y_}, "weapons_bar") {}
 
-void WeaponsBar::updateWeaponsList(const std::vector<Weapon> &weapons) {
+void WeaponsBar::updateWeaponsList(const std::vector<std::unique_ptr<Weapon>> &weapons) {
     weapons_.clear();
 
     int i = 0;
@@ -17,8 +17,11 @@ void WeaponsBar::updateWeaponsList(const std::vector<Weapon> &weapons) {
         - SLOTS_ / 2.0f * sf::Vector2f{WEAPON_SIZE_X_, 0.0f};
     for (const auto &weapon : weapons)
     {
-        weapons_.push_back({base_position + static_cast<float>(i) * sf::Vector2f{WEAPON_SIZE_X_, 0.0f},
-                           {WEAPON_SIZE_X_, WEAPON_SIZE_Y_}, "weapon_mini_" + weapon.getName()});
+        if (weapon->getName() != "noweapon")
+        {
+            weapons_.push_back({base_position + static_cast<float>(i) * sf::Vector2f{WEAPON_SIZE_X_, 0.0f},
+                               {WEAPON_SIZE_X_, WEAPON_SIZE_Y_}, "weapon_mini_" + weapon->getName()});
+        }
 
         ++i;
     }

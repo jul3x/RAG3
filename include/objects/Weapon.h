@@ -25,7 +25,7 @@ public:
            float bullet_angular_diff,
            const std::string &texture_name);
 
-    sf::Vector2f shot();
+    virtual sf::Vector2f shot();
 
     const std::string& getName() const;
 

@@ -21,7 +21,7 @@ Character::Character(const sf::Vector2f &position,
         life_(10) {}
 
 bool Character::shot() {
-    auto new_velocity = current_weapon_->shot();
+    auto new_velocity = (*current_weapon_)->shot();
 
     if (!utils::isNearlyEqual(new_velocity, {0.0f, 0.0f}))
     {
@@ -42,11 +42,11 @@ void Character::getShot(const Bullet &bullet) {
 }
 
 int Character::getCurrentWeapon() const {
-    return std::distance<std::vector<Weapon>::const_iterator>(
+    return std::distance<std::vector<std::unique_ptr<Weapon>>::const_iterator>(
         this->weapons_in_backpack_.begin(), this->current_weapon_);
 }
 
-const std::vector<Weapon>& Character::getWeapons() const {
+const std::vector<std::unique_ptr<Weapon>>& Character::getWeapons() const {
     return this->weapons_in_backpack_;
 }
 
@@ -67,8 +67,8 @@ void Character::switchWeapon(int relative_position_backpack) {
 bool Character::update(float time_elapsed) {
     DynamicObject::update(time_elapsed);
 
-    current_weapon_->setPosition(this->getPosition());
-    current_weapon_->setRotation(this->getRotation());
+    (*current_weapon_)->setPosition(this->getPosition());
+    (*current_weapon_)->setRotation(this->getRotation());
 
     return life_ > 0;
 }
@@ -77,6 +77,6 @@ void Character::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     if (this->isVisible())
     {
         target.draw(shape_, states);
-        target.draw(*current_weapon_, states);
+        target.draw(**current_weapon_, states);
     }
 }

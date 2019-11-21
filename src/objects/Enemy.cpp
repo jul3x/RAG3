@@ -12,7 +12,8 @@ Enemy::Enemy(const sf::Vector2f &position,
              const sf::Vector2f &velocity) :
         Character(position,
                   velocity) {
-    weapons_in_backpack_.emplace_back(ResourceManager::getInstance().getWeapon("desert_eagle"));
+    weapons_in_backpack_.push_back(
+        std::make_unique<Weapon>(ResourceManager::getInstance().getWeapon("desert_eagle")));
 
     current_weapon_ = weapons_in_backpack_.begin();
 }

@@ -116,7 +116,11 @@ void ResourceManager::loadBulletDescription(const std::string &key) {
     utils::J3XFParameters float_params;
     utils::J3XSParameters string_params;
 
+#ifdef __linux__
     std::tie(int_params, float_params, string_params) = utils::parse("data/bullets/" + key + ".j3x");
+#elif _WIN32
+    std::tie(int_params, float_params, string_params) = utils::parse("../data/bullets/" + key + ".j3x");
+#endif
 
     bullets_.emplace(key, BulletDescription{utils::getFloat(float_params, "speed"),
                                             utils::getFloat(float_params, "life"),
@@ -132,7 +136,12 @@ void ResourceManager::loadWeapon(const std::string &key) {
     utils::J3XIParameters int_params;
     utils::J3XFParameters float_params;
     utils::J3XSParameters string_params;
+
+#ifdef __linux__
     std::tie(int_params, float_params, string_params) = utils::parse("data/weapons/" + key + ".j3x");
+#elif _WIN32
+    std::tie(int_params, float_params, string_params) = utils::parse("../data/weapons/" + key + ".j3x");
+#endif
 
     weapons_.emplace(key, ShootingWeapon{utils::getFloat(float_params, "bullet_timeout"),
                                          utils::getFloat(float_params, "recoil"),
@@ -150,7 +159,11 @@ void ResourceManager::loadWeapon(const std::string &key) {
 }
 
 void ResourceManager::loadTexture(const std::string &key) {
+#ifdef __linux__
     if (!textures_[key].loadFromFile("data/textures/" + key + ".png"))
+#elif _WIN32
+    if (!textures_[key].loadFromFile("../data/textures/" + key + ".png"))
+#endif
     {
         throw std::runtime_error("[ResourceManager] " + key + " texture file not successfully loaded.");
     }
@@ -159,7 +172,11 @@ void ResourceManager::loadTexture(const std::string &key) {
 }
 
 void ResourceManager::loadFont(const std::string &key) {
+#ifdef __linux__
     if (!fonts_[key].loadFromFile("data/fonts/" + key + ".ttf"))
+#elif _WIN32
+    if (!fonts_[key].loadFromFile("../data/fonts/" + key + ".ttf"))
+#endif
     {
         throw std::runtime_error("[ResourceManager] " + key + " font file not successfully loaded.");
     }
@@ -168,7 +185,11 @@ void ResourceManager::loadFont(const std::string &key) {
 }
 
 std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(const std::string &key) {
+#ifdef __linux__
     std::ifstream file("data/" + key + ".j3x");
+#elif _WIN32
+    std::ifstream file("../data/" + key + ".j3x");
+#endif
     std::list<Obstacle> obstacles;
     std::list<Decoration> decorations;
 

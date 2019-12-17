@@ -65,8 +65,12 @@ void Engine::update(int frame_rate) {
         player_.setVisibility(Graphics::getInstance().getCurrentView());
 
         map_.update(time_elapsed);
-        if (player_.isVisible())
-            player_.update(time_elapsed);
+        if (player_.isAlive() && !player_.update(time_elapsed))
+        {
+            map_.spawnDecoration(player_.getPosition(), Decoration::Type::Blood);
+            spawnExplosionAnimation(player_.getPosition(), 25.0f);
+            player_.setDead();
+        }
 
         auto visible_enemies = map_.getVisibleEnemies();
         auto visible_obstacles = map_.getVisibleObstacles();
@@ -76,10 +80,9 @@ void Engine::update(int frame_rate) {
             utils::AABBwithDS(player_, *obstacle);
 
             // obstacles -> enemies
-            for (auto it_ob = visible_enemies.begin();
-                 it_ob != visible_enemies.end(); ++it_ob)
+            for (auto &visible_enemy : visible_enemies)
             {
-                utils::AABBwithDS(**it_ob, *obstacle);
+                utils::AABBwithDS(*visible_enemy, *obstacle);
             }
         }
 
@@ -161,7 +164,10 @@ void Engine::update(int frame_rate) {
                 Graphics::getInstance().draw(bullet);
             }
 
-            Graphics::getInstance().draw(player_);
+            if (player_.isAlive())
+            {
+                Graphics::getInstance().draw(player_);
+            }
 
             for (const auto &animation : animation_events_)
             {

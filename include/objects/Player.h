@@ -14,6 +14,11 @@ public:
     Player(const sf::Vector2f &position,
            const sf::Vector2f &velocity);
 
+    void setDead();
+    bool isAlive() const;
+
+private:
+    bool is_alive_;
 };
 
 #endif // RAG3_OBJECTS_PLAYER_H

@@ -26,6 +26,8 @@ public:
     std::list<Enemy*>& getVisibleEnemies();
     virtual void setVisibility(const sf::View &view);
 
+    void spawnDecoration(const sf::Vector2f &pos, Decoration::Type which);
+
     bool update(float time_elapsed);
 
 private:

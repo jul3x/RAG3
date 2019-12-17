@@ -44,8 +44,8 @@ void Character::getShot(const Bullet &bullet) {
 }
 
 int Character::getCurrentWeapon() const {
-    return std::distance<std::vector<std::unique_ptr<AbstractWeapon>>::const_iterator>(
-        this->weapons_in_backpack_.begin(), this->current_weapon_);
+    return static_cast<int>(std::distance<std::vector<std::unique_ptr<AbstractWeapon>>::const_iterator>(
+        this->weapons_in_backpack_.begin(), this->current_weapon_));
 }
 
 const std::vector<std::unique_ptr<AbstractWeapon>>& Character::getWeapons() const {
@@ -79,6 +79,11 @@ bool Character::update(float time_elapsed) {
 
     (*current_weapon_)->setPosition(this->getPosition());
     (*current_weapon_)->setRotation(this->getRotation());
+
+    if (life_ < 0)
+    {
+        life_ = 0;
+    }
 
     return life_ > 0;
 }

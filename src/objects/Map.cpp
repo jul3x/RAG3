@@ -37,18 +37,19 @@ std::list<Enemy*>& Map::getVisibleEnemies() {
 }
 
 void Map::setVisibility(const sf::View &view) {
-    for (auto it = obstacles_.begin(); it != obstacles_.end(); ++it)
-    {
-        it->setVisibility(view);
+    for (auto &obstacle : obstacles_) {
+        obstacle.setVisibility(view);
     }
-    for (auto it = decorations_.begin(); it != decorations_.end(); ++it)
-    {
-        it->setVisibility(view);
+    for (auto &decoration : decorations_) {
+        decoration.setVisibility(view);
     }
-    for (auto it = enemies_.begin(); it != enemies_.end(); ++it)
-    {
-        it->setVisibility(view);
+    for (auto &enemy : enemies_) {
+        enemy.setVisibility(view);
     }
+}
+
+void Map::spawnDecoration(const sf::Vector2f &pos, Decoration::Type which) {
+    decorations_.emplace_back(pos, which);
 }
 
 bool Map::update(float time_elapsed) {
@@ -63,7 +64,7 @@ bool Map::update(float time_elapsed) {
             if (!it->update(time_elapsed))
             {
                 // draw on this place destruction
-                decorations_.emplace_back(it->getPosition(), 2);
+                spawnDecoration(it->getPosition(), Decoration::Type::DestroyedWall);
                 Engine::getInstance().spawnExplosionAnimation(it->getPosition(), 25.0f);
 
                 auto next_it = std::next(it);
@@ -88,7 +89,7 @@ bool Map::update(float time_elapsed) {
             if (!it->update(time_elapsed))
             {
                 // draw on this place destruction
-                decorations_.emplace_back(it->getPosition(), 3);
+                spawnDecoration(it->getPosition(), Decoration::Type::Blood);
                 Engine::getInstance().spawnExplosionAnimation(it->getPosition(), 25.0f);
 
                 auto next_it = std::next(it);

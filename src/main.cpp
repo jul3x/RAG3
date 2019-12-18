@@ -2,9 +2,9 @@
 // Created by jprolejko on 26.02.19.
 //
 
-#include <system/Config.h>
-#include <system/Engine.h>
-#include <system/ResourceManager.h>
+#include <engine/system/Config.h>
+#include <engine/system/Engine.h>
+#include <engine/system/ResourceManager.h>
 
 int main()
 {

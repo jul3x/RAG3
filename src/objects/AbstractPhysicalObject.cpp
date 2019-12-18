@@ -2,6 +2,7 @@
 // Created by jprolejko on 30.09.19.
 //
 
+#include <utils/Geometry.h>
 #include <utils/Numeric.h>
 #include <system/Config.h>
 #include <objects/AbstractPhysicalObject.h>
@@ -24,7 +25,7 @@ StaticObject::StaticObject(const sf::Vector2f &position,
                            const std::string &texture_name) :
         AbstractPhysicalObject(position, size, texture_name) {}
 
-void StaticObject::update(float time_elapsed) {}
+bool StaticObject::update(float time_elapsed) {}
 
 //
 // DynamicObject
@@ -56,7 +57,13 @@ void DynamicObject::setForcedVelocity(const sf::Vector2f &velocity) {
     curr_v_ = velocity;
 }
 
-void DynamicObject::update(float time_elapsed) {
+void DynamicObject::setVisibility(const sf::View &view) {
+    // visibility is checked on smaller view than static obstacles
+    is_visible_ = utils::AABB(view.getCenter(), view.getSize(),
+                              this->getPosition(), this->getSize());
+}
+
+bool DynamicObject::update(float time_elapsed) {
     trail_.push_back(this->getPosition());
 
     if (trail_.size() > TRAIL_COUNT_)
@@ -84,6 +91,8 @@ void DynamicObject::update(float time_elapsed) {
     }
 
     this->setPosition(this->getPosition() + curr_v_);
+
+    return true;
 }
 
 void DynamicObject::draw(sf::RenderTarget &target, sf::RenderStates states) const {

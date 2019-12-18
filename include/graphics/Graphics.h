@@ -24,9 +24,13 @@ public:
 
     const bool isWindowOpen() const;
     sf::RenderWindow& getWindow();
-    sf::View& getView();
+    sf::View& getCurrentView();
+    sf::View& getStaticView();
 
-    void setView(const sf::View &view);
+    void setStaticView();
+    void setCurrentView();
+    void modifyCurrentView(const sf::View &view);
+    void modifyStaticView(const sf::View &view);
     void setViewCenter(const sf::Vector3f &view);
 
     void clear();
@@ -39,6 +43,7 @@ private:
     sf::ContextSettings settings_;
     sf::RenderWindow window_;
     sf::View current_view_;
+    sf::View static_view_;
 
 };
 

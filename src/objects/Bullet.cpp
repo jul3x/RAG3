@@ -25,7 +25,7 @@ const int Bullet::getDeadlyFactor() const {
     return deadly_factor_;
 }
 
-bool Bullet::updateBullet(float time_elapsed) {
+bool Bullet::update(float time_elapsed) {
     DynamicObject::update(time_elapsed);
 
     if (std::chrono::duration_cast<std::chrono::milliseconds>(

@@ -21,7 +21,7 @@ public:
                            const sf::Vector2f &size,
                            const std::string &texture_name);
 
-    virtual void update(float time_elapsed) = 0;
+    virtual bool update(float time_elapsed) = 0;
 
 };
 
@@ -33,7 +33,7 @@ public:
                  const sf::Vector2f &size,
                  const std::string &texture_name);
 
-    virtual void update(float time_elapsed);
+    virtual bool update(float time_elapsed);
 
 };
 
@@ -53,7 +53,9 @@ public:
     void setVelocity(const float x, const float y);
     void setForcedVelocity(const sf::Vector2f &velocity);
 
-    virtual void update(float time_elapsed);
+    virtual void setVisibility(const sf::View &view);
+
+    virtual bool update(float time_elapsed);
 
 protected:
     std::deque<sf::Vector2f> trail_;

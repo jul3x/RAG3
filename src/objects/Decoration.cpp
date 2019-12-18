@@ -10,3 +10,6 @@ Decoration::Decoration(const sf::Vector2f &position,
         AbstractDrawableObject(position,
                                {SIZE_X_, SIZE_Y_},
                                "decoration" + std::to_string(type_number)) {}
+
+Decoration::Decoration(const sf::Vector2f &position,
+                       const Type type_number) : Decoration(position, static_cast<const int>(type_number)) {}

@@ -55,6 +55,17 @@ inline sf::Vector2f vectorLengthLimit(const sf::Vector2f &vector_in, float max_l
     return out;
 }
 
+inline sf::Vector2f getNormalized(const sf::Vector2f &vector) {
+    float length = std::hypot(vector.x, vector.y);
+
+    if (length <= 0.0f)
+    {
+        throw std::invalid_argument("[utils::getNormalized] Input vector is invalid!");
+    }
+
+    return vector / length;
+}
+
 inline bool isPointInRectangle(const sf::Vector2f &p, const sf::Vector2f &rect_pos, const sf::Vector2f &rect_size) {
     if (rect_size.x <= 0.0f || rect_size.y <= 0.0f)
     {
@@ -99,6 +110,14 @@ inline short int AABB(const sf::Vector2f &a_origin, const sf::Vector2f &a_size,
     }
 
     return direction;
+}
+
+inline bool AABB(DynamicObject &a, StaticObject &b) {
+    return AABB(a.getPosition() + a.getVelocity(), a.getSize(), b.getPosition(), b.getSize());
+}
+
+inline bool AABB(DynamicObject &a, DynamicObject &b) {
+    return AABB(a.getPosition() + a.getVelocity() - b.getVelocity(), a.getSize(), b.getPosition(), b.getSize());
 }
 
 inline bool AABBwithDS(DynamicObject &a, const StaticObject &b) {

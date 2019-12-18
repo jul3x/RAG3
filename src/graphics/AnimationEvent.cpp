@@ -15,7 +15,7 @@ AnimationEvent::AnimationEvent(const std::string &texture_name,
                                const AnimationType &animation_type) :
                                                             AbstractDrawableObject(position,
                                                                                    static_cast<sf::Vector2f>(frame_size),
-                                                                                   texture_name),
+                                                                                   "animation_" + texture_name),
                                                             frame_size_(frame_size),
                                                             animation_source_({0, 0}, frame_size_),
                                                             type_(animation_type),

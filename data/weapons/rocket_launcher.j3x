@@ -1,10 +1,10 @@
 float recoil=15.0f
 int max_ammo=5
 float bullet_timeout=2000.0f
-float size_x=100.0f
+float size_x=140.0f
 float size_y=35.0f
 float offset_x=0.0f
-float offset_y=10.0f
+float offset_y=24.0f
 string bullet_type=rocket
 int bullet_quantity=1
 float bullet_angular_diff=0.0f

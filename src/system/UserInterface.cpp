@@ -8,13 +8,22 @@
 #include <system/UserInterface.h>
 
 
-UserInterface::UserInterface() {}
+UserInterface::UserInterface() : 
+    weapons_bar_({CFG.getInt("window_width_px") / 2.0f, CFG.getInt("window_height_px") -
+                                                        WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom")}),
+    health_bar_({HEALTH_BAR_X_ * CFG.getFloat("user_interface_zoom"),
+                 HEALTH_BAR_Y_ * CFG.getFloat("user_interface_zoom")}) {}
+
+void UserInterface::initialize() {
+    health_bar_.setMaxHealth(Engine::getInstance().getPlayer().getMaxHealth());
+}
 
 void UserInterface::handleEvents() {
     static sf::Event event;
     static auto &graphics_window = Graphics::getInstance().getWindow();
-    static auto& player = Engine::getInstance().getPlayer();
+    static auto &player = Engine::getInstance().getPlayer();
 
+    updatePlayerStates(player);
     handleMouse(graphics_window, player);
     handleKeys(player);
 
@@ -31,9 +40,17 @@ void UserInterface::handleEvents() {
             {
                 auto visible_area = sf::Vector2f(event.size.width, event.size.height);
 
-                auto view = Graphics::getInstance().getView();
-                view.setSize(visible_area);
-                Graphics::getInstance().setView(view);
+                auto current_view = Graphics::getInstance().getCurrentView();
+                current_view.setSize(visible_area);
+                Graphics::getInstance().modifyCurrentView(current_view);
+
+                auto static_view = Graphics::getInstance().getStaticView();
+                static_view.setSize(visible_area);
+                static_view.setCenter(visible_area / 2.0f);
+                Graphics::getInstance().modifyStaticView(static_view);
+
+                weapons_bar_.setPosition(event.size.width / 2.0f,
+                                         event.size.height - WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom"));
 
                 break;
             }
@@ -50,39 +67,16 @@ void UserInterface::handleEvents() {
     }
 }
 
+void UserInterface::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+    target.draw(weapons_bar_, states);
+    target.draw(health_bar_, states);
+}
+
 inline void UserInterface::handleScrolling(Player &player, float delta) {
-    static const int WEAPONS_NUMBER = 4;
     auto do_increase = delta > 0 ? 1 : -1;
 
-    player.switchWeapon(do_increase);
-    /*
-    current_weapon_number_ = (current_weapon_number_ + do_increase) % WEAPONS_NUMBER;
-
-    switch (current_weapon_number_)
-    {
-        case 0:
-        {
-            player.setWeapon("m4");
-            break;
-        }
-        case 1:
-        {
-            break;
-        }
-        case 2:
-        {
-            break;
-        }
-        case 3:
-        {
-            break;
-        }
-        default:
-        {
-            throw std::runtime_error("Dude! Current weapon is not supposed to be different "
-                                     "than all possible weapons!");
-        }
-    }*/
+    if (player.isAlive())
+        player.switchWeapon(do_increase);
 }
 
 inline void UserInterface::handleKeys(Player &player) {
@@ -105,11 +99,9 @@ inline void UserInterface::handleKeys(Player &player) {
     {
         delta.y += CFG.getFloat("player_max_speed");
     }
-  //  auto yaw = player.getRotation() * M_PI / 180.0f + M_PI_2;
 
-   /// player.setVelocity(delta.x * std::cos(yaw) - delta.y * std::sin(yaw),
-  //                     delta.x * std::sin(yaw) + delta.y * std::cos(yaw));
-    player.setVelocity(delta.x, delta.y);
+    if (player.isAlive())
+        player.setVelocity(delta.x, delta.y);
 }
 
 inline void UserInterface::handleMouse(sf::RenderWindow &graphics_window, Player &player) {
@@ -119,10 +111,22 @@ inline void UserInterface::handleMouse(sf::RenderWindow &graphics_window, Player
 
     float angle;
     std::tie(std::ignore, angle) = utils::cartesianToPolar(mouse_difference);
-    player.setRotation(angle * 180.0f / M_PI);
+
+    if (player.isAlive())
+        player.setRotation(angle * 180.0f / M_PI);
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        player.shot();
+        if (player.isAlive() && player.shot())
+        {
+            Engine::getInstance().forceCameraShaking();
+        }
     }
+}
+
+inline void UserInterface::updatePlayerStates(const Player &player) {
+    weapons_bar_.updateWeaponsList(player.getWeapons());
+    weapons_bar_.updateCurrentWeapon(player.getCurrentWeapon());
+    
+    health_bar_.updateHealth(player.getHealth());
 }

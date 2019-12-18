@@ -33,12 +33,12 @@ public:
 
 protected:
     sf::RectangleShape shape_;
+    bool is_visible_;
 
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     sf::Texture *texture_;
-    bool is_visible_;
 };
 
 #endif // RAG3_OBJECTS_ABSTRACTDRAWABLEOBJECT_H

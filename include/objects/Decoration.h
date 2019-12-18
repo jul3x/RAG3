@@ -11,8 +11,15 @@
 
 class Decoration : public AbstractDrawableObject {
 public:
+    enum class Type {
+        Blood = 3,
+        DestroyedWall = 2
+    };
+
     Decoration(const sf::Vector2f &position,
-               const int type_number);
+               const int type);
+    Decoration(const sf::Vector2f &position,
+               const Type type);
 
     static constexpr float SIZE_X_ = 100.0f;
     static constexpr float SIZE_Y_ = 100.0f;

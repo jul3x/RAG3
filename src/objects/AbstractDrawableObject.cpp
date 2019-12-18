@@ -10,13 +10,16 @@
 
 AbstractDrawableObject::AbstractDrawableObject(const sf::Vector2f &position,
                                                const sf::Vector2f &size,
-                                               const std::string &texture_name) : 
-        texture_(&ResourceManager::getInstance().getTexture(texture_name)),
+                                               const std::string &texture_name) :
         is_visible_(true) {
-    shape_.setPosition(position);
-    shape_.setSize(size);
-    shape_.setOrigin(size.x / 2.0f, size.y / 2.0f);
-    shape_.setTexture(texture_);
+    if (texture_name != "")
+    {
+        texture_ = &ResourceManager::getInstance().getTexture(texture_name);
+        shape_.setPosition(position);
+        shape_.setSize(size);
+        shape_.setOrigin(size.x / 2.0f, size.y / 2.0f);
+        shape_.setTexture(texture_);
+    }
 }
 
 const sf::Vector2f& AbstractDrawableObject::getPosition() const {
@@ -48,7 +51,9 @@ void AbstractDrawableObject::setRotation(const float angle_deg) {
 }
 
 void AbstractDrawableObject::setVisibility(const sf::View &view) {
-    is_visible_ = utils::AABB(view.getCenter(), view.getSize(), this->getPosition(), this->getSize());
+    // visibility is checked on bigger view (e.g. to avoid tunnelling of enemies)
+    is_visible_ = utils::AABB(view.getCenter(), view.getSize() + sf::Vector2f{300.0f, 300.0f},
+                              this->getPosition(), this->getSize());
 }
 
 void AbstractDrawableObject::draw(sf::RenderTarget& target, sf::RenderStates states) const {

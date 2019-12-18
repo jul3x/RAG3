@@ -11,9 +11,11 @@ Environment configuration is editable via config.j3x file in data directory. Fee
 
 -----
 
-## Build Options
+## Build
 
 Build is as **simple** as it is possible [CMake]. Use provided in package ``build_and_run.bash`` script to build and open window with application. Additionally, ``run.bash`` script runs already builded **Rag3** app.  
+
+If you work on Windows - modify CMake with your SFML path and provide *.dll files for appropriate runtime.
 
 ## Dependencies
 

@@ -6,13 +6,16 @@
 
 #include <utils/Geometry.h>
 #include <graphics/ExplosionAnimation.h>
-#include <graphics/SpawnAnimation.h>
+#include <graphics/ShotAnimation.h>
+#include <graphics/SparksAnimation.h>
 #include <system/ResourceManager.h>
 
 #include <system/Engine.h>
 
 
-Engine::Engine() : player_({500.0f, 500.0f}, {}) {
+// TODO - Make all of huge components constructors -> initialization -> loop -> destruction
+
+Engine::Engine() : player_({400.0f, 500.0f}, {}) {
     map_.loadMap("map");
 }
 
@@ -24,14 +27,19 @@ void Engine::forceCameraShaking() {
     camera_.setShaking();
 }
 
+void Engine::spawnSparksAnimation(const sf::Vector2f &pos, const float dir, const float r) {
+    animation_events_.push_back(
+        std::make_unique<SparksAnimation>(pos, dir, r));
+}
+
 void Engine::spawnExplosionAnimation(const sf::Vector2f &pos, const float r) {
     animation_events_.push_back(
         std::make_unique<ExplosionAnimation>(pos, r));
 }
 
-void Engine::spawnSmokeAnimation(const sf::Vector2f &pos, const float r) {
+void Engine::spawnShotAnimation(const sf::Vector2f &pos, const float dir, const float r) {
     animation_events_.push_back(
-        std::make_unique<SpawnAnimation>(pos, r));
+        std::make_unique<ShotAnimation>(pos, dir, r));
 }
 
 void Engine::spawnBullet(const std::string &name, const sf::Vector2f &pos, const float dir) {
@@ -40,6 +48,9 @@ void Engine::spawnBullet(const std::string &name, const sf::Vector2f &pos, const
 
 void Engine::update(int frame_rate) {
     restartClock();
+
+    ui_.initialize();
+
     auto time_start = std::chrono::system_clock::now();
 
     while (Graphics::getInstance().isWindowOpen())
@@ -50,37 +61,73 @@ void Engine::update(int frame_rate) {
 
         ui_.handleEvents();
 
-        map_.setVisibility(Graphics::getInstance().getView());
-        player_.setVisibility(Graphics::getInstance().getView());
+        map_.setVisibility(Graphics::getInstance().getCurrentView());
+        player_.setVisibility(Graphics::getInstance().getCurrentView());
 
         map_.update(time_elapsed);
-        if (player_.isVisible())
-            player_.update(time_elapsed);
+        if (player_.isAlive() && !player_.update(time_elapsed))
+        {
+            map_.spawnDecoration(player_.getPosition(), Decoration::Type::Blood);
+            spawnExplosionAnimation(player_.getPosition(), 25.0f);
+            player_.setDead();
+        }
+
+        auto visible_enemies = map_.getVisibleEnemies();
+        auto visible_obstacles = map_.getVisibleObstacles();
 
         for (auto &obstacle : map_.getVisibleObstacles())
         {
             utils::AABBwithDS(player_, *obstacle);
+
+            // obstacles -> enemies
+            for (auto &visible_enemy : visible_enemies)
+            {
+                utils::AABBwithDS(*visible_enemy, *obstacle);
+            }
         }
 
         for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
         {
             bool remove_bullet = false;
+            bool shooted = false;
 
-            for (auto it_ob = map_.getVisibleObstacles().begin();
-                 it_ob != map_.getVisibleObstacles().end(); ++it_ob)
+            // bullet -> obstacle
+            for (auto it_ob = visible_obstacles.begin(); it_ob != visible_obstacles.end(); ++it_ob)
             {
-                if (utils::AABBwithDS(*it, **it_ob))
+                if (utils::AABB(*it, **it_ob))
                 {
                     (*it_ob)->getShot(*it);
-
-                    remove_bullet = true;
-                    spawnSmokeAnimation(it->getPosition(), 10.0f);
+                    shooted = true;
 
                     break;
                 }
             }
 
-            if (!it->updateBullet(time_elapsed))
+            // bullet -> player
+            if (player_.isAlive() && utils::AABB(*it, player_))
+            {
+                player_.getShot(*it);
+                shooted = true;
+            }
+
+            // bullet -> enemies
+            for (auto it_ob = visible_enemies.begin(); it_ob != visible_enemies.end(); ++it_ob)
+            {
+                if (utils::AABB(*it, **it_ob))
+                {
+                    (*it_ob)->getShot(*it);
+                    shooted = true;
+
+                    break;
+                }
+            }
+
+            if (shooted)
+            {
+                spawnSparksAnimation(it->getPosition(), it->getRotation() - 90.0f, std::pow(it->getDeadlyFactor(), 0.4f));
+            }
+
+            if (!it->update(time_elapsed) || shooted)
             {
                 remove_bullet = true;
             }
@@ -117,12 +164,19 @@ void Engine::update(int frame_rate) {
                 Graphics::getInstance().draw(bullet);
             }
 
-            Graphics::getInstance().draw(player_);
+            if (player_.isAlive())
+            {
+                Graphics::getInstance().draw(player_);
+            }
 
             for (const auto &animation : animation_events_)
             {
                 Graphics::getInstance().draw(*animation);
             }
+
+            Graphics::getInstance().setStaticView();
+            Graphics::getInstance().draw(ui_);
+            Graphics::getInstance().setCurrentView();
 
             Graphics::getInstance().display();
         }

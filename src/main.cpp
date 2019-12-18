@@ -5,6 +5,7 @@
 #include <engine/system/Config.h>
 #include <engine/system/Engine.h>
 #include <game/misc/ResourceManager.h>
+#include <game/Game.h>
 
 
 int main()
@@ -25,16 +26,7 @@ int main()
     ResourceManager::getInstance().lazyLoadTexture("animation_explosion2");
     ResourceManager::getInstance().lazyLoadTexture("animation_explosion3");
 
-    std::unique_ptr<AbstractUserInterface> user_interface = std::make_unique<UserInterface>();
-    std::unique_ptr<AbstractCamera> camera = std::make_unique<Camera>();
-
-    Engine::getInstance().initializeGraphics(
-            sf::Vector2i{CFG.getInt("window_width_px"), CFG.getInt("window_height_px")}, "Codename: Rag3",
-            CFG.getInt("full_screen") ? sf::Style::Fullscreen : sf::Style::Default);
-    Engine::getInstance().registerCamera(camera.get());
-    Engine::getInstance().registerUI(user_interface.get());
-
-    Engine::getInstance().update(FRAME_RATE);
+    Game::get().start(FRAME_RATE);
 
     return 0;
 }

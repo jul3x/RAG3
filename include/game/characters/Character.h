@@ -9,9 +9,10 @@
 #include <memory>
 
 #include <engine/system/Config.h>
+#include <engine/objects/AbstractPhysicalObject.h>
+
 #include <game/weapons/AbstractWeapon.h>
 #include <game/weapons/Bullet.h>
-#include <engine/objects/AbstractPhysicalObject.h>
 
 
 class Character : public DynamicObject {

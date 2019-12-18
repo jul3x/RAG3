@@ -6,14 +6,13 @@
 #define RAG3_ENGINE_SYSTEM_ENGINE_H
 
 #include <memory>
+#include <list>
 
 #include <engine/graphics/Graphics.h>
-#include <game/misc/Camera.h>
+#include <engine/graphics/AbstractCamera.h>
 #include <engine/graphics/AnimationEvent.h>
-#include <game/characters/Player.h>
-#include <game/environment/Map.h>
-#include <game/weapons/Bullet.h>
-#include <game/ui/UserInterface.h>
+#include <engine/system/AbstractUserInterface.h>
+#include <engine/system/AbstractGame.h>
 
 
 class Engine {
@@ -23,11 +22,7 @@ public:
 
     Engine& operator=(const Engine&) = delete;
 
-    static Engine& getInstance()
-    {
-        static Engine engine_instance;
-        return engine_instance;
-    }
+    Engine();
 
     void initializeGraphics(const sf::Vector2i& size, const std::string& title, int style);
 
@@ -35,27 +30,17 @@ public:
 
     void registerCamera(AbstractCamera* camera);
 
-    Graphics& getGraphics() const;
+    void registerGame(AbstractGame* game);
 
-    Player& getPlayer();
+    void spawnAnimationEvent(const std::shared_ptr<AnimationEvent>& event);
 
-    void spawnBullet(const std::string& name, const sf::Vector2f& pos, float dir);
-
-    void spawnSparksAnimation(const sf::Vector2f& pos, float dir, float r);
-
-    void spawnShotAnimation(const sf::Vector2f& pos, float dir, float r);
-
-    void spawnExplosionAnimation(const sf::Vector2f& pos, float r);
-
-    void forceCameraShaking();
+    void setVisibility(AbstractDrawableObject& object) const;
 
     void update(int frame_rate);
 
     static sf::Vector2i detectResolution();
 
 private:
-    Engine();
-
     void ensureConstantFrameRate(int frame_rate);
 
     void restartClock();
@@ -63,17 +48,15 @@ private:
     // Engine components
     std::unique_ptr<Graphics> graphics_;
 
-    // Registered by game
+    // Registered by Game
     AbstractUserInterface* ui_;
     AbstractCamera* camera_;
-    Player player_;
-    Map map_;
-    std::list<Bullet> bullets_;
+    AbstractGame* game_;
 
     sf::Clock clock_;
     sf::Time time_;
 
-    std::list<std::unique_ptr<AnimationEvent>> animation_events_;
+    std::list<std::shared_ptr<AnimationEvent>> animation_events_;
 };
 
 

@@ -5,20 +5,10 @@
 #include <chrono>
 
 #include <engine/utils/Geometry.h>
-#include <game/animations/ExplosionAnimation.h>
-#include <game/animations/ShotAnimation.h>
-#include <game/animations/SparksAnimation.h>
-#include <game/misc/ResourceManager.h>
-
 #include <engine/system/Engine.h>
 
 
-// TODO - Make all of huge components constructors -> initialization -> loop -> destruction
-
-Engine::Engine() : player_({400.0f, 500.0f}, {})
-{
-    map_.loadMap("map");
-}
+Engine::Engine() {}
 
 void Engine::initializeGraphics(const sf::Vector2i& size, const std::string& title, int style)
 {
@@ -35,49 +25,21 @@ void Engine::registerCamera(AbstractCamera* camera)
     camera_ = camera;
 }
 
-Graphics& Engine::getGraphics() const
+void Engine::registerGame(AbstractGame* game)
 {
-    return *graphics_;
+    game_ = game;
 }
 
-Player& Engine::getPlayer()
+void Engine::spawnAnimationEvent(const std::shared_ptr<AnimationEvent>& event)
 {
-    return player_;
-}
-
-void Engine::forceCameraShaking()
-{
-    // NEEDED TO MOVE TO GAME CLASS IMMEDIATELY
-    dynamic_cast<Camera*>(camera_)->setShaking();
-}
-
-void Engine::spawnSparksAnimation(const sf::Vector2f& pos, const float dir, const float r)
-{
-    animation_events_.push_back(
-            std::make_unique<SparksAnimation>(pos, dir, r));
-}
-
-void Engine::spawnExplosionAnimation(const sf::Vector2f& pos, const float r)
-{
-    animation_events_.push_back(
-            std::make_unique<ExplosionAnimation>(pos, r));
-}
-
-void Engine::spawnShotAnimation(const sf::Vector2f& pos, const float dir, const float r)
-{
-    animation_events_.push_back(
-            std::make_unique<ShotAnimation>(pos, dir, r));
-}
-
-void Engine::spawnBullet(const std::string& name, const sf::Vector2f& pos, const float dir)
-{
-    bullets_.emplace_back(ResourceManager::getInstance().getBulletDescription(name), pos, dir);
+    animation_events_.push_back(event);
 }
 
 void Engine::update(int frame_rate)
 {
     restartClock();
 
+    game_->initialize();
     ui_->initialize();
 
     auto time_start = std::chrono::system_clock::now();
@@ -88,89 +50,8 @@ void Engine::update(int frame_rate)
                 std::chrono::system_clock::now() - time_start).count() / 1000000.0f;
         time_start = std::chrono::system_clock::now();
 
-        ui_->handleEvents();
-
-        map_.setVisibility(graphics_->getCurrentView());
-        player_.setVisibility(graphics_->getCurrentView());
-
-        map_.update(time_elapsed);
-        if (player_.isAlive() && !player_.update(time_elapsed))
-        {
-            map_.spawnDecoration(player_.getPosition(), Decoration::Type::Blood);
-            spawnExplosionAnimation(player_.getPosition(), 25.0f);
-            player_.setDead();
-        }
-
-        auto visible_enemies = map_.getVisibleEnemies();
-        auto visible_obstacles = map_.getVisibleObstacles();
-
-        for (auto& obstacle : map_.getVisibleObstacles())
-        {
-            utils::AABBwithDS(player_, *obstacle);
-
-            // obstacles -> enemies
-            for (auto& visible_enemy : visible_enemies)
-            {
-                utils::AABBwithDS(*visible_enemy, *obstacle);
-            }
-        }
-
-        for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
-        {
-            bool remove_bullet = false;
-            bool shooted = false;
-
-            // bullet -> obstacle
-            for (auto& visible_obstacle : visible_obstacles)
-            {
-                if (utils::AABB(*it, *visible_obstacle))
-                {
-                    visible_obstacle->getShot(*it);
-                    shooted = true;
-
-                    break;
-                }
-            }
-
-            // bullet -> player
-            if (player_.isAlive() && utils::AABB(*it, player_))
-            {
-                player_.getShot(*it);
-                shooted = true;
-            }
-
-            // bullet -> enemies
-            for (auto& visible_enemy : visible_enemies)
-            {
-                if (utils::AABB(*it, *visible_enemy))
-                {
-                    visible_enemy->getShot(*it);
-                    shooted = true;
-
-                    break;
-                }
-            }
-
-            if (shooted)
-            {
-                spawnSparksAnimation(it->getPosition(), it->getRotation() - 90.0f,
-                                     std::pow(it->getDeadlyFactor(), 0.4f));
-            }
-
-            if (!it->update(time_elapsed) || shooted)
-            {
-                remove_bullet = true;
-            }
-
-            if (remove_bullet)
-            {
-                auto next_it = std::next(it);
-                bullets_.erase(it);
-                it = next_it;
-            }
-        }
-
-        camera_->update(player_.getPosition(), time_elapsed);
+        ui_->handleEvents(*graphics_);
+        game_->update(time_elapsed);
 
         for (auto it = animation_events_.begin(); it != animation_events_.end(); ++it)
         {
@@ -187,17 +68,7 @@ void Engine::update(int frame_rate)
             graphics_->clear();
             graphics_->setViewCenter(camera_->getViewCenter());
 
-            graphics_->draw(map_);
-
-            for (const auto& bullet : bullets_)
-            {
-                graphics_->draw(bullet);
-            }
-
-            if (player_.isAlive())
-            {
-                graphics_->draw(player_);
-            }
+            game_->draw(*graphics_);
 
             for (const auto& animation : animation_events_)
             {
@@ -237,4 +108,9 @@ void Engine::ensureConstantFrameRate(const int frame_rate)
 void Engine::restartClock()
 {
     time_ = clock_.restart();
+}
+
+void Engine::setVisibility(AbstractDrawableObject& object) const
+{
+    object.setVisibility(graphics_->getCurrentView());
 }

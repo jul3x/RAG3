@@ -3,9 +3,9 @@
 //
 
 #include <game/misc/ResourceManager.h>
-#include <engine/system/Engine.h>
 #include <engine/utils/Geometry.h>
 #include <game/characters/Enemy.h>
+#include <game/Game.h>
 
 
 Enemy::Enemy(const sf::Vector2f& position,
@@ -23,7 +23,7 @@ bool Enemy::update(float time_elapsed)
     bool is_alive = Character::update(time_elapsed);
     float rotation;
     std::tie(std::ignore, rotation) =
-            utils::cartesianToPolar(Engine::getInstance().getPlayer().getPosition() - this->getPosition());
+            utils::cartesianToPolar(Game::get().getPlayerPosition() - this->getPosition());
 
     this->setRotation(rotation * 180.0f / static_cast<float>(M_PI));
     shot();

@@ -12,22 +12,36 @@ UserInterface::UserInterface() :
         weapons_bar_({CFG.getInt("window_width_px") / 2.0f, CFG.getInt("window_height_px") -
                                                             WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom")}),
         health_bar_({HEALTH_BAR_X_ * CFG.getFloat("user_interface_zoom"),
-                     HEALTH_BAR_Y_ * CFG.getFloat("user_interface_zoom")}) {}
+                     HEALTH_BAR_Y_ * CFG.getFloat("user_interface_zoom")}),
+        player_(nullptr),
+        camera_(nullptr) {}
 
 void UserInterface::initialize()
 {
-    health_bar_.setMaxHealth(Engine::getInstance().getPlayer().getMaxHealth());
+    if (player_ == nullptr || camera_ == nullptr)
+    {
+        throw std::runtime_error("[UserInterface] player_ or camera_ is nullptr!");
+    }
+    health_bar_.setMaxHealth(player_->getMaxHealth());
 }
 
-void UserInterface::handleEvents()
+void UserInterface::registerPlayer(Player* player)
+{
+    player_ = player;
+}
+
+void UserInterface::registerCamera(Camera* camera)
+{
+    camera_ = camera;
+}
+
+void UserInterface::handleEvents(Graphics& graphics)
 {
     static sf::Event event;
-    static auto& graphics = Engine::getInstance().getGraphics();
-    static auto& player = Engine::getInstance().getPlayer();
 
-    updatePlayerStates(player);
-    handleMouse(graphics.getWindow(), player);
-    handleKeys(player);
+    updatePlayerStates();
+    handleMouse(graphics.getWindow());
+    handleKeys();
 
     while (graphics.getWindow().pollEvent(event))
     {
@@ -58,7 +72,7 @@ void UserInterface::handleEvents()
             }
             case sf::Event::MouseWheelScrolled:
             {
-                handleScrolling(player, event.mouseWheelScroll.delta);
+                handleScrolling(event.mouseWheelScroll.delta);
                 break;
             }
             default:
@@ -75,15 +89,15 @@ void UserInterface::draw(sf::RenderTarget& target, sf::RenderStates states) cons
     target.draw(health_bar_, states);
 }
 
-inline void UserInterface::handleScrolling(Player& player, float delta)
+inline void UserInterface::handleScrolling(float delta)
 {
     auto do_increase = delta > 0 ? 1 : -1;
 
-    if (player.isAlive())
-        player.switchWeapon(do_increase);
+    if (player_->isAlive())
+        player_->switchWeapon(do_increase);
 }
 
-inline void UserInterface::handleKeys(Player& player)
+inline void UserInterface::handleKeys()
 {
     auto delta = sf::Vector2f(0.0f, 0.0f);
 
@@ -105,35 +119,35 @@ inline void UserInterface::handleKeys(Player& player)
         delta.y += CFG.getFloat("player_max_speed");
     }
 
-    if (player.isAlive())
-        player.setVelocity(delta.x, delta.y);
+    if (player_->isAlive())
+        player_->setVelocity(delta.x, delta.y);
 }
 
-inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window, Player& player)
+inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
 {
     auto mouse_pos = sf::Mouse::getPosition(graphics_window);
     auto mouse_difference = graphics_window.mapPixelToCoords(mouse_pos) -
-                            player.getPosition();
+                            player_->getPosition();
 
     float angle;
     std::tie(std::ignore, angle) = utils::cartesianToPolar(mouse_difference);
 
-    if (player.isAlive())
-        player.setRotation(angle * 180.0f / static_cast<float>(M_PI));
+    if (player_->isAlive())
+        player_->setRotation(angle * 180.0f / static_cast<float>(M_PI));
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        if (player.isAlive() && player.shot())
+        if (player_->isAlive() && player_->shot())
         {
-            Engine::getInstance().forceCameraShaking();
+            camera_->setShaking();
         }
     }
 }
 
-inline void UserInterface::updatePlayerStates(const Player& player)
+inline void UserInterface::updatePlayerStates()
 {
-    weapons_bar_.updateWeaponsList(player.getWeapons());
-    weapons_bar_.updateCurrentWeapon(player.getCurrentWeapon());
+    weapons_bar_.updateWeaponsList(player_->getWeapons());
+    weapons_bar_.updateCurrentWeapon(player_->getCurrentWeapon());
 
-    health_bar_.updateHealth(player.getHealth());
+    health_bar_.updateHealth(player_->getHealth());
 }

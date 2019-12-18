@@ -5,10 +5,8 @@
 #ifndef RAG3_ENGINE_SYSTEM_ABSTRACTUSERINTERFACE_H
 #define RAG3_ENGINE_SYSTEM_ABSTRACTUSERINTERFACE_H
 
-#include <engine/system/Config.h>
-#include <game/ui/WeaponsBar.h>
-#include <game/ui/HealthBar.h>
 #include <engine/objects/AbstractDrawableObject.h>
+#include <engine/graphics/Graphics.h>
 
 
 class AbstractUserInterface : public AbstractDrawableObject {
@@ -22,10 +20,10 @@ public:
 
     virtual void initialize() = 0;
 
-    virtual void handleEvents() = 0;
+    virtual void handleEvents(Graphics &graphics) = 0;
 
 private:
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override = 0;
 
 };
 

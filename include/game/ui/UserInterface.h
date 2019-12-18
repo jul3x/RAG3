@@ -8,6 +8,8 @@
 #include <engine/system/Config.h>
 #include <game/ui/WeaponsBar.h>
 #include <game/ui/HealthBar.h>
+#include <game/characters/Player.h>
+#include <game/misc/Camera.h>
 #include <engine/system/AbstractUserInterface.h>
 
 
@@ -22,18 +24,22 @@ public:
 
     void initialize() override;
 
-    void handleEvents() override;
+    void handleEvents(Graphics &graphics) override;
+
+    void registerPlayer(Player* player);
+
+    void registerCamera(Camera* camera);
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    static inline void handleScrolling(Player& player, float delta);
+    inline void handleScrolling(float delta);
 
-    static inline void handleKeys(Player& player);
+    inline void handleKeys();
 
-    static inline void handleMouse(sf::RenderWindow& graphics_window, Player& player);
+    inline void handleMouse(sf::RenderWindow& graphics_window);
 
-    inline void updatePlayerStates(const Player& player);
+    inline void updatePlayerStates();
 
     static constexpr float WEAPONS_BAR_OFF_Y_ = 70.0f;
     static constexpr float HEALTH_BAR_X_ = 150.0f;
@@ -41,6 +47,8 @@ private:
 
     WeaponsBar weapons_bar_;
     HealthBar health_bar_;
+    Player* player_;
+    Camera* camera_;
 };
 
 

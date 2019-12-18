@@ -4,9 +4,8 @@
 
 #include <game/misc/ResourceManager.h>
 
-#include <engine/system/Engine.h>
-
 #include <game/environment/Map.h>
+#include <game/Game.h>
 
 
 void Map::loadMap(const std::string& name)
@@ -77,7 +76,7 @@ bool Map::update(float time_elapsed)
             {
                 // draw on this place destruction
                 spawnDecoration(it->getPosition(), Decoration::Type::DestroyedWall);
-                Engine::getInstance().spawnExplosionAnimation(it->getPosition(), 25.0f);
+                Game::get().spawnExplosionAnimation(it->getPosition(), 25.0f);
 
                 auto next_it = std::next(it);
                 obstacles_.erase(it);
@@ -102,7 +101,7 @@ bool Map::update(float time_elapsed)
             {
                 // draw on this place destruction
                 spawnDecoration(it->getPosition(), Decoration::Type::Blood);
-                Engine::getInstance().spawnExplosionAnimation(it->getPosition(), 25.0f);
+                Game::get().spawnExplosionAnimation(it->getPosition(), 25.0f);
 
                 auto next_it = std::next(it);
                 enemies_.erase(it);

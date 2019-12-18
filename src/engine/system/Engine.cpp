@@ -15,38 +15,46 @@
 
 // TODO - Make all of huge components constructors -> initialization -> loop -> destruction
 
-Engine::Engine() : player_({400.0f, 500.0f}, {}) {
+Engine::Engine() : player_({400.0f, 500.0f}, {})
+{
     map_.loadMap("map");
 }
 
-Player& Engine::getPlayer() {
+Player& Engine::getPlayer()
+{
     return player_;
 }
 
-void Engine::forceCameraShaking() {
+void Engine::forceCameraShaking()
+{
     camera_.setShaking();
 }
 
-void Engine::spawnSparksAnimation(const sf::Vector2f &pos, const float dir, const float r) {
+void Engine::spawnSparksAnimation(const sf::Vector2f& pos, const float dir, const float r)
+{
     animation_events_.push_back(
-        std::make_unique<SparksAnimation>(pos, dir, r));
+            std::make_unique<SparksAnimation>(pos, dir, r));
 }
 
-void Engine::spawnExplosionAnimation(const sf::Vector2f &pos, const float r) {
+void Engine::spawnExplosionAnimation(const sf::Vector2f& pos, const float r)
+{
     animation_events_.push_back(
-        std::make_unique<ExplosionAnimation>(pos, r));
+            std::make_unique<ExplosionAnimation>(pos, r));
 }
 
-void Engine::spawnShotAnimation(const sf::Vector2f &pos, const float dir, const float r) {
+void Engine::spawnShotAnimation(const sf::Vector2f& pos, const float dir, const float r)
+{
     animation_events_.push_back(
-        std::make_unique<ShotAnimation>(pos, dir, r));
+            std::make_unique<ShotAnimation>(pos, dir, r));
 }
 
-void Engine::spawnBullet(const std::string &name, const sf::Vector2f &pos, const float dir) {
+void Engine::spawnBullet(const std::string& name, const sf::Vector2f& pos, const float dir)
+{
     bullets_.emplace_back(ResourceManager::getInstance().getBulletDescription(name), pos, dir);
 }
 
-void Engine::update(int frame_rate) {
+void Engine::update(int frame_rate)
+{
     restartClock();
 
     ui_.initialize();
@@ -75,12 +83,12 @@ void Engine::update(int frame_rate) {
         auto visible_enemies = map_.getVisibleEnemies();
         auto visible_obstacles = map_.getVisibleObstacles();
 
-        for (auto &obstacle : map_.getVisibleObstacles())
+        for (auto& obstacle : map_.getVisibleObstacles())
         {
             utils::AABBwithDS(player_, *obstacle);
 
             // obstacles -> enemies
-            for (auto &visible_enemy : visible_enemies)
+            for (auto& visible_enemy : visible_enemies)
             {
                 utils::AABBwithDS(*visible_enemy, *obstacle);
             }
@@ -92,7 +100,7 @@ void Engine::update(int frame_rate) {
             bool shooted = false;
 
             // bullet -> obstacle
-            for (auto &visible_obstacle : visible_obstacles)
+            for (auto& visible_obstacle : visible_obstacles)
             {
                 if (utils::AABB(*it, *visible_obstacle))
                 {
@@ -111,7 +119,7 @@ void Engine::update(int frame_rate) {
             }
 
             // bullet -> enemies
-            for (auto &visible_enemy : visible_enemies)
+            for (auto& visible_enemy : visible_enemies)
             {
                 if (utils::AABB(*it, *visible_enemy))
                 {
@@ -124,7 +132,8 @@ void Engine::update(int frame_rate) {
 
             if (shooted)
             {
-                spawnSparksAnimation(it->getPosition(), it->getRotation() - 90.0f, std::pow(it->getDeadlyFactor(), 0.4f));
+                spawnSparksAnimation(it->getPosition(), it->getRotation() - 90.0f,
+                                     std::pow(it->getDeadlyFactor(), 0.4f));
             }
 
             if (!it->update(time_elapsed) || shooted)
@@ -159,7 +168,7 @@ void Engine::update(int frame_rate) {
 
             Graphics::getInstance().draw(map_);
 
-            for (const auto &bullet : bullets_)
+            for (const auto& bullet : bullets_)
             {
                 Graphics::getInstance().draw(bullet);
             }
@@ -169,7 +178,7 @@ void Engine::update(int frame_rate) {
                 Graphics::getInstance().draw(player_);
             }
 
-            for (const auto &animation : animation_events_)
+            for (const auto& animation : animation_events_)
             {
                 Graphics::getInstance().draw(*animation);
             }
@@ -185,7 +194,8 @@ void Engine::update(int frame_rate) {
     }
 }
 
-sf::Vector2i Engine::detectResolution() {
+sf::Vector2i Engine::detectResolution()
+{
     int res_x = static_cast<int>(sf::VideoMode::getDesktopMode().width);
     int res_y = static_cast<int>(sf::VideoMode::getDesktopMode().height);
 
@@ -194,14 +204,16 @@ sf::Vector2i Engine::detectResolution() {
     return {res_x, res_y};
 }
 
-void Engine::ensureConstantFrameRate(const int frame_rate) {
+void Engine::ensureConstantFrameRate(const int frame_rate)
+{
     time_ = clock_.restart();
     sf::Time time_for_sleep =
-        sf::milliseconds(static_cast<int>(1000.0f / static_cast<float>(frame_rate))) - time_;
+            sf::milliseconds(static_cast<int>(1000.0f / static_cast<float>(frame_rate))) - time_;
     sf::sleep(time_for_sleep);
     time_ = clock_.restart();
 }
 
-void Engine::restartClock() {
+void Engine::restartClock()
+{
     time_ = clock_.restart();
 }

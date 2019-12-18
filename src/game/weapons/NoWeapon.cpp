@@ -4,8 +4,10 @@
 
 #include <game/weapons/NoWeapon.h>
 
+
 NoWeapon::NoWeapon() : AbstractWeapon({}, "") {}
 
-sf::Vector2f NoWeapon::use() {
+sf::Vector2f NoWeapon::use()
+{
     return {0.0f, 0.0f};
 }

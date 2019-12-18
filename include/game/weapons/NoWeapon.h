@@ -9,11 +9,11 @@
 #include <game/weapons/AbstractWeapon.h>
 
 
-class NoWeapon : public AbstractWeapon  {
+class NoWeapon : public AbstractWeapon {
 public:
     NoWeapon();
 
-    virtual sf::Vector2f use();
+    sf::Vector2f use() override;
 
 };
 

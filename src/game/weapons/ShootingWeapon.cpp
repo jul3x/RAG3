@@ -5,32 +5,36 @@
 #include <game/weapons/ShootingWeapon.h>
 #include <engine/system/Engine.h>
 
+#include <utility>
+
 
 ShootingWeapon::ShootingWeapon(float bullet_timeout,
                                float recoil,
-                               int amunition,
-                               const sf::Vector2f &size,
-                               const sf::Vector2f &weapon_offset,
-                               const std::string &bullet_type,
+                               int ammunition,
+                               const sf::Vector2f& size,
+                               const sf::Vector2f& weapon_offset,
+                               std::string bullet_type,
                                int bullet_quantity,
                                float bullet_angular_diff,
-                               const std::string &texture_name) :
+                               const std::string& texture_name) :
         weapon_offset_(weapon_offset),
         bullet_timeout_(bullet_timeout),
         recoil_(recoil),
-        amunition_(amunition),
-        bullet_type_(bullet_type),
+        ammunition_(ammunition),
+        bullet_type_(std::move(bullet_type)),
         bullet_quantity_(bullet_quantity),
         bullet_angular_diff_(bullet_angular_diff),
-        AbstractWeapon(size, texture_name) {
+        AbstractWeapon(size, texture_name)
+{
     shape_.setOrigin(size / 2.0f - weapon_offset_);
 }
 
-sf::Vector2f ShootingWeapon::use() {
+sf::Vector2f ShootingWeapon::use()
+{
     auto time_now = std::chrono::system_clock::now();
-    if (amunition_ > 0 &&
+    if (ammunition_ > 0 &&
         std::chrono::duration_cast<std::chrono::milliseconds>(
-            time_now - last_bullet_time_).count() >= bullet_timeout_)
+                time_now - last_bullet_time_).count() >= bullet_timeout_)
     {
         auto sine = static_cast<float>(std::sin(this->getRotation() * M_PI / 180.0f));
         auto cosine = static_cast<float>(std::cos(this->getRotation() * M_PI / 180.0f));
@@ -40,7 +44,7 @@ sf::Vector2f ShootingWeapon::use() {
         offset_position.y += weapon_size.x * sine + weapon_size.y * cosine;
 
         auto primary_rotation = this->getRotation() -
-                bullet_angular_diff_ * static_cast<float>(bullet_quantity_ - 1) / 2.0f;
+                                bullet_angular_diff_ * static_cast<float>(bullet_quantity_ - 1) / 2.0f;
 
         Engine::getInstance().spawnShotAnimation(offset_position, this->getRotation(), std::sqrt(recoil_) / 2.0f);
         for (int i = 0; i < bullet_quantity_; ++i)
@@ -51,12 +55,13 @@ sf::Vector2f ShootingWeapon::use() {
 
         last_bullet_time_ = time_now;
 
-        --amunition_;
+        --ammunition_;
         return -recoil_ * sf::Vector2f{cosine, sine};
     }
     return {0.0f, 0.0f};
 }
 
-int ShootingWeapon::getAmunition() const {
-    return amunition_;
+int ShootingWeapon::getAmmunition() const
+{
+    return ammunition_;
 }

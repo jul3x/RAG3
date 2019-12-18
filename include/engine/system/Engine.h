@@ -20,18 +20,25 @@ class Engine {
 
 public:
     Engine(const Engine&) = delete;
+
     Engine& operator=(const Engine&) = delete;
 
-    static Engine& getInstance() {
+    static Engine& getInstance()
+    {
         static Engine engine_instance;
         return engine_instance;
     }
 
     Player& getPlayer();
-    void spawnBullet(const std::string &name, const sf::Vector2f &pos, float dir);
-    void spawnSparksAnimation(const sf::Vector2f &pos, float dir, float r);
-    void spawnShotAnimation(const sf::Vector2f &pos, float dir, float r);
-    void spawnExplosionAnimation(const sf::Vector2f &pos, float r);
+
+    void spawnBullet(const std::string& name, const sf::Vector2f& pos, float dir);
+
+    void spawnSparksAnimation(const sf::Vector2f& pos, float dir, float r);
+
+    void spawnShotAnimation(const sf::Vector2f& pos, float dir, float r);
+
+    void spawnExplosionAnimation(const sf::Vector2f& pos, float r);
+
     void forceCameraShaking();
 
     void update(int frame_rate);
@@ -42,6 +49,7 @@ private:
     Engine();
 
     void ensureConstantFrameRate(int frame_rate);
+
     void restartClock();
 
     UserInterface ui_;

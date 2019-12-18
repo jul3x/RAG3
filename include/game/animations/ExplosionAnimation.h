@@ -13,7 +13,7 @@ class ExplosionAnimation : public AnimationEvent {
 public:
     ExplosionAnimation() = delete;
 
-    ExplosionAnimation(const sf::Vector2f &position,
+    ExplosionAnimation(const sf::Vector2f& position,
                        float radius);
 
 private:

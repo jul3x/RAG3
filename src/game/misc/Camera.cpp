@@ -11,12 +11,14 @@
 
 Camera::Camera() : state_(State::NORMAL) {}
 
-void Camera::setShaking() {
+void Camera::setShaking()
+{
     state_ = State::SHOOTING;
     time_elapsed_ = SHAKING_TIME_;
 }
 
-void Camera::update(const sf::Vector2f &position, float time_elapsed) {
+void Camera::update(const sf::Vector2f& position, float time_elapsed)
+{
     auto diff = position - sf::Vector2f{center_.x, center_.y};
 
     center_.x += diff.x * time_elapsed * CFG.getFloat("camera_speed");
@@ -41,6 +43,7 @@ void Camera::update(const sf::Vector2f &position, float time_elapsed) {
     }
 }
 
-sf::Vector3f& Camera::getViewCenter() {
+sf::Vector3f& Camera::getViewCenter()
+{
     return center_;
 }

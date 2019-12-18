@@ -12,11 +12,12 @@
 
 class Obstacle : public StaticObject {
 public:
-    Obstacle(const sf::Vector2f &position,
-             const int type_number);
+    Obstacle(const sf::Vector2f& position,
+             int type_number);
 
-    void getShot(const Bullet &bullet);
-    bool update(float time_elapsed);
+    void getShot(const Bullet& bullet);
+
+    bool update(float time_elapsed) override;
 
     static constexpr float SIZE_X_ = 100.0f;
     static constexpr float SIZE_Y_ = 100.0f;

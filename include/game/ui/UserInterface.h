@@ -10,25 +10,30 @@
 #include <game/ui/HealthBar.h>
 #include <engine/objects/AbstractDrawableObject.h>
 
+
 class UserInterface : public AbstractDrawableObject {
 
 public:
     explicit UserInterface();
 
     UserInterface(const UserInterface&) = delete;
+
     UserInterface& operator=(const UserInterface&) = delete;
 
     void initialize();
+
     void handleEvents();
 
 private:
-    virtual void draw(sf::RenderTarget &targer, sf::RenderStates states) const;
+    void draw(sf::RenderTarget& targer, sf::RenderStates states) const override;
 
-    inline void handleScrolling(Player &player, float delta);
-    inline void handleKeys(Player &player);
-    inline void handleMouse(sf::RenderWindow &graphics_window, Player &player);
+    static inline void handleScrolling(Player& player, float delta);
 
-    inline void updatePlayerStates(const Player &player);
+    static inline void handleKeys(Player& player);
+
+    static inline void handleMouse(sf::RenderWindow& graphics_window, Player& player);
+
+    inline void updatePlayerStates(const Player& player);
 
     static constexpr float WEAPONS_BAR_OFF_Y_ = 70.0f;
     static constexpr float HEALTH_BAR_X_ = 150.0f;

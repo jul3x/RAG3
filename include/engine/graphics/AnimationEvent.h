@@ -14,19 +14,18 @@
 class AnimationEvent : public AbstractDrawableObject {
 
 public:
-    enum class AnimationType
-    {
+    enum class AnimationType {
         LINEAR,
         QUADRATIC
     };
 
     AnimationEvent() = delete;
 
-    AnimationEvent(const std::string &texture_name,
-                   const sf::Vector2i &frame_size,
-                   const sf::Vector2f &position,
+    AnimationEvent(sf::Texture* texture,
+                   const sf::Vector2i& frame_size,
+                   const sf::Vector2f& position,
                    float duration_s, short int frames_count,
-                   const AnimationType &animation_type = AnimationType::LINEAR);
+                   const AnimationType& animation_type = AnimationType::LINEAR);
 
     bool update(float time_elapsed);
 

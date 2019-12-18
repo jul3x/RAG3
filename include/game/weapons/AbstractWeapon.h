@@ -11,10 +11,10 @@
 #include <engine/objects/AbstractDrawableObject.h>
 
 
-class AbstractWeapon : public AbstractDrawableObject  {
+class AbstractWeapon : public AbstractDrawableObject {
 public:
-    AbstractWeapon(const sf::Vector2f &size,
-                   const std::string &name);
+    AbstractWeapon(const sf::Vector2f& size,
+                   const std::string& name);
 
     virtual sf::Vector2f use() = 0;
 

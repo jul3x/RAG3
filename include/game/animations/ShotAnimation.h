@@ -13,7 +13,7 @@ class ShotAnimation : public AnimationEvent {
 public:
     ShotAnimation() = delete;
 
-    ShotAnimation(const sf::Vector2f &position,
+    ShotAnimation(const sf::Vector2f& position,
                   float direction,
                   float radius);
 

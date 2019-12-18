@@ -11,10 +11,10 @@
 
 class Enemy : public Character {
 public:
-    Enemy(const sf::Vector2f &position,
-          const sf::Vector2f &velocity);
+    Enemy(const sf::Vector2f& position,
+          const sf::Vector2f& velocity);
 
-    virtual bool update(float time_elapsed);
+    bool update(float time_elapsed) override;
 
 };
 

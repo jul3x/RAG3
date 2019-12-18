@@ -16,10 +16,12 @@ public:
         DestroyedWall = 2
     };
 
-    Decoration(const sf::Vector2f &position,
-               const int type);
-    Decoration(const sf::Vector2f &position,
-               const Type type);
+
+    Decoration(const sf::Vector2f& position,
+               int type);
+
+    Decoration(const sf::Vector2f& position,
+               Type type);
 
     static constexpr float SIZE_X_ = 100.0f;
     static constexpr float SIZE_Y_ = 100.0f;

@@ -13,7 +13,7 @@ class SparksAnimation : public AnimationEvent {
 public:
     SparksAnimation() = delete;
 
-    SparksAnimation(const sf::Vector2f &position,
+    SparksAnimation(const sf::Vector2f& position,
                     float direction,
                     float radius);
 

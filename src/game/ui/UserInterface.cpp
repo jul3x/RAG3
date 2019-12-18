@@ -8,20 +8,22 @@
 #include <game/ui/UserInterface.h>
 
 
-UserInterface::UserInterface() : 
-    weapons_bar_({CFG.getInt("window_width_px") / 2.0f, CFG.getInt("window_height_px") -
-                                                        WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom")}),
-    health_bar_({HEALTH_BAR_X_ * CFG.getFloat("user_interface_zoom"),
-                 HEALTH_BAR_Y_ * CFG.getFloat("user_interface_zoom")}) {}
+UserInterface::UserInterface() :
+        weapons_bar_({CFG.getInt("window_width_px") / 2.0f, CFG.getInt("window_height_px") -
+                                                            WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom")}),
+        health_bar_({HEALTH_BAR_X_ * CFG.getFloat("user_interface_zoom"),
+                     HEALTH_BAR_Y_ * CFG.getFloat("user_interface_zoom")}) {}
 
-void UserInterface::initialize() {
+void UserInterface::initialize()
+{
     health_bar_.setMaxHealth(Engine::getInstance().getPlayer().getMaxHealth());
 }
 
-void UserInterface::handleEvents() {
+void UserInterface::handleEvents()
+{
     static sf::Event event;
-    static auto &graphics_window = Graphics::getInstance().getWindow();
-    static auto &player = Engine::getInstance().getPlayer();
+    static auto& graphics_window = Graphics::getInstance().getWindow();
+    static auto& player = Engine::getInstance().getPlayer();
 
     updatePlayerStates(player);
     handleMouse(graphics_window, player);
@@ -67,19 +69,22 @@ void UserInterface::handleEvents() {
     }
 }
 
-void UserInterface::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+void UserInterface::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
     target.draw(weapons_bar_, states);
     target.draw(health_bar_, states);
 }
 
-inline void UserInterface::handleScrolling(Player &player, float delta) {
+inline void UserInterface::handleScrolling(Player& player, float delta)
+{
     auto do_increase = delta > 0 ? 1 : -1;
 
     if (player.isAlive())
         player.switchWeapon(do_increase);
 }
 
-inline void UserInterface::handleKeys(Player &player) {
+inline void UserInterface::handleKeys(Player& player)
+{
     auto delta = sf::Vector2f(0.0f, 0.0f);
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
@@ -104,16 +109,17 @@ inline void UserInterface::handleKeys(Player &player) {
         player.setVelocity(delta.x, delta.y);
 }
 
-inline void UserInterface::handleMouse(sf::RenderWindow &graphics_window, Player &player) {
+inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window, Player& player)
+{
     auto mouse_pos = sf::Mouse::getPosition(graphics_window);
     auto mouse_difference = graphics_window.mapPixelToCoords(mouse_pos) -
-        player.getPosition();
+                            player.getPosition();
 
     float angle;
     std::tie(std::ignore, angle) = utils::cartesianToPolar(mouse_difference);
 
     if (player.isAlive())
-        player.setRotation(angle * 180.0f / M_PI);
+        player.setRotation(angle * 180.0f / static_cast<float>(M_PI));
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
@@ -124,9 +130,10 @@ inline void UserInterface::handleMouse(sf::RenderWindow &graphics_window, Player
     }
 }
 
-inline void UserInterface::updatePlayerStates(const Player &player) {
+inline void UserInterface::updatePlayerStates(const Player& player)
+{
     weapons_bar_.updateWeaponsList(player.getWeapons());
     weapons_bar_.updateCurrentWeapon(player.getCurrentWeapon());
-    
+
     health_bar_.updateHealth(player.getHealth());
 }

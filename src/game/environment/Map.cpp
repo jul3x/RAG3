@@ -8,8 +8,9 @@
 #include <game/environment/Map.h>
 
 
-void Map::loadMap(const std::string &name) {
-    std::tie(obstacles_, decorations_) = ResourceManager::getInstance().getMap(name);
+void Map::loadMap(const std::string& name)
+{
+    std::tie(obstacles_, decorations_) = ResourceManager::getMap(name);
 
     enemies_.emplace_back(sf::Vector2f{1000.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
     enemies_.emplace_back(sf::Vector2f{500.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
@@ -20,39 +21,49 @@ void Map::loadMap(const std::string &name) {
     visible_enemies_.clear();
 }
 
-std::list<Obstacle>& Map::getObstacles() {
+std::list<Obstacle>& Map::getObstacles()
+{
     return obstacles_;
 }
 
-std::list<Obstacle*>& Map::getVisibleObstacles() {
+std::list<Obstacle*>& Map::getVisibleObstacles()
+{
     return visible_obstacles_;
 }
 
-std::list<Enemy>& Map::getEnemies() {
+std::list<Enemy>& Map::getEnemies()
+{
     return enemies_;
 }
 
-std::list<Enemy*>& Map::getVisibleEnemies() {
+std::list<Enemy*>& Map::getVisibleEnemies()
+{
     return visible_enemies_;
 }
 
-void Map::setVisibility(const sf::View &view) {
-    for (auto &obstacle : obstacles_) {
+void Map::setVisibility(const sf::View& view)
+{
+    for (auto& obstacle : obstacles_)
+    {
         obstacle.setVisibility(view);
     }
-    for (auto &decoration : decorations_) {
+    for (auto& decoration : decorations_)
+    {
         decoration.setVisibility(view);
     }
-    for (auto &enemy : enemies_) {
+    for (auto& enemy : enemies_)
+    {
         enemy.setVisibility(view);
     }
 }
 
-void Map::spawnDecoration(const sf::Vector2f &pos, Decoration::Type which) {
+void Map::spawnDecoration(const sf::Vector2f& pos, Decoration::Type which)
+{
     decorations_.emplace_back(pos, which);
 }
 
-bool Map::update(float time_elapsed) {
+bool Map::update(float time_elapsed)
+{
     visible_obstacles_.clear();
     visible_enemies_.clear();
     // TODO Make private function that encapsulates this logic
@@ -109,16 +120,17 @@ bool Map::update(float time_elapsed) {
     return true;
 }
 
-void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    for (const auto &decoration : decorations_)
+void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+    for (const auto& decoration : decorations_)
     {
         target.draw(decoration, states);
     }
-    for (const auto &obstacle : visible_obstacles_)
+    for (const auto& obstacle : visible_obstacles_)
     {
         target.draw(*obstacle, states);
     }
-    for (const auto &enemy : visible_enemies_)
+    for (const auto& enemy : visible_enemies_)
     {
         target.draw(*enemy, states);
     }

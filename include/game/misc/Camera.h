@@ -10,13 +10,14 @@
 #include <SFML/System/Vector2.hpp>
 
 
-class Camera  {
+class Camera {
 public:
     Camera();
 
     void setShaking();
 
-    void update(const sf::Vector2f &position, float time_elapsed);
+    void update(const sf::Vector2f& position, float time_elapsed);
+
     sf::Vector3f& getViewCenter();
 
 private:

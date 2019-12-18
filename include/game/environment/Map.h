@@ -14,24 +14,28 @@
 #include <engine/objects/AbstractDrawableObject.h>
 
 
-class Map : public AbstractDrawableObject  {
+class Map : public AbstractDrawableObject {
 public:
     Map() = default;
 
-    void loadMap(const std::string &name);
+    void loadMap(const std::string& name);
 
     std::list<Obstacle>& getObstacles();
-    std::list<Obstacle*>& getVisibleObstacles();
-    std::list<Enemy>& getEnemies();
-    std::list<Enemy*>& getVisibleEnemies();
-    virtual void setVisibility(const sf::View &view);
 
-    void spawnDecoration(const sf::Vector2f &pos, Decoration::Type which);
+    std::list<Obstacle*>& getVisibleObstacles();
+
+    std::list<Enemy>& getEnemies();
+
+    std::list<Enemy*>& getVisibleEnemies();
+
+    void setVisibility(const sf::View& view) override;
+
+    void spawnDecoration(const sf::Vector2f& pos, Decoration::Type which);
 
     bool update(float time_elapsed);
 
 private:
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     std::list<Obstacle> obstacles_;
     std::list<Obstacle*> visible_obstacles_;

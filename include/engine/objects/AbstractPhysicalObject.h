@@ -17,9 +17,9 @@ class AbstractPhysicalObject : public AbstractDrawableObject {
 public:
     AbstractPhysicalObject() = default;
 
-    AbstractPhysicalObject(const sf::Vector2f &position,
-                           const sf::Vector2f &size,
-                           const std::string &texture_name);
+    AbstractPhysicalObject(const sf::Vector2f& position,
+                           const sf::Vector2f& size,
+                           sf::Texture* texture);
 
     virtual bool update(float time_elapsed) = 0;
 
@@ -29,11 +29,11 @@ class StaticObject : public AbstractPhysicalObject {
 public:
     StaticObject() = default;
 
-    StaticObject(const sf::Vector2f &position,
-                 const sf::Vector2f &size,
-                 const std::string &texture_name);
+    StaticObject(const sf::Vector2f& position,
+                 const sf::Vector2f& size,
+                 sf::Texture* texture);
 
-    virtual bool update(float time_elapsed);
+    bool update(float time_elapsed) override;
 
 };
 
@@ -41,27 +41,29 @@ class DynamicObject : public StaticObject {
 public:
     DynamicObject() = default;
 
-    DynamicObject(const sf::Vector2f &position,
-                  const sf::Vector2f &velocity,
-                  const sf::Vector2f &size,
-                  const std::string &texture_name,
-                  const double acceleration);
+    DynamicObject(const sf::Vector2f& position,
+                  const sf::Vector2f& velocity,
+                  const sf::Vector2f& size,
+                  sf::Texture* texture,
+                  float acceleration);
 
     const sf::Vector2f& getVelocity() const;
 
-    void setVelocity(const sf::Vector2f &velocity);
-    void setVelocity(const float x, const float y);
-    void setForcedVelocity(const sf::Vector2f &velocity);
+    void setVelocity(const sf::Vector2f& velocity);
 
-    virtual void setVisibility(const sf::View &view);
+    void setVelocity(float x, float y);
 
-    virtual bool update(float time_elapsed);
+    void setForcedVelocity(const sf::Vector2f& velocity);
+
+    void setVisibility(const sf::View& view) override;
+
+    bool update(float time_elapsed) override;
 
 protected:
     std::deque<sf::Vector2f> trail_;
 
 private:
-    virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     float acceleration_;
 
@@ -75,11 +77,11 @@ class HoveringObject : public DynamicObject {
 public:
     HoveringObject() = default;
 
-    HoveringObject(const sf::Vector2f &position,
-                   const sf::Vector2f &velocity,
-                   const sf::Vector2f &size,
-                   const std::string &texture_name,
-                   const double acceleration);
+    HoveringObject(const sf::Vector2f& position,
+                   const sf::Vector2f& velocity,
+                   const sf::Vector2f& size,
+                   sf::Texture* texture,
+                   float acceleration);
 };
 
 #endif // RAG3_ENGINE_OBJECTS_ABSTRACTPHYSICALOBJECT_H

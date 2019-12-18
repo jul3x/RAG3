@@ -19,13 +19,14 @@
 
 class WeaponsBar : public AbstractDrawableObject {
 public:
-    WeaponsBar(const sf::Vector2f &position);
+    explicit WeaponsBar(const sf::Vector2f& position);
 
-    void updateWeaponsList(const std::vector<std::unique_ptr<AbstractWeapon>> &weapons);
+    void updateWeaponsList(const std::vector<std::unique_ptr<AbstractWeapon>>& weapons);
+
     void updateCurrentWeapon(int curr_weapon);
 
 private:
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     static constexpr float WEAPON_SIZE_X_ = 70.0f;
     static constexpr float WEAPON_SIZE_Y_ = 70.0f;

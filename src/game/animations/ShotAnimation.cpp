@@ -3,16 +3,18 @@
 //
 
 #include <game/animations/ShotAnimation.h>
+#include <engine/system/ResourceManager.h>
 
 
-ShotAnimation::ShotAnimation(const sf::Vector2f &position,
+ShotAnimation::ShotAnimation(const sf::Vector2f& position,
                              float direction,
                              float radius) :
-        AnimationEvent("shot",
+        AnimationEvent(&ResourceManager::getInstance().getTexture("animation_shot"),
                        {ShotAnimation::WIDTH_PX_, ShotAnimation::HEIGHT_PX_}, position,
-                       ShotAnimation::DURATION_S_, ShotAnimation::MAX_FRAMES_COUNT_) {
+                       ShotAnimation::DURATION_S_, ShotAnimation::MAX_FRAMES_COUNT_)
+{
 
-        shape_.setRotation(direction);
-        shape_.setScale(radius, radius);
+    shape_.setRotation(direction);
+    shape_.setScale(radius, radius);
 
 }

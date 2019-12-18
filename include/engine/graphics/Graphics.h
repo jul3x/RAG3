@@ -15,26 +15,37 @@ class Graphics {
 
 public:
     Graphics(const Graphics&) = delete;
+
     Graphics& operator=(const Graphics&) = delete;
 
-    static Graphics& getInstance() {
+    static Graphics& getInstance()
+    {
         static Graphics graphics_instance;
         return graphics_instance;
     }
 
-    const bool isWindowOpen() const;
+    bool isWindowOpen() const;
+
     sf::RenderWindow& getWindow();
+
     sf::View& getCurrentView();
+
     sf::View& getStaticView();
 
     void setStaticView();
+
     void setCurrentView();
-    void modifyCurrentView(const sf::View &view);
-    void modifyStaticView(const sf::View &view);
-    void setViewCenter(const sf::Vector3f &view);
+
+    void modifyCurrentView(const sf::View& view);
+
+    void modifyStaticView(const sf::View& view);
+
+    void setViewCenter(const sf::Vector3f& view);
 
     void clear();
-    void draw(const AbstractDrawableObject &object);
+
+    void draw(const AbstractDrawableObject& object);
+
     void display();
 
 private:

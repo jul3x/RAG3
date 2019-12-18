@@ -8,12 +8,14 @@
 #include <engine/system/ResourceManager.h>
 
 
-ResourceManager& ResourceManager::getInstance() {
+ResourceManager& ResourceManager::getInstance()
+{
     static ResourceManager resource_manager_instance;
     return resource_manager_instance;
 }
 
-BulletDescription& ResourceManager::getBulletDescription(const std::string &key) {
+BulletDescription& ResourceManager::getBulletDescription(const std::string& key)
+{
     auto it = bullets_.find(key);
     if (it == bullets_.end())
     {
@@ -23,7 +25,7 @@ BulletDescription& ResourceManager::getBulletDescription(const std::string &key)
 
             return bullets_.at(key);
         }
-        catch (std::runtime_error &e)
+        catch (std::runtime_error& e)
         {
             std::cerr << e.what() << std::endl;
         }
@@ -33,7 +35,8 @@ BulletDescription& ResourceManager::getBulletDescription(const std::string &key)
 }
 
 
-ShootingWeapon& ResourceManager::getWeapon(const std::string &key) {
+ShootingWeapon& ResourceManager::getWeapon(const std::string& key)
+{
     auto it = weapons_.find(key);
     if (it == weapons_.end())
     {
@@ -43,7 +46,7 @@ ShootingWeapon& ResourceManager::getWeapon(const std::string &key) {
 
             return weapons_.at(key);
         }
-        catch (std::runtime_error &e)
+        catch (std::runtime_error& e)
         {
             std::cerr << e.what() << std::endl;
         }
@@ -52,7 +55,8 @@ ShootingWeapon& ResourceManager::getWeapon(const std::string &key) {
     return it->second;
 }
 
-sf::Texture& ResourceManager::getTexture(const std::string &key) {
+sf::Texture& ResourceManager::getTexture(const std::string& key)
+{
     auto it = textures_.find(key);
     if (it == textures_.end())
     {
@@ -62,7 +66,7 @@ sf::Texture& ResourceManager::getTexture(const std::string &key) {
 
             return textures_.at(key);
         }
-        catch (std::runtime_error &e)
+        catch (std::runtime_error& e)
         {
             std::cerr << e.what() << std::endl;
         }
@@ -71,7 +75,8 @@ sf::Texture& ResourceManager::getTexture(const std::string &key) {
     return it->second;
 }
 
-sf::Font& ResourceManager::getFont(const std::string &key) {
+sf::Font& ResourceManager::getFont(const std::string& key)
+{
     auto it = fonts_.find(key);
     if (it == fonts_.end())
     {
@@ -81,7 +86,7 @@ sf::Font& ResourceManager::getFont(const std::string &key) {
 
             return fonts_.at(key);
         }
-        catch (std::runtime_error &e)
+        catch (std::runtime_error& e)
         {
             std::cerr << e.what() << std::endl;
         }
@@ -90,26 +95,30 @@ sf::Font& ResourceManager::getFont(const std::string &key) {
     return it->second;
 }
 
-sf::Font& ResourceManager::getFont() {
+sf::Font& ResourceManager::getFont()
+{
     return this->getFont("default");
 }
 
-std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::getMap(const std::string &key) {
+std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::getMap(const std::string& key)
+{
     try
     {
         return loadMap(key);
     }
-    catch (std::logic_error &e)
+    catch (std::logic_error& e)
     {
         std::cerr << e.what() << std::endl;
     }
 }
 
-void ResourceManager::lazyLoadTexture(const std::string &key) {
+void ResourceManager::lazyLoadTexture(const std::string& key)
+{
     loadTexture(key);
 }
 
-void ResourceManager::loadBulletDescription(const std::string &key) {
+void ResourceManager::loadBulletDescription(const std::string& key)
+{
     utils::J3XIParameters int_params;
     utils::J3XFParameters float_params;
     utils::J3XSParameters string_params;
@@ -126,7 +135,8 @@ void ResourceManager::loadBulletDescription(const std::string &key) {
     std::cout << "[ResourceManager] Bullet description " << key << " is loaded!" << std::endl;
 }
 
-void ResourceManager::loadWeapon(const std::string &key) {
+void ResourceManager::loadWeapon(const std::string& key)
+{
     utils::J3XIParameters int_params;
     utils::J3XFParameters float_params;
     utils::J3XSParameters string_params;
@@ -148,7 +158,8 @@ void ResourceManager::loadWeapon(const std::string &key) {
     std::cout << "[ResourceManager] Weapon " << key << " is loaded!" << std::endl;
 }
 
-void ResourceManager::loadTexture(const std::string &key) {
+void ResourceManager::loadTexture(const std::string& key)
+{
     if (!textures_[key].loadFromFile("../data/textures/" + key + ".png"))
     {
         throw std::runtime_error("[ResourceManager] " + key + " texture file not successfully loaded.");
@@ -157,7 +168,8 @@ void ResourceManager::loadTexture(const std::string &key) {
     std::cout << "[ResourceManager] Texture " << key << " is loaded!" << std::endl;
 }
 
-void ResourceManager::loadFont(const std::string &key) {
+void ResourceManager::loadFont(const std::string& key)
+{
     if (!fonts_[key].loadFromFile("../data/fonts/" + key + ".ttf"))
     {
         throw std::runtime_error("[ResourceManager] " + key + " font file not successfully loaded.");
@@ -166,7 +178,8 @@ void ResourceManager::loadFont(const std::string &key) {
     std::cout << "[ResourceManager] Font " << key << " is loaded!" << std::endl;
 }
 
-std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(const std::string &key) {
+std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(const std::string& key)
+{
     std::ifstream file("../data/" + key + ".j3x");
     std::list<Obstacle> obstacles;
     std::list<Decoration> decorations;

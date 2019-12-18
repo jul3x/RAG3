@@ -25,11 +25,12 @@ struct BulletDescription {
 
 class Bullet : public HoveringObject {
 public:
-    Bullet(const BulletDescription &description,
-           const sf::Vector2f &position,
-           const float direction);
+    Bullet(const BulletDescription& description,
+           const sf::Vector2f& position,
+           float direction);
 
-    bool update(float time_elapsed);
+    bool update(float time_elapsed) override;
+
     int getDeadlyFactor() const;
 
 private:

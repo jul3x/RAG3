@@ -17,6 +17,7 @@ public:
     void setDead();
     bool isAlive() const;
 
+
 private:
     bool is_alive_;
 };

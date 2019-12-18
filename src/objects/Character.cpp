@@ -41,6 +41,7 @@ void Character::getShot(const Bullet &bullet) {
                              CFG.getFloat("get_shot_factor"));
 
     life_ -= bullet.getDeadlyFactor();
+    life_ = life_ < 0 ? 0 : life_;
 }
 
 int Character::getCurrentWeapon() const {
@@ -79,11 +80,6 @@ bool Character::update(float time_elapsed) {
 
     (*current_weapon_)->setPosition(this->getPosition());
     (*current_weapon_)->setRotation(this->getRotation());
-
-    if (life_ < 0)
-    {
-        life_ = 0;
-    }
 
     return life_ > 0;
 }

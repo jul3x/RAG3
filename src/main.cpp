@@ -10,12 +10,7 @@ int main()
 {
     constexpr int FRAME_RATE = 60;
 
-#ifdef __linux__
-    CFG.initialize("data/config.j3x");
-#elif _WIN32
     CFG.initialize("../data/config.j3x");
-#endif
-
 
     if (CFG.getInt("auto_resolution"))
     {

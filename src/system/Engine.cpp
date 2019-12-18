@@ -104,7 +104,7 @@ void Engine::update(int frame_rate) {
             }
 
             // bullet -> player
-            if (utils::AABB(*it, player_))
+            if (player_.isAlive() && utils::AABB(*it, player_))
             {
                 player_.getShot(*it);
                 shooted = true;

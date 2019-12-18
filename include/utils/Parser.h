@@ -95,6 +95,10 @@ inline J3XParameters parse(const std::string &filename) {
     else
     {
         throw std::logic_error("[J3X] J3X " + filename + " file not found!");
+        throw std::logic_error("[J3X] J3X " + filename + " file not found!");
+        throw std::logic_error("[J3X] J3X " + filename + " file not found!");
+        throw std::logic_error("[J3X] J3X " + filename + " file not found!");
+        throw std::logic_error("[J3X] J3X " + filename + " file not found!");
     }
 
     return std::make_tuple(int_params, float_params, string_params);

@@ -1,4 +1,5 @@
 #!/bin/bash
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
-$DIR/build/Rag3
+cd $DIR/build
+./Rag3

@@ -72,7 +72,8 @@ void UserInterface::draw(sf::RenderTarget &target, sf::RenderStates states) cons
 inline void UserInterface::handleScrolling(Player &player, float delta) {
     auto do_increase = delta > 0 ? 1 : -1;
 
-    player.switchWeapon(do_increase);
+    if (player.isAlive())
+        player.switchWeapon(do_increase);
 }
 
 inline void UserInterface::handleKeys(Player &player) {
@@ -96,7 +97,8 @@ inline void UserInterface::handleKeys(Player &player) {
         delta.y += CFG.getFloat("player_max_speed");
     }
 
-    player.setVelocity(delta.x, delta.y);
+    if (player.isAlive())
+        player.setVelocity(delta.x, delta.y);
 }
 
 inline void UserInterface::handleMouse(sf::RenderWindow &graphics_window, Player &player) {
@@ -106,11 +108,13 @@ inline void UserInterface::handleMouse(sf::RenderWindow &graphics_window, Player
 
     float angle;
     std::tie(std::ignore, angle) = utils::cartesianToPolar(mouse_difference);
-    player.setRotation(angle * 180.0f / M_PI);
+
+    if (player.isAlive())
+        player.setRotation(angle * 180.0f / M_PI);
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        if (player.shot())
+        if (player.isAlive() && player.shot())
         {
             Engine::getInstance().forceCameraShaking();
         }

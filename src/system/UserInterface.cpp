@@ -9,8 +9,10 @@
 
 
 UserInterface::UserInterface() : 
-    weapons_bar_({CFG.getInt("window_width_px") / 2.0f, CFG.getInt("window_height_px") - WEAPONS_BAR_OFF_Y_}),
-    health_bar_({HEALTH_BAR_X_, HEALTH_BAR_Y_}) {}
+    weapons_bar_({CFG.getInt("window_width_px") / 2.0f, CFG.getInt("window_height_px") -
+                                                        WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom")}),
+    health_bar_({HEALTH_BAR_X_ * CFG.getFloat("user_interface_zoom"),
+                 HEALTH_BAR_Y_ * CFG.getFloat("user_interface_zoom")}) {}
 
 void UserInterface::initialize() {
     health_bar_.setMaxHealth(Engine::getInstance().getPlayer().getMaxHealth());
@@ -47,7 +49,8 @@ void UserInterface::handleEvents() {
                 static_view.setCenter(visible_area / 2.0f);
                 Graphics::getInstance().modifyStaticView(static_view);
 
-                weapons_bar_.setPosition(event.size.width / 2.0f, event.size.height - WEAPONS_BAR_OFF_Y_);
+                weapons_bar_.setPosition(event.size.width / 2.0f,
+                                         event.size.height - WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom"));
 
                 break;
             }

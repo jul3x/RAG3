@@ -11,7 +11,7 @@
 
 Player::Player(const sf::Vector2f &position,
                const sf::Vector2f &velocity) :
-        Character(position, velocity, 100),
+        Character(position, velocity, 1000),
         is_alive_(true) {
     weapons_in_backpack_.push_back(
         std::make_unique<ShootingWeapon>(ResourceManager::getInstance().getWeapon("m4")));

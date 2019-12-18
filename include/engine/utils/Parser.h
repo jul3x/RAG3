@@ -1,5 +1,5 @@
 //
-// Created by jprolejko on 23.10.19.
+// Created by jul3x on 23.10.19.
 //
 
 #ifndef RAG3_ENGINE_UTILS_PARSER_H

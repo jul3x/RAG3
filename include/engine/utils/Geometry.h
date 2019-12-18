@@ -1,5 +1,5 @@
 //
-// Created by jprolejko on 27.06.19.
+// Created by jul3x on 27.06.19.
 //
 
 #ifndef RAG3_ENGINE_UTILS_GEOMETRY_H

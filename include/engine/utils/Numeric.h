@@ -1,5 +1,5 @@
 //
-// Created by jprolejko on 13.06.19.
+// Created by jul3x on 13.06.19.
 //
 
 #ifndef RAG3_ENGINE_UTILS_NUMERIC_H

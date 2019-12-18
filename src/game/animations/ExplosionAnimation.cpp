@@ -1,17 +1,17 @@
 //
-// Created by jprolejko on 30.06.19.
+// Created by jul3x on 30.06.19.
 //
 
 #include <engine/utils/Utils.h>
 
 #include <game/animations/ExplosionAnimation.h>
-#include <engine/system/ResourceManager.h>
+#include <engine/system/AbstractResourceManager.h>
 
 
 ExplosionAnimation::ExplosionAnimation(const sf::Vector2f& position,
                                        float radius) :
         AnimationEvent(
-                &ResourceManager::getInstance().getTexture(
+                &AbstractResourceManager::getInstance().getTexture(
                         "animation_explosion" + std::to_string(utils::getRandom<int>(1, 3))),
                 {ExplosionAnimation::WIDTH_PX_, ExplosionAnimation::HEIGHT_PX_}, position,
                 ExplosionAnimation::DURATION_S_, ExplosionAnimation::MAX_FRAMES_COUNT_,

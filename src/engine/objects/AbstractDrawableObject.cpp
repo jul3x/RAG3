@@ -1,9 +1,9 @@
 //
-// Created by jprolejko on 30.09.19.
+// Created by jul3x on 30.09.19.
 //
 
 
-#include <engine/system/ResourceManager.h>
+#include <engine/system/AbstractResourceManager.h>
 #include <engine/utils/Geometry.h>
 #include <engine/objects/AbstractDrawableObject.h>
 

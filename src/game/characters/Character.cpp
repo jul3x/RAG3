@@ -1,12 +1,12 @@
 //
-// Created by jprolejko on 30.09.19.
+// Created by jul3x on 30.09.19.
 //
 
 #include <iostream>
 
 #include <engine/utils/Geometry.h>
 #include <engine/utils/Numeric.h>
-#include <engine/system/ResourceManager.h>
+#include <engine/system/AbstractResourceManager.h>
 
 #include <game/characters/Character.h>
 
@@ -17,7 +17,7 @@ Character::Character(const sf::Vector2f& position,
         DynamicObject(position,
                       velocity,
                       {SIZE_X_, SIZE_Y_},
-                      &ResourceManager::getInstance().getTexture("player"),
+                      &AbstractResourceManager::getInstance().getTexture("player"),
                       CFG.getFloat("player_max_acceleration")),
         max_life_(max_life),
         life_(max_life) {}

@@ -1,5 +1,5 @@
 //
-// Created by jprolejko on 27.02.19.
+// Created by jul3x on 27.02.19.
 //
 
 #include <chrono>
@@ -8,7 +8,7 @@
 #include <game/animations/ExplosionAnimation.h>
 #include <game/animations/ShotAnimation.h>
 #include <game/animations/SparksAnimation.h>
-#include <engine/system/ResourceManager.h>
+#include <engine/system/AbstractResourceManager.h>
 
 #include <engine/system/Engine.h>
 
@@ -20,6 +20,26 @@ Engine::Engine() : player_({400.0f, 500.0f}, {})
     map_.loadMap("map");
 }
 
+void Engine::initializeGraphics(const sf::Vector2i& size, const std::string& title, int style)
+{
+    graphics_ = std::make_unique<Graphics>(size, title, style);
+}
+
+void Engine::registerUI(AbstractUserInterface* user_interface)
+{
+    ui_ = user_interface;
+}
+
+void Engine::registerCamera(AbstractCamera* camera)
+{
+    camera_ = camera;
+}
+
+Graphics& Engine::getGraphics() const
+{
+    return *graphics_;
+}
+
 Player& Engine::getPlayer()
 {
     return player_;
@@ -27,7 +47,8 @@ Player& Engine::getPlayer()
 
 void Engine::forceCameraShaking()
 {
-    camera_.setShaking();
+    // NEEDED TO MOVE TO GAME CLASS IMMEDIATELY
+    dynamic_cast<Camera*>(camera_)->setShaking();
 }
 
 void Engine::spawnSparksAnimation(const sf::Vector2f& pos, const float dir, const float r)
@@ -50,27 +71,27 @@ void Engine::spawnShotAnimation(const sf::Vector2f& pos, const float dir, const 
 
 void Engine::spawnBullet(const std::string& name, const sf::Vector2f& pos, const float dir)
 {
-    bullets_.emplace_back(ResourceManager::getInstance().getBulletDescription(name), pos, dir);
+    bullets_.emplace_back(AbstractResourceManager::getInstance().getBulletDescription(name), pos, dir);
 }
 
 void Engine::update(int frame_rate)
 {
     restartClock();
 
-    ui_.initialize();
+    ui_->initialize();
 
     auto time_start = std::chrono::system_clock::now();
 
-    while (Graphics::getInstance().isWindowOpen())
+    while (graphics_->isWindowOpen())
     {
         float time_elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
                 std::chrono::system_clock::now() - time_start).count() / 1000000.0f;
         time_start = std::chrono::system_clock::now();
 
-        ui_.handleEvents();
+        ui_->handleEvents();
 
-        map_.setVisibility(Graphics::getInstance().getCurrentView());
-        player_.setVisibility(Graphics::getInstance().getCurrentView());
+        map_.setVisibility(graphics_->getCurrentView());
+        player_.setVisibility(graphics_->getCurrentView());
 
         map_.update(time_elapsed);
         if (player_.isAlive() && !player_.update(time_elapsed))
@@ -149,7 +170,7 @@ void Engine::update(int frame_rate)
             }
         }
 
-        camera_.update(player_.getPosition(), time_elapsed);
+        camera_->update(player_.getPosition(), time_elapsed);
 
         for (auto it = animation_events_.begin(); it != animation_events_.end(); ++it)
         {
@@ -163,31 +184,31 @@ void Engine::update(int frame_rate)
 
         // drawing
         {
-            Graphics::getInstance().clear();
-            Graphics::getInstance().setViewCenter(camera_.getViewCenter());
+            graphics_->clear();
+            graphics_->setViewCenter(camera_->getViewCenter());
 
-            Graphics::getInstance().draw(map_);
+            graphics_->draw(map_);
 
             for (const auto& bullet : bullets_)
             {
-                Graphics::getInstance().draw(bullet);
+                graphics_->draw(bullet);
             }
 
             if (player_.isAlive())
             {
-                Graphics::getInstance().draw(player_);
+                graphics_->draw(player_);
             }
 
             for (const auto& animation : animation_events_)
             {
-                Graphics::getInstance().draw(*animation);
+                graphics_->draw(*animation);
             }
 
-            Graphics::getInstance().setStaticView();
-            Graphics::getInstance().draw(ui_);
-            Graphics::getInstance().setCurrentView();
+            graphics_->setStaticView();
+            graphics_->draw(*ui_);
+            graphics_->setCurrentView();
 
-            Graphics::getInstance().display();
+            graphics_->display();
         }
 
         ensureConstantFrameRate(frame_rate);

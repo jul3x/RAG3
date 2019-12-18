@@ -1,5 +1,5 @@
 //
-// Created by jprolejko on 27.02.19.
+// Created by jul3x on 27.02.19.
 //
 
 #include <engine/system/Engine.h>
@@ -22,34 +22,34 @@ void UserInterface::initialize()
 void UserInterface::handleEvents()
 {
     static sf::Event event;
-    static auto& graphics_window = Graphics::getInstance().getWindow();
+    static auto& graphics = Engine::getInstance().getGraphics();
     static auto& player = Engine::getInstance().getPlayer();
 
     updatePlayerStates(player);
-    handleMouse(graphics_window, player);
+    handleMouse(graphics.getWindow(), player);
     handleKeys(player);
 
-    while (graphics_window.pollEvent(event))
+    while (graphics.getWindow().pollEvent(event))
     {
         switch (event.type)
         {
             case sf::Event::Closed:
             {
-                graphics_window.close();
+                graphics.getWindow().close();
                 break;
             }
             case sf::Event::Resized:
             {
                 auto visible_area = sf::Vector2f(event.size.width, event.size.height);
 
-                auto current_view = Graphics::getInstance().getCurrentView();
+                auto current_view = graphics.getCurrentView();
                 current_view.setSize(visible_area);
-                Graphics::getInstance().modifyCurrentView(current_view);
+                graphics.modifyCurrentView(current_view);
 
-                auto static_view = Graphics::getInstance().getStaticView();
+                auto static_view = graphics.getStaticView();
                 static_view.setSize(visible_area);
                 static_view.setCenter(visible_area / 2.0f);
-                Graphics::getInstance().modifyStaticView(static_view);
+                graphics.modifyStaticView(static_view);
 
                 weapons_bar_.setPosition(event.size.width / 2.0f,
                                          event.size.height - WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom"));

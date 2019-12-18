@@ -1,5 +1,5 @@
 //
-// Created by jprolejko on 30.08.19.
+// Created by jul3x on 30.08.19.
 //
 
 #ifndef RAG3_GAME_ANIMATIONS_EXPLOSIONANIMATION_H

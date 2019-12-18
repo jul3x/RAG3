@@ -1,5 +1,5 @@
 //
-// Created by jprolejko on 05.09.19.
+// Created by jul3x on 05.09.19.
 //
 
 #ifndef RAG3_ENGINE_GRAPHICS_ANIMATIONEVENT_H

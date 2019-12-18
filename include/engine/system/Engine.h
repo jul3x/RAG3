@@ -1,5 +1,5 @@
 //
-// Created by jprolejko on 27.02.19.
+// Created by jul3x on 27.02.19.
 //
 
 #ifndef RAG3_ENGINE_SYSTEM_ENGINE_H
@@ -29,6 +29,14 @@ public:
         return engine_instance;
     }
 
+    void initializeGraphics(const sf::Vector2i& size, const std::string& title, int style);
+
+    void registerUI(AbstractUserInterface* user_interface);
+
+    void registerCamera(AbstractCamera* camera);
+
+    Graphics& getGraphics() const;
+
     Player& getPlayer();
 
     void spawnBullet(const std::string& name, const sf::Vector2f& pos, float dir);
@@ -52,14 +60,18 @@ private:
 
     void restartClock();
 
-    UserInterface ui_;
-    sf::Clock clock_;
-    sf::Time time_;
+    // Engine components
+    std::unique_ptr<Graphics> graphics_;
 
-    Camera camera_;
+    // Registered by game
+    AbstractUserInterface* ui_;
+    AbstractCamera* camera_;
     Player player_;
     Map map_;
     std::list<Bullet> bullets_;
+
+    sf::Clock clock_;
+    sf::Time time_;
 
     std::list<std::unique_ptr<AnimationEvent>> animation_events_;
 };

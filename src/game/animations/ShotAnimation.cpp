@@ -1,15 +1,15 @@
 //
-// Created by jprolejko on 30.09.19.
+// Created by jul3x on 30.09.19.
 //
 
 #include <game/animations/ShotAnimation.h>
-#include <engine/system/ResourceManager.h>
+#include <engine/system/AbstractResourceManager.h>
 
 
 ShotAnimation::ShotAnimation(const sf::Vector2f& position,
                              float direction,
                              float radius) :
-        AnimationEvent(&ResourceManager::getInstance().getTexture("animation_shot"),
+        AnimationEvent(&AbstractResourceManager::getInstance().getTexture("animation_shot"),
                        {ShotAnimation::WIDTH_PX_, ShotAnimation::HEIGHT_PX_}, position,
                        ShotAnimation::DURATION_S_, ShotAnimation::MAX_FRAMES_COUNT_)
 {

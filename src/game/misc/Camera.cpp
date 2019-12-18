@@ -1,5 +1,5 @@
 //
-// Created by jprolejko on 01.10.19.
+// Created by jul3x on 01.10.19.
 //
 
 #include <cmath>
@@ -41,9 +41,4 @@ void Camera::update(const sf::Vector2f& position, float time_elapsed)
         time_elapsed_ = -1.0f;
         state_ = State::NORMAL;
     }
-}
-
-sf::Vector3f& Camera::getViewCenter()
-{
-    return center_;
 }

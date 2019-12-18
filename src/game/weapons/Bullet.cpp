@@ -1,10 +1,10 @@
 //
-// Created by jprolejko on 01.10.19.
+// Created by jul3x on 01.10.19.
 //
 
 #include <engine/system/Config.h>
 #include <game/weapons/Bullet.h>
-#include <engine/system/ResourceManager.h>
+#include <engine/system/AbstractResourceManager.h>
 
 
 Bullet::Bullet(const BulletDescription& description,
@@ -14,7 +14,7 @@ Bullet::Bullet(const BulletDescription& description,
                        {description.speed_ * std::cos(direction),
                         description.speed_ * std::sin(direction)},
                        {description.size_x_, description.size_y_},
-                       &ResourceManager::getInstance().getTexture("bullet_" + description.name_),
+                       &AbstractResourceManager::getInstance().getTexture("bullet_" + description.name_),
                        0.0f)
 {
     this->setRotation(direction * 180.0f / static_cast<float>(M_PI));

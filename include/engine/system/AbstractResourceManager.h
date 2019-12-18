@@ -1,5 +1,5 @@
 //
-// Created by jprolejko on 25.06.19.
+// Created by jul3x on 25.06.19.
 //
 
 #ifndef RAG3_ENGINE_SYSTEM_RESOURCEMANAGER_H
@@ -22,14 +22,14 @@
 // ITS TIME TO MODIFY IT TO TEMPLATES!
 // AND TO ONLY HOLD FILES - NOT THEIR INTERPRETATION
 
-class ResourceManager {
+class AbstractResourceManager {
 
 public:
-    ResourceManager(const ResourceManager&) = delete;
+    AbstractResourceManager(const AbstractResourceManager&) = delete;
 
-    ResourceManager& operator=(const ResourceManager&) = delete;
+    AbstractResourceManager& operator=(const AbstractResourceManager&) = delete;
 
-    static ResourceManager& getInstance();
+    static AbstractResourceManager& getInstance();
 
     BulletDescription& getBulletDescription(const std::string& key);
 
@@ -47,7 +47,7 @@ public:
     void lazyLoadTexture(const std::string& key);
 
 private:
-    ResourceManager() = default;
+    AbstractResourceManager() = default;
 
     void loadBulletDescription(const std::string& key);
 

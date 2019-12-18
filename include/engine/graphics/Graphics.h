@@ -1,5 +1,5 @@
 //
-// Created by jprolejko on 26.02.19.
+// Created by jul3x on 26.02.19.
 //
 
 #ifndef RAG3_ENGINE_GRAPHICS_GRAPHICS_H
@@ -14,15 +14,11 @@
 class Graphics {
 
 public:
+    Graphics(const sf::Vector2i& size, const std::string& title, int style);
+
     Graphics(const Graphics&) = delete;
 
     Graphics& operator=(const Graphics&) = delete;
-
-    static Graphics& getInstance()
-    {
-        static Graphics graphics_instance;
-        return graphics_instance;
-    }
 
     bool isWindowOpen() const;
 
@@ -49,8 +45,6 @@ public:
     void display();
 
 private:
-    Graphics();
-
     sf::ContextSettings settings_;
     sf::RenderWindow window_;
     sf::View current_view_;

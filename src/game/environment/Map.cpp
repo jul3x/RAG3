@@ -1,8 +1,8 @@
 //
-// Created by jprolejko on 30.09.19.
+// Created by jul3x on 30.09.19.
 //
 
-#include <engine/system/ResourceManager.h>
+#include <engine/system/AbstractResourceManager.h>
 #include <engine/system/Engine.h>
 
 #include <game/environment/Map.h>
@@ -10,7 +10,7 @@
 
 void Map::loadMap(const std::string& name)
 {
-    std::tie(obstacles_, decorations_) = ResourceManager::getMap(name);
+    std::tie(obstacles_, decorations_) = AbstractResourceManager::getMap(name);
 
     enemies_.emplace_back(sf::Vector2f{1000.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
     enemies_.emplace_back(sf::Vector2f{500.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});

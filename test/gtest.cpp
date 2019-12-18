@@ -1,6 +1,6 @@
 
 //
-// Created by jprolejko on 16.07.2019.
+// Created by jul3x on 16.07.2019.
 //
 
 #include <gtest/gtest.h>

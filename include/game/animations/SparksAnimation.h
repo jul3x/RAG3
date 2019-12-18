@@ -1,5 +1,5 @@
 //
-// Created by jprolejko on 31.10.19.
+// Created by jul3x on 31.10.19.
 //
 
 #ifndef RAG3_GAME_ANIMATIONS_SPARKSANIMATION_H

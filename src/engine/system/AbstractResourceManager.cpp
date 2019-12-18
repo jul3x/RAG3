@@ -1,20 +1,20 @@
 //
-// Created by jprolejko on 26.06.2019.
+// Created by jul3x on 26.06.2019.
 //
 
 #include <iostream>
 
 #include <engine/utils/Parser.h>
-#include <engine/system/ResourceManager.h>
+#include <engine/system/AbstractResourceManager.h>
 
 
-ResourceManager& ResourceManager::getInstance()
+AbstractResourceManager& AbstractResourceManager::getInstance()
 {
-    static ResourceManager resource_manager_instance;
+    static AbstractResourceManager resource_manager_instance;
     return resource_manager_instance;
 }
 
-BulletDescription& ResourceManager::getBulletDescription(const std::string& key)
+BulletDescription& AbstractResourceManager::getBulletDescription(const std::string& key)
 {
     auto it = bullets_.find(key);
     if (it == bullets_.end())
@@ -35,7 +35,7 @@ BulletDescription& ResourceManager::getBulletDescription(const std::string& key)
 }
 
 
-ShootingWeapon& ResourceManager::getWeapon(const std::string& key)
+ShootingWeapon& AbstractResourceManager::getWeapon(const std::string& key)
 {
     auto it = weapons_.find(key);
     if (it == weapons_.end())
@@ -55,7 +55,7 @@ ShootingWeapon& ResourceManager::getWeapon(const std::string& key)
     return it->second;
 }
 
-sf::Texture& ResourceManager::getTexture(const std::string& key)
+sf::Texture& AbstractResourceManager::getTexture(const std::string& key)
 {
     auto it = textures_.find(key);
     if (it == textures_.end())
@@ -75,7 +75,7 @@ sf::Texture& ResourceManager::getTexture(const std::string& key)
     return it->second;
 }
 
-sf::Font& ResourceManager::getFont(const std::string& key)
+sf::Font& AbstractResourceManager::getFont(const std::string& key)
 {
     auto it = fonts_.find(key);
     if (it == fonts_.end())
@@ -95,12 +95,12 @@ sf::Font& ResourceManager::getFont(const std::string& key)
     return it->second;
 }
 
-sf::Font& ResourceManager::getFont()
+sf::Font& AbstractResourceManager::getFont()
 {
     return this->getFont("default");
 }
 
-std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::getMap(const std::string& key)
+std::tuple<std::list<Obstacle>, std::list<Decoration>> AbstractResourceManager::getMap(const std::string& key)
 {
     try
     {
@@ -112,12 +112,12 @@ std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::getMap(c
     }
 }
 
-void ResourceManager::lazyLoadTexture(const std::string& key)
+void AbstractResourceManager::lazyLoadTexture(const std::string& key)
 {
     loadTexture(key);
 }
 
-void ResourceManager::loadBulletDescription(const std::string& key)
+void AbstractResourceManager::loadBulletDescription(const std::string& key)
 {
     utils::J3XIParameters int_params;
     utils::J3XFParameters float_params;
@@ -132,10 +132,10 @@ void ResourceManager::loadBulletDescription(const std::string& key)
                                             utils::getFloat(float_params, "size_x"),
                                             utils::getFloat(float_params, "size_y")});
 
-    std::cout << "[ResourceManager] Bullet description " << key << " is loaded!" << std::endl;
+    std::cout << "[AbstractResourceManager] Bullet description " << key << " is loaded!" << std::endl;
 }
 
-void ResourceManager::loadWeapon(const std::string& key)
+void AbstractResourceManager::loadWeapon(const std::string& key)
 {
     utils::J3XIParameters int_params;
     utils::J3XFParameters float_params;
@@ -155,30 +155,30 @@ void ResourceManager::loadWeapon(const std::string& key)
                                          utils::getFloat(float_params, "bullet_angular_diff"),
                                          key});
 
-    std::cout << "[ResourceManager] Weapon " << key << " is loaded!" << std::endl;
+    std::cout << "[AbstractResourceManager] Weapon " << key << " is loaded!" << std::endl;
 }
 
-void ResourceManager::loadTexture(const std::string& key)
+void AbstractResourceManager::loadTexture(const std::string& key)
 {
     if (!textures_[key].loadFromFile("../data/textures/" + key + ".png"))
     {
-        throw std::runtime_error("[ResourceManager] " + key + " texture file not successfully loaded.");
+        throw std::runtime_error("[AbstractResourceManager] " + key + " texture file not successfully loaded.");
     }
 
-    std::cout << "[ResourceManager] Texture " << key << " is loaded!" << std::endl;
+    std::cout << "[AbstractResourceManager] Texture " << key << " is loaded!" << std::endl;
 }
 
-void ResourceManager::loadFont(const std::string& key)
+void AbstractResourceManager::loadFont(const std::string& key)
 {
     if (!fonts_[key].loadFromFile("../data/fonts/" + key + ".ttf"))
     {
-        throw std::runtime_error("[ResourceManager] " + key + " font file not successfully loaded.");
+        throw std::runtime_error("[AbstractResourceManager] " + key + " font file not successfully loaded.");
     }
 
-    std::cout << "[ResourceManager] Font " << key << " is loaded!" << std::endl;
+    std::cout << "[AbstractResourceManager] Font " << key << " is loaded!" << std::endl;
 }
 
-std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(const std::string& key)
+std::tuple<std::list<Obstacle>, std::list<Decoration>> AbstractResourceManager::loadMap(const std::string& key)
 {
     std::ifstream file("../data/" + key + ".j3x");
     std::list<Obstacle> obstacles;
@@ -205,22 +205,22 @@ std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(
             }
             else if (type != 0)
             {
-                throw std::logic_error("[ResourceManager] For now, not handled type of obstacle!");
+                throw std::logic_error("[AbstractResourceManager] For now, not handled type of obstacle!");
             }
             ++count;
         }
 
         if (count != max_number)
         {
-            throw std::logic_error("[ResourceManager] Wrong number of tiles!");
+            throw std::logic_error("[AbstractResourceManager] Wrong number of tiles!");
         }
     }
     else
     {
-        throw std::logic_error("[ResourceManager] Map file not found! This should not happen during standard runtime.");
+        throw std::logic_error("[AbstractResourceManager] Map file not found! This should not happen during standard runtime.");
     }
 
-    std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
+    std::cout << "[AbstractResourceManager] Map " << key << " is loaded!" << std::endl;
 
     return std::make_tuple(obstacles, decorations);
 }

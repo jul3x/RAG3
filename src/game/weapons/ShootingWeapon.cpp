@@ -1,5 +1,5 @@
 //
-// Created by jprolejko on 16.10.19.
+// Created by jul3x on 16.10.19.
 //
 
 #include <game/weapons/ShootingWeapon.h>

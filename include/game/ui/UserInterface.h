@@ -1,5 +1,5 @@
 //
-// Created by jprolejko on 27.02.19.
+// Created by jul3x on 27.02.19.
 //
 
 #ifndef RAG3_GAME_UI_USERINTERFACE_H
@@ -8,10 +8,10 @@
 #include <engine/system/Config.h>
 #include <game/ui/WeaponsBar.h>
 #include <game/ui/HealthBar.h>
-#include <engine/objects/AbstractDrawableObject.h>
+#include <engine/system/AbstractUserInterface.h>
 
 
-class UserInterface : public AbstractDrawableObject {
+class UserInterface : public AbstractUserInterface {
 
 public:
     explicit UserInterface();
@@ -20,12 +20,12 @@ public:
 
     UserInterface& operator=(const UserInterface&) = delete;
 
-    void initialize();
+    void initialize() override;
 
-    void handleEvents();
+    void handleEvents() override;
 
 private:
-    void draw(sf::RenderTarget& targer, sf::RenderStates states) const override;
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     static inline void handleScrolling(Player& player, float delta);
 

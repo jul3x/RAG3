@@ -1,5 +1,5 @@
 //
-// Created by jprolejko on 21.11.19.
+// Created by jul3x on 21.11.19.
 //
 
 #ifndef RAG3_GAME_UI_HEALTHBAR_H

@@ -1,5 +1,5 @@
 #
-# Created by jprolejko on 26.02.19.
+# Created by jul3x on 26.02.19.
 #
 
 cmake_minimum_required(VERSION 3.6)

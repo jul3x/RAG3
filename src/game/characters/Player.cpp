@@ -2,11 +2,11 @@
 // Created by jul3x on 03.11.19.
 //
 
-#include <engine/system/AbstractResourceManager.h>
 
 #include <game/characters/Player.h>
 #include <game/weapons/ShootingWeapon.h>
 #include <game/weapons/NoWeapon.h>
+#include <game/misc/ResourceManager.h>
 
 
 Player::Player(const sf::Vector2f& position,
@@ -15,13 +15,13 @@ Player::Player(const sf::Vector2f& position,
         is_alive_(true)
 {
     weapons_in_backpack_.push_back(
-            std::make_unique<ShootingWeapon>(AbstractResourceManager::getInstance().getWeapon("m4")));
+            std::make_unique<ShootingWeapon>(ResourceManager::getInstance().getWeapon("m4")));
     weapons_in_backpack_.push_back(
-            std::make_unique<ShootingWeapon>(AbstractResourceManager::getInstance().getWeapon("desert_eagle")));
+            std::make_unique<ShootingWeapon>(ResourceManager::getInstance().getWeapon("desert_eagle")));
     weapons_in_backpack_.push_back(
-            std::make_unique<ShootingWeapon>(AbstractResourceManager::getInstance().getWeapon("shotgun")));
+            std::make_unique<ShootingWeapon>(ResourceManager::getInstance().getWeapon("shotgun")));
     weapons_in_backpack_.push_back(
-            std::make_unique<ShootingWeapon>(AbstractResourceManager::getInstance().getWeapon("rocket_launcher")));
+            std::make_unique<ShootingWeapon>(ResourceManager::getInstance().getWeapon("rocket_launcher")));
     weapons_in_backpack_.push_back(
             std::make_unique<NoWeapon>());
     weapons_in_backpack_.push_back(

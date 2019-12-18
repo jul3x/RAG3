@@ -2,7 +2,7 @@
 // Created by jul3x on 31.10.19.
 //
 
-#include <engine/system/AbstractResourceManager.h>
+#include <game/misc/ResourceManager.h>
 #include <engine/system/Engine.h>
 #include <engine/utils/Geometry.h>
 #include <game/characters/Enemy.h>
@@ -13,7 +13,7 @@ Enemy::Enemy(const sf::Vector2f& position,
         Character(position, velocity, 10)
 {
     weapons_in_backpack_.push_back(
-            std::make_unique<ShootingWeapon>(AbstractResourceManager::getInstance().getWeapon("desert_eagle")));
+            std::make_unique<ShootingWeapon>(ResourceManager::getInstance().getWeapon("desert_eagle")));
 
     current_weapon_ = weapons_in_backpack_.begin();
 }

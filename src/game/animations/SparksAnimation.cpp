@@ -3,13 +3,13 @@
 //
 
 #include <game/animations/SparksAnimation.h>
-#include <engine/system/AbstractResourceManager.h>
+#include <game/misc/ResourceManager.h>
 
 
 SparksAnimation::SparksAnimation(const sf::Vector2f& position,
                                  float direction,
                                  float radius) :
-        AnimationEvent(&AbstractResourceManager::getInstance().getTexture("animation_sparks"),
+        AnimationEvent(&ResourceManager::getInstance().getTexture("animation_sparks"),
                        {SparksAnimation::WIDTH_PX_, SparksAnimation::HEIGHT_PX_}, position,
                        SparksAnimation::DURATION_S_, SparksAnimation::MAX_FRAMES_COUNT_)
 {

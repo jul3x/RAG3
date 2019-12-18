@@ -21,7 +21,6 @@ set(EXECUTABLE_NAME "Rag3")
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/build")
 
 file(GLOB_RECURSE MAIN_SRC "src/*.cpp")
-
 add_executable(${EXECUTABLE_NAME} ${MAIN_SRC})
 
 target_link_libraries(${EXECUTABLE_NAME} stdc++fs)

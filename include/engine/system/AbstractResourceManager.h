@@ -12,57 +12,35 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Font.hpp>
 
-#include <game/environment/Obstacle.h>
-#include <game/environment/Decoration.h>
-#include <game/weapons/ShootingWeapon.h>
-#include <game/weapons/Bullet.h>
+#include <engine/utils/Parser.h>
 
-
-// A LOT OF BOILERPLATE!
-// ITS TIME TO MODIFY IT TO TEMPLATES!
-// AND TO ONLY HOLD FILES - NOT THEIR INTERPRETATION
 
 class AbstractResourceManager {
 
 public:
-    AbstractResourceManager(const AbstractResourceManager&) = delete;
-
-    AbstractResourceManager& operator=(const AbstractResourceManager&) = delete;
-
-    static AbstractResourceManager& getInstance();
-
-    BulletDescription& getBulletDescription(const std::string& key);
-
-    ShootingWeapon& getWeapon(const std::string& key);
+    AbstractResourceManager() = default;
 
     sf::Texture& getTexture(const std::string& key);
 
     sf::Font& getFont(const std::string& key);
 
-    sf::Font& getFont();
+    utils::J3XParameters& getParameters(const std::string& key);
 
-    static std::tuple<std::list<Obstacle>, std::list<Decoration>> getMap(const std::string& key);
+    sf::Font& getFont();
 
     // TODO LazyLoad every type of objects
     void lazyLoadTexture(const std::string& key);
 
 private:
-    AbstractResourceManager() = default;
-
-    void loadBulletDescription(const std::string& key);
-
-    void loadWeapon(const std::string& key);
+    void loadJ3XFile(const std::string& key);
 
     void loadTexture(const std::string& key);
 
     void loadFont(const std::string& key);
 
-    static std::tuple<std::list<Obstacle>, std::list<Decoration>> loadMap(const std::string& key);
-
     std::map<std::string, sf::Texture> textures_;
-    std::map<std::string, ShootingWeapon> weapons_;
-    std::map<std::string, BulletDescription> bullets_;
     std::map<std::string, sf::Font> fonts_;
+    std::map<std::string, utils::J3XParameters> parameters_;
 };
 
 

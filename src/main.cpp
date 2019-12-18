@@ -4,7 +4,7 @@
 
 #include <engine/system/Config.h>
 #include <engine/system/Engine.h>
-#include <engine/system/AbstractResourceManager.h>
+#include <game/misc/ResourceManager.h>
 
 
 int main()
@@ -20,10 +20,10 @@ int main()
         CFG.setInt("window_height_px", res.y);
     }
 
-    AbstractResourceManager::getInstance().lazyLoadTexture("animation_shot");
-    AbstractResourceManager::getInstance().lazyLoadTexture("animation_explosion1");
-    AbstractResourceManager::getInstance().lazyLoadTexture("animation_explosion2");
-    AbstractResourceManager::getInstance().lazyLoadTexture("animation_explosion3");
+    ResourceManager::getInstance().lazyLoadTexture("animation_shot");
+    ResourceManager::getInstance().lazyLoadTexture("animation_explosion1");
+    ResourceManager::getInstance().lazyLoadTexture("animation_explosion2");
+    ResourceManager::getInstance().lazyLoadTexture("animation_explosion3");
 
     std::unique_ptr<AbstractUserInterface> user_interface = std::make_unique<UserInterface>();
     std::unique_ptr<AbstractCamera> camera = std::make_unique<Camera>();

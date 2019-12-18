@@ -5,13 +5,13 @@
 #include <engine/utils/Utils.h>
 
 #include <game/animations/ExplosionAnimation.h>
-#include <engine/system/AbstractResourceManager.h>
+#include <game/misc/ResourceManager.h>
 
 
 ExplosionAnimation::ExplosionAnimation(const sf::Vector2f& position,
                                        float radius) :
         AnimationEvent(
-                &AbstractResourceManager::getInstance().getTexture(
+                &ResourceManager::getInstance().getTexture(
                         "animation_explosion" + std::to_string(utils::getRandom<int>(1, 3))),
                 {ExplosionAnimation::WIDTH_PX_, ExplosionAnimation::HEIGHT_PX_}, position,
                 ExplosionAnimation::DURATION_S_, ExplosionAnimation::MAX_FRAMES_COUNT_,

@@ -3,14 +3,14 @@
 //
 
 #include <game/weapons/AbstractWeapon.h>
-#include <engine/system/AbstractResourceManager.h>
+#include <game/misc/ResourceManager.h>
 
 
 AbstractWeapon::AbstractWeapon(const sf::Vector2f& size,
                                const std::string& name) :
         name_(name),
         AbstractDrawableObject({}, size,
-                               name.empty() ? nullptr : &AbstractResourceManager::getInstance().getTexture("weapon_" + name))
+                               name.empty() ? nullptr : &ResourceManager::getInstance().getTexture("weapon_" + name))
 {
 }
 

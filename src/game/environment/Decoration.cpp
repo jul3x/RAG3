@@ -3,14 +3,14 @@
 //
 
 #include <game/environment/Decoration.h>
-#include <engine/system/AbstractResourceManager.h>
+#include <game/misc/ResourceManager.h>
 
 
 Decoration::Decoration(const sf::Vector2f& position,
                        const int type_number) :
         AbstractDrawableObject(position,
                                {SIZE_X_, SIZE_Y_},
-                               &AbstractResourceManager::getInstance().getTexture(
+                               &ResourceManager::getInstance().getTexture(
                                        "decoration" + std::to_string(type_number))) {}
 
 Decoration::Decoration(const sf::Vector2f& position,

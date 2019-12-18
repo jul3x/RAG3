@@ -8,7 +8,7 @@
 #include <game/animations/ExplosionAnimation.h>
 #include <game/animations/ShotAnimation.h>
 #include <game/animations/SparksAnimation.h>
-#include <engine/system/AbstractResourceManager.h>
+#include <game/misc/ResourceManager.h>
 
 #include <engine/system/Engine.h>
 
@@ -71,7 +71,7 @@ void Engine::spawnShotAnimation(const sf::Vector2f& pos, const float dir, const 
 
 void Engine::spawnBullet(const std::string& name, const sf::Vector2f& pos, const float dir)
 {
-    bullets_.emplace_back(AbstractResourceManager::getInstance().getBulletDescription(name), pos, dir);
+    bullets_.emplace_back(ResourceManager::getInstance().getBulletDescription(name), pos, dir);
 }
 
 void Engine::update(int frame_rate)

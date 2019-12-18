@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 
-#include <utils/Numeric.h>
+#include <engine/utils/Numeric.h>
 
 TEST(NumericTest, IsNearlyEqual) {
     // positive values

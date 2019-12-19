@@ -23,7 +23,8 @@ public:
 
     Game& operator=(const Game&) = delete;
 
-    static Game& get() {
+    static Game& get()
+    {
         static Game instance;
         return instance;
     }
@@ -43,6 +44,16 @@ public:
     void update(float time_elapsed) override;
 
     void draw(Graphics& graphics) override;
+
+    void alertCollision(HoveringObject* h_obj, StaticObject* s_obj) override;
+
+    void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) override;
+
+    void alertCollision(DynamicObject* d_obj, StaticObject* s_obj) override;
+
+    void deleteStaticObject(StaticObject* s_obj);
+
+    void deleteDynamicObject(DynamicObject* d_obj);
 
     void start(int frame_rate);
 

@@ -36,6 +36,14 @@ void Game::initialize()
     engine_->registerUI(ui_.get());
 
     map_->loadMap("map");
+
+    for (auto& obstacle : map_->getObstacles())
+        engine_->registerStaticObject(&obstacle);
+
+    for (auto& enemy : map_->getEnemies())
+        engine_->registerDynamicObject(&enemy);
+
+    engine_->registerDynamicObject(player_.get());
 }
 
 void Game::update(float time_elapsed)
@@ -49,71 +57,14 @@ void Game::update(float time_elapsed)
         map_->spawnDecoration(player_->getPosition(), Decoration::Type::Blood);
         spawnExplosionAnimation(player_->getPosition(), 25.0f);
         player_->setDead();
-    }
-
-    auto visible_enemies = map_->getVisibleEnemies();
-    auto visible_obstacles = map_->getVisibleObstacles();
-
-    for (auto& obstacle : map_->getVisibleObstacles())
-    {
-        utils::AABBwithDS(*player_, *obstacle);
-
-        // obstacles -> enemies
-        for (auto& visible_enemy : visible_enemies)
-        {
-            utils::AABBwithDS(*visible_enemy, *obstacle);
-        }
+        engine_->deleteDynamicObject(player_.get());
     }
 
     for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
     {
-        bool remove_bullet = false;
-        bool shooted = false;
-
-        // bullet -> obstacle
-        for (auto& visible_obstacle : visible_obstacles)
+        if (!(*it)->update(time_elapsed))
         {
-            if (utils::AABB(**it, *visible_obstacle))
-            {
-                visible_obstacle->getShot(**it);
-                shooted = true;
-
-                break;
-            }
-        }
-
-        // bullet -> player
-        if (player_->isAlive() && utils::AABB(**it, *player_))
-        {
-            player_->getShot(**it);
-            shooted = true;
-        }
-
-        // bullet -> enemies
-        for (auto& visible_enemy : visible_enemies)
-        {
-            if (utils::AABB(**it, *visible_enemy))
-            {
-                visible_enemy->getShot(**it);
-                shooted = true;
-
-                break;
-            }
-        }
-
-        if (shooted)
-        {
-            spawnSparksAnimation((*it)->getPosition(), (*it)->getRotation() - 90.0f,
-                                 std::pow((*it)->getDeadlyFactor(), 0.4f));
-        }
-
-        if (!(*it)->update(time_elapsed) || shooted)
-        {
-            remove_bullet = true;
-        }
-
-        if (remove_bullet)
-        {
+            engine_->deleteHoveringObject(it->get());
             auto next_it = std::next(it);
             bullets_.erase(it);
             it = next_it;
@@ -167,4 +118,41 @@ void Game::spawnBullet(const std::string& name, const sf::Vector2f& pos, const f
 {
     bullets_.emplace_back(
             std::make_unique<Bullet>(ResourceManager::getInstance().getBulletDescription(name), pos, dir));
+    engine_->registerHoveringObject(bullets_.back().get());
+}
+
+void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
+{
+    auto bullet = dynamic_cast<Bullet*>(h_obj);
+    auto obstacle = dynamic_cast<Obstacle*>(s_obj);
+    obstacle->getShot(*bullet);
+    spawnSparksAnimation(bullet->getPosition(), bullet->getRotation() - 90.0f,
+                                 std::pow(bullet->getDeadlyFactor(), 0.4f));
+    // REMOVE BULLET SOMEHOW?!
+}
+
+void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
+{
+    auto bullet = dynamic_cast<Bullet*>(h_obj);
+    auto character = dynamic_cast<Character*>(d_obj);
+    character->getShot(*bullet);
+    spawnSparksAnimation(bullet->getPosition(), bullet->getRotation() - 90.0f,
+                         std::pow(bullet->getDeadlyFactor(), 0.4f));
+
+    // REMOVE BULLET SOMEHOW?!
+}
+
+void Game::alertCollision(DynamicObject* d_obj, StaticObject* s_obj)
+{
+    // Nothing to do for now (maybe sounds?)
+}
+
+void Game::deleteStaticObject(StaticObject* s_obj)
+{
+    engine_->deleteStaticObject(s_obj);
+}
+
+void Game::deleteDynamicObject(DynamicObject* d_obj)
+{
+    engine_->deleteStaticObject(d_obj);
 }

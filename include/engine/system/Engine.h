@@ -6,6 +6,7 @@
 #define RAG3_ENGINE_SYSTEM_ENGINE_H
 
 #include <memory>
+#include <unordered_set>
 #include <list>
 
 #include <engine/graphics/Graphics.h>
@@ -13,6 +14,7 @@
 #include <engine/graphics/AnimationEvent.h>
 #include <engine/system/AbstractUserInterface.h>
 #include <engine/system/AbstractGame.h>
+#include <engine/objects/AbstractPhysicalObject.h>
 
 
 class Engine {
@@ -32,6 +34,18 @@ public:
 
     void registerGame(AbstractGame* game);
 
+    void registerStaticObject(StaticObject* obj);
+
+    void registerDynamicObject(DynamicObject* obj);
+
+    void registerHoveringObject(HoveringObject* obj);
+
+    void deleteStaticObject(StaticObject* obj);
+
+    void deleteDynamicObject(DynamicObject* obj);
+
+    void deleteHoveringObject(HoveringObject* obj);
+
     void spawnAnimationEvent(const std::shared_ptr<AnimationEvent>& event);
 
     void setVisibility(AbstractDrawableObject& object) const;
@@ -41,6 +55,16 @@ public:
     static sf::Vector2i detectResolution();
 
 private:
+    void DSCollisions(float time_elapsed);
+
+    void HSCollisions(float time_elapsed);
+
+    void HDCollisions(float time_elapsed);
+
+    void updateAnimationEvents(float time_elapsed);
+
+    void draw();
+
     void ensureConstantFrameRate(int frame_rate);
 
     void restartClock();
@@ -52,6 +76,12 @@ private:
     AbstractUserInterface* ui_;
     AbstractCamera* camera_;
     AbstractGame* game_;
+
+    // Objects
+    std::unordered_set<StaticObject*> s_objects_;
+    std::unordered_set<DynamicObject*> d_objects_;
+    std::unordered_set<HoveringObject*> h_objects_;
+
 
     sf::Clock clock_;
     sf::Time time_;

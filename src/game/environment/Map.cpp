@@ -16,6 +16,10 @@ void Map::loadMap(const std::string& name)
     enemies_.emplace_back(sf::Vector2f{500.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
     enemies_.emplace_back(sf::Vector2f{1000.0f, 500.0f}, sf::Vector2f{0.0f, 0.0f});
     enemies_.emplace_back(sf::Vector2f{1500.0f, 300.0f}, sf::Vector2f{0.0f, 0.0f});
+//    enemies_.emplace_back(sf::Vector2f{-1000.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
+//    enemies_.emplace_back(sf::Vector2f{-500.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
+//    enemies_.emplace_back(sf::Vector2f{-1000.0f, 500.0f}, sf::Vector2f{0.0f, 0.0f});
+//    enemies_.emplace_back(sf::Vector2f{-1500.0f, 300.0f}, sf::Vector2f{0.0f, 0.0f});
 
     visible_obstacles_.clear();
     visible_enemies_.clear();
@@ -64,6 +68,7 @@ void Map::spawnDecoration(const sf::Vector2f& pos, Decoration::Type which)
 
 bool Map::update(float time_elapsed)
 {
+    // TODO Remove this - because it will be no longer needed when uniform grid is applied
     visible_obstacles_.clear();
     visible_enemies_.clear();
     // TODO Make private function that encapsulates this logic
@@ -79,6 +84,7 @@ bool Map::update(float time_elapsed)
                 Game::get().spawnExplosionAnimation(it->getPosition(), 25.0f);
 
                 auto next_it = std::next(it);
+                Game::get().deleteStaticObject(&*it);
                 obstacles_.erase(it);
                 it = next_it;
                 do_increment = false;
@@ -104,6 +110,7 @@ bool Map::update(float time_elapsed)
                 Game::get().spawnExplosionAnimation(it->getPosition(), 25.0f);
 
                 auto next_it = std::next(it);
+                Game::get().deleteDynamicObject(&*it);
                 enemies_.erase(it);
                 it = next_it;
                 do_increment = false;

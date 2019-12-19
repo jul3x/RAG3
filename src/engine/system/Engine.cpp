@@ -53,34 +53,14 @@ void Engine::update(int frame_rate)
         ui_->handleEvents(*graphics_);
         game_->update(time_elapsed);
 
-        for (auto it = animation_events_.begin(); it != animation_events_.end(); ++it)
-        {
-            if ((*it)->update(time_elapsed))
-            {
-                auto next_it = std::next(it);
-                animation_events_.erase(it);
-                it = next_it;
-            }
-        }
+        DSCollisions(time_elapsed);
+        //DDCollisions(time_elapsed);
+        HSCollisions(time_elapsed);
+        HDCollisions(time_elapsed);
 
-        // drawing
-        {
-            graphics_->clear();
-            graphics_->setViewCenter(camera_->getViewCenter());
+        updateAnimationEvents(time_elapsed);
 
-            game_->draw(*graphics_);
-
-            for (const auto& animation : animation_events_)
-            {
-                graphics_->draw(*animation);
-            }
-
-            graphics_->setStaticView();
-            graphics_->draw(*ui_);
-            graphics_->setCurrentView();
-
-            graphics_->display();
-        }
+        draw();
 
         ensureConstantFrameRate(frame_rate);
     }
@@ -113,4 +93,114 @@ void Engine::restartClock()
 void Engine::setVisibility(AbstractDrawableObject& object) const
 {
     object.setVisibility(graphics_->getCurrentView());
+}
+
+void Engine::registerStaticObject(StaticObject* obj)
+{
+    s_objects_.insert(obj);
+}
+
+void Engine::registerDynamicObject(DynamicObject* obj)
+{
+    d_objects_.insert(obj);
+}
+
+void Engine::registerHoveringObject(HoveringObject* obj)
+{
+    h_objects_.insert(obj);
+}
+
+void Engine::deleteStaticObject(StaticObject* obj)
+{
+    s_objects_.erase(obj);
+}
+
+void Engine::deleteDynamicObject(DynamicObject* obj)
+{
+    d_objects_.erase(obj);
+}
+
+void Engine::deleteHoveringObject(HoveringObject* obj)
+{
+    h_objects_.erase(obj);
+}
+
+void Engine::updateAnimationEvents(float time_elapsed)
+{
+    for (auto it = animation_events_.begin(); it != animation_events_.end(); ++it)
+    {
+        if ((*it)->update(time_elapsed))
+        {
+            auto next_it = std::next(it);
+            animation_events_.erase(it);
+            it = next_it;
+        }
+    }
+}
+
+void Engine::draw()
+{
+    graphics_->clear();
+    graphics_->setViewCenter(camera_->getViewCenter());
+
+    game_->draw(*graphics_);
+
+    for (const auto& animation : animation_events_)
+    {
+        graphics_->draw(*animation);
+    }
+
+    graphics_->setStaticView();
+    graphics_->draw(*ui_);
+    graphics_->setCurrentView();
+
+    graphics_->display();
+}
+
+void Engine::DSCollisions(float time_elapsed)
+{
+    for (auto sit = s_objects_.begin(); sit != s_objects_.end(); ++sit)
+    {
+        for (auto d_object : d_objects_)
+        {
+            if (utils::AABBwithDS(*d_object, **sit))
+            {
+                game_->alertCollision(d_object, *sit);
+                //++sit;
+                break;
+            }
+        }
+    }
+}
+
+void Engine::HSCollisions(float time_elapsed)
+{
+    for (auto hit = h_objects_.begin(); hit != h_objects_.end(); ++hit)
+    {
+        for (auto& s_obj : s_objects_)
+        {
+            if (utils::AABB(**hit, *s_obj))
+            {
+                game_->alertCollision(*hit, s_obj);
+                //++hit;
+                break;
+            }
+        }
+    }
+}
+
+void Engine::HDCollisions(float time_elapsed)
+{
+    for (auto hit = h_objects_.begin(); hit != h_objects_.end(); ++hit)
+    {
+        for (auto& d_obj : d_objects_)
+        {
+            if (utils::AABB(**hit, *d_obj))
+            {
+                game_->alertCollision(*hit, d_obj);
+                //++hit;
+                break;
+            }
+        }
+    }
 }

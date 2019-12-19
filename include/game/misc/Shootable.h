@@ -12,7 +12,7 @@ class Shootable {
 public:
     Shootable() = delete;
 
-    Shootable(int life) : life_(life) {}
+    explicit Shootable(int life) : life_(life) {}
 
     virtual void getShot(const Bullet& bullet)
     {

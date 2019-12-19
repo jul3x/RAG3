@@ -13,9 +13,10 @@
 
 #include <game/weapons/AbstractWeapon.h>
 #include <game/weapons/Bullet.h>
+#include <game/misc/Shootable.h>
 
 
-class Character : public DynamicObject {
+class Character : public DynamicObject, public Shootable {
 public:
     Character(const sf::Vector2f& position,
               const sf::Vector2f& velocity,
@@ -23,7 +24,7 @@ public:
 
     bool shot();
 
-    void getShot(const Bullet& bullet);
+    void getShot(const Bullet& bullet) override;
 
     void switchWeapon(int relative_position_backpack);
 
@@ -48,7 +49,6 @@ private:
     static constexpr float SIZE_Y_ = 125.0f;
 
     int max_life_;
-    int life_;
 };
 
 #endif // RAG3_GAME_CHARACTERS_CHARACTER_H

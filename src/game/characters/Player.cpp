@@ -11,7 +11,7 @@
 
 Player::Player(const sf::Vector2f& position,
                const sf::Vector2f& velocity) :
-        Character(position, velocity, 1000),
+        Character(position, velocity, 200),
         is_alive_(true)
 {
     weapons_in_backpack_.push_back(

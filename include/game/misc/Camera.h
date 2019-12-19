@@ -23,8 +23,6 @@ private:
         SHOOTING
     };
 
-    static constexpr float SHAKING_TIME_ = 0.3f;
-
     Camera::State state_;
 };
 

@@ -14,7 +14,7 @@ Camera::Camera() : state_(State::NORMAL) {}
 void Camera::setShaking()
 {
     state_ = State::SHOOTING;
-    time_elapsed_ = SHAKING_TIME_;
+    time_elapsed_ = CFG.getFloat("camera_shaking_time") ;
 }
 
 void Camera::update(const sf::Vector2f& position, float time_elapsed)
@@ -26,9 +26,12 @@ void Camera::update(const sf::Vector2f& position, float time_elapsed)
 
     if (state_ == State::SHOOTING)
     {
-        center_.z = CFG.getFloat("camera_recoil") * std::sin(time_elapsed_ / SHAKING_TIME_ * M_PI * 2.0f);
-        center_.x += CFG.getFloat("camera_recoil") * std::sin(time_elapsed_ / SHAKING_TIME_ * M_PI * 2.0f);
-        center_.y += CFG.getFloat("camera_recoil") * std::sin(time_elapsed_ / SHAKING_TIME_ * M_PI * 2.0f);
+        center_.z = CFG.getFloat("camera_recoil") *
+                    std::sin(time_elapsed_ / CFG.getFloat("camera_shaking_time") * M_PI * 2.0f);
+        center_.x += CFG.getFloat("camera_recoil") *
+                     std::sin(time_elapsed_ / CFG.getFloat("camera_shaking_time") * M_PI * 2.0f);
+        center_.y += CFG.getFloat("camera_recoil") *
+                     std::sin(time_elapsed_ / CFG.getFloat("camera_shaking_time") * M_PI * 2.0f);
         time_elapsed_ -= time_elapsed;
     }
     else

@@ -12,18 +12,13 @@ Obstacle::Obstacle(const sf::Vector2f& position,
                    const int type_number) :
         StaticObject(position,
                      {SIZE_X_, SIZE_Y_},
-                     &ResourceManager::getInstance().getTexture("obstacle" + std::to_string(type_number)))
+                     &ResourceManager::getInstance().getTexture("obstacle" + std::to_string(type_number))),
+        Shootable(type_number * CFG.getInt("obstacles_endurance_factor"))
 {
-    shots_left_ = type_number * CFG.getInt("obstacles_endurance_factor");
     // type_number determines if wall is solid (for now)
-}
-
-void Obstacle::getShot(const Bullet& bullet)
-{
-    shots_left_ -= bullet.getDeadlyFactor();
 }
 
 bool Obstacle::update(float time_elapsed)
 {
-    return shots_left_ > 0;
+    return life_ > 0;
 }

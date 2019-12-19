@@ -20,7 +20,7 @@ Character::Character(const sf::Vector2f& position,
                       &ResourceManager::getInstance().getTexture("player"),
                       CFG.getFloat("player_max_acceleration")),
         max_life_(max_life),
-        life_(max_life) {}
+        Shootable(max_life) {}
 
 bool Character::shot()
 {

@@ -28,6 +28,11 @@ int Bullet::getDeadlyFactor() const
     return deadly_factor_;
 }
 
+void Bullet::setDead()
+{
+    life_ = -1.0f;
+}
+
 bool Bullet::update(float time_elapsed)
 {
     DynamicObject::update(time_elapsed);

@@ -31,6 +31,8 @@ public:
 
     bool update(float time_elapsed) override;
 
+    void setDead();
+
     int getDeadlyFactor() const;
 
 private:

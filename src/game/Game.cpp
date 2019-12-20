@@ -128,8 +128,8 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
     obstacle->getShot(*bullet);
     spawnSparksAnimation(bullet->getPosition(), bullet->getRotation() - 90.0f,
                          static_cast<float>(std::pow(bullet->getDeadlyFactor(), 0.4f)));
-    
-    // REMOVE BULLET SOMEHOW?!
+
+    bullet->setDead();
 }
 
 void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
@@ -140,7 +140,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     spawnSparksAnimation(bullet->getPosition(), bullet->getRotation() - 90.0f,
                          static_cast<float>(std::pow(bullet->getDeadlyFactor(), 0.4f)));
 
-    // REMOVE BULLET SOMEHOW?!
+    bullet->setDead();
 }
 
 void Game::alertCollision(DynamicObject* d_obj, StaticObject* s_obj)

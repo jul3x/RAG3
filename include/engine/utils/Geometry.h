@@ -181,29 +181,21 @@ namespace utils {
         {
             a.setForcedVelocity({a.getVelocity().x, 0.0f});
             a.setPosition(a.getPosition().x, b1.y - a.getSize().y / 2.0f - 1.0f);
-            b.setForcedVelocity({b.getVelocity().x, 0.0f});
-            b.setPosition(b.getPosition().x, a2.y + b.getSize().y / 2.0f + 1.0f);
         }
         else if (direction == 4)
         {
             a.setForcedVelocity({a.getVelocity().x, 0.0f});
             a.setPosition(a.getPosition().x, b2.y + a.getSize().y / 2.0f + 1.0f);
-            b.setForcedVelocity({b.getVelocity().x, 0.0f});
-            b.setPosition(b.getPosition().x, a1.y - b.getSize().y / 2.0f - 1.0f);
         }
         else if (direction == 3)
         {
             a.setForcedVelocity({0.0f, a.getVelocity().y});
             a.setPosition(b2.x + a.getSize().x / 2.0f + 1.0f, a.getPosition().y);
-            b.setForcedVelocity({0.0f, b.getVelocity().y});
-            b.setPosition(a1.x + b.getSize().x / 2.0f + 1.0f, b.getPosition().y);
         }
         else if (direction == 1)
         {
             a.setForcedVelocity({0.0f, a.getVelocity().y});
             a.setPosition(b1.x - a.getSize().x / 2.0f - 1.0f, a.getPosition().y);
-            b.setForcedVelocity({0.0f, b.getVelocity().y});
-            b.setPosition(a2.x - b.getSize().x / 2.0f - 1.0f, b.getPosition().y);
         }
         else
         {

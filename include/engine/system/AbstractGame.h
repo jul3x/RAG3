@@ -18,6 +18,7 @@ public:
     virtual void alertCollision(HoveringObject* h_obj, StaticObject* s_obj) = 0;
     virtual void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) = 0;
     virtual void alertCollision(DynamicObject* d_obj, StaticObject* s_obj) = 0;
+    virtual void alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2) = 0;
 
 };
 

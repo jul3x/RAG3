@@ -148,6 +148,11 @@ void Game::alertCollision(DynamicObject* d_obj, StaticObject* s_obj)
     // Nothing to do for now (maybe sounds?)
 }
 
+void Game::alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2)
+{
+    // Nothing to do for now (maybe sounds?)
+}
+
 void Game::deleteStaticObject(StaticObject* s_obj)
 {
     engine_->deleteStaticObject(s_obj);

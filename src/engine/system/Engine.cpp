@@ -54,7 +54,7 @@ void Engine::update(int frame_rate)
         game_->update(time_elapsed);
 
         DSCollisions(time_elapsed);
-        //DDCollisions(time_elapsed);
+        DDCollisions(time_elapsed);
         HSCollisions(time_elapsed);
         HDCollisions(time_elapsed);
 
@@ -159,9 +159,9 @@ void Engine::draw()
 
 void Engine::DSCollisions(float time_elapsed)
 {
-    for (auto s_object : s_objects_)
+    for (auto& s_object : s_objects_)
     {
-        for (auto d_object : d_objects_)
+        for (auto& d_object : d_objects_)
         {
             if (utils::AABBwithDS(*d_object, *s_object))
             {
@@ -173,9 +173,25 @@ void Engine::DSCollisions(float time_elapsed)
     }
 }
 
+void Engine::DDCollisions(float time_elapsed)
+{
+    for (auto& d_object_1 : d_objects_)
+    {
+        for (auto& d_object_2 : d_objects_)
+        {
+            if (d_object_1 != d_object_2 && utils::AABBwithDD(*d_object_1, *d_object_2))
+            {
+                game_->alertCollision(d_object_1, d_object_2);
+
+                break;
+            }
+        }
+    }
+}
+
 void Engine::HSCollisions(float time_elapsed)
 {
-    for (auto h_object : h_objects_)
+    for (auto& h_object : h_objects_)
     {
         for (auto& s_obj : s_objects_)
         {
@@ -191,7 +207,7 @@ void Engine::HSCollisions(float time_elapsed)
 
 void Engine::HDCollisions(float time_elapsed)
 {
-    for (auto h_object : h_objects_)
+    for (auto& h_object : h_objects_)
     {
         for (auto& d_obj : d_objects_)
         {

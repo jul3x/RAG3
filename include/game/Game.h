@@ -51,6 +51,8 @@ public:
 
     void alertCollision(DynamicObject* d_obj, StaticObject* s_obj) override;
 
+    void alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2) override;
+
     void deleteStaticObject(StaticObject* s_obj);
 
     void deleteDynamicObject(DynamicObject* d_obj);

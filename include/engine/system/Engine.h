@@ -57,6 +57,8 @@ public:
 private:
     void DSCollisions(float time_elapsed);
 
+    void DDCollisions(float time_elapsed);
+
     void HSCollisions(float time_elapsed);
 
     void HDCollisions(float time_elapsed);

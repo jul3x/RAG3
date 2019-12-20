@@ -159,14 +159,14 @@ void Engine::draw()
 
 void Engine::DSCollisions(float time_elapsed)
 {
-    for (auto sit = s_objects_.begin(); sit != s_objects_.end(); ++sit)
+    for (auto s_object : s_objects_)
     {
         for (auto d_object : d_objects_)
         {
-            if (utils::AABBwithDS(*d_object, **sit))
+            if (utils::AABBwithDS(*d_object, *s_object))
             {
-                game_->alertCollision(d_object, *sit);
-                //++sit;
+                game_->alertCollision(d_object, s_object);
+
                 break;
             }
         }
@@ -175,14 +175,14 @@ void Engine::DSCollisions(float time_elapsed)
 
 void Engine::HSCollisions(float time_elapsed)
 {
-    for (auto hit = h_objects_.begin(); hit != h_objects_.end(); ++hit)
+    for (auto h_object : h_objects_)
     {
         for (auto& s_obj : s_objects_)
         {
-            if (utils::AABB(**hit, *s_obj))
+            if (utils::AABB(*h_object, *s_obj))
             {
-                game_->alertCollision(*hit, s_obj);
-                //++hit;
+                game_->alertCollision(h_object, s_obj);
+
                 break;
             }
         }
@@ -191,14 +191,14 @@ void Engine::HSCollisions(float time_elapsed)
 
 void Engine::HDCollisions(float time_elapsed)
 {
-    for (auto hit = h_objects_.begin(); hit != h_objects_.end(); ++hit)
+    for (auto h_object : h_objects_)
     {
         for (auto& d_obj : d_objects_)
         {
-            if (utils::AABB(**hit, *d_obj))
+            if (utils::AABB(*h_object, *d_obj))
             {
-                game_->alertCollision(*hit, d_obj);
-                //++hit;
+                game_->alertCollision(h_object, d_obj);
+
                 break;
             }
         }

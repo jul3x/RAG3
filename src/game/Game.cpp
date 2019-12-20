@@ -127,7 +127,8 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
     auto obstacle = dynamic_cast<Obstacle*>(s_obj);
     obstacle->getShot(*bullet);
     spawnSparksAnimation(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                                 std::pow(bullet->getDeadlyFactor(), 0.4f));
+                         static_cast<float>(std::pow(bullet->getDeadlyFactor(), 0.4f)));
+    
     // REMOVE BULLET SOMEHOW?!
 }
 
@@ -137,7 +138,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     auto character = dynamic_cast<Character*>(d_obj);
     character->getShot(*bullet);
     spawnSparksAnimation(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                         std::pow(bullet->getDeadlyFactor(), 0.4f));
+                         static_cast<float>(std::pow(bullet->getDeadlyFactor(), 0.4f)));
 
     // REMOVE BULLET SOMEHOW?!
 }
@@ -154,5 +155,5 @@ void Game::deleteStaticObject(StaticObject* s_obj)
 
 void Game::deleteDynamicObject(DynamicObject* d_obj)
 {
-    engine_->deleteStaticObject(d_obj);
+    engine_->deleteDynamicObject(d_obj);
 }

@@ -61,13 +61,6 @@ void DynamicObject::setForcedVelocity(const sf::Vector2f& velocity)
     curr_v_ = velocity;
 }
 
-void DynamicObject::setVisibility(const sf::View& view)
-{
-    // visibility is checked on smaller view than static obstacles
-    is_visible_ = utils::AABB(view.getCenter(), view.getSize(),
-                              this->getPosition(), this->getSize());
-}
-
 bool DynamicObject::update(float time_elapsed)
 {
     trail_.push_back(this->getPosition());

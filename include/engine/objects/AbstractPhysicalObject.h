@@ -55,8 +55,6 @@ public:
 
     void setForcedVelocity(const sf::Vector2f& velocity);
 
-    void setVisibility(const sf::View& view) override;
-
     bool update(float time_elapsed) override;
 
 protected:
@@ -65,9 +63,9 @@ protected:
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    float acceleration_;
-
     static constexpr size_t TRAIL_COUNT_ = 10;
+
+    float acceleration_;
 
     sf::Vector2f curr_v_, set_v_;
 

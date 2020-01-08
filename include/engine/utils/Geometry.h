@@ -158,22 +158,22 @@ namespace utils {
         if (direction == 2)
         {
             a.setForcedVelocity({a.getVelocity().x, 0.0f});
-            a.setPosition(a.getPosition().x, b1.y - a_size.y / 2.0f - 1.0f);
+            a.setPosition(a.getPosition().x, b1.y - a.getCollisionArea().getOffset().y - a_size.y / 2.0f - 1.0f);
         }
         else if (direction == 4)
         {
             a.setForcedVelocity({a.getVelocity().x, 0.0f});
-            a.setPosition(a.getPosition().x, b2.y + a_size.y / 2.0f + 1.0f);
+            a.setPosition(a.getPosition().x, b2.y - a.getCollisionArea().getOffset().y + a_size.y / 2.0f + 1.0f);
         }
         else if (direction == 3)
         {
             a.setForcedVelocity({0.0f, a.getVelocity().y});
-            a.setPosition(b2.x + a_size.x / 2.0f + 1.0f, a.getPosition().y);
+            a.setPosition(b2.x - a.getCollisionArea().getOffset().x + a_size.x / 2.0f + 1.0f, a.getPosition().y);
         }
         else if (direction == 1)
         {
             a.setForcedVelocity({0.0f, a.getVelocity().y});
-            a.setPosition(b1.x - a_size.x / 2.0f - 1.0f, a.getPosition().y);
+            a.setPosition(b1.x - a.getCollisionArea().getOffset().x - a_size.x / 2.0f - 1.0f, a.getPosition().y);
         }
         else
         {

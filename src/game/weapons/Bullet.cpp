@@ -14,6 +14,7 @@ Bullet::Bullet(const BulletDescription& description,
                        {description.speed_ * std::cos(direction),
                         description.speed_ * std::sin(direction)},
                        {description.size_x_, description.size_y_},
+                       Collision::Box(description.size_x_, description.size_y_),
                        &ResourceManager::getInstance().getTexture("bullet_" + description.name_),
                        sf::Color(CFG.getInt("trail_color")),
                        0.0f)

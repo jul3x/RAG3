@@ -38,6 +38,9 @@
 # CMake
 cmake-build-debug/*
 cmake-build-release/*
+test/cmake-build-debug/*
+test/cmake-build-release/*
+
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
@@ -50,5 +53,3 @@ test/build_test/*
 # gtest
 *googletest*
 
-# saved systems
-data/systems/*

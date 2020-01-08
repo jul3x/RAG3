@@ -1,10 +1,12 @@
 //
-// Created by jprolejko on 26.02.19.
+// Created by jul3x on 26.02.19.
 //
 
-#include <system/Config.h>
-#include <system/Engine.h>
-#include <system/ResourceManager.h>
+#include <engine/system/Config.h>
+#include <engine/system/Engine.h>
+#include <game/misc/ResourceManager.h>
+#include <game/Game.h>
+
 
 int main()
 {
@@ -23,7 +25,8 @@ int main()
     ResourceManager::getInstance().lazyLoadTexture("animation_explosion1");
     ResourceManager::getInstance().lazyLoadTexture("animation_explosion2");
     ResourceManager::getInstance().lazyLoadTexture("animation_explosion3");
-    Engine::getInstance().update(FRAME_RATE);
+
+    Game::get().start(FRAME_RATE);
 
     return 0;
 }

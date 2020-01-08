@@ -1,5 +1,5 @@
 #
-# Created by jprolejko on 16.07.19.
+# Created by jul3x on 16.07.19.
 #
 
 cmake_minimum_required(VERSION 3.6)
@@ -39,10 +39,14 @@ endif()
 
 # Common build
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../cmake_modules" ${CMAKE_MODULE_PATH})
-find_package(SFML 2 REQUIRED COMPONENTS network audio graphics window system)
+
+# Change this if you're working on Windows to your SFML path.
+set(SFML_ROOT "C:/SFML-2.5.1")
+
+find_package(SFML 2 REQUIRED COMPONENTS graphics window system)
 
 include_directories(../include)
-include_directories(${SFML_INCLUDE_DIR} ${TGUI_INCLUDE_DIR})
+include_directories(${SFML_INCLUDE_DIR})
 
 set(EXECUTABLE_NAME "Rag3Test")
 set(TEST_MAIN "gtest.cpp")
@@ -55,7 +59,7 @@ list(FILTER MAIN_SRC EXCLUDE REGEX "main")
 add_executable(${EXECUTABLE_NAME} ${TEST_MAIN} ${TEST_SRC} ${MAIN_SRC})
 
 target_link_libraries(${EXECUTABLE_NAME} stdc++fs)
-target_link_libraries(${EXECUTABLE_NAME} gtest ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
+target_link_libraries(${EXECUTABLE_NAME} gtest ${SFML_GRAPHICS_LIBRARY} ${SFML_WINDOW_LIBRARY} ${SFML_SYSTEM_LIBRARY})
 add_test(NAME ${EXECUTABLE_NAME} COMMAND ${EXECUTABLE_NAME})
 
 

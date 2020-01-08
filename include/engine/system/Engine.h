@@ -26,7 +26,10 @@ public:
 
     Engine();
 
-    void initializeGraphics(const sf::Vector2i& size, const std::string& title, int style);
+    void initializeGraphics(const sf::Vector2i& size,
+                            const std::string& title,
+                            int style,
+                            const sf::Color &bg_color);
 
     void registerUI(AbstractUserInterface* user_interface);
 
@@ -34,11 +37,15 @@ public:
 
     void registerGame(AbstractGame* game);
 
+    void registerDrawableObject(AbstractDrawableObject* obj);
+
     void registerStaticObject(StaticObject* obj);
 
     void registerDynamicObject(DynamicObject* obj);
 
     void registerHoveringObject(HoveringObject* obj);
+
+    void deleteDrawableObject(AbstractDrawableObject* obj);
 
     void deleteStaticObject(StaticObject* obj);
 
@@ -55,6 +62,8 @@ public:
     static sf::Vector2i detectResolution();
 
 private:
+    void setVisibilities() const;
+
     void DSCollisions(float time_elapsed);
 
     void DDCollisions(float time_elapsed);
@@ -80,6 +89,7 @@ private:
     AbstractGame* game_;
 
     // Objects
+    std::unordered_set<AbstractDrawableObject*> drawables_;
     std::unordered_set<StaticObject*> s_objects_;
     std::unordered_set<DynamicObject*> d_objects_;
     std::unordered_set<HoveringObject*> h_objects_;

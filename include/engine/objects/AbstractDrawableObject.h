@@ -6,8 +6,6 @@
 #ifndef RAG3_ENGINE_OBJECTS_ABSTRACTDRAWABLEOBJECT_H
 #define RAG3_ENGINE_OBJECTS_ABSTRACTDRAWABLEOBJECT_H
 
-#include <string>
-
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>

@@ -5,12 +5,16 @@
 #include <engine/graphics/Graphics.h>
 
 
-Graphics::Graphics(const sf::Vector2i& size, const std::string& title, int style) : settings_(0, 0, 8),
-                                                                                    window_(sf::VideoMode(size.x,
-                                                                                                          size.y),
-                                                                                            title,
-                                                                                            style,
-                                                                                            settings_)
+Graphics::Graphics(const sf::Vector2i& size,
+                   const std::string& title,
+                   int style,
+                   const sf::Color& bg_color) : settings_(0, 0, 8),
+                                                window_(sf::VideoMode(size.x,
+                                                                        size.y),
+                                                        title,
+                                                        style,
+                                                        settings_),
+                                                bg_color_(bg_color)
 {
     current_view_ = window_.getView();
     current_view_.setSize(size.x, size.y);
@@ -68,7 +72,7 @@ void Graphics::setViewCenter(const sf::Vector3f& view_center)
 
 void Graphics::clear()
 {
-    window_.clear(sf::Color(CFG.getInt("background_color")));
+    window_.clear(bg_color_);
 }
 
 void Graphics::draw(const AbstractDrawableObject& object)

@@ -10,9 +10,12 @@
 
 Engine::Engine() {}
 
-void Engine::initializeGraphics(const sf::Vector2i& size, const std::string& title, int style)
+void Engine::initializeGraphics(const sf::Vector2i& size,
+                                const std::string& title,
+                                int style,
+                                const sf::Color &bg_color)
 {
-    graphics_ = std::make_unique<Graphics>(size, title, style);
+    graphics_ = std::make_unique<Graphics>(size, title, style, bg_color);
 }
 
 void Engine::registerUI(AbstractUserInterface* user_interface)
@@ -49,6 +52,8 @@ void Engine::update(int frame_rate)
         float time_elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
                 std::chrono::system_clock::now() - time_start).count() / 1000000.0f;
         time_start = std::chrono::system_clock::now();
+
+        setVisibilities();
 
         ui_->handleEvents(*graphics_);
         game_->update(time_elapsed);
@@ -95,6 +100,26 @@ void Engine::setVisibility(AbstractDrawableObject& object) const
     object.setVisibility(graphics_->getCurrentView());
 }
 
+void Engine::setVisibilities() const
+{
+    for (auto &drawable : drawables_)
+        drawable->setVisibility(graphics_->getCurrentView());
+
+    for (auto &s_obj : s_objects_)
+        s_obj->setVisibility(graphics_->getCurrentView());
+
+    for (auto &h_obj : h_objects_)
+        h_obj->setVisibility(graphics_->getCurrentView());
+
+    for (auto &d_obj : d_objects_)
+        d_obj->setVisibility(graphics_->getCurrentView());
+}
+
+void Engine::registerDrawableObject(AbstractDrawableObject* obj)
+{
+    drawables_.insert(obj);
+}
+
 void Engine::registerStaticObject(StaticObject* obj)
 {
     s_objects_.insert(obj);
@@ -108,6 +133,11 @@ void Engine::registerDynamicObject(DynamicObject* obj)
 void Engine::registerHoveringObject(HoveringObject* obj)
 {
     h_objects_.insert(obj);
+}
+
+void Engine::deleteDrawableObject(AbstractDrawableObject* obj)
+{
+    drawables_.erase(obj);
 }
 
 void Engine::deleteStaticObject(StaticObject* obj)

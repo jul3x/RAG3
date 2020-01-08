@@ -45,6 +45,7 @@ public:
                   const sf::Vector2f& velocity,
                   const sf::Vector2f& size,
                   sf::Texture* texture,
+                  const sf::Color& trail_color,
                   float acceleration);
 
     const sf::Vector2f& getVelocity() const;
@@ -68,7 +69,7 @@ private:
     float acceleration_;
 
     sf::Vector2f curr_v_, set_v_;
-
+    sf::Color trail_color_;
 };
 
 class HoveringObject : public DynamicObject {
@@ -79,6 +80,7 @@ public:
                    const sf::Vector2f& velocity,
                    const sf::Vector2f& size,
                    sf::Texture* texture,
+                   const sf::Color& trail_color,
                    float acceleration);
 };
 

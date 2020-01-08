@@ -18,6 +18,7 @@ Character::Character(const sf::Vector2f& position,
                       velocity,
                       {SIZE_X_, SIZE_Y_},
                       &ResourceManager::getInstance().getTexture("player"),
+                      sf::Color(CFG.getInt("trail_color")),
                       CFG.getFloat("player_max_acceleration")),
         max_life_(max_life),
         Shootable(max_life) {}

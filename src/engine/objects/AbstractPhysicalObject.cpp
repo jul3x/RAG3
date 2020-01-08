@@ -35,8 +35,10 @@ DynamicObject::DynamicObject(const sf::Vector2f& position,
                              const sf::Vector2f& velocity,
                              const sf::Vector2f& size,
                              sf::Texture* texture,
+                             const sf::Color& trail_color,
                              const float acceleration) :
         StaticObject(position, size, texture),
+        trail_color_(trail_color),
         curr_v_(velocity), set_v_(velocity),
         acceleration_(acceleration) {}
 
@@ -107,8 +109,7 @@ void DynamicObject::draw(sf::RenderTarget& target, sf::RenderStates states) cons
 
             if (trail_.size() >= 2)
             {
-                trail_vert.emplace_back(trail_.front(), sf::Color(CFG.getInt("trail_color")),
-                                        sf::Vector2f{});
+                trail_vert.emplace_back(trail_.front(), trail_color_, sf::Vector2f{});
             }
 
             for (size_t i = 1; i < trail_.size(); ++i)
@@ -120,9 +121,9 @@ void DynamicObject::draw(sf::RenderTarget& target, sf::RenderStates states) cons
 
                 sf::Vector2f norm = {std::cos(dir), std::sin(dir)};
                 trail_vert.emplace_back(trail_.at(i) - temp_r * norm,
-                                        sf::Color(CFG.getInt("trail_color")), sf::Vector2f{});
+                                        trail_color_, sf::Vector2f{});
                 trail_vert.emplace_back(trail_.at(i) + temp_r * norm,
-                                        sf::Color(CFG.getInt("trail_color")), sf::Vector2f{});
+                                        trail_color_, sf::Vector2f{});
             }
 
             target.draw(&trail_vert[0], trail_vert.size(), sf::TriangleStrip, states);
@@ -139,5 +140,6 @@ HoveringObject::HoveringObject(const sf::Vector2f& position,
                                const sf::Vector2f& velocity,
                                const sf::Vector2f& size,
                                sf::Texture* texture,
+                               const sf::Color& trail_color,
                                float acceleration) :
-        DynamicObject(position, velocity, size, texture, acceleration) {}
+        DynamicObject(position, velocity, size, texture, trail_color, acceleration) {}

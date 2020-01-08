@@ -55,6 +55,8 @@ public:
 
     void deleteStaticObject(StaticObject* s_obj);
 
+    void deleteHoveringObject(HoveringObject* h_obj);
+
     void deleteDynamicObject(DynamicObject* d_obj);
 
     void start(int frame_rate);
@@ -64,7 +66,7 @@ private:
 
     std::unique_ptr<Engine> engine_;
     std::unique_ptr<UserInterface> ui_;
-    std::unique_ptr<AbstractCamera> camera_;
+    std::unique_ptr<Camera> camera_;
 
     std::unique_ptr<Player> player_;
     std::unique_ptr<Map> map_;

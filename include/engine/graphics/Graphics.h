@@ -14,7 +14,7 @@
 class Graphics {
 
 public:
-    Graphics(const sf::Vector2i& size, const std::string& title, int style);
+    Graphics(const sf::Vector2i& size, const std::string& title, int style, const sf::Color& bg_color);
 
     Graphics(const Graphics&) = delete;
 
@@ -49,6 +49,8 @@ private:
     sf::RenderWindow window_;
     sf::View current_view_;
     sf::View static_view_;
+
+    sf::Color bg_color_;
 
 };
 

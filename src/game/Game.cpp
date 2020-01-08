@@ -26,12 +26,13 @@ void Game::initialize()
     player_ = std::make_unique<Player>(sf::Vector2f{400.0f, 500.0f}, sf::Vector2f{});
     map_ = std::make_unique<Map>();
 
-    dynamic_cast<UserInterface*>(ui_.get())->registerCamera(dynamic_cast<Camera*>(camera_.get()));
-    dynamic_cast<UserInterface*>(ui_.get())->registerPlayer(player_.get());
+    ui_->registerCamera(camera_.get());
+    ui_->registerPlayer(player_.get());
 
     engine_->initializeGraphics(
             sf::Vector2i{CFG.getInt("window_width_px"), CFG.getInt("window_height_px")}, "Codename: Rag3",
-            CFG.getInt("full_screen") ? sf::Style::Fullscreen : sf::Style::Default);
+            CFG.getInt("full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
+            sf::Color(CFG.getInt("background_color")));
     engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
 
@@ -39,6 +40,9 @@ void Game::initialize()
 
     for (auto& obstacle : map_->getObstacles())
         engine_->registerStaticObject(&obstacle);
+
+    for (auto& decoration : map_->getDecorations())
+        engine_->registerDrawableObject(&decoration);
 
     for (auto& enemy : map_->getEnemies())
         engine_->registerDynamicObject(&enemy);
@@ -48,23 +52,22 @@ void Game::initialize()
 
 void Game::update(float time_elapsed)
 {
-    engine_->setVisibility(*map_);
-    engine_->setVisibility(*player_);
-
     map_->update(time_elapsed);
+
     if (player_->isAlive() && !player_->update(time_elapsed))
     {
-        map_->spawnDecoration(player_->getPosition(), Decoration::Type::Blood);
+        engine_->registerDrawableObject(
+            map_->spawnDecoration(player_->getPosition(), Decoration::Type::Blood));
         spawnExplosionAnimation(player_->getPosition(), 25.0f);
         player_->setDead();
-        engine_->deleteDynamicObject(player_.get());
+        deleteDynamicObject(player_.get());
     }
 
     for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
     {
         if (!(*it)->update(time_elapsed))
         {
-            engine_->deleteHoveringObject(it->get());
+            deleteHoveringObject(it->get());
             auto next_it = std::next(it);
             bullets_.erase(it);
             it = next_it;
@@ -76,17 +79,20 @@ void Game::update(float time_elapsed)
 
 void Game::draw(Graphics& graphics)
 {
-    graphics.draw(*map_);
+    for (const auto& decoration : map_->getDecorations())
+        graphics.draw(decoration);
+
+    for (const auto& obstacle : map_->getObstacles())
+        graphics.draw(obstacle);
+
+    for (const auto& enemy : map_->getEnemies())
+        graphics.draw(enemy);
 
     for (const auto& bullet : bullets_)
-    {
         graphics.draw(*bullet);
-    }
 
     if (player_->isAlive())
-    {
         graphics.draw(*player_);
-    }
 }
 
 void Game::start(int frame_rate)
@@ -156,6 +162,11 @@ void Game::alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2)
 void Game::deleteStaticObject(StaticObject* s_obj)
 {
     engine_->deleteStaticObject(s_obj);
+}
+
+void Game::deleteHoveringObject(HoveringObject* h_obj)
+{
+    engine_->deleteHoveringObject(h_obj);
 }
 
 void Game::deleteDynamicObject(DynamicObject* d_obj)

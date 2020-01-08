@@ -187,13 +187,49 @@ void Engine::draw()
     graphics_->display();
 }
 
+bool Engine::ifCollidableResponse(DynamicObject& d_obj, const StaticObject& s_obj)
+{
+    const auto& a = d_obj.getCollisionArea().getType();
+    const auto& b = s_obj.getCollisionArea().getType();
+
+    if (a == Collision::Area::Type::None && b == Collision::Area::Type::None)
+    {
+        return false;
+    }
+
+    if (a == Collision::Area::Type::Box && b == Collision::Area::Type::Box)
+    {
+        return utils::AABBwithResponse(d_obj, s_obj);
+    }
+
+    throw std::invalid_argument("[Engine] This collision type is not handled yet!");
+}
+
+bool Engine::areCollidable(const StaticObject& obj_1, const StaticObject& obj_2) const
+{
+    const auto& a = obj_1.getCollisionArea().getType();
+    const auto& b = obj_2.getCollisionArea().getType();
+
+    if (a == Collision::Area::Type::None && b == Collision::Area::Type::None)
+    {
+        return false;
+    }
+
+    if (a == Collision::Area::Type::Box && b == Collision::Area::Type::Box)
+    {
+        return utils::AABB(obj_1, obj_2);
+    }
+
+    throw std::invalid_argument("[Engine] This collision type is not handled yet!");
+}
+
 void Engine::DSCollisions(float time_elapsed)
 {
     for (auto& s_object : s_objects_)
     {
         for (auto& d_object : d_objects_)
         {
-            if (utils::AABBwithDS(*d_object, *s_object))
+            if (ifCollidableResponse(*d_object, *s_object))
             {
                 game_->alertCollision(d_object, s_object);
 
@@ -209,7 +245,7 @@ void Engine::DDCollisions(float time_elapsed)
     {
         for (auto& d_object_2 : d_objects_)
         {
-            if (d_object_1 != d_object_2 && utils::AABBwithDD(*d_object_1, *d_object_2))
+            if (d_object_1 != d_object_2 && ifCollidableResponse(*d_object_1, *d_object_2))
             {
                 game_->alertCollision(d_object_1, d_object_2);
 
@@ -223,11 +259,11 @@ void Engine::HSCollisions(float time_elapsed)
 {
     for (auto& h_object : h_objects_)
     {
-        for (auto& s_obj : s_objects_)
+        for (auto& s_object : s_objects_)
         {
-            if (utils::AABB(*h_object, *s_obj))
+            if (areCollidable(*h_object, *s_object))
             {
-                game_->alertCollision(h_object, s_obj);
+                game_->alertCollision(h_object, s_object);
 
                 break;
             }
@@ -239,11 +275,11 @@ void Engine::HDCollisions(float time_elapsed)
 {
     for (auto& h_object : h_objects_)
     {
-        for (auto& d_obj : d_objects_)
+        for (auto& d_object : d_objects_)
         {
-            if (utils::AABB(*h_object, *d_obj))
+            if (areCollidable(*h_object, *d_object))
             {
-                game_->alertCollision(h_object, d_obj);
+                game_->alertCollision(h_object, d_object);
 
                 break;
             }

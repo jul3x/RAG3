@@ -64,6 +64,10 @@ public:
 private:
     void setVisibilities() const;
 
+    bool ifCollidableResponse(DynamicObject& d_obj, const StaticObject& s_obj);
+
+    bool areCollidable(const StaticObject& obj_1, const StaticObject& obj_2) const;
+
     void DSCollisions(float time_elapsed);
 
     void DDCollisions(float time_elapsed);

@@ -22,10 +22,25 @@ public:
     Area(Type type, float a, float b, const sf::Vector2f &offset) :
             type_(type), a_(a), b_(b), offset_pos_(offset) {}
 
-    const Type& getType() const;
-    const sf::Vector2f getOffset() const;
-    float getA() const;
-    float getB() const;
+    const Type& getType() const
+    {
+        return type_;
+    }
+
+    const sf::Vector2f getOffset() const
+    {
+        return offset_pos_;
+    }
+
+    float getA() const
+    {
+        return a_;
+    }
+
+    float getB() const
+    {
+        return b_;
+    }
 
 private:
     Type type_;

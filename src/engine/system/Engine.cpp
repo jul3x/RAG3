@@ -189,35 +189,73 @@ void Engine::draw()
 
 bool Engine::ifCollidableResponse(DynamicObject& d_obj, const StaticObject& s_obj)
 {
-    const auto& a = d_obj.getCollisionArea().getType();
-    const auto& b = s_obj.getCollisionArea().getType();
+    const auto& d = d_obj.getCollisionArea().getType();
+    const auto& s = s_obj.getCollisionArea().getType();
 
-    if (a == Collision::Area::Type::None && b == Collision::Area::Type::None)
+    if (d == Collision::Area::Type::None || s == Collision::Area::Type::None)
     {
         return false;
     }
 
-    if (a == Collision::Area::Type::Box && b == Collision::Area::Type::Box)
+    if (d == Collision::Area::Type::Circle)
     {
-        return utils::AABBwithResponse(d_obj, s_obj);
+        if (s == Collision::Area::Type::Circle)
+        {
+            return utils::CircleCircle(d_obj, s_obj);
+        }
+        else if (s == Collision::Area::Type::Box)
+        {
+            return utils::ABCircle(s_obj, d_obj);
+        }
     }
 
-    throw std::invalid_argument("[Engine] This collision type is not handled yet!");
+    if (d == Collision::Area::Type::Box)
+    {
+        if (s == Collision::Area::Type::Circle)
+        {
+            return utils::ABCircle(d_obj, s_obj);
+        }
+        else if (s == Collision::Area::Type::Box)
+        {
+            return utils::AABBwithResponse(d_obj, s_obj);
+        }
+    }
+
+    throw std::invalid_argument("[Engine] This collision types is not handled yet!");
 }
 
-bool Engine::areCollidable(const StaticObject& obj_1, const StaticObject& obj_2) const
+bool Engine::areCollidable(const StaticObject& obj_1, const StaticObject& obj_2)
 {
     const auto& a = obj_1.getCollisionArea().getType();
     const auto& b = obj_2.getCollisionArea().getType();
 
-    if (a == Collision::Area::Type::None && b == Collision::Area::Type::None)
+    if (a == Collision::Area::Type::None || b == Collision::Area::Type::None)
     {
         return false;
     }
 
-    if (a == Collision::Area::Type::Box && b == Collision::Area::Type::Box)
+    if (a == Collision::Area::Type::Circle)
     {
-        return utils::AABB(obj_1, obj_2);
+        if (b == Collision::Area::Type::Circle)
+        {
+            return utils::CircleCircle(obj_1, obj_2);
+        }
+        else if (b == Collision::Area::Type::Box)
+        {
+            return utils::ABCircle(obj_2, obj_1);
+        }
+    }
+
+    if (a == Collision::Area::Type::Box)
+    {
+        if (b == Collision::Area::Type::Circle)
+        {
+            return utils::ABCircle(obj_1, obj_2);
+        }
+        else if (b == Collision::Area::Type::Box)
+        {
+            return utils::AABB(obj_1, obj_2);
+        }
     }
 
     throw std::invalid_argument("[Engine] This collision type is not handled yet!");

@@ -12,10 +12,10 @@ void Map::loadMap(const std::string& name)
 {
     std::tie(obstacles_, decorations_) = ResourceManager::getMap(name);
 
-    enemies_.emplace_back(sf::Vector2f{1000.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
-    enemies_.emplace_back(sf::Vector2f{500.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
-    enemies_.emplace_back(sf::Vector2f{1000.0f, 500.0f}, sf::Vector2f{0.0f, 0.0f});
-    enemies_.emplace_back(sf::Vector2f{1500.0f, 300.0f}, sf::Vector2f{0.0f, 0.0f});
+//    enemies_.emplace_back(sf::Vector2f{1000.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
+//    enemies_.emplace_back(sf::Vector2f{500.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
+//    enemies_.emplace_back(sf::Vector2f{1000.0f, 500.0f}, sf::Vector2f{0.0f, 0.0f});
+//    enemies_.emplace_back(sf::Vector2f{1500.0f, 300.0f}, sf::Vector2f{0.0f, 0.0f});
 //    enemies_.emplace_back(sf::Vector2f{-1000.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
 //    enemies_.emplace_back(sf::Vector2f{-500.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
 //    enemies_.emplace_back(sf::Vector2f{-1000.0f, 500.0f}, sf::Vector2f{0.0f, 0.0f});

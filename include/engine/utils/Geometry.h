@@ -145,6 +145,97 @@ namespace utils {
                     {b.getCollisionArea().getA(), b.getCollisionArea().getB()});
     }
 
+    inline bool CircleCircle(const sf::Vector2f& a_origin, float a_r,
+                             const sf::Vector2f& b_origin, float b_r)
+    {
+        return (utils::getDistance(a_origin, b_origin) < a_r + b_r);
+    }
+
+    inline bool CircleCircle(const StaticObject& a, const StaticObject& b)
+    {
+        return CircleCircle(a.getPosition() + a.getCollisionArea().getOffset(), a.getCollisionArea().getA(),
+                            b.getPosition() + b.getCollisionArea().getOffset(), b.getCollisionArea().getA());
+    }
+
+    inline bool CircleCircle(const DynamicObject& a, const StaticObject& b)
+    {
+        return CircleCircle(a.getPosition() + a.getCollisionArea().getOffset() + a.getVelocity(),
+                            a.getCollisionArea().getA(),
+                            b.getPosition() + b.getCollisionArea().getOffset(),
+                            b.getCollisionArea().getA());
+    }
+
+    inline bool CircleCircle(const DynamicObject& a, const DynamicObject& b)
+    {
+        return CircleCircle(a.getPosition() + a.getCollisionArea().getOffset() + a.getVelocity() - b.getVelocity(),
+                            a.getCollisionArea().getA(),
+                            b.getPosition() + b.getCollisionArea().getOffset(),
+                            b.getCollisionArea().getA());
+    }
+
+    inline short int ABCircle(const sf::Vector2f& a_origin, const sf::Vector2f& a_size,
+                              const sf::Vector2f& b_origin, float b_r)
+    {
+        sf::Vector2f test = {b_origin.x, b_origin.y};
+
+        sf::Vector2f left_top = {a_origin.x - a_size.x / 2.0f, a_origin.y - a_size.y / 2.0f};
+        short int dir = 0;
+        float diff = 0.0f;
+        // 0 - none, 1 - left, 2 - top, 3 - right, 4 - bottom
+        if (b_origin.x < left_top.x)
+        {
+            test.x = left_top.x;  // left edge
+            diff = left_top.x - b_origin.x;
+            dir = 1;
+        }
+        else if (b_origin.x > left_top.x + a_size.x)
+        {
+            test.x = left_top.x + a_size.x;  // right edge
+            diff = left_top.x + a_size.x - b_origin.x;
+            dir = 3;
+        }
+
+        if (b_origin.y < left_top.y)
+        {
+            test.y = left_top.y;  // top edge
+
+            if (left_top.y - b_origin.y > diff)
+                dir = 2;
+        }
+        else if (b_origin.y > left_top.y + a_size.y)
+        {
+            test.y = left_top.y + a_size.y;  // bottom edge
+
+            if (left_top.y + a_size.y - b_origin.y > diff)
+                dir = 4;
+        }
+
+        return (utils::getDistance(b_origin, test) < b_r) ? dir : 0;
+    }
+
+    inline short int ABCircle(const StaticObject& a, const StaticObject& b)
+    {
+        return ABCircle(a.getPosition() + a.getCollisionArea().getOffset(),
+                        {a.getCollisionArea().getA(), a.getCollisionArea().getB()},
+                        b.getPosition() + b.getCollisionArea().getOffset(), b.getCollisionArea().getA());
+    }
+
+    inline short int ABCircle(const DynamicObject& a, const StaticObject& b)
+    {
+        return ABCircle(a.getPosition() + a.getCollisionArea().getOffset() + a.getVelocity(),
+                        {a.getCollisionArea().getA(), a.getCollisionArea().getB()},
+                        b.getPosition() + b.getCollisionArea().getOffset(),
+                        b.getCollisionArea().getA());
+    }
+
+    inline short int ABCircle(const DynamicObject& a, const DynamicObject& b)
+    {
+        return ABCircle(a.getPosition() + a.getCollisionArea().getOffset() + a.getVelocity() - b.getVelocity(),
+                        {a.getCollisionArea().getA(), a.getCollisionArea().getB()},
+                        b.getPosition() + b.getCollisionArea().getOffset(),
+                        b.getCollisionArea().getA());
+    }
+
     inline bool AABBwithResponse(DynamicObject& a, const StaticObject& b)
     {
         sf::Vector2f a_size = {a.getCollisionArea().getA(), a.getCollisionArea().getB()};

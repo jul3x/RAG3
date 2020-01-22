@@ -6,6 +6,7 @@
 #include <engine/utils/Geometry.h>
 #include <game/characters/Enemy.h>
 #include <game/Game.h>
+#include <game/weapons/NoWeapon.h>
 
 
 Enemy::Enemy(const sf::Vector2f& position,
@@ -13,7 +14,7 @@ Enemy::Enemy(const sf::Vector2f& position,
         Character(position, velocity, 10)
 {
     weapons_in_backpack_.push_back(
-            std::make_unique<ShootingWeapon>(ResourceManager::getInstance().getWeapon("desert_eagle")));
+            std::make_unique<NoWeapon>());
 
     current_weapon_ = weapons_in_backpack_.begin();
 }
@@ -26,7 +27,7 @@ bool Enemy::update(float time_elapsed)
             utils::cartesianToPolar(Game::get().getPlayerPosition() - this->getPosition());
 
     this->setRotation(rotation * 180.0f / static_cast<float>(M_PI));
-    shot();
+  //  shot();
 
     return is_alive;
 }

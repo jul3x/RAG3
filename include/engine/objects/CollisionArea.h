@@ -19,28 +19,15 @@ public:
         Circle
     };
 
-    Area(Type type, float a, float b, const sf::Vector2f &offset) :
-            type_(type), a_(a), b_(b), offset_pos_(offset) {}
+    Area(Type type, float a, float b, const sf::Vector2f &offset);
 
-    const Type& getType() const
-    {
-        return type_;
-    }
+    const Type& getType() const;
 
-    const sf::Vector2f getOffset() const
-    {
-        return offset_pos_;
-    }
+    const sf::Vector2f& getOffset() const;
 
-    float getA() const
-    {
-        return a_;
-    }
+    float getA() const;
 
-    float getB() const
-    {
-        return b_;
-    }
+    float getB() const;
 
 private:
     Type type_;
@@ -52,19 +39,19 @@ private:
 
 class None : public Area {
 public:
-    None() : Area(Area::Type::None, 0.0f, 0.0f, {}) {}
+    None();
 
 };
 
 class Box : public Area {
 public:
-    Box(float a, float b, const sf::Vector2f& offset = {}) : Area(Area::Type::Box, a, b, offset) {}
+    Box(float a, float b, const sf::Vector2f& offset = {});
 
 };
 
 class Circle : public Area {
 public:
-    Circle(float r, const sf::Vector2f& offset = {}) : Area(Area::Type::Box, r, 0.0f, offset) {}
+    explicit Circle(float r, const sf::Vector2f& offset = {});
 
 };
 

@@ -1,4 +1,4 @@
-bool auto_resolution=1
+bool auto_resolution=0
 bool full_screen=0
 int window_height_px=1500
 int window_width_px=3000
@@ -12,4 +12,4 @@ float camera_recoil=8.0f
 float camera_shaking_time=0.4f
 int obstacles_endurance_factor=3
 float get_shot_factor=1.5f
-float user_interface_zoom=1.0f
+float user_interface_zoom=2.0f

@@ -31,7 +31,7 @@ public:
     // TODO LazyLoad every type of objects
 
 private:
-    ResourceManager() = default;
+    ResourceManager();
 
     void loadBulletDescription(const std::string& key);
 

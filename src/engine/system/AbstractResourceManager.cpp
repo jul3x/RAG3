@@ -3,9 +3,18 @@
 //
 
 #include <iostream>
+#include <utility>
 
 #include <engine/system/AbstractResourceManager.h>
 
+
+AbstractResourceManager::AbstractResourceManager(std::string j3x_dir, std::string textures_dir,
+                                                 std::string fonts_dir) : j3x_directory_{std::move(j3x_dir)},
+                                                                          textures_directory_{std::move(textures_dir)},
+                                                                          fonts_directory_{std::move(fonts_dir)}
+{
+
+}
 
 utils::J3XParameters& AbstractResourceManager::getParameters(const std::string& key)
 {
@@ -81,7 +90,7 @@ void AbstractResourceManager::loadJ3XFile(const std::string& key)
 {
     utils::J3XParameters params;
 
-    params = utils::parse("../data/" + key + ".j3x");
+    params = utils::parse(j3x_directory_ + "/" + key + ".j3x");
 
     parameters_.emplace(key, params);
 
@@ -90,7 +99,7 @@ void AbstractResourceManager::loadJ3XFile(const std::string& key)
 
 void AbstractResourceManager::loadTexture(const std::string& key)
 {
-    if (!textures_[key].loadFromFile("../data/textures/" + key + ".png"))
+    if (!textures_[key].loadFromFile(textures_directory_ + "/"  + key + ".png"))
     {
         throw std::runtime_error("[AbstractResourceManager] " + key + " texture file not successfully loaded.");
     }
@@ -100,7 +109,7 @@ void AbstractResourceManager::loadTexture(const std::string& key)
 
 void AbstractResourceManager::loadFont(const std::string& key)
 {
-    if (!fonts_[key].loadFromFile("../data/fonts/" + key + ".ttf"))
+    if (!fonts_[key].loadFromFile(fonts_directory_ + "/"  + key + ".ttf"))
     {
         throw std::runtime_error("[AbstractResourceManager] " + key + " font file not successfully loaded.");
     }

@@ -153,3 +153,8 @@ std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(
 
     return std::make_tuple(obstacles, decorations);
 }
+
+ResourceManager::ResourceManager() : AbstractResourceManager("../data/", "../data/textures/", "../data/fonts/")
+{
+
+}

@@ -20,6 +20,8 @@ class AbstractResourceManager {
 public:
     AbstractResourceManager() = default;
 
+    AbstractResourceManager(std::string j3x_dir, std::string textures_dir, std::string fonts_dir);
+
     sf::Texture& getTexture(const std::string& key);
 
     sf::Font& getFont(const std::string& key);
@@ -41,6 +43,10 @@ private:
     std::map<std::string, sf::Texture> textures_;
     std::map<std::string, sf::Font> fonts_;
     std::map<std::string, utils::J3XParameters> parameters_;
+
+    std::string j3x_directory_;
+    std::string textures_directory_;
+    std::string fonts_directory_;
 };
 
 

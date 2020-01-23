@@ -201,11 +201,12 @@ bool Engine::ifCollidableResponse(DynamicObject& d_obj, const StaticObject& s_ob
     {
         if (s == Collision::Area::Type::Circle)
         {
-            return utils::CircleCircle(d_obj, s_obj);
+            return utils::CircleCircleResponse(d_obj, s_obj);
         }
         else if (s == Collision::Area::Type::Box)
         {
-            return utils::ABCircle(s_obj, d_obj);
+            //return utils::CircleABResponse(d_obj, s_obj);
+            return utils::ABCircle(d_obj, s_obj);
         }
     }
 
@@ -213,11 +214,12 @@ bool Engine::ifCollidableResponse(DynamicObject& d_obj, const StaticObject& s_ob
     {
         if (s == Collision::Area::Type::Circle)
         {
-            return utils::ABCircle(d_obj, s_obj);
+            //return utils::ABCircleResponse(d_obj, s_obj);
+            return utils::ABCircle(s_obj, d_obj);
         }
         else if (s == Collision::Area::Type::Box)
         {
-            return utils::AABBwithResponse(d_obj, s_obj);
+            return utils::AABBResponse(d_obj, s_obj);
         }
     }
 
@@ -270,8 +272,6 @@ void Engine::DSCollisions(float time_elapsed)
             if (ifCollidableResponse(*d_object, *s_object))
             {
                 game_->alertCollision(d_object, s_object);
-
-                break;
             }
         }
     }
@@ -286,8 +286,6 @@ void Engine::DDCollisions(float time_elapsed)
             if (d_object_1 != d_object_2 && ifCollidableResponse(*d_object_1, *d_object_2))
             {
                 game_->alertCollision(d_object_1, d_object_2);
-
-                break;
             }
         }
     }
@@ -302,8 +300,6 @@ void Engine::HSCollisions(float time_elapsed)
             if (areCollidable(*h_object, *s_object))
             {
                 game_->alertCollision(h_object, s_object);
-
-                break;
             }
         }
     }
@@ -318,8 +314,6 @@ void Engine::HDCollisions(float time_elapsed)
             if (areCollidable(*h_object, *d_object))
             {
                 game_->alertCollision(h_object, d_object);
-
-                break;
             }
         }
     }

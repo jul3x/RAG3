@@ -27,6 +27,7 @@ bool Enemy::update(float time_elapsed)
             utils::cartesianToPolar(Game::get().getPlayerPosition() - this->getPosition());
 
     this->setRotation(rotation * 180.0f / static_cast<float>(M_PI));
+    this->setVelocity(3 * std::cos(rotation), 3 * std::sin(rotation));
   //  shot();
 
     return is_alive;

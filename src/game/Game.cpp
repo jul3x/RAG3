@@ -152,7 +152,6 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
 void Game::alertCollision(DynamicObject* d_obj, StaticObject* s_obj)
 {
     // Nothing to do for now (maybe sounds?)
-    std::cout << "YEA\n";
 }
 
 void Game::alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2)

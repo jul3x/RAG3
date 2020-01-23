@@ -8,6 +8,11 @@
 #include <engine/objects/AbstractDrawableObject.h>
 
 
+AbstractDrawableObject::AbstractDrawableObject() : is_visible_(true)
+{
+}
+
+
 AbstractDrawableObject::AbstractDrawableObject(const sf::Vector2f& position,
                                                const sf::Vector2f& size,
                                                sf::Texture* texture) :

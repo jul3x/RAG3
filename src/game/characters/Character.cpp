@@ -17,7 +17,7 @@ Character::Character(const sf::Vector2f& position,
         DynamicObject(position,
                       velocity,
                       {SIZE_X_, SIZE_Y_},
-                      Collision::Circle((SIZE_X_ - 20.0f) / 2.0f),
+                      Collision::Circle((SIZE_X_ - 40.0f) / 2.0f),
                       &ResourceManager::getInstance().getTexture("player"),
                       sf::Color(CFG.getInt("trail_color")),
                       CFG.getFloat("player_max_acceleration")),
@@ -88,9 +88,6 @@ bool Character::update(float time_elapsed)
 {
     DynamicObject::update(time_elapsed);
 
-    (*current_weapon_)->setPosition(this->getPosition());
-    (*current_weapon_)->setRotation(this->getRotation());
-
     return life_ > 0;
 }
 
@@ -101,4 +98,22 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
         target.draw(shape_, states);
         target.draw(**current_weapon_, states);
     }
+}
+
+void Character::setPosition(const sf::Vector2f& pos)
+{
+    AbstractDrawableObject::setPosition(pos);
+    (*current_weapon_)->setPosition(pos);
+}
+
+void Character::setRotation(float theta)
+{
+    AbstractDrawableObject::setRotation(theta);
+    (*current_weapon_)->setRotation(theta);
+}
+
+void Character::setPosition(float x, float y)
+{
+    AbstractDrawableObject::setPosition(x, y);
+    (*current_weapon_)->setPosition(x, y);
 }

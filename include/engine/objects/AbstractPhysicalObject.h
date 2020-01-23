@@ -16,7 +16,7 @@
 
 class AbstractPhysicalObject : public AbstractDrawableObject {
 public:
-    AbstractPhysicalObject() = default;
+    AbstractPhysicalObject() = delete;
 
     AbstractPhysicalObject(const sf::Vector2f& position,
                            const sf::Vector2f& size,
@@ -34,7 +34,7 @@ private:
 
 class StaticObject : public AbstractPhysicalObject {
 public:
-    StaticObject() = default;
+    StaticObject() = delete;
 
     StaticObject(const sf::Vector2f& position,
                  const sf::Vector2f& size,
@@ -47,7 +47,7 @@ public:
 
 class DynamicObject : public StaticObject {
 public:
-    DynamicObject() = default;
+    DynamicObject() = delete;
 
     DynamicObject(const sf::Vector2f& position,
                   const sf::Vector2f& velocity,
@@ -59,11 +59,11 @@ public:
 
     const sf::Vector2f& getVelocity() const;
 
-    void setVelocity(const sf::Vector2f& velocity);
+    virtual void setVelocity(const sf::Vector2f& velocity);
 
-    void setVelocity(float x, float y);
+    virtual void setVelocity(float x, float y);
 
-    void setForcedVelocity(const sf::Vector2f& velocity);
+    virtual void setForcedVelocity(const sf::Vector2f& velocity);
 
     bool update(float time_elapsed) override;
 
@@ -83,7 +83,7 @@ private:
 
 class HoveringObject : public DynamicObject {
 public:
-    HoveringObject() = default;
+    HoveringObject() = delete;
 
     HoveringObject(const sf::Vector2f& position,
                    const sf::Vector2f& velocity,

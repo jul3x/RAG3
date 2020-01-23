@@ -129,22 +129,6 @@ namespace utils {
                     {b.getCollisionArea().getA(), b.getCollisionArea().getB()});
     }
 
-    inline short int AABB(const DynamicObject& a, const StaticObject& b)
-    {
-        return AABB(a.getPosition() + a.getCollisionArea().getOffset() + a.getVelocity(),
-                    {a.getCollisionArea().getA(), a.getCollisionArea().getB()},
-                    b.getPosition() + b.getCollisionArea().getOffset(),
-                    {b.getCollisionArea().getA(), b.getCollisionArea().getB()});
-    }
-
-    inline short int AABB(const DynamicObject& a, const DynamicObject& b)
-    {
-        return AABB(a.getPosition() + a.getCollisionArea().getOffset() + a.getVelocity() - b.getVelocity(),
-                    {a.getCollisionArea().getA(), a.getCollisionArea().getB()},
-                    b.getPosition() + b.getCollisionArea().getOffset(),
-                    {b.getCollisionArea().getA(), b.getCollisionArea().getB()});
-    }
-
     inline bool CircleCircle(const sf::Vector2f& a_origin, float a_r,
                              const sf::Vector2f& b_origin, float b_r)
     {
@@ -155,22 +139,6 @@ namespace utils {
     {
         return CircleCircle(a.getPosition() + a.getCollisionArea().getOffset(), a.getCollisionArea().getA(),
                             b.getPosition() + b.getCollisionArea().getOffset(), b.getCollisionArea().getA());
-    }
-
-    inline bool CircleCircle(const DynamicObject& a, const StaticObject& b)
-    {
-        return CircleCircle(a.getPosition() + a.getCollisionArea().getOffset() + a.getVelocity(),
-                            a.getCollisionArea().getA(),
-                            b.getPosition() + b.getCollisionArea().getOffset(),
-                            b.getCollisionArea().getA());
-    }
-
-    inline bool CircleCircle(const DynamicObject& a, const DynamicObject& b)
-    {
-        return CircleCircle(a.getPosition() + a.getCollisionArea().getOffset() + a.getVelocity() - b.getVelocity(),
-                            a.getCollisionArea().getA(),
-                            b.getPosition() + b.getCollisionArea().getOffset(),
-                            b.getCollisionArea().getA());
     }
 
     inline short int ABCircle(const sf::Vector2f& a_origin, const sf::Vector2f& a_size,
@@ -220,23 +188,7 @@ namespace utils {
                         b.getPosition() + b.getCollisionArea().getOffset(), b.getCollisionArea().getA());
     }
 
-    inline short int ABCircle(const DynamicObject& a, const StaticObject& b)
-    {
-        return ABCircle(a.getPosition() + a.getCollisionArea().getOffset() + a.getVelocity(),
-                        {a.getCollisionArea().getA(), a.getCollisionArea().getB()},
-                        b.getPosition() + b.getCollisionArea().getOffset(),
-                        b.getCollisionArea().getA());
-    }
-
-    inline short int ABCircle(const DynamicObject& a, const DynamicObject& b)
-    {
-        return ABCircle(a.getPosition() + a.getCollisionArea().getOffset() + a.getVelocity() - b.getVelocity(),
-                        {a.getCollisionArea().getA(), a.getCollisionArea().getB()},
-                        b.getPosition() + b.getCollisionArea().getOffset(),
-                        b.getCollisionArea().getA());
-    }
-
-    inline bool AABBwithResponse(DynamicObject& a, const StaticObject& b)
+    inline bool AABBResponse(DynamicObject& a, const StaticObject& b)
     {
         sf::Vector2f a_size = {a.getCollisionArea().getA(), a.getCollisionArea().getB()};
         sf::Vector2f b_size = {b.getCollisionArea().getA(), b.getCollisionArea().getB()};
@@ -272,6 +224,23 @@ namespace utils {
         }
 
         return true;
+    }
+
+    inline bool CircleCircleResponse(DynamicObject& a, const StaticObject& b)
+    {
+        if (CircleCircle(a, b))
+        {
+            sf::Vector2f distance = a.getPosition() + a.getCollisionArea().getOffset() - b.getPosition() -
+                                    b.getCollisionArea().getOffset();
+
+            sf::Vector2f unit = utils::getNormalized(distance);
+
+            a.setPosition(b.getPosition() + b.getCollisionArea().getOffset() - a.getCollisionArea().getOffset() +
+                          unit * (a.getCollisionArea().getA() + b.getCollisionArea().getA() + 1));
+            return true;
+        }
+
+        return false;
     }
 
 } // namespace utils

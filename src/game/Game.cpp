@@ -36,7 +36,7 @@ void Game::initialize()
     engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
 
-    map_->loadMap("test");
+    map_->loadMap("map");
 
     for (auto& obstacle : map_->getObstacles())
         engine_->registerStaticObject(&obstacle);

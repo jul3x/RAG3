@@ -99,34 +99,61 @@ namespace utils {
         sf::Vector2f b1 = b_origin - b_size / 2.0f;
         sf::Vector2f b2 = b_origin + b_size / 2.0f;
 
-        short int direction = 0;
-        // 0 - none, 1 - left, 2 - top, 3 - right, 4 - bottom
         if (a1.x > b2.x || a2.x < b1.x || a1.y > b2.y || a2.y < b1.y)
+            return 0; // no collision
+
+        if (a_origin.x < b1.x && a_origin.y >= b1.y && a_origin.y < b2.y)
+            return 1;
+
+        if (a_origin.y < b1.y && a_origin.x >= b1.x && a_origin.x < b2.x)
+            return 2;
+
+        if (a_origin.x >= b2.x && a_origin.y >= b1.y && a_origin.y < b2.y)
+            return 3;
+
+        if (a_origin.y >= b2.y && a_origin.x >= b1.x && a_origin.x < b2.x)
+            return 4;
+
+        if (a_origin.x < b1.x && a_origin.y < b1.y)
         {
-            return direction; // no collision
+            float diff_x = std::abs(b1.x - a_origin.x - a_size.x / 2.0f);
+            float diff_y = std::abs(b1.y - a_origin.y - a_size.y / 2.0f);
+
+            //std::cout << diff_x << " " << diff_y << std::endl;
+
+            if (diff_x > diff_y) return 2;
+            else return 1;
         }
 
-        auto angle = std::get<1>(utils::cartesianToPolar(b_origin - a_origin));
+        if (a_origin.x >= b2.x && a_origin.y < b1.y)
+        {
+            float diff_x = std::abs(b2.x - a_origin.x + a_size.x / 2.0f);
+            float diff_y = std::abs(b1.y - a_origin.y - a_size.y / 2.0f);
 
-        if (angle >= M_PI_4 && angle <= M_PI_4 + M_PI_2)
-        {
-            direction = 2;
-        }
-        else if (angle <= -M_PI_4 && angle >= -M_PI_4 - M_PI_2)
-        {
-            direction = 4;
-        }
-        else if ((angle >= 0.0f && angle < M_PI_4) ||
-                 (angle < 0.0f && angle > -M_PI_4))
-        {
-            direction = 1;
-        }
-        else
-        {
-            direction = 3;
+            if (diff_x > diff_y) return 2;
+            else return 3;
         }
 
-        return direction;
+        if (a_origin.x >= b2.x && a_origin.y >= b2.y)
+        {
+            float diff_x = std::abs(b2.x - a_origin.x + a_size.x / 2.0f);
+            float diff_y = std::abs(b2.y - a_origin.y + a_size.y / 2.0f);
+
+            if (diff_x > diff_y) return 4;
+            else return 3;
+        }
+
+        if (a_origin.x < b1.x && a_origin.y >= b2.y)
+        {
+            float diff_x = std::abs(b1.x - a_origin.x - a_size.x / 2.0f);
+            float diff_y = std::abs(b2.y - a_origin.y + a_size.y / 2.0f);
+
+            if (diff_x > diff_y) return 4;
+            else return 1;
+        }
+
+        return 5;
+
     }
 
     inline short int AABB(const StaticObject& a, const StaticObject& b)
@@ -300,25 +327,30 @@ namespace utils {
         sf::Vector2f b2 = b.getPosition() + b.getCollisionArea().getOffset() + b_size / 2.0f;
 
         short int direction = AABB(a, b);
-        if (direction == 2)
+        if (direction == 1)
+        {
+            a.setForcedVelocity({0.0f, a.getVelocity().y});
+            a.setPosition(b1.x - a.getCollisionArea().getOffset().x - a_size.x / 2.0f - 1.0f, a.getPosition().y);
+        }
+        else if (direction == 2)
         {
             a.setForcedVelocity({a.getVelocity().x, 0.0f});
             a.setPosition(a.getPosition().x, b1.y - a.getCollisionArea().getOffset().y - a_size.y / 2.0f - 1.0f);
-        }
-        else if (direction == 4)
-        {
-            a.setForcedVelocity({a.getVelocity().x, 0.0f});
-            a.setPosition(a.getPosition().x, b2.y - a.getCollisionArea().getOffset().y + a_size.y / 2.0f + 1.0f);
         }
         else if (direction == 3)
         {
             a.setForcedVelocity({0.0f, a.getVelocity().y});
             a.setPosition(b2.x - a.getCollisionArea().getOffset().x + a_size.x / 2.0f + 1.0f, a.getPosition().y);
         }
-        else if (direction == 1)
+        else if (direction == 4)
         {
-            a.setForcedVelocity({0.0f, a.getVelocity().y});
-            a.setPosition(b1.x - a.getCollisionArea().getOffset().x - a_size.x / 2.0f - 1.0f, a.getPosition().y);
+            a.setForcedVelocity({a.getVelocity().x, 0.0f});
+            a.setPosition(a.getPosition().x, b2.y - a.getCollisionArea().getOffset().y + a_size.y / 2.0f + 1.0f);
+        }
+        else if (direction == 5)
+        {
+            a.setForcedVelocity({0.0f, 0.0f});
+            a.setPosition(a.getPosition() - a.getVelocity());
         }
         else
         {

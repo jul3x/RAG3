@@ -64,7 +64,7 @@ void AbstractDrawableObject::setRotation(const float angle_deg)
 
 void AbstractDrawableObject::setVisibility(const sf::View& view)
 {
-    // visibility is checked on bigger view (e.g. to avoid tunnelling of enemies)
+    // visibility is checked on bigger view (e.g. to avoid tunnelling)
     is_visible_ = utils::AABB(view.getCenter(), view.getSize() + sf::Vector2f{300.0f, 300.0f},
                               this->getPosition(), this->getSize()) > 0;
 }

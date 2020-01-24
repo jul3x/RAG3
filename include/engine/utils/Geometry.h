@@ -86,6 +86,14 @@ namespace utils {
     inline short int AABB(const sf::Vector2f& a_origin, const sf::Vector2f& a_size,
                           const sf::Vector2f& b_origin, const sf::Vector2f& b_size)
     {
+        //
+        // 6  ___2___  7
+        //   |       |
+        // 1 |   5   | 3
+        //   |_______|
+        // 9     4     8
+        //
+
         sf::Vector2f a1 = a_origin - a_size / 2.0f;
         sf::Vector2f a2 = a_origin + a_size / 2.0f;
         sf::Vector2f b1 = b_origin - b_size / 2.0f;
@@ -144,16 +152,57 @@ namespace utils {
     inline short int ABCircle(const sf::Vector2f& a_origin, const sf::Vector2f& a_size,
                               const sf::Vector2f& b_origin, float b_r)
     {
+        //
+        // 6  ___2___  7
+        //   |       |
+        // 1 |   5   | 3
+        //   |_______|
+        // 9     4     8
+        //
+
         // Get difference vector between both centers
-        sf::Vector2f difference = b_origin - a_origin;
+        if (utils::isPointInRectangle(b_origin, a_origin - a_size / 2.0f, a_size))
+            return 5;
 
-        sf::Vector2f clamped = {std::max(-a_size.x / 2.0f, std::min(a_size.x / 2.0f, difference.x)),
-                                std::max(-a_size.y / 2.0f, std::min(a_size.y / 2.0f, difference.y))};
+        sf::Vector2f r_o1 = {a_origin.x - a_size.x / 2.0f - b_r / 2.0f, a_origin.y};
+        sf::Vector2f r_s1 = {b_r, a_size.y};
+        sf::Vector2f r_o2 = {a_origin.x, a_origin.y - a_size.y / 2.0f - b_r / 2.0f};
+        sf::Vector2f r_s2 = {a_size.x, b_r};
+        sf::Vector2f r_o3 = {a_origin.x + a_size.x / 2.0f + b_r / 2.0f, a_origin.y};
+        sf::Vector2f r_s3 = {b_r, a_size.y};
+        sf::Vector2f r_o4 = {a_origin.x, a_origin.y + a_size.x / 2.0f + b_r / 2.0f};
+        sf::Vector2f r_s4 = {a_size.x, b_r};
 
-        sf::Vector2f closest = a_origin + clamped;
+        if (utils::isPointInRectangle(b_origin, r_o1 - r_s1 / 2.0f, r_s1))
+            return 1;
 
-        difference = closest - b_origin;
-        return std::get<0>(cartesianToPolar(difference)) < b_r;
+        if (utils::isPointInRectangle(b_origin, r_o2 - r_s2 / 2.0f, r_s2))
+            return 2;
+
+        if (utils::isPointInRectangle(b_origin, r_o3 - r_s3 / 2.0f, r_s3))
+            return 3;
+
+        if (utils::isPointInRectangle(b_origin, r_o4 - r_s4 / 2.0f, r_s4))
+            return 4;
+
+        sf::Vector2f c_o1 = {a_origin.x - a_size.x / 2.0f, a_origin.y - a_size.y / 2.0f};
+        sf::Vector2f c_o2 = {a_origin.x + a_size.x / 2.0f, a_origin.y - a_size.y / 2.0f};
+        sf::Vector2f c_o3 = {a_origin.x + a_size.x / 2.0f, a_origin.y + a_size.y / 2.0f};
+        sf::Vector2f c_o4 = {a_origin.x - a_size.x / 2.0f, a_origin.y + a_size.y / 2.0f};
+
+        if (utils::getDistance(b_origin, c_o1) < b_r)
+            return 6;
+
+        if (utils::getDistance(b_origin, c_o2) < b_r)
+            return 7;
+
+        if (utils::getDistance(b_origin, c_o3) < b_r)
+            return 8;
+
+        if (utils::getDistance(b_origin, c_o4) < b_r)
+            return 9;
+
+        return 0;
     }
 
     inline short int ABCircle(const StaticObject& a, const StaticObject& b)
@@ -165,12 +214,77 @@ namespace utils {
 
     inline bool CircleABResponse(DynamicObject& a, const StaticObject& b)
     {
-        short int dir = ABCircle(b, a);
+        short int direction = ABCircle(b, a);
 
-        if (dir)
+        float a_r = a.getCollisionArea().getA();
+        sf::Vector2f b_size = {b.getCollisionArea().getA(), b.getCollisionArea().getB()};
+        sf::Vector2f b1 = b.getPosition() + b.getCollisionArea().getOffset() - b_size / 2.0f;
+        sf::Vector2f b2 = b.getPosition() + b.getCollisionArea().getOffset() + b_size / 2.0f;
+
+        if (direction == 1)
         {
-            //a.setPosition(a.getPosition() - a.getVelocity());
-            return true;
+            a.setForcedVelocity({0.0f, a.getVelocity().y});
+            a.setPosition(b1.x - a.getCollisionArea().getOffset().x - a_r - 1.0f, a.getPosition().y);
+        }
+        else if (direction == 2)
+        {
+            a.setForcedVelocity({a.getVelocity().x, 0.0f});
+            a.setPosition(a.getPosition().x, b1.y - a.getCollisionArea().getOffset().y - a_r - 1.0f);
+        }
+        else if (direction == 3)
+        {
+            a.setForcedVelocity({0.0f, a.getVelocity().y});
+            a.setPosition(b2.x - a.getCollisionArea().getOffset().x + a_r + 1.0f, a.getPosition().y);
+        }
+        else if (direction == 4)
+        {
+            a.setForcedVelocity({a.getVelocity().x, 0.0f});
+            a.setPosition(a.getPosition().x, b2.y - a.getCollisionArea().getOffset().y + a_r + 1.0f);
+        }
+        else if (direction == 5)
+        {
+            a.setForcedVelocity({0.0f, 0.0f});
+            a.setPosition(a.getPosition() - a.getVelocity());
+        }
+        else if (direction == 6)
+        {
+            sf::Vector2f distance = a.getPosition() + a.getCollisionArea().getOffset() - b1;
+
+            sf::Vector2f unit = utils::getNormalized(distance);
+
+            a.setPosition(b1 - a.getCollisionArea().getOffset() +
+                          unit * (a_r + 1));
+        }
+        else if (direction == 7)
+        {
+            sf::Vector2f distance = a.getPosition() + a.getCollisionArea().getOffset() - sf::Vector2f{b2.x, b1.y};
+
+            sf::Vector2f unit = utils::getNormalized(distance);
+
+            a.setPosition(sf::Vector2f{b2.x, b1.y} - a.getCollisionArea().getOffset() +
+                          unit * (a_r + 1));
+        }
+        else if (direction == 8)
+        {
+            sf::Vector2f distance = a.getPosition() + a.getCollisionArea().getOffset() - b2;
+
+            sf::Vector2f unit = utils::getNormalized(distance);
+
+            a.setPosition(b2 - a.getCollisionArea().getOffset() +
+                          unit * (a_r + 1));
+        }
+        else if (direction == 9)
+        {
+            sf::Vector2f distance = a.getPosition() + a.getCollisionArea().getOffset() - sf::Vector2f{b1.x, b2.y};
+
+            sf::Vector2f unit = utils::getNormalized(distance);
+
+            a.setPosition(sf::Vector2f{b1.x, b2.y} - a.getCollisionArea().getOffset() +
+                          unit * (a_r + 1));
+        }
+        else
+        {
+            return false;
         }
 
         return false;

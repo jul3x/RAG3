@@ -205,14 +205,8 @@ bool Engine::ifCollidableResponse(DynamicObject& d_obj, const StaticObject& s_ob
         }
         else if (s == Collision::Area::Type::Box)
         {
-            if (utils::ABCircle(s_obj, d_obj) == 1)
+            if (utils::ABCircle(s_obj, d_obj) > 0)
                 d_obj.setColor(255, 0, 0, 255);
-            else if (utils::ABCircle(s_obj, d_obj) == 2)
-                d_obj.setColor(0, 255, 0, 255);
-            else if (utils::ABCircle(s_obj, d_obj) == 3)
-                d_obj.setColor(0, 0, 255, 255);
-            else if (utils::ABCircle(s_obj, d_obj) == 4)
-                d_obj.setColor(255, 255, 255, 120);
             else
                 d_obj.setColor(255, 255, 255, 0);
 

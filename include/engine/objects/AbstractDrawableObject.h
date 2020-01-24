@@ -35,6 +35,8 @@ public:
 
     virtual void setVisibility(const sf::View& view);
 
+    void setColor(int r, int g, int b, int a);
+
 protected:
     sf::RectangleShape shape_;
     bool is_visible_;

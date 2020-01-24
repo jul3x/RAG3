@@ -9,6 +9,7 @@
 #include <game/misc/ResourceManager.h>
 
 #include <game/characters/Character.h>
+#include <SFML/Graphics/CircleShape.hpp>
 
 
 Character::Character(const sf::Vector2f& position,
@@ -93,6 +94,12 @@ bool Character::update(float time_elapsed)
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
+    static sf::CircleShape circle;
+    circle.setPosition(this->getPosition() + this->getCollisionArea().getOffset());
+    circle.setRadius(this->getCollisionArea().getA());
+    circle.setOrigin(this->getCollisionArea().getA(), this->getCollisionArea().getA());
+    circle.setFillColor(sf::Color::Red);
+    target.draw(circle, states);
     if (this->isVisible())
     {
         target.draw(shape_, states);

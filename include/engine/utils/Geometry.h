@@ -144,41 +144,16 @@ namespace utils {
     inline short int ABCircle(const sf::Vector2f& a_origin, const sf::Vector2f& a_size,
                               const sf::Vector2f& b_origin, float b_r)
     {
-        sf::Vector2f test = {b_origin.x, b_origin.y};
+        // Get difference vector between both centers
+        sf::Vector2f difference = b_origin - a_origin;
 
-        sf::Vector2f left_top = {a_origin.x - a_size.x / 2.0f, a_origin.y - a_size.y / 2.0f};
-        short int dir = 0;
-        float diff = 0.0f;
-        // 0 - none, 1 - left, 2 - top, 3 - right, 4 - bottom
-        if (b_origin.x < left_top.x)
-        {
-            test.x = left_top.x;  // left edge
-            diff = left_top.x - b_origin.x;
-            dir = 1;
-        }
-        else if (b_origin.x > left_top.x + a_size.x)
-        {
-            test.x = left_top.x + a_size.x;  // right edge
-            diff = left_top.x + a_size.x - b_origin.x;
-            dir = 3;
-        }
+        sf::Vector2f clamped = {std::max(-a_size.x / 2.0f, std::min(a_size.x / 2.0f, difference.x)),
+                                std::max(-a_size.y / 2.0f, std::min(a_size.y / 2.0f, difference.y))};
 
-        if (b_origin.y < left_top.y)
-        {
-            test.y = left_top.y;  // top edge
+        sf::Vector2f closest = a_origin + clamped;
 
-            if (left_top.y - b_origin.y > diff)
-                dir = 2;
-        }
-        else if (b_origin.y > left_top.y + a_size.y)
-        {
-            test.y = left_top.y + a_size.y;  // bottom edge
-
-            if (left_top.y + a_size.y - b_origin.y > diff)
-                dir = 4;
-        }
-
-        return (utils::getDistance(b_origin, test) < b_r) ? dir : 0;
+        difference = closest - b_origin;
+        return std::get<0>(cartesianToPolar(difference)) < b_r;
     }
 
     inline short int ABCircle(const StaticObject& a, const StaticObject& b)
@@ -186,6 +161,19 @@ namespace utils {
         return ABCircle(a.getPosition() + a.getCollisionArea().getOffset(),
                         {a.getCollisionArea().getA(), a.getCollisionArea().getB()},
                         b.getPosition() + b.getCollisionArea().getOffset(), b.getCollisionArea().getA());
+    }
+
+    inline bool CircleABResponse(DynamicObject& a, const StaticObject& b)
+    {
+        short int dir = ABCircle(b, a);
+
+        if (dir)
+        {
+            //a.setPosition(a.getPosition() - a.getVelocity());
+            return true;
+        }
+
+        return false;
     }
 
     inline bool AABBResponse(DynamicObject& a, const StaticObject& b)

@@ -77,3 +77,8 @@ void AbstractDrawableObject::draw(sf::RenderTarget& target, sf::RenderStates sta
     }
 }
 
+void AbstractDrawableObject::setColor(int r, int g, int b, int a)
+{
+    shape_.setFillColor(sf::Color(r, g, b, a));
+}
+

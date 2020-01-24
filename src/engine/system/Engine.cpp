@@ -205,8 +205,18 @@ bool Engine::ifCollidableResponse(DynamicObject& d_obj, const StaticObject& s_ob
         }
         else if (s == Collision::Area::Type::Box)
         {
-            //return utils::CircleABResponse(d_obj, s_obj);
-            return utils::ABCircle(d_obj, s_obj);
+            if (utils::ABCircle(s_obj, d_obj) == 1)
+                d_obj.setColor(255, 0, 0, 255);
+            else if (utils::ABCircle(s_obj, d_obj) == 2)
+                d_obj.setColor(0, 255, 0, 255);
+            else if (utils::ABCircle(s_obj, d_obj) == 3)
+                d_obj.setColor(0, 0, 255, 255);
+            else if (utils::ABCircle(s_obj, d_obj) == 4)
+                d_obj.setColor(255, 255, 255, 120);
+            else
+                d_obj.setColor(255, 255, 255, 0);
+
+            return utils::CircleABResponse(d_obj, s_obj);
         }
     }
 
@@ -215,7 +225,7 @@ bool Engine::ifCollidableResponse(DynamicObject& d_obj, const StaticObject& s_ob
         if (s == Collision::Area::Type::Circle)
         {
             //return utils::ABCircleResponse(d_obj, s_obj);
-            return utils::ABCircle(s_obj, d_obj);
+            return utils::ABCircle(d_obj, s_obj);
         }
         else if (s == Collision::Area::Type::Box)
         {

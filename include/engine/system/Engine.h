@@ -24,7 +24,7 @@ public:
 
     Engine& operator=(const Engine&) = delete;
 
-    Engine();
+    Engine() = default;
 
     void initializeGraphics(const sf::Vector2i& size,
                             const std::string& title,
@@ -63,12 +63,6 @@ public:
 
 private:
     void setVisibilities() const;
-
-    static bool ifCollidableResponse(DynamicObject& d_obj, const StaticObject& s_obj);
-
-    static bool ifCollidableResponse(DynamicObject& d_obj, DynamicObject& s_obj);
-
-    static bool areCollidable(const StaticObject& obj_1, const StaticObject& obj_2) ;
 
     void DSCollisions(float time_elapsed);
 

@@ -317,6 +317,84 @@ namespace utils {
         return false;
     }
 
+    inline bool ABCircleResponse(DynamicObject& a, const StaticObject& b)
+    {
+        short int direction = ABCircle(a, b);
+
+        float b_r = b.getCollisionArea().getA();
+        sf::Vector2f a_size = {a.getCollisionArea().getA(), a.getCollisionArea().getB()};
+        sf::Vector2f a1 = a.getPosition() + a.getCollisionArea().getOffset() - a_size / 2.0f;
+        sf::Vector2f a2 = a.getPosition() + a.getCollisionArea().getOffset() + a_size / 2.0f;
+
+        if (direction == 1)
+        {
+            a.setForcedVelocity({0.0f, a.getVelocity().y});
+            a.setPosition(b.getPosition().x + b.getCollisionArea().getOffset().x - a.getCollisionArea().getOffset().x + b_r + a.getSize().x / 2.0f + 1.0f, a.getPosition().y);
+        }
+        else if (direction == 2)
+        {
+            a.setForcedVelocity({a.getVelocity().x, 0.0f});
+            a.setPosition(a.getPosition().x, b.getPosition().y + b.getCollisionArea().getOffset().y - a.getCollisionArea().getOffset().y + b_r + a.getSize().y / 2.0f + 1.0f);
+        }
+        else if (direction == 3)
+        {
+            a.setForcedVelocity({0.0f, a.getVelocity().y});
+            a.setPosition(b.getPosition().x + b.getCollisionArea().getOffset().x - a.getCollisionArea().getOffset().x - b_r - a.getSize().x / 2.0f - 1.0f, a.getPosition().y);
+        }
+        else if (direction == 4)
+        {
+            a.setForcedVelocity({a.getVelocity().x, 0.0f});
+            a.setPosition(a.getPosition().x, b.getPosition().y + b.getCollisionArea().getOffset().y - a.getCollisionArea().getOffset().y - b_r - a.getSize().y / 2.0f - 1.0f);
+        }
+        else if (direction == 5)
+        {
+            a.setForcedVelocity({0.0f, 0.0f});
+            a.setPosition(a.getPosition() - a.getVelocity());
+        }
+        else if (direction == 6)
+        {
+            sf::Vector2f distance = b.getPosition() + b.getCollisionArea().getOffset() - a1;
+
+            sf::Vector2f unit = utils::getNormalized(distance);
+
+            a.setPosition(b.getPosition() + b.getCollisionArea().getOffset() - a.getCollisionArea().getOffset() -
+                          unit * (b_r + 1) + a_size / 2.0f);
+        }
+        else if (direction == 7)
+        {
+            sf::Vector2f distance = b.getPosition() + b.getCollisionArea().getOffset() - sf::Vector2f{a2.x, a1.y};
+
+            sf::Vector2f unit = utils::getNormalized(distance);
+
+            a.setPosition(b.getPosition() + b.getCollisionArea().getOffset() - a.getCollisionArea().getOffset() -
+                          unit * (b_r + 1) + sf::Vector2f{-a_size.x, a_size.y} / 2.0f);
+        }
+        else if (direction == 8)
+        {
+            sf::Vector2f distance = b.getPosition() + b.getCollisionArea().getOffset() - a2;
+
+            sf::Vector2f unit = utils::getNormalized(distance);
+
+            a.setPosition(b.getPosition() + b.getCollisionArea().getOffset() - a.getCollisionArea().getOffset() -
+                          unit * (b_r + 1) - a_size / 2.0f);
+        }
+        else if (direction == 9)
+        {
+            sf::Vector2f distance = b.getPosition() + b.getCollisionArea().getOffset() - sf::Vector2f{a1.x, a2.y};
+
+            sf::Vector2f unit = utils::getNormalized(distance);
+
+            a.setPosition(b.getPosition() + b.getCollisionArea().getOffset() - a.getCollisionArea().getOffset() -
+                          unit * (b_r + 1) + sf::Vector2f{a_size.x, -a_size.y} / 2.0f);
+        }
+        else
+        {
+            return false;
+        }
+
+        return false;
+    }
+
     inline bool AABBResponse(DynamicObject& a, const StaticObject& b)
     {
         sf::Vector2f a_size = {a.getCollisionArea().getA(), a.getCollisionArea().getB()};

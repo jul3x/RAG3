@@ -213,8 +213,7 @@ bool Engine::ifCollidableResponse(DynamicObject& d_obj, const StaticObject& s_ob
     {
         if (s == Collision::Area::Type::Circle)
         {
-            //return utils::ABCircleResponse(d_obj, s_obj);
-            return utils::ABCircle(d_obj, s_obj);
+            return utils::ABCircleResponse(d_obj, s_obj);
         }
         else if (s == Collision::Area::Type::Box)
         {

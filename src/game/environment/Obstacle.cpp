@@ -12,8 +12,7 @@ Obstacle::Obstacle(const sf::Vector2f& position,
                    const int type_number) :
         StaticObject(position,
                      {SIZE_X_, SIZE_Y_},
-                     //Collision::Box(SIZE_X_, SIZE_Y_),
-                     Collision::Circle(SIZE_X_),
+                     Collision::Box(SIZE_X_, SIZE_Y_),
                      &ResourceManager::getInstance().getTexture("obstacle" + std::to_string(type_number))),
         Shootable(type_number * CFG.getInt("obstacles_endurance_factor"))
 {

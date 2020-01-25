@@ -58,10 +58,10 @@ void Engine::update(int frame_rate)
         ui_->handleEvents(*graphics_);
         game_->update(time_elapsed);
 
-        DSCollisions(time_elapsed);
         DDCollisions(time_elapsed);
-        HSCollisions(time_elapsed);
         HDCollisions(time_elapsed);
+        DSCollisions(time_elapsed);
+        HSCollisions(time_elapsed);
 
         updateAnimationEvents(time_elapsed);
 
@@ -188,6 +188,43 @@ void Engine::draw()
 }
 
 bool Engine::ifCollidableResponse(DynamicObject& d_obj, const StaticObject& s_obj)
+{
+    const auto& d = d_obj.getCollisionArea().getType();
+    const auto& s = s_obj.getCollisionArea().getType();
+
+    if (d == Collision::Area::Type::None || s == Collision::Area::Type::None)
+    {
+        return false;
+    }
+
+    if (d == Collision::Area::Type::Circle)
+    {
+        if (s == Collision::Area::Type::Circle)
+        {
+            return utils::CircleCircleResponse(d_obj, s_obj);
+        }
+        else if (s == Collision::Area::Type::Box)
+        {
+            return utils::CircleABResponse(d_obj, s_obj);
+        }
+    }
+
+    if (d == Collision::Area::Type::Box)
+    {
+        if (s == Collision::Area::Type::Circle)
+        {
+            return utils::ABCircleResponse(d_obj, s_obj);
+        }
+        else if (s == Collision::Area::Type::Box)
+        {
+            return utils::AABBResponse(d_obj, s_obj);
+        }
+    }
+
+    throw std::invalid_argument("[Engine] This collision types is not handled yet!");
+}
+
+bool Engine::ifCollidableResponse(DynamicObject& d_obj, DynamicObject& s_obj)
 {
     const auto& d = d_obj.getCollisionArea().getType();
     const auto& s = s_obj.getCollisionArea().getType();

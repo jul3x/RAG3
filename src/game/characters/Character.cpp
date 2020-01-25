@@ -18,8 +18,7 @@ Character::Character(const sf::Vector2f& position,
         DynamicObject(position,
                       velocity,
                       {SIZE_X_, SIZE_Y_},
-                      //Collision::Circle((SIZE_X_ - 40.0f) / 2.0f),
-                      Collision::Box(SIZE_X_, SIZE_Y_),
+                      Collision::Circle((SIZE_X_ - 40.0f) / 2.0f),
                       &ResourceManager::getInstance().getTexture("player"),
                       sf::Color(CFG.getInt("trail_color")),
                       CFG.getFloat("player_max_acceleration")),
@@ -95,12 +94,6 @@ bool Character::update(float time_elapsed)
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    static sf::RectangleShape rect;
-    rect.setPosition(this->getPosition() + this->getCollisionArea().getOffset());
-    rect.setSize(sf::Vector2f(this->getCollisionArea().getA(),this->getCollisionArea().getB()));
-    rect.setOrigin(this->getCollisionArea().getA() / 2.0f, this->getCollisionArea().getB() / 2.0f);
-    rect.setFillColor(sf::Color::Red);
-    target.draw(rect, states);
     if (this->isVisible())
     {
         target.draw(shape_, states);

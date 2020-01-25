@@ -66,6 +66,8 @@ private:
 
     static bool ifCollidableResponse(DynamicObject& d_obj, const StaticObject& s_obj);
 
+    static bool ifCollidableResponse(DynamicObject& d_obj, DynamicObject& s_obj);
+
     static bool areCollidable(const StaticObject& obj_1, const StaticObject& obj_2) ;
 
     void DSCollisions(float time_elapsed);

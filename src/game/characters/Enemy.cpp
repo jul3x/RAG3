@@ -24,7 +24,7 @@ bool Enemy::update(float time_elapsed)
     bool is_alive = Character::update(time_elapsed);
     float rotation;
     std::tie(std::ignore, rotation) =
-            utils::cartesianToPolar(Game::get().getPlayerPosition() - this->getPosition());
+            utils::geo::cartesianToPolar(Game::get().getPlayerPosition() - this->getPosition());
 
     this->setRotation(rotation * 180.0f / static_cast<float>(M_PI));
     this->setVelocity(3 * std::cos(rotation), 3 * std::sin(rotation));

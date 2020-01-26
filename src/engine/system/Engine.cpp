@@ -17,6 +17,12 @@ void Engine::initializeGraphics(const sf::Vector2i& size,
     graphics_ = std::make_unique<Graphics>(size, title, style, bg_color);
 }
 
+void Engine::initializeCollisions(const sf::Vector2f& size, float grid)
+{
+    collisions_ = std::make_unique<Collisions>();
+    collisions_->initialize(size, grid);
+}
+
 void Engine::registerUI(AbstractUserInterface* user_interface)
 {
     ui_ = user_interface;
@@ -57,6 +63,7 @@ void Engine::update(int frame_rate)
         ui_->handleEvents(*graphics_);
         game_->update(time_elapsed);
 
+        collisions_->update();
         DDCollisions(time_elapsed);
         HDCollisions(time_elapsed);
         DSCollisions(time_elapsed);
@@ -122,16 +129,19 @@ void Engine::registerDrawableObject(AbstractDrawableObject* obj)
 void Engine::registerStaticObject(StaticObject* obj)
 {
     s_objects_.insert(obj);
+    collisions_->insert(obj);
 }
 
 void Engine::registerDynamicObject(DynamicObject* obj)
 {
     d_objects_.insert(obj);
+    collisions_->insert(obj);
 }
 
 void Engine::registerHoveringObject(HoveringObject* obj)
 {
     h_objects_.insert(obj);
+    collisions_->insert(obj);
 }
 
 void Engine::deleteDrawableObject(AbstractDrawableObject* obj)
@@ -142,16 +152,19 @@ void Engine::deleteDrawableObject(AbstractDrawableObject* obj)
 void Engine::deleteStaticObject(StaticObject* obj)
 {
     s_objects_.erase(obj);
+    collisions_->erase(obj);
 }
 
 void Engine::deleteDynamicObject(DynamicObject* obj)
 {
     d_objects_.erase(obj);
+    collisions_->erase(obj);
 }
 
 void Engine::deleteHoveringObject(HoveringObject* obj)
 {
     h_objects_.erase(obj);
+    collisions_->erase(obj);
 }
 
 void Engine::updateAnimationEvents(float time_elapsed)
@@ -192,7 +205,7 @@ void Engine::DSCollisions(float time_elapsed)
     {
         for (auto& d_object : d_objects_)
         {
-            if (Collisions::ifCollidableResponse(*d_object, *s_object))
+            if (Collisions::ifCollideResponse(*d_object, *s_object))
             {
                 game_->alertCollision(d_object, s_object);
             }
@@ -206,7 +219,7 @@ void Engine::DDCollisions(float time_elapsed)
     {
         for (auto& d_object_2 : d_objects_)
         {
-            if (d_object_1 != d_object_2 && Collisions::ifCollidableResponse(*d_object_1, *d_object_2))
+            if (d_object_1 != d_object_2 && Collisions::ifCollideResponse(*d_object_1, *d_object_2))
             {
                 game_->alertCollision(d_object_1, d_object_2);
             }
@@ -220,7 +233,7 @@ void Engine::HSCollisions(float time_elapsed)
     {
         for (auto& s_object : s_objects_)
         {
-            if (Collisions::areCollidable(*h_object, *s_object))
+            if (Collisions::isCollision(*h_object, *s_object))
             {
                 game_->alertCollision(h_object, s_object);
             }
@@ -234,7 +247,7 @@ void Engine::HDCollisions(float time_elapsed)
     {
         for (auto& d_object : d_objects_)
         {
-            if (Collisions::areCollidable(*h_object, *d_object))
+            if (Collisions::isCollision(*h_object, *d_object))
             {
                 game_->alertCollision(h_object, d_object);
             }

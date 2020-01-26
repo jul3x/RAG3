@@ -13,6 +13,8 @@
 #include <engine/objects/AbstractDrawableObject.h>
 #include <engine/objects/CollisionArea.h>
 
+class Collisions;
+
 
 class AbstractPhysicalObject : public AbstractDrawableObject {
 public:
@@ -43,6 +45,10 @@ public:
 
     bool update(float time_elapsed) override;
 
+protected:
+    sf::Vector2<size_t> grid_position_;
+
+    friend class Collisions;
 };
 
 class DynamicObject : public StaticObject {

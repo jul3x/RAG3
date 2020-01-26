@@ -14,6 +14,7 @@
 #include <engine/graphics/AnimationEvent.h>
 #include <engine/system/AbstractUserInterface.h>
 #include <engine/system/AbstractGame.h>
+#include <engine/system/Collisions.h>
 #include <engine/objects/AbstractPhysicalObject.h>
 
 
@@ -30,6 +31,8 @@ public:
                             const std::string& title,
                             int style,
                             const sf::Color &bg_color);
+
+    void initializeCollisions(const sf::Vector2f& size, float grid);
 
     void registerUI(AbstractUserInterface* user_interface);
 
@@ -82,6 +85,7 @@ private:
 
     // Engine components
     std::unique_ptr<Graphics> graphics_;
+    std::unique_ptr<Collisions> collisions_;
 
     // Registered by Game
     AbstractUserInterface* ui_;

@@ -16,34 +16,29 @@
 
 
 namespace utils {
+namespace geo {
 
-    inline float getDistance(const sf::Vector2f& a, const sf::Vector2f& b)
-    {
+    inline float getDistance(const sf::Vector2f &a, const sf::Vector2f &b) {
         return std::hypot(b.x - a.x, b.y - a.y);
     }
 
-    inline sf::Vector2f polarToCartesian(float r, float theta_rad)
-    {
-        if (r < 0.0f)
-        {
+    inline sf::Vector2f polarToCartesian(float r, float theta_rad) {
+        if (r < 0.0f) {
             throw std::invalid_argument("[Utils::polarToCartesian] Radius cannot be negative!");
         }
 
         return {r * std::cos(theta_rad), r * std::sin(theta_rad)};
     }
 
-    inline std::tuple<float, float> cartesianToPolar(const sf::Vector2f& vector)
-    {
+    inline std::tuple<float, float> cartesianToPolar(const sf::Vector2f &vector) {
         float r = std::hypot(vector.x, vector.y);
         float theta_rad = std::atan2(vector.y, vector.x);
 
         return std::make_tuple(r, theta_rad);
     }
 
-    inline sf::Vector2f vectorLengthLimit(const sf::Vector2f& vector_in, float max_length)
-    {
-        if (max_length < 0.0f)
-        {
+    inline sf::Vector2f vectorLengthLimit(const sf::Vector2f &vector_in, float max_length) {
+        if (max_length < 0.0f) {
             throw std::invalid_argument("[utils::vectorLengthLimit] max_length cannot be negative!");
         }
 
@@ -51,8 +46,7 @@ namespace utils {
 
         sf::Vector2f out = vector_in;
 
-        if (length > max_length)
-        {
+        if (length > max_length) {
             out.x = out.x / length * max_length;
             out.y = out.y / length * max_length;
         }
@@ -60,22 +54,18 @@ namespace utils {
         return out;
     }
 
-    inline sf::Vector2f getNormalized(const sf::Vector2f& vector)
-    {
+    inline sf::Vector2f getNormalized(const sf::Vector2f &vector) {
         float length = std::hypot(vector.x, vector.y);
 
-        if (length <= 0.0f)
-        {
+        if (length <= 0.0f) {
             throw std::invalid_argument("[utils::getNormalized] Input vector is invalid!");
         }
 
         return vector / length;
     }
 
-    inline bool isPointInRectangle(const sf::Vector2f& p, const sf::Vector2f& rect_pos, const sf::Vector2f& rect_size)
-    {
-        if (rect_size.x <= 0.0f || rect_size.y <= 0.0f)
-        {
+    inline bool isPointInRectangle(const sf::Vector2f &p, const sf::Vector2f &rect_pos, const sf::Vector2f &rect_size) {
+        if (rect_size.x <= 0.0f || rect_size.y <= 0.0f) {
             throw std::invalid_argument("[isPointInRectangle] Size of rectangle cannot be negative!");
         }
 
@@ -83,9 +73,8 @@ namespace utils {
                p.y < rect_pos.y + rect_size.y;
     }
 
-    inline short int AABB(const sf::Vector2f& a_origin, const sf::Vector2f& a_size,
-                          const sf::Vector2f& b_origin, const sf::Vector2f& b_size)
-    {
+    inline short int AABB(const sf::Vector2f &a_origin, const sf::Vector2f &a_size,
+                          const sf::Vector2f &b_origin, const sf::Vector2f &b_size) {
         //
         // 6  ___2___  7
         //   |       |
@@ -114,8 +103,7 @@ namespace utils {
         if (a_origin.y >= b2.y && a_origin.x >= b1.x && a_origin.x < b2.x)
             return 4;
 
-        if (a_origin.x < b1.x && a_origin.y < b1.y)
-        {
+        if (a_origin.x < b1.x && a_origin.y < b1.y) {
             float diff_x = std::abs(b1.x - a_origin.x - a_size.x / 2.0f);
             float diff_y = std::abs(b1.y - a_origin.y - a_size.y / 2.0f);
 
@@ -123,8 +111,7 @@ namespace utils {
             else return 1;
         }
 
-        if (a_origin.x >= b2.x && a_origin.y < b1.y)
-        {
+        if (a_origin.x >= b2.x && a_origin.y < b1.y) {
             float diff_x = std::abs(b2.x - a_origin.x + a_size.x / 2.0f);
             float diff_y = std::abs(b1.y - a_origin.y - a_size.y / 2.0f);
 
@@ -132,8 +119,7 @@ namespace utils {
             else return 3;
         }
 
-        if (a_origin.x >= b2.x && a_origin.y >= b2.y)
-        {
+        if (a_origin.x >= b2.x && a_origin.y >= b2.y) {
             float diff_x = std::abs(b2.x - a_origin.x + a_size.x / 2.0f);
             float diff_y = std::abs(b2.y - a_origin.y + a_size.y / 2.0f);
 
@@ -141,8 +127,7 @@ namespace utils {
             else return 3;
         }
 
-        if (a_origin.x < b1.x && a_origin.y >= b2.y)
-        {
+        if (a_origin.x < b1.x && a_origin.y >= b2.y) {
             float diff_x = std::abs(b1.x - a_origin.x - a_size.x / 2.0f);
             float diff_y = std::abs(b2.y - a_origin.y + a_size.y / 2.0f);
 
@@ -158,8 +143,7 @@ namespace utils {
         diff[1] = std::abs(a_origin.y + a_size.y / 2.0f - b_origin.y);
 
         short int min_i = 0;
-        for (short int i = 0; i < 4; ++i)
-        {
+        for (short int i = 0; i < 4; ++i) {
             if (diff[i] < diff[min_i])
                 min_i = i;
         }
@@ -167,15 +151,13 @@ namespace utils {
         return min_i + 1;
     }
 
-    inline bool CircleCircle(const sf::Vector2f& a_origin, float a_r,
-                             const sf::Vector2f& b_origin, float b_r)
-    {
-        return (utils::getDistance(a_origin, b_origin) < a_r + b_r);
+    inline bool circleCircle(const sf::Vector2f &a_origin, float a_r,
+                             const sf::Vector2f &b_origin, float b_r) {
+        return (utils::geo::getDistance(a_origin, b_origin) < a_r + b_r);
     }
 
-    inline short int ABCircle(const sf::Vector2f& a_origin, const sf::Vector2f& a_size,
-                              const sf::Vector2f& b_origin, float b_r)
-    {
+    inline short int ABCircle(const sf::Vector2f &a_origin, const sf::Vector2f &a_size,
+                              const sf::Vector2f &b_origin, float b_r) {
         //
         // 6  ___2___  7
         //   |       |
@@ -185,7 +167,7 @@ namespace utils {
         //
 
         // Get difference vector between both centers
-        if (utils::isPointInRectangle(b_origin, a_origin - a_size / 2.0f, a_size))
+        if (utils::geo::isPointInRectangle(b_origin, a_origin - a_size / 2.0f, a_size))
         {
             float diff[4];
             diff[0] = std::abs(b_origin.x - a_origin.x + a_size.x / 2.0f);
@@ -194,8 +176,7 @@ namespace utils {
             diff[1] = std::abs(a_origin.y + a_size.y / 2.0f - b_origin.y);
 
             short int min_i = 0;
-            for (short int i = 0; i < 4; ++i)
-            {
+            for (short int i = 0; i < 4; ++i) {
                 if (diff[i] < diff[min_i])
                     min_i = i;
             }
@@ -212,16 +193,16 @@ namespace utils {
         sf::Vector2f r_o4 = {a_origin.x, a_origin.y + a_size.x / 2.0f + b_r / 2.0f};
         sf::Vector2f r_s4 = {a_size.x, b_r};
 
-        if (utils::isPointInRectangle(b_origin, r_o1 - r_s1 / 2.0f, r_s1))
+        if (utils::geo::isPointInRectangle(b_origin, r_o1 - r_s1 / 2.0f, r_s1))
             return 1;
 
-        if (utils::isPointInRectangle(b_origin, r_o2 - r_s2 / 2.0f, r_s2))
+        if (utils::geo::isPointInRectangle(b_origin, r_o2 - r_s2 / 2.0f, r_s2))
             return 2;
 
-        if (utils::isPointInRectangle(b_origin, r_o3 - r_s3 / 2.0f, r_s3))
+        if (utils::geo::isPointInRectangle(b_origin, r_o3 - r_s3 / 2.0f, r_s3))
             return 3;
 
-        if (utils::isPointInRectangle(b_origin, r_o4 - r_s4 / 2.0f, r_s4))
+        if (utils::geo::isPointInRectangle(b_origin, r_o4 - r_s4 / 2.0f, r_s4))
             return 4;
 
         sf::Vector2f c_o1 = {a_origin.x - a_size.x / 2.0f, a_origin.y - a_size.y / 2.0f};
@@ -229,40 +210,44 @@ namespace utils {
         sf::Vector2f c_o3 = {a_origin.x + a_size.x / 2.0f, a_origin.y + a_size.y / 2.0f};
         sf::Vector2f c_o4 = {a_origin.x - a_size.x / 2.0f, a_origin.y + a_size.y / 2.0f};
 
-        if (utils::getDistance(b_origin, c_o1) < b_r)
+        if (utils::geo::getDistance(b_origin, c_o1) < b_r)
             return 6;
 
-        if (utils::getDistance(b_origin, c_o2) < b_r)
+        if (utils::geo::getDistance(b_origin, c_o2) < b_r)
             return 7;
 
-        if (utils::getDistance(b_origin, c_o3) < b_r)
+        if (utils::geo::getDistance(b_origin, c_o3) < b_r)
             return 8;
 
-        if (utils::getDistance(b_origin, c_o4) < b_r)
+        if (utils::geo::getDistance(b_origin, c_o4) < b_r)
             return 9;
 
         return 0;
     }
 
-    inline std::tuple<sf::Vector2f, sf::Vector2f, sf::Vector2f> generateCollisionAABB(const StaticObject &a)
-    {
+    inline std::tuple<sf::Vector2f, sf::Vector2f, sf::Vector2f> generateCollisionAABB(const StaticObject &a) {
         std::tuple<sf::Vector2f, sf::Vector2f, sf::Vector2f> out;
         std::get<2>(out) = {a.getCollisionArea().getA(), a.getCollisionArea().getB()};
         std::get<0>(out) = a.getPosition() + a.getCollisionArea().getOffset() - std::get<2>(out) / 2.0f;
         std::get<1>(out) = a.getPosition() + a.getCollisionArea().getOffset() + std::get<2>(out) / 2.0f;
 
         return out;
-    };
+    }
 
-    inline std::tuple<sf::Vector2f, sf::Vector2f, sf::Vector2f> generateCollisionAABB(const DynamicObject &a)
-    {
-        std::tuple<sf::Vector2f, sf::Vector2f, sf::Vector2f> out = generateCollisionAABB(static_cast<const StaticObject&>(a));
+    inline std::tuple<sf::Vector2f, sf::Vector2f, sf::Vector2f> generateCollisionAABB(const DynamicObject &a) {
+        std::tuple<sf::Vector2f, sf::Vector2f, sf::Vector2f> out = utils::geo::generateCollisionAABB(
+                static_cast<const StaticObject &>(a));
         std::get<0>(out) += a.getVelocity();
         std::get<1>(out) += a.getPosition();
 
         return out;
-    };
+    }
 
+    inline float dotProduct(const sf::Vector2f &a, const sf::Vector2f &b) {
+        return (a.x * b.x + a.y * b.y);
+    }
+
+} // namespace geo
 } // namespace utils
 
 #endif // RAG3_ENGINE_UTILS_GEOMETRY_H

@@ -10,6 +10,7 @@
 
 #include <game/characters/Character.h>
 #include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/Text.hpp>
 
 
 Character::Character(const sf::Vector2f& position,
@@ -29,7 +30,7 @@ bool Character::shot()
 {
     auto new_velocity = (*current_weapon_)->use();
 
-    if (!utils::isNearlyEqual(new_velocity, {0.0f, 0.0f}))
+    if (!utils::num::isNearlyEqual(new_velocity, {0.0f, 0.0f}))
     {
         this->setForcedVelocity(new_velocity);
         return true;
@@ -42,7 +43,7 @@ void Character::getShot(const Bullet& bullet)
 {
     //Engine::spawnBloodAnimation();
     this->setForcedVelocity(this->getVelocity() +
-                            utils::getNormalized(bullet.getVelocity()) * static_cast<float>(bullet.getDeadlyFactor()) *
+                            utils::geo::getNormalized(bullet.getVelocity()) * static_cast<float>(bullet.getDeadlyFactor()) *
                             CFG.getFloat("get_shot_factor"));
 
     life_ -= bullet.getDeadlyFactor();
@@ -98,6 +99,17 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         target.draw(shape_, states);
         target.draw(**current_weapon_, states);
+
+        static sf::Text text("", ResourceManager::getInstance().getFont(),
+                      24);
+
+        text.setFillColor(sf::Color::Red);
+        text.setPosition(this->getPosition());
+
+        text.setString(std::to_string(grid_position_.x) + ", " + std::to_string(grid_position_.y));
+
+        target.draw(text, states);
+
     }
 }
 

@@ -37,6 +37,7 @@ void Game::initialize()
     engine_->registerUI(ui_.get());
 
     map_->loadMap("map");
+    engine_->initializeCollisions(map_->getSize(), COLLISION_GRID_SIZE_);
 
     for (auto& obstacle : map_->getObstacles())
         engine_->registerStaticObject(&obstacle);

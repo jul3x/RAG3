@@ -81,8 +81,8 @@ bool DynamicObject::update(float time_elapsed)
         trail_.pop_front();
     }
 
-    if (utils::isNearlyEqual(set_v_.x, 0.0f, 0.01f) &&
-        utils::isNearlyEqual(curr_v_.x, 0.0f, 0.05f))
+    if (utils::num::isNearlyEqual(set_v_.x, 0.0f, 0.01f) &&
+        utils::num::isNearlyEqual(curr_v_.x, 0.0f, 0.05f))
     {
         curr_v_.x = 0.0f;
     }
@@ -90,8 +90,8 @@ bool DynamicObject::update(float time_elapsed)
     {
         curr_v_.x = curr_v_.x - std::copysign(acceleration_ * time_elapsed, curr_v_.x - set_v_.x);
     }
-    if (utils::isNearlyEqual(set_v_.y, 0.0f, 0.01f) &&
-        utils::isNearlyEqual(curr_v_.y, 0.0f, 0.05f))
+    if (utils::num::isNearlyEqual(set_v_.y, 0.0f, 0.01f) &&
+        utils::num::isNearlyEqual(curr_v_.y, 0.0f, 0.05f))
     {
         curr_v_.y = 0.0f;
     }

@@ -244,6 +244,25 @@ namespace utils {
         return 0;
     }
 
+    inline std::tuple<sf::Vector2f, sf::Vector2f, sf::Vector2f> generateCollisionAABB(const StaticObject &a)
+    {
+        std::tuple<sf::Vector2f, sf::Vector2f, sf::Vector2f> out;
+        std::get<2>(out) = {a.getCollisionArea().getA(), a.getCollisionArea().getB()};
+        std::get<0>(out) = a.getPosition() + a.getCollisionArea().getOffset() - std::get<2>(out) / 2.0f;
+        std::get<1>(out) = a.getPosition() + a.getCollisionArea().getOffset() + std::get<2>(out) / 2.0f;
+
+        return out;
+    };
+
+    inline std::tuple<sf::Vector2f, sf::Vector2f, sf::Vector2f> generateCollisionAABB(const DynamicObject &a)
+    {
+        std::tuple<sf::Vector2f, sf::Vector2f, sf::Vector2f> out = generateCollisionAABB(static_cast<const StaticObject&>(a));
+        std::get<0>(out) += a.getVelocity();
+        std::get<1>(out) += a.getPosition();
+
+        return out;
+    };
+
 } // namespace utils
 
 #endif // RAG3_ENGINE_UTILS_GEOMETRY_H

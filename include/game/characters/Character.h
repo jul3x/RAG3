@@ -42,6 +42,10 @@ public:
 
     void setPosition(float x, float y) override;
 
+    void setPositionX(float x) override;
+
+    void setPositionY(float y) override;
+
     void setRotation(float theta) override;
 
 protected:

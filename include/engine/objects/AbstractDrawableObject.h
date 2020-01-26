@@ -31,6 +31,10 @@ public:
 
     virtual void setPosition(float x, float y);
 
+    virtual void setPositionX(float x);
+
+    virtual void setPositionY(float y);
+
     virtual void setRotation(float angle_deg);
 
     virtual void setVisibility(const sf::View& view);

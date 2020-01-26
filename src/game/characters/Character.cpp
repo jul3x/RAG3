@@ -118,3 +118,16 @@ void Character::setPosition(float x, float y)
     AbstractDrawableObject::setPosition(x, y);
     (*current_weapon_)->setPosition(x, y);
 }
+
+
+void Character::setPositionX(float x)
+{
+    AbstractDrawableObject::setPositionX(x);
+    (*current_weapon_)->setPositionX(x);
+}
+
+void Character::setPositionY(float y)
+{
+    AbstractDrawableObject::setPositionY(y);
+    (*current_weapon_)->setPositionY(y);
+}

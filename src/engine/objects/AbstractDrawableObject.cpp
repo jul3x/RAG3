@@ -52,12 +52,22 @@ void AbstractDrawableObject::setPosition(const sf::Vector2f& position)
     shape_.setPosition(position);
 }
 
-void AbstractDrawableObject::setPosition(const float x, const float y)
+void AbstractDrawableObject::setPosition(float x, float y)
 {
     shape_.setPosition({x, y});
 }
 
-void AbstractDrawableObject::setRotation(const float angle_deg)
+void AbstractDrawableObject::setPositionX(float x)
+{
+    shape_.setPosition({x, this->getPosition().y});
+}
+
+void AbstractDrawableObject::setPositionY(float y)
+{
+    shape_.setPosition({this->getPosition().x, y});
+}
+
+void AbstractDrawableObject::setRotation(float angle_deg)
 {
     shape_.setRotation(angle_deg);
 }

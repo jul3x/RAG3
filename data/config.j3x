@@ -1,4 +1,4 @@
-bool auto_resolution=0
+bool auto_resolution=1
 bool full_screen=0
 int window_height_px=1500
 int window_width_px=3000

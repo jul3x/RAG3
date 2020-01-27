@@ -24,52 +24,15 @@ void Collisions::initialize(const sf::Vector2f &size, float grid)
     }
 }
 
-void Collisions::update()
+void Collisions::update(AbstractGame *game)
 {
-    for (size_t i = 0; i < grid_size_x_; ++i)
-    {
-        auto& d_col = d_grid_.at(i);
-        auto& h_col = h_grid_.at(i);
-
-        for (size_t j = 0; j < grid_size_y_; ++j)
-        {
-            for (auto it = d_col.at(j).begin(); it != d_col.at(j).end();)
-            {
-                bool do_increment = true;
-                auto old_grid_pos = (*it)->grid_position_;
-                updateGridPosition(*it);
-
-                if (old_grid_pos != (*it)->grid_position_)
-                {
-                    auto next_it = std::next(it);
-                    insert(*it, d_grid_);
-                    d_col.at(j).erase(it);
-                    it = next_it;
-                    do_increment = false;
-                }
-
-                if (do_increment) ++it;
-            }
-
-            for (auto it = h_col.at(j).begin(); it != h_col.at(j).end();)
-            {
-                bool do_increment = true;
-                auto old_grid_pos = (*it)->grid_position_;
-                updateGridPosition(*it);
-
-                if (old_grid_pos != (*it)->grid_position_)
-                {
-                    auto next_it = std::next(it);
-                    insert(*it, h_grid_);
-                    h_col.at(j).erase(it);
-                    it = next_it;
-                    do_increment = false;
-                }
-
-                if (do_increment) ++it;
-            }
-        }
-    }
+    // s_grid_ does not need to be updated - only erasing and adding new objects is going on there
+    updateGrid(d_grid_);
+    updateGrid(h_grid_);
+    checkCollisions(game, h_grid_, d_grid_);
+    checkCollisions(game, h_grid_, s_grid_);
+    checkCollisions(game, d_grid_, d_grid_, true);
+    checkCollisions(game, d_grid_, s_grid_, true);
 }
 
 void Collisions::insert(StaticObject* obj)

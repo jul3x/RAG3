@@ -107,38 +107,35 @@ bool DynamicObject::update(float time_elapsed)
 
 void DynamicObject::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    if (this->isVisible())
+    auto pixel_size = this->getSize().x / 5.0f;
+
     {
-        auto pixel_size = this->getSize().x / 5.0f;
+        std::vector<sf::Vertex> trail_vert;
 
+        float factor = pixel_size / static_cast<float>(trail_.size() * trail_.size());
+
+        if (trail_.size() >= 2)
         {
-            std::vector<sf::Vertex> trail_vert;
+            trail_vert.emplace_back(trail_.front(), trail_color_, sf::Vector2f{});
 
-            float factor = pixel_size / static_cast<float>(trail_.size() * trail_.size());
-
-            if (trail_.size() >= 2)
+            for (size_t i = 1; i < trail_.size(); ++i)
             {
-                trail_vert.emplace_back(trail_.front(), trail_color_, sf::Vector2f{});
+                float temp_r = factor * i * i;
+                // make 2 points
+                sf::Vector2f diff = trail_.at(i) - trail_.at(i - 1);
+                auto dir = static_cast<float>(std::atan2(diff.y, diff.x) + M_PI_2);
 
-                for (size_t i = 1; i < trail_.size(); ++i)
-                {
-                    float temp_r = factor * i * i;
-                    // make 2 points
-                    sf::Vector2f diff = trail_.at(i) - trail_.at(i - 1);
-                    auto dir = static_cast<float>(std::atan2(diff.y, diff.x) + M_PI_2);
-
-                    sf::Vector2f norm = {std::cos(dir), std::sin(dir)};
-                    trail_vert.emplace_back(trail_.at(i) - temp_r * norm,
-                                            trail_color_, sf::Vector2f{});
-                    trail_vert.emplace_back(trail_.at(i) + temp_r * norm,
-                                            trail_color_, sf::Vector2f{});
-                }
-
-                target.draw(&trail_vert[0], trail_vert.size(), sf::TriangleStrip, states);
+                sf::Vector2f norm = {std::cos(dir), std::sin(dir)};
+                trail_vert.emplace_back(trail_.at(i) - temp_r * norm,
+                                        trail_color_, sf::Vector2f{});
+                trail_vert.emplace_back(trail_.at(i) + temp_r * norm,
+                                        trail_color_, sf::Vector2f{});
             }
+
+            target.draw(&trail_vert[0], trail_vert.size(), sf::TriangleStrip, states);
         }
-        target.draw(shape_, states);
     }
+    target.draw(shape_, states);
 }
 
 //

@@ -10,7 +10,7 @@ Graphics::Graphics(const sf::Vector2i& size,
                    int style,
                    const sf::Color& bg_color) : settings_(0, 0, 8),
                                                 window_(sf::VideoMode(size.x,
-                                                                        size.y),
+                                                                      size.y),
                                                         title,
                                                         style,
                                                         settings_),
@@ -75,9 +75,11 @@ void Graphics::clear()
     window_.clear(bg_color_);
 }
 
-void Graphics::draw(const AbstractDrawableObject& object)
+void Graphics::draw(AbstractDrawableObject& object)
 {
-    window_.draw(object);
+    object.setVisibility(window_.getView());
+    if (object.isVisible())
+        window_.draw(object);
 }
 
 void Graphics::display()

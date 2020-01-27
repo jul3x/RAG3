@@ -40,15 +40,11 @@ public:
 
     void registerGame(AbstractGame* game);
 
-    void registerDrawableObject(AbstractDrawableObject* obj);
-
     void registerStaticObject(StaticObject* obj);
 
     void registerDynamicObject(DynamicObject* obj);
 
     void registerHoveringObject(HoveringObject* obj);
-
-    void deleteDrawableObject(AbstractDrawableObject* obj);
 
     void deleteStaticObject(StaticObject* obj);
 
@@ -67,14 +63,6 @@ public:
 private:
     void setVisibilities() const;
 
-    void DSCollisions(float time_elapsed);
-
-    void DDCollisions(float time_elapsed);
-
-    void HSCollisions(float time_elapsed);
-
-    void HDCollisions(float time_elapsed);
-
     void updateAnimationEvents(float time_elapsed);
 
     void draw();
@@ -91,13 +79,6 @@ private:
     AbstractUserInterface* ui_;
     AbstractCamera* camera_;
     AbstractGame* game_;
-
-    // Objects
-    std::unordered_set<AbstractDrawableObject*> drawables_;
-    std::unordered_set<StaticObject*> s_objects_;
-    std::unordered_set<DynamicObject*> d_objects_;
-    std::unordered_set<HoveringObject*> h_objects_;
-
 
     sf::Clock clock_;
     sf::Time time_;

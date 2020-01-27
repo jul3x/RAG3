@@ -27,7 +27,7 @@ public:
 
     std::list<Enemy>& getEnemies();
 
-    Decoration* spawnDecoration(const sf::Vector2f& pos, Decoration::Type which);
+    void spawnDecoration(const sf::Vector2f& pos, Decoration::Type which);
 
     bool update(float time_elapsed);
 

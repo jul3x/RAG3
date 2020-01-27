@@ -10,6 +10,7 @@
 
 #include <engine/objects/AbstractPhysicalObject.h>
 #include <engine/utils/Numeric.h>
+#include <engine/system/AbstractGame.h>
 
 
 class Collisions {
@@ -20,7 +21,7 @@ public:
 
     void initialize(const sf::Vector2f &size, float grid);
 
-    void update();
+    void update(AbstractGame *game);
 
     void insert(StaticObject* obj);
     void insert(DynamicObject* obj);
@@ -30,8 +31,58 @@ public:
     void erase(DynamicObject* obj);
     void erase(HoveringObject* obj);
 
+private:
+    void updateGridPosition(StaticObject* obj);
+
+    template <class T>
+    void updateGrid(std::vector<std::vector<std::list<T*>>> &cont) {
+        for (size_t i = 0; i < grid_size_x_; ++i)
+        {
+            auto& col = cont.at(i);
+
+            for (size_t j = 0; j < grid_size_y_; ++j)
+            {
+                for (auto it = col.at(j).begin(); it != col.at(j).end();)
+                {
+                    bool do_increment = true;
+                    auto old_grid_pos = (*it)->grid_position_;
+                    updateGridPosition(*it);
+
+                    if (old_grid_pos != (*it)->grid_position_)
+                    {
+                        auto next_it = std::next(it);
+                        insert(*it, cont);
+                        col.at(j).erase(it);
+                        it = next_it;
+                        do_increment = false;
+                    }
+
+                    if (do_increment) ++it;
+                }
+            }
+        }
+    }
+
+    template <class T>
+    void insert(T* obj,std::vector<std::vector<std::list<T*>>> &cont) {
+            cont.at(obj->grid_position_.x).at(obj->grid_position_.y).push_back(obj);
+    }
+
+    template <class T>
+    void eraseIfExists(T* obj,std::vector<std::vector<std::list<T*>>> &cont) {
+        auto& obj_list = cont.at(obj->grid_position_.x).at(obj->grid_position_.y);
+        for (auto it = obj_list.begin(); it != obj_list.end(); ++it)
+        {
+            if (*it == obj)
+            {
+                obj_list.erase(it);
+                break;
+            }
+        }
+    }
+
     template<class T, class K>
-    static bool ifCollideResponse(T &obj_1, K &obj_2)
+    static bool ifCollideRespond(T &obj_1, K &obj_2)
     {
         const auto& a = obj_1.getCollisionArea().getType();
         const auto& b = obj_2.getCollisionArea().getType();
@@ -86,23 +137,39 @@ public:
         throw std::invalid_argument("[Collisions] This collision type is not handled yet!");
     }
 
-private:
-    void updateGridPosition(StaticObject* obj);
-
-    template <class T>
-    void insert(T* obj,std::vector<std::vector<std::list<T*>>> &cont) {
-            cont.at(obj->grid_position_.x).at(obj->grid_position_.y).push_back(obj);
-    }
-
-    template <class T>
-    void eraseIfExists(T* obj,std::vector<std::vector<std::list<T*>>> &cont) {
-        auto& obj_list = cont.at(obj->grid_position_.x).at(obj->grid_position_.y);
-        for (auto it = obj_list.begin(); it != obj_list.end(); ++it)
+    template <class T, class K>
+    void checkCollisions(AbstractGame *game,
+                         std::vector<std::vector<std::list<T*>>> &cont_1,
+                         std::vector<std::vector<std::list<K*>>> &cont_2,
+                         bool respond = false)
+    {
+        static std::vector<sf::Vector2<int>> grids_to_check =
+                {{-1, -1}, {0, -1}, {1, 1}, {0, -1}, {0, 0}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+        for (size_t i = 0; i < grid_size_x_; ++i)
         {
-            if (*it == obj)
+            for (size_t j = 0; j < grid_size_y_; ++j)
             {
-                obj_list.erase(it);
-                break;
+                for (const auto &grid : grids_to_check)
+                {
+                    size_t x = grid.x + i;
+                    size_t y = grid.y + j;
+
+                    if (x < 0 || x >= grid_size_x_ || y < 0 || y >= grid_size_y_) continue;
+
+                    for (const auto &el1 : cont_1.at(i).at(j))
+                    {
+                        for (const auto &el2 : cont_2.at(x).at(y))
+                        {
+                            if (x == i && y == j && el1 == el2) continue;
+
+                            if ((respond && Collisions::ifCollideRespond(*el1, *el2)) ||
+                                Collisions::isCollision(*el1, *el2))
+                            {
+                                game->alertCollision(el1, el2);
+                            }
+                        }
+                    }
+                }
             }
         }
     }

@@ -42,9 +42,6 @@ void Game::initialize()
     for (auto& obstacle : map_->getObstacles())
         engine_->registerStaticObject(&obstacle);
 
-    for (auto& decoration : map_->getDecorations())
-        engine_->registerDrawableObject(&decoration);
-
     for (auto& enemy : map_->getEnemies())
         engine_->registerDynamicObject(&enemy);
 
@@ -57,8 +54,7 @@ void Game::update(float time_elapsed)
 
     if (player_->isAlive() && !player_->update(time_elapsed))
     {
-        engine_->registerDrawableObject(
-            map_->spawnDecoration(player_->getPosition(), Decoration::Type::Blood));
+        map_->spawnDecoration(player_->getPosition(), Decoration::Type::Blood);
         spawnExplosionAnimation(player_->getPosition(), 25.0f);
         player_->setDead();
         deleteDynamicObject(player_.get());
@@ -80,16 +76,16 @@ void Game::update(float time_elapsed)
 
 void Game::draw(Graphics& graphics)
 {
-    for (const auto& decoration : map_->getDecorations())
+    for (auto& decoration : map_->getDecorations())
         graphics.draw(decoration);
 
-    for (const auto& obstacle : map_->getObstacles())
+    for (auto& obstacle : map_->getObstacles())
         graphics.draw(obstacle);
 
-    for (const auto& enemy : map_->getEnemies())
+    for (auto& enemy : map_->getEnemies())
         graphics.draw(enemy);
 
-    for (const auto& bullet : bullets_)
+    for (auto& bullet : bullets_)
         graphics.draw(*bullet);
 
     if (player_->isAlive())

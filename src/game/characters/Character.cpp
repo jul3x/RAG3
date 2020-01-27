@@ -95,22 +95,18 @@ bool Character::update(float time_elapsed)
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    if (this->isVisible())
-    {
-        target.draw(shape_, states);
-        target.draw(**current_weapon_, states);
+    target.draw(shape_, states);
+    target.draw(**current_weapon_, states);
 
-        static sf::Text text("", ResourceManager::getInstance().getFont(),
-                      24);
+    static sf::Text text("", ResourceManager::getInstance().getFont(),
+                  24);
 
-        text.setFillColor(sf::Color::Red);
-        text.setPosition(this->getPosition());
+    text.setFillColor(sf::Color::Red);
+    text.setPosition(this->getPosition());
 
-        text.setString(std::to_string(grid_position_.x) + ", " + std::to_string(grid_position_.y));
+    text.setString(std::to_string(grid_position_.x) + ", " + std::to_string(grid_position_.y));
 
-        target.draw(text, states);
-
-    }
+    target.draw(text, states);
 }
 
 void Character::setPosition(const sf::Vector2f& pos)

@@ -45,10 +45,9 @@ std::list<Enemy>& Map::getEnemies()
     return enemies_;
 }
 
-Decoration* Map::spawnDecoration(const sf::Vector2f& pos, Decoration::Type which)
+void Map::spawnDecoration(const sf::Vector2f& pos, Decoration::Type which)
 {
     decorations_.emplace_back(pos, which);
-    return &decorations_.back();
 }
 
 bool Map::update(float time_elapsed)

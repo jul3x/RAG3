@@ -40,7 +40,7 @@ public:
 
     void clear();
 
-    void draw(const AbstractDrawableObject& object);
+    void draw(AbstractDrawableObject& object);
 
     void display();
 

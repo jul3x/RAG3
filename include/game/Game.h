@@ -64,7 +64,7 @@ public:
 private:
     Game();
 
-    static constexpr float COLLISION_GRID_SIZE_ = 100.0f;
+    static constexpr float COLLISION_GRID_SIZE_ = 400.0f;
 
     std::unique_ptr<Engine> engine_;
     std::unique_ptr<UserInterface> ui_;

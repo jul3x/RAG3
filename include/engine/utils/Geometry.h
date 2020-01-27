@@ -234,15 +234,6 @@ namespace geo {
         return out;
     }
 
-    inline std::tuple<sf::Vector2f, sf::Vector2f, sf::Vector2f> generateCollisionAABB(const DynamicObject &a) {
-        std::tuple<sf::Vector2f, sf::Vector2f, sf::Vector2f> out = utils::geo::generateCollisionAABB(
-                static_cast<const StaticObject &>(a));
-        std::get<0>(out) += a.getVelocity();
-        std::get<1>(out) += a.getPosition();
-
-        return out;
-    }
-
     inline float dotProduct(const sf::Vector2f &a, const sf::Vector2f &b) {
         return (a.x * b.x + a.y * b.y);
     }

@@ -32,10 +32,10 @@ public:
     void erase(HoveringObject* obj);
 
 private:
-    void updateGridPosition(StaticObject* obj);
+    inline void updateGridPosition(StaticObject* obj);
 
     template <class T>
-    void updateGrid(std::vector<std::vector<std::list<T*>>> &cont) {
+    inline void updateGrid(std::vector<std::vector<std::list<T*>>> &cont) {
         for (size_t i = 0; i < grid_size_x_; ++i)
         {
             auto& col = cont.at(i);
@@ -64,12 +64,12 @@ private:
     }
 
     template <class T>
-    void insert(T* obj,std::vector<std::vector<std::list<T*>>> &cont) {
+    inline void insert(T* obj,std::vector<std::vector<std::list<T*>>> &cont) {
             cont.at(obj->grid_position_.x).at(obj->grid_position_.y).push_back(obj);
     }
 
     template <class T>
-    void eraseIfExists(T* obj,std::vector<std::vector<std::list<T*>>> &cont) {
+    inline void eraseIfExists(T* obj,std::vector<std::vector<std::list<T*>>> &cont) {
         auto& obj_list = cont.at(obj->grid_position_.x).at(obj->grid_position_.y);
         for (auto it = obj_list.begin(); it != obj_list.end(); ++it)
         {
@@ -82,7 +82,7 @@ private:
     }
 
     template<class T, class K>
-    static bool ifCollideRespond(T &obj_1, K &obj_2)
+    inline static bool ifCollideRespond(T &obj_1, K &obj_2)
     {
         const auto& a = obj_1.getCollisionArea().getType();
         const auto& b = obj_2.getCollisionArea().getType();
@@ -110,7 +110,7 @@ private:
     }
 
     template<class T, class K>
-    static bool isCollision(const T &obj_1, const K &obj_2)
+    inline static bool isCollision(const T &obj_1, const K &obj_2)
     {
         const auto& a = obj_1.getCollisionArea().getType();
         const auto& b = obj_2.getCollisionArea().getType();
@@ -138,7 +138,7 @@ private:
     }
 
     template <class T, class K>
-    void checkCollisions(AbstractGame *game,
+    inline void checkCollisions(AbstractGame *game,
                          std::vector<std::vector<std::list<T*>>> &cont_1,
                          std::vector<std::vector<std::list<K*>>> &cont_2,
                          bool respond = false)
@@ -175,44 +175,37 @@ private:
     }
 
     // Detection
-    static short int AABB(const StaticObject& a, const StaticObject& b);
+    inline static short int AABB(const StaticObject& a, const StaticObject& b);
 
-    static short int AABB(const DynamicObject& a, const StaticObject& b);
+    inline static bool circleCircle(const StaticObject &a, const StaticObject &b);
 
-    static short int AABB(const DynamicObject& a, const DynamicObject& b);
+    inline static short int ABCircle(const StaticObject& a, const StaticObject& b);
 
-    static bool circleCircle(const StaticObject &a, const StaticObject &b);
-
-    static bool circleCircle(const DynamicObject &a, const StaticObject &b);
-
-    static bool circleCircle(const DynamicObject &a, const DynamicObject &b);
-
-    static short int ABCircle(const StaticObject& a, const StaticObject& b);
-
-    static short int ABCircle(const DynamicObject& a, const StaticObject& b);
-
-    static short int ABCircle(const StaticObject& a, const DynamicObject& b);
-
-    static short int ABCircle(const DynamicObject& a, const DynamicObject& b);
 
     // Response
-    static bool circleABResponse(DynamicObject &a, const StaticObject &b);
+    inline static bool circleABResponse(DynamicObject &a, const StaticObject &b);
 
-    static bool circleABResponse(DynamicObject &a, DynamicObject &b);
+    inline static bool circleABResponse(DynamicObject &a, DynamicObject &b);
 
-    static bool ABCircleResponse(DynamicObject& a, const StaticObject& b);
+    inline static bool ABCircleResponse(DynamicObject& a, const StaticObject& b);
 
-    static bool ABCircleResponse(DynamicObject& a, DynamicObject& b);
+    inline static bool ABCircleResponse(DynamicObject& a, DynamicObject& b);
 
-    static bool AABBResponse(DynamicObject& a, const StaticObject& b);
+    inline static bool AABBResponse(DynamicObject& a, const StaticObject& b);
 
-    static bool AABBResponse(DynamicObject& a, DynamicObject& b);
+    inline static bool AABBResponse(DynamicObject& a, DynamicObject& b);
 
-    static bool circleCircleResponse(DynamicObject &a, const StaticObject &b);
+    inline static bool circleCircleResponse(DynamicObject &a, const StaticObject &b);
 
-    static bool circleCircleResponse(DynamicObject &a, DynamicObject &b);
+    inline static bool circleCircleResponse(DynamicObject &a, DynamicObject &b);
 
-    static void blockNormalVelocity(DynamicObject& a, short int dir);
+    inline static void blockNormalVelocity(DynamicObject& a, short int dir);
+
+    inline static void setVerifiedPosition(StaticObject &a, const sf::Vector2f &pos);
+
+    inline static void setVerifiedPositionX(StaticObject &a, float x);
+
+    inline static void setVerifiedPositionY(StaticObject &a, float y);
 
     std::vector<std::vector<std::list<StaticObject*>>> s_grid_;
     std::vector<std::vector<std::list<DynamicObject*>>> d_grid_;

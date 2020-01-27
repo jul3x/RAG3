@@ -73,11 +73,10 @@ void Collisions::erase(HoveringObject* obj)
 
 void Collisions::updateGridPosition(StaticObject* obj)
 {
-    auto position = sf::Vector2<size_t>{obj->getPosition() / grid_};
-
-    position.x = std::max<size_t>(0, std::min(grid_size_x_ - 1, position.x));
-    position.y = std::max<size_t>(0, std::min(grid_size_y_ - 1, position.y));
-    obj->grid_position_ = position;
+    auto position = sf::Vector2i{obj->getPosition() / grid_};
+    
+    obj->grid_position_.x = static_cast<size_t>(std::max(0, std::min(static_cast<int>(grid_size_x_) - 1, position.x)));
+    obj->grid_position_.y = static_cast<size_t>(std::max(0, std::min(static_cast<int>(grid_size_y_) - 1, position.y)));
 }
 
 short int Collisions::AABB(const StaticObject& a, const StaticObject& b)
@@ -88,38 +87,10 @@ short int Collisions::AABB(const StaticObject& a, const StaticObject& b)
                        {b.getCollisionArea().getA(), b.getCollisionArea().getB()});
 }
 
-short int Collisions::AABB(const DynamicObject& a, const StaticObject& b)
-{
-    return utils::geo::AABB(a.getPosition() + a.getCollisionArea().getOffset() + a.getVelocity(),
-                       {a.getCollisionArea().getA(), a.getCollisionArea().getB()},
-                       b.getPosition() + b.getCollisionArea().getOffset(),
-                       {b.getCollisionArea().getA(), b.getCollisionArea().getB()});
-}
-
-short int Collisions::AABB(const DynamicObject& a, const DynamicObject& b)
-{
-    return utils::geo::AABB(a.getPosition() + a.getCollisionArea().getOffset() + a.getVelocity(),
-                       {a.getCollisionArea().getA(), a.getCollisionArea().getB()},
-                       b.getPosition() + b.getCollisionArea().getOffset() + b.getVelocity(),
-                       {b.getCollisionArea().getA(), b.getCollisionArea().getB()});
-}
-
 bool Collisions::circleCircle(const StaticObject &a, const StaticObject &b)
 {
     return utils::geo::circleCircle(a.getPosition() + a.getCollisionArea().getOffset(), a.getCollisionArea().getA(),
                                b.getPosition() + b.getCollisionArea().getOffset(), b.getCollisionArea().getA());
-}
-
-bool Collisions::circleCircle(const DynamicObject &a, const StaticObject &b)
-{
-    return utils::geo::circleCircle(a.getPosition() + a.getCollisionArea().getOffset() + a.getVelocity(), a.getCollisionArea().getA(),
-                               b.getPosition() + b.getCollisionArea().getOffset(), b.getCollisionArea().getA());
-}
-
-bool Collisions::circleCircle(const DynamicObject &a, const DynamicObject &b)
-{
-    return utils::geo::circleCircle(a.getPosition() + a.getCollisionArea().getOffset() + a.getVelocity(), a.getCollisionArea().getA(),
-                               b.getPosition() + b.getCollisionArea().getOffset() + b.getVelocity(), b.getCollisionArea().getA());
 }
 
 short int Collisions::ABCircle(const StaticObject& a, const StaticObject& b)
@@ -127,27 +98,6 @@ short int Collisions::ABCircle(const StaticObject& a, const StaticObject& b)
     return utils::geo::ABCircle(a.getPosition() + a.getCollisionArea().getOffset(),
                            {a.getCollisionArea().getA(), a.getCollisionArea().getB()},
                            b.getPosition() + b.getCollisionArea().getOffset(), b.getCollisionArea().getA());
-}
-
-short int Collisions::ABCircle(const DynamicObject& a, const StaticObject& b)
-{
-    return utils::geo::ABCircle(a.getPosition() + a.getCollisionArea().getOffset() + a.getVelocity(),
-                           {a.getCollisionArea().getA(), a.getCollisionArea().getB()},
-                           b.getPosition() + b.getCollisionArea().getOffset(), b.getCollisionArea().getA());
-}
-
-short int Collisions::ABCircle(const StaticObject& a, const DynamicObject& b)
-{
-    return utils::geo::ABCircle(a.getPosition() + a.getCollisionArea().getOffset(),
-                           {a.getCollisionArea().getA(), a.getCollisionArea().getB()},
-                           b.getPosition() + b.getCollisionArea().getOffset() + b.getVelocity(), b.getCollisionArea().getA());
-}
-
-short int Collisions::ABCircle(const DynamicObject& a, const DynamicObject& b)
-{
-    return utils::geo::ABCircle(a.getPosition() + a.getCollisionArea().getOffset() + a.getVelocity(),
-                           {a.getCollisionArea().getA(), a.getCollisionArea().getB()},
-                           b.getPosition() + b.getCollisionArea().getOffset() + b.getVelocity(), b.getCollisionArea().getA());
 }
 
 bool Collisions::circleABResponse(DynamicObject &a, const StaticObject &b)
@@ -162,11 +112,13 @@ bool Collisions::circleABResponse(DynamicObject &a, const StaticObject &b)
 
     static auto CircleCircleResponse_ = [](DynamicObject &a, const sf::Vector2f &p)
     {
-        sf::Vector2f distance = a.getPosition() + a.getVelocity() + a.getCollisionArea().getOffset() - p;
+        sf::Vector2f distance = a.getPosition() + a.getCollisionArea().getOffset() - p;
 
+        if (utils::num::isNearlyEqual(distance, {}, 0.001))
+            distance = {1.0f, 1.0f};
         sf::Vector2f unit = utils::geo::getNormalized(distance);
 
-        a.setPosition(p - a.getCollisionArea().getOffset() +
+        Collisions::setVerifiedPosition(a, p - a.getCollisionArea().getOffset() +
                       unit * (a.getCollisionArea().getA() + 1));
 
         a.setForcedVelocity(a.getVelocity() - utils::geo::dotProduct(a.getVelocity(), unit) * unit);
@@ -175,19 +127,16 @@ bool Collisions::circleABResponse(DynamicObject &a, const StaticObject &b)
     switch (direction)
     {
         case 1:
-            a.setPositionX(std::get<0>(b_bounds).x - offset.x - a_r - 1.0f);
+            Collisions::setVerifiedPositionX(a, std::get<0>(b_bounds).x - offset.x - a_r - 1.0f);
             break;
         case 2:
-            a.setPositionY(std::get<0>(b_bounds).y - offset.y - a_r - 1.0f);
+            Collisions::setVerifiedPositionY(a, std::get<0>(b_bounds).y - offset.y - a_r - 1.0f);
             break;
         case 3:
-            a.setPositionX(std::get<1>(b_bounds).x - offset.x + a_r + 1.0f);
+            Collisions::setVerifiedPositionX(a, std::get<1>(b_bounds).x - offset.x + a_r + 1.0f);
             break;
         case 4:
-            a.setPositionY(std::get<1>(b_bounds).y - offset.y + a_r + 1.0f);
-            break;
-        case 5:
-            a.setPosition(a.getPosition() - a.getVelocity());
+            Collisions::setVerifiedPositionY(a, std::get<1>(b_bounds).y - offset.y + a_r + 1.0f);
             break;
         case 6:
             CircleCircleResponse_(a, std::get<0>(b_bounds));
@@ -220,17 +169,19 @@ bool Collisions::circleABResponse(DynamicObject &a, DynamicObject &b)
     auto b_bounds = utils::geo::generateCollisionAABB(b);
     auto a_offset = a.getCollisionArea().getOffset();
     auto b_offset = b.getCollisionArea().getOffset();
-    auto a_future_pos = a.getPosition() + a.getVelocity();
+    auto a_pos = a.getPosition();
 
     static auto CircleCircleResponse_ = [](DynamicObject &a, DynamicObject &b, const sf::Vector2f &b_size, const sf::Vector2f &p)
     {
-        sf::Vector2f distance = a.getPosition() + a.getVelocity() + a.getCollisionArea().getOffset() - p;
+        sf::Vector2f distance = a.getPosition() + a.getCollisionArea().getOffset() - p;
 
+        if (utils::num::isNearlyEqual(distance, {}, 0.001))
+            distance = {1.0f, 1.0f};
         sf::Vector2f unit = utils::geo::getNormalized(distance);
 
-        a.setPosition(p - a.getCollisionArea().getOffset() +
+        Collisions::setVerifiedPosition(a, p - a.getCollisionArea().getOffset() +
                       unit * (a.getCollisionArea().getA() + 1));
-        b.setPosition(a.getPosition() + a.getCollisionArea().getOffset() - b.getCollisionArea().getOffset() -
+        Collisions::setVerifiedPosition(b, a.getPosition() + a.getCollisionArea().getOffset() - b.getCollisionArea().getOffset() -
                       unit * (a.getCollisionArea().getA() + 1) + b_size / 2.0f);
         a.setForcedVelocity(a.getVelocity() - utils::geo::dotProduct(a.getVelocity(), unit) * unit);
         b.setForcedVelocity(b.getVelocity() - utils::geo::dotProduct(b.getVelocity(), unit) * unit);
@@ -238,24 +189,20 @@ bool Collisions::circleABResponse(DynamicObject &a, DynamicObject &b)
 
     switch (direction) {
         case 1:
-            b.setPositionX(a_future_pos.x + a_offset.x - b_offset.x + a_r + std::get<2>(b_bounds).x / 2.0f + 1.0f);
-            a.setPositionX(std::get<0>(b_bounds).x - a_offset.x - a_r - 1.0f);
+            Collisions::setVerifiedPositionX(b, a_pos.x + a_offset.x - b_offset.x + a_r + std::get<2>(b_bounds).x / 2.0f + 1.0f);
+            Collisions::setVerifiedPositionX(a, std::get<0>(b_bounds).x - a_offset.x - a_r - 1.0f);
             break;
         case 2:
-            b.setPositionY(a_future_pos.y + a_offset.y - b_offset.y + a_r + std::get<2>(b_bounds).y / 2.0f + 1.0f);
-            a.setPositionY(std::get<0>(b_bounds).y - a_offset.y - a_r - 1.0f);
+            Collisions::setVerifiedPositionY(b, a_pos.y + a_offset.y - b_offset.y + a_r + std::get<2>(b_bounds).y / 2.0f + 1.0f);
+            Collisions::setVerifiedPositionY(a, std::get<0>(b_bounds).y - a_offset.y - a_r - 1.0f);
             break;
         case 3:
-            b.setPositionX(a_future_pos.x + a_offset.x - b_offset.x - a_r - std::get<2>(b_bounds).x / 2.0f - 1.0f);
-            a.setPositionX(std::get<1>(b_bounds).x - a_offset.x + a_r + 1.0f);
+            Collisions::setVerifiedPositionX(b, a_pos.x + a_offset.x - b_offset.x - a_r - std::get<2>(b_bounds).x / 2.0f - 1.0f);
+            Collisions::setVerifiedPositionX(a, std::get<1>(b_bounds).x - a_offset.x + a_r + 1.0f);
             break;
         case 4:
-            b.setPositionY(a_future_pos.y + a_offset.y - b_offset.y - a_r - std::get<2>(b_bounds).y / 2.0f - 1.0f);
-            a.setPositionY(std::get<1>(b_bounds).y - a_offset.y + a_r + 1.0f);
-            break;
-        case 5:
-            a.setPosition(a.getPosition() - a.getVelocity());
-            b.setPosition(b.getPosition() - b.getVelocity());
+            Collisions::setVerifiedPositionY(b, a_pos.y + a_offset.y - b_offset.y - a_r - std::get<2>(b_bounds).y / 2.0f - 1.0f);
+            Collisions::setVerifiedPositionY(a, std::get<1>(b_bounds).y - a_offset.y + a_r + 1.0f);
             break;
         case 6:
             CircleCircleResponse_(a, b, std::get<2>(b_bounds), std::get<0>(b_bounds));
@@ -293,29 +240,28 @@ bool Collisions::ABCircleResponse(DynamicObject& a, const StaticObject& b)
     {
         sf::Vector2f distance = b.getPosition() + b.getCollisionArea().getOffset() - p;
 
+        if (utils::num::isNearlyEqual(distance, {}, 0.001))
+            distance = {1.0f, 1.0f};
         sf::Vector2f unit = utils::geo::getNormalized(distance);
-
-        a.setPosition(b.getPosition() + b.getCollisionArea().getOffset() - a.getCollisionArea().getOffset() -
-                      unit * (b.getCollisionArea().getA() + 1) + a_size / 2.0f);
+        
+        Collisions::setVerifiedPosition(a, b.getPosition() + b.getCollisionArea().getOffset() - a.getCollisionArea().getOffset() -
+                               unit * (b.getCollisionArea().getA() + 1) + a_size / 2.0f);
         a.setForcedVelocity(a.getVelocity() - utils::geo::dotProduct(a.getVelocity(), unit) * unit);
     };
 
     switch (direction)
     {
         case 1:
-            a.setPositionX(b.getPosition().x + offset.x + b_r + std::get<2>(a_bounds).x / 2.0f + 1.0f);
+            Collisions::setVerifiedPositionX(a, b.getPosition().x + offset.x + b_r + std::get<2>(a_bounds).x / 2.0f + 1.0f);
             break;
         case 2:
-            a.setPositionY(b.getPosition().y + offset.y + b_r + std::get<2>(a_bounds).y / 2.0f + 1.0f);
+            Collisions::setVerifiedPositionY(a, b.getPosition().y + offset.y + b_r + std::get<2>(a_bounds).y / 2.0f + 1.0f);
             break;
         case 3:
-            a.setPositionX(b.getPosition().x + offset.x - b_r - std::get<2>(a_bounds).x / 2.0f - 1.0f);
+            Collisions::setVerifiedPositionX(a, b.getPosition().x + offset.x - b_r - std::get<2>(a_bounds).x / 2.0f - 1.0f);
             break;
         case 4:
-            a.setPositionY(b.getPosition().y + offset.y - b_r - std::get<2>(a_bounds).y / 2.0f - 1.0f);
-            break;
-        case 5:
-            a.setPosition(a.getPosition() - a.getVelocity());
+            Collisions::setVerifiedPositionY(a, b.getPosition().y + offset.y - b_r - std::get<2>(a_bounds).y / 2.0f - 1.0f);
             break;
         case 6:
             CircleCircleResponse_(a, b, std::get<2>(a_bounds), std::get<0>(a_bounds));
@@ -346,19 +292,21 @@ bool Collisions::ABCircleResponse(DynamicObject& a, DynamicObject& b)
 
     float b_r = b.getCollisionArea().getA();
     auto a_bounds = utils::geo::generateCollisionAABB(a);
-    auto b_future_pos = b.getPosition() + b.getVelocity();
+    auto b_pos = b.getPosition();
     auto a_offset = a.getCollisionArea().getOffset();
     auto b_offset = b.getCollisionArea().getOffset();
 
     static auto CircleCircleResponse_ = [](DynamicObject &a, DynamicObject &b, const sf::Vector2f &a_size, const sf::Vector2f &b_size, const sf::Vector2f &p)
     {
-        sf::Vector2f distance = b.getPosition() + b.getVelocity()  + b.getCollisionArea().getOffset() - p;
+        sf::Vector2f distance = b.getPosition() + b.getCollisionArea().getOffset() - p;
 
+        if (utils::num::isNearlyEqual(distance, {}, 0.001))
+            distance = {1.0f, 1.0f};
         sf::Vector2f unit = utils::geo::getNormalized(distance);
 
-        a.setPosition(b.getPosition() + b.getCollisionArea().getOffset() - a.getCollisionArea().getOffset() -
+        Collisions::setVerifiedPosition(a, b.getPosition() + b.getCollisionArea().getOffset() - a.getCollisionArea().getOffset() -
                       unit * (b.getCollisionArea().getA() + 1) + a_size / 2.0f);
-        b.setPosition(a.getPosition() + a.getCollisionArea().getOffset() - b.getCollisionArea().getOffset() -
+        Collisions::setVerifiedPosition(b, a.getPosition() + a.getCollisionArea().getOffset() - b.getCollisionArea().getOffset() -
                       unit * (b.getCollisionArea().getA() + 1) + b_size / 2.0f);
 
         a.setForcedVelocity(a.getVelocity() - utils::geo::dotProduct(a.getVelocity(), unit) * unit);
@@ -368,24 +316,20 @@ bool Collisions::ABCircleResponse(DynamicObject& a, DynamicObject& b)
     switch (direction)
     {
         case 1:
-            a.setPositionX(b_future_pos.x + b_offset.x - a_offset.x + b_r + std::get<2>(a_bounds).x / 2.0f + 1.0f);
-            b.setPositionX(std::get<0>(a_bounds).x - b_offset.x - b_r - 1.0f);
+            Collisions::setVerifiedPositionX(a, b_pos.x + b_offset.x - a_offset.x + b_r + std::get<2>(a_bounds).x / 2.0f + 1.0f);
+            Collisions::setVerifiedPositionX(b, std::get<0>(a_bounds).x - b_offset.x - b_r - 1.0f);
             break;
         case 2:
-            a.setPositionY(b_future_pos.y + b_offset.y - a_offset.y + b_r + std::get<2>(a_bounds).y / 2.0f + 1.0f);
-            b.setPositionY(std::get<0>(a_bounds).y - b_offset.y - b_r - 1.0f);
+            Collisions::setVerifiedPositionY(a, b_pos.y + b_offset.y - a_offset.y + b_r + std::get<2>(a_bounds).y / 2.0f + 1.0f);
+            Collisions::setVerifiedPositionY(b, std::get<0>(a_bounds).y - b_offset.y - b_r - 1.0f);
             break;
         case 3:
-            a.setPositionX(b_future_pos.x + b_offset.x - a_offset.x - b_r - std::get<2>(a_bounds).x / 2.0f - 1.0f);
-            b.setPositionX(std::get<1>(a_bounds).x - b_offset.x + b_r + 1.0f);
+            Collisions::setVerifiedPositionX(a, b_pos.x + b_offset.x - a_offset.x - b_r - std::get<2>(a_bounds).x / 2.0f - 1.0f);
+            Collisions::setVerifiedPositionX(b, std::get<1>(a_bounds).x - b_offset.x + b_r + 1.0f);
             break;
         case 4:
-            a.setPositionY(b_future_pos.y + b_offset.y - a_offset.y - b_r - std::get<2>(a_bounds).y / 2.0f - 1.0f);
-            b.setPositionY(std::get<1>(a_bounds).y - b_offset.y + b_r + 1.0f);
-            break;
-        case 5:
-            a.setPosition(a.getPosition() - a.getVelocity());
-            b.setPosition(b.getPosition() - b.getVelocity());
+            Collisions::setVerifiedPositionY(a, b_pos.y + b_offset.y - a_offset.y - b_r - std::get<2>(a_bounds).y / 2.0f - 1.0f);
+            Collisions::setVerifiedPositionY(b, std::get<1>(a_bounds).y - b_offset.y + b_r + 1.0f);
             break;
         case 6:
             CircleCircleResponse_(a, b, std::get<2>(a_bounds), std::get<2>(a_bounds), std::get<0>(a_bounds));
@@ -421,19 +365,16 @@ bool Collisions::AABBResponse(DynamicObject& a, const StaticObject& b)
 
     switch (direction) {
         case 1:
-            a.setPositionX(std::get<0>(b_bounds).x - a_offset.x - std::get<2>(a_bounds).x / 2.0f - 1.0f);
+            Collisions::setVerifiedPositionX(a, std::get<0>(b_bounds).x - a_offset.x - std::get<2>(a_bounds).x / 2.0f - 1.0f);
             break;
         case 2:
-            a.setPositionY(std::get<0>(b_bounds).y - a_offset.y - std::get<2>(a_bounds).y / 2.0f - 1.0f);
+            Collisions::setVerifiedPositionY(a, std::get<0>(b_bounds).y - a_offset.y - std::get<2>(a_bounds).y / 2.0f - 1.0f);
             break;
         case 3:
-            a.setPositionX(std::get<1>(b_bounds).x - a_offset.x + std::get<2>(a_bounds).x / 2.0f + 1.0f);
+            Collisions::setVerifiedPositionX(a, std::get<1>(b_bounds).x - a_offset.x + std::get<2>(a_bounds).x / 2.0f + 1.0f);
             break;
         case 4:
-            a.setPositionY(std::get<1>(b_bounds).y - a_offset.y + std::get<2>(a_bounds).y / 2.0f + 1.0f);
-            break;
-        case 5:
-            a.setPosition(a.getPosition() - a.getVelocity());
+            Collisions::setVerifiedPositionY(a, std::get<1>(b_bounds).y - a_offset.y + std::get<2>(a_bounds).y / 2.0f + 1.0f);
             break;
         default:
             return false;
@@ -459,24 +400,20 @@ bool Collisions::AABBResponse(DynamicObject& a, DynamicObject& b)
 
     switch (direction) {
         case 1:
-            a.setPositionX(std::get<0>(b_bounds).x - a_offset.x - std::get<2>(a_bounds).x / 2.0f - 1.0f);
-            b.setPositionX(std::get<1>(a_bounds).x - b_offset.x + std::get<2>(b_bounds).x / 2.0f + 1.0f);
+            Collisions::setVerifiedPositionX(a, std::get<0>(b_bounds).x - a_offset.x - std::get<2>(a_bounds).x / 2.0f - 1.0f);
+            Collisions::setVerifiedPositionX(b, std::get<1>(a_bounds).x - b_offset.x + std::get<2>(b_bounds).x / 2.0f + 1.0f);
             break;
         case 2:
-            a.setPositionY(std::get<0>(b_bounds).y - a_offset.y - std::get<2>(a_bounds).y / 2.0f - 1.0f);
-            b.setPositionY(std::get<1>(a_bounds).y - b_offset.y + std::get<2>(b_bounds).y / 2.0f + 1.0f);
+            Collisions::setVerifiedPositionY(a, std::get<0>(b_bounds).y - a_offset.y - std::get<2>(a_bounds).y / 2.0f - 1.0f);
+            Collisions::setVerifiedPositionY(b, std::get<1>(a_bounds).y - b_offset.y + std::get<2>(b_bounds).y / 2.0f + 1.0f);
             break;
         case 3:
-            a.setPositionX(std::get<1>(b_bounds).x - a_offset.x + std::get<2>(a_bounds).x / 2.0f + 1.0f);
-            b.setPositionX(std::get<0>(a_bounds).x - b_offset.x - std::get<2>(b_bounds).x / 2.0f - 1.0f);
+            Collisions::setVerifiedPositionX(a, std::get<1>(b_bounds).x - a_offset.x + std::get<2>(a_bounds).x / 2.0f + 1.0f);
+            Collisions::setVerifiedPositionX(b, std::get<0>(a_bounds).x - b_offset.x - std::get<2>(b_bounds).x / 2.0f - 1.0f);
             break;
         case 4:
-            a.setPositionY(std::get<1>(b_bounds).y - a_offset.y + std::get<2>(a_bounds).y / 2.0f + 1.0f);
-            b.setPositionY(std::get<0>(a_bounds).y - b_offset.y - std::get<2>(b_bounds).y / 2.0f - 1.0f);
-            break;
-        case 5:
-            a.setPosition(a.getPosition() - a.getVelocity());
-            b.setPosition(b.getPosition() - b.getVelocity());
+            Collisions::setVerifiedPositionY(a, std::get<1>(b_bounds).y - a_offset.y + std::get<2>(a_bounds).y / 2.0f + 1.0f);
+            Collisions::setVerifiedPositionY(b, std::get<0>(a_bounds).y - b_offset.y - std::get<2>(b_bounds).y / 2.0f - 1.0f);
             break;
         default:
             return false;
@@ -492,12 +429,14 @@ bool Collisions::circleCircleResponse(DynamicObject &a, const StaticObject &b)
 {
     if (circleCircle(a, b))
     {
-        sf::Vector2f distance = a.getPosition() + a.getVelocity() + a.getCollisionArea().getOffset() - b.getPosition() -
+        sf::Vector2f distance = a.getPosition() + a.getCollisionArea().getOffset() - b.getPosition() -
                                 b.getCollisionArea().getOffset();
 
+        if (utils::num::isNearlyEqual(distance, {}, 0.001))
+            distance = {1.0f, 1.0f};
         sf::Vector2f unit = utils::geo::getNormalized(distance);
 
-        a.setPosition(b.getPosition() + b.getCollisionArea().getOffset() - a.getCollisionArea().getOffset() +
+        Collisions::setVerifiedPosition(a, b.getPosition() + b.getCollisionArea().getOffset() - a.getCollisionArea().getOffset() +
                       unit * (a.getCollisionArea().getA() + b.getCollisionArea().getA() + 1));
         a.setForcedVelocity(a.getVelocity() - utils::geo::dotProduct(a.getVelocity(), unit) * unit);
         return true;
@@ -510,14 +449,16 @@ bool Collisions::circleCircleResponse(DynamicObject &a, DynamicObject &b)
 {
     if (circleCircle(a, b))
     {
-        sf::Vector2f distance = a.getPosition() + a.getVelocity() - b.getVelocity() + a.getCollisionArea().getOffset() - b.getPosition() -
+        sf::Vector2f distance = a.getPosition() + a.getCollisionArea().getOffset() - b.getPosition() -
                                 b.getCollisionArea().getOffset();
 
+        if (utils::num::isNearlyEqual(distance, {}, 0.001))
+            distance = {1.0f, 1.0f};
         sf::Vector2f unit = utils::geo::getNormalized(distance);
 
-        a.setPosition(b.getPosition() + b.getCollisionArea().getOffset() - a.getCollisionArea().getOffset() +
+        Collisions::setVerifiedPosition(a, b.getPosition() + b.getCollisionArea().getOffset() - a.getCollisionArea().getOffset() +
                       unit * (a.getCollisionArea().getA() + b.getCollisionArea().getA() + 1));
-        b.setPosition(a.getPosition() + a.getCollisionArea().getOffset() - b.getCollisionArea().getOffset() -
+        Collisions::setVerifiedPosition(b, a.getPosition() + a.getCollisionArea().getOffset() - b.getCollisionArea().getOffset() -
                       unit * (a.getCollisionArea().getA() + b.getCollisionArea().getA() + 1));
 
         a.setForcedVelocity(a.getVelocity() - utils::geo::dotProduct(a.getVelocity(), unit) * unit);
@@ -539,9 +480,26 @@ void Collisions::blockNormalVelocity(DynamicObject &a, short int dir)
         case 4:
             a.setForcedVelocity({a.getVelocity().x, 0.0f});
             break;
-        case 5:
-            a.setForcedVelocity({0.0f, 0.0f});
         default:
             break;
     }
+}
+
+void Collisions::setVerifiedPosition(StaticObject &a, const sf::Vector2f &pos)
+{
+    float threshold = a.getCollisionArea().getA() / 2.0f;
+    if (utils::geo::getDistance(pos, a.getPosition()) < threshold)
+        a.setPosition(pos);
+    else
+        a.setPosition(a.getPosition() + utils::geo::vectorLengthLimit(pos - a.getPosition(), threshold));
+}
+
+void Collisions::setVerifiedPositionX(StaticObject &a, float x)
+{
+    Collisions::setVerifiedPosition(a, {x, a.getPosition().y});
+}
+
+void Collisions::setVerifiedPositionY(StaticObject &a, float y)
+{
+    Collisions::setVerifiedPosition(a, {a.getPosition().x, y});
 }

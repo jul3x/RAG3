@@ -81,10 +81,7 @@ void AbstractDrawableObject::setVisibility(const sf::View& view)
 
 void AbstractDrawableObject::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    if (is_visible_)
-    {
-        target.draw(shape_, states);
-    }
+    target.draw(shape_, states);
 }
 
 void AbstractDrawableObject::setColor(int r, int g, int b, int a)

@@ -6,6 +6,7 @@
 #include <engine/utils/Geometry.h>
 #include <game/characters/Enemy.h>
 #include <game/Game.h>
+#include <game/weapons/NoWeapon.h>
 
 
 Enemy::Enemy(const sf::Vector2f& position,
@@ -23,9 +24,12 @@ bool Enemy::update(float time_elapsed)
     bool is_alive = Character::update(time_elapsed);
     float rotation;
     std::tie(std::ignore, rotation) =
-            utils::cartesianToPolar(Game::get().getPlayerPosition() - this->getPosition());
-
+            utils::geo::cartesianToPolar(Game::get().getPlayerPosition() - this->getPosition());
+    
     this->setRotation(rotation * 180.0f / static_cast<float>(M_PI));
+
+    int noise = utils::num::getRandom(-10, 10);
+    this->setVelocity(3 * std::cos(rotation) - noise * std::sin(rotation), 3 * std::sin(rotation) + noise * std::cos(rotation));
     shot();
 
     return is_alive;

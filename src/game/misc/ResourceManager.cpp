@@ -54,7 +54,7 @@ ShootingWeapon& ResourceManager::getWeapon(const std::string& key)
     return it->second;
 }
 
-std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::getMap(const std::string& key)
+std::tuple<sf::Vector2i, std::list<Obstacle>, std::list<Decoration>> ResourceManager::getMap(const std::string& key)
 {
     try
     {
@@ -63,6 +63,7 @@ std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::getMap(c
     catch (std::logic_error& e)
     {
         std::cerr << e.what() << std::endl;
+        return {};
     }
 }
 
@@ -107,15 +108,14 @@ void ResourceManager::loadWeapon(const std::string& key)
     std::cout << "[ResourceManager] Weapon " << key << " is loaded!" << std::endl;
 }
 
-std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(const std::string& key)
+std::tuple<sf::Vector2i, std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(const std::string& key)
 {
     std::ifstream file("../data/" + key + ".j3x");
     std::list<Obstacle> obstacles;
     std::list<Decoration> decorations;
-
+    int w, h;
     if (file)
     {
-        int w, h;
         file >> w >> h;
 
         int max_number = w * h;
@@ -151,5 +151,10 @@ std::tuple<std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(
 
     std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
 
-    return std::make_tuple(obstacles, decorations);
+    return std::make_tuple(sf::Vector2i{w, h}, obstacles, decorations);
+}
+
+ResourceManager::ResourceManager() : AbstractResourceManager("../data/", "../data/textures/", "../data/fonts/")
+{
+
 }

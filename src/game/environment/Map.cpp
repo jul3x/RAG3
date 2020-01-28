@@ -10,16 +10,24 @@
 
 void Map::loadMap(const std::string& name)
 {
-    std::tie(obstacles_, decorations_) = ResourceManager::getMap(name);
+    sf::Vector2i size_i;
+    std::tie(size_i, obstacles_, decorations_) = ResourceManager::getMap(name);
+
+    size_ = {size_i.x * Obstacle::SIZE_X_, size_i.y * Obstacle::SIZE_Y_};
 
     enemies_.emplace_back(sf::Vector2f{1000.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
     enemies_.emplace_back(sf::Vector2f{500.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
     enemies_.emplace_back(sf::Vector2f{1000.0f, 500.0f}, sf::Vector2f{0.0f, 0.0f});
     enemies_.emplace_back(sf::Vector2f{1500.0f, 300.0f}, sf::Vector2f{0.0f, 0.0f});
-//    enemies_.emplace_back(sf::Vector2f{-1000.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
-//    enemies_.emplace_back(sf::Vector2f{-500.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
-//    enemies_.emplace_back(sf::Vector2f{-1000.0f, 500.0f}, sf::Vector2f{0.0f, 0.0f});
-//    enemies_.emplace_back(sf::Vector2f{-1500.0f, 300.0f}, sf::Vector2f{0.0f, 0.0f});
+    enemies_.emplace_back(sf::Vector2f{-1000.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
+    enemies_.emplace_back(sf::Vector2f{-500.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
+    enemies_.emplace_back(sf::Vector2f{-1000.0f, 500.0f}, sf::Vector2f{0.0f, 0.0f});
+    enemies_.emplace_back(sf::Vector2f{-1500.0f, 300.0f}, sf::Vector2f{0.0f, 0.0f});
+}
+
+const sf::Vector2f& Map::getSize() const
+{
+    return size_;
 }
 
 std::list<Decoration>& Map::getDecorations()
@@ -37,10 +45,9 @@ std::list<Enemy>& Map::getEnemies()
     return enemies_;
 }
 
-Decoration* Map::spawnDecoration(const sf::Vector2f& pos, Decoration::Type which)
+void Map::spawnDecoration(const sf::Vector2f& pos, Decoration::Type which)
 {
     decorations_.emplace_back(pos, which);
-    return &decorations_.back();
 }
 
 bool Map::update(float time_elapsed)

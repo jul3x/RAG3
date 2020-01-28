@@ -9,6 +9,8 @@
 #include <game/misc/ResourceManager.h>
 
 #include <game/characters/Character.h>
+#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/Text.hpp>
 
 
 Character::Character(const sf::Vector2f& position,
@@ -17,6 +19,7 @@ Character::Character(const sf::Vector2f& position,
         DynamicObject(position,
                       velocity,
                       {SIZE_X_, SIZE_Y_},
+                      Collision::Circle((SIZE_X_ - 40.0f) / 2.0f),
                       &ResourceManager::getInstance().getTexture("player"),
                       sf::Color(CFG.getInt("trail_color")),
                       CFG.getFloat("player_max_acceleration")),
@@ -27,7 +30,7 @@ bool Character::shot()
 {
     auto new_velocity = (*current_weapon_)->use();
 
-    if (!utils::isNearlyEqual(new_velocity, {0.0f, 0.0f}))
+    if (!utils::num::isNearlyEqual(new_velocity, {0.0f, 0.0f}))
     {
         this->setForcedVelocity(new_velocity);
         return true;
@@ -40,7 +43,7 @@ void Character::getShot(const Bullet& bullet)
 {
     //Engine::spawnBloodAnimation();
     this->setForcedVelocity(this->getVelocity() +
-                            utils::getNormalized(bullet.getVelocity()) * static_cast<float>(bullet.getDeadlyFactor()) *
+                            utils::geo::getNormalized(bullet.getVelocity()) * static_cast<float>(bullet.getDeadlyFactor()) *
                             CFG.getFloat("get_shot_factor"));
 
     life_ -= bullet.getDeadlyFactor();
@@ -87,17 +90,52 @@ bool Character::update(float time_elapsed)
 {
     DynamicObject::update(time_elapsed);
 
-    (*current_weapon_)->setPosition(this->getPosition());
-    (*current_weapon_)->setRotation(this->getRotation());
-
     return life_ > 0;
 }
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    if (this->isVisible())
-    {
-        target.draw(shape_, states);
-        target.draw(**current_weapon_, states);
-    }
+    target.draw(shape_, states);
+    target.draw(**current_weapon_, states);
+
+    static sf::Text text("", ResourceManager::getInstance().getFont(),
+                  24);
+
+    text.setFillColor(sf::Color::Red);
+    text.setPosition(this->getPosition());
+
+    text.setString(std::to_string(grid_position_.x) + ", " + std::to_string(grid_position_.y));
+
+    target.draw(text, states);
+}
+
+void Character::setPosition(const sf::Vector2f& pos)
+{
+    AbstractDrawableObject::setPosition(pos);
+    (*current_weapon_)->setPosition(pos);
+}
+
+void Character::setRotation(float theta)
+{
+    AbstractDrawableObject::setRotation(theta);
+    (*current_weapon_)->setRotation(theta);
+}
+
+void Character::setPosition(float x, float y)
+{
+    AbstractDrawableObject::setPosition(x, y);
+    (*current_weapon_)->setPosition(x, y);
+}
+
+
+void Character::setPositionX(float x)
+{
+    AbstractDrawableObject::setPositionX(x);
+    (*current_weapon_)->setPositionX(x);
+}
+
+void Character::setPositionY(float y)
+{
+    AbstractDrawableObject::setPositionY(y);
+    (*current_weapon_)->setPositionY(y);
 }

@@ -13,7 +13,7 @@
 
 class AbstractDrawableObject : public sf::Drawable {
 public:
-    AbstractDrawableObject() = default;
+    AbstractDrawableObject();
 
     AbstractDrawableObject(const sf::Vector2f& position,
                            const sf::Vector2f& size,
@@ -27,13 +27,19 @@ public:
 
     bool isVisible() const;
 
-    void setPosition(const sf::Vector2f& position);
+    virtual void setPosition(const sf::Vector2f& position);
 
-    void setPosition(float x, float y);
+    virtual void setPosition(float x, float y);
 
-    void setRotation(float angle_deg);
+    virtual void setPositionX(float x);
+
+    virtual void setPositionY(float y);
+
+    virtual void setRotation(float angle_deg);
 
     virtual void setVisibility(const sf::View& view);
+
+    void setColor(int r, int g, int b, int a);
 
 protected:
     sf::RectangleShape shape_;

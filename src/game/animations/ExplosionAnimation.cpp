@@ -12,7 +12,7 @@ ExplosionAnimation::ExplosionAnimation(const sf::Vector2f& position,
                                        float radius) :
         AnimationEvent(
                 &ResourceManager::getInstance().getTexture(
-                        "animation_explosion" + std::to_string(utils::getRandom<int>(1, 3))),
+                        "animation_explosion" + std::to_string(utils::num::getRandom<int>(1, 3))),
                 {ExplosionAnimation::WIDTH_PX_, ExplosionAnimation::HEIGHT_PX_}, position,
                 ExplosionAnimation::DURATION_S_, ExplosionAnimation::MAX_FRAMES_COUNT_,
                 AnimationType::QUADRATIC)

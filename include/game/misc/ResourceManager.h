@@ -26,18 +26,18 @@ public:
 
     ShootingWeapon& getWeapon(const std::string& key);
 
-    static std::tuple<std::list<Obstacle>, std::list<Decoration>> getMap(const std::string& key);
+    static std::tuple<sf::Vector2i, std::list<Obstacle>, std::list<Decoration>> getMap(const std::string& key);
 
     // TODO LazyLoad every type of objects
 
 private:
-    ResourceManager() = default;
+    ResourceManager();
 
     void loadBulletDescription(const std::string& key);
 
     void loadWeapon(const std::string& key);
 
-    static std::tuple<std::list<Obstacle>, std::list<Decoration>> loadMap(const std::string& key);
+    static std::tuple<sf::Vector2i, std::list<Obstacle>, std::list<Decoration>> loadMap(const std::string& key);
 
     std::map<std::string, ShootingWeapon> weapons_;
     std::map<std::string, BulletDescription> bullets_;

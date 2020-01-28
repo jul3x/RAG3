@@ -38,6 +38,16 @@ public:
 
     bool update(float time_elapsed) override;
 
+    void setPosition(const sf::Vector2f& pos) override;
+
+    void setPosition(float x, float y) override;
+
+    void setPositionX(float x) override;
+
+    void setPositionY(float y) override;
+
+    void setRotation(float theta) override;
+
 protected:
     std::vector<std::unique_ptr<AbstractWeapon>> weapons_in_backpack_;
     std::vector<std::unique_ptr<AbstractWeapon>>::iterator current_weapon_;

@@ -19,13 +19,15 @@ public:
 
     void loadMap(const std::string& name);
 
+    const sf::Vector2f& getSize() const;
+
     std::list<Decoration>& getDecorations();
 
     std::list<Obstacle>& getObstacles();
 
     std::list<Enemy>& getEnemies();
 
-    Decoration* spawnDecoration(const sf::Vector2f& pos, Decoration::Type which);
+    void spawnDecoration(const sf::Vector2f& pos, Decoration::Type which);
 
     bool update(float time_elapsed);
 
@@ -33,6 +35,8 @@ private:
     std::list<Obstacle> obstacles_;
     std::list<Enemy> enemies_;
     std::list<Decoration> decorations_;
+
+    sf::Vector2f size_;
 
 };
 

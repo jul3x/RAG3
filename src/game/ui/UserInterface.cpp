@@ -130,7 +130,7 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
                             player_->getPosition();
 
     float angle;
-    std::tie(std::ignore, angle) = utils::cartesianToPolar(mouse_difference);
+    std::tie(std::ignore, angle) = utils::geo::cartesianToPolar(mouse_difference);
 
     if (player_->isAlive())
         player_->setRotation(angle * 180.0f / static_cast<float>(M_PI));

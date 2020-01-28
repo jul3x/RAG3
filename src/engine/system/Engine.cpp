@@ -6,9 +6,8 @@
 
 #include <engine/utils/Geometry.h>
 #include <engine/system/Engine.h>
+#include <engine/system/Collisions.h>
 
-
-Engine::Engine() {}
 
 void Engine::initializeGraphics(const sf::Vector2i& size,
                                 const std::string& title,
@@ -16,6 +15,12 @@ void Engine::initializeGraphics(const sf::Vector2i& size,
                                 const sf::Color &bg_color)
 {
     graphics_ = std::make_unique<Graphics>(size, title, style, bg_color);
+}
+
+void Engine::initializeCollisions(const sf::Vector2f& size, float grid)
+{
+    collisions_ = std::make_unique<Collisions>();
+    collisions_->initialize(size, grid);
 }
 
 void Engine::registerUI(AbstractUserInterface* user_interface)
@@ -53,15 +58,10 @@ void Engine::update(int frame_rate)
                 std::chrono::system_clock::now() - time_start).count() / 1000000.0f;
         time_start = std::chrono::system_clock::now();
 
-        setVisibilities();
-
         ui_->handleEvents(*graphics_);
         game_->update(time_elapsed);
 
-        DSCollisions(time_elapsed);
-        DDCollisions(time_elapsed);
-        HSCollisions(time_elapsed);
-        HDCollisions(time_elapsed);
+        collisions_->update(game_);
 
         updateAnimationEvents(time_elapsed);
 
@@ -95,64 +95,34 @@ void Engine::restartClock()
     time_ = clock_.restart();
 }
 
-void Engine::setVisibility(AbstractDrawableObject& object) const
-{
-    object.setVisibility(graphics_->getCurrentView());
-}
-
-void Engine::setVisibilities() const
-{
-    for (auto &drawable : drawables_)
-        drawable->setVisibility(graphics_->getCurrentView());
-
-    for (auto &s_obj : s_objects_)
-        s_obj->setVisibility(graphics_->getCurrentView());
-
-    for (auto &h_obj : h_objects_)
-        h_obj->setVisibility(graphics_->getCurrentView());
-
-    for (auto &d_obj : d_objects_)
-        d_obj->setVisibility(graphics_->getCurrentView());
-}
-
-void Engine::registerDrawableObject(AbstractDrawableObject* obj)
-{
-    drawables_.insert(obj);
-}
-
 void Engine::registerStaticObject(StaticObject* obj)
 {
-    s_objects_.insert(obj);
+    collisions_->insert(obj);
 }
 
 void Engine::registerDynamicObject(DynamicObject* obj)
 {
-    d_objects_.insert(obj);
+    collisions_->insert(obj);
 }
 
 void Engine::registerHoveringObject(HoveringObject* obj)
 {
-    h_objects_.insert(obj);
-}
-
-void Engine::deleteDrawableObject(AbstractDrawableObject* obj)
-{
-    drawables_.erase(obj);
+    collisions_->insert(obj);
 }
 
 void Engine::deleteStaticObject(StaticObject* obj)
 {
-    s_objects_.erase(obj);
+    collisions_->erase(obj);
 }
 
 void Engine::deleteDynamicObject(DynamicObject* obj)
 {
-    d_objects_.erase(obj);
+    collisions_->erase(obj);
 }
 
 void Engine::deleteHoveringObject(HoveringObject* obj)
 {
-    h_objects_.erase(obj);
+    collisions_->erase(obj);
 }
 
 void Engine::updateAnimationEvents(float time_elapsed)
@@ -187,66 +157,3 @@ void Engine::draw()
     graphics_->display();
 }
 
-void Engine::DSCollisions(float time_elapsed)
-{
-    for (auto& s_object : s_objects_)
-    {
-        for (auto& d_object : d_objects_)
-        {
-            if (utils::AABBwithDS(*d_object, *s_object))
-            {
-                game_->alertCollision(d_object, s_object);
-
-                break;
-            }
-        }
-    }
-}
-
-void Engine::DDCollisions(float time_elapsed)
-{
-    for (auto& d_object_1 : d_objects_)
-    {
-        for (auto& d_object_2 : d_objects_)
-        {
-            if (d_object_1 != d_object_2 && utils::AABBwithDD(*d_object_1, *d_object_2))
-            {
-                game_->alertCollision(d_object_1, d_object_2);
-
-                break;
-            }
-        }
-    }
-}
-
-void Engine::HSCollisions(float time_elapsed)
-{
-    for (auto& h_object : h_objects_)
-    {
-        for (auto& s_obj : s_objects_)
-        {
-            if (utils::AABB(*h_object, *s_obj))
-            {
-                game_->alertCollision(h_object, s_obj);
-
-                break;
-            }
-        }
-    }
-}
-
-void Engine::HDCollisions(float time_elapsed)
-{
-    for (auto& h_object : h_objects_)
-    {
-        for (auto& d_obj : d_objects_)
-        {
-            if (utils::AABB(*h_object, *d_obj))
-            {
-                game_->alertCollision(h_object, d_obj);
-
-                break;
-            }
-        }
-    }
-}

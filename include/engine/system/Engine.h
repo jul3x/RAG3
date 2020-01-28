@@ -14,6 +14,7 @@
 #include <engine/graphics/AnimationEvent.h>
 #include <engine/system/AbstractUserInterface.h>
 #include <engine/system/AbstractGame.h>
+#include <engine/system/Collisions.h>
 #include <engine/objects/AbstractPhysicalObject.h>
 
 
@@ -24,12 +25,14 @@ public:
 
     Engine& operator=(const Engine&) = delete;
 
-    Engine();
+    Engine() = default;
 
     void initializeGraphics(const sf::Vector2i& size,
                             const std::string& title,
                             int style,
                             const sf::Color &bg_color);
+
+    void initializeCollisions(const sf::Vector2f& size, float grid);
 
     void registerUI(AbstractUserInterface* user_interface);
 
@@ -37,15 +40,11 @@ public:
 
     void registerGame(AbstractGame* game);
 
-    void registerDrawableObject(AbstractDrawableObject* obj);
-
     void registerStaticObject(StaticObject* obj);
 
     void registerDynamicObject(DynamicObject* obj);
 
     void registerHoveringObject(HoveringObject* obj);
-
-    void deleteDrawableObject(AbstractDrawableObject* obj);
 
     void deleteStaticObject(StaticObject* obj);
 
@@ -64,14 +63,6 @@ public:
 private:
     void setVisibilities() const;
 
-    void DSCollisions(float time_elapsed);
-
-    void DDCollisions(float time_elapsed);
-
-    void HSCollisions(float time_elapsed);
-
-    void HDCollisions(float time_elapsed);
-
     void updateAnimationEvents(float time_elapsed);
 
     void draw();
@@ -82,18 +73,12 @@ private:
 
     // Engine components
     std::unique_ptr<Graphics> graphics_;
+    std::unique_ptr<Collisions> collisions_;
 
     // Registered by Game
     AbstractUserInterface* ui_;
     AbstractCamera* camera_;
     AbstractGame* game_;
-
-    // Objects
-    std::unordered_set<AbstractDrawableObject*> drawables_;
-    std::unordered_set<StaticObject*> s_objects_;
-    std::unordered_set<DynamicObject*> d_objects_;
-    std::unordered_set<HoveringObject*> h_objects_;
-
 
     sf::Clock clock_;
     sf::Time time_;

@@ -19,7 +19,7 @@ Character::Character(const sf::Vector2f& position,
         DynamicObject(position,
                       velocity,
                       {SIZE_X_, SIZE_Y_},
-                      Collision::Circle((SIZE_X_ - 40.0f) / 2.0f),
+                      Collision::Circle((SIZE_X_ - 5.0f) / 2.0f),
                       &ResourceManager::getInstance().getTexture("player"),
                       sf::Color(CFG.getInt("trail_color")),
                       CFG.getFloat("player_max_acceleration")),
@@ -103,10 +103,23 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
     text.setFillColor(sf::Color::Red);
     text.setPosition(this->getPosition());
+    int start_x = std::round(this->getPosition().x / Obstacle::SIZE_X_);
+    int start_y = std::round(this->getPosition().y / Obstacle::SIZE_Y_);
 
-    text.setString(std::to_string(grid_position_.x) + ", " + std::to_string(grid_position_.y));
+    text.setString(std::to_string(start_x) + ", " + std::to_string(start_y) + ":\n" +
+                   std::to_string(this->getPosition().x) + ", " + std::to_string(this->getPosition().y));
 
     target.draw(text, states);
+
+    static sf::VertexArray path(sf::LineStrip);
+    path.clear();
+
+    for (const auto &v : path_)
+    {
+        path.append(sf::Vertex{{v.first *Obstacle::SIZE_X_, v.second * Obstacle::SIZE_Y_}, sf::Color::Blue});
+    }
+
+    target.draw(path, states);
 }
 
 void Character::setPosition(const sf::Vector2f& pos)

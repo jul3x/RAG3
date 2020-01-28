@@ -23,7 +23,7 @@ void Game::initialize()
 {
     ui_ = std::make_unique<UserInterface>();
     camera_ = std::make_unique<Camera>();
-    player_ = std::make_unique<Player>(sf::Vector2f{400.0f, 500.0f}, sf::Vector2f{});
+    player_ = std::make_unique<Player>(sf::Vector2f{530, 530.0f}, sf::Vector2f{});
     map_ = std::make_unique<Map>();
 
     ui_->registerCamera(camera_.get());
@@ -36,7 +36,7 @@ void Game::initialize()
     engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
 
-    map_->loadMap("map");
+    map_->loadMap("test");
     engine_->initializeCollisions(map_->getSize(), COLLISION_GRID_SIZE_);
 
     for (auto& obstacle : map_->getObstacles())
@@ -100,6 +100,11 @@ void Game::start(int frame_rate)
 const sf::Vector2f& Game::getPlayerPosition() const
 {
     return player_->getPosition();
+}
+
+const std::vector<std::vector<bool>>& Game::getMapBlockage() const
+{
+    return map_->getMapBlockage();
 }
 
 void Game::spawnSparksAnimation(const sf::Vector2f& pos, const float dir, const float r)

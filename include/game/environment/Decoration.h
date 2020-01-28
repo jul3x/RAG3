@@ -23,8 +23,8 @@ public:
     Decoration(const sf::Vector2f& position,
                Type type);
 
-    static constexpr float SIZE_X_ = 100.0f;
-    static constexpr float SIZE_Y_ = 100.0f;
+    static constexpr float SIZE_X_ = 10.0f;
+    static constexpr float SIZE_Y_ = 10.0f;
 
 };
 

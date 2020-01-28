@@ -39,7 +39,7 @@ namespace astar {
 
     float heuristic(const Node &start, const Node &goal)
     {
-        return 0.0f;
+        return std::hypot(start.cord.first - goal.cord.first, start.cord.second - goal.cord.second);
     }
 
     std::vector<std::pair<int, int>> reconstruct_path(const std::map<std::pair<int, int>, std::pair<int, int>> &came_from, const std::pair<int, int> &current_node) {
@@ -65,7 +65,7 @@ namespace astar {
 
         static constexpr float INF = std::numeric_limits<float>::infinity();
 
-        openset.insert(Node({start.x, start.y}, INF, INF, INF));
+        openset.insert(Node({start.x, start.y}, 0.0f, 0.0f, 0.0f));
         Node goal_node = Node({goal.x, goal.y}, INF, INF, INF);
 
         static std::vector<std::pair<int, int>> neighbours = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};

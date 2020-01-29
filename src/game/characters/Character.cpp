@@ -116,7 +116,7 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
     for (const auto &v : path_)
     {
-        path.append(sf::Vertex{{v.first *Obstacle::SIZE_X_, v.second * Obstacle::SIZE_Y_}, sf::Color::Blue});
+        path.append(sf::Vertex{{v.cord.first *Obstacle::SIZE_X_, v.cord.second * Obstacle::SIZE_Y_}, sf::Color::Blue});
     }
 
     target.draw(path, states);

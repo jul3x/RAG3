@@ -10,6 +10,7 @@
 
 #include <engine/system/Config.h>
 #include <engine/objects/AbstractPhysicalObject.h>
+#include <engine/ai/AStar.h>
 
 #include <game/weapons/AbstractWeapon.h>
 #include <game/weapons/Bullet.h>
@@ -51,7 +52,7 @@ public:
 protected:
     std::vector<std::unique_ptr<AbstractWeapon>> weapons_in_backpack_;
     std::vector<std::unique_ptr<AbstractWeapon>>::iterator current_weapon_;
-    std::vector<std::pair<int, int>> path_;
+    std::vector<AStar::Node> path_;
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

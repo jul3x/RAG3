@@ -2,9 +2,10 @@
 // Created by jul3x on 31.10.19.
 //
 
-#include <game/misc/ResourceManager.h>
 #include <engine/utils/Geometry.h>
-#include <engine/utils/AStar.h>
+#include <engine/ai/AStar.h>
+
+#include <game/misc/ResourceManager.h>
 #include <game/characters/Enemy.h>
 #include <game/Game.h>
 #include <game/weapons/NoWeapon.h>
@@ -44,13 +45,13 @@ bool Enemy::update(float time_elapsed)
     //std::cout << start_x << " " << start_y << ", " << goal_x << " " << goal_y << std::endl;
     // TODO - Implement AgentsManager and Agent interface
     //if (path_.empty())
-    path_ = utils::astar::astar(grid, {start_x, start_y}, {goal_x, goal_y});
+    path_ = AStar::makePath(grid, {start_x, start_y}, {goal_x, goal_y});
     //std::cout << path.size() << std::endl;
    // static int i = 0;
     if (!path_.empty())
     {
 
-        this->setVelocity((path_.at(0).first - start_x), (path_.at(0).second - start_y));
+        this->setVelocity((path_.at(0).cord.first - start_x), (path_.at(0).cord.second - start_y));
         //if (utils::num::isNearlyEqual({path_.at(0).first, path_.at(0).second}, {start_x, start_y}, 0.01f)) ++i;
     }
 

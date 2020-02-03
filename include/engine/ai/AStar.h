@@ -22,6 +22,8 @@ public:
         std::pair<int, int> cord;
         float f_score, g_score, h_score;
         Node(const std::pair<int, int> &c, float f, float g, float h) : cord(c), f_score(f), g_score(g), h_score(h) {}
+        Node() = default;
+        Node(const sf::Vector2i &c) : cord(c.x, c.y), f_score(), g_score(), h_score() {}
     };
 
     struct NodeHash {
@@ -30,7 +32,7 @@ public:
         }
     };
 
-
+    static std::vector<sf::Vector2f> getSmoothedPath(const std::vector<Node> &path, float scale_x, float scale_y);
 
     static std::vector<Node> makePath(const std::vector<std::vector<bool>> &grid, const sf::Vector2<size_t> &start, const sf::Vector2<size_t> &goal);
 

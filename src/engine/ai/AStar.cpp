@@ -4,7 +4,7 @@
 
 
 #include <engine/ai/AStar.h>
-
+#include <engine/utils/Utils.h>
 
 
 bool operator== (const AStar::Node &a, const AStar::Node &b) {
@@ -28,6 +28,55 @@ std::vector<AStar::Node> AStar::reconstructPath(const std::unordered_map<Node, N
     {
         return {};
     }
+}
+
+std::vector<sf::Vector2f> AStar::getSmoothedPath(const std::vector<AStar::Node> &path, float scale_x, float scale_y) {
+    if (path.empty()) return {};
+
+    std::vector<sf::Vector2f> ret;
+
+    auto convert = [&scale_x, &scale_y](const Node &node) {
+        return sf::Vector2f(node.cord.first * scale_x, node.cord.second * scale_y);
+    };
+
+    ret.push_back(convert(path[0]));
+
+    sf::Vector2f curPoint, prevPoint, nextPoint;
+    sf::Vector2f currentHeading, nextHeading, pointQ, pointR;
+
+    float angle;
+
+    prevPoint = convert(path[0]);
+    int i = 1;
+
+    while(i < path.size() - 1)
+    {
+        curPoint = convert(path[i++]);
+        nextPoint = convert(path[i]);
+        currentHeading = utils::geo::getNormalized(curPoint - prevPoint);
+        nextHeading = utils::geo::getNormalized(nextPoint - curPoint);
+        angle = utils::geo::getAngle(currentHeading, nextHeading);
+//        if (angle >= M_PI_2)
+//        {
+//            i++;
+//            prevPoint = curPoint;
+//            continue;
+//        }
+        pointQ = (0.75f * curPoint) +
+                 (0.25f * nextPoint);
+        pointR = (0.25f * curPoint) +
+                 (0.75f * nextPoint);
+        ret.push_back(pointQ);
+        ret.push_back(pointR);
+        prevPoint = pointR;
+    }
+
+    // Make sure we get home.
+    if(ret.back() != convert(path.back()))
+        ret.push_back(convert(path.back()));
+
+    return ret;
+
 }
 
 std::vector<AStar::Node> AStar::makePath(const std::vector<std::vector<bool>> &grid, const sf::Vector2<size_t> &start, const sf::Vector2<size_t> &goal)

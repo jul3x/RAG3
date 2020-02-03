@@ -45,13 +45,14 @@ bool Enemy::update(float time_elapsed)
     //std::cout << start_x << " " << start_y << ", " << goal_x << " " << goal_y << std::endl;
     // TODO - Implement AgentsManager and Agent interface
     //if (path_.empty())
-    path_ = AStar::makePath(grid, {start_x, start_y}, {goal_x, goal_y});
+    auto path = AStar::makePath(grid, {start_x, start_y}, {goal_x, goal_y});
+    path_ = AStar::getSmoothedPath(path, Obstacle::SIZE_X_, Obstacle::SIZE_Y_);
     //std::cout << path.size() << std::endl;
    // static int i = 0;
     if (!path_.empty())
     {
 
-        this->setVelocity((path_.at(0).cord.first - start_x), (path_.at(0).cord.second - start_y));
+        this->setVelocity(4.0f * utils::geo::getNormalized(path_.at(0) - this->getPosition()));
         //if (utils::num::isNearlyEqual({path_.at(0).first, path_.at(0).second}, {start_x, start_y}, 0.01f)) ++i;
     }
 

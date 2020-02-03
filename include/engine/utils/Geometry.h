@@ -17,7 +17,6 @@
 
 namespace utils {
 namespace geo {
-
     inline float getDistance(const sf::Vector2f &a, const sf::Vector2f &b) {
         return std::hypot(b.x - a.x, b.y - a.y);
     }
@@ -238,6 +237,12 @@ namespace geo {
         return (a.x * b.x + a.y * b.y);
     }
 
+    inline float getAngle(const sf::Vector2f &a, const sf::Vector2f &b) {
+        float dot = utils::geo::dotProduct(utils::geo::getNormalized(a), utils::geo::getNormalized(b));
+        dot = ( dot < -1.0 ? -1.0 : ( dot > 1.0 ? 1.0 : dot ) );
+
+        return std::acos(dot);
+    }
 } // namespace geo
 } // namespace utils
 

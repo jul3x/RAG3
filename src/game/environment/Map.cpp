@@ -15,13 +15,13 @@ void Map::loadMap(const std::string& name) {
     size_ = {size_i.x * Obstacle::SIZE_X_, size_i.y * Obstacle::SIZE_Y_};
 
     enemies_.emplace_back(sf::Vector2f{40.0f, 40.0f}, sf::Vector2f{0.0f, 0.0f});
-    enemies_.emplace_back(sf::Vector2f{70.0f, 70.0f}, sf::Vector2f{0.0f, 0.0f});
-    enemies_.emplace_back(sf::Vector2f{100.0f, 100.0f}, sf::Vector2f{0.0f, 0.0f});
-    enemies_.emplace_back(sf::Vector2f{300.0f, 300.0f}, sf::Vector2f{0.0f, 0.0f});
-    enemies_.emplace_back(sf::Vector2f{400.0f, 400.0f}, sf::Vector2f{0.0f, 0.0f});
-    enemies_.emplace_back(sf::Vector2f{500.0f, 500.0f}, sf::Vector2f{0.0f, 0.0f});
-    enemies_.emplace_back(sf::Vector2f{200.0f, 600.0f}, sf::Vector2f{0.0f, 0.0f});
-    enemies_.emplace_back(sf::Vector2f{150.0f, 800.0f}, sf::Vector2f{0.0f, 0.0f});
+//    enemies_.emplace_back(sf::Vector2f{70.0f, 70.0f}, sf::Vector2f{0.0f, 0.0f});
+//    enemies_.emplace_back(sf::Vector2f{100.0f, 100.0f}, sf::Vector2f{0.0f, 0.0f});
+//    enemies_.emplace_back(sf::Vector2f{300.0f, 300.0f}, sf::Vector2f{0.0f, 0.0f});
+//    enemies_.emplace_back(sf::Vector2f{400.0f, 400.0f}, sf::Vector2f{0.0f, 0.0f});
+//    enemies_.emplace_back(sf::Vector2f{500.0f, 500.0f}, sf::Vector2f{0.0f, 0.0f});
+//    enemies_.emplace_back(sf::Vector2f{200.0f, 600.0f}, sf::Vector2f{0.0f, 0.0f});
+//    enemies_.emplace_back(sf::Vector2f{150.0f, 800.0f}, sf::Vector2f{0.0f, 0.0f});
 }
 
 const sf::Vector2f& Map::getSize() const

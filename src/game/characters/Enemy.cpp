@@ -10,7 +10,6 @@
 #include <game/misc/ResourceManager.h>
 #include <game/characters/Enemy.h>
 #include <game/Game.h>
-#include <game/weapons/NoWeapon.h>
 
 
 Enemy::Enemy(const sf::Vector2f& position,
@@ -32,17 +31,16 @@ bool Enemy::update(float time_elapsed)
 
     this->setRotation(rotation * 180.0f / static_cast<float>(M_PI));
 
-    int noise = utils::num::getRandom(-10, 10);
-    //this->setVelocity(3 * std::cos(rotation) - noise * std::sin(rotation), 3 * std::sin(rotation) + noise * std::cos(rotation));
-    //  shot();
+    //shot();
 
     // TODO - Implement AgentsManager and Agent interface
     path_ = ai::AStar::getSmoothedPath(Game::get().getMapBlockage(), this->getPosition(),
-                                       Game::get().getPlayerPosition());
+                                       Game::get().getPlayerPosition(), ai::AStar::EightNeighbours);
 
     if (!path_.empty())
     {
-        this->setVelocity(4.0f * utils::geo::getNormalized(path_.front() - this->getPosition()));
+        this->setVelocity(
+                CFG.getFloat("enemy_max_speed") * utils::geo::getNormalized(path_.front() - this->getPosition()));
     }
 
     return is_alive;

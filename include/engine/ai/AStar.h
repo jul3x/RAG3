@@ -12,6 +12,7 @@
 #include <utility>
 #include <vector>
 #include <list>
+#include <functional>
 
 #include <SFML/System/Vector2.hpp>
 
@@ -23,6 +24,9 @@ namespace ai {
     };
 
     class AStar {
+        using NeighboursVec = std::vector<sf::Vector2<size_t>>;
+        using Grid = std::vector<std::vector<bool>>;
+        using NeighbourFunction = std::function<NeighboursVec(const Grid& grid, const sf::Vector2<size_t>&)>;
 
     public:
         class Node {
@@ -46,13 +50,18 @@ namespace ai {
         };
 
         static std::list<sf::Vector2f>
-        getSmoothedPath(const MapBlockage& map_blockage_, const sf::Vector2f& start, const sf::Vector2f& goal);
+        getSmoothedPath(const MapBlockage& map_blockage_, const sf::Vector2f& start, const sf::Vector2f& goal,
+                        const NeighbourFunction& func);
+
+        static NeighboursVec EightNeighbours(const Grid& grid, const sf::Vector2<size_t>& pos);
+
+        static NeighboursVec FourNeighbours(const Grid& grid, const sf::Vector2<size_t>& pos);
 
     private:
         static void getSmoothedPath_(std::list<sf::Vector2f>& path);
 
         static std::vector<Node> getPath(const std::vector<std::vector<bool>>& grid, const sf::Vector2<size_t>& start,
-                                         const sf::Vector2<size_t>& goal);
+                                         const sf::Vector2<size_t>& goal, const NeighbourFunction& func);
 
         static float heuristic(const Node& start, const Node& goal);
 

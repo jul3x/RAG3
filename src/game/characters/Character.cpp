@@ -22,7 +22,7 @@ Character::Character(const sf::Vector2f& position,
                       Collision::Circle((SIZE_X_ - 5.0f) / 2.0f),
                       &ResourceManager::getInstance().getTexture("player"),
                       sf::Color(CFG.getInt("trail_color")),
-                      CFG.getFloat("player_max_acceleration")),
+                      CFG.getFloat("max_acceleration")),
         max_life_(max_life),
         Shootable(max_life) {}
 

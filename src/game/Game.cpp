@@ -23,7 +23,7 @@ void Game::initialize()
 {
     ui_ = std::make_unique<UserInterface>();
     camera_ = std::make_unique<Camera>();
-    player_ = std::make_unique<Player>(sf::Vector2f{530, 530.0f}, sf::Vector2f{});
+    player_ = std::make_unique<Player>(sf::Vector2f{700.0f, 700.0f}, sf::Vector2f{});
     map_ = std::make_unique<Map>();
 
     ui_->registerCamera(camera_.get());
@@ -102,7 +102,7 @@ const sf::Vector2f& Game::getPlayerPosition() const
     return player_->getPosition();
 }
 
-const std::vector<std::vector<bool>>& Game::getMapBlockage() const
+const ai::MapBlockage& Game::getMapBlockage() const
 {
     return map_->getMapBlockage();
 }

@@ -52,13 +52,13 @@ public:
 protected:
     std::vector<std::unique_ptr<AbstractWeapon>> weapons_in_backpack_;
     std::vector<std::unique_ptr<AbstractWeapon>>::iterator current_weapon_;
-    std::vector<sf::Vector2f> path_;
+    std::list<sf::Vector2f> path_;
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    static constexpr float SIZE_X_ = 30.0f;
-    static constexpr float SIZE_Y_ = 30.0f;
+    static constexpr float SIZE_X_ = 100.0f;
+    static constexpr float SIZE_Y_ = 100.0f;
 
     int max_life_;
 

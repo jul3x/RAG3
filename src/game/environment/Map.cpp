@@ -10,11 +10,12 @@
 
 void Map::loadMap(const std::string& name) {
     sf::Vector2i size_i;
-    std::tie(size_i, blocked_, obstacles_, decorations_) = ResourceManager::getMap(name);
-
+    std::tie(size_i, blocked_.blockage_, obstacles_, decorations_) = ResourceManager::getMap(name);
+    blocked_.scale_x_ = Obstacle::SIZE_X_;
+    blocked_.scale_y_ = Obstacle::SIZE_Y_;
     size_ = {size_i.x * Obstacle::SIZE_X_, size_i.y * Obstacle::SIZE_Y_};
 
-    enemies_.emplace_back(sf::Vector2f{40.0f, 40.0f}, sf::Vector2f{0.0f, 0.0f});
+    enemies_.emplace_back(sf::Vector2f{400.0f, 400.0f}, sf::Vector2f{0.0f, 0.0f});
 //    enemies_.emplace_back(sf::Vector2f{70.0f, 70.0f}, sf::Vector2f{0.0f, 0.0f});
 //    enemies_.emplace_back(sf::Vector2f{100.0f, 100.0f}, sf::Vector2f{0.0f, 0.0f});
 //    enemies_.emplace_back(sf::Vector2f{300.0f, 300.0f}, sf::Vector2f{0.0f, 0.0f});
@@ -29,11 +30,10 @@ const sf::Vector2f& Map::getSize() const
     return size_;
 }
 
-const std::vector<std::vector<bool>>& Map::getMapBlockage() const
+const ai::MapBlockage& Map::getMapBlockage() const
 {
     return blocked_;
 }
-
 
 std::list<Decoration>& Map::getDecorations()
 {
@@ -72,7 +72,7 @@ bool Map::update(float time_elapsed)
 
             auto grid_pos  = std::make_pair(static_cast<size_t>(it->getPosition().x / Obstacle::SIZE_X_),
                                             static_cast<size_t>(it->getPosition().y / Obstacle::SIZE_Y_));
-            blocked_.at(grid_pos.first).at(grid_pos.second) = false;
+            blocked_.blockage_.at(grid_pos.first).at(grid_pos.second) = false;
             obstacles_.erase(it);
             it = next_it;
             do_increment = false;

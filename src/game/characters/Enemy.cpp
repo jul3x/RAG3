@@ -2,6 +2,8 @@
 // Created by jul3x on 31.10.19.
 //
 
+#include <cmath>
+
 #include <engine/utils/Geometry.h>
 #include <engine/ai/AStar.h>
 
@@ -32,28 +34,15 @@ bool Enemy::update(float time_elapsed)
 
     int noise = utils::num::getRandom(-10, 10);
     //this->setVelocity(3 * std::cos(rotation) - noise * std::sin(rotation), 3 * std::sin(rotation) + noise * std::cos(rotation));
-  //  shot();
+    //  shot();
 
-    auto &grid = Game::get().getMapBlockage();
-
-    int start_x = std::round(this->getPosition().x / Obstacle::SIZE_X_);
-    int start_y = std::round(this->getPosition().y / Obstacle::SIZE_Y_);
-
-    int goal_x = std::round(Game::get().getPlayerPosition().x / Obstacle::SIZE_X_);
-    int goal_y = std::round(Game::get().getPlayerPosition().y / Obstacle::SIZE_Y_);
-
-    //std::cout << start_x << " " << start_y << ", " << goal_x << " " << goal_y << std::endl;
     // TODO - Implement AgentsManager and Agent interface
-    //if (path_.empty())
-    auto path = AStar::makePath(grid, {start_x, start_y}, {goal_x, goal_y});
-    path_ = AStar::getSmoothedPath(path, Obstacle::SIZE_X_, Obstacle::SIZE_Y_);
-    //std::cout << path.size() << std::endl;
-   // static int i = 0;
+    path_ = ai::AStar::getSmoothedPath(Game::get().getMapBlockage(), this->getPosition(),
+                                       Game::get().getPlayerPosition());
+
     if (!path_.empty())
     {
-
-        this->setVelocity(4.0f * utils::geo::getNormalized(path_.at(0) - this->getPosition()));
-        //if (utils::num::isNearlyEqual({path_.at(0).first, path_.at(0).second}, {start_x, start_y}, 0.01f)) ++i;
+        this->setVelocity(4.0f * utils::geo::getNormalized(path_.front() - this->getPosition()));
     }
 
     return is_alive;

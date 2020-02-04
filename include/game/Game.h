@@ -31,7 +31,7 @@ public:
 
     const sf::Vector2f& getPlayerPosition() const;
 
-    const std::vector<std::vector<bool>>& getMapBlockage() const;
+    const ai::MapBlockage& getMapBlockage() const;
 
     void spawnBullet(const std::string& name, const sf::Vector2f& pos, float dir);
 

@@ -114,9 +114,12 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
     static sf::VertexArray path(sf::LineStrip);
     path.clear();
 
-    for (const auto &v : path_)
+    if (path_ != nullptr)
     {
-        path.append(sf::Vertex{v, sf::Color::Blue});
+        for (const auto& v : *path_)
+        {
+            path.append(sf::Vertex{v, sf::Color::Blue});
+        }
     }
 
     target.draw(path, states);

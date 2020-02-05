@@ -52,7 +52,7 @@ public:
 protected:
     std::vector<std::unique_ptr<AbstractWeapon>> weapons_in_backpack_;
     std::vector<std::unique_ptr<AbstractWeapon>>::iterator current_weapon_;
-    std::list<sf::Vector2f> path_;
+    const std::list<sf::Vector2f>* path_;
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

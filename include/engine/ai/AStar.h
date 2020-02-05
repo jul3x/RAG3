@@ -18,16 +18,16 @@
 
 
 namespace ai {
+    using NeighboursVec = std::vector<sf::Vector2<size_t>>;
+    using Grid = std::vector<std::vector<bool>>;
+    using NeighbourFunction = std::function<NeighboursVec(const Grid& grid, const sf::Vector2<size_t>&)>;
+
     struct MapBlockage {
-        std::vector<std::vector<bool>> blockage_;
+        Grid blockage_;
         float scale_x_, scale_y_;
     };
 
     class AStar {
-        using NeighboursVec = std::vector<sf::Vector2<size_t>>;
-        using Grid = std::vector<std::vector<bool>>;
-        using NeighbourFunction = std::function<NeighboursVec(const Grid& grid, const sf::Vector2<size_t>&)>;
-
     public:
         class Node {
         public:

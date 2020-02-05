@@ -171,7 +171,7 @@ namespace ai {
         return {};
     }
 
-    AStar::NeighboursVec AStar::EightNeighbours(const AStar::Grid& grid, const sf::Vector2<size_t>& pos)
+    NeighboursVec AStar::EightNeighbours(const Grid& grid, const sf::Vector2<size_t>& pos)
     {
         static std::vector<sf::Vector2i> neighbours = {
                 {-1, 0},
@@ -187,7 +187,7 @@ namespace ai {
                 {-1, 1}
         };
 
-        AStar::NeighboursVec ret;
+        NeighboursVec ret;
         for (const auto& neigh : neighbours)
         {
             int cord_x = pos.x + neigh.x;
@@ -217,7 +217,7 @@ namespace ai {
         return ret;
     }
 
-    AStar::NeighboursVec AStar::FourNeighbours(const AStar::Grid& grid, const sf::Vector2<size_t>& pos)
+    NeighboursVec AStar::FourNeighbours(const Grid& grid, const sf::Vector2<size_t>& pos)
     {
         static std::vector<sf::Vector2i> neighbours = {
                 {-1, 0},
@@ -226,7 +226,7 @@ namespace ai {
                 {1,  0}
         };
 
-        AStar::NeighboursVec ret;
+        NeighboursVec ret;
         for (const auto& neigh : neighbours)
         {
             int cord_x = pos.x + neigh.x;

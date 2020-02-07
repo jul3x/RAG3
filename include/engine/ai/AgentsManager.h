@@ -23,7 +23,8 @@ namespace ai {
         AgentsManager() = delete;
 
         AgentsManager(const ai::MapBlockage& map_blockage, ai::NeighbourFunction func,
-                      float max_time_without_ms_ = 0.0f, float min_threshold_goal = 0.0f);
+                      float max_time_without_ms_ = 0.0f, float min_threshold_goal = 1.0f,
+                      size_t max_path_search_limit = 1e12);
 
         void update();
 
@@ -47,6 +48,7 @@ namespace ai {
         static inline bool isGoalValid(const Goal& goal);
 
         float max_time_without_ms_, min_threshold_goal_;
+        size_t max_path_search_limit_;
         const ai::MapBlockage& map_blockage_;
         ai::NeighbourFunction neighbour_function_;
 

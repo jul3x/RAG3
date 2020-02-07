@@ -27,7 +27,8 @@ void Game::initialize()
     map_ = std::make_unique<Map>();
     agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
                                                           1000.0f, // max time without recalculation of path in ms
-                                                          100.0f); // min change of goal to trigger recalculation
+                                                          100.0f, // min change of goal to trigger recalculation
+                                                          1000); // max search of path
 
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());

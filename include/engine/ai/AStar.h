@@ -44,7 +44,7 @@ namespace ai {
 
         static Path
         getSmoothedPath(const MapBlockage& map_blockage_, const sf::Vector2f& start, const sf::Vector2f& goal,
-                        const NeighbourFunction& func);
+                        const NeighbourFunction& func, size_t limit = 1e12);
 
         static NeighboursVec EightNeighbours(const Grid& grid, const sf::Vector2<size_t>& pos);
 
@@ -54,7 +54,7 @@ namespace ai {
         static void getSmoothedPath_(Path& path);
 
         static std::vector<Node> getPath(const std::vector<std::vector<bool>>& grid, const sf::Vector2<size_t>& start,
-                                         const sf::Vector2<size_t>& goal, const NeighbourFunction& func);
+                                         const sf::Vector2<size_t>& goal, const NeighbourFunction& func, size_t limit);
 
         static float heuristic(const Node& start, const Node& goal);
 

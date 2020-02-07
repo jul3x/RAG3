@@ -36,7 +36,7 @@ namespace ai {
 
     ai::Path
     AStar::getSmoothedPath(const MapBlockage& map_blockage_, const sf::Vector2f& start, const sf::Vector2f& goal,
-                           const NeighbourFunction& func)
+                           const NeighbourFunction& func, size_t limit)
     {
         int start_x = std::round(start.x / map_blockage_.scale_x_);
         int start_y = std::round(start.y / map_blockage_.scale_y_);
@@ -50,7 +50,7 @@ namespace ai {
         std::vector<ai::AStar::Node> path = ai::AStar::getPath(map_blockage_.blockage_,
                                                                sf::Vector2<size_t>(start_x, start_y),
                                                                sf::Vector2<size_t>(goal_x, goal_y),
-                                                               func);
+                                                               func, limit);
         ai::Path ret;
 
         for (const auto& node : path)
@@ -95,7 +95,7 @@ namespace ai {
 
     std::vector<AStar::Node>
     AStar::getPath(const std::vector<std::vector<bool>>& grid, const sf::Vector2<size_t>& start,
-                   const sf::Vector2<size_t>& goal, const NeighbourFunction& func)
+                   const sf::Vector2<size_t>& goal, const NeighbourFunction& func, size_t limit)
     {
         std::unordered_set<Node, NodeHash> closed_set;
         std::unordered_set<Node, NodeHash> open_set;
@@ -130,13 +130,17 @@ namespace ai {
 
             for (const auto& neigh : neighbours)
             {
+                --limit;
+                if (limit <= 0) return {};
+
                 Node y = Node({neigh.x, neigh.y}, INF, INF, INF);
                 if (closed_set.find(y) != closed_set.end())
                 {
                     continue;
                 }
 
-                float tentative_g_score = x.g_score + 1.0f;
+                float tentative_g_score = x.g_score +
+                                          (neigh.x != x.cord.first && neigh.y != x.cord.second) ? 1.1f : 1.0f;
                 bool tentative_is_better = false;
 
                 auto y_it = open_set.find(y);

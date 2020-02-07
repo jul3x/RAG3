@@ -12,14 +12,18 @@
 
 
 namespace ai {
-    AgentsManager::AgentsManager(const ai::MapBlockage& map_blockage, ai::NeighbourFunction  func,
-                                 float max_time_without_ms, float min_threshold_goal) :
+    AgentsManager::AgentsManager(const ai::MapBlockage& map_blockage, ai::NeighbourFunction func,
+                                 float max_time_without_ms, float min_threshold_goal, size_t max_path_search_limit) :
             max_time_without_ms_(max_time_without_ms),
             min_threshold_goal_(min_threshold_goal),
             map_blockage_(map_blockage),
-            neighbour_function_(std::move(func))
+            neighbour_function_(std::move(func)),
+            max_path_search_limit_(max_path_search_limit)
     {
-
+        if (max_time_without_ms_ < 0.0f || min_threshold_goal_ < 1.0f)
+        {
+            throw std::invalid_argument("Wrong parameters in AgentsManager constructor!");
+        }
     }
 
     void AgentsManager::update()
@@ -42,7 +46,7 @@ namespace ai {
         {
             auto& data = AgentsManager::getAgentData(agent);
             std::get<0>(data) = ai::AStar::getSmoothedPath(map_blockage_, agent->getStartPosition(),
-                                                           std::get<1>(data), neighbour_function_);
+                                                           std::get<1>(data), neighbour_function_, max_path_search_limit_);
             std::get<2>(data) = std::chrono::system_clock::now();
         }
         catch (const std::runtime_error& e)

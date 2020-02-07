@@ -13,6 +13,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <engine/objects/AbstractPhysicalObject.h>
+#include <engine/ai/DataTypes.h>
 
 
 namespace utils {
@@ -266,6 +267,34 @@ namespace utils {
             dot = (dot < -1.0 ? -1.0 : (dot > 1.0 ? 1.0 : dot));
 
             return std::acos(dot);
+        }
+
+        inline sf::Vector2f getNearestForwardPointToPath(const sf::Vector2f& pos, const ai::Path& path)
+        {
+            if (path.empty()) return {};
+
+            auto nearest_it = path.begin();
+            auto dist_to = utils::geo::getDistance(pos, nearest_it->first);
+            auto dist = dist_to + nearest_it->second;
+
+            for (auto it = path.begin(); it != path.end(); ++it)
+            {
+                auto new_dist_to = utils::geo::getDistance(pos, it->first);
+                auto new_dist = dist_to + it->second;
+                bool should_break = false;
+                if (new_dist_to > dist_to) should_break = true;
+
+                if (new_dist + new_dist_to <= dist + dist_to)
+                {
+                    nearest_it = it;
+                    dist_to = new_dist_to;
+                    dist = new_dist;
+                }
+
+                if (should_break) break;
+            }
+
+            return nearest_it->first;
         }
     } // namespace geo
 } // namespace utils

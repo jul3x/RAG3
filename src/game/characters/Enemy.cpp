@@ -34,19 +34,12 @@ bool Enemy::update(float time_elapsed)
 
     this->setRotation(rotation * 180.0f / static_cast<float>(M_PI));
 
-    if (!utils::num::isNearlyEqual(this->getCurrentGoal(), Game::get().getPlayerPosition(), 100.0f))
-        this->setCurrentGoal(Game::get().getPlayerPosition());
+    this->setCurrentGoal(Game::get().getPlayerPosition());
 
     //shot();
 
-    // TODO - Implement AgentsManager and Agent interface
     path_ = &(this->getPath());
-
-    if (!path_->empty())
-    {
-        this->setVelocity(
-                CFG.getFloat("enemy_max_speed") * utils::geo::getNormalized(path_->front() - this->getPosition()));
-    }
+    this->setVelocity(CFG.getFloat("enemy_max_speed") * this->generateVelocityForPath());
 
     return is_alive;
 }

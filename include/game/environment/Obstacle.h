@@ -18,8 +18,8 @@ public:
 
     bool update(float time_elapsed) override;
 
-    static constexpr float SIZE_X_ = 100.0f;
-    static constexpr float SIZE_Y_ = 100.0f;
+    static constexpr float SIZE_X_ = 30.0f;
+    static constexpr float SIZE_Y_ = 30.0f;
 
 };
 

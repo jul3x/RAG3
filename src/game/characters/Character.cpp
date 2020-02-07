@@ -116,9 +116,10 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
     if (path_ != nullptr)
     {
+        auto return_V = utils::geo::getNearestForwardPointToPath(this->getPosition(), *path_);
         for (const auto& v : *path_)
         {
-            path.append(sf::Vertex{v, sf::Color::Blue});
+            path.append(sf::Vertex{v.first, utils::num::isNearlyEqual(v.first, return_V) ? sf::Color::Red : sf::Color::Blue});
         }
     }
 

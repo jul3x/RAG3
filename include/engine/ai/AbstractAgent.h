@@ -7,7 +7,8 @@
 
 #include <SFML/System/Vector2.hpp>
 
-#include <list>
+#include <engine/ai/DataTypes.h>
+
 
 namespace ai {
     class AgentsManager;
@@ -18,20 +19,23 @@ namespace ai {
 
         virtual ~AbstractAgent();
 
-        void setCurrentGoal(const sf::Vector2f& goal);
+        void setCurrentGoal(const ai::Goal& goal);
 
         void setNoGoal();
 
-        const sf::Vector2f& getCurrentGoal() const;
+        const ai::Goal& getCurrentGoal() const;
 
         virtual const sf::Vector2f& getStartPosition() const = 0;
 
-        const std::list<sf::Vector2f>& getPath() const;
+        const ai::Path& getPath() const;
+
+        sf::Vector2f generateVelocityForPath() const;
 
     private:
         AgentsManager& manager_;
 
     };
+
 } // namespace ai
 
 #endif //RAG3_ENGINE_AI_ABSTRACTAGENT_H

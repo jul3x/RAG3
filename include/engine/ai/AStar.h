@@ -16,17 +16,10 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include <engine/ai/DataTypes.h>
+
 
 namespace ai {
-    using NeighboursVec = std::vector<sf::Vector2<size_t>>;
-    using Grid = std::vector<std::vector<bool>>;
-    using NeighbourFunction = std::function<NeighboursVec(const Grid& grid, const sf::Vector2<size_t>&)>;
-
-    struct MapBlockage {
-        Grid blockage_;
-        float scale_x_, scale_y_;
-    };
-
     class AStar {
     public:
         class Node {
@@ -49,7 +42,7 @@ namespace ai {
             }
         };
 
-        static std::list<sf::Vector2f>
+        static Path
         getSmoothedPath(const MapBlockage& map_blockage_, const sf::Vector2f& start, const sf::Vector2f& goal,
                         const NeighbourFunction& func);
 
@@ -58,7 +51,7 @@ namespace ai {
         static NeighboursVec FourNeighbours(const Grid& grid, const sf::Vector2<size_t>& pos);
 
     private:
-        static void getSmoothedPath_(std::list<sf::Vector2f>& path);
+        static void getSmoothedPath_(Path& path);
 
         static std::vector<Node> getPath(const std::vector<std::vector<bool>>& grid, const sf::Vector2<size_t>& start,
                                          const sf::Vector2<size_t>& goal, const NeighbourFunction& func);

@@ -34,7 +34,7 @@ namespace ai {
         }
     }
 
-    std::list<sf::Vector2f>
+    ai::Path
     AStar::getSmoothedPath(const MapBlockage& map_blockage_, const sf::Vector2f& start, const sf::Vector2f& goal,
                            const NeighbourFunction& func)
     {
@@ -51,41 +51,44 @@ namespace ai {
                                                                sf::Vector2<size_t>(start_x, start_y),
                                                                sf::Vector2<size_t>(goal_x, goal_y),
                                                                func);
-        std::list<sf::Vector2f> ret;
+        ai::Path ret;
 
         for (const auto& node : path)
         {
-            ret.push_back(convert(node));
+            ret.emplace_back(std::make_pair<sf::Vector2f, float>(convert(node), 0.0f));
         }
         AStar::getSmoothedPath_(ret);
         AStar::getSmoothedPath_(ret);
-        AStar::getSmoothedPath_(ret);
-        AStar::getSmoothedPath_(ret);
+
+        // generate distance to goal on path
+        for (auto it = ++ret.rbegin(), prev = ret.rbegin(); it != ret.rend(); ++it)
+        {
+            it->second = utils::geo::getDistance(it->first, prev->first) + prev->second;
+            prev = it;
+        }
 
         return ret;
     }
 
-    void AStar::getSmoothedPath_(std::list<sf::Vector2f>& path)
+    void AStar::getSmoothedPath_(ai::Path& path)
     {
         if (path.size() < 3) return;
         sf::Vector2f curPoint, nextPoint;
         sf::Vector2f pointQ, pointR;
 
-        path.insert(path.begin(), path.front());
-
         for (auto it = path.begin(); it != path.end();)
         {
-            curPoint = *it;
+            curPoint = it->first;
             auto next_it = std::next(it);
             if (next_it == path.end()) break;
-            nextPoint = *next_it;
+            nextPoint = next_it->first;
             pointQ = (0.75f * curPoint) +
                      (0.25f * nextPoint);
             pointR = (0.25f * curPoint) +
                      (0.75f * nextPoint);
 
-            *it = pointQ;
-            path.insert(next_it, pointR);
+            it->first = pointQ;
+            path.insert(next_it, std::make_pair(pointR, 0.0f));
             it = next_it;
         }
     }

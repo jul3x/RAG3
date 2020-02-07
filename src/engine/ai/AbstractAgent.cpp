@@ -4,6 +4,8 @@
 
 #include <engine/ai/AbstractAgent.h>
 #include <engine/ai/AgentsManager.h>
+#include <engine/utils/Geometry.h>
+#include <engine/utils/Numeric.h>
 
 
 namespace ai {
@@ -27,7 +29,7 @@ namespace ai {
         manager_.setNoGoal(this);
     }
 
-    const std::list<sf::Vector2f>& AbstractAgent::getPath() const
+    const Path& AbstractAgent::getPath() const
     {
         return manager_.getPath(this);
     }
@@ -35,5 +37,16 @@ namespace ai {
     const sf::Vector2f& AbstractAgent::getCurrentGoal() const
     {
         return manager_.getCurrentGoal(this);
+    }
+
+    sf::Vector2f AbstractAgent::generateVelocityForPath() const
+    {
+        const sf::Vector2f& pos = this->getStartPosition();
+        const ai::Path& path = manager_.getPath(this);
+        if (path.empty()) return {};
+
+        sf::Vector2f point = utils::geo::getNearestForwardPointToPath(pos, path);
+
+        return utils::geo::getNormalized(point - pos);
     }
 } // namespace ai

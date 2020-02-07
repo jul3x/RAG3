@@ -8,13 +8,16 @@
 
 #include <engine/ai/AgentsManager.h>
 #include <engine/ai/AStar.h>
+#include <engine/utils/Numeric.h>
 
 
 namespace ai {
     AgentsManager::AgentsManager(const ai::MapBlockage& map_blockage, ai::NeighbourFunction  func,
-                                 float max_time_without_ms) : max_time_without_ms_(max_time_without_ms),
-                                                              map_blockage_(map_blockage),
-                                                              neighbour_function_(std::move(func))
+                                 float max_time_without_ms, float min_threshold_goal) :
+            max_time_without_ms_(max_time_without_ms),
+            min_threshold_goal_(min_threshold_goal),
+            map_blockage_(map_blockage),
+            neighbour_function_(std::move(func))
     {
 
     }
@@ -50,16 +53,19 @@ namespace ai {
         agents_to_update_.pop();
     }
 
-    const AgentsManager::Path& AgentsManager::getPath(const AbstractAgent* agent) const
+    const ai::Path& AgentsManager::getPath(const AbstractAgent* agent) const
     {
         return std::get<0>(this->getAgentData(const_cast<AbstractAgent*>(agent)));
     }
 
-    void AgentsManager::setCurrentGoal(AbstractAgent* agent, const AgentsManager::Goal& new_goal)
+    void AgentsManager::setCurrentGoal(AbstractAgent* agent, const ai::Goal& new_goal)
     {
-        std::get<1>(this->getAgentData(agent)) = new_goal;
-        agents_to_update_.push(agent);
-        std::cout << "[AgentsManager] Goal set to " << new_goal.x << ", " << new_goal.y << "!" << std::endl;
+        if (!utils::num::isNearlyEqual(this->getCurrentGoal(agent), new_goal, min_threshold_goal_))
+        {
+            agents_to_update_.push(agent);
+            std::get<1>(this->getAgentData(agent)) = new_goal;
+            std::cout << "[AgentsManager] Goal set to " << new_goal.x << ", " << new_goal.y << "!" << std::endl;
+        }
     }
 
     void AgentsManager::setNoGoal(AbstractAgent* agent)
@@ -71,7 +77,7 @@ namespace ai {
 
     void AgentsManager::registerAgent(AbstractAgent* agent)
     {
-        agents_map_.emplace(agent, std::tuple<AgentsManager::Path, AgentsManager::Goal, AgentsManager::Timestamp>());
+        agents_map_.emplace(agent, std::tuple<ai::Path, ai::Goal, ai::Timestamp>());
         std::cout << "[AgentsManager] Agent registered!" << std::endl;
     }
 
@@ -84,12 +90,12 @@ namespace ai {
         std::cout << "[AgentsManager] Agent deleted!" << std::endl;
     }
 
-    const AgentsManager::Goal& AgentsManager::getCurrentGoal(const AbstractAgent* agent) const
+    const ai::Goal& AgentsManager::getCurrentGoal(const AbstractAgent* agent) const
     {
         return std::get<1>(this->getAgentData(const_cast<AbstractAgent*>(agent)));
     }
 
-    std::tuple<AgentsManager::Path, AgentsManager::Goal, AgentsManager::Timestamp>&
+    std::tuple<ai::Path, ai::Goal, ai::Timestamp>&
     AgentsManager::getAgentData(AbstractAgent* agent)
     {
         auto it = agents_map_.find(agent);
@@ -98,7 +104,7 @@ namespace ai {
         return it->second;
     }
 
-    const std::tuple<AgentsManager::Path, AgentsManager::Goal, AgentsManager::Timestamp>&
+    const std::tuple<ai::Path, ai::Goal, ai::Timestamp>&
     AgentsManager::getAgentData(AbstractAgent* agent) const
     {
         auto it = agents_map_.find(agent);
@@ -107,7 +113,7 @@ namespace ai {
         return it->second;
     }
 
-    bool AgentsManager::isGoalValid(const AgentsManager::Goal& goal)
+    bool AgentsManager::isGoalValid(const ai::Goal& goal)
     {
         return !(goal.x == std::numeric_limits<float>::infinity() || goal.y == std::numeric_limits<float>::infinity());
     }

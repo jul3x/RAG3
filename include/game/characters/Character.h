@@ -49,6 +49,8 @@ public:
 
     void setRotation(float theta) override;
 
+    void setWeaponPointing(const sf::Vector2f& point);
+
 protected:
     std::vector<std::unique_ptr<AbstractWeapon>> weapons_in_backpack_;
     std::vector<std::unique_ptr<AbstractWeapon>>::iterator current_weapon_;

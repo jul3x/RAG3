@@ -14,13 +14,19 @@
 class AbstractWeapon : public AbstractDrawableObject {
 public:
     AbstractWeapon(const sf::Vector2f& size,
+                   const sf::Vector2f& weapon_offset,
                    const std::string& name);
 
     virtual sf::Vector2f use() = 0;
 
     virtual float getState() const = 0;
 
+    const sf::Vector2f& getWeaponOffset() const;
+
     const std::string& getName() const;
+
+protected:
+    sf::Vector2f weapon_offset_;
 
 private:
     std::string name_;

@@ -33,7 +33,6 @@ public:
 
 private:
     // weapon parameters
-    sf::Vector2f weapon_offset_;
     std::string bullet_type_;
     int bullet_quantity_;
     float bullet_angular_diff_;

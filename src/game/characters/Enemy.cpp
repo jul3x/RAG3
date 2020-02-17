@@ -27,12 +27,8 @@ Enemy::Enemy(const sf::Vector2f& position,
 
 bool Enemy::update(float time_elapsed)
 {
+    if (!this->isVisible()) return true;
     bool is_alive = Character::update(time_elapsed);
-
-    float rotation;
-    std::tie(std::ignore, rotation) =
-            utils::geo::cartesianToPolar(Game::get().getPlayerPosition() - this->getPosition());
-
 
     handleLifeState();
     handleAmmoState();
@@ -49,14 +45,14 @@ bool Enemy::update(float time_elapsed)
         }
         case ActionState::Follow:
         {
-            this->setRotation(rotation * 180.0f / static_cast<float>(M_PI));
+            this->setWeaponPointing(Game::get().getPlayerPosition());
             this->setCurrentGoal(Game::get().getPlayerPosition());
             //std::cout << "FOLLOW" << std::endl;
             break;
         }
         case ActionState::DestroyWall:
         {
-            this->setRotation(rotation * 180.0f / static_cast<float>(M_PI));
+            this->setWeaponPointing(Game::get().getPlayerPosition());
             this->setNoGoal();
             this->shot();
             //std::cout << "DESTROYWALL" << std::endl;
@@ -64,7 +60,7 @@ bool Enemy::update(float time_elapsed)
         }
         case ActionState::Shot:
         {
-            this->setRotation(rotation * 180.0f / static_cast<float>(M_PI));
+            this->setWeaponPointing(Game::get().getPlayerPosition());
             this->setNoGoal();
             this->shot();
             //std::cout << "SHOT" << std::endl;
@@ -72,7 +68,7 @@ bool Enemy::update(float time_elapsed)
         }
         case ActionState::ShotAndRun:
         {
-            this->setRotation(rotation * 180.0f / static_cast<float>(M_PI));
+            this->setWeaponPointing(Game::get().getPlayerPosition());
             this->setNoGoal();
             this->shot();
             //std::cout << "SHOTANDRUN" << std::endl;
@@ -80,14 +76,12 @@ bool Enemy::update(float time_elapsed)
         }
         case ActionState::Run:
         {
-            this->setRotation(rotation * 180.0f / static_cast<float>(M_PI));
+            this->setWeaponPointing(Game::get().getPlayerPosition());
             this->setNoGoal();
             //std::cout << "RUN" << std::endl;
             break;
         }
     }
-
-    //shot();
 
     path_ = &(this->getPath());
     this->setVelocity(CFG.getFloat("enemy_max_speed") * this->generateVelocityForPath());

@@ -5,7 +5,7 @@
 #include <game/weapons/NoWeapon.h>
 
 
-NoWeapon::NoWeapon() : AbstractWeapon({}, "") {}
+NoWeapon::NoWeapon() : AbstractWeapon({}, {}, "") {}
 
 sf::Vector2f NoWeapon::use()
 {

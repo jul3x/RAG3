@@ -144,7 +144,6 @@ void Character::setPosition(float x, float y)
     (*current_weapon_)->setPosition(x, y);
 }
 
-
 void Character::setPositionX(float x)
 {
     AbstractDrawableObject::setPositionX(x);
@@ -155,4 +154,20 @@ void Character::setPositionY(float y)
 {
     AbstractDrawableObject::setPositionY(y);
     (*current_weapon_)->setPositionY(y);
+}
+
+void Character::setWeaponPointing(const sf::Vector2f& point)
+{
+    float a = (*current_weapon_)->getWeaponOffset().y;
+    float d = utils::geo::getDistance(point, this->getPosition());
+
+    float theta = std::asin(a / d);
+
+    float angle = std::atan2(point.y - this->getPosition().y, point.x - this->getPosition().x);
+
+    if (!std::isnan(theta))
+    {
+        angle -= theta;
+        this->setRotation(angle * 180.0f / static_cast<float>(M_PI));
+    }
 }

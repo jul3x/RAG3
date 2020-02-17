@@ -17,7 +17,6 @@ ShootingWeapon::ShootingWeapon(float bullet_timeout,
                                int bullet_quantity,
                                float bullet_angular_diff,
                                const std::string& texture_name) :
-        weapon_offset_(weapon_offset),
         bullet_timeout_(bullet_timeout),
         recoil_(recoil),
         ammunition_(ammunition),
@@ -25,7 +24,7 @@ ShootingWeapon::ShootingWeapon(float bullet_timeout,
         bullet_type_(std::move(bullet_type)),
         bullet_quantity_(bullet_quantity),
         bullet_angular_diff_(bullet_angular_diff),
-        AbstractWeapon(size, texture_name)
+        AbstractWeapon(size, weapon_offset, texture_name)
 {
     if (ammunition <= 0 || bullet_timeout <= 0.0f)
         throw std::invalid_argument("[ShootingWeapon] Constructor parameters are invalid!");

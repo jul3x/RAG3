@@ -55,6 +55,7 @@ namespace ai {
         std::unordered_map<AbstractAgent*, std::tuple<ai::Path, ai::Goal, ai::Timestamp>> agents_map_;
 
         std::queue<AbstractAgent*> agents_to_update_;
+        std::unordered_set<AbstractAgent*> agents_to_update_set_;
     };
 } // namespace ai
 

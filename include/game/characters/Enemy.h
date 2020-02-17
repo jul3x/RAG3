@@ -13,12 +13,50 @@
 
 class Enemy : public Character, public ai::AbstractAgent {
 public:
+    enum class LifeState {
+        High,
+        Low,
+        Critical
+    };
+
+    enum class AmmoState {
+        High,
+        Low,
+        Zero
+    };
+
+    enum class VisibilityState {
+        Close,
+        Far,
+        TooFar
+    };
+
+    enum class ActionState {
+        StandBy,
+        Follow,
+        DestroyWall,
+        Shot,
+        ShotAndRun,
+        Run
+    };
+
     Enemy(const sf::Vector2f& position,
           const sf::Vector2f& velocity);
 
     bool update(float time_elapsed) override;
 
     const sf::Vector2f& getStartPosition() const override;
+
+private:
+    inline void handleLifeState();
+    inline void handleAmmoState();
+    inline void handleVisibilityState();
+    inline void handleActionState();
+
+    LifeState life_state_;
+    AmmoState ammo_state_;
+    VisibilityState visibility_state_;
+    ActionState action_state_;
 
 };
 

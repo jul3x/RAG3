@@ -27,6 +27,11 @@ Enemy::Enemy(const sf::Vector2f& position,
 
 bool Enemy::update(float time_elapsed)
 {
+    handleLifeState();
+    handleAmmoState();
+    handleVisibilityState();
+    handleActionState();
+
     bool is_alive = Character::update(time_elapsed);
     float rotation;
     std::tie(std::ignore, rotation) =
@@ -41,10 +46,42 @@ bool Enemy::update(float time_elapsed)
     path_ = &(this->getPath());
     this->setVelocity(CFG.getFloat("enemy_max_speed") * this->generateVelocityForPath());
 
+    //std::cout << "Life: " << static_cast<int>(life_state_) << ", ammo: " << static_cast<int>(ammo_state_) << std::endl;
+
     return is_alive;
 }
 
 const sf::Vector2f& Enemy::getStartPosition() const
 {
     return this->getPosition();
+}
+
+void Enemy::handleLifeState()
+{
+    if (life_ > 0.67 * max_life_)
+        life_state_ = LifeState::High;
+    else if (life_ > 0.2 * max_life_)
+        life_state_ = LifeState::Low;
+    else
+        life_state_ = LifeState::Critical;
+}
+
+void Enemy::handleAmmoState()
+{
+    if ((*current_weapon_)->getState() > 0.5)
+        ammo_state_ = AmmoState::High;
+    else if ((*current_weapon_)->getState() > 0.0)
+        ammo_state_ = AmmoState::Low;
+    else
+        ammo_state_ = AmmoState::Zero;
+}
+
+void Enemy::handleVisibilityState()
+{
+    // TODO
+}
+
+void Enemy::handleActionState()
+{
+    // TODO
 }

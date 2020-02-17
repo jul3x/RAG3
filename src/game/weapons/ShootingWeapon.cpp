@@ -21,11 +21,15 @@ ShootingWeapon::ShootingWeapon(float bullet_timeout,
         bullet_timeout_(bullet_timeout),
         recoil_(recoil),
         ammunition_(ammunition),
+        max_ammunition_(ammunition),
         bullet_type_(std::move(bullet_type)),
         bullet_quantity_(bullet_quantity),
         bullet_angular_diff_(bullet_angular_diff),
         AbstractWeapon(size, texture_name)
 {
+    if (ammunition <= 0 || bullet_timeout <= 0.0f)
+        throw std::invalid_argument("[ShootingWeapon] Constructor parameters are invalid!");
+
     shape_.setOrigin(size / 2.0f - weapon_offset_);
 }
 
@@ -64,4 +68,9 @@ sf::Vector2f ShootingWeapon::use()
 int ShootingWeapon::getAmmunition() const
 {
     return ammunition_;
+}
+
+float ShootingWeapon::getState() const
+{
+    return static_cast<float>(ammunition_) / static_cast<float>(max_ammunition_);
 }

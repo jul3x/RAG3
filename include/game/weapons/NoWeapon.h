@@ -15,6 +15,7 @@ public:
 
     sf::Vector2f use() override;
 
+    float getState() const override;
 };
 
 #endif // RAG3_GAME_WEAPONS_NOWEAPON_H

@@ -33,8 +33,12 @@ namespace ai {
         for (const auto& agent : agents_map_)
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(time_now - std::get<2>(agent.second)).count() >
-                max_time_without_ms_ && AgentsManager::isGoalValid(std::get<1>(agent.second)))
+                max_time_without_ms_ && AgentsManager::isGoalValid(std::get<1>(agent.second)) &&
+                    agents_to_update_set_.find(agent.first) == agents_to_update_set_.end())
+            {
                 agents_to_update_.push(agent.first);
+                agents_to_update_set_.insert(agent.first);
+            }
         }
 
         if (agents_to_update_.empty()) return;
@@ -55,6 +59,7 @@ namespace ai {
         }
 
         agents_to_update_.pop();
+        agents_to_update_set_.erase(agents_to_update_set_.find(agent));
     }
 
     const ai::Path& AgentsManager::getPath(const AbstractAgent* agent) const
@@ -66,7 +71,12 @@ namespace ai {
     {
         if (!utils::num::isNearlyEqual(this->getCurrentGoal(agent), new_goal, min_threshold_goal_))
         {
-            agents_to_update_.push(agent);
+            if (agents_to_update_set_.find(agent) == agents_to_update_set_.end())
+            {
+                agents_to_update_set_.insert(agent);
+                agents_to_update_.push(agent);
+            }
+
             std::get<1>(this->getAgentData(agent)) = new_goal;
             std::cout << "[AgentsManager] Goal set to " << new_goal.x << ", " << new_goal.y << "!" << std::endl;
         }

@@ -18,6 +18,8 @@ public:
 
     virtual sf::Vector2f use() = 0;
 
+    virtual float getState() const = 0;
+
     const std::string& getName() const;
 
 private:

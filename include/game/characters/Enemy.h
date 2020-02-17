@@ -28,7 +28,8 @@ public:
     enum class VisibilityState {
         Close,
         Far,
-        TooFar
+        TooFar,
+        OutOfRange
     };
 
     enum class ActionState {
@@ -52,6 +53,8 @@ private:
     inline void handleAmmoState();
     inline void handleVisibilityState();
     inline void handleActionState();
+
+    static constexpr float MAX_DISTANCE_ = 1500.0f;
 
     LifeState life_state_;
     AmmoState ammo_state_;

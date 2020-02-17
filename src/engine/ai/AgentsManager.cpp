@@ -43,7 +43,7 @@ namespace ai {
 
         if (agents_to_update_.empty()) return;
 
-        std::cout << "[AgentsManager] Calculating new path!" << std::endl;
+        //std::cout << "[AgentsManager] Calculating new path!" << std::endl;
         auto& agent = agents_to_update_.front();
 
         try
@@ -78,7 +78,7 @@ namespace ai {
             }
 
             std::get<1>(this->getAgentData(agent)) = new_goal;
-            std::cout << "[AgentsManager] Goal set to " << new_goal.x << ", " << new_goal.y << "!" << std::endl;
+            //std::cout << "[AgentsManager] Goal set to " << new_goal.x << ", " << new_goal.y << "!" << std::endl;
         }
     }
 
@@ -86,7 +86,9 @@ namespace ai {
     {
         std::get<1>(this->getAgentData(agent)) = sf::Vector2f{std::numeric_limits<float>::infinity(),
                                                               std::numeric_limits<float>::infinity()};
-        std::cout << "[AgentsManager] Goal set to 0!" << std::endl;
+        auto& data = AgentsManager::getAgentData(agent);
+        std::get<0>(data) = {};
+        //std::cout << "[AgentsManager] Goal set to 0!" << std::endl;
     }
 
     void AgentsManager::registerAgent(AbstractAgent* agent)

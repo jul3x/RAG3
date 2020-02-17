@@ -59,8 +59,8 @@ protected:
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    static constexpr float SIZE_X_ = 30.0f;
-    static constexpr float SIZE_Y_ = 30.0f;
+    static constexpr float SIZE_X_ = 100.0f;
+    static constexpr float SIZE_Y_ = 100.0f;
 
 };
 

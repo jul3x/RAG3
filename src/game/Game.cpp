@@ -27,7 +27,7 @@ void Game::initialize()
     map_ = std::make_unique<Map>();
     agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
                                                           1000.0f, // max time without recalculation of path in ms
-                                                          100.0f, // min change of goal to trigger recalculation
+                                                          20.0f, // min change of goal to trigger recalculation
                                                           1000); // max search of path
 
     ui_->registerCamera(camera_.get());
@@ -40,7 +40,7 @@ void Game::initialize()
     engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
 
-    map_->loadMap("test");
+    map_->loadMap("map");
     engine_->initializeCollisions(map_->getSize(), COLLISION_GRID_SIZE_);
 
     for (auto& obstacle : map_->getObstacles())

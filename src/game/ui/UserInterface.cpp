@@ -72,6 +72,8 @@ void UserInterface::handleEvents(Graphics& graphics)
             }
             case sf::Event::MouseWheelScrolled:
             {
+                graphics.getCurrentView().zoom(1.05f);
+                graphics.setCurrentView();
                 handleScrolling(event.mouseWheelScroll.delta);
                 break;
             }

@@ -74,13 +74,6 @@ void DynamicObject::setForcedVelocity(const sf::Vector2f& velocity)
 
 bool DynamicObject::update(float time_elapsed)
 {
-    trail_.push_back(this->getPosition());
-
-    if (trail_.size() > TRAIL_COUNT_)
-    {
-        trail_.pop_front();
-    }
-
     if (utils::num::isNearlyEqual(set_v_.x, 0.0f, 0.01f) &&
         utils::num::isNearlyEqual(curr_v_.x, 0.0f, 0.05f))
     {
@@ -100,7 +93,14 @@ bool DynamicObject::update(float time_elapsed)
         curr_v_.y = curr_v_.y - std::copysign(acceleration_ * time_elapsed, curr_v_.y - set_v_.y);
     }
 
-    this->setPosition(this->getPosition() + curr_v_);
+    this->setPosition(this->getPosition() + curr_v_ * time_elapsed);
+
+    trail_.push_back(this->getPosition());
+
+    if (trail_.size() > TRAIL_COUNT_)
+    {
+        trail_.pop_front();
+    }
 
     return true;
 }

@@ -41,13 +41,11 @@ bool Character::shot()
 
 void Character::getShot(const Bullet& bullet)
 {
+    Shootable::getShot(bullet);
     //Engine::spawnBloodAnimation();
     this->setForcedVelocity(this->getVelocity() +
                             utils::geo::getNormalized(bullet.getVelocity()) * static_cast<float>(bullet.getDeadlyFactor()) *
                             CFG.getFloat("get_shot_factor"));
-
-    life_ -= bullet.getDeadlyFactor();
-    life_ = life_ < 0 ? 0 : life_;
 }
 
 int Character::getCurrentWeapon() const
@@ -98,16 +96,13 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(shape_, states);
     target.draw(**current_weapon_, states);
 
-    static sf::Text text("", ResourceManager::getInstance().getFont(),
-                  24);
+    static sf::Text text("", ResourceManager::getInstance().getFont(), 24);
 
     text.setFillColor(sf::Color::Red);
     text.setPosition(this->getPosition());
-    int start_x = std::round(this->getPosition().x / Obstacle::SIZE_X_);
-    int start_y = std::round(this->getPosition().y / Obstacle::SIZE_Y_);
 
-    text.setString(std::to_string(start_x) + ", " + std::to_string(start_y) + ":\n" +
-                   std::to_string(this->getPosition().x) + ", " + std::to_string(this->getPosition().y));
+    text.setString("Life: " + std::to_string(life_) + "/" + std::to_string(max_life_) + "\n" +
+                   "Ammo: " + std::to_string((*current_weapon_)->getState()) + "%");
 
     target.draw(text, states);
 

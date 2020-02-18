@@ -49,7 +49,7 @@ sf::Vector2f ShootingWeapon::use()
         auto primary_rotation = this->getRotation() -
                                 bullet_angular_diff_ * static_cast<float>(bullet_quantity_ - 1) / 2.0f;
 
-        Game::get().spawnShotAnimation(offset_position, this->getRotation(), std::sqrt(recoil_) / 2.0f);
+        Game::get().spawnShotAnimation(offset_position, this->getRotation(), std::sqrt(recoil_) / 10.0f);
         for (int i = 0; i < bullet_quantity_; ++i)
         {
             auto rotation = (primary_rotation + static_cast<float>(i) * bullet_angular_diff_) * M_PI / 180.0f;

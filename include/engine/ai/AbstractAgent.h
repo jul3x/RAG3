@@ -5,6 +5,8 @@
 #ifndef RAG3_ENGINE_AI_ABSTRACTAGENT_H
 #define RAG3_ENGINE_AI_ABSTRACTAGENT_H
 
+#include <chrono>
+
 #include <SFML/System/Vector2.hpp>
 
 #include <engine/ai/DataTypes.h>
@@ -23,6 +25,8 @@ namespace ai {
 
         void setNoGoal();
 
+        const sf::Vector2f& getWanderingDirection(float constraint, float max_time_ms);
+
         const ai::Goal& getCurrentGoal() const;
 
         virtual const sf::Vector2f& getStartPosition() const = 0;
@@ -33,6 +37,9 @@ namespace ai {
 
     private:
         AgentsManager& manager_;
+
+        ai::Timestamp latest_wander_point_time_;
+        sf::Vector2f wandering_direction_;
 
     };
 

@@ -33,21 +33,25 @@ bool Enemy::update(float time_elapsed)
     handleLifeState();
     handleAmmoState();
     handleVisibilityState();
-    handleActionState();
+    //handleActionState();
+    action_state_ = ActionState::StandBy;
+    auto velocity = CFG.getFloat("enemy_max_speed") * this->generateVelocityForPath();
 
     switch (action_state_)
     {
         case ActionState::StandBy:
         {
+            velocity = CFG.getFloat("enemy_standby_speed") * this->getWanderingDirection(0.2f, 100.0f);
+
             this->setNoGoal();
-            //std::cout << "STANDBY" << std::endl;
+            this->setWeaponPointing(this->getPosition() + velocity);
             break;
         }
         case ActionState::Follow:
         {
             this->setWeaponPointing(Game::get().getPlayerPosition());
             this->setCurrentGoal(Game::get().getPlayerPosition());
-            //std::cout << "FOLLOW" << std::endl;
+            this->setWeaponPointing(this->getPosition() + velocity);
             break;
         }
         case ActionState::DestroyWall:
@@ -76,7 +80,7 @@ bool Enemy::update(float time_elapsed)
         }
         case ActionState::Run:
         {
-            this->setWeaponPointing(Game::get().getPlayerPosition());
+            this->setWeaponPointing(this->getPosition() + velocity);
             this->setNoGoal();
             //std::cout << "RUN" << std::endl;
             break;
@@ -84,7 +88,7 @@ bool Enemy::update(float time_elapsed)
     }
 
     path_ = &(this->getPath());
-    this->setVelocity(CFG.getFloat("enemy_max_speed") * this->generateVelocityForPath());
+    this->setVelocity(velocity);
 
     return is_alive;
 }

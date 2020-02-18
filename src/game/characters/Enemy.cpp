@@ -14,7 +14,7 @@
 
 Enemy::Enemy(const sf::Vector2f& position,
              const sf::Vector2f& velocity) :
-        Character(position, velocity, 10),
+        Character(position, velocity, CFG.getInt("enemy_max_health")),
         AbstractAgent(Game::get().getAgentsManager())
 {
     weapons_in_backpack_.push_back(

@@ -72,9 +72,16 @@ void UserInterface::handleEvents(Graphics& graphics)
             }
             case sf::Event::MouseWheelScrolled:
             {
-                graphics.getCurrentView().zoom(1.05f);
-                graphics.setCurrentView();
-                handleScrolling(event.mouseWheelScroll.delta);
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+                {
+                    auto current_view = graphics.getCurrentView();
+                    current_view.zoom(1.0f - (event.mouseWheelScroll.delta > 0 ? 0.05f : -0.05f));
+                    graphics.modifyCurrentView(current_view);
+                }
+                else
+                {
+                    handleScrolling(event.mouseWheelScroll.delta);
+                }
                 break;
             }
             default:

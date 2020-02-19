@@ -33,15 +33,15 @@ bool Enemy::update(float time_elapsed)
     handleLifeState();
     handleAmmoState();
     handleVisibilityState();
-    //handleActionState();
-    action_state_ = ActionState::StandBy;
+    handleActionState();
+
     auto velocity = CFG.getFloat("enemy_max_speed") * this->generateVelocityForPath();
 
     switch (action_state_)
     {
         case ActionState::StandBy:
         {
-            velocity = CFG.getFloat("enemy_standby_speed") * this->getWanderingDirection(0.2f, 100.0f);
+            velocity = CFG.getFloat("enemy_standby_speed") * this->getWanderingDirection(0.2f, 100.0f, 20);
 
             this->setNoGoal();
             this->setWeaponPointing(this->getPosition() + velocity);
@@ -59,7 +59,6 @@ bool Enemy::update(float time_elapsed)
             this->setWeaponPointing(Game::get().getPlayerPosition());
             this->setNoGoal();
             this->shot();
-            //std::cout << "DESTROYWALL" << std::endl;
             break;
         }
         case ActionState::Shot:
@@ -67,22 +66,19 @@ bool Enemy::update(float time_elapsed)
             this->setWeaponPointing(Game::get().getPlayerPosition());
             this->setNoGoal();
             this->shot();
-            //std::cout << "SHOT" << std::endl;
             break;
         }
         case ActionState::ShotAndRun:
         {
             this->setWeaponPointing(Game::get().getPlayerPosition());
-            this->setNoGoal();
+            this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - Game::get().getPlayerPosition()));
             this->shot();
-            //std::cout << "SHOTANDRUN" << std::endl;
             break;
         }
         case ActionState::Run:
         {
             this->setWeaponPointing(this->getPosition() + velocity);
-            this->setNoGoal();
-            //std::cout << "RUN" << std::endl;
+            this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - Game::get().getPlayerPosition()));
             break;
         }
     }
@@ -134,6 +130,9 @@ void Enemy::handleVisibilityState()
     {
         start_x = start_x + dir.x;
         start_y = start_y + dir.y;
+
+        if (start_x >= blockage.blockage_.size() || start_x < 0 ||
+            start_y >= blockage.blockage_.at(0).size() || start_y < 0) break;
 
         if (blockage.blockage_.at(std::round(start_x)).at(std::round(start_y)))
             ++walls_between;
@@ -273,4 +272,42 @@ void Enemy::handleActionState()
             break;
         }
     }
+}
+
+sf::Vector2f Enemy::findNearestSafeSpot(const sf::Vector2f &direction) const
+{
+    auto dir = utils::geo::getNormalized(direction);
+    auto& blockage = Game::get().getMapBlockage();
+    auto current = sf::Vector2f{std::round(this->getPosition().x / blockage.scale_x_),
+                                std::round(this->getPosition().y / blockage.scale_y_)};
+
+    int rounded_x = static_cast<int>(std::round(current.x + dir.x));
+    int rounded_y = static_cast<int>(std::round(current.y + dir.y));
+    if (rounded_x < blockage.blockage_.size() && rounded_x >= 0 &&
+        rounded_y < blockage.blockage_.at(0).size() && rounded_y >= 0 &&
+        !blockage.blockage_.at(rounded_x).at(rounded_y))
+        return {rounded_x * blockage.scale_x_, rounded_y * blockage.scale_y_};
+
+    rounded_x = static_cast<int>(std::round(current.x - dir.y));
+    rounded_y = static_cast<int>(std::round(current.y + dir.x));
+    if (rounded_x < blockage.blockage_.size() && rounded_x >= 0 &&
+        rounded_y < blockage.blockage_.at(0).size() && rounded_y >= 0 &&
+        !blockage.blockage_.at(rounded_x).at(rounded_y))
+        return {rounded_x * blockage.scale_x_, rounded_y * blockage.scale_y_};
+
+    rounded_x = static_cast<int>(std::round(current.x + dir.y));
+    rounded_y = static_cast<int>(std::round(current.y - dir.x));
+    if (rounded_x < blockage.blockage_.size() && rounded_x >= 0 &&
+        rounded_y < blockage.blockage_.at(0).size() && rounded_y >= 0 &&
+        !blockage.blockage_.at(rounded_x).at(rounded_y))
+        return {rounded_x * blockage.scale_x_, rounded_y * blockage.scale_y_};
+
+    rounded_x = static_cast<int>(std::round(current.x - dir.x));
+    rounded_y = static_cast<int>(std::round(current.y - dir.y));
+    if (rounded_x < blockage.blockage_.size() && rounded_x >= 0 &&
+        rounded_y < blockage.blockage_.at(0).size() && rounded_y >= 0 &&
+        !blockage.blockage_.at(rounded_x).at(rounded_y))
+        return {rounded_x * blockage.scale_x_, rounded_y * blockage.scale_y_};
+
+    return {};
 }

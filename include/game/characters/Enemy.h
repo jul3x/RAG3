@@ -53,6 +53,7 @@ private:
     inline void handleAmmoState();
     inline void handleVisibilityState();
     inline void handleActionState();
+    inline sf::Vector2f findNearestSafeSpot(const sf::Vector2f& direction) const;
 
     static constexpr float MAX_DISTANCE_ = 1500.0f;
 

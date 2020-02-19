@@ -29,7 +29,7 @@ namespace ai {
         manager_.setNoGoal(this);
     }
 
-    const sf::Vector2f& AbstractAgent::getWanderingDirection(float constraint, float max_time_ms)
+    const sf::Vector2f& AbstractAgent::getWanderingDirection(float constraint, float max_time_ms, int when_opposite)
     {
         auto now = std::chrono::system_clock::now();
 
@@ -40,7 +40,7 @@ namespace ai {
             wandering_direction_ = {std::cos(new_direction), std::sin(new_direction)};
             latest_wander_point_time_ = now;
 
-            auto change_direction = utils::num::getRandom(0, 20);
+            auto change_direction = utils::num::getRandom(0, when_opposite);
 
             if (change_direction == 1) wandering_direction_ = -wandering_direction_;
         }

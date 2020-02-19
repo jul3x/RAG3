@@ -25,7 +25,7 @@ namespace ai {
 
         void setNoGoal();
 
-        const sf::Vector2f& getWanderingDirection(float constraint, float max_time_ms);
+        const sf::Vector2f& getWanderingDirection(float constraint, float max_time_ms, int when_opposite);
 
         const ai::Goal& getCurrentGoal() const;
 

@@ -21,6 +21,8 @@ public:
 
     const sf::Vector2f& getSize() const;
 
+    const ai::MapBlockage& getMapBlockage() const;
+
     std::list<Decoration>& getDecorations();
 
     std::list<Obstacle>& getObstacles();
@@ -35,6 +37,8 @@ private:
     std::list<Obstacle> obstacles_;
     std::list<Enemy> enemies_;
     std::list<Decoration> decorations_;
+
+    ai::MapBlockage blocked_;
 
     sf::Vector2f size_;
 

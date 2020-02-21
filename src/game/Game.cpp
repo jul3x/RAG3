@@ -23,8 +23,12 @@ void Game::initialize()
 {
     ui_ = std::make_unique<UserInterface>();
     camera_ = std::make_unique<Camera>();
-    player_ = std::make_unique<Player>(sf::Vector2f{400.0f, 500.0f}, sf::Vector2f{});
+    player_ = std::make_unique<Player>(sf::Vector2f{900.0f, 900.0f}, sf::Vector2f{});
     map_ = std::make_unique<Map>();
+    agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
+                                                          1000.0f, // max time without recalculation of path in ms
+                                                          20.0f, // min change of goal to trigger recalculation
+                                                          1000); // max search of path
 
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());
@@ -50,6 +54,7 @@ void Game::initialize()
 
 void Game::update(float time_elapsed)
 {
+    agents_manager_->update();
     map_->update(time_elapsed);
 
     if (player_->isAlive() && !player_->update(time_elapsed))
@@ -100,6 +105,11 @@ void Game::start(int frame_rate)
 const sf::Vector2f& Game::getPlayerPosition() const
 {
     return player_->getPosition();
+}
+
+const ai::MapBlockage& Game::getMapBlockage() const
+{
+    return map_->getMapBlockage();
 }
 
 void Game::spawnSparksAnimation(const sf::Vector2f& pos, const float dir, const float r)
@@ -169,4 +179,9 @@ void Game::deleteHoveringObject(HoveringObject* h_obj)
 void Game::deleteDynamicObject(DynamicObject* d_obj)
 {
     engine_->deleteDynamicObject(d_obj);
+}
+
+ai::AgentsManager& Game::getAgentsManager() const
+{
+    return *agents_manager_;
 }

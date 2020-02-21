@@ -29,15 +29,16 @@ public:
 
     int getAmmunition() const;
 
+    float getState() const override;
+
 private:
     // weapon parameters
-    sf::Vector2f weapon_offset_;
     std::string bullet_type_;
     int bullet_quantity_;
     float bullet_angular_diff_;
     float bullet_timeout_;
     float recoil_;
-    int ammunition_;
+    int ammunition_, max_ammunition_;
 
     std::chrono::system_clock::time_point last_bullet_time_;
 

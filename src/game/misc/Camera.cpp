@@ -9,7 +9,7 @@
 #include <game/misc/Camera.h>
 
 
-Camera::Camera() : state_(State::NORMAL) {}
+Camera::Camera() : state_(State::NORMAL) { center_ = {}; }
 
 void Camera::setShaking()
 {

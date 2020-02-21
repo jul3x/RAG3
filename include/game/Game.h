@@ -7,13 +7,16 @@
 
 #include <memory>
 
-#include <game/misc/Camera.h>
 #include <engine/system/AbstractGame.h>
+#include <engine/system/Engine.h>
+#include <engine/ai/AgentsManager.h>
+
+#include <game/misc/Camera.h>
 #include <game/characters/Player.h>
 #include <game/environment/Map.h>
 #include <game/weapons/Bullet.h>
 #include <game/ui/UserInterface.h>
-#include <engine/system/Engine.h>
+
 
 
 class Game : public AbstractGame {
@@ -30,6 +33,10 @@ public:
     }
 
     const sf::Vector2f& getPlayerPosition() const;
+
+    const ai::MapBlockage& getMapBlockage() const;
+
+    ai::AgentsManager& getAgentsManager() const;
 
     void spawnBullet(const std::string& name, const sf::Vector2f& pos, float dir);
 
@@ -69,6 +76,7 @@ private:
     std::unique_ptr<Engine> engine_;
     std::unique_ptr<UserInterface> ui_;
     std::unique_ptr<Camera> camera_;
+    std::unique_ptr<ai::AgentsManager> agents_manager_;
 
     std::unique_ptr<Player> player_;
     std::unique_ptr<Map> map_;

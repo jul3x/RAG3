@@ -72,7 +72,16 @@ void UserInterface::handleEvents(Graphics& graphics)
             }
             case sf::Event::MouseWheelScrolled:
             {
-                handleScrolling(event.mouseWheelScroll.delta);
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+                {
+                    auto current_view = graphics.getCurrentView();
+                    current_view.zoom(1.0f - (event.mouseWheelScroll.delta > 0 ? 0.05f : -0.05f));
+                    graphics.modifyCurrentView(current_view);
+                }
+                else
+                {
+                    handleScrolling(event.mouseWheelScroll.delta);
+                }
                 break;
             }
             default:
@@ -126,14 +135,9 @@ inline void UserInterface::handleKeys()
 inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
 {
     auto mouse_pos = sf::Mouse::getPosition(graphics_window);
-    auto mouse_difference = graphics_window.mapPixelToCoords(mouse_pos) -
-                            player_->getPosition();
-
-    float angle;
-    std::tie(std::ignore, angle) = utils::geo::cartesianToPolar(mouse_difference);
 
     if (player_->isAlive())
-        player_->setRotation(angle * 180.0f / static_cast<float>(M_PI));
+        player_->setWeaponPointing(graphics_window.mapPixelToCoords(mouse_pos));
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {

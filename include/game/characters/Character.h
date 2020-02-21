@@ -10,6 +10,7 @@
 
 #include <engine/system/Config.h>
 #include <engine/objects/AbstractPhysicalObject.h>
+#include <engine/ai/AStar.h>
 
 #include <game/weapons/AbstractWeapon.h>
 #include <game/weapons/Bullet.h>
@@ -48,17 +49,25 @@ public:
 
     void setRotation(float theta) override;
 
+    void setWeaponPointing(const sf::Vector2f& point);
+
+    bool isAlreadyRotated() const;
+
 protected:
     std::vector<std::unique_ptr<AbstractWeapon>> weapons_in_backpack_;
     std::vector<std::unique_ptr<AbstractWeapon>>::iterator current_weapon_;
+    const ai::Path* path_;
+
+    int max_life_;
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    static constexpr float SIZE_X_ = 125.0f;
-    static constexpr float SIZE_Y_ = 125.0f;
+    static constexpr float SIZE_X_ = 100.0f;
+    static constexpr float SIZE_Y_ = 100.0f;
 
-    int max_life_;
+    float rotate_to_;
+
 };
 
 #endif // RAG3_GAME_CHARACTERS_CHARACTER_H

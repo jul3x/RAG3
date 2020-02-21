@@ -19,10 +19,10 @@ Character::Character(const sf::Vector2f& position,
         DynamicObject(position,
                       velocity,
                       {SIZE_X_, SIZE_Y_},
-                      Collision::Circle((SIZE_X_ - 40.0f) / 2.0f),
+                      Collision::Circle((SIZE_X_ - 5.0f) / 2.0f),
                       &ResourceManager::getInstance().getTexture("player"),
                       sf::Color(CFG.getInt("trail_color")),
-                      CFG.getFloat("player_max_acceleration")),
+                      CFG.getFloat("max_acceleration")),
         max_life_(max_life),
         Shootable(max_life) {}
 
@@ -41,13 +41,11 @@ bool Character::shot()
 
 void Character::getShot(const Bullet& bullet)
 {
+    Shootable::getShot(bullet);
     //Engine::spawnBloodAnimation();
     this->setForcedVelocity(this->getVelocity() +
                             utils::geo::getNormalized(bullet.getVelocity()) * static_cast<float>(bullet.getDeadlyFactor()) *
                             CFG.getFloat("get_shot_factor"));
-
-    life_ -= bullet.getDeadlyFactor();
-    life_ = life_ < 0 ? 0 : life_;
 }
 
 int Character::getCurrentWeapon() const
@@ -90,6 +88,12 @@ bool Character::update(float time_elapsed)
 {
     DynamicObject::update(time_elapsed);
 
+    auto rotation_diff = utils::geo::getAngleBetweenDegree(this->getRotation(), rotate_to_);
+    auto is_negative = std::signbit(rotation_diff);
+    auto rotation_sqrt = std::sqrt(std::abs(rotation_diff)) * (is_negative ? -1.0f : 1.0f);
+    this->setRotation(this->getRotation() -
+                      rotation_sqrt * CFG.getFloat("mouse_reaction_speed"));
+
     return life_ > 0;
 }
 
@@ -98,15 +102,29 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(shape_, states);
     target.draw(**current_weapon_, states);
 
-    static sf::Text text("", ResourceManager::getInstance().getFont(),
-                  24);
+    static sf::Text text("", ResourceManager::getInstance().getFont(), 24);
 
-    text.setFillColor(sf::Color::Red);
+    text.setFillColor(sf::Color::White);
     text.setPosition(this->getPosition());
 
-    text.setString(std::to_string(grid_position_.x) + ", " + std::to_string(grid_position_.y));
+    text.setString("Life: " + std::to_string(life_) + "/" + std::to_string(max_life_) + "\n" +
+                   "Ammo: " + std::to_string((*current_weapon_)->getState()) + "%");
 
     target.draw(text, states);
+
+    static sf::VertexArray path(sf::LineStrip);
+    path.clear();
+
+    if (path_ != nullptr)
+    {
+        auto return_V = utils::geo::getNearestForwardPointToPath(this->getPosition(), *path_);
+        for (const auto& v : *path_)
+        {
+            path.append(sf::Vertex{v.first, utils::num::isNearlyEqual(v.first, return_V) ? sf::Color::Red : sf::Color::Blue});
+        }
+    }
+
+    target.draw(path, states);
 }
 
 void Character::setPosition(const sf::Vector2f& pos)
@@ -127,7 +145,6 @@ void Character::setPosition(float x, float y)
     (*current_weapon_)->setPosition(x, y);
 }
 
-
 void Character::setPositionX(float x)
 {
     AbstractDrawableObject::setPositionX(x);
@@ -138,4 +155,27 @@ void Character::setPositionY(float y)
 {
     AbstractDrawableObject::setPositionY(y);
     (*current_weapon_)->setPositionY(y);
+}
+
+void Character::setWeaponPointing(const sf::Vector2f& point)
+{
+    float a = (*current_weapon_)->getWeaponOffset().y;
+    float d = utils::geo::getDistance(point, this->getPosition());
+
+    float theta = std::asin(a / d);
+
+    float angle = std::atan2(point.y - this->getPosition().y, point.x - this->getPosition().x);
+
+    if (!std::isnan(theta))
+    {
+        angle -= theta;
+        rotate_to_ = angle * 180.0f / static_cast<float>(M_PI);
+    }
+}
+
+bool Character::isAlreadyRotated() const
+{
+    static constexpr float ERROR = 2.0f;
+
+    return utils::num::isNearlyEqual(utils::geo::getAngleBetweenDegree(this->getRotation(), rotate_to_), 0.0f, ERROR);
 }

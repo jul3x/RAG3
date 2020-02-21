@@ -54,7 +54,8 @@ ShootingWeapon& ResourceManager::getWeapon(const std::string& key)
     return it->second;
 }
 
-std::tuple<sf::Vector2i, std::list<Obstacle>, std::list<Decoration>> ResourceManager::getMap(const std::string& key)
+std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, std::list<Decoration>>
+ResourceManager::getMap(const std::string& key)
 {
     try
     {
@@ -108,9 +109,10 @@ void ResourceManager::loadWeapon(const std::string& key)
     std::cout << "[ResourceManager] Weapon " << key << " is loaded!" << std::endl;
 }
 
-std::tuple<sf::Vector2i, std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(const std::string& key)
+std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(const std::string& key)
 {
     std::ifstream file("../data/" + key + ".j3x");
+    std::vector<std::vector<bool>> blocked;
     std::list<Obstacle> obstacles;
     std::list<Decoration> decorations;
     int w, h;
@@ -118,14 +120,20 @@ std::tuple<sf::Vector2i, std::list<Obstacle>, std::list<Decoration>> ResourceMan
     {
         file >> w >> h;
 
+        blocked.resize(w);
+        for (auto &row : blocked)
+            row.resize(h);
+
         int max_number = w * h;
         int count = 0;
         short int type = 0;
         // type < 0 - decoration, type > 0 - obstacle
         while (file >> type)
         {
+            blocked.at(count % w).at(count / w) = false;
             if (type < 10 && type > 0)
             {
+                blocked.at(count % w).at(count / w) = true;
                 obstacles.push_back({{(count % w) * Obstacle::SIZE_X_, (count / w) * Obstacle::SIZE_Y_}, type});
             }
             else if (type > -10 && type < 0)
@@ -151,7 +159,7 @@ std::tuple<sf::Vector2i, std::list<Obstacle>, std::list<Decoration>> ResourceMan
 
     std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
 
-    return std::make_tuple(sf::Vector2i{w, h}, obstacles, decorations);
+    return std::make_tuple(sf::Vector2i{w, h}, blocked, obstacles, decorations);
 }
 
 ResourceManager::ResourceManager() : AbstractResourceManager("../data/", "../data/textures/", "../data/fonts/")

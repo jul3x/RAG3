@@ -30,6 +30,8 @@ bool Enemy::update(float time_elapsed)
     if (!this->isVisible()) return true;
     bool is_alive = Character::update(time_elapsed);
 
+    auto& player_position = Game::get().getPlayerPosition();
+
     handleLifeState();
     handleAmmoState();
     handleVisibilityState();
@@ -49,36 +51,43 @@ bool Enemy::update(float time_elapsed)
         }
         case ActionState::Follow:
         {
-            this->setWeaponPointing(Game::get().getPlayerPosition());
-            this->setCurrentGoal(Game::get().getPlayerPosition());
+            this->setWeaponPointing(player_position);
+            this->setCurrentGoal(player_position);
             this->setWeaponPointing(this->getPosition() + velocity);
             break;
         }
         case ActionState::DestroyWall:
         {
-            this->setWeaponPointing(Game::get().getPlayerPosition());
+            this->setWeaponPointing(player_position);
             this->setNoGoal();
-            this->shot();
+
+            if (this->isAlreadyRotated())
+                this->shot();
             break;
         }
         case ActionState::Shot:
         {
-            this->setWeaponPointing(Game::get().getPlayerPosition());
+            this->setWeaponPointing(player_position);
             this->setNoGoal();
-            this->shot();
+
+            if (this->isAlreadyRotated())
+                this->shot();
+
             break;
         }
         case ActionState::ShotAndRun:
         {
-            this->setWeaponPointing(Game::get().getPlayerPosition());
-            this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - Game::get().getPlayerPosition()));
-            this->shot();
+            this->setWeaponPointing(player_position);
+            this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - player_position));
+
+            if (this->isAlreadyRotated())
+                this->shot();
             break;
         }
         case ActionState::Run:
         {
             this->setWeaponPointing(this->getPosition() + velocity);
-            this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - Game::get().getPlayerPosition()));
+            this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - player_position));
             break;
         }
     }
@@ -122,7 +131,7 @@ void Enemy::handleVisibilityState()
     float goal_x = std::round(Game::get().getPlayerPosition().x / blockage.scale_x_);
     float goal_y = std::round(Game::get().getPlayerPosition().y / blockage.scale_y_);
 
-    auto dir = utils::geo::getNormalized({goal_x - start_x, goal_y - start_y});
+    auto dir = utils::geo::getNormalized(Game::get().getPlayerPosition() - this->getPosition());
 
     int walls_between = 0;
     while (!utils::num::isNearlyEqual(start_x, goal_x, 1.0f) ||
@@ -131,10 +140,13 @@ void Enemy::handleVisibilityState()
         start_x = start_x + dir.x;
         start_y = start_y + dir.y;
 
-        if (start_x >= blockage.blockage_.size() || start_x < 0 ||
-            start_y >= blockage.blockage_.at(0).size() || start_y < 0) break;
+        auto rounded_x = static_cast<int>(std::round(start_x));
+        auto rounded_y = static_cast<int>(std::round(start_y));
 
-        if (blockage.blockage_.at(std::round(start_x)).at(std::round(start_y)))
+        if (rounded_x >= blockage.blockage_.size() || rounded_x < 0 ||
+            rounded_y >= blockage.blockage_.at(0).size() || rounded_y < 0) break;
+
+        if (blockage.blockage_.at(rounded_x).at(rounded_y))
             ++walls_between;
     }
 

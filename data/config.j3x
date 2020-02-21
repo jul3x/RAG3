@@ -10,7 +10,10 @@ int player_max_health=100
 float enemy_max_speed=350.0f
 float enemy_standby_speed=100.0f
 int enemy_max_health=20
+
 float max_acceleration=500.0f
+
+float mouse_reaction_speed=1.0f
 float camera_speed=4.0f
 float camera_recoil=8.0f
 float camera_shaking_time=0.4f

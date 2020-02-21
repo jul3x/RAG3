@@ -269,6 +269,37 @@ namespace utils {
             return std::acos(dot);
         }
 
+        inline float wrapAngle0_360(float angle)
+        {
+            angle = std::fmod(angle, 360.0f);
+
+            if (angle < 0.0f)
+                angle += 360.0f;
+
+            return angle;
+        }
+
+        inline float wrapAngle0_2PI(float angle)
+        {
+            angle = std::fmod(angle, 2 * M_PI);
+
+            if (angle < 0.0f)
+                angle += 2 * M_PI;
+
+            return angle;
+        }
+
+        inline float getAngleBetweenDegree(float angle_1, float angle_2)
+        {
+            auto res = angle_1 - angle_2;
+            return (static_cast<int>(res) + 180) % 360 - 180.0f;
+        }
+
+        inline float getAngleBetweenRadian(float angle_1, float angle_2)
+        {
+            return getAngleBetweenDegree(angle_1 * 180.0f / M_PI, angle_2 * 180.0f / M_PI) * M_PI / 180.0f;
+        }
+
         inline sf::Vector2f getNearestForwardPointToPath(const sf::Vector2f& pos, const ai::Path& path)
         {
             if (path.empty()) return {};

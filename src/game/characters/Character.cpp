@@ -88,6 +88,12 @@ bool Character::update(float time_elapsed)
 {
     DynamicObject::update(time_elapsed);
 
+    auto rotation_diff = utils::geo::getAngleBetweenDegree(this->getRotation(), rotate_to_);
+    auto is_negative = std::signbit(rotation_diff);
+    auto rotation_sqrt = std::sqrt(std::abs(rotation_diff)) * (is_negative ? -1.0f : 1.0f);
+    this->setRotation(this->getRotation() -
+                      rotation_sqrt * CFG.getFloat("mouse_reaction_speed"));
+
     return life_ > 0;
 }
 
@@ -98,7 +104,7 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
     static sf::Text text("", ResourceManager::getInstance().getFont(), 24);
 
-    text.setFillColor(sf::Color::Red);
+    text.setFillColor(sf::Color::White);
     text.setPosition(this->getPosition());
 
     text.setString("Life: " + std::to_string(life_) + "/" + std::to_string(max_life_) + "\n" +
@@ -163,6 +169,13 @@ void Character::setWeaponPointing(const sf::Vector2f& point)
     if (!std::isnan(theta))
     {
         angle -= theta;
-        this->setRotation(angle * 180.0f / static_cast<float>(M_PI));
+        rotate_to_ = angle * 180.0f / static_cast<float>(M_PI);
     }
+}
+
+bool Character::isAlreadyRotated() const
+{
+    static constexpr float ERROR = 2.0f;
+
+    return utils::num::isNearlyEqual(utils::geo::getAngleBetweenDegree(this->getRotation(), rotate_to_), 0.0f, ERROR);
 }

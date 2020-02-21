@@ -51,6 +51,8 @@ public:
 
     void setWeaponPointing(const sf::Vector2f& point);
 
+    bool isAlreadyRotated() const;
+
 protected:
     std::vector<std::unique_ptr<AbstractWeapon>> weapons_in_backpack_;
     std::vector<std::unique_ptr<AbstractWeapon>>::iterator current_weapon_;
@@ -63,6 +65,8 @@ private:
 
     static constexpr float SIZE_X_ = 100.0f;
     static constexpr float SIZE_Y_ = 100.0f;
+
+    float rotate_to_;
 
 };
 

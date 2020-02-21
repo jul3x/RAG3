@@ -37,6 +37,8 @@ public:
 
     virtual void setRotation(float angle_deg);
 
+    virtual void setSize(const sf::Vector2f& size);
+
     virtual void setVisibility(const sf::View& view);
 
     void setColor(int r, int g, int b, int a);

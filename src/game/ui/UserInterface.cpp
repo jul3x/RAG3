@@ -9,6 +9,7 @@
 
 
 UserInterface::UserInterface() :
+        blood_splash_(sf::Vector2f(CFG.getInt("window_width_px"), CFG.getInt("window_height_px"))),
         weapons_bar_({CFG.getInt("window_width_px") / 2.0f, CFG.getInt("window_height_px") -
                                                             WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom")}),
         health_bar_({HEALTH_BAR_X_ * CFG.getFloat("user_interface_zoom"),
@@ -72,6 +73,7 @@ void UserInterface::handleEvents(Graphics& graphics)
                                          event.size.height - WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom"));
 
                 camera_->setViewNormalSize(visible_area);
+                blood_splash_.resizeWindow(visible_area);
 
                 break;
             }
@@ -100,6 +102,7 @@ void UserInterface::handleEvents(Graphics& graphics)
 
 void UserInterface::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
+    target.draw(blood_splash_, states);
     target.draw(weapons_bar_, states);
     target.draw(health_bar_, states);
     target.draw(crosshair_, states);
@@ -176,4 +179,6 @@ inline void UserInterface::updatePlayerStates()
     weapons_bar_.updateCurrentWeapon(player_->getCurrentWeapon());
 
     health_bar_.updateHealth(player_->getHealth());
+
+    blood_splash_.updateLifeState(player_->getLifeState());
 }

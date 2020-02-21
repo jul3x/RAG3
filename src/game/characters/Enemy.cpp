@@ -32,8 +32,6 @@ bool Enemy::update(float time_elapsed)
 
     auto& player_position = Game::get().getPlayerPosition();
 
-    handleLifeState();
-    handleAmmoState();
     handleVisibilityState();
     handleActionState();
 
@@ -101,26 +99,6 @@ bool Enemy::update(float time_elapsed)
 const sf::Vector2f& Enemy::getStartPosition() const
 {
     return this->getPosition();
-}
-
-void Enemy::handleLifeState()
-{
-    if (life_ > 0.67 * max_life_)
-        life_state_ = LifeState::High;
-    else if (life_ > 0.2 * max_life_)
-        life_state_ = LifeState::Low;
-    else
-        life_state_ = LifeState::Critical;
-}
-
-void Enemy::handleAmmoState()
-{
-    if ((*current_weapon_)->getState() > 0.7)
-        ammo_state_ = AmmoState::High;
-    else if ((*current_weapon_)->getState() > 0.0)
-        ammo_state_ = AmmoState::Low;
-    else
-        ammo_state_ = AmmoState::Zero;
 }
 
 void Enemy::handleVisibilityState()

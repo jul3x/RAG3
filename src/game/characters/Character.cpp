@@ -69,6 +69,12 @@ int Character::getMaxHealth() const
     return this->max_life_;
 }
 
+Character::LifeState Character::getLifeState() const
+{
+    return this->life_state_;
+}
+
+
 void Character::switchWeapon(int relative_position_backpack)
 {
     current_weapon_ = current_weapon_ + relative_position_backpack;
@@ -87,6 +93,9 @@ void Character::switchWeapon(int relative_position_backpack)
 bool Character::update(float time_elapsed)
 {
     DynamicObject::update(time_elapsed);
+
+    handleAmmoState();
+    handleLifeState();
 
     auto rotation_diff = utils::geo::getAngleBetweenDegree(this->getRotation(), rotate_to_);
     auto is_negative = std::signbit(rotation_diff);
@@ -178,4 +187,25 @@ bool Character::isAlreadyRotated() const
     static constexpr float ERROR = 2.0f;
 
     return utils::num::isNearlyEqual(utils::geo::getAngleBetweenDegree(this->getRotation(), rotate_to_), 0.0f, ERROR);
+}
+
+
+void Character::handleLifeState()
+{
+    if (life_ > 0.67 * max_life_)
+        life_state_ = LifeState::High;
+    else if (life_ > 0.2 * max_life_)
+        life_state_ = LifeState::Low;
+    else
+        life_state_ = LifeState::Critical;
+}
+
+void Character::handleAmmoState()
+{
+    if ((*current_weapon_)->getState() > 0.7)
+        ammo_state_ = AmmoState::High;
+    else if ((*current_weapon_)->getState() > 0.0)
+        ammo_state_ = AmmoState::Low;
+    else
+        ammo_state_ = AmmoState::Zero;
 }

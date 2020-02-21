@@ -19,6 +19,18 @@
 
 class Character : public DynamicObject, public Shootable {
 public:
+    enum class LifeState {
+        High,
+        Low,
+        Critical
+    };
+
+    enum class AmmoState {
+        High,
+        Low,
+        Zero
+    };
+
     Character(const sf::Vector2f& position,
               const sf::Vector2f& velocity,
               int max_life);
@@ -36,6 +48,8 @@ public:
     int getHealth() const;
 
     int getMaxHealth() const;
+
+    LifeState getLifeState() const;
 
     bool update(float time_elapsed) override;
 
@@ -58,9 +72,15 @@ protected:
     std::vector<std::unique_ptr<AbstractWeapon>>::iterator current_weapon_;
     const ai::Path* path_;
 
+    LifeState life_state_;
+    AmmoState ammo_state_;
+
     int max_life_;
 
 private:
+    inline void handleLifeState();
+    inline void handleAmmoState();
+
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     static constexpr float SIZE_X_ = 100.0f;

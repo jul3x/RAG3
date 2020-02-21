@@ -9,6 +9,7 @@
 #include <game/ui/WeaponsBar.h>
 #include <game/ui/HealthBar.h>
 #include <game/ui/Crosshair.h>
+#include <game/ui/BloodSplash.h>
 #include <game/characters/Player.h>
 #include <game/misc/Camera.h>
 #include <engine/system/AbstractUserInterface.h>
@@ -49,6 +50,7 @@ private:
     WeaponsBar weapons_bar_;
     HealthBar health_bar_;
     Crosshair crosshair_;
+    BloodSplash blood_splash_;
 
     Player* player_;
     Camera* camera_;

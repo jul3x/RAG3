@@ -16,7 +16,7 @@ UserInterface::UserInterface() :
         player_(nullptr),
         camera_(nullptr) {}
 
-void UserInterface::initialize(Graphics &graphics)
+void UserInterface::initialize(Graphics& graphics)
 {
     if (player_ == nullptr || camera_ == nullptr)
     {
@@ -25,6 +25,7 @@ void UserInterface::initialize(Graphics &graphics)
     health_bar_.setMaxHealth(player_->getMaxHealth());
 
     graphics.getWindow().setMouseCursorVisible(false);
+    camera_->setViewNormalSize(graphics.getWindow().getView().getSize());
 }
 
 void UserInterface::registerPlayer(Player* player)
@@ -70,6 +71,8 @@ void UserInterface::handleEvents(Graphics& graphics)
                 weapons_bar_.setPosition(event.size.width / 2.0f,
                                          event.size.height - WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom"));
 
+                camera_->setViewNormalSize(visible_area);
+
                 break;
             }
             case sf::Event::MouseWheelScrolled:
@@ -77,8 +80,9 @@ void UserInterface::handleEvents(Graphics& graphics)
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
                 {
                     auto current_view = graphics.getCurrentView();
-                    current_view.zoom(1.0f - (event.mouseWheelScroll.delta > 0 ? 0.05f : -0.05f));
+                    current_view.zoom(1.0f - (event.mouseWheelScroll.delta > 0 ? 0.1f : -0.1f));
                     graphics.modifyCurrentView(current_view);
+                    camera_->setViewNormalSize(graphics.getCurrentView().getSize());
                 }
                 else
                 {
@@ -138,17 +142,30 @@ inline void UserInterface::handleKeys()
 inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
 {
     auto mouse_pos = sf::Mouse::getPosition(graphics_window);
+    auto mouse_world_pos = graphics_window.mapPixelToCoords(mouse_pos);
 
     crosshair_.setPosition(mouse_pos.x, mouse_pos.y);
 
     if (player_->isAlive())
-        player_->setWeaponPointing(graphics_window.mapPixelToCoords(mouse_pos));
-
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        if (player_->isAlive() && player_->shot())
+        player_->setWeaponPointing(mouse_world_pos);
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player_->shot())
         {
             camera_->setShaking();
+        }
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+        {
+            camera_->setPointingTo(player_->getPosition() +
+                                   utils::geo::getNormalized(mouse_world_pos - player_->getPosition()) *
+                                   CFG.getFloat("camera_right_click_distance_factor"));
+            camera_->setZoomTo(CFG.getFloat("camera_right_click_zoom_factor"));
+        }
+        else
+        {
+            camera_->setPointingTo(player_->getPosition());
+            camera_->setZoomTo(1.0f);
         }
     }
 }

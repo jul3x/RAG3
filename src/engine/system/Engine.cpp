@@ -142,6 +142,7 @@ void Engine::draw()
 {
     graphics_->clear();
     graphics_->setViewCenter(camera_->getViewCenter());
+    graphics_->setViewSize(camera_->getViewSize());
 
     game_->draw(*graphics_);
 

@@ -38,6 +38,8 @@ public:
 
     void setViewCenter(const sf::Vector3f& view);
 
+    void setViewSize(const sf::Vector2f& view);
+
     void clear();
 
     void draw(AbstractDrawableObject& object);

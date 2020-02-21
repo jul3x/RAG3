@@ -15,8 +15,11 @@ float max_acceleration=500.0f
 
 float mouse_reaction_speed=1.0f
 float camera_speed=4.0f
+float camera_zoom_speed=5.0f
 float camera_recoil=8.0f
 float camera_shaking_time=0.4f
+float camera_right_click_distance_factor=300.0f
+float camera_right_click_zoom_factor=0.6f
 int obstacles_endurance_factor=3
 float get_shot_factor=100.0f
 float user_interface_zoom=2.0f

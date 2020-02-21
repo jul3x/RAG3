@@ -14,15 +14,35 @@ class AbstractCamera {
 public:
     AbstractCamera() = default;
 
-    virtual void update(const sf::Vector2f& position, float time_elapsed) = 0;
+    virtual void update(float time_elapsed) = 0;
 
     sf::Vector3f& getViewCenter() {
         return center_;
     }
 
+    sf::Vector2f& getViewSize() {
+        return view_size_;
+    }
+
+    void setPointingTo(const sf::Vector2f& position) {
+        pointing_to_ = position;
+    }
+
+    void setViewNormalSize(const sf::Vector2f& size) {
+        view_normal_size_ = size;
+    }
+
+    void setZoomTo(float zoom) {
+        zoom_to_ = zoom;
+    }
+
 protected:
     sf::Vector3f center_;
+    sf::Vector2f pointing_to_;
+    sf::Vector2f view_size_;
+    sf::Vector2f view_normal_size_;
 
+    float zoom_to_;
     float time_elapsed_;
 };
 

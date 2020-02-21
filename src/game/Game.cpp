@@ -76,7 +76,7 @@ void Game::update(float time_elapsed)
         }
     }
 
-    camera_->update(player_->getPosition(), time_elapsed);
+    camera_->update(time_elapsed);
 }
 
 void Game::draw(Graphics& graphics)

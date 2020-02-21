@@ -64,12 +64,6 @@ namespace utils {
         inline sf::Vector2f getNormalized(const sf::Vector2f& vector)
         {
             float length = std::hypot(vector.x, vector.y);
-
-            if (length <= 0.0f)
-            {
-                throw std::invalid_argument("[utils::getNormalized] Input vector is invalid!");
-            }
-
             return vector / length;
         }
 

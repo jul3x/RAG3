@@ -70,6 +70,12 @@ void Graphics::setViewCenter(const sf::Vector3f& view_center)
     window_.setView(current_view_);
 }
 
+void Graphics::setViewSize(const sf::Vector2f& view_size)
+{
+    current_view_.setSize(view_size.x, view_size.y);
+    window_.setView(current_view_);
+}
+
 void Graphics::clear()
 {
     window_.clear(bg_color_);

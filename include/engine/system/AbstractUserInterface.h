@@ -18,7 +18,7 @@ public:
 
     AbstractUserInterface& operator=(const AbstractUserInterface&) = delete;
 
-    virtual void initialize() = 0;
+    virtual void initialize(Graphics &graphics) = 0;
 
     virtual void handleEvents(Graphics& graphics) = 0;
 

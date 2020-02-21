@@ -48,7 +48,7 @@ void Engine::update(int frame_rate)
     restartClock();
 
     game_->initialize();
-    ui_->initialize();
+    ui_->initialize(*graphics_);
 
     auto time_start = std::chrono::system_clock::now();
 

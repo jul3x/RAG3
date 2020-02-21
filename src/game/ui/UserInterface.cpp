@@ -16,13 +16,15 @@ UserInterface::UserInterface() :
         player_(nullptr),
         camera_(nullptr) {}
 
-void UserInterface::initialize()
+void UserInterface::initialize(Graphics &graphics)
 {
     if (player_ == nullptr || camera_ == nullptr)
     {
         throw std::runtime_error("[UserInterface] player_ or camera_ is nullptr!");
     }
     health_bar_.setMaxHealth(player_->getMaxHealth());
+
+    graphics.getWindow().setMouseCursorVisible(false);
 }
 
 void UserInterface::registerPlayer(Player* player)
@@ -96,6 +98,7 @@ void UserInterface::draw(sf::RenderTarget& target, sf::RenderStates states) cons
 {
     target.draw(weapons_bar_, states);
     target.draw(health_bar_, states);
+    target.draw(crosshair_, states);
 }
 
 inline void UserInterface::handleScrolling(float delta)
@@ -135,6 +138,8 @@ inline void UserInterface::handleKeys()
 inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
 {
     auto mouse_pos = sf::Mouse::getPosition(graphics_window);
+
+    crosshair_.setPosition(mouse_pos.x, mouse_pos.y);
 
     if (player_->isAlive())
         player_->setWeaponPointing(graphics_window.mapPixelToCoords(mouse_pos));

@@ -9,7 +9,7 @@
 
 
 BloodSplash::BloodSplash(const sf::Vector2f& size) :
-        dead_(size / 2.0f, size, &ResourceManager::getInstance().getTexture("player")),
+        dead_(size / 2.0f, size, &ResourceManager::getInstance().getTexture("blood_hud_3")),
         critical_(size / 2.0f, size, &ResourceManager::getInstance().getTexture("blood_hud_2")),
         low_(size / 2.0f, size, &ResourceManager::getInstance().getTexture("blood_hud_1")),
         player_life_state_(Player::LifeState::High),

@@ -26,6 +26,7 @@ Character::Character(const sf::Vector2f& position,
         max_life_(max_life),
         ammo_state_(AmmoState::High),
         life_state_(LifeState::High),
+        path_(nullptr),
         Shootable(max_life) {}
 
 bool Character::shot()
@@ -126,12 +127,11 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
     static sf::VertexArray path(sf::LineStrip);
     path.clear();
 
-    if (path_ != nullptr)
+    if (path_ != nullptr && !path_->empty())
     {
-        auto return_V = utils::geo::getNearestForwardPointToPath(this->getPosition(), *path_);
         for (const auto& v : *path_)
         {
-            path.append(sf::Vertex{v.first, utils::num::isNearlyEqual(v.first, return_V) ? sf::Color::Red : sf::Color::Blue});
+            path.append(sf::Vertex{v.first, sf::Color::Red});
         }
     }
 

@@ -6,9 +6,11 @@
 #include <engine/utils/Geometry.h>
 
 #include <game/ui/UserInterface.h>
+#include <game/Game.h>
 
 
 UserInterface::UserInterface() :
+        blood_splash_(sf::Vector2f(CFG.getInt("window_width_px"), CFG.getInt("window_height_px"))),
         weapons_bar_({CFG.getInt("window_width_px") / 2.0f, CFG.getInt("window_height_px") -
                                                             WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom")}),
         health_bar_({HEALTH_BAR_X_ * CFG.getFloat("user_interface_zoom"),
@@ -16,13 +18,16 @@ UserInterface::UserInterface() :
         player_(nullptr),
         camera_(nullptr) {}
 
-void UserInterface::initialize()
+void UserInterface::initialize(Graphics& graphics)
 {
     if (player_ == nullptr || camera_ == nullptr)
     {
         throw std::runtime_error("[UserInterface] player_ or camera_ is nullptr!");
     }
     health_bar_.setMaxHealth(player_->getMaxHealth());
+
+    graphics.getWindow().setMouseCursorVisible(false);
+    camera_->setViewNormalSize(graphics.getWindow().getView().getSize());
 }
 
 void UserInterface::registerPlayer(Player* player)
@@ -35,13 +40,15 @@ void UserInterface::registerCamera(Camera* camera)
     camera_ = camera;
 }
 
-void UserInterface::handleEvents(Graphics& graphics)
+void UserInterface::handleEvents(Graphics& graphics, float time_elapsed)
 {
     static sf::Event event;
 
     updatePlayerStates();
     handleMouse(graphics.getWindow());
     handleKeys();
+
+    blood_splash_.update(time_elapsed);
 
     while (graphics.getWindow().pollEvent(event))
     {
@@ -68,6 +75,9 @@ void UserInterface::handleEvents(Graphics& graphics)
                 weapons_bar_.setPosition(event.size.width / 2.0f,
                                          event.size.height - WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom"));
 
+                camera_->setViewNormalSize(visible_area);
+                blood_splash_.resizeWindow(visible_area);
+
                 break;
             }
             case sf::Event::MouseWheelScrolled:
@@ -75,8 +85,9 @@ void UserInterface::handleEvents(Graphics& graphics)
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
                 {
                     auto current_view = graphics.getCurrentView();
-                    current_view.zoom(1.0f - (event.mouseWheelScroll.delta > 0 ? 0.05f : -0.05f));
+                    current_view.zoom(1.0f - (event.mouseWheelScroll.delta > 0 ? 0.1f : -0.1f));
                     graphics.modifyCurrentView(current_view);
+                    camera_->setViewNormalSize(graphics.getCurrentView().getSize());
                 }
                 else
                 {
@@ -94,8 +105,10 @@ void UserInterface::handleEvents(Graphics& graphics)
 
 void UserInterface::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
+    target.draw(blood_splash_, states);
     target.draw(weapons_bar_, states);
     target.draw(health_bar_, states);
+    target.draw(crosshair_, states);
 }
 
 inline void UserInterface::handleScrolling(float delta)
@@ -135,15 +148,32 @@ inline void UserInterface::handleKeys()
 inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
 {
     auto mouse_pos = sf::Mouse::getPosition(graphics_window);
+    auto mouse_world_pos = graphics_window.mapPixelToCoords(mouse_pos);
+
+    crosshair_.setPosition(mouse_pos.x, mouse_pos.y);
 
     if (player_->isAlive())
-        player_->setWeaponPointing(graphics_window.mapPixelToCoords(mouse_pos));
-
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        if (player_->isAlive() && player_->shot())
+        player_->setWeaponPointing(mouse_world_pos);
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player_->shot())
         {
             camera_->setShaking();
+        }
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+        {
+            camera_->setPointingTo(player_->getPosition() +
+                                   utils::geo::getNormalized(mouse_world_pos - player_->getPosition()) *
+                                   CFG.getFloat("camera_right_click_distance_factor"));
+            camera_->setZoomTo(CFG.getFloat("camera_right_click_zoom_factor"));
+            Game::get().setBulletTime();
+        }
+        else
+        {
+            camera_->setPointingTo(player_->getPosition());
+            camera_->setZoomTo(1.0f);
+            Game::get().setNormalTime();
         }
     }
 }
@@ -154,4 +184,6 @@ inline void UserInterface::updatePlayerStates()
     weapons_bar_.updateCurrentWeapon(player_->getCurrentWeapon());
 
     health_bar_.updateHealth(player_->getHealth());
+
+    blood_splash_.updateLifeState(player_->getLifeState());
 }

@@ -8,6 +8,8 @@
 #include <engine/system/Config.h>
 #include <game/ui/WeaponsBar.h>
 #include <game/ui/HealthBar.h>
+#include <game/ui/Crosshair.h>
+#include <game/ui/BloodSplash.h>
 #include <game/characters/Player.h>
 #include <game/misc/Camera.h>
 #include <engine/system/AbstractUserInterface.h>
@@ -22,9 +24,9 @@ public:
 
     UserInterface& operator=(const UserInterface&) = delete;
 
-    void initialize() override;
+    void initialize(Graphics &graphics) override;
 
-    void handleEvents(Graphics &graphics) override;
+    void handleEvents(Graphics &graphics, float time_elapsed) override;
 
     void registerPlayer(Player* player);
 
@@ -47,6 +49,9 @@ private:
 
     WeaponsBar weapons_bar_;
     HealthBar health_bar_;
+    Crosshair crosshair_;
+    BloodSplash blood_splash_;
+
     Player* player_;
     Camera* camera_;
 };

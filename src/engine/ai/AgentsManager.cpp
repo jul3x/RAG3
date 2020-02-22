@@ -58,8 +58,8 @@ namespace ai {
             std::cout << "[AgentsManager] Agent removed while processing the path!" << std::endl;
         }
 
-        agents_to_update_.pop();
         agents_to_update_set_.erase(agents_to_update_set_.find(agent));
+        agents_to_update_.pop();
     }
 
     const ai::Path& AgentsManager::getPath(const AbstractAgent* agent) const

@@ -24,6 +24,9 @@ Character::Character(const sf::Vector2f& position,
                       sf::Color(CFG.getInt("trail_color")),
                       CFG.getFloat("max_acceleration")),
         max_life_(max_life),
+        ammo_state_(AmmoState::High),
+        life_state_(LifeState::High),
+        path_(nullptr),
         Shootable(max_life) {}
 
 bool Character::shot()
@@ -69,6 +72,12 @@ int Character::getMaxHealth() const
     return this->max_life_;
 }
 
+Character::LifeState Character::getLifeState() const
+{
+    return this->life_state_;
+}
+
+
 void Character::switchWeapon(int relative_position_backpack)
 {
     current_weapon_ = current_weapon_ + relative_position_backpack;
@@ -87,6 +96,9 @@ void Character::switchWeapon(int relative_position_backpack)
 bool Character::update(float time_elapsed)
 {
     DynamicObject::update(time_elapsed);
+
+    handleAmmoState();
+    handleLifeState();
 
     auto rotation_diff = utils::geo::getAngleBetweenDegree(this->getRotation(), rotate_to_);
     auto is_negative = std::signbit(rotation_diff);
@@ -115,12 +127,11 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
     static sf::VertexArray path(sf::LineStrip);
     path.clear();
 
-    if (path_ != nullptr)
+    if (path_ != nullptr && !path_->empty())
     {
-        auto return_V = utils::geo::getNearestForwardPointToPath(this->getPosition(), *path_);
         for (const auto& v : *path_)
         {
-            path.append(sf::Vertex{v.first, utils::num::isNearlyEqual(v.first, return_V) ? sf::Color::Red : sf::Color::Blue});
+            path.append(sf::Vertex{v.first, sf::Color::Red});
         }
     }
 
@@ -178,4 +189,27 @@ bool Character::isAlreadyRotated() const
     static constexpr float ERROR = 2.0f;
 
     return utils::num::isNearlyEqual(utils::geo::getAngleBetweenDegree(this->getRotation(), rotate_to_), 0.0f, ERROR);
+}
+
+
+void Character::handleLifeState()
+{
+    if (life_ > 0.67f * max_life_)
+        life_state_ = LifeState::High;
+    else if (life_ > 0.2f * max_life_)
+        life_state_ = LifeState::Low;
+    else if (life_ > 0.0f)
+        life_state_ = LifeState::Critical;
+    else
+        life_state_ = LifeState::Dead;
+}
+
+void Character::handleAmmoState()
+{
+    if ((*current_weapon_)->getState() > 0.7)
+        ammo_state_ = AmmoState::High;
+    else if ((*current_weapon_)->getState() > 0.0)
+        ammo_state_ = AmmoState::Low;
+    else
+        ammo_state_ = AmmoState::Zero;
 }

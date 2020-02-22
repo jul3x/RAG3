@@ -26,6 +26,11 @@ int main()
     ResourceManager::getInstance().lazyLoadTexture("animation_explosion2");
     ResourceManager::getInstance().lazyLoadTexture("animation_explosion3");
 
+    ResourceManager::getInstance().lazyLoadTexture("blood_hud_1");
+    ResourceManager::getInstance().lazyLoadTexture("blood_hud_2");
+    ResourceManager::getInstance().lazyLoadTexture("blood_hud_3");
+
+
     Game::get().start(FRAME_RATE);
 
     return 0;

@@ -25,7 +25,7 @@ public:
 
     Engine& operator=(const Engine&) = delete;
 
-    Engine() = default;
+    Engine();
 
     void initializeGraphics(const sf::Vector2i& size,
                             const std::string& title,
@@ -56,6 +56,8 @@ public:
 
     void setVisibility(AbstractDrawableObject& object) const;
 
+    void setTimeScaleFactor(float factor);
+
     void update(int frame_rate);
 
     static sf::Vector2i detectResolution();
@@ -82,6 +84,8 @@ private:
 
     sf::Clock clock_;
     sf::Time time_;
+
+    float time_scale_factor_;
 
     std::list<std::shared_ptr<AnimationEvent>> animation_events_;
 };

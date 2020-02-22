@@ -17,12 +17,12 @@ void Camera::setShaking()
     time_elapsed_ = CFG.getFloat("camera_shaking_time") ;
 }
 
-void Camera::update(const sf::Vector2f& position, float time_elapsed)
+void Camera::update(float time_elapsed)
 {
-    auto diff = position - sf::Vector2f{center_.x, center_.y};
+    auto center_diff = pointing_to_ - sf::Vector2f{center_.x, center_.y};
 
-    center_.x += diff.x * time_elapsed * CFG.getFloat("camera_speed");
-    center_.y += diff.y * time_elapsed * CFG.getFloat("camera_speed");
+    center_.x += center_diff.x * time_elapsed * CFG.getFloat("camera_speed");
+    center_.y += center_diff.y * time_elapsed * CFG.getFloat("camera_speed");
 
     if (state_ == State::SHOOTING)
     {
@@ -38,6 +38,10 @@ void Camera::update(const sf::Vector2f& position, float time_elapsed)
     {
         center_.z = 0.0f;
     }
+
+    auto zoom_diff = zoom_to_ * view_normal_size_ - view_size_;
+    view_size_.x += zoom_diff.x * time_elapsed * CFG.getFloat("camera_zoom_speed");
+    view_size_.y += zoom_diff.y * time_elapsed * CFG.getFloat("camera_zoom_speed");
 
     if (time_elapsed_ < 0.0f)
     {

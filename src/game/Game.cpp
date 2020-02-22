@@ -76,7 +76,7 @@ void Game::update(float time_elapsed)
         }
     }
 
-    camera_->update(player_->getPosition(), time_elapsed);
+    camera_->update(time_elapsed);
 }
 
 void Game::draw(Graphics& graphics)
@@ -184,4 +184,21 @@ void Game::deleteDynamicObject(DynamicObject* d_obj)
 ai::AgentsManager& Game::getAgentsManager() const
 {
     return *agents_manager_;
+}
+
+void Game::setBulletTime()
+{
+    current_time_factor_ = CFG.getFloat("bullet_time_factor");
+    engine_->setTimeScaleFactor(current_time_factor_);
+}
+
+void Game::setNormalTime()
+{
+    current_time_factor_ = 1.0f;
+    engine_->setTimeScaleFactor(1.0f);
+}
+
+float Game::getCurrentTimeFactor() const
+{
+    return current_time_factor_;
 }

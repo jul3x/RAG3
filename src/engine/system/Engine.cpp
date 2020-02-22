@@ -9,10 +9,22 @@
 #include <engine/system/Collisions.h>
 
 
+Engine::Engine() : time_scale_factor_(1.0f),
+                   graphics_(nullptr),
+                   collisions_(nullptr),
+                   ui_(nullptr),
+                   camera_(nullptr),
+                   game_(nullptr),
+                   clock_(),
+                   time_()
+{
+
+}
+
 void Engine::initializeGraphics(const sf::Vector2i& size,
                                 const std::string& title,
                                 int style,
-                                const sf::Color &bg_color)
+                                const sf::Color& bg_color)
 {
     graphics_ = std::make_unique<Graphics>(size, title, style, bg_color);
 }
@@ -48,7 +60,7 @@ void Engine::update(int frame_rate)
     restartClock();
 
     game_->initialize();
-    ui_->initialize();
+    ui_->initialize(*graphics_);
 
     auto time_start = std::chrono::system_clock::now();
 
@@ -58,12 +70,12 @@ void Engine::update(int frame_rate)
                 std::chrono::system_clock::now() - time_start).count() / 1000000.0f;
         time_start = std::chrono::system_clock::now();
 
-        ui_->handleEvents(*graphics_);
-        game_->update(time_elapsed);
+        ui_->handleEvents(*graphics_, time_scale_factor_ * time_elapsed);
+        game_->update(time_scale_factor_ * time_elapsed);
 
         collisions_->update(game_);
 
-        updateAnimationEvents(time_elapsed);
+        updateAnimationEvents(time_scale_factor_ * time_elapsed);
 
         draw();
 
@@ -142,6 +154,7 @@ void Engine::draw()
 {
     graphics_->clear();
     graphics_->setViewCenter(camera_->getViewCenter());
+    graphics_->setViewSize(camera_->getViewSize());
 
     game_->draw(*graphics_);
 
@@ -155,5 +168,10 @@ void Engine::draw()
     graphics_->setCurrentView();
 
     graphics_->display();
+}
+
+void Engine::setTimeScaleFactor(float factor)
+{
+    time_scale_factor_ = factor;
 }
 

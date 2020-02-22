@@ -66,6 +66,12 @@ public:
 
     void deleteDynamicObject(DynamicObject* d_obj);
 
+    void setBulletTime();
+
+    void setNormalTime();
+
+    float getCurrentTimeFactor() const;
+
     void start(int frame_rate);
 
 private:
@@ -81,6 +87,8 @@ private:
     std::unique_ptr<Player> player_;
     std::unique_ptr<Map> map_;
     std::list<std::unique_ptr<Bullet>> bullets_;
+
+    float current_time_factor_;
 
 };
 

@@ -15,7 +15,7 @@ public:
 
     void setShaking();
 
-    void update(const sf::Vector2f& position, float time_elapsed) override;
+    void update(float time_elapsed) override;
 
 private:
     enum class State {

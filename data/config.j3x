@@ -11,7 +11,7 @@ float enemy_max_speed=500.0f
 float enemy_standby_speed=100.0f
 int enemy_max_health=20
 
-float max_acceleration=500.0f
+float max_acceleration=1000.0f
 
 float mouse_reaction_speed=1.0f
 float camera_speed=4.0f
@@ -25,3 +25,5 @@ float get_shot_factor=100.0f
 float user_interface_zoom=2.0f
 
 float blood_pulsating_time=5.0f
+
+float bullet_time_factor=0.3f

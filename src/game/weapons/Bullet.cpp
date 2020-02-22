@@ -5,6 +5,7 @@
 #include <engine/system/Config.h>
 #include <game/weapons/Bullet.h>
 #include <game/misc/ResourceManager.h>
+#include <game/Game.h>
 
 
 Bullet::Bullet(const BulletDescription& description,
@@ -40,5 +41,5 @@ bool Bullet::update(float time_elapsed)
     DynamicObject::update(time_elapsed);
 
     return std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::system_clock::now() - spawn_time_).count() <= life_;
+            std::chrono::system_clock::now() - spawn_time_).count() <= life_ / Game::get().getCurrentTimeFactor();
 }

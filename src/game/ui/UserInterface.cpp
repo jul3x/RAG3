@@ -6,6 +6,7 @@
 #include <engine/utils/Geometry.h>
 
 #include <game/ui/UserInterface.h>
+#include <game/Game.h>
 
 
 UserInterface::UserInterface() :
@@ -166,11 +167,13 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
                                    utils::geo::getNormalized(mouse_world_pos - player_->getPosition()) *
                                    CFG.getFloat("camera_right_click_distance_factor"));
             camera_->setZoomTo(CFG.getFloat("camera_right_click_zoom_factor"));
+            Game::get().setBulletTime();
         }
         else
         {
             camera_->setPointingTo(player_->getPosition());
             camera_->setZoomTo(1.0f);
+            Game::get().setNormalTime();
         }
     }
 }

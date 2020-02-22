@@ -23,3 +23,5 @@ float camera_right_click_zoom_factor=0.6f
 int obstacles_endurance_factor=3
 float get_shot_factor=100.0f
 float user_interface_zoom=2.0f
+
+float blood_pulsating_time=5.0f

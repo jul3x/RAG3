@@ -58,7 +58,7 @@ void Engine::update(int frame_rate)
                 std::chrono::system_clock::now() - time_start).count() / 1000000.0f;
         time_start = std::chrono::system_clock::now();
 
-        ui_->handleEvents(*graphics_);
+        ui_->handleEvents(*graphics_, time_elapsed);
         game_->update(time_elapsed);
 
         collisions_->update(game_);

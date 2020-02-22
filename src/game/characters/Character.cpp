@@ -24,6 +24,8 @@ Character::Character(const sf::Vector2f& position,
                       sf::Color(CFG.getInt("trail_color")),
                       CFG.getFloat("max_acceleration")),
         max_life_(max_life),
+        ammo_state_(AmmoState::High),
+        life_state_(LifeState::High),
         Shootable(max_life) {}
 
 bool Character::shot()
@@ -192,12 +194,14 @@ bool Character::isAlreadyRotated() const
 
 void Character::handleLifeState()
 {
-    if (life_ > 0.67 * max_life_)
+    if (life_ > 0.67f * max_life_)
         life_state_ = LifeState::High;
-    else if (life_ > 0.2 * max_life_)
+    else if (life_ > 0.2f * max_life_)
         life_state_ = LifeState::Low;
-    else
+    else if (life_ > 0.0f)
         life_state_ = LifeState::Critical;
+    else
+        life_state_ = LifeState::Dead;
 }
 
 void Character::handleAmmoState()

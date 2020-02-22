@@ -39,13 +39,15 @@ void UserInterface::registerCamera(Camera* camera)
     camera_ = camera;
 }
 
-void UserInterface::handleEvents(Graphics& graphics)
+void UserInterface::handleEvents(Graphics& graphics, float time_elapsed)
 {
     static sf::Event event;
 
     updatePlayerStates();
     handleMouse(graphics.getWindow());
     handleKeys();
+
+    blood_splash_.update(time_elapsed);
 
     while (graphics.getWindow().pollEvent(event))
     {

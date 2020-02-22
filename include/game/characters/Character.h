@@ -22,7 +22,8 @@ public:
     enum class LifeState {
         High,
         Low,
-        Critical
+        Critical,
+        Dead
     };
 
     enum class AmmoState {

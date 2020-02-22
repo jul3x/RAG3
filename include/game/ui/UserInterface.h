@@ -26,7 +26,7 @@ public:
 
     void initialize(Graphics &graphics) override;
 
-    void handleEvents(Graphics &graphics) override;
+    void handleEvents(Graphics &graphics, float time_elapsed) override;
 
     void registerPlayer(Player* player);
 

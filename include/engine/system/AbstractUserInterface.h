@@ -20,7 +20,7 @@ public:
 
     virtual void initialize(Graphics &graphics) = 0;
 
-    virtual void handleEvents(Graphics& graphics) = 0;
+    virtual void handleEvents(Graphics& graphics, float time_elapsed) = 0;
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override = 0;

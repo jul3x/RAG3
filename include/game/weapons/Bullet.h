@@ -6,8 +6,6 @@
 #ifndef RAG3_GAME_WEAPONS_BULLET_H
 #define RAG3_GAME_WEAPONS_BULLET_H
 
-#include <chrono>
-
 #include <engine/objects/AbstractPhysicalObject.h>
 
 
@@ -43,7 +41,6 @@ private:
     float life_;
     int deadly_factor_;
 
-    std::chrono::system_clock::time_point spawn_time_;
 };
 
 #endif // RAG3_GAME_WEAPONS_PLAYER_H

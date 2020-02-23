@@ -22,7 +22,6 @@ Bullet::Bullet(const BulletDescription& description,
 {
     this->setRotation(direction * 180.0f / static_cast<float>(M_PI));
     life_ = description.life_;
-    spawn_time_ = std::chrono::system_clock::now();
     deadly_factor_ = description.deadly_factor_;
 }
 
@@ -40,6 +39,7 @@ bool Bullet::update(float time_elapsed)
 {
     DynamicObject::update(time_elapsed);
 
-    return std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::system_clock::now() - spawn_time_).count() <= life_ / Game::get().getCurrentTimeFactor();
+    life_ -= time_elapsed * 1000.0f;
+
+    return life_ > 0.0f;
 }

@@ -4,6 +4,8 @@
 
 #include <chrono>
 
+#include <SFML/Audio/Listener.hpp>
+
 #include <engine/utils/Geometry.h>
 #include <engine/system/Engine.h>
 #include <engine/system/Collisions.h>
@@ -11,6 +13,7 @@
 
 Engine::Engine() : time_scale_factor_(1.0f),
                    graphics_(nullptr),
+                   sound_manager_(nullptr),
                    collisions_(nullptr),
                    ui_(nullptr),
                    camera_(nullptr),
@@ -27,6 +30,11 @@ void Engine::initializeGraphics(const sf::Vector2i& size,
                                 const sf::Color& bg_color)
 {
     graphics_ = std::make_unique<Graphics>(size, title, style, bg_color);
+}
+
+void Engine::initializeSoundManager(float attenuation)
+{
+    sound_manager_ = std::make_unique<SoundManager>(attenuation);
 }
 
 void Engine::initializeCollisions(const sf::Vector2f& size, float grid)
@@ -55,6 +63,11 @@ void Engine::spawnAnimationEvent(const std::shared_ptr<AnimationEvent>& event)
     animation_events_.push_back(event);
 }
 
+void Engine::spawnSoundEvent(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume)
+{
+    sound_manager_->playSound(buffer, position, volume);
+}
+
 void Engine::update(int frame_rate)
 {
     restartClock();
@@ -78,6 +91,7 @@ void Engine::update(int frame_rate)
         updateAnimationEvents(time_scale_factor_ * time_elapsed);
 
         draw();
+        sound_manager_->update(time_scale_factor_ * time_elapsed);
 
         ensureConstantFrameRate(frame_rate);
     }
@@ -173,5 +187,11 @@ void Engine::draw()
 void Engine::setTimeScaleFactor(float factor)
 {
     time_scale_factor_ = factor;
+    sound_manager_->changePitch(factor);
+}
+
+void Engine::changeSoundListenerPosition(const sf::Vector2f& pos)
+{
+    sf::Listener::setPosition(pos.x, 0.0f, pos.y);
 }
 

@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(SFML_ROOT "C:/SFML-2.5.1")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
-find_package(SFML 2 REQUIRED COMPONENTS graphics window system)
+find_package(SFML 2 REQUIRED COMPONENTS graphics window system audio)
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${SFML_INCLUDE_DIR})
@@ -24,7 +24,11 @@ file(GLOB_RECURSE MAIN_SRC "src/*.cpp")
 add_executable(${EXECUTABLE_NAME} ${MAIN_SRC})
 
 target_link_libraries(${EXECUTABLE_NAME} stdc++fs)
-target_link_libraries(${EXECUTABLE_NAME} ${SFML_GRAPHICS_LIBRARY} ${SFML_WINDOW_LIBRARY} ${SFML_SYSTEM_LIBRARY})
+target_link_libraries(${EXECUTABLE_NAME}
+        ${SFML_GRAPHICS_LIBRARY}
+        ${SFML_WINDOW_LIBRARY}
+        ${SFML_SYSTEM_LIBRARY}
+        ${SFML_AUDIO_LIBRARY})
 
 
 

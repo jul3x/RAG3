@@ -40,11 +40,11 @@ public:
 
     void spawnBullet(const std::string& name, const sf::Vector2f& pos, float dir);
 
-    void spawnSparksAnimation(const sf::Vector2f& pos, float dir, float r);
+    void spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);
 
-    void spawnShotAnimation(const sf::Vector2f& pos, float dir, float r);
+    void spawnShotEvent(const sf::Vector2f& pos, float dir, float r);
 
-    void spawnExplosionAnimation(const sf::Vector2f& pos, float r);
+    void spawnExplosionEvent(const sf::Vector2f& pos, float r);
 
     void initialize() override;
 

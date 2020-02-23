@@ -109,7 +109,8 @@ void ResourceManager::loadWeapon(const std::string& key)
     std::cout << "[ResourceManager] Weapon " << key << " is loaded!" << std::endl;
 }
 
-std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(const std::string& key)
+std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, std::list<Decoration>>
+ResourceManager::loadMap(const std::string& key)
 {
     std::ifstream file("../data/" + key + ".j3x");
     std::vector<std::vector<bool>> blocked;
@@ -121,7 +122,7 @@ std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, st
         file >> w >> h;
 
         blocked.resize(w);
-        for (auto &row : blocked)
+        for (auto& row : blocked)
             row.resize(h);
 
         int max_number = w * h;
@@ -162,7 +163,8 @@ std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, st
     return std::make_tuple(sf::Vector2i{w, h}, blocked, obstacles, decorations);
 }
 
-ResourceManager::ResourceManager() : AbstractResourceManager("../data/", "../data/textures/", "../data/fonts/")
+ResourceManager::ResourceManager() : AbstractResourceManager("../data/", "../data/textures/", "../data/fonts/",
+                                                             "../data/sounds/", "../data/music/")
 {
 
 }

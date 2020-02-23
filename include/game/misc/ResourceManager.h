@@ -39,8 +39,8 @@ private:
 
     static std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, std::list<Decoration>> loadMap(const std::string& key);
 
-    std::map<std::string, ShootingWeapon> weapons_;
-    std::map<std::string, BulletDescription> bullets_;
+    std::unordered_map<std::string, ShootingWeapon> weapons_;
+    std::unordered_map<std::string, BulletDescription> bullets_;
 };
 
 

@@ -9,9 +9,12 @@
 
 
 AbstractResourceManager::AbstractResourceManager(std::string j3x_dir, std::string textures_dir,
-                                                 std::string fonts_dir) : j3x_directory_{std::move(j3x_dir)},
-                                                                          textures_directory_{std::move(textures_dir)},
-                                                                          fonts_directory_{std::move(fonts_dir)}
+                                                 std::string fonts_dir, std::string sounds_dir, std::string music_dir)
+        : j3x_directory_{std::move(j3x_dir)},
+          textures_directory_{std::move(textures_dir)},
+          fonts_directory_{std::move(fonts_dir)},
+          sounds_directory_{std::move(sounds_dir)},
+          music_directory_{std::move(music_dir)}
 {
 
 }
@@ -76,6 +79,48 @@ sf::Font& AbstractResourceManager::getFont(const std::string& key)
     return it->second;
 }
 
+
+sf::SoundBuffer& AbstractResourceManager::getSound(const std::string& key)
+{
+    auto it = sounds_.find(key);
+    if (it == sounds_.end())
+    {
+        try
+        {
+            loadSound(key);
+
+            return sounds_.at(key);
+        }
+        catch (std::runtime_error& e)
+        {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+
+    return it->second;
+}
+
+sf::Music& AbstractResourceManager::getMusic(const std::string& key)
+{
+    auto it = music_.find(key);
+    if (it == music_.end())
+    {
+        try
+        {
+            loadMusic(key);
+
+            return music_.at(key);
+        }
+        catch (std::runtime_error& e)
+        {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+
+    return it->second;
+}
+
+
 sf::Font& AbstractResourceManager::getFont()
 {
     return this->getFont("default");
@@ -99,7 +144,7 @@ void AbstractResourceManager::loadJ3XFile(const std::string& key)
 
 void AbstractResourceManager::loadTexture(const std::string& key)
 {
-    if (!textures_[key].loadFromFile(textures_directory_ + "/"  + key + ".png"))
+    if (!textures_[key].loadFromFile(textures_directory_ + "/" + key + ".png"))
     {
         throw std::runtime_error("[AbstractResourceManager] " + key + " texture file not successfully loaded.");
     }
@@ -109,10 +154,30 @@ void AbstractResourceManager::loadTexture(const std::string& key)
 
 void AbstractResourceManager::loadFont(const std::string& key)
 {
-    if (!fonts_[key].loadFromFile(fonts_directory_ + "/"  + key + ".ttf"))
+    if (!fonts_[key].loadFromFile(fonts_directory_ + "/" + key + ".ttf"))
     {
         throw std::runtime_error("[AbstractResourceManager] " + key + " font file not successfully loaded.");
     }
 
     std::cout << "[AbstractResourceManager] Font " << key << " is loaded!" << std::endl;
+}
+
+void AbstractResourceManager::loadSound(const std::string& key)
+{
+    if (!sounds_[key].loadFromFile(sounds_directory_ + "/" + key + ".ogg"))
+    {
+        throw std::runtime_error("[AbstractResourceManager] " + key + " sound file not successfully loaded.");
+    }
+
+    std::cout << "[AbstractResourceManager] Sound " << key << " is loaded!" << std::endl;
+}
+
+void AbstractResourceManager::loadMusic(const std::string& key)
+{
+    if (!music_[key].openFromFile(music_directory_ + "/" + key + ".wav"))
+    {
+        throw std::runtime_error("[AbstractResourceManager] " + key + " music file not successfully loaded.");
+    }
+
+    std::cout << "[AbstractResourceManager] Music " << key << " is loaded!" << std::endl;
 }

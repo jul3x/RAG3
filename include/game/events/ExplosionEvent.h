@@ -2,18 +2,18 @@
 // Created by jul3x on 30.08.19.
 //
 
-#ifndef RAG3_GAME_ANIMATIONS_EXPLOSIONANIMATION_H
-#define RAG3_GAME_ANIMATIONS_EXPLOSIONANIMATION_H
+#ifndef RAG3_GAME_EVENTS_EXPLOSIONEVENT_H
+#define RAG3_GAME_EVENTS_EXPLOSIONEVENT_H
 
 #include <engine/graphics/AnimationEvent.h>
 
 
-class ExplosionAnimation : public AnimationEvent {
+class ExplosionEvent : public AnimationEvent {
 
 public:
-    ExplosionAnimation() = delete;
+    ExplosionEvent() = delete;
 
-    ExplosionAnimation(const sf::Vector2f& position,
+    ExplosionEvent(const sf::Vector2f& position,
                        float radius);
 
 private:
@@ -24,4 +24,4 @@ private:
 };
 
 
-#endif // RAG3_GAME_ANIMATIONS_EXPLOSIONANIMATION_H
+#endif // RAG3_GAME_EVENTS_EXPLOSIONEVENT_H

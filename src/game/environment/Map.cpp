@@ -62,7 +62,7 @@ bool Map::update(float time_elapsed)
         {
             // draw on this place destruction
             spawnDecoration(it->getPosition(), Decoration::Type::DestroyedWall);
-            Game::get().spawnExplosionAnimation(it->getPosition(), 25.0f);
+            Game::get().spawnExplosionEvent(it->getPosition(), 25.0f);
 
             auto next_it = std::next(it);
             Game::get().deleteStaticObject(&*it);
@@ -85,7 +85,7 @@ bool Map::update(float time_elapsed)
         {
             // draw on this place destruction
             spawnDecoration(it->getPosition(), Decoration::Type::Blood);
-            Game::get().spawnExplosionAnimation(it->getPosition(), 25.0f);
+            Game::get().spawnExplosionEvent(it->getPosition(), 25.0f);
 
             auto next_it = std::next(it);
             Game::get().deleteDynamicObject(&*it);

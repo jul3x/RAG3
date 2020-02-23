@@ -43,7 +43,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../cmake_modules" ${CMAKE_MODULE_PATH
 # Change this if you're working on Windows to your SFML path.
 set(SFML_ROOT "C:/SFML-2.5.1")
 
-find_package(SFML 2 REQUIRED COMPONENTS graphics window system)
+find_package(SFML 2 REQUIRED COMPONENTS graphics window system audio)
 
 include_directories(../include)
 include_directories(${SFML_INCLUDE_DIR})
@@ -59,7 +59,11 @@ list(FILTER MAIN_SRC EXCLUDE REGEX "main")
 add_executable(${EXECUTABLE_NAME} ${TEST_MAIN} ${TEST_SRC} ${MAIN_SRC})
 
 target_link_libraries(${EXECUTABLE_NAME} stdc++fs)
-target_link_libraries(${EXECUTABLE_NAME} gtest ${SFML_GRAPHICS_LIBRARY} ${SFML_WINDOW_LIBRARY} ${SFML_SYSTEM_LIBRARY})
+target_link_libraries(${EXECUTABLE_NAME} gtest
+        ${SFML_GRAPHICS_LIBRARY}
+        ${SFML_WINDOW_LIBRARY}
+        ${SFML_SYSTEM_LIBRARY}
+        ${SFML_AUDIO_LIBRARY})
 add_test(NAME ${EXECUTABLE_NAME} COMMAND ${EXECUTABLE_NAME})
 
 

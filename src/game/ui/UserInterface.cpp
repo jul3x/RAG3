@@ -95,6 +95,15 @@ void UserInterface::handleEvents(Graphics& graphics, float time_elapsed)
                 }
                 break;
             }
+            case sf::Event::KeyPressed:
+            {
+                if (event.key.code == sf::Keyboard::F)
+                {
+                    player_->setForcedVelocity(utils::geo::polarToCartesian(1000.0f,
+                            M_PI / 180.0f * player_->getRotation()));
+                }
+                break;
+            }
             default:
             {
                 break;

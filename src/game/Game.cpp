@@ -5,9 +5,9 @@
 #include <chrono>
 
 #include <engine/utils/Geometry.h>
-#include <game/animations/ExplosionAnimation.h>
-#include <game/animations/ShotAnimation.h>
-#include <game/animations/SparksAnimation.h>
+#include <game/events/ExplosionEvent.h>
+#include <game/events/ShotEvent.h>
+#include <game/events/SparksEvent.h>
 #include <game/misc/ResourceManager.h>
 
 #include <game/Game.h>
@@ -37,6 +37,8 @@ void Game::initialize()
             sf::Vector2i{CFG.getInt("window_width_px"), CFG.getInt("window_height_px")}, "Codename: Rag3",
             CFG.getInt("full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
             sf::Color(CFG.getInt("background_color")));
+    engine_->initializeSoundManager(CFG.getFloat("sound_attenuation"));
+
     engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
 
@@ -60,7 +62,7 @@ void Game::update(float time_elapsed)
     if (player_->isAlive() && !player_->update(time_elapsed))
     {
         map_->spawnDecoration(player_->getPosition(), Decoration::Type::Blood);
-        spawnExplosionAnimation(player_->getPosition(), 25.0f);
+        spawnExplosionEvent(player_->getPosition(), 25.0f);
         player_->setDead();
         deleteDynamicObject(player_.get());
     }
@@ -77,6 +79,8 @@ void Game::update(float time_elapsed)
     }
 
     camera_->update(time_elapsed);
+
+    engine_->changeSoundListenerPosition(player_->getPosition());
 }
 
 void Game::draw(Graphics& graphics)
@@ -112,19 +116,21 @@ const ai::MapBlockage& Game::getMapBlockage() const
     return map_->getMapBlockage();
 }
 
-void Game::spawnSparksAnimation(const sf::Vector2f& pos, const float dir, const float r)
+void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const float r)
 {
-    engine_->spawnAnimationEvent(std::make_shared<SparksAnimation>(pos, dir, r));
+    engine_->spawnAnimationEvent(std::make_shared<SparksEvent>(pos, dir, r));
 }
 
-void Game::spawnExplosionAnimation(const sf::Vector2f& pos, const float r)
+void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
 {
-    engine_->spawnAnimationEvent(std::make_shared<ExplosionAnimation>(pos, r));
+    engine_->spawnAnimationEvent(std::make_shared<ExplosionEvent>(pos, r));
 }
 
-void Game::spawnShotAnimation(const sf::Vector2f& pos, const float dir, const float r)
+void Game::spawnShotEvent(const sf::Vector2f& pos, const float dir, const float r)
 {
-    engine_->spawnAnimationEvent(std::make_shared<ShotAnimation>(pos, dir, r));
+    auto shot_event = std::make_shared<ShotEvent>(pos, dir, r);
+    engine_->spawnAnimationEvent(shot_event);
+    engine_->spawnSoundEvent(ResourceManager::getInstance().getSound("desert_eagle_shot"), pos);
 }
 
 void Game::spawnBullet(const std::string& name, const sf::Vector2f& pos, const float dir)
@@ -139,7 +145,7 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
     auto bullet = dynamic_cast<Bullet*>(h_obj);
     auto obstacle = dynamic_cast<Obstacle*>(s_obj);
     obstacle->getShot(*bullet);
-    spawnSparksAnimation(bullet->getPosition(), bullet->getRotation() - 90.0f,
+    spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
                          static_cast<float>(std::pow(bullet->getDeadlyFactor(), 0.4f)));
 
     bullet->setDead();
@@ -150,7 +156,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     auto bullet = dynamic_cast<Bullet*>(h_obj);
     auto character = dynamic_cast<Character*>(d_obj);
     character->getShot(*bullet);
-    spawnSparksAnimation(bullet->getPosition(), bullet->getRotation() - 90.0f,
+    spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
                          static_cast<float>(std::pow(bullet->getDeadlyFactor(), 0.4f)));
 
     bullet->setDead();

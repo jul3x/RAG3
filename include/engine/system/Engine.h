@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include <list>
 
+#include <engine/audio/SoundManager.h>
 #include <engine/graphics/Graphics.h>
 #include <engine/graphics/AbstractCamera.h>
 #include <engine/graphics/AnimationEvent.h>
@@ -32,6 +33,8 @@ public:
                             int style,
                             const sf::Color &bg_color);
 
+    void initializeSoundManager(float attenuation);
+
     void initializeCollisions(const sf::Vector2f& size, float grid);
 
     void registerUI(AbstractUserInterface* user_interface);
@@ -54,17 +57,17 @@ public:
 
     void spawnAnimationEvent(const std::shared_ptr<AnimationEvent>& event);
 
-    void setVisibility(AbstractDrawableObject& object) const;
+    void spawnSoundEvent(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume = 100.0f);
 
     void setTimeScaleFactor(float factor);
 
     void update(int frame_rate);
 
+    void changeSoundListenerPosition(const sf::Vector2f& pos);
+
     static sf::Vector2i detectResolution();
 
 private:
-    void setVisibilities() const;
-
     void updateAnimationEvents(float time_elapsed);
 
     void draw();
@@ -75,6 +78,7 @@ private:
 
     // Engine components
     std::unique_ptr<Graphics> graphics_;
+    std::unique_ptr<SoundManager> sound_manager_;
     std::unique_ptr<Collisions> collisions_;
 
     // Registered by Game

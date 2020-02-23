@@ -34,7 +34,7 @@ void Engine::initializeGraphics(const sf::Vector2i& size,
 
 void Engine::initializeSoundManager(float attenuation)
 {
-    sound_manager_ = std::make_unique<SoundManager>(attenuation);
+    sound_manager_ = std::make_unique<audio::SoundManager>(attenuation);
 }
 
 void Engine::initializeCollisions(const sf::Vector2f& size, float grid)

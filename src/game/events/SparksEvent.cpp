@@ -9,7 +9,7 @@
 SparksEvent::SparksEvent(const sf::Vector2f& position,
                          float direction,
                          float radius) :
-        AnimationEvent(&ResourceManager::getInstance().getTexture("animation_sparks"),
+        AnimationEvent(&RM.getTexture("animation_sparks"),
                        {SparksEvent::WIDTH_PX_, SparksEvent::HEIGHT_PX_}, position,
                        SparksEvent::DURATION_S_, SparksEvent::MAX_FRAMES_COUNT_)
 {

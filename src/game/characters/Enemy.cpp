@@ -18,7 +18,7 @@ Enemy::Enemy(const sf::Vector2f& position,
         AbstractAgent(Game::get().getAgentsManager())
 {
     weapons_in_backpack_.push_back(
-            std::make_unique<ShootingWeapon>(ResourceManager::getInstance().getWeapon("desert_eagle")));
+            std::make_unique<ShootingWeapon>(RM.getWeapon("desert_eagle")));
 
     current_weapon_ = weapons_in_backpack_.begin();
 

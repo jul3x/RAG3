@@ -20,7 +20,7 @@ Character::Character(const sf::Vector2f& position,
                       velocity,
                       {SIZE_X_, SIZE_Y_},
                       Collision::Circle((SIZE_X_ - 5.0f) / 2.0f),
-                      &ResourceManager::getInstance().getTexture("player"),
+                      &RM.getTexture("player"),
                       sf::Color(CFG.getInt("trail_color")),
                       CFG.getFloat("max_acceleration")),
         max_life_(max_life),
@@ -114,7 +114,7 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(shape_, states);
     target.draw(**current_weapon_, states);
 
-    static sf::Text text("", ResourceManager::getInstance().getFont(), 24);
+    static sf::Text text("", RM.getFont(), 24);
 
     text.setFillColor(sf::Color::White);
     text.setPosition(this->getPosition());

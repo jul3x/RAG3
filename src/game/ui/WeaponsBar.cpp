@@ -14,15 +14,15 @@ WeaponsBar::WeaponsBar(const sf::Vector2f& position) :
         current_highlight_(position,
                            {WEAPON_SIZE_X_ * CFG.getFloat("user_interface_zoom"),
                             WEAPON_SIZE_Y_ * CFG.getFloat("user_interface_zoom")},
-                           &ResourceManager::getInstance().getTexture("current_weapon_highlight")),
+                           &RM.getTexture("current_weapon_highlight")),
         AbstractDrawableObject(position,
                                {SIZE_X_ * CFG.getFloat("user_interface_zoom"),
                                 SIZE_Y_ * CFG.getFloat("user_interface_zoom")},
-                               &ResourceManager::getInstance().getTexture("weapons_bar"))
+                               &RM.getTexture("weapons_bar"))
 {
     for (int i = 0; i < SLOTS_; ++i)
     {
-        ammo_.emplace_back("0", ResourceManager::getInstance().getFont(), 16 * CFG.getFloat("user_interface_zoom"));
+        ammo_.emplace_back("0", RM.getFont(), 16 * CFG.getFloat("user_interface_zoom"));
         ammo_.at(i).setFillColor(sf::Color(CFG.getInt("font_color")));
     }
 }
@@ -45,7 +45,7 @@ void WeaponsBar::updateWeaponsList(const std::vector<std::unique_ptr<AbstractWea
                                               sf::Vector2f{WEAPON_SIZE_X_ * CFG.getFloat("user_interface_zoom"), 0.0f};
             weapons_.push_back({weapon_pos, {WEAPON_SIZE_X_ * CFG.getFloat("user_interface_zoom"),
                                              WEAPON_SIZE_Y_ * CFG.getFloat("user_interface_zoom")},
-                                &ResourceManager::getInstance().getTexture("weapon_mini_" + weapon_cast->getName())});
+                                &RM.getTexture("weapon_mini_" + weapon_cast->getName())});
 
             ammo_.at(i).setString(std::to_string(weapon_cast->getAmmunition()));
             sf::FloatRect text_rect = ammo_.at(i).getLocalBounds();

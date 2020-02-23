@@ -30,6 +30,14 @@ void Game::initialize()
                                                           20.0f, // min change of goal to trigger recalculation
                                                           1000); // max search of path
 
+    music_manager_ = std::make_unique<audio::MusicManager>();
+    music_manager_->addToQueue(&RM.getMusic("Dailucia_InTheEnd"));
+    music_manager_->addToQueue(&RM.getMusic("Meltdown_TheNextLevel"));
+
+
+    music_manager_->setVolume(50.0f);
+    music_manager_->play();
+
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());
 
@@ -65,6 +73,7 @@ void Game::update(float time_elapsed)
         spawnExplosionEvent(player_->getPosition(), 25.0f);
         player_->setDead();
         deleteDynamicObject(player_.get());
+        music_manager_->stop();
     }
 
     for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
@@ -81,6 +90,7 @@ void Game::update(float time_elapsed)
     camera_->update(time_elapsed);
 
     engine_->changeSoundListenerPosition(player_->getPosition());
+    music_manager_->update(time_elapsed);
 }
 
 void Game::draw(Graphics& graphics)
@@ -124,21 +134,22 @@ void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const floa
 void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
 {
     engine_->spawnAnimationEvent(std::make_shared<ExplosionEvent>(pos, r));
-    engine_->spawnSoundEvent(ResourceManager::getInstance().getSound("wall_explosion"), pos);
+    engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
 }
 
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir)
 {
     auto shot_event = std::make_shared<ShotEvent>(pos, dir * 180.0f / M_PI,
-            ResourceManager::getInstance().getBulletDescription(name).burst_size_);
+                                                  RM.getBulletDescription(
+                                                          name).burst_size_);
     engine_->spawnAnimationEvent(shot_event);
-    engine_->spawnSoundEvent(ResourceManager::getInstance().getSound(name + "_bullet_shot"), pos);
+    engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
 }
 
 void Game::spawnBullet(const std::string& name, const sf::Vector2f& pos, const float dir)
 {
     bullets_.emplace_back(
-            std::make_unique<Bullet>(ResourceManager::getInstance().getBulletDescription(name), pos, dir));
+            std::make_unique<Bullet>(RM.getBulletDescription(name), pos, dir));
     engine_->registerHoveringObject(bullets_.back().get());
 
     this->spawnShotEvent(name, pos, dir);
@@ -150,7 +161,7 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
     auto obstacle = dynamic_cast<Obstacle*>(s_obj);
     obstacle->getShot(*bullet);
     spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                         static_cast<float>(std::pow(bullet->getDeadlyFactor(), 0.4f)));
+                     static_cast<float>(std::pow(bullet->getDeadlyFactor(), 0.4f)));
 
     bullet->setDead();
 }
@@ -161,7 +172,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     auto character = dynamic_cast<Character*>(d_obj);
     character->getShot(*bullet);
     spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                         static_cast<float>(std::pow(bullet->getDeadlyFactor(), 0.4f)));
+                     static_cast<float>(std::pow(bullet->getDeadlyFactor(), 0.4f)));
 
     bullet->setDead();
 }
@@ -200,12 +211,14 @@ void Game::setBulletTime()
 {
     current_time_factor_ = CFG.getFloat("bullet_time_factor");
     engine_->setTimeScaleFactor(current_time_factor_);
+    music_manager_->setPlaybackPitch(CFG.getFloat("bullet_time_music_factor"));
 }
 
 void Game::setNormalTime()
 {
     current_time_factor_ = 1.0f;
     engine_->setTimeScaleFactor(1.0f);
+    music_manager_->setPlaybackPitch(1.0f);
 }
 
 float Game::getCurrentTimeFactor() const

@@ -10,6 +10,7 @@
 #include <engine/system/AbstractGame.h>
 #include <engine/system/Engine.h>
 #include <engine/ai/AgentsManager.h>
+#include <engine/audio/MusicManager.h>
 
 #include <game/misc/Camera.h>
 #include <game/characters/Player.h>
@@ -83,6 +84,7 @@ private:
     std::unique_ptr<UserInterface> ui_;
     std::unique_ptr<Camera> camera_;
     std::unique_ptr<ai::AgentsManager> agents_manager_;
+    std::unique_ptr<audio::MusicManager> music_manager_;
 
     std::unique_ptr<Player> player_;
     std::unique_ptr<Map> map_;

@@ -9,7 +9,7 @@
 ShotEvent::ShotEvent(const sf::Vector2f& position,
                      float direction,
                      float radius) :
-        AnimationEvent(&ResourceManager::getInstance().getTexture("animation_shot"),
+        AnimationEvent(&RM.getTexture("animation_shot"),
                        {ShotEvent::WIDTH_PX_, ShotEvent::HEIGHT_PX_}, position,
                        ShotEvent::DURATION_S_, ShotEvent::MAX_FRAMES_COUNT_)
 {

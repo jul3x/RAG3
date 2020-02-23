@@ -10,7 +10,7 @@ Decoration::Decoration(const sf::Vector2f& position,
                        const int type_number) :
         AbstractDrawableObject(position,
                                {SIZE_X_, SIZE_Y_},
-                               &ResourceManager::getInstance().getTexture(
+                               &RM.getTexture(
                                        "decoration" + std::to_string(type_number))) {}
 
 Decoration::Decoration(const sf::Vector2f& position,

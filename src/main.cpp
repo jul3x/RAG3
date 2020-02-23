@@ -21,14 +21,14 @@ int main()
         CFG.setInt("window_height_px", res.y);
     }
 
-    ResourceManager::getInstance().lazyLoadTexture("animation_shot");
-    ResourceManager::getInstance().lazyLoadTexture("animation_explosion1");
-    ResourceManager::getInstance().lazyLoadTexture("animation_explosion2");
-    ResourceManager::getInstance().lazyLoadTexture("animation_explosion3");
+    RM.lazyLoadTexture("animation_shot");
+    RM.lazyLoadTexture("animation_explosion1");
+    RM.lazyLoadTexture("animation_explosion2");
+    RM.lazyLoadTexture("animation_explosion3");
 
-    ResourceManager::getInstance().lazyLoadTexture("blood_hud_1");
-    ResourceManager::getInstance().lazyLoadTexture("blood_hud_2");
-    ResourceManager::getInstance().lazyLoadTexture("blood_hud_3");
+    RM.lazyLoadTexture("blood_hud_1");
+    RM.lazyLoadTexture("blood_hud_2");
+    RM.lazyLoadTexture("blood_hud_3");
 
 
     Game::get().start(FRAME_RATE);

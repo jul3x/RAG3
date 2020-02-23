@@ -43,5 +43,6 @@ private:
     std::unordered_map<std::string, BulletDescription> bullets_;
 };
 
+#define RM ResourceManager::getInstance()
 
 #endif //RAG3_GAME_MISC_RESOURCEMANAGER_H

@@ -174,7 +174,7 @@ void AbstractResourceManager::loadSound(const std::string& key)
 
 void AbstractResourceManager::loadMusic(const std::string& key)
 {
-    if (!music_[key].openFromFile(music_directory_ + "/" + key + ".wav"))
+    if (!music_[key].openFromFile(music_directory_ + "/" + key + ".ogg"))
     {
         throw std::runtime_error("[AbstractResourceManager] " + key + " music file not successfully loaded.");
     }

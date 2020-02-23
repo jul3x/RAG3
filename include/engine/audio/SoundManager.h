@@ -11,19 +11,23 @@
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 
-class SoundManager {
-public:
-    explicit SoundManager(float attenuation);
 
-    void playSound(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume);
+namespace audio {
+    class SoundManager {
+    public:
+        explicit SoundManager(float attenuation);
 
-    void update(float time_elapsed);
+        void playSound(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume);
 
-    void changePitch(float pitch);
-private:
-    std::list<sf::Sound> played_sounds_;
+        void update(float time_elapsed);
 
-    float current_pitch_, attenuation_;
-};
+        void changePitch(float pitch);
+
+    private:
+        std::list<sf::Sound> played_sounds_;
+
+        float current_pitch_, attenuation_;
+    };
+} // namespace audio
 
 #endif //RAG3_ENGINE_AUDIO_SOUNDMANAGER_H

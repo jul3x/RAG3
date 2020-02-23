@@ -78,7 +78,7 @@ private:
 
     // Engine components
     std::unique_ptr<Graphics> graphics_;
-    std::unique_ptr<SoundManager> sound_manager_;
+    std::unique_ptr<audio::SoundManager> sound_manager_;
     std::unique_ptr<Collisions> collisions_;
 
     // Registered by Game

@@ -11,7 +11,7 @@
 ExplosionEvent::ExplosionEvent(const sf::Vector2f& position,
                                        float radius) :
         AnimationEvent(
-                &ResourceManager::getInstance().getTexture(
+                &RM.getTexture(
                         "animation_explosion" + std::to_string(utils::num::getRandom<int>(1, 3))),
                 {ExplosionEvent::WIDTH_PX_, ExplosionEvent::HEIGHT_PX_}, position,
                 ExplosionEvent::DURATION_S_, ExplosionEvent::MAX_FRAMES_COUNT_,

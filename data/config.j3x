@@ -27,5 +27,6 @@ float user_interface_zoom=2.0f
 float blood_pulsating_time=5.0f
 
 float bullet_time_factor=0.3f
+float bullet_time_music_factor=1.0f
 
 float sound_attenuation=0.02f

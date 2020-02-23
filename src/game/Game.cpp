@@ -23,7 +23,7 @@ void Game::initialize()
 {
     ui_ = std::make_unique<UserInterface>();
     camera_ = std::make_unique<Camera>();
-    player_ = std::make_unique<Player>(sf::Vector2f{900.0f, 900.0f}, sf::Vector2f{});
+    player_ = std::make_unique<Player>(sf::Vector2f{900.0f, 4100.0f}, sf::Vector2f{});
     map_ = std::make_unique<Map>();
     agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
                                                           1000.0f, // max time without recalculation of path in ms

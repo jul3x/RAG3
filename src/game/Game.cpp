@@ -124,6 +124,7 @@ void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const floa
 void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
 {
     engine_->spawnAnimationEvent(std::make_shared<ExplosionEvent>(pos, r));
+    engine_->spawnSoundEvent(ResourceManager::getInstance().getSound("wall_explosion"), pos);
 }
 
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir)

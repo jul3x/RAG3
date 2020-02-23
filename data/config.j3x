@@ -28,4 +28,4 @@ float blood_pulsating_time=5.0f
 
 float bullet_time_factor=0.3f
 
-float sound_attenuation=0.1f
+float sound_attenuation=0.02f

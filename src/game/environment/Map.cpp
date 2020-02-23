@@ -18,6 +18,8 @@ void Map::loadMap(const std::string& name) {
     enemies_.emplace_back(sf::Vector2f{1400.0f, 1200.0f}, sf::Vector2f{0.0f, 0.0f});
     enemies_.emplace_back(sf::Vector2f{70.0f, 70.0f}, sf::Vector2f{0.0f, 0.0f});
     enemies_.emplace_back(sf::Vector2f{1000.0f, 100.0f}, sf::Vector2f{0.0f, 0.0f});
+    enemies_.emplace_back(sf::Vector2f{70.0f, 1100.0f}, sf::Vector2f{0.0f, 0.0f});
+    enemies_.emplace_back(sf::Vector2f{1000.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
     enemies_.emplace_back(sf::Vector2f{1900.0f, 1000.0f}, sf::Vector2f{0.0f, 0.0f});
     enemies_.emplace_back(sf::Vector2f{2000.0f, 2100.0f}, sf::Vector2f{0.0f, 0.0f});
 }

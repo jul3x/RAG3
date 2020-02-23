@@ -42,7 +42,7 @@ public:
 
     void spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);
 
-    void spawnShotEvent(const sf::Vector2f& pos, float dir, float r);
+    void spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir);
 
     void spawnExplosionEvent(const sf::Vector2f& pos, float r);
 

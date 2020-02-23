@@ -126,11 +126,12 @@ void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
     engine_->spawnAnimationEvent(std::make_shared<ExplosionEvent>(pos, r));
 }
 
-void Game::spawnShotEvent(const sf::Vector2f& pos, const float dir, const float r)
+void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir)
 {
-    auto shot_event = std::make_shared<ShotEvent>(pos, dir, r);
+    auto shot_event = std::make_shared<ShotEvent>(pos, dir * 180.0f / M_PI,
+            ResourceManager::getInstance().getBulletDescription(name).burst_size_);
     engine_->spawnAnimationEvent(shot_event);
-    engine_->spawnSoundEvent(ResourceManager::getInstance().getSound("desert_eagle_shot"), pos);
+    engine_->spawnSoundEvent(ResourceManager::getInstance().getSound(name + "_bullet_shot"), pos);
 }
 
 void Game::spawnBullet(const std::string& name, const sf::Vector2f& pos, const float dir)
@@ -138,6 +139,8 @@ void Game::spawnBullet(const std::string& name, const sf::Vector2f& pos, const f
     bullets_.emplace_back(
             std::make_unique<Bullet>(ResourceManager::getInstance().getBulletDescription(name), pos, dir));
     engine_->registerHoveringObject(bullets_.back().get());
+
+    this->spawnShotEvent(name, pos, dir);
 }
 
 void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)

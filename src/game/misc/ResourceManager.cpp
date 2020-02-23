@@ -81,7 +81,8 @@ void ResourceManager::loadBulletDescription(const std::string& key)
                                             utils::getInt(int_params, "deadly_factor"),
                                             key,
                                             utils::getFloat(float_params, "size_x"),
-                                            utils::getFloat(float_params, "size_y")});
+                                            utils::getFloat(float_params, "size_y"),
+                                            utils::getFloat(float_params, "burst_size")});
 
     std::cout << "[ResourceManager] Bullet description " << key << " is loaded!" << std::endl;
 }

@@ -20,6 +20,8 @@ struct BulletDescription {
 
     float size_x_;
     float size_y_;
+
+    float burst_size_;
 };
 
 

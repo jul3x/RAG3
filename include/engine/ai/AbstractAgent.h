@@ -19,26 +19,26 @@ namespace r3e {
 
         class AbstractAgent {
         public:
-            explicit AbstractAgent(AgentsManager &manager);
+            explicit AbstractAgent(AgentsManager& manager);
 
             virtual ~AbstractAgent();
 
-            void setCurrentGoal(const ai::Goal &goal);
+            void setCurrentGoal(const ai::Goal& goal);
 
             void setNoGoal();
 
-            const sf::Vector2f &getWanderingDirection(float constraint, float max_time_ms, int when_opposite);
+            const sf::Vector2f& getWanderingDirection(float constraint, float max_time_ms, int when_opposite);
 
-            const ai::Goal &getCurrentGoal() const;
+            const ai::Goal& getCurrentGoal() const;
 
-            virtual const sf::Vector2f &getStartPosition() const = 0;
+            virtual const sf::Vector2f& getStartPosition() const = 0;
 
-            const ai::Path &getPath() const;
+            const ai::Path& getPath() const;
 
             sf::Vector2f generateVelocityForPath() const;
 
         private:
-            AgentsManager &manager_;
+            AgentsManager& manager_;
 
             ai::Timestamp latest_wander_point_time_;
             sf::Vector2f wandering_direction_;

@@ -9,7 +9,7 @@
 
 
 ExplosionEvent::ExplosionEvent(const sf::Vector2f& position,
-                                       float radius) :
+                               float radius) :
         AnimationEvent(
                 &RM.getTexture(
                         "animation_explosion" + std::to_string(utils::num::getRandom<int>(1, 3))),

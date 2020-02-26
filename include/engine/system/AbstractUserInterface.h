@@ -8,6 +8,7 @@
 #include <engine/objects/AbstractDrawableObject.h>
 #include <engine/graphics/Graphics.h>
 
+
 namespace r3e {
 
     class AbstractUserInterface : public AbstractDrawableObject {
@@ -19,7 +20,7 @@ namespace r3e {
 
         AbstractUserInterface& operator=(const AbstractUserInterface&) = delete;
 
-        virtual void initialize(graphics::Graphics &graphics) = 0;
+        virtual void initialize(graphics::Graphics& graphics) = 0;
 
         virtual void handleEvents(graphics::Graphics& graphics, float time_elapsed) = 0;
 

@@ -47,7 +47,8 @@ void Character::getShot(const Bullet& bullet)
     Shootable::getShot(bullet);
     //Engine::spawnBloodAnimation();
     this->setForcedVelocity(this->getVelocity() +
-                            utils::geo::getNormalized(bullet.getVelocity()) * static_cast<float>(bullet.getDeadlyFactor()) *
+                            utils::geo::getNormalized(bullet.getVelocity()) *
+                            static_cast<float>(bullet.getDeadlyFactor()) *
                             CFG.getFloat("get_shot_factor"));
 }
 
@@ -104,7 +105,7 @@ bool Character::update(float time_elapsed)
     auto is_negative = std::signbit(rotation_diff);
     auto rotation_sqrt = std::sqrt(std::abs(rotation_diff)) * (is_negative ? -1.0f : 1.0f);
     this->setRotation(this->getRotation() -
-                      rotation_sqrt * CFG.getFloat("mouse_reaction_speed"));
+                      rotation_sqrt * CFG.getFloat("mouse_reaction_speed") * time_elapsed);
 
     return life_ > 0;
 }

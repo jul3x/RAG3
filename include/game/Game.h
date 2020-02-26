@@ -74,7 +74,9 @@ public:
 
     float getCurrentTimeFactor() const;
 
-    void start(int frame_rate);
+    float getFPS() const;
+
+    void start();
 
 private:
     Game();

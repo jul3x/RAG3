@@ -15,40 +15,48 @@ namespace r3e {
     class Config {
 
     public:
-        Config(const Config &) = delete;
+        Config(const Config&) = delete;
 
-        Config &operator=(const Config &) = delete;
+        Config& operator=(const Config&) = delete;
 
-        static Config &getInstance() {
+        static Config& getInstance()
+        {
             static Config instance;
             return instance;
         }
 
-        void initialize(const std::string &filename) {
+        void initialize(const std::string& filename)
+        {
             std::tie(int_params_, float_params_, string_params_) = utils::parse(filename);
         }
 
-        int getInt(const std::string &key) const {
+        int getInt(const std::string& key) const
+        {
             return utils::getInt(int_params_, key);
         }
 
-        float getFloat(const std::string &key) const {
+        float getFloat(const std::string& key) const
+        {
             return utils::getFloat(float_params_, key);
         }
 
-        const std::string &getString(const std::string &key) const {
+        const std::string& getString(const std::string& key) const
+        {
             return utils::getString(string_params_, key);
         }
 
-        void setInt(const std::string &key, int value) {
+        void setInt(const std::string& key, int value)
+        {
             utils::setInt(int_params_, key, value);
         }
 
-        void setFloat(const std::string &key, float value) {
+        void setFloat(const std::string& key, float value)
+        {
             utils::setFloat(float_params_, key, value);
         }
 
-        void setString(const std::string &key, const std::string &value) {
+        void setString(const std::string& key, const std::string& value)
+        {
             utils::setString(string_params_, key, value);
         }
 
@@ -61,7 +69,7 @@ namespace r3e {
 
     };
 
-    #define CFG Config::getInstance()
+#define CFG Config::getInstance()
 } // namespace r3e
 
 #endif //RAG3_ENGINE_SYSTEM_CONFIG_H

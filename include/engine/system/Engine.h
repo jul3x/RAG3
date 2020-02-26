@@ -32,7 +32,7 @@ namespace r3e {
         void initializeGraphics(const sf::Vector2i& size,
                                 const std::string& title,
                                 int style,
-                                const sf::Color &bg_color);
+                                const sf::Color& bg_color);
 
         void initializeSoundManager(float attenuation);
 
@@ -60,11 +60,13 @@ namespace r3e {
 
         void spawnSoundEvent(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume = 100.0f);
 
+        float getCurrentFPS() const;
+
         void setTimeScaleFactor(float factor);
 
-        void update(int frame_rate);
+        void start();
 
-        void changeSoundListenerPosition(const sf::Vector2f& pos);
+        static void changeSoundListenerPosition(const sf::Vector2f& pos);
 
         static sf::Vector2i detectResolution();
 
@@ -72,10 +74,6 @@ namespace r3e {
         void updateAnimationEvents(float time_elapsed);
 
         void draw();
-
-        void ensureConstantFrameRate(int frame_rate);
-
-        void restartClock();
 
         // Engine components
         std::unique_ptr<graphics::Graphics> graphics_;
@@ -87,10 +85,8 @@ namespace r3e {
         graphics::AbstractCamera* camera_;
         AbstractGame* game_;
 
-        sf::Clock clock_;
-        sf::Time time_;
-
         float time_scale_factor_;
+        float frame_time_;
 
         std::list<std::shared_ptr<graphics::AnimationEvent>> animation_events_;
     };

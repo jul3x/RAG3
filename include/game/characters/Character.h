@@ -16,6 +16,7 @@
 #include <game/weapons/Bullet.h>
 #include <game/misc/Shootable.h>
 
+
 using namespace r3e;
 
 class Character : public DynamicObject, public Shootable {
@@ -81,6 +82,7 @@ protected:
 
 private:
     inline void handleLifeState();
+
     inline void handleAmmoState();
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

@@ -6,6 +6,8 @@
 
 #include <engine/utils/Numeric.h>
 
+using namespace r3e;
+
 TEST(NumericTest, IsNearlyEqual) {
     // positive values
     EXPECT_TRUE(utils::num::isNearlyEqual(0.0f, 0.0f, 0.001f));

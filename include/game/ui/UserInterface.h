@@ -26,9 +26,9 @@ public:
 
     UserInterface& operator=(const UserInterface&) = delete;
 
-    void initialize(graphics::Graphics &graphics) override;
+    void initialize(graphics::Graphics& graphics) override;
 
-    void handleEvents(graphics::Graphics &graphics, float time_elapsed) override;
+    void handleEvents(graphics::Graphics& graphics, float time_elapsed) override;
 
     void registerPlayer(Player* player);
 
@@ -49,10 +49,15 @@ private:
     static constexpr float HEALTH_BAR_X_ = 150.0f;
     static constexpr float HEALTH_BAR_Y_ = 50.0f;
 
+    static constexpr float FPS_X_ = 150.0f;
+    static constexpr float FPS_Y_ = 300.0f;
+
     WeaponsBar weapons_bar_;
     HealthBar health_bar_;
     Crosshair crosshair_;
     BloodSplash blood_splash_;
+
+    sf::Text fps_text_;
 
     Player* player_;
     Camera* camera_;

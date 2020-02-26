@@ -164,8 +164,8 @@ ResourceManager::loadMap(const std::string& key)
     return std::make_tuple(sf::Vector2i{w, h}, blocked, obstacles, decorations);
 }
 
-ResourceManager::ResourceManager() : AbstractResourceManager("../data/", "../data/textures/", "../data/fonts/",
-                                                             "../data/sounds/", "../data/music/")
+ResourceManager::ResourceManager() : AbstractResourceManager("../data", "../data/textures", "../data/fonts",
+                                                             "../data/sounds", "../data/music")
 {
 
 }

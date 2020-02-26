@@ -19,23 +19,28 @@ namespace r3e {
 
             virtual void update(float time_elapsed) = 0;
 
-            sf::Vector3f& getViewCenter() {
+            sf::Vector3f& getViewCenter()
+            {
                 return center_;
             }
 
-            sf::Vector2f& getViewSize() {
+            sf::Vector2f& getViewSize()
+            {
                 return view_size_;
             }
 
-            void setPointingTo(const sf::Vector2f& position) {
+            void setPointingTo(const sf::Vector2f& position)
+            {
                 pointing_to_ = position;
             }
 
-            void setViewNormalSize(const sf::Vector2f& size) {
+            void setViewNormalSize(const sf::Vector2f& size)
+            {
                 view_normal_size_ = size;
             }
 
-            void setZoomTo(float zoom) {
+            void setZoomTo(float zoom)
+            {
                 zoom_to_ = zoom;
             }
 

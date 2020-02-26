@@ -10,8 +10,6 @@
 
 int main()
 {
-    constexpr int FRAME_RATE = 60;
-
     CFG.initialize("../data/config.j3x");
 
     if (CFG.getInt("auto_resolution"))
@@ -31,7 +29,7 @@ int main()
     RM.lazyLoadTexture("blood_hud_3");
 
 
-    Game::get().start(FRAME_RATE);
+    Game::get().start();
 
     return 0;
 }

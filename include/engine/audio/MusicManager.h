@@ -22,11 +22,11 @@ namespace r3e {
 
             MusicManager();
 
-            void addToQueue(sf::Music *music);
+            void addToQueue(sf::Music* music);
 
-            void addToQueue(const std::string &name);
+            void addToQueue(const std::string& name);
 
-            void addDirectoryToQueue(const std::string &dir);
+            void addDirectoryToQueue(const std::string& dir);
 
             void setVolume(float volume);
 
@@ -39,8 +39,8 @@ namespace r3e {
             void setPlaybackPitch(float pitch);
 
         private:
-            std::list<sf::Music *> music_list_;
-            std::list<sf::Music *>::iterator current_song_;
+            std::list<sf::Music*> music_list_;
+            std::list<sf::Music*>::iterator current_song_;
 
             std::list<sf::Music> music_owned_;
 

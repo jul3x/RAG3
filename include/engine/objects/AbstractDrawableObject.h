@@ -10,6 +10,7 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 
+
 namespace r3e {
     class AbstractDrawableObject : public sf::Drawable {
     public:

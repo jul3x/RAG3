@@ -88,7 +88,7 @@ void Game::update(float time_elapsed)
 
     camera_->update(time_elapsed);
 
-    engine_->changeSoundListenerPosition(player_->getPosition());
+    Engine::changeSoundListenerPosition(player_->getPosition());
     music_manager_->update(time_elapsed);
 }
 
@@ -110,9 +110,9 @@ void Game::draw(graphics::Graphics& graphics)
         graphics.draw(*player_);
 }
 
-void Game::start(int frame_rate)
+void Game::start()
 {
-    engine_->update(frame_rate);
+    engine_->start();
 }
 
 const sf::Vector2f& Game::getPlayerPosition() const
@@ -223,4 +223,9 @@ void Game::setNormalTime()
 float Game::getCurrentTimeFactor() const
 {
     return current_time_factor_;
+}
+
+float Game::getFPS() const
+{
+    return engine_->getCurrentFPS();
 }

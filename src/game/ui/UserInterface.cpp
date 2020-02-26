@@ -2,9 +2,12 @@
 // Created by jul3x on 27.02.19.
 //
 
+#include <iomanip>
+
 #include <engine/system/Engine.h>
 #include <engine/utils/Geometry.h>
 
+#include <game/misc/ResourceManager.h>
 #include <game/ui/UserInterface.h>
 #include <game/Game.h>
 
@@ -15,6 +18,7 @@ UserInterface::UserInterface() :
                                                             WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom")}),
         health_bar_({HEALTH_BAR_X_ * CFG.getFloat("user_interface_zoom"),
                      HEALTH_BAR_Y_ * CFG.getFloat("user_interface_zoom")}),
+        fps_text_("FPS: ", RM.getFont(), 30),
         player_(nullptr),
         camera_(nullptr) {}
 
@@ -25,6 +29,9 @@ void UserInterface::initialize(graphics::Graphics& graphics)
         throw std::runtime_error("[UserInterface] player_ or camera_ is nullptr!");
     }
     health_bar_.setMaxHealth(player_->getMaxHealth());
+
+    fps_text_.setFillColor(sf::Color::White);
+    fps_text_.setPosition(FPS_X_, FPS_Y_);
 
     graphics.getWindow().setMouseCursorVisible(false);
     camera_->setViewNormalSize(graphics.getWindow().getView().getSize());
@@ -49,6 +56,10 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
     handleKeys();
 
     blood_splash_.update(time_elapsed);
+
+    std::stringstream fps_stream;
+    fps_stream << std::fixed << std::setprecision(2) << Game::get().getFPS();
+    fps_text_.setString("FPS: " + fps_stream.str());
 
     while (graphics.getWindow().pollEvent(event))
     {
@@ -100,7 +111,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 if (event.key.code == sf::Keyboard::F)
                 {
                     player_->setForcedVelocity(utils::geo::polarToCartesian(1000.0f,
-                            M_PI / 180.0f * player_->getRotation()));
+                                                                            M_PI / 180.0f * player_->getRotation()));
                 }
                 break;
             }
@@ -117,6 +128,7 @@ void UserInterface::draw(sf::RenderTarget& target, sf::RenderStates states) cons
     target.draw(blood_splash_, states);
     target.draw(weapons_bar_, states);
     target.draw(health_bar_, states);
+    target.draw(fps_text_, states);
     target.draw(crosshair_, states);
 }
 

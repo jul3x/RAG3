@@ -28,7 +28,8 @@ public:
 
     ShootingWeapon& getWeapon(const std::string& key);
 
-    static std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, std::list<Decoration>> getMap(const std::string& key);
+    static std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, std::list<Decoration>>
+    getMap(const std::string& key);
 
     // TODO LazyLoad every type of objects
 
@@ -39,7 +40,8 @@ private:
 
     void loadWeapon(const std::string& key);
 
-    static std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, std::list<Decoration>> loadMap(const std::string& key);
+    static std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, std::list<Decoration>>
+    loadMap(const std::string& key);
 
     std::unordered_map<std::string, ShootingWeapon> weapons_;
     std::unordered_map<std::string, BulletDescription> bullets_;

@@ -9,7 +9,8 @@
 
 namespace r3e {
 
-    void Collisions::initialize(const sf::Vector2f &size, float grid) {
+    void Collisions::initialize(const sf::Vector2f& size, float grid)
+    {
         grid_ = grid;
         grid_size_x_ = static_cast<size_t>(std::ceil(size.x / grid));
         grid_size_y_ = static_cast<size_t>(std::ceil(size.y / grid));
@@ -18,14 +19,16 @@ namespace r3e {
         d_grid_.resize(grid_size_x_);
         h_grid_.resize(grid_size_x_);
 
-        for (size_t i = 0; i < grid_size_x_; ++i) {
+        for (size_t i = 0; i < grid_size_x_; ++i)
+        {
             s_grid_.at(i).resize(grid_size_y_);
             d_grid_.at(i).resize(grid_size_y_);
             h_grid_.at(i).resize(grid_size_y_);
         }
     }
 
-    void Collisions::update(AbstractGame *game) {
+    void Collisions::update(AbstractGame* game)
+    {
         // s_grid_ does not need to be updated - only erasing and adding new objects is going on there
         updateGrid(d_grid_);
         updateGrid(h_grid_);
@@ -35,37 +38,44 @@ namespace r3e {
         checkCollisions(game, d_grid_, s_grid_, true);
     }
 
-    void Collisions::insert(StaticObject *obj) {
+    void Collisions::insert(StaticObject* obj)
+    {
         updateGridPosition(obj);
         insert(obj, s_grid_);
     }
 
-    void Collisions::insert(DynamicObject *obj) {
+    void Collisions::insert(DynamicObject* obj)
+    {
         updateGridPosition(obj);
         insert(obj, d_grid_);
     }
 
-    void Collisions::insert(HoveringObject *obj) {
+    void Collisions::insert(HoveringObject* obj)
+    {
         updateGridPosition(obj);
         insert(obj, h_grid_);
     }
 
-    void Collisions::erase(StaticObject *obj) {
+    void Collisions::erase(StaticObject* obj)
+    {
         eraseIfExists(obj, s_grid_);
         obj->grid_position_ = {};
     }
 
-    void Collisions::erase(DynamicObject *obj) {
+    void Collisions::erase(DynamicObject* obj)
+    {
         eraseIfExists(obj, d_grid_);
         obj->grid_position_ = {};
     }
 
-    void Collisions::erase(HoveringObject *obj) {
+    void Collisions::erase(HoveringObject* obj)
+    {
         eraseIfExists(obj, h_grid_);
         obj->grid_position_ = {};
     }
 
-    void Collisions::updateGridPosition(StaticObject *obj) {
+    void Collisions::updateGridPosition(StaticObject* obj)
+    {
         auto position = sf::Vector2i{obj->getPosition() / grid_};
 
         obj->grid_position_.x = static_cast<size_t>(std::max(0,
@@ -74,26 +84,30 @@ namespace r3e {
                                                              std::min(static_cast<int>(grid_size_y_) - 1, position.y)));
     }
 
-    short int Collisions::AABB(const StaticObject &a, const StaticObject &b) {
+    short int Collisions::AABB(const StaticObject& a, const StaticObject& b)
+    {
         return utils::geo::AABB(a.getPosition() + a.getCollisionArea().getOffset(),
                                 {a.getCollisionArea().getA(), a.getCollisionArea().getB()},
                                 b.getPosition() + b.getCollisionArea().getOffset(),
                                 {b.getCollisionArea().getA(), b.getCollisionArea().getB()});
     }
 
-    bool Collisions::circleCircle(const StaticObject &a, const StaticObject &b) {
+    bool Collisions::circleCircle(const StaticObject& a, const StaticObject& b)
+    {
         return utils::geo::circleCircle(a.getPosition() + a.getCollisionArea().getOffset(), a.getCollisionArea().getA(),
                                         b.getPosition() + b.getCollisionArea().getOffset(),
                                         b.getCollisionArea().getA());
     }
 
-    short int Collisions::ABCircle(const StaticObject &a, const StaticObject &b) {
+    short int Collisions::ABCircle(const StaticObject& a, const StaticObject& b)
+    {
         return utils::geo::ABCircle(a.getPosition() + a.getCollisionArea().getOffset(),
                                     {a.getCollisionArea().getA(), a.getCollisionArea().getB()},
                                     b.getPosition() + b.getCollisionArea().getOffset(), b.getCollisionArea().getA());
     }
 
-    bool Collisions::circleABResponse(DynamicObject &a, const StaticObject &b) {
+    bool Collisions::circleABResponse(DynamicObject& a, const StaticObject& b)
+    {
         short int direction = ABCircle(b, a);
 
         if (!direction) return false;
@@ -102,7 +116,7 @@ namespace r3e {
         auto b_bounds = utils::geo::generateCollisionAABB(b);
         auto offset = a.getCollisionArea().getOffset();
 
-        static auto CircleCircleResponse_ = [](DynamicObject &a, const sf::Vector2f &p) {
+        static auto CircleCircleResponse_ = [](DynamicObject& a, const sf::Vector2f& p) {
             sf::Vector2f distance = a.getPosition() + a.getCollisionArea().getOffset() - p;
 
             if (utils::num::isNearlyEqual(distance, {}, 0.001))
@@ -115,7 +129,8 @@ namespace r3e {
             a.setForcedVelocity(a.getVelocity() - utils::geo::dotProduct(a.getVelocity(), unit) * unit);
         };
 
-        switch (direction) {
+        switch (direction)
+        {
             case 1:
                 Collisions::setVerifiedPositionX(a, std::get<0>(b_bounds).x - offset.x - a_r - 1.0f);
                 break;
@@ -149,7 +164,8 @@ namespace r3e {
         return true;
     }
 
-    bool Collisions::circleABResponse(DynamicObject &a, DynamicObject &b) {
+    bool Collisions::circleABResponse(DynamicObject& a, DynamicObject& b)
+    {
         short int direction = ABCircle(b, a);
 
         if (!direction) return false;
@@ -160,8 +176,8 @@ namespace r3e {
         auto b_offset = b.getCollisionArea().getOffset();
         auto a_pos = a.getPosition();
 
-        static auto CircleCircleResponse_ = [](DynamicObject &a, DynamicObject &b, const sf::Vector2f &b_size,
-                                               const sf::Vector2f &p) {
+        static auto CircleCircleResponse_ = [](DynamicObject& a, DynamicObject& b, const sf::Vector2f& b_size,
+                                               const sf::Vector2f& p) {
             sf::Vector2f distance = a.getPosition() + a.getCollisionArea().getOffset() - p;
 
             if (utils::num::isNearlyEqual(distance, {}, 0.001))
@@ -177,7 +193,8 @@ namespace r3e {
             b.setForcedVelocity(b.getVelocity() - utils::geo::dotProduct(b.getVelocity(), unit) * unit);
         };
 
-        switch (direction) {
+        switch (direction)
+        {
             case 1:
                 Collisions::setVerifiedPositionX(b, a_pos.x + a_offset.x - b_offset.x + a_r +
                                                     std::get<2>(b_bounds).x / 2.0f + 1.0f);
@@ -222,7 +239,8 @@ namespace r3e {
         return true;
     }
 
-    bool Collisions::ABCircleResponse(DynamicObject &a, const StaticObject &b) {
+    bool Collisions::ABCircleResponse(DynamicObject& a, const StaticObject& b)
+    {
         short int direction = ABCircle(a, b);
 
         if (!direction) return false;
@@ -231,8 +249,8 @@ namespace r3e {
         auto a_bounds = utils::geo::generateCollisionAABB(a);
         auto offset = b.getCollisionArea().getOffset() - a.getCollisionArea().getOffset();
 
-        static auto CircleCircleResponse_ = [](DynamicObject &a, const StaticObject &b, const sf::Vector2f &a_size,
-                                               const sf::Vector2f &p) {
+        static auto CircleCircleResponse_ = [](DynamicObject& a, const StaticObject& b, const sf::Vector2f& a_size,
+                                               const sf::Vector2f& p) {
             sf::Vector2f distance = b.getPosition() + b.getCollisionArea().getOffset() - p;
 
             if (utils::num::isNearlyEqual(distance, {}, 0.001))
@@ -245,7 +263,8 @@ namespace r3e {
             a.setForcedVelocity(a.getVelocity() - utils::geo::dotProduct(a.getVelocity(), unit) * unit);
         };
 
-        switch (direction) {
+        switch (direction)
+        {
             case 1:
                 Collisions::setVerifiedPositionX(a,
                                                  b.getPosition().x + offset.x + b_r + std::get<2>(a_bounds).x / 2.0f +
@@ -289,7 +308,8 @@ namespace r3e {
         return true;
     }
 
-    bool Collisions::ABCircleResponse(DynamicObject &a, DynamicObject &b) {
+    bool Collisions::ABCircleResponse(DynamicObject& a, DynamicObject& b)
+    {
         short int direction = ABCircle(a, b);
 
         if (!direction) return false;
@@ -300,8 +320,8 @@ namespace r3e {
         auto a_offset = a.getCollisionArea().getOffset();
         auto b_offset = b.getCollisionArea().getOffset();
 
-        static auto CircleCircleResponse_ = [](DynamicObject &a, DynamicObject &b, const sf::Vector2f &a_size,
-                                               const sf::Vector2f &b_size, const sf::Vector2f &p) {
+        static auto CircleCircleResponse_ = [](DynamicObject& a, DynamicObject& b, const sf::Vector2f& a_size,
+                                               const sf::Vector2f& b_size, const sf::Vector2f& p) {
             sf::Vector2f distance = b.getPosition() + b.getCollisionArea().getOffset() - p;
 
             if (utils::num::isNearlyEqual(distance, {}, 0.001))
@@ -319,7 +339,8 @@ namespace r3e {
             b.setForcedVelocity(b.getVelocity() - utils::geo::dotProduct(b.getVelocity(), unit) * unit);
         };
 
-        switch (direction) {
+        switch (direction)
+        {
             case 1:
                 Collisions::setVerifiedPositionX(a, b_pos.x + b_offset.x - a_offset.x + b_r +
                                                     std::get<2>(a_bounds).x / 2.0f + 1.0f);
@@ -366,7 +387,8 @@ namespace r3e {
         return true;
     }
 
-    bool Collisions::AABBResponse(DynamicObject &a, const StaticObject &b) {
+    bool Collisions::AABBResponse(DynamicObject& a, const StaticObject& b)
+    {
         short int direction = AABB(a, b);
 
         if (!direction) return false;
@@ -375,7 +397,8 @@ namespace r3e {
         auto b_bounds = utils::geo::generateCollisionAABB(b);
         auto a_offset = a.getCollisionArea().getOffset();
 
-        switch (direction) {
+        switch (direction)
+        {
             case 1:
                 Collisions::setVerifiedPositionX(a,
                                                  std::get<0>(b_bounds).x - a_offset.x - std::get<2>(a_bounds).x / 2.0f -
@@ -406,7 +429,8 @@ namespace r3e {
     }
 
 
-    bool Collisions::AABBResponse(DynamicObject &a, DynamicObject &b) {
+    bool Collisions::AABBResponse(DynamicObject& a, DynamicObject& b)
+    {
         short int direction = AABB(a, b);
 
         if (!direction) return false;
@@ -417,7 +441,8 @@ namespace r3e {
         auto a_offset = a.getCollisionArea().getOffset();
         auto b_offset = b.getCollisionArea().getOffset();
 
-        switch (direction) {
+        switch (direction)
+        {
             case 1:
                 Collisions::setVerifiedPositionX(a,
                                                  std::get<0>(b_bounds).x - a_offset.x - std::get<2>(a_bounds).x / 2.0f -
@@ -460,8 +485,10 @@ namespace r3e {
         return true;
     }
 
-    bool Collisions::circleCircleResponse(DynamicObject &a, const StaticObject &b) {
-        if (circleCircle(a, b)) {
+    bool Collisions::circleCircleResponse(DynamicObject& a, const StaticObject& b)
+    {
+        if (circleCircle(a, b))
+        {
             sf::Vector2f distance = a.getPosition() + a.getCollisionArea().getOffset() - b.getPosition() -
                                     b.getCollisionArea().getOffset();
 
@@ -479,8 +506,10 @@ namespace r3e {
         return false;
     }
 
-    bool Collisions::circleCircleResponse(DynamicObject &a, DynamicObject &b) {
-        if (circleCircle(a, b)) {
+    bool Collisions::circleCircleResponse(DynamicObject& a, DynamicObject& b)
+    {
+        if (circleCircle(a, b))
+        {
             sf::Vector2f distance = a.getPosition() + a.getCollisionArea().getOffset() - b.getPosition() -
                                     b.getCollisionArea().getOffset();
 
@@ -503,8 +532,10 @@ namespace r3e {
         return false;
     }
 
-    void Collisions::blockNormalVelocity(DynamicObject &a, short int dir) {
-        switch (dir) {
+    void Collisions::blockNormalVelocity(DynamicObject& a, short int dir)
+    {
+        switch (dir)
+        {
             case 1:
             case 3:
                 a.setForcedVelocity({0.0f, a.getVelocity().y});
@@ -518,7 +549,8 @@ namespace r3e {
         }
     }
 
-    void Collisions::setVerifiedPosition(StaticObject &a, const sf::Vector2f &pos) {
+    void Collisions::setVerifiedPosition(StaticObject& a, const sf::Vector2f& pos)
+    {
         float threshold = a.getCollisionArea().getA() / 2.0f;
         if (utils::geo::getDistance(pos, a.getPosition()) < threshold)
             a.setPosition(pos);
@@ -526,11 +558,13 @@ namespace r3e {
             a.setPosition(a.getPosition() + utils::geo::vectorLengthLimit(pos - a.getPosition(), threshold));
     }
 
-    void Collisions::setVerifiedPositionX(StaticObject &a, float x) {
+    void Collisions::setVerifiedPositionX(StaticObject& a, float x)
+    {
         Collisions::setVerifiedPosition(a, {x, a.getPosition().y});
     }
 
-    void Collisions::setVerifiedPositionY(StaticObject &a, float y) {
+    void Collisions::setVerifiedPositionY(StaticObject& a, float y)
+    {
         Collisions::setVerifiedPosition(a, {a.getPosition().x, y});
     }
 

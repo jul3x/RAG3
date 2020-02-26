@@ -13,11 +13,12 @@
 
 #include <SFML/System/Vector2.hpp>
 
+
 namespace r3e {
     namespace ai {
         using NeighboursVec = std::vector<sf::Vector2<size_t>>;
         using Grid = std::vector<std::vector<bool>>;
-        using NeighbourFunction = std::function<NeighboursVec(const Grid &grid, const sf::Vector2<size_t> &)>;
+        using NeighbourFunction = std::function<NeighboursVec(const Grid& grid, const sf::Vector2<size_t>&)>;
 
         using Path = std::list<std::pair<sf::Vector2f, float>>;
         using Goal = sf::Vector2f;

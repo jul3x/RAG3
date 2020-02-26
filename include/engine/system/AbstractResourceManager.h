@@ -16,6 +16,7 @@
 
 #include <engine/utils/Parser.h>
 
+
 namespace r3e {
 
     class AbstractResourceManager {

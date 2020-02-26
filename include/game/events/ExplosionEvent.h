@@ -16,7 +16,7 @@ public:
     ExplosionEvent() = delete;
 
     ExplosionEvent(const sf::Vector2f& position,
-                       float radius);
+                   float radius);
 
 private:
     static constexpr short int MAX_FRAMES_COUNT_ = 64;

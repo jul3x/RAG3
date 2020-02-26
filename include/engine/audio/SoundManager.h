@@ -18,7 +18,7 @@ namespace r3e {
         public:
             explicit SoundManager(float attenuation);
 
-            void playSound(const sf::SoundBuffer &buffer, const sf::Vector2f &position, float volume);
+            void playSound(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume);
 
             void update(float time_elapsed);
 

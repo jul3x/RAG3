@@ -8,89 +8,76 @@
 #include <engine/objects/AbstractDrawableObject.h>
 
 
-AbstractDrawableObject::AbstractDrawableObject() : is_visible_(true)
-{
-}
+namespace r3e {
 
-
-AbstractDrawableObject::AbstractDrawableObject(const sf::Vector2f& position,
-                                               const sf::Vector2f& size,
-                                               sf::Texture* texture) :
-        is_visible_(true)
-{
-    if (texture != nullptr)
-    {
-        shape_.setPosition(position);
-        shape_.setSize(size);
-        shape_.setOrigin(size.x / 2.0f, size.y / 2.0f);
-        shape_.setTexture(texture);
+    AbstractDrawableObject::AbstractDrawableObject() : is_visible_(true) {
     }
-}
 
-const sf::Vector2f& AbstractDrawableObject::getPosition() const
-{
-    return shape_.getPosition();
-}
 
-const sf::Vector2f& AbstractDrawableObject::getSize() const
-{
-    return shape_.getSize();
-}
+    AbstractDrawableObject::AbstractDrawableObject(const sf::Vector2f &position,
+                                                   const sf::Vector2f &size,
+                                                   sf::Texture *texture) :
+            is_visible_(true) {
+        if (texture != nullptr) {
+            shape_.setPosition(position);
+            shape_.setSize(size);
+            shape_.setOrigin(size.x / 2.0f, size.y / 2.0f);
+            shape_.setTexture(texture);
+        }
+    }
 
-float AbstractDrawableObject::getRotation() const
-{
-    return shape_.getRotation();
-}
+    const sf::Vector2f &AbstractDrawableObject::getPosition() const {
+        return shape_.getPosition();
+    }
 
-bool AbstractDrawableObject::isVisible() const
-{
-    return is_visible_;
-}
+    const sf::Vector2f &AbstractDrawableObject::getSize() const {
+        return shape_.getSize();
+    }
 
-void AbstractDrawableObject::setPosition(const sf::Vector2f& position)
-{
-    shape_.setPosition(position);
-}
+    float AbstractDrawableObject::getRotation() const {
+        return shape_.getRotation();
+    }
 
-void AbstractDrawableObject::setPosition(float x, float y)
-{
-    shape_.setPosition({x, y});
-}
+    bool AbstractDrawableObject::isVisible() const {
+        return is_visible_;
+    }
 
-void AbstractDrawableObject::setPositionX(float x)
-{
-    shape_.setPosition({x, this->getPosition().y});
-}
+    void AbstractDrawableObject::setPosition(const sf::Vector2f &position) {
+        shape_.setPosition(position);
+    }
 
-void AbstractDrawableObject::setPositionY(float y)
-{
-    shape_.setPosition({this->getPosition().x, y});
-}
+    void AbstractDrawableObject::setPosition(float x, float y) {
+        shape_.setPosition({x, y});
+    }
 
-void AbstractDrawableObject::setRotation(float angle_deg)
-{
-    shape_.setRotation(angle_deg);
-}
+    void AbstractDrawableObject::setPositionX(float x) {
+        shape_.setPosition({x, this->getPosition().y});
+    }
 
-void AbstractDrawableObject::setSize(const sf::Vector2f& size)
-{
-    shape_.setSize(size);
-}
+    void AbstractDrawableObject::setPositionY(float y) {
+        shape_.setPosition({this->getPosition().x, y});
+    }
 
-void AbstractDrawableObject::setVisibility(const sf::View& view)
-{
-    // visibility is checked on bigger view (e.g. to avoid tunnelling)
-    is_visible_ = utils::geo::AABB(view.getCenter(), view.getSize() + sf::Vector2f{300.0f, 300.0f},
-                                   this->getPosition(), this->getSize()) > 0;
-}
+    void AbstractDrawableObject::setRotation(float angle_deg) {
+        shape_.setRotation(angle_deg);
+    }
 
-void AbstractDrawableObject::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-    target.draw(shape_, states);
-}
+    void AbstractDrawableObject::setSize(const sf::Vector2f &size) {
+        shape_.setSize(size);
+    }
 
-void AbstractDrawableObject::setColor(int r, int g, int b, int a)
-{
-    shape_.setFillColor(sf::Color(r, g, b, a));
-}
+    void AbstractDrawableObject::setVisibility(const sf::View &view) {
+        // visibility is checked on bigger view (e.g. to avoid tunnelling)
+        is_visible_ = utils::geo::AABB(view.getCenter(), view.getSize() + sf::Vector2f{300.0f, 300.0f},
+                                       this->getPosition(), this->getSize()) > 0;
+    }
 
+    void AbstractDrawableObject::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+        target.draw(shape_, states);
+    }
+
+    void AbstractDrawableObject::setColor(int r, int g, int b, int a) {
+        shape_.setFillColor(sf::Color(r, g, b, a));
+    }
+
+} // namespace r3e

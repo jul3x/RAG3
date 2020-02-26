@@ -10,6 +10,7 @@
 
 #include <game/characters/Character.h>
 
+using namespace r3e;
 
 class Enemy : public Character, public ai::AbstractAgent {
 public:

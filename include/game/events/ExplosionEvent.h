@@ -8,7 +8,9 @@
 #include <engine/graphics/AnimationEvent.h>
 
 
-class ExplosionEvent : public AnimationEvent {
+using namespace r3e;
+
+class ExplosionEvent : public graphics::AnimationEvent {
 
 public:
     ExplosionEvent() = delete;

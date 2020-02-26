@@ -11,6 +11,8 @@
 #include <engine/objects/AbstractDrawableObject.h>
 
 
+using namespace r3e;
+
 class AbstractWeapon : public AbstractDrawableObject {
 public:
     AbstractWeapon(const sf::Vector2f& size,

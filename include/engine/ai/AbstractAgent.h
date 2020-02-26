@@ -12,37 +12,40 @@
 #include <engine/ai/DataTypes.h>
 
 
-namespace ai {
-    class AgentsManager;
+namespace r3e {
+    namespace ai {
 
-    class AbstractAgent {
-    public:
-        explicit AbstractAgent(AgentsManager& manager);
+        class AgentsManager;
 
-        virtual ~AbstractAgent();
+        class AbstractAgent {
+        public:
+            explicit AbstractAgent(AgentsManager &manager);
 
-        void setCurrentGoal(const ai::Goal& goal);
+            virtual ~AbstractAgent();
 
-        void setNoGoal();
+            void setCurrentGoal(const ai::Goal &goal);
 
-        const sf::Vector2f& getWanderingDirection(float constraint, float max_time_ms, int when_opposite);
+            void setNoGoal();
 
-        const ai::Goal& getCurrentGoal() const;
+            const sf::Vector2f &getWanderingDirection(float constraint, float max_time_ms, int when_opposite);
 
-        virtual const sf::Vector2f& getStartPosition() const = 0;
+            const ai::Goal &getCurrentGoal() const;
 
-        const ai::Path& getPath() const;
+            virtual const sf::Vector2f &getStartPosition() const = 0;
 
-        sf::Vector2f generateVelocityForPath() const;
+            const ai::Path &getPath() const;
 
-    private:
-        AgentsManager& manager_;
+            sf::Vector2f generateVelocityForPath() const;
 
-        ai::Timestamp latest_wander_point_time_;
-        sf::Vector2f wandering_direction_;
+        private:
+            AgentsManager &manager_;
 
-    };
+            ai::Timestamp latest_wander_point_time_;
+            sf::Vector2f wandering_direction_;
 
-} // namespace ai
+        };
+
+    } // namespace ai
+} // namespace r3e
 
 #endif //RAG3_ENGINE_AI_ABSTRACTAGENT_H

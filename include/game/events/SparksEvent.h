@@ -8,7 +8,9 @@
 #include <engine/graphics/AnimationEvent.h>
 
 
-class SparksEvent : public AnimationEvent {
+using namespace r3e;
+
+class SparksEvent : public graphics::AnimationEvent {
 
 public:
     SparksEvent() = delete;

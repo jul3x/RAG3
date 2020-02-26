@@ -11,6 +11,8 @@
 #include <engine/objects/AbstractDrawableObject.h>
 
 
+using namespace r3e;
+
 class HealthBar : public AbstractDrawableObject {
 public:
     explicit HealthBar(const sf::Vector2f &position);

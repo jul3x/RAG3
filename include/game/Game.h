@@ -19,6 +19,7 @@
 #include <game/ui/UserInterface.h>
 
 
+using namespace r3e;
 
 class Game : public AbstractGame {
 
@@ -51,7 +52,7 @@ public:
 
     void update(float time_elapsed) override;
 
-    void draw(Graphics& graphics) override;
+    void draw(graphics::Graphics& graphics) override;
 
     void alertCollision(HoveringObject* h_obj, StaticObject* s_obj) override;
 

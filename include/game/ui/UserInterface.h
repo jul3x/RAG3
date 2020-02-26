@@ -15,6 +15,8 @@
 #include <engine/system/AbstractUserInterface.h>
 
 
+using namespace r3e;
+
 class UserInterface : public AbstractUserInterface {
 
 public:
@@ -24,9 +26,9 @@ public:
 
     UserInterface& operator=(const UserInterface&) = delete;
 
-    void initialize(Graphics &graphics) override;
+    void initialize(graphics::Graphics &graphics) override;
 
-    void handleEvents(Graphics &graphics, float time_elapsed) override;
+    void handleEvents(graphics::Graphics &graphics, float time_elapsed) override;
 
     void registerPlayer(Player* player);
 

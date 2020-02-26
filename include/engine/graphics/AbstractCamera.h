@@ -10,40 +10,46 @@
 #include <SFML/System/Vector2.hpp>
 
 
-class AbstractCamera {
-public:
-    AbstractCamera() = default;
+namespace r3e {
+    namespace graphics {
 
-    virtual void update(float time_elapsed) = 0;
+        class AbstractCamera {
+        public:
+            AbstractCamera() = default;
 
-    sf::Vector3f& getViewCenter() {
-        return center_;
-    }
+            virtual void update(float time_elapsed) = 0;
 
-    sf::Vector2f& getViewSize() {
-        return view_size_;
-    }
+            sf::Vector3f& getViewCenter() {
+                return center_;
+            }
 
-    void setPointingTo(const sf::Vector2f& position) {
-        pointing_to_ = position;
-    }
+            sf::Vector2f& getViewSize() {
+                return view_size_;
+            }
 
-    void setViewNormalSize(const sf::Vector2f& size) {
-        view_normal_size_ = size;
-    }
+            void setPointingTo(const sf::Vector2f& position) {
+                pointing_to_ = position;
+            }
 
-    void setZoomTo(float zoom) {
-        zoom_to_ = zoom;
-    }
+            void setViewNormalSize(const sf::Vector2f& size) {
+                view_normal_size_ = size;
+            }
 
-protected:
-    sf::Vector3f center_;
-    sf::Vector2f pointing_to_;
-    sf::Vector2f view_size_;
-    sf::Vector2f view_normal_size_;
+            void setZoomTo(float zoom) {
+                zoom_to_ = zoom;
+            }
 
-    float zoom_to_;
-    float time_elapsed_;
-};
+        protected:
+            sf::Vector3f center_;
+            sf::Vector2f pointing_to_;
+            sf::Vector2f view_size_;
+            sf::Vector2f view_normal_size_;
+
+            float zoom_to_;
+            float time_elapsed_;
+        };
+
+    } // namespace graphics
+} // namespace r3e
 
 #endif // RAG3_ENGINE_GRAPHICS_ABSTRACTCAMERA_H

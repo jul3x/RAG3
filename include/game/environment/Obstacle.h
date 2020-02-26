@@ -11,6 +11,8 @@
 #include <game/misc/Shootable.h>
 
 
+using namespace r3e;
+
 class Obstacle : public StaticObject, public Shootable {
 public:
     Obstacle(const sf::Vector2f& position,

@@ -13,6 +13,8 @@
 #include <game/environment/Decoration.h>
 
 
+using namespace r3e;
+
 class Map {
 public:
     Map() = default;

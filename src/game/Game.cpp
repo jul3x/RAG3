@@ -92,7 +92,7 @@ void Game::update(float time_elapsed)
     music_manager_->update(time_elapsed);
 }
 
-void Game::draw(Graphics& graphics)
+void Game::draw(graphics::Graphics& graphics)
 {
     for (auto& decoration : map_->getDecorations())
         graphics.draw(decoration);

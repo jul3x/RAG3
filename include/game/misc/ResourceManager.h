@@ -13,6 +13,8 @@
 #include <engine/system/AbstractResourceManager.h>
 
 
+using namespace r3e;
+
 class ResourceManager : public AbstractResourceManager {
 
 public:

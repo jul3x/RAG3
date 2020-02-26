@@ -18,7 +18,7 @@ UserInterface::UserInterface() :
         player_(nullptr),
         camera_(nullptr) {}
 
-void UserInterface::initialize(Graphics& graphics)
+void UserInterface::initialize(graphics::Graphics& graphics)
 {
     if (player_ == nullptr || camera_ == nullptr)
     {
@@ -40,7 +40,7 @@ void UserInterface::registerCamera(Camera* camera)
     camera_ = camera;
 }
 
-void UserInterface::handleEvents(Graphics& graphics, float time_elapsed)
+void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapsed)
 {
     static sf::Event event;
 

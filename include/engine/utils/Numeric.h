@@ -10,7 +10,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
-
+namespace r3e {
 namespace utils {
 namespace num {
     template<class T>
@@ -41,6 +41,6 @@ namespace num {
 
 } // namespace num
 } // namespace utils
-
+} // namespace r3e
 
 #endif // RAG3_ENGINE_UTILS_NUMERIC_H

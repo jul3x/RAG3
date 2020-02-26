@@ -9,6 +9,8 @@
 #include <engine/objects/AbstractPhysicalObject.h>
 
 
+using namespace r3e;
+
 struct BulletDescription {
     float speed_;
     float life_;

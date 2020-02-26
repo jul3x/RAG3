@@ -9,6 +9,8 @@
 #include <game/characters/Player.h>
 
 
+using namespace r3e;
+
 class BloodSplash : public AbstractDrawableObject {
 public:
     explicit BloodSplash(const sf::Vector2f& size);

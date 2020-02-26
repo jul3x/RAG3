@@ -10,46 +10,48 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 
+namespace r3e {
+    class AbstractDrawableObject : public sf::Drawable {
+    public:
+        AbstractDrawableObject();
 
-class AbstractDrawableObject : public sf::Drawable {
-public:
-    AbstractDrawableObject();
+        AbstractDrawableObject(const sf::Vector2f& position,
+                               const sf::Vector2f& size,
+                               sf::Texture* texture_name);
 
-    AbstractDrawableObject(const sf::Vector2f& position,
-                           const sf::Vector2f& size,
-                           sf::Texture* texture_name);
+        const sf::Vector2f& getPosition() const;
 
-    const sf::Vector2f& getPosition() const;
+        const sf::Vector2f& getSize() const;
 
-    const sf::Vector2f& getSize() const;
+        float getRotation() const;
 
-    float getRotation() const;
+        bool isVisible() const;
 
-    bool isVisible() const;
+        virtual void setPosition(const sf::Vector2f& position);
 
-    virtual void setPosition(const sf::Vector2f& position);
+        virtual void setPosition(float x, float y);
 
-    virtual void setPosition(float x, float y);
+        virtual void setPositionX(float x);
 
-    virtual void setPositionX(float x);
+        virtual void setPositionY(float y);
 
-    virtual void setPositionY(float y);
+        virtual void setRotation(float angle_deg);
 
-    virtual void setRotation(float angle_deg);
+        virtual void setSize(const sf::Vector2f& size);
 
-    virtual void setSize(const sf::Vector2f& size);
+        virtual void setVisibility(const sf::View& view);
 
-    virtual void setVisibility(const sf::View& view);
+        void setColor(int r, int g, int b, int a);
 
-    void setColor(int r, int g, int b, int a);
+    protected:
+        sf::RectangleShape shape_;
+        bool is_visible_;
 
-protected:
-    sf::RectangleShape shape_;
-    bool is_visible_;
+    private:
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-private:
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    };
 
-};
+} // namespace r3e
 
 #endif // RAG3_ENGINE_OBJECTS_ABSTRACTDRAWABLEOBJECT_H

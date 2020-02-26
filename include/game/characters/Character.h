@@ -16,6 +16,7 @@
 #include <game/weapons/Bullet.h>
 #include <game/misc/Shootable.h>
 
+using namespace r3e;
 
 class Character : public DynamicObject, public Shootable {
 public:

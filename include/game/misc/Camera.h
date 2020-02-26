@@ -9,7 +9,9 @@
 #include <engine/graphics/AbstractCamera.h>
 
 
-class Camera : public AbstractCamera {
+using namespace r3e;
+
+class Camera : public graphics::AbstractCamera {
 public:
     Camera();
 

@@ -69,5 +69,9 @@ void BloodSplash::draw(sf::RenderTarget& target, sf::RenderStates states) const
             target.draw(dead_, states);
             break;
         }
+        default:
+        {
+            break;
+        }
     }
 }

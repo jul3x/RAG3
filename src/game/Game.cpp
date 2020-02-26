@@ -13,7 +13,7 @@
 #include <game/Game.h>
 
 
-Game::Game()
+Game::Game() : current_time_factor_(1.0f)
 {
     engine_ = std::make_unique<Engine>();
     engine_->registerGame(this);

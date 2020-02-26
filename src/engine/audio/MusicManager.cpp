@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <experimental/filesystem>
 
 #include <engine/audio/MusicManager.h>
 
@@ -20,6 +21,32 @@ namespace audio {
         music_list_.push_back(music);
 
         if (music_list_.size() == 1) current_song_ = music_list_.begin();
+    }
+
+    void MusicManager::addToQueue(const std::string& name)
+    {
+        music_owned_.emplace_back();
+        if (!music_owned_.back().openFromFile(name))
+        {
+            std::cerr << "[MusicManager] " << name << " music file not successfully loaded." << std::endl;
+        }
+        else
+        {
+            addToQueue(&music_owned_.back());
+            std::cout << "[MusicManager] Music " << name << " is loaded!" << std::endl;
+        }
+    }
+
+    void MusicManager::addDirectoryToQueue(const std::string& dir)
+    {
+        std::experimental::filesystem::path path(dir);
+        for (const auto& f : std::experimental::filesystem::recursive_directory_iterator(path))
+        {
+            if (!std::experimental::filesystem::is_directory(f))
+            {
+                this->addToQueue(f.path().string());
+            }
+        }
     }
 
     void MusicManager::play()

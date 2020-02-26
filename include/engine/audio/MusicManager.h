@@ -9,6 +9,7 @@
 
 #include <SFML/Audio/Music.hpp>
 
+
 namespace audio {
 
     class MusicManager {
@@ -21,6 +22,10 @@ namespace audio {
         MusicManager();
 
         void addToQueue(sf::Music* music);
+
+        void addToQueue(const std::string& name);
+
+        void addDirectoryToQueue(const std::string& dir);
 
         void setVolume(float volume);
 
@@ -35,6 +40,8 @@ namespace audio {
     private:
         std::list<sf::Music*> music_list_;
         std::list<sf::Music*>::iterator current_song_;
+
+        std::list<sf::Music> music_owned_;
 
         Status status_;
         float current_pitch_, current_volume_;

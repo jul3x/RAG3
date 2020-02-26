@@ -31,8 +31,7 @@ void Game::initialize()
                                                           1000); // max search of path
 
     music_manager_ = std::make_unique<audio::MusicManager>();
-    music_manager_->addToQueue(&RM.getMusic("Dailucia_InTheEnd"));
-    music_manager_->addToQueue(&RM.getMusic("Meltdown_TheNextLevel"));
+    music_manager_->addDirectoryToQueue("../data/music");
 
 
     music_manager_->setVolume(50.0f);

@@ -18,6 +18,10 @@ UserInterface::UserInterface() :
                                                             WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom")}),
         health_bar_({HEALTH_BAR_X_ * CFG.getFloat("user_interface_zoom"),
                      HEALTH_BAR_Y_ * CFG.getFloat("user_interface_zoom")}),
+        logo_(sf::Vector2f{CFG.getInt("window_width_px") - LOGO_OFF_X_ * CFG.getFloat("user_interface_zoom"),
+                           LOGO_OFF_Y_ * CFG.getFloat("user_interface_zoom")},
+              CFG.getFloat("user_interface_zoom") * sf::Vector2f{LOGO_SIZE_X_, LOGO_SIZE_Y_},
+              &RM.getTexture("rag3_logo")),
         fps_text_("FPS: ", RM.getFont(), 30),
         player_(nullptr),
         camera_(nullptr) {}
@@ -85,6 +89,8 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 
                 weapons_bar_.setPosition(event.size.width / 2.0f,
                                          event.size.height - WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom"));
+                logo_.setPosition(event.size.width - LOGO_OFF_X_ * CFG.getFloat("user_interface_zoom"),
+                                  LOGO_OFF_Y_ * CFG.getFloat("user_interface_zoom"));
 
                 camera_->setViewNormalSize(visible_area);
                 blood_splash_.resizeWindow(visible_area);
@@ -129,6 +135,7 @@ void UserInterface::draw(sf::RenderTarget& target, sf::RenderStates states) cons
     target.draw(weapons_bar_, states);
     target.draw(health_bar_, states);
     target.draw(fps_text_, states);
+    target.draw(logo_, states);
     target.draw(crosshair_, states);
 }
 

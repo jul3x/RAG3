@@ -46,6 +46,12 @@ private:
     inline void updatePlayerStates();
 
     static constexpr float WEAPONS_BAR_OFF_Y_ = 70.0f;
+
+    static constexpr float LOGO_OFF_X_ = 240.0f;
+    static constexpr float LOGO_OFF_Y_ = 120.0f;
+    static constexpr float LOGO_SIZE_X_ = 512.0f;
+    static constexpr float LOGO_SIZE_Y_ = 288.0f;
+
     static constexpr float HEALTH_BAR_X_ = 150.0f;
     static constexpr float HEALTH_BAR_Y_ = 50.0f;
 
@@ -56,6 +62,8 @@ private:
     HealthBar health_bar_;
     Crosshair crosshair_;
     BloodSplash blood_splash_;
+
+    AbstractDrawableObject logo_;
 
     sf::Text fps_text_;
 

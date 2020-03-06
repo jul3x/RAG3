@@ -98,16 +98,20 @@ void Game::draw(graphics::Graphics& graphics)
         graphics.draw(decoration);
 
     for (auto& obstacle : map_->getObstacles())
-        graphics.draw(obstacle);
+        graphics.drawSorted(obstacle);
 
     for (auto& enemy : map_->getEnemies())
-        graphics.draw(enemy);
+        graphics.drawSorted(enemy);
 
     for (auto& bullet : bullets_)
-        graphics.draw(*bullet);
+        graphics.drawSorted(*bullet);
 
     if (player_->isAlive())
-        graphics.draw(*player_);
+        graphics.drawSorted(*player_);
+
+    engine_->drawSortedAnimationEvents();
+
+    graphics.drawAlreadySorted();
 }
 
 void Game::start()

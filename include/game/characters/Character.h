@@ -89,8 +89,9 @@ private:
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    static constexpr float COLLISION_RADIUS_ = 35.0f;
-    static constexpr float COLLISION_OFFSET_Y_ = 15.0f;
+    static constexpr float COLLISION_SIZE_X_ = 44.0f;
+    static constexpr float COLLISION_SIZE_Y_ = 80.0f;
+    static constexpr float COLLISION_OFFSET_Y_ = 10.0f;
 
     static constexpr float SIZE_X_ = 49.0f;
     static constexpr float SIZE_Y_ = 120.0f;

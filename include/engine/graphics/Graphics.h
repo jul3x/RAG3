@@ -5,6 +5,8 @@
 #ifndef RAG3_ENGINE_GRAPHICS_GRAPHICS_H
 #define RAG3_ENGINE_GRAPHICS_GRAPHICS_H
 
+#include <set>
+
 #include <SFML/Graphics.hpp>
 
 #include <engine/objects/AbstractDrawableObject.h>
@@ -47,6 +49,10 @@ namespace r3e {
 
             void draw(AbstractDrawableObject& object);
 
+            void drawSorted(AbstractDrawableObject& object);
+
+            void drawAlreadySorted();
+
             void display();
 
         private:
@@ -56,6 +62,8 @@ namespace r3e {
             sf::View static_view_;
 
             sf::Color bg_color_;
+
+            std::set<AbstractDrawableObject*, AbstractDrawableObjectsCmp> sorted_drawables_;
 
         };
 

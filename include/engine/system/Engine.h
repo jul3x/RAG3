@@ -66,6 +66,10 @@ namespace r3e {
 
         void start();
 
+        void drawAnimationEvents();
+
+        void drawSortedAnimationEvents();
+
         static void changeSoundListenerPosition(const sf::Vector2f& pos);
 
         static sf::Vector2i detectResolution();

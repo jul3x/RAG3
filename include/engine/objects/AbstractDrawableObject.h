@@ -55,6 +55,14 @@ namespace r3e {
 
     };
 
+    struct AbstractDrawableObjectsCmp {
+        bool operator()(const AbstractDrawableObject* lhs, const AbstractDrawableObject* rhs) const
+        {
+            return (lhs->getPosition().y < rhs->getPosition().y) ||
+                   (lhs->getPosition().y == rhs->getPosition().y && lhs->getPosition().x < rhs->getPosition().x);
+        }
+    };
+
 } // namespace r3e
 
 #endif // RAG3_ENGINE_OBJECTS_ABSTRACTDRAWABLEOBJECT_H

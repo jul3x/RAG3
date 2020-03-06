@@ -82,6 +82,7 @@ namespace r3e {
         void Graphics::clear()
         {
             window_.clear(bg_color_);
+            sorted_drawables_.clear();
         }
 
         void Graphics::draw(AbstractDrawableObject& object)
@@ -89,6 +90,19 @@ namespace r3e {
             object.setVisibility(window_.getView());
             if (object.isVisible())
                 window_.draw(object);
+        }
+
+        void Graphics::drawSorted(AbstractDrawableObject& object)
+        {
+            object.setVisibility(window_.getView());
+            if (object.isVisible())
+                sorted_drawables_.insert(&object);
+        }
+
+        void Graphics::drawAlreadySorted()
+        {
+            for (auto &object : sorted_drawables_)
+                window_.draw(*object);
         }
 
         void Graphics::display()

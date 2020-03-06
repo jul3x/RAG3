@@ -155,11 +155,6 @@ namespace r3e {
 
         game_->draw(*graphics_);
 
-        for (const auto& animation : animation_events_)
-        {
-            graphics_->draw(*animation);
-        }
-
         graphics_->setStaticView();
         graphics_->draw(*ui_);
         graphics_->setCurrentView();
@@ -181,6 +176,22 @@ namespace r3e {
     float Engine::getCurrentFPS() const
     {
         return 1.0f / (frame_time_);
+    }
+
+    void Engine::drawSortedAnimationEvents()
+    {
+        for (const auto& animation : animation_events_)
+        {
+            graphics_->drawSorted(*animation);
+        }
+    }
+
+    void Engine::drawAnimationEvents()
+    {
+        for (const auto& animation : animation_events_)
+        {
+            graphics_->draw(*animation);
+        }
     }
 
 } // namespace r3e

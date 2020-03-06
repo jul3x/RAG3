@@ -13,9 +13,9 @@ void Map::loadMap(const std::string& name)
 {
     sf::Vector2i size_i;
     std::tie(size_i, blocked_.blockage_, obstacles_, decorations_) = ResourceManager::getMap(name);
-    blocked_.scale_x_ = Obstacle::SIZE_X_;
-    blocked_.scale_y_ = Obstacle::SIZE_Y_;
-    size_ = {size_i.x * Obstacle::SIZE_X_, size_i.y * Obstacle::SIZE_Y_};
+    blocked_.scale_x_ = Obstacle::COLLISION_SIZE_X_;
+    blocked_.scale_y_ = Obstacle::COLLISION_SIZE_Y_;
+    size_ = {size_i.x * Obstacle::COLLISION_SIZE_X_, size_i.y * Obstacle::COLLISION_SIZE_Y_};
 
     enemies_.emplace_back(sf::Vector2f{1400.0f, 1200.0f}, sf::Vector2f{0.0f, 0.0f});
     enemies_.emplace_back(sf::Vector2f{70.0f, 70.0f}, sf::Vector2f{0.0f, 0.0f});
@@ -65,14 +65,15 @@ bool Map::update(float time_elapsed)
         if (!it->update(time_elapsed))
         {
             // draw on this place destruction
-            spawnDecoration(it->getPosition(), Decoration::Type::DestroyedWall);
+            spawnDecoration(it->getPosition() + sf::Vector2f{0.0f, Obstacle::COLLISION_OFFSET_Y_},
+                            Decoration::Type::DestroyedWall);
             Game::get().spawnExplosionEvent(it->getPosition(), 25.0f);
 
             auto next_it = std::next(it);
             Game::get().deleteStaticObject(&*it);
 
-            auto grid_pos = std::make_pair(static_cast<size_t>(it->getPosition().x / Obstacle::SIZE_X_),
-                                           static_cast<size_t>(it->getPosition().y / Obstacle::SIZE_Y_));
+            auto grid_pos = std::make_pair(static_cast<size_t>(it->getPosition().x / Obstacle::COLLISION_SIZE_X_),
+                                           static_cast<size_t>(it->getPosition().y / Obstacle::COLLISION_SIZE_Y_));
             blocked_.blockage_.at(grid_pos.first).at(grid_pos.second) = false;
             obstacles_.erase(it);
             it = next_it;

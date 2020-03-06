@@ -29,7 +29,7 @@ ShootingWeapon::ShootingWeapon(float bullet_timeout,
     if (ammunition <= 0 || bullet_timeout <= 0.0f)
         throw std::invalid_argument("[ShootingWeapon] Constructor parameters are invalid!");
 
-    shape_.setOrigin(size / 2.0f - weapon_offset_);
+    shape_.setOrigin({weapon_offset.x, size.y / 2.0f + weapon_offset.y});
 }
 
 sf::Vector2f ShootingWeapon::use()
@@ -42,7 +42,7 @@ sf::Vector2f ShootingWeapon::use()
         auto sine = static_cast<float>(std::sin(this->getRotation() * M_PI / 180.0f));
         auto cosine = static_cast<float>(std::cos(this->getRotation() * M_PI / 180.0f));
         auto offset_position = this->getPosition();
-        auto weapon_size = weapon_offset_ + sf::Vector2f{this->getSize().x, 0.0f} / 2.0f;
+        auto weapon_size = sf::Vector2f{this->getSize().x - weapon_offset_.x, 0.0f};
         offset_position.x += weapon_size.x * cosine - weapon_size.y * sine;
         offset_position.y += weapon_size.x * sine + weapon_size.y * cosine;
 

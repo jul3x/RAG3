@@ -66,6 +66,8 @@ public:
 
     void setRotation(float theta) override;
 
+    float getRotation() const override;
+
     void setWeaponPointing(const sf::Vector2f& point);
 
     bool isAlreadyRotated() const;
@@ -87,9 +89,13 @@ private:
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    static constexpr float SIZE_X_ = 100.0f;
-    static constexpr float SIZE_Y_ = 100.0f;
+    static constexpr float COLLISION_RADIUS_ = 35.0f;
+    static constexpr float COLLISION_OFFSET_Y_ = 15.0f;
 
+    static constexpr float SIZE_X_ = 49.0f;
+    static constexpr float SIZE_Y_ = 120.0f;
+
+    sf::Vector2f gun_offset_;
     float rotate_to_;
 
 };

@@ -19,14 +19,15 @@ Character::Character(const sf::Vector2f& position,
         DynamicObject(position,
                       velocity,
                       {SIZE_X_, SIZE_Y_},
-                      Collision::Circle((SIZE_X_ - 5.0f) / 2.0f),
-                      &RM.getTexture("player"),
+                      Collision::Circle(COLLISION_RADIUS_, {0.0f, COLLISION_OFFSET_Y_}),
+                      &RM.getTexture("player_1"),
                       sf::Color(CFG.getInt("trail_color")),
                       CFG.getFloat("max_acceleration")),
         max_life_(max_life),
         ammo_state_(AmmoState::High),
         life_state_(LifeState::High),
         path_(nullptr),
+        gun_offset_({CFG.getFloat("gun_offset_x"), CFG.getFloat("gun_offset_y")}),
         Shootable(max_life) {}
 
 bool Character::shot()
@@ -123,7 +124,7 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
     text.setString("Life: " + std::to_string(life_) + "/" + std::to_string(max_life_) + "\n" +
                    "Ammo: " + std::to_string((*current_weapon_)->getState()) + "%");
 
-    target.draw(text, states);
+//    target.draw(text, states);
 
     static sf::VertexArray path(sf::LineStrip);
     path.clear();
@@ -139,50 +140,66 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(path, states);
 }
 
+void Character::setRotation(float theta)
+{
+    (*current_weapon_)->setRotation(theta);
+
+    if (theta >= 0.0f && theta < 90.0f)
+    {
+        shape_.setTexture(&RM.getTexture("player_1"));
+        gun_offset_.x = CFG.getFloat("gun_offset_x");
+        gun_offset_.y = CFG.getFloat("gun_offset_y");
+    }
+    else if (theta >= 90.0f && theta < 180.0f)
+    {
+        shape_.setTexture(&RM.getTexture("player_2"));
+        gun_offset_.x = -CFG.getFloat("gun_offset_x");
+        gun_offset_.y = CFG.getFloat("gun_offset_y");
+    }
+    else if (theta >= 180.0f && theta < 270.0f)
+    {
+        shape_.setTexture(&RM.getTexture("player_3"));
+        gun_offset_.x = -CFG.getFloat("gun_offset_x");
+        gun_offset_.y = CFG.getFloat("gun_offset_y");
+    }
+    else
+    {
+        shape_.setTexture(&RM.getTexture("player_4"));
+        gun_offset_.x = CFG.getFloat("gun_offset_x");
+        gun_offset_.y = CFG.getFloat("gun_offset_y");
+    }
+}
+
 void Character::setPosition(const sf::Vector2f& pos)
 {
     AbstractDrawableObject::setPosition(pos);
-    (*current_weapon_)->setPosition(pos);
-}
-
-void Character::setRotation(float theta)
-{
-    AbstractDrawableObject::setRotation(theta);
-    (*current_weapon_)->setRotation(theta);
+    (*current_weapon_)->setPosition(pos + sf::Vector2f{gun_offset_.x, gun_offset_.y});
 }
 
 void Character::setPosition(float x, float y)
 {
     AbstractDrawableObject::setPosition(x, y);
-    (*current_weapon_)->setPosition(x, y);
+    (*current_weapon_)->setPosition(x + gun_offset_.x, y + gun_offset_.y);
 }
 
 void Character::setPositionX(float x)
 {
     AbstractDrawableObject::setPositionX(x);
-    (*current_weapon_)->setPositionX(x);
+    (*current_weapon_)->setPositionX(x + gun_offset_.x);
 }
 
 void Character::setPositionY(float y)
 {
     AbstractDrawableObject::setPositionY(y);
-    (*current_weapon_)->setPositionY(y);
+    (*current_weapon_)->setPositionY(y + gun_offset_.y);
 }
 
 void Character::setWeaponPointing(const sf::Vector2f& point)
 {
-    float a = (*current_weapon_)->getWeaponOffset().y;
-    float d = utils::geo::getDistance(point, this->getPosition());
+    float angle = std::atan2(point.y - this->getPosition().y - gun_offset_.y,
+                             point.x - this->getPosition().x - gun_offset_.x);
 
-    float theta = std::asin(a / d);
-
-    float angle = std::atan2(point.y - this->getPosition().y, point.x - this->getPosition().x);
-
-    if (!std::isnan(theta))
-    {
-        angle -= theta;
-        rotate_to_ = angle * 180.0f / static_cast<float>(M_PI);
-    }
+    rotate_to_ = angle * 180.0f / static_cast<float>(M_PI);
 }
 
 bool Character::isAlreadyRotated() const
@@ -213,4 +230,9 @@ void Character::handleAmmoState()
         ammo_state_ = AmmoState::Low;
     else
         ammo_state_ = AmmoState::Zero;
+}
+
+float Character::getRotation() const
+{
+    return (*current_weapon_)->getRotation();
 }

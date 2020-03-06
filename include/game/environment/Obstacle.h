@@ -20,8 +20,13 @@ public:
 
     bool update(float time_elapsed) override;
 
+    static constexpr float COLLISION_SIZE_X_ = 100.0f;
+    static constexpr float COLLISION_SIZE_Y_ = 100.0f;
+    static constexpr float COLLISION_OFFSET_Y_ = 25.0f;
+
+
     static constexpr float SIZE_X_ = 100.0f;
-    static constexpr float SIZE_Y_ = 100.0f;
+    static constexpr float SIZE_Y_ = 150.0f;
 
 };
 

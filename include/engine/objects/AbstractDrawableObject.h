@@ -20,13 +20,13 @@ namespace r3e {
                                const sf::Vector2f& size,
                                sf::Texture* texture_name);
 
-        const sf::Vector2f& getPosition() const;
+        virtual const sf::Vector2f& getPosition() const;
 
-        const sf::Vector2f& getSize() const;
+        virtual const sf::Vector2f& getSize() const;
 
-        float getRotation() const;
+        virtual float getRotation() const;
 
-        bool isVisible() const;
+        virtual bool isVisible() const;
 
         virtual void setPosition(const sf::Vector2f& position);
 
@@ -42,7 +42,9 @@ namespace r3e {
 
         virtual void setVisibility(const sf::View& view);
 
-        void setColor(int r, int g, int b, int a);
+        virtual void setColor(int r, int g, int b, int a);
+
+        virtual void changeTexture(sf::Texture* texture);
 
     protected:
         sf::RectangleShape shape_;

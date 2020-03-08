@@ -18,7 +18,7 @@ Enemy::Enemy(const sf::Vector2f& position,
         AbstractAgent(Game::get().getAgentsManager())
 {
     weapons_in_backpack_.push_back(
-            std::make_unique<ShootingWeapon>(ResourceManager::getInstance().getWeapon("desert_eagle")));
+            std::make_unique<ShootingWeapon>(RM.getWeapon("desert_eagle")));
 
     current_weapon_ = weapons_in_backpack_.begin();
 
@@ -122,7 +122,8 @@ void Enemy::handleVisibilityState()
         auto rounded_y = static_cast<int>(std::round(start_y));
 
         if (rounded_x >= blockage.blockage_.size() || rounded_x < 0 ||
-            rounded_y >= blockage.blockage_.at(0).size() || rounded_y < 0) break;
+            rounded_y >= blockage.blockage_.at(0).size() || rounded_y < 0)
+            break;
 
         if (blockage.blockage_.at(rounded_x).at(rounded_y))
             ++walls_between;
@@ -264,9 +265,9 @@ void Enemy::handleActionState()
     }
 }
 
-sf::Vector2f Enemy::findNearestSafeSpot(const sf::Vector2f &direction) const
-{
-    auto dir = utils::geo::getNormalized(direction);
+sf::Vector2f Enemy::findNearestSafeSpot(const sf::Vector2f& direction) const
+    {
+        auto dir = utils::geo::getNormalized(direction);
     auto& blockage = Game::get().getMapBlockage();
     auto current = sf::Vector2f{std::round(this->getPosition().x / blockage.scale_x_),
                                 std::round(this->getPosition().y / blockage.scale_y_)};

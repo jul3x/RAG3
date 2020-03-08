@@ -8,53 +8,57 @@
 #include <SFML/System/Vector2.hpp>
 
 
-namespace Collision {
+namespace r3e {
 
-class Area {
+    namespace Collision {
 
-public:
-    enum class Type {
-        None,
-        Box,
-        Circle
-    };
+        class Area {
 
-    Area(Type type, float a, float b, const sf::Vector2f &offset);
+        public:
+            enum class Type {
+                None,
+                Box,
+                Circle
+            };
 
-    const Type& getType() const;
+            Area(Type type, float a, float b, const sf::Vector2f& offset);
 
-    const sf::Vector2f& getOffset() const;
+            const Type& getType() const;
 
-    float getA() const;
+            const sf::Vector2f& getOffset() const;
 
-    float getB() const;
+            float getA() const;
 
-private:
-    Type type_;
-    sf::Vector2f offset_pos_;
+            float getB() const;
 
-    float a_, b_;
+        private:
+            Type type_;
+            sf::Vector2f offset_pos_;
 
-};
+            float a_, b_;
 
-class None : public Area {
-public:
-    None();
+        };
 
-};
+        class None : public Area {
+        public:
+            None();
 
-class Box : public Area {
-public:
-    Box(float a, float b, const sf::Vector2f& offset = {});
+        };
 
-};
+        class Box : public Area {
+        public:
+            Box(float a, float b, const sf::Vector2f& offset = {});
 
-class Circle : public Area {
-public:
-    explicit Circle(float r, const sf::Vector2f& offset = {});
+        };
 
-};
+        class Circle : public Area {
+        public:
+            explicit Circle(float r, const sf::Vector2f& offset = {});
 
-}; // namespace collision
+        };
+
+    }; // namespace collision
+
+} // namespace r3e
 
 #endif // RAG3_ENGINE_OBJECTS_COLLISIONAREA_H

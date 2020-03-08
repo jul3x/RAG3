@@ -2,9 +2,12 @@
 // Created by jul3x on 27.02.19.
 //
 
+#include <iomanip>
+
 #include <engine/system/Engine.h>
 #include <engine/utils/Geometry.h>
 
+#include <game/misc/ResourceManager.h>
 #include <game/ui/UserInterface.h>
 #include <game/Game.h>
 
@@ -15,16 +18,24 @@ UserInterface::UserInterface() :
                                                             WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom")}),
         health_bar_({HEALTH_BAR_X_ * CFG.getFloat("user_interface_zoom"),
                      HEALTH_BAR_Y_ * CFG.getFloat("user_interface_zoom")}),
+        logo_(sf::Vector2f{CFG.getInt("window_width_px") - LOGO_OFF_X_ * CFG.getFloat("user_interface_zoom"),
+                           LOGO_OFF_Y_ * CFG.getFloat("user_interface_zoom")},
+              CFG.getFloat("user_interface_zoom") * sf::Vector2f{LOGO_SIZE_X_, LOGO_SIZE_Y_},
+              &RM.getTexture("rag3_logo")),
+        fps_text_("FPS: ", RM.getFont(), 30),
         player_(nullptr),
         camera_(nullptr) {}
 
-void UserInterface::initialize(Graphics& graphics)
+void UserInterface::initialize(graphics::Graphics& graphics)
 {
     if (player_ == nullptr || camera_ == nullptr)
     {
         throw std::runtime_error("[UserInterface] player_ or camera_ is nullptr!");
     }
     health_bar_.setMaxHealth(player_->getMaxHealth());
+
+    fps_text_.setFillColor(sf::Color::White);
+    fps_text_.setPosition(FPS_X_, FPS_Y_);
 
     graphics.getWindow().setMouseCursorVisible(false);
     camera_->setViewNormalSize(graphics.getWindow().getView().getSize());
@@ -40,7 +51,7 @@ void UserInterface::registerCamera(Camera* camera)
     camera_ = camera;
 }
 
-void UserInterface::handleEvents(Graphics& graphics, float time_elapsed)
+void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapsed)
 {
     static sf::Event event;
 
@@ -49,6 +60,10 @@ void UserInterface::handleEvents(Graphics& graphics, float time_elapsed)
     handleKeys();
 
     blood_splash_.update(time_elapsed);
+
+    std::stringstream fps_stream;
+    fps_stream << std::fixed << std::setprecision(2) << Game::get().getFPS();
+    fps_text_.setString("FPS: " + fps_stream.str());
 
     while (graphics.getWindow().pollEvent(event))
     {
@@ -74,6 +89,8 @@ void UserInterface::handleEvents(Graphics& graphics, float time_elapsed)
 
                 weapons_bar_.setPosition(event.size.width / 2.0f,
                                          event.size.height - WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom"));
+                logo_.setPosition(event.size.width - LOGO_OFF_X_ * CFG.getFloat("user_interface_zoom"),
+                                  LOGO_OFF_Y_ * CFG.getFloat("user_interface_zoom"));
 
                 camera_->setViewNormalSize(visible_area);
                 blood_splash_.resizeWindow(visible_area);
@@ -95,6 +112,15 @@ void UserInterface::handleEvents(Graphics& graphics, float time_elapsed)
                 }
                 break;
             }
+            case sf::Event::KeyPressed:
+            {
+                if (event.key.code == sf::Keyboard::F)
+                {
+                    player_->setForcedVelocity(utils::geo::polarToCartesian(1000.0f,
+                                                                            M_PI / 180.0f * player_->getRotation()));
+                }
+                break;
+            }
             default:
             {
                 break;
@@ -108,6 +134,8 @@ void UserInterface::draw(sf::RenderTarget& target, sf::RenderStates states) cons
     target.draw(blood_splash_, states);
     target.draw(weapons_bar_, states);
     target.draw(health_bar_, states);
+    target.draw(fps_text_, states);
+    target.draw(logo_, states);
     target.draw(crosshair_, states);
 }
 

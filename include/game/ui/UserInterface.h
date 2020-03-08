@@ -15,6 +15,8 @@
 #include <engine/system/AbstractUserInterface.h>
 
 
+using namespace r3e;
+
 class UserInterface : public AbstractUserInterface {
 
 public:
@@ -24,9 +26,9 @@ public:
 
     UserInterface& operator=(const UserInterface&) = delete;
 
-    void initialize(Graphics &graphics) override;
+    void initialize(graphics::Graphics& graphics) override;
 
-    void handleEvents(Graphics &graphics, float time_elapsed) override;
+    void handleEvents(graphics::Graphics& graphics, float time_elapsed) override;
 
     void registerPlayer(Player* player);
 
@@ -44,13 +46,26 @@ private:
     inline void updatePlayerStates();
 
     static constexpr float WEAPONS_BAR_OFF_Y_ = 70.0f;
+
+    static constexpr float LOGO_OFF_X_ = 240.0f;
+    static constexpr float LOGO_OFF_Y_ = 120.0f;
+    static constexpr float LOGO_SIZE_X_ = 512.0f;
+    static constexpr float LOGO_SIZE_Y_ = 288.0f;
+
     static constexpr float HEALTH_BAR_X_ = 150.0f;
     static constexpr float HEALTH_BAR_Y_ = 50.0f;
+
+    static constexpr float FPS_X_ = 150.0f;
+    static constexpr float FPS_Y_ = 300.0f;
 
     WeaponsBar weapons_bar_;
     HealthBar health_bar_;
     Crosshair crosshair_;
     BloodSplash blood_splash_;
+
+    AbstractDrawableObject logo_;
+
+    sf::Text fps_text_;
 
     Player* player_;
     Camera* camera_;

@@ -13,6 +13,8 @@
 #include <engine/system/AbstractResourceManager.h>
 
 
+using namespace r3e;
+
 class ResourceManager : public AbstractResourceManager {
 
 public:
@@ -26,7 +28,8 @@ public:
 
     ShootingWeapon& getWeapon(const std::string& key);
 
-    static std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, std::list<Decoration>> getMap(const std::string& key);
+    static std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, std::list<Decoration>>
+    getMap(const std::string& key);
 
     // TODO LazyLoad every type of objects
 
@@ -37,11 +40,13 @@ private:
 
     void loadWeapon(const std::string& key);
 
-    static std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, std::list<Decoration>> loadMap(const std::string& key);
+    static std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, std::list<Decoration>>
+    loadMap(const std::string& key);
 
-    std::map<std::string, ShootingWeapon> weapons_;
-    std::map<std::string, BulletDescription> bullets_;
+    std::unordered_map<std::string, ShootingWeapon> weapons_;
+    std::unordered_map<std::string, BulletDescription> bullets_;
 };
 
+#define RM ResourceManager::getInstance()
 
 #endif //RAG3_GAME_MISC_RESOURCEMANAGER_H

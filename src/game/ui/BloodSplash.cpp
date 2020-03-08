@@ -9,9 +9,9 @@
 
 
 BloodSplash::BloodSplash(const sf::Vector2f& size) :
-        dead_(size / 2.0f, size, &ResourceManager::getInstance().getTexture("blood_hud_3")),
-        critical_(size / 2.0f, size, &ResourceManager::getInstance().getTexture("blood_hud_2")),
-        low_(size / 2.0f, size, &ResourceManager::getInstance().getTexture("blood_hud_1")),
+        dead_(size / 2.0f, size, &RM.getTexture("blood_hud_3")),
+        critical_(size / 2.0f, size, &RM.getTexture("blood_hud_2")),
+        low_(size / 2.0f, size, &RM.getTexture("blood_hud_1")),
         player_life_state_(Player::LifeState::High),
         transparency_(255),
         time_elapsed_(0)
@@ -67,6 +67,10 @@ void BloodSplash::draw(sf::RenderTarget& target, sf::RenderStates states) const
         case Player::LifeState::Dead:
         {
             target.draw(dead_, states);
+            break;
+        }
+        default:
+        {
             break;
         }
     }

@@ -8,6 +8,8 @@
 #include <engine/objects/AbstractDrawableObject.h>
 
 
+using namespace r3e;
+
 class Crosshair : public AbstractDrawableObject {
 public:
     explicit Crosshair();

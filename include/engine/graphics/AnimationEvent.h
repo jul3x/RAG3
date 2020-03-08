@@ -11,37 +11,42 @@
 #include <engine/objects/AbstractDrawableObject.h>
 
 
-class AnimationEvent : public AbstractDrawableObject {
+namespace r3e {
+    namespace graphics {
 
-public:
-    enum class AnimationType {
-        LINEAR,
-        QUADRATIC
-    };
+        class AnimationEvent : public AbstractDrawableObject {
 
-    AnimationEvent() = delete;
+        public:
+            enum class AnimationType {
+                LINEAR,
+                QUADRATIC
+            };
 
-    AnimationEvent(sf::Texture* texture,
-                   const sf::Vector2i& frame_size,
-                   const sf::Vector2f& position,
-                   float duration_s, short int frames_count,
-                   const AnimationType& animation_type = AnimationType::LINEAR);
+            AnimationEvent() = delete;
 
-    bool update(float time_elapsed);
+            AnimationEvent(sf::Texture* texture,
+                           const sf::Vector2i& frame_size,
+                           const sf::Vector2f& position,
+                           float duration_s, short int frames_count,
+                           const AnimationType& animation_type = AnimationType::LINEAR);
 
-protected:
-    short int max_frames_count_;
-    float duration_s_;
+            bool update(float time_elapsed);
 
-    sf::Vector2i frame_size_;
+        protected:
+            short int max_frames_count_;
+            float duration_s_;
 
-    sf::IntRect animation_source_;
+            sf::Vector2i frame_size_;
 
-    AnimationType type_;
+            sf::IntRect animation_source_;
 
-    float time_elapsed_;
+            AnimationType type_;
 
-};
+            float time_elapsed_;
 
+        };
+
+    } // namespace graphics
+} // namespace r3e
 
 #endif // RAG3_ENGINE_GRAPHICS_ANIMATIONEVENT_H

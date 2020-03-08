@@ -11,6 +11,8 @@
 #include <game/characters/Character.h>
 
 
+using namespace r3e;
+
 class Enemy : public Character, public ai::AbstractAgent {
 public:
     enum class VisibilityState {
@@ -38,7 +40,9 @@ public:
 
 private:
     inline void handleVisibilityState();
+
     inline void handleActionState();
+
     inline sf::Vector2f findNearestSafeSpot(const sf::Vector2f& direction) const;
 
     static constexpr float MAX_DISTANCE_ = 1500.0f;

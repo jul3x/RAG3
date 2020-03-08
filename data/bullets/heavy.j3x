@@ -3,3 +3,4 @@ float life=1000.0f
 int deadly_factor=3
 float size_x=14.0f
 float size_y=6.0f
+float burst_size=150.0f

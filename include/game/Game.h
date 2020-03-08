@@ -10,6 +10,7 @@
 #include <engine/system/AbstractGame.h>
 #include <engine/system/Engine.h>
 #include <engine/ai/AgentsManager.h>
+#include <engine/audio/MusicManager.h>
 
 #include <game/misc/Camera.h>
 #include <game/characters/Player.h>
@@ -18,6 +19,7 @@
 #include <game/ui/UserInterface.h>
 
 
+using namespace r3e;
 
 class Game : public AbstractGame {
 
@@ -40,17 +42,17 @@ public:
 
     void spawnBullet(const std::string& name, const sf::Vector2f& pos, float dir);
 
-    void spawnSparksAnimation(const sf::Vector2f& pos, float dir, float r);
+    void spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);
 
-    void spawnShotAnimation(const sf::Vector2f& pos, float dir, float r);
+    void spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir);
 
-    void spawnExplosionAnimation(const sf::Vector2f& pos, float r);
+    void spawnExplosionEvent(const sf::Vector2f& pos, float r);
 
     void initialize() override;
 
     void update(float time_elapsed) override;
 
-    void draw(Graphics& graphics) override;
+    void draw(graphics::Graphics& graphics) override;
 
     void alertCollision(HoveringObject* h_obj, StaticObject* s_obj) override;
 
@@ -72,7 +74,9 @@ public:
 
     float getCurrentTimeFactor() const;
 
-    void start(int frame_rate);
+    float getFPS() const;
+
+    void start();
 
 private:
     Game();
@@ -83,6 +87,7 @@ private:
     std::unique_ptr<UserInterface> ui_;
     std::unique_ptr<Camera> camera_;
     std::unique_ptr<ai::AgentsManager> agents_manager_;
+    std::unique_ptr<audio::MusicManager> music_manager_;
 
     std::unique_ptr<Player> player_;
     std::unique_ptr<Map> map_;

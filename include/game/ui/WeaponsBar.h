@@ -17,6 +17,8 @@
 #include <engine/objects/AbstractDrawableObject.h>
 
 
+using namespace r3e;
+
 class WeaponsBar : public AbstractDrawableObject {
 public:
     explicit WeaponsBar(const sf::Vector2f& position);

@@ -17,6 +17,8 @@
 #include <game/misc/Shootable.h>
 
 
+using namespace r3e;
+
 class Character : public DynamicObject, public Shootable {
 public:
     enum class LifeState {
@@ -64,6 +66,8 @@ public:
 
     void setRotation(float theta) override;
 
+    float getRotation() const override;
+
     void setWeaponPointing(const sf::Vector2f& point);
 
     bool isAlreadyRotated() const;
@@ -80,13 +84,19 @@ protected:
 
 private:
     inline void handleLifeState();
+
     inline void handleAmmoState();
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    static constexpr float SIZE_X_ = 100.0f;
-    static constexpr float SIZE_Y_ = 100.0f;
+    static constexpr float COLLISION_SIZE_X_ = 44.0f;
+    static constexpr float COLLISION_SIZE_Y_ = 80.0f;
+    static constexpr float COLLISION_OFFSET_Y_ = 10.0f;
 
+    static constexpr float SIZE_X_ = 49.0f;
+    static constexpr float SIZE_Y_ = 120.0f;
+
+    sf::Vector2f gun_offset_;
     float rotate_to_;
 
 };

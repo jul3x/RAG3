@@ -7,6 +7,8 @@
 #include <engine/utils/Numeric.h>
 #include <engine/utils/Geometry.h>
 
+using namespace r3e;
+
 TEST(GeometryTest, GetDistance) {
     // same vector
     sf::Vector2f a{}, b{};

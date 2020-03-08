@@ -5,39 +5,43 @@
 #include <engine/objects/CollisionArea.h>
 
 
-namespace Collision {
+namespace r3e {
 
-    // Area
-    Area::Area(Type type, float a, float b, const sf::Vector2f &offset) :
-            type_(type), a_(a), b_(b), offset_pos_(offset) {}
+    namespace Collision {
 
-    const Area::Type& Area::getType() const
-    {
-        return type_;
-    }
+        // Area
+        Area::Area(Type type, float a, float b, const sf::Vector2f& offset) :
+                type_(type), a_(a), b_(b), offset_pos_(offset) {}
 
-    const sf::Vector2f& Area::getOffset() const
-    {
-        return offset_pos_;
-    }
+        const Area::Type& Area::getType() const
+        {
+            return type_;
+        }
 
-    float Area::getA() const
-    {
-        return a_;
-    }
+        const sf::Vector2f& Area::getOffset() const
+        {
+            return offset_pos_;
+        }
 
-    float Area::getB() const
-    {
-        return b_;
-    }
+        float Area::getA() const
+        {
+            return a_;
+        }
 
-    // None
-    None::None() : Area(Area::Type::None, 0.0f, 0.0f, {}) {}
+        float Area::getB() const
+        {
+            return b_;
+        }
 
-    // Box
-    Box::Box(float a, float b, const sf::Vector2f& offset) : Area(Area::Type::Box, a, b, offset) {}
+        // None
+        None::None() : Area(Area::Type::None, 0.0f, 0.0f, {}) {}
 
-    // Circle
-    Circle::Circle(float r, const sf::Vector2f& offset) : Area(Area::Type::Circle, r, 0.0f, offset) {}
+        // Box
+        Box::Box(float a, float b, const sf::Vector2f& offset) : Area(Area::Type::Box, a, b, offset) {}
 
-}; // namespace collision
+        // Circle
+        Circle::Circle(float r, const sf::Vector2f& offset) : Area(Area::Type::Circle, r, 0.0f, offset) {}
+
+    } // namespace collision
+
+} // namespace r3e

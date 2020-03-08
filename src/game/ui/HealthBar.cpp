@@ -11,8 +11,8 @@ HealthBar::HealthBar(const sf::Vector2f& position) :
         AbstractDrawableObject(position,
                                {HEALTH_SIZE_X_ * CFG.getFloat("user_interface_zoom"),
                                 HEALTH_SIZE_Y_ * CFG.getFloat("user_interface_zoom")},
-                               &ResourceManager::getInstance().getTexture("health_bar")),
-        health_text_("Health: 100%", ResourceManager::getInstance().getFont(),
+                               &RM.getTexture("health_bar")),
+        health_text_("Health: 100%", RM.getFont(),
                      16 * CFG.getFloat("user_interface_zoom"))
 {
     health_text_.setFillColor(sf::Color(CFG.getInt("font_color")));

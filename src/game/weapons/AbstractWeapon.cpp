@@ -12,7 +12,7 @@ AbstractWeapon::AbstractWeapon(const sf::Vector2f& size,
         name_(name),
         weapon_offset_(weapon_offset),
         AbstractDrawableObject({}, size,
-                               name.empty() ? nullptr : &ResourceManager::getInstance().getTexture("weapon_" + name))
+                               name.empty() ? nullptr : &RM.getTexture("weapon_" + name))
 {
 }
 

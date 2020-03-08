@@ -81,7 +81,8 @@ void ResourceManager::loadBulletDescription(const std::string& key)
                                             utils::getInt(int_params, "deadly_factor"),
                                             key,
                                             utils::getFloat(float_params, "size_x"),
-                                            utils::getFloat(float_params, "size_y")});
+                                            utils::getFloat(float_params, "size_y"),
+                                            utils::getFloat(float_params, "burst_size")});
 
     std::cout << "[ResourceManager] Bullet description " << key << " is loaded!" << std::endl;
 }
@@ -109,7 +110,8 @@ void ResourceManager::loadWeapon(const std::string& key)
     std::cout << "[ResourceManager] Weapon " << key << " is loaded!" << std::endl;
 }
 
-std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, std::list<Decoration>> ResourceManager::loadMap(const std::string& key)
+std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, std::list<Decoration>>
+ResourceManager::loadMap(const std::string& key)
 {
     std::ifstream file("../data/" + key + ".j3x");
     std::vector<std::vector<bool>> blocked;
@@ -121,7 +123,7 @@ std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, st
         file >> w >> h;
 
         blocked.resize(w);
-        for (auto &row : blocked)
+        for (auto& row : blocked)
             row.resize(h);
 
         int max_number = w * h;
@@ -134,11 +136,15 @@ std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, st
             if (type < 10 && type > 0)
             {
                 blocked.at(count % w).at(count / w) = true;
-                obstacles.push_back({{(count % w) * Obstacle::SIZE_X_, (count / w) * Obstacle::SIZE_Y_}, type});
+                obstacles.push_back({{(count % w) * Obstacle::COLLISION_SIZE_X_,
+                                      (count / w) * Obstacle::COLLISION_SIZE_Y_ - Obstacle::COLLISION_OFFSET_Y_},
+                                     type});
             }
             else if (type > -10 && type < 0)
             {
-                decorations.push_back({{(count % w) * Obstacle::SIZE_X_, (count / w) * Obstacle::SIZE_Y_}, -type});
+                decorations.push_back(
+                        {{(count % w) * Obstacle::COLLISION_SIZE_X_, (count / w) * Obstacle::COLLISION_SIZE_Y_},
+                         -type});
             }
             else if (type != 0)
             {
@@ -162,7 +168,8 @@ std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, st
     return std::make_tuple(sf::Vector2i{w, h}, blocked, obstacles, decorations);
 }
 
-ResourceManager::ResourceManager() : AbstractResourceManager("../data/", "../data/textures/", "../data/fonts/")
+ResourceManager::ResourceManager() : AbstractResourceManager("../data", "../data/textures", "../data/fonts",
+                                                             "../data/sounds", "../data/music")
 {
 
 }

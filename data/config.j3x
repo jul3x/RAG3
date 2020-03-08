@@ -1,22 +1,26 @@
 bool auto_resolution=1
-bool full_screen=0
+bool full_screen=1dddddddddddddddddd
 int window_height_px=1500
 int window_width_px=3000
-int32 background_color=0x55000000
+int32 background_color=0x11111100
 int32 trail_color=0xFFFFFF30
 int32 font_color=0xFFFFFFAA
 float player_max_speed=700.0f
-int player_max_health=100
+int player_max_health=160
 float enemy_max_speed=500.0f
 float enemy_standby_speed=100.0f
 int enemy_max_health=20
 
+float gun_offset_x=20.0f
+float gun_offset_y=5.0f
+
 float max_acceleration=1000.0f
 
-float mouse_reaction_speed=1.0f
+float mouse_reaction_speed=100.0f
 float camera_speed=4.0f
 float camera_zoom_speed=5.0f
-float camera_recoil=8.0f
+float camera_rotation_recoil=8.0f
+float camera_position_recoil=1.0f
 float camera_shaking_time=0.4f
 float camera_right_click_distance_factor=300.0f
 float camera_right_click_zoom_factor=0.6f
@@ -27,3 +31,8 @@ float user_interface_zoom=2.0f
 float blood_pulsating_time=5.0f
 
 float bullet_time_factor=0.3f
+float bullet_time_music_factor=1.0f
+
+float sound_attenuation=0.01f
+
+float sparks_size_factor=30000.0f

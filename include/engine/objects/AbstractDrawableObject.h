@@ -11,45 +11,58 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 
 
-class AbstractDrawableObject : public sf::Drawable {
-public:
-    AbstractDrawableObject();
+namespace r3e {
+    class AbstractDrawableObject : public sf::Drawable {
+    public:
+        AbstractDrawableObject();
 
-    AbstractDrawableObject(const sf::Vector2f& position,
-                           const sf::Vector2f& size,
-                           sf::Texture* texture_name);
+        AbstractDrawableObject(const sf::Vector2f& position,
+                               const sf::Vector2f& size,
+                               sf::Texture* texture_name);
 
-    const sf::Vector2f& getPosition() const;
+        virtual const sf::Vector2f& getPosition() const;
 
-    const sf::Vector2f& getSize() const;
+        virtual const sf::Vector2f& getSize() const;
 
-    float getRotation() const;
+        virtual float getRotation() const;
 
-    bool isVisible() const;
+        virtual bool isVisible() const;
 
-    virtual void setPosition(const sf::Vector2f& position);
+        virtual void setPosition(const sf::Vector2f& position);
 
-    virtual void setPosition(float x, float y);
+        virtual void setPosition(float x, float y);
 
-    virtual void setPositionX(float x);
+        virtual void setPositionX(float x);
 
-    virtual void setPositionY(float y);
+        virtual void setPositionY(float y);
 
-    virtual void setRotation(float angle_deg);
+        virtual void setRotation(float angle_deg);
 
-    virtual void setSize(const sf::Vector2f& size);
+        virtual void setSize(const sf::Vector2f& size);
 
-    virtual void setVisibility(const sf::View& view);
+        virtual void setVisibility(const sf::View& view);
 
-    void setColor(int r, int g, int b, int a);
+        virtual void setColor(int r, int g, int b, int a);
 
-protected:
-    sf::RectangleShape shape_;
-    bool is_visible_;
+        virtual void changeTexture(sf::Texture* texture);
 
-private:
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    protected:
+        sf::RectangleShape shape_;
+        bool is_visible_;
 
-};
+    private:
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+    };
+
+    struct AbstractDrawableObjectsCmp {
+        bool operator()(const AbstractDrawableObject* lhs, const AbstractDrawableObject* rhs) const
+        {
+            return (lhs->getPosition().y < rhs->getPosition().y) ||
+                   (lhs->getPosition().y == rhs->getPosition().y && lhs->getPosition().x < rhs->getPosition().x);
+        }
+    };
+
+} // namespace r3e
 
 #endif // RAG3_ENGINE_OBJECTS_ABSTRACTDRAWABLEOBJECT_H

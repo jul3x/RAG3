@@ -5,56 +5,69 @@
 #ifndef RAG3_ENGINE_GRAPHICS_GRAPHICS_H
 #define RAG3_ENGINE_GRAPHICS_GRAPHICS_H
 
+#include <set>
+
 #include <SFML/Graphics.hpp>
 
 #include <engine/objects/AbstractDrawableObject.h>
 #include <engine/system/Config.h>
 
 
-class Graphics {
+namespace r3e {
+    namespace graphics {
 
-public:
-    Graphics(const sf::Vector2i& size, const std::string& title, int style, const sf::Color& bg_color);
+        class Graphics {
 
-    Graphics(const Graphics&) = delete;
+        public:
+            Graphics(const sf::Vector2i& size, const std::string& title, int style, const sf::Color& bg_color);
 
-    Graphics& operator=(const Graphics&) = delete;
+            Graphics(const Graphics&) = delete;
 
-    bool isWindowOpen() const;
+            Graphics& operator=(const Graphics&) = delete;
 
-    sf::RenderWindow& getWindow();
+            bool isWindowOpen() const;
 
-    sf::View& getCurrentView();
+            sf::RenderWindow& getWindow();
 
-    sf::View& getStaticView();
+            sf::View& getCurrentView();
 
-    void setStaticView();
+            sf::View& getStaticView();
 
-    void setCurrentView();
+            void setStaticView();
 
-    void modifyCurrentView(const sf::View& view);
+            void setCurrentView();
 
-    void modifyStaticView(const sf::View& view);
+            void modifyCurrentView(const sf::View& view);
 
-    void setViewCenter(const sf::Vector3f& view);
+            void modifyStaticView(const sf::View& view);
 
-    void setViewSize(const sf::Vector2f& view);
+            void setViewCenter(const sf::Vector3f& view);
 
-    void clear();
+            void setViewSize(const sf::Vector2f& view);
 
-    void draw(AbstractDrawableObject& object);
+            void clear();
 
-    void display();
+            void draw(AbstractDrawableObject& object);
 
-private:
-    sf::ContextSettings settings_;
-    sf::RenderWindow window_;
-    sf::View current_view_;
-    sf::View static_view_;
+            void drawSorted(AbstractDrawableObject& object);
 
-    sf::Color bg_color_;
+            void drawAlreadySorted();
 
-};
+            void display();
 
+        private:
+            sf::ContextSettings settings_;
+            sf::RenderWindow window_;
+            sf::View current_view_;
+            sf::View static_view_;
+
+            sf::Color bg_color_;
+
+            std::set<AbstractDrawableObject*, AbstractDrawableObjectsCmp> sorted_drawables_;
+
+        };
+
+    } // namespace graphics
+} // namespace r3e
 
 #endif //RAG3_ENGINE_GRAPHICS_GRAPHICS_H

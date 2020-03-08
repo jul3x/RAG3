@@ -9,6 +9,8 @@
 #include <engine/objects/AbstractDrawableObject.h>
 
 
+using namespace r3e;
+
 class Decoration : public AbstractDrawableObject {
 public:
     enum class Type {

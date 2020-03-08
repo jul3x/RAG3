@@ -11,10 +11,11 @@
 
 class Player : public Character {
 public:
-    Player(const sf::Vector2f &position,
-           const sf::Vector2f &velocity);
+    Player(const sf::Vector2f& position,
+           const sf::Vector2f& velocity);
 
     void setDead();
+
     bool isAlive() const;
 
 

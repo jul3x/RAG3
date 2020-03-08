@@ -29,7 +29,7 @@ ShootingWeapon::ShootingWeapon(float bullet_timeout,
     if (ammunition <= 0 || bullet_timeout <= 0.0f)
         throw std::invalid_argument("[ShootingWeapon] Constructor parameters are invalid!");
 
-    shape_.setOrigin(size / 2.0f - weapon_offset_);
+    shape_.setOrigin({weapon_offset.x, size.y / 2.0f + weapon_offset.y});
 }
 
 sf::Vector2f ShootingWeapon::use()
@@ -42,14 +42,13 @@ sf::Vector2f ShootingWeapon::use()
         auto sine = static_cast<float>(std::sin(this->getRotation() * M_PI / 180.0f));
         auto cosine = static_cast<float>(std::cos(this->getRotation() * M_PI / 180.0f));
         auto offset_position = this->getPosition();
-        auto weapon_size = weapon_offset_ + sf::Vector2f{this->getSize().x, 0.0f} / 2.0f;
+        auto weapon_size = sf::Vector2f{this->getSize().x - weapon_offset_.x, 0.0f};
         offset_position.x += weapon_size.x * cosine - weapon_size.y * sine;
         offset_position.y += weapon_size.x * sine + weapon_size.y * cosine;
 
         auto primary_rotation = this->getRotation() -
                                 bullet_angular_diff_ * static_cast<float>(bullet_quantity_ - 1) / 2.0f;
 
-        Game::get().spawnShotAnimation(offset_position, this->getRotation(), std::sqrt(recoil_) / 10.0f);
         for (int i = 0; i < bullet_quantity_; ++i)
         {
             auto rotation = (primary_rotation + static_cast<float>(i) * bullet_angular_diff_) * M_PI / 180.0f;

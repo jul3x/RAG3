@@ -9,23 +9,26 @@
 #include <engine/graphics/Graphics.h>
 
 
-class AbstractUserInterface : public AbstractDrawableObject {
+namespace r3e {
 
-public:
-    explicit AbstractUserInterface() = default;
+    class AbstractUserInterface : public AbstractDrawableObject {
 
-    AbstractUserInterface(const AbstractUserInterface&) = delete;
+    public:
+        explicit AbstractUserInterface() = default;
 
-    AbstractUserInterface& operator=(const AbstractUserInterface&) = delete;
+        AbstractUserInterface(const AbstractUserInterface&) = delete;
 
-    virtual void initialize(Graphics &graphics) = 0;
+        AbstractUserInterface& operator=(const AbstractUserInterface&) = delete;
 
-    virtual void handleEvents(Graphics& graphics, float time_elapsed) = 0;
+        virtual void initialize(graphics::Graphics& graphics) = 0;
 
-private:
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override = 0;
+        virtual void handleEvents(graphics::Graphics& graphics, float time_elapsed) = 0;
 
-};
+    private:
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override = 0;
 
+    };
+
+} // namespace r3e
 
 #endif //RAG3_ENGINE_SYSTEM_ABSTRACTUSERINTERFACE_H

@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include <list>
 
+#include <engine/audio/SoundManager.h>
 #include <engine/graphics/Graphics.h>
 #include <engine/graphics/AbstractCamera.h>
 #include <engine/graphics/AnimationEvent.h>
@@ -18,77 +19,83 @@
 #include <engine/objects/AbstractPhysicalObject.h>
 
 
-class Engine {
+namespace r3e {
+    class Engine {
 
-public:
-    Engine(const Engine&) = delete;
+    public:
+        Engine(const Engine&) = delete;
 
-    Engine& operator=(const Engine&) = delete;
+        Engine& operator=(const Engine&) = delete;
 
-    Engine();
+        Engine();
 
-    void initializeGraphics(const sf::Vector2i& size,
-                            const std::string& title,
-                            int style,
-                            const sf::Color &bg_color);
+        void initializeGraphics(const sf::Vector2i& size,
+                                const std::string& title,
+                                int style,
+                                const sf::Color& bg_color);
 
-    void initializeCollisions(const sf::Vector2f& size, float grid);
+        void initializeSoundManager(float attenuation);
 
-    void registerUI(AbstractUserInterface* user_interface);
+        void initializeCollisions(const sf::Vector2f& size, float grid);
 
-    void registerCamera(AbstractCamera* camera);
+        void registerUI(AbstractUserInterface* user_interface);
 
-    void registerGame(AbstractGame* game);
+        void registerCamera(graphics::AbstractCamera* camera);
 
-    void registerStaticObject(StaticObject* obj);
+        void registerGame(AbstractGame* game);
 
-    void registerDynamicObject(DynamicObject* obj);
+        void registerStaticObject(StaticObject* obj);
 
-    void registerHoveringObject(HoveringObject* obj);
+        void registerDynamicObject(DynamicObject* obj);
 
-    void deleteStaticObject(StaticObject* obj);
+        void registerHoveringObject(HoveringObject* obj);
 
-    void deleteDynamicObject(DynamicObject* obj);
+        void deleteStaticObject(StaticObject* obj);
 
-    void deleteHoveringObject(HoveringObject* obj);
+        void deleteDynamicObject(DynamicObject* obj);
 
-    void spawnAnimationEvent(const std::shared_ptr<AnimationEvent>& event);
+        void deleteHoveringObject(HoveringObject* obj);
 
-    void setVisibility(AbstractDrawableObject& object) const;
+        void spawnAnimationEvent(const std::shared_ptr<graphics::AnimationEvent>& event);
 
-    void setTimeScaleFactor(float factor);
+        void spawnSoundEvent(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume = 100.0f);
 
-    void update(int frame_rate);
+        float getCurrentFPS() const;
 
-    static sf::Vector2i detectResolution();
+        void setTimeScaleFactor(float factor);
 
-private:
-    void setVisibilities() const;
+        void start();
 
-    void updateAnimationEvents(float time_elapsed);
+        void drawAnimationEvents();
 
-    void draw();
+        void drawSortedAnimationEvents();
 
-    void ensureConstantFrameRate(int frame_rate);
+        static void changeSoundListenerPosition(const sf::Vector2f& pos);
 
-    void restartClock();
+        static sf::Vector2i detectResolution();
 
-    // Engine components
-    std::unique_ptr<Graphics> graphics_;
-    std::unique_ptr<Collisions> collisions_;
+    private:
+        void updateAnimationEvents(float time_elapsed);
 
-    // Registered by Game
-    AbstractUserInterface* ui_;
-    AbstractCamera* camera_;
-    AbstractGame* game_;
+        void draw();
 
-    sf::Clock clock_;
-    sf::Time time_;
+        // Engine components
+        std::unique_ptr<graphics::Graphics> graphics_;
+        std::unique_ptr<audio::SoundManager> sound_manager_;
+        std::unique_ptr<Collisions> collisions_;
 
-    float time_scale_factor_;
+        // Registered by Game
+        AbstractUserInterface* ui_;
+        graphics::AbstractCamera* camera_;
+        AbstractGame* game_;
 
-    std::list<std::shared_ptr<AnimationEvent>> animation_events_;
-};
+        float time_scale_factor_;
+        float frame_time_;
+
+        std::list<std::shared_ptr<graphics::AnimationEvent>> animation_events_;
+    };
+
+} // namespace r3e
 
 
 #endif //RAG3_ENGINE_SYSTEM_ENGINE_H

@@ -266,8 +266,8 @@ void Enemy::handleActionState()
 }
 
 sf::Vector2f Enemy::findNearestSafeSpot(const sf::Vector2f& direction) const
-{
-    auto dir = utils::geo::getNormalized(direction);
+    {
+        auto dir = utils::geo::getNormalized(direction);
     auto& blockage = Game::get().getMapBlockage();
     auto current = sf::Vector2f{std::round(this->getPosition().x / blockage.scale_x_),
                                 std::round(this->getPosition().y / blockage.scale_y_)};

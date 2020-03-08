@@ -14,5 +14,5 @@ ShotEvent::ShotEvent(const sf::Vector2f& position,
                        ShotEvent::DURATION_S_, ShotEvent::MAX_FRAMES_COUNT_)
 {
     shape_.setRotation(direction);
-    shape_.setScale(radius, radius);
+    shape_.setScale(radius / ShotEvent::WIDTH_PX_, radius / ShotEvent::WIDTH_PX_);
 }

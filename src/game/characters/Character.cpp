@@ -116,16 +116,6 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(shape_, states);
     target.draw(**current_weapon_, states);
 
-    static sf::Text text("", RM.getFont(), 24);
-
-    text.setFillColor(sf::Color::White);
-    text.setPosition(this->getPosition());
-
-    text.setString("Life: " + std::to_string(life_) + "/" + std::to_string(max_life_) + "\n" +
-                   "Ammo: " + std::to_string((*current_weapon_)->getState()) + "%");
-
-//    target.draw(text, states);
-
     static sf::VertexArray path(sf::LineStrip);
     path.clear();
 

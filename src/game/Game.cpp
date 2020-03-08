@@ -164,7 +164,7 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
     auto obstacle = dynamic_cast<Obstacle*>(s_obj);
     obstacle->getShot(*bullet);
     spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                     static_cast<float>(std::pow(bullet->getDeadlyFactor(), 0.4f)));
+                     static_cast<float>(std::pow(CFG.getFloat("sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
     bullet->setDead();
 }
@@ -175,7 +175,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     auto character = dynamic_cast<Character*>(d_obj);
     character->getShot(*bullet);
     spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                     static_cast<float>(std::pow(bullet->getDeadlyFactor(), 0.4f)));
+                     static_cast<float>(std::pow(CFG.getFloat("sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
     bullet->setDead();
 }

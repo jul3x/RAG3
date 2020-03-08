@@ -14,5 +14,5 @@ SparksEvent::SparksEvent(const sf::Vector2f& position,
                        SparksEvent::DURATION_S_, SparksEvent::MAX_FRAMES_COUNT_)
 {
     shape_.setRotation(direction);
-    shape_.setScale(radius, radius);
+    shape_.setScale(radius / SparksEvent::WIDTH_PX_, radius / SparksEvent::WIDTH_PX_);
 }

@@ -17,8 +17,6 @@ ExplosionEvent::ExplosionEvent(const sf::Vector2f& position,
                 ExplosionEvent::DURATION_S_, ExplosionEvent::MAX_FRAMES_COUNT_,
                 AnimationType::QUADRATIC)
 {
-    float scale_factor = 20.0f;
-    float scale = scale_factor * radius;
-    shape_.setScale(scale_factor * radius / ExplosionEvent::WIDTH_PX_,
-                    scale_factor * radius / ExplosionEvent::HEIGHT_PX_);
+    shape_.setScale(radius / ExplosionEvent::WIDTH_PX_,
+                    radius / ExplosionEvent::HEIGHT_PX_);
 }

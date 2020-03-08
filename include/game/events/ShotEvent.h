@@ -22,8 +22,8 @@ public:
 private:
     static constexpr short int MAX_FRAMES_COUNT_ = 6;
     static constexpr float DURATION_S_ = 0.3f;
-    static constexpr short int WIDTH_PX_ = 100;
-    static constexpr short int HEIGHT_PX_ = 20;
+    static constexpr short int WIDTH_PX_ = 400;
+    static constexpr short int HEIGHT_PX_ = 80;
 };
 
 

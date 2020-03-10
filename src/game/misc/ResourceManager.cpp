@@ -137,7 +137,7 @@ ResourceManager::loadMap(const std::string& key)
             {
                 blocked.at(count % w).at(count / w) = true;
                 obstacles.push_back({{(count % w) * Obstacle::COLLISION_SIZE_X_,
-                                      (count / w) * Obstacle::COLLISION_SIZE_Y_ - Obstacle::COLLISION_OFFSET_Y_},
+                                      (count / w) * Obstacle::COLLISION_SIZE_Y_},
                                      type});
             }
             else if (type > -10 && type < 0)

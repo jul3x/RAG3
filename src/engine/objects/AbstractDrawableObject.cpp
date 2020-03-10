@@ -101,4 +101,9 @@ namespace r3e {
         shape_.setTexture(texture);
     }
 
+    void AbstractDrawableObject::changeOrigin(const sf::Vector2f &origin)
+    {
+        shape_.setOrigin(origin);
+    }
+
 } // namespace r3e

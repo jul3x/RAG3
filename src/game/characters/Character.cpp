@@ -19,7 +19,7 @@ Character::Character(const sf::Vector2f& position,
         DynamicObject(position,
                       velocity,
                       {SIZE_X_, SIZE_Y_},
-                      Collision::Box(COLLISION_SIZE_X_, COLLISION_SIZE_Y_, {0.0f, COLLISION_OFFSET_Y_}),
+                      Collision::Box(COLLISION_SIZE_X_, COLLISION_SIZE_Y_),
                       &RM.getTexture("player_1"),
                       sf::Color(CFG.getInt("trail_color")),
                       CFG.getFloat("max_acceleration")),
@@ -28,7 +28,10 @@ Character::Character(const sf::Vector2f& position,
         life_state_(LifeState::High),
         path_(nullptr),
         gun_offset_({CFG.getFloat("gun_offset_x"), CFG.getFloat("gun_offset_y")}),
-        Shootable(max_life) {}
+        Shootable(max_life)
+{
+    this->changeOrigin({SIZE_X_ / 2.0f, SIZE_Y_ / 2.0f + COLLISION_OFFSET_Y_});
+}
 
 bool Character::shot()
 {

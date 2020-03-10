@@ -37,4 +37,4 @@ float sound_attenuation=0.01f
 
 float sparks_size_factor=30000.0f
 
-bool sound_on=1
+bool sound_on=0

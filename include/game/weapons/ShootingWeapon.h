@@ -32,6 +32,7 @@ public:
     float getState() const override;
 
 private:
+    static constexpr float BULLET_STARTING_OFFSET_ = 20.0f;
     // weapon parameters
     std::string bullet_type_;
     int bullet_quantity_;

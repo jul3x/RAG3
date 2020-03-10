@@ -12,7 +12,7 @@ float enemy_standby_speed=100.0f
 int enemy_max_health=20
 
 float gun_offset_x=20.0f
-float gun_offset_y=5.0f
+float gun_offset_y=-5.0f
 
 float max_acceleration=1000.0f
 
@@ -36,3 +36,5 @@ float bullet_time_music_factor=1.0f
 float sound_attenuation=0.01f
 
 float sparks_size_factor=30000.0f
+
+bool sound_on=0

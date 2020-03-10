@@ -46,6 +46,8 @@ namespace r3e {
 
         virtual void changeTexture(sf::Texture* texture);
 
+        virtual void changeOrigin(const sf::Vector2f &origin);
+
     protected:
         sf::RectangleShape shape_;
         bool is_visible_;

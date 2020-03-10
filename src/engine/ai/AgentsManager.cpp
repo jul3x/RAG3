@@ -88,8 +88,8 @@ namespace r3e {
 
         void AgentsManager::setNoGoal(AbstractAgent* agent)
         {
-            std::get<1>(this->getAgentData(agent)) = sf::Vector2f{std::numeric_limits<float>::infinity(),
-                                                                  std::numeric_limits<float>::infinity()};
+            std::get<1>(this->getAgentData(agent)) = {ai::NO_GOAL, ai::NO_GOAL};
+
             auto& data = AgentsManager::getAgentData(agent);
             std::get<0>(data) = {};
             //std::cout << "[AgentsManager] Goal set to 0!" << std::endl;
@@ -135,8 +135,7 @@ namespace r3e {
 
         bool AgentsManager::isGoalValid(const ai::Goal& goal)
         {
-            return !(goal.x == std::numeric_limits<float>::infinity() ||
-                     goal.y == std::numeric_limits<float>::infinity());
+            return goal.x != ai::NO_GOAL && goal.y != ai::NO_GOAL;
         }
 
     } // namespace ai

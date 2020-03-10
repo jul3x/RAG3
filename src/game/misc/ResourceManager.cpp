@@ -54,7 +54,7 @@ ShootingWeapon& ResourceManager::getWeapon(const std::string& key)
     return it->second;
 }
 
-std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, std::list<Decoration>>
+std::tuple<sf::Vector2i, std::vector<std::vector<float>>, std::list<Obstacle>, std::list<Decoration>>
 ResourceManager::getMap(const std::string& key)
 {
     try
@@ -110,11 +110,11 @@ void ResourceManager::loadWeapon(const std::string& key)
     std::cout << "[ResourceManager] Weapon " << key << " is loaded!" << std::endl;
 }
 
-std::tuple<sf::Vector2i, std::vector<std::vector<bool>>, std::list<Obstacle>, std::list<Decoration>>
+std::tuple<sf::Vector2i, std::vector<std::vector<float>>, std::list<Obstacle>, std::list<Decoration>>
 ResourceManager::loadMap(const std::string& key)
 {
     std::ifstream file("../data/" + key + ".j3x");
-    std::vector<std::vector<bool>> blocked;
+    std::vector<std::vector<float>> blocked;
     std::list<Obstacle> obstacles;
     std::list<Decoration> decorations;
     int w, h;
@@ -135,9 +135,10 @@ ResourceManager::loadMap(const std::string& key)
             blocked.at(count % w).at(count / w) = false;
             if (type < 10 && type > 0)
             {
-                blocked.at(count % w).at(count / w) = true;
+                // TODO - different types, different blockage
+                blocked.at(count % w).at(count / w) = type;
                 obstacles.push_back({{(count % w) * Obstacle::COLLISION_SIZE_X_,
-                                      (count / w) * Obstacle::COLLISION_SIZE_Y_ - Obstacle::COLLISION_OFFSET_Y_},
+                                      (count / w) * Obstacle::COLLISION_SIZE_Y_},
                                      type});
             }
             else if (type > -10 && type < 0)

@@ -46,6 +46,8 @@ private:
     inline sf::Vector2f findNearestSafeSpot(const sf::Vector2f& direction) const;
 
     static constexpr float MAX_DISTANCE_ = 1500.0f;
+    static constexpr float WALLS_BETWEEN_CLOSE_ = 0.0f;
+    static constexpr float WALLS_BETWEEN_FAR_ = 1.0f;
 
     VisibilityState visibility_state_;
     ActionState action_state_;

@@ -7,8 +7,8 @@
 #define RAG3_GAME_ENVIRONMENT_OBSTACLE_H
 
 #include <R3E/objects/AbstractPhysicalObject.h>
-#include "../weapons/Bullet.h"
-#include "../misc/Shootable.h"
+#include <weapons/Bullet.h>
+#include <misc/Shootable.h>
 
 
 using namespace r3e;

@@ -8,9 +8,9 @@
 
 #include <list>
 
-#include "../characters/Enemy.h"
-#include "Obstacle.h"
-#include "Decoration.h"
+#include <characters/Enemy.h>
+#include <environment/Obstacle.h>
+#include <environment/Decoration.h>
 
 
 using namespace r3e;

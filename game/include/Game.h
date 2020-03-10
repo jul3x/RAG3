@@ -12,11 +12,11 @@
 #include <R3E/ai/AgentsManager.h>
 #include <R3E/audio/MusicManager.h>
 
-#include "misc/Camera.h"
-#include "characters/Player.h"
-#include "environment/Map.h"
-#include "weapons/Bullet.h"
-#include "ui/UserInterface.h"
+#include <misc/Camera.h>
+#include <characters/Player.h>
+#include <environment/Map.h>
+#include <weapons/Bullet.h>
+#include <ui/UserInterface.h>
 
 
 using namespace r3e;

@@ -5,7 +5,7 @@
 #ifndef RAG3_GAME_MISC_SHOOTABLE_H
 #define RAG3_GAME_MISC_SHOOTABLE_H
 
-#include "../weapons/Bullet.h"
+#include <weapons/Bullet.h>
 
 
 class Shootable {

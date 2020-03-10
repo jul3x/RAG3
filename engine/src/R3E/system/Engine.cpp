@@ -85,7 +85,8 @@ namespace r3e {
             ui_->handleEvents(*graphics_, time_scale_factor_ * frame_time_);
             game_->update(time_scale_factor_ * frame_time_);
 
-            collisions_->update(game_);
+            if (collisions_ != nullptr)
+                collisions_->update(game_);
 
             updateAnimationEvents(time_scale_factor_ * frame_time_);
 

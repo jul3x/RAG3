@@ -6,7 +6,7 @@
 #ifndef RAG3_GAME_CHARACTERS_PLAYER_H
 #define RAG3_GAME_CHARACTERS_PLAYER_H
 
-#include "Character.h"
+#include <characters/Character.h>
 
 
 class Player : public Character {

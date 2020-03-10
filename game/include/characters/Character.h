@@ -12,9 +12,9 @@
 #include <R3E/objects/AbstractPhysicalObject.h>
 #include <R3E/ai/AStar.h>
 
-#include "../weapons/AbstractWeapon.h"
-#include "../weapons/Bullet.h"
-#include "../misc/Shootable.h"
+#include <weapons/AbstractWeapon.h>
+#include <weapons/Bullet.h>
+#include <misc/Shootable.h>
 
 
 using namespace r3e;

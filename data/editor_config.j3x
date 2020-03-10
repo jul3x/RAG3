@@ -1,0 +1,10 @@
+bool auto_resolution=1
+bool full_screen=0
+int window_height_px=1500
+int window_width_px=3000
+int32 background_color=0x33333300
+
+float camera_speed=4.0f
+float camera_zoom_speed=5.0f
+
+float user_interface_zoom=2.0f

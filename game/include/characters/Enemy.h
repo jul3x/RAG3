@@ -8,7 +8,7 @@
 
 #include <R3E/ai/AbstractAgent.h>
 
-#include "Character.h"
+#include <characters/Character.h>
 
 
 using namespace r3e;

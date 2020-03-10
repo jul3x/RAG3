@@ -5,10 +5,10 @@
 #ifndef RAG3_GAME_MISC_RESOURCEMANAGER_H
 #define RAG3_GAME_MISC_RESOURCEMANAGER_H
 
-#include "../environment/Obstacle.h"
-#include "../environment/Decoration.h"
-#include "../weapons/ShootingWeapon.h"
-#include "../weapons/Bullet.h"
+#include <environment/Obstacle.h>
+#include <environment/Decoration.h>
+#include <weapons/ShootingWeapon.h>
+#include <weapons/Bullet.h>
 
 #include <R3E/system/AbstractResourceManager.h>
 

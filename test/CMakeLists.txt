@@ -45,7 +45,8 @@ set(SFML_ROOT "C:/SFML-2.5.1")
 
 find_package(SFML 2 REQUIRED COMPONENTS graphics window system audio)
 
-include_directories(../include)
+include_directories(../engine/include)
+include_directories(../game/include)
 include_directories(${SFML_INCLUDE_DIR})
 
 set(EXECUTABLE_NAME "Rag3Test")
@@ -53,10 +54,11 @@ set(TEST_MAIN "gtest.cpp")
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/build_test")
 
 file(GLOB_RECURSE TEST_SRC "src/*Test.cpp")
-file(GLOB_RECURSE MAIN_SRC "../src/*.cpp")
-list(FILTER MAIN_SRC EXCLUDE REGEX "main")
+file(GLOB_RECURSE GAME_SRC "../game/src/*.cpp")
+file(GLOB_RECURSE ENGINE_SRC "../engine/src/*.cpp")
+list(FILTER GAME_SRC EXCLUDE REGEX "main")
 
-add_executable(${EXECUTABLE_NAME} ${TEST_MAIN} ${TEST_SRC} ${MAIN_SRC})
+add_executable(${EXECUTABLE_NAME} ${TEST_MAIN} ${TEST_SRC} ${MAIN_SRC} ${ENGINE_SRC})
 
 target_link_libraries(${EXECUTABLE_NAME} stdc++fs)
 target_link_libraries(${EXECUTABLE_NAME} gtest

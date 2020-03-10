@@ -4,8 +4,8 @@
 
 #include <gtest/gtest.h>
 
-#include <engine/utils/Numeric.h>
-#include <engine/utils/Geometry.h>
+#include <R3E/utils/Numeric.h>
+#include <R3E/utils/Geometry.h>
 
 using namespace r3e;
 

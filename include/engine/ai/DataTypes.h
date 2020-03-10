@@ -10,6 +10,7 @@
 #include <vector>
 #include <list>
 #include <chrono>
+#include <limits>
 
 #include <SFML/System/Vector2.hpp>
 
@@ -22,6 +23,9 @@ namespace r3e {
 
         using Path = std::list<std::pair<sf::Vector2f, float>>;
         using Goal = sf::Vector2f;
+
+        constexpr float NO_GOAL = std::numeric_limits<float>::infinity();
+
         using Timestamp = std::chrono::system_clock::time_point;
 
         struct MapBlockage {

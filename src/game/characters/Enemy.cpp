@@ -15,7 +15,8 @@
 Enemy::Enemy(const sf::Vector2f& position,
              const sf::Vector2f& velocity) :
         Character(position, velocity, CFG.getInt("enemy_max_health")),
-        AbstractAgent(Game::get().getAgentsManager())
+        AbstractAgent(Game::get().getAgentsManager()),
+        visibility_state_(VisibilityState::TooFar)
 {
     weapons_in_backpack_.push_back(
             std::make_unique<ShootingWeapon>(RM.getWeapon("desert_eagle")));
@@ -299,5 +300,5 @@ sf::Vector2f Enemy::findNearestSafeSpot(const sf::Vector2f& direction) const
     if (checkIfPositionValid(rounded_x, rounded_y))
         return {rounded_x * blockage.scale_x_, rounded_y * blockage.scale_y_};
 
-    return {};
+    return {ai::NO_GOAL, ai::NO_GOAL};
 }

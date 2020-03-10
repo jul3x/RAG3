@@ -96,8 +96,12 @@ private:
     static constexpr float SIZE_X_ = 49.0f;
     static constexpr float SIZE_Y_ = 120.0f;
 
+    static constexpr float ROTATING_HYSTERESIS_ = 15.0f;
+
     sf::Vector2f gun_offset_;
     float rotate_to_;
+
+    short int current_rotation_quarter_;
 
 };
 

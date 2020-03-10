@@ -28,6 +28,7 @@ Character::Character(const sf::Vector2f& position,
         life_state_(LifeState::High),
         path_(nullptr),
         gun_offset_({CFG.getFloat("gun_offset_x"), CFG.getFloat("gun_offset_y")}),
+        current_rotation_quarter_(1),
         Shootable(max_life)
 {
     this->changeOrigin({SIZE_X_ / 2.0f, SIZE_Y_ / 2.0f + COLLISION_OFFSET_Y_});
@@ -137,29 +138,71 @@ void Character::setRotation(float theta)
 {
     (*current_weapon_)->setRotation(theta);
 
-    if (theta >= 0.0f && theta < 90.0f)
+    auto getQuarter = [](float theta) {
+        if (theta >= 0.0f && theta < 90.0f)
+            return 1;
+        else if (theta >= 90.0f && theta < 180.0f)
+            return 2;
+        else if (theta >= 180.0f && theta < 270.0f)
+            return 3;
+        else
+            return 4;
+    };
+
+    short int new_quarter_ = getQuarter(theta);
+
+    switch (current_rotation_quarter_)
     {
-        shape_.setTexture(&RM.getTexture("player_1"));
-        gun_offset_.x = CFG.getFloat("gun_offset_x");
-        gun_offset_.y = CFG.getFloat("gun_offset_y");
-    }
-    else if (theta >= 90.0f && theta < 180.0f)
-    {
-        shape_.setTexture(&RM.getTexture("player_2"));
-        gun_offset_.x = -CFG.getFloat("gun_offset_x");
-        gun_offset_.y = CFG.getFloat("gun_offset_y");
-    }
-    else if (theta >= 180.0f && theta < 270.0f)
-    {
-        shape_.setTexture(&RM.getTexture("player_3"));
-        gun_offset_.x = -CFG.getFloat("gun_offset_x");
-        gun_offset_.y = CFG.getFloat("gun_offset_y");
-    }
-    else
-    {
-        shape_.setTexture(&RM.getTexture("player_4"));
-        gun_offset_.x = CFG.getFloat("gun_offset_x");
-        gun_offset_.y = CFG.getFloat("gun_offset_y");
+        case 1:
+        {
+            shape_.setTexture(&RM.getTexture("player_1"));
+            gun_offset_.x = CFG.getFloat("gun_offset_x");
+            gun_offset_.y = CFG.getFloat("gun_offset_y");
+
+            if (new_quarter_ == 2 && theta >= 90.0f + Character::ROTATING_HYSTERESIS_)
+                current_rotation_quarter_ = 2;
+            else if (new_quarter_ != 2)
+                current_rotation_quarter_ = new_quarter_;
+            break;
+        }
+        case 2:
+        {
+            shape_.setTexture(&RM.getTexture("player_2"));
+            gun_offset_.x = -CFG.getFloat("gun_offset_x");
+            gun_offset_.y = CFG.getFloat("gun_offset_y");
+
+            if (new_quarter_ == 1 && theta < 90.0f - Character::ROTATING_HYSTERESIS_)
+                current_rotation_quarter_ = 1;
+            else if (new_quarter_ != 1)
+                current_rotation_quarter_ = new_quarter_;
+            break;
+        }
+        case 3:
+        {
+            shape_.setTexture(&RM.getTexture("player_3"));
+            gun_offset_.x = -CFG.getFloat("gun_offset_x");
+            gun_offset_.y = CFG.getFloat("gun_offset_y");
+
+            if (new_quarter_ == 4 && theta >= 270.0f + Character::ROTATING_HYSTERESIS_)
+                current_rotation_quarter_ = 4;
+            else if (new_quarter_ != 4)
+                current_rotation_quarter_ = new_quarter_;
+            break;
+        }
+        case 4:
+        {
+            shape_.setTexture(&RM.getTexture("player_4"));
+            gun_offset_.x = CFG.getFloat("gun_offset_x");
+            gun_offset_.y = CFG.getFloat("gun_offset_y");
+
+            if (new_quarter_ == 3 && theta < 270.0f - Character::ROTATING_HYSTERESIS_)
+                current_rotation_quarter_ = 3;
+            else if (new_quarter_ != 3)
+                current_rotation_quarter_ = new_quarter_;
+            break;
+        }
+        default:
+            throw std::runtime_error("[Character] Invalid rotation quarter!");
     }
 }
 

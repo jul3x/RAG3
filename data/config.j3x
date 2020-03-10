@@ -36,3 +36,5 @@ float bullet_time_music_factor=1.0f
 float sound_attenuation=0.01f
 
 float sparks_size_factor=30000.0f
+
+bool sound_on=1

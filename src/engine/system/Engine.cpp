@@ -90,7 +90,9 @@ namespace r3e {
             updateAnimationEvents(time_scale_factor_ * frame_time_);
 
             draw();
-            sound_manager_->update(time_scale_factor_ * frame_time_);
+
+            if (sound_manager_ != nullptr)
+                sound_manager_->update(time_scale_factor_ * frame_time_);
         }
     }
 
@@ -165,7 +167,9 @@ namespace r3e {
     void Engine::setTimeScaleFactor(float factor)
     {
         time_scale_factor_ = factor;
-        sound_manager_->changePitch(factor);
+
+        if (sound_manager_ != nullptr)
+            sound_manager_->changePitch(factor);
     }
 
     void Engine::changeSoundListenerPosition(const sf::Vector2f& pos)

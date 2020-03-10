@@ -33,7 +33,6 @@ void Game::initialize()
     music_manager_ = std::make_unique<audio::MusicManager>();
     music_manager_->addDirectoryToQueue("../data/music");
 
-
     music_manager_->setVolume(50.0f);
     music_manager_->play();
 
@@ -44,6 +43,7 @@ void Game::initialize()
             sf::Vector2i{CFG.getInt("window_width_px"), CFG.getInt("window_height_px")}, "Codename: Rag3",
             CFG.getInt("full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
             sf::Color(CFG.getInt("background_color")));
+
     engine_->initializeSoundManager(CFG.getFloat("sound_attenuation"));
 
     engine_->registerCamera(camera_.get());
@@ -88,8 +88,11 @@ void Game::update(float time_elapsed)
 
     camera_->update(time_elapsed);
 
-    Engine::changeSoundListenerPosition(player_->getPosition());
-    music_manager_->update(time_elapsed);
+    if (CFG.getInt("sound_on"))
+    {
+        Engine::changeSoundListenerPosition(player_->getPosition());
+        music_manager_->update(time_elapsed);
+    }
 }
 
 void Game::draw(graphics::Graphics& graphics)
@@ -137,7 +140,9 @@ void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const floa
 void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
 {
     engine_->spawnAnimationEvent(std::make_shared<ExplosionEvent>(pos, r));
-    engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
+
+    if (CFG.getInt("sound_on"))
+        engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
 }
 
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir)
@@ -146,7 +151,9 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, cons
                                                   RM.getBulletDescription(
                                                           name).burst_size_);
     engine_->spawnAnimationEvent(shot_event);
-    engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
+
+    if (CFG.getInt("sound_on"))
+        engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
 }
 
 void Game::spawnBullet(const std::string& name, const sf::Vector2f& pos, const float dir)
@@ -214,14 +221,18 @@ void Game::setBulletTime()
 {
     current_time_factor_ = CFG.getFloat("bullet_time_factor");
     engine_->setTimeScaleFactor(current_time_factor_);
-    music_manager_->setPlaybackPitch(CFG.getFloat("bullet_time_music_factor"));
+
+    if (CFG.getInt("sound_on"))
+        music_manager_->setPlaybackPitch(CFG.getFloat("bullet_time_music_factor"));
 }
 
 void Game::setNormalTime()
 {
     current_time_factor_ = 1.0f;
     engine_->setTimeScaleFactor(1.0f);
-    music_manager_->setPlaybackPitch(1.0f);
+
+    if (CFG.getInt("sound_on"))
+        music_manager_->setPlaybackPitch(1.0f);
 }
 
 float Game::getCurrentTimeFactor() const

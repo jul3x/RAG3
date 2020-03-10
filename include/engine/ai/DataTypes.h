@@ -17,7 +17,7 @@
 namespace r3e {
     namespace ai {
         using NeighboursVec = std::vector<sf::Vector2<size_t>>;
-        using Grid = std::vector<std::vector<bool>>;
+        using Grid = std::vector<std::vector<float>>;
         using NeighbourFunction = std::function<NeighboursVec(const Grid& grid, const sf::Vector2<size_t>&)>;
 
         using Path = std::list<std::pair<sf::Vector2f, float>>;

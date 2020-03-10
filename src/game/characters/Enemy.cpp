@@ -111,7 +111,7 @@ void Enemy::handleVisibilityState()
 
     auto dir = utils::geo::getNormalized(Game::get().getPlayerPosition() - this->getPosition());
 
-    int walls_between = 0;
+    float walls_between = 0;
     while (!utils::num::isNearlyEqual(start_x, goal_x, 1.0f) ||
            !utils::num::isNearlyEqual(start_y, goal_y, 1.0f))
     {
@@ -125,15 +125,16 @@ void Enemy::handleVisibilityState()
             rounded_y >= blockage.blockage_.at(0).size() || rounded_y < 0)
             break;
 
-        if (blockage.blockage_.at(rounded_x).at(rounded_y))
-            ++walls_between;
+        walls_between += blockage.blockage_.at(rounded_x).at(rounded_y);
+
+        if (walls_between > Enemy::WALLS_BETWEEN_FAR_) break;
     }
 
     if (utils::geo::getDistance(Game::get().getPlayerPosition(), this->getPosition()) > Enemy::MAX_DISTANCE_)
         visibility_state_ = VisibilityState::OutOfRange;
-    else if (walls_between <= 0)
+    else if (walls_between <= Enemy::WALLS_BETWEEN_CLOSE_)
         visibility_state_ = VisibilityState::Close;
-    else if (walls_between <= 1)
+    else if (walls_between <= Enemy::WALLS_BETWEEN_FAR_)
         visibility_state_ = VisibilityState::Far;
     else
         visibility_state_ = VisibilityState::TooFar;
@@ -266,38 +267,36 @@ void Enemy::handleActionState()
 }
 
 sf::Vector2f Enemy::findNearestSafeSpot(const sf::Vector2f& direction) const
-    {
-        auto dir = utils::geo::getNormalized(direction);
+{
+    auto dir = utils::geo::getNormalized(direction);
     auto& blockage = Game::get().getMapBlockage();
     auto current = sf::Vector2f{std::round(this->getPosition().x / blockage.scale_x_),
                                 std::round(this->getPosition().y / blockage.scale_y_)};
 
+    auto checkIfPositionValid = [&blockage](int a, int b) {
+        return a < blockage.blockage_.size() && a >= 0 &&
+                b < blockage.blockage_.at(0).size() && b >= 0 &&
+               !blockage.blockage_.at(a).at(b);
+    };
+
     int rounded_x = static_cast<int>(std::round(current.x + dir.x));
     int rounded_y = static_cast<int>(std::round(current.y + dir.y));
-    if (rounded_x < blockage.blockage_.size() && rounded_x >= 0 &&
-        rounded_y < blockage.blockage_.at(0).size() && rounded_y >= 0 &&
-        !blockage.blockage_.at(rounded_x).at(rounded_y))
+    if (checkIfPositionValid(rounded_x, rounded_y))
         return {rounded_x * blockage.scale_x_, rounded_y * blockage.scale_y_};
 
     rounded_x = static_cast<int>(std::round(current.x - dir.y));
     rounded_y = static_cast<int>(std::round(current.y + dir.x));
-    if (rounded_x < blockage.blockage_.size() && rounded_x >= 0 &&
-        rounded_y < blockage.blockage_.at(0).size() && rounded_y >= 0 &&
-        !blockage.blockage_.at(rounded_x).at(rounded_y))
+    if (checkIfPositionValid(rounded_x, rounded_y))
         return {rounded_x * blockage.scale_x_, rounded_y * blockage.scale_y_};
 
     rounded_x = static_cast<int>(std::round(current.x + dir.y));
     rounded_y = static_cast<int>(std::round(current.y - dir.x));
-    if (rounded_x < blockage.blockage_.size() && rounded_x >= 0 &&
-        rounded_y < blockage.blockage_.at(0).size() && rounded_y >= 0 &&
-        !blockage.blockage_.at(rounded_x).at(rounded_y))
+    if (checkIfPositionValid(rounded_x, rounded_y))
         return {rounded_x * blockage.scale_x_, rounded_y * blockage.scale_y_};
 
     rounded_x = static_cast<int>(std::round(current.x - dir.x));
     rounded_y = static_cast<int>(std::round(current.y - dir.y));
-    if (rounded_x < blockage.blockage_.size() && rounded_x >= 0 &&
-        rounded_y < blockage.blockage_.at(0).size() && rounded_y >= 0 &&
-        !blockage.blockage_.at(rounded_x).at(rounded_y))
+    if (checkIfPositionValid(rounded_x, rounded_y))
         return {rounded_x * blockage.scale_x_, rounded_y * blockage.scale_y_};
 
     return {};

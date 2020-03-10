@@ -96,7 +96,7 @@ namespace r3e {
         }
 
         std::vector<AStar::Node>
-        AStar::getPath(const std::vector<std::vector<bool>>& grid, const sf::Vector2<size_t>& start,
+        AStar::getPath(const std::vector<std::vector<float>>& grid, const sf::Vector2<size_t>& start,
                        const sf::Vector2<size_t>& goal, const NeighbourFunction& func, size_t limit)
         {
             std::unordered_set<Node, NodeHash> closed_set;

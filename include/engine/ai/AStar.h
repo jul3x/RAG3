@@ -55,7 +55,7 @@ namespace r3e {
             static void getSmoothedPath_(Path& path);
 
             static std::vector<Node>
-            getPath(const std::vector<std::vector<bool>>& grid, const sf::Vector2<size_t>& start,
+            getPath(const std::vector<std::vector<float>>& grid, const sf::Vector2<size_t>& start,
                     const sf::Vector2<size_t>& goal, const NeighbourFunction& func, size_t limit);
 
             static float heuristic(const Node& start, const Node& goal);

@@ -44,6 +44,14 @@ namespace r3e {
             int goal_x = std::round(goal.x / map_blockage_.scale_x_);
             int goal_y = std::round(goal.y / map_blockage_.scale_y_);
 
+            if (start_x < 0 || start_x >= map_blockage_.blockage_.size() || start_y < 0 ||
+                start_y >= map_blockage_.blockage_.at(0).size() ||
+                goal_x < 0 || goal_x >= map_blockage_.blockage_.size() || goal_y < 0 ||
+                goal_y >= map_blockage_.blockage_.at(0).size())
+            {
+                return {};
+            }
+
             auto convert = [&map_blockage_](const Node& node) {
                 return sf::Vector2f(node.cord.first * map_blockage_.scale_x_,
                                     node.cord.second * map_blockage_.scale_y_);

@@ -5,18 +5,20 @@
 cmake_minimum_required(VERSION 3.6)
 project(Rag3)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
-# Change this if you're working on Windows to your SFML path.
+# Change this if you're working on Windows to your SFML and TGUI path.
 set(SFML_ROOT "C:/SFML-2.5.1")
+set(TGUI_ROOT "C:/TGUI-0.8")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 find_package(SFML 2 REQUIRED COMPONENTS graphics window system audio)
+find_package(TGUI 0.8 REQUIRED)
 
 include_directories(${CMAKE_SOURCE_DIR}/engine/include)
 include_directories(${CMAKE_SOURCE_DIR}/editor/include)
 include_directories(${CMAKE_SOURCE_DIR}/game/include)
-include_directories(${SFML_INCLUDE_DIR})
+include_directories(${SFML_INCLUDE_DIR} ${TGUI_INCLUDE_DIR})
 
 # R3Engine
 set(LIBRARY_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/build")
@@ -44,7 +46,8 @@ target_link_libraries(${EDITOR_NAME}
         ${SFML_GRAPHICS_LIBRARY_RELEASE}
         ${SFML_WINDOW_LIBRARY_RELEASE}
         ${SFML_SYSTEM_LIBRARY_RELEASE}
-        ${SFML_AUDIO_LIBRARY_RELEASE})
+        ${SFML_AUDIO_LIBRARY_RELEASE}
+        ${TGUI_LIBRARY_RELEASE})
 
 # RAG3
 set(EXECUTABLE_NAME "Rag3")

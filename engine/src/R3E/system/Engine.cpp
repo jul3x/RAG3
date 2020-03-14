@@ -159,7 +159,7 @@ namespace r3e {
         game_->draw(*graphics_);
 
         graphics_->setStaticView();
-        graphics_->draw(*ui_);
+        ui_->draw(*graphics_);
         graphics_->setCurrentView();
 
         graphics_->display();

@@ -20,6 +20,8 @@ namespace editor {
 
         static ResourceManager& getInstance();
 
+        const std::vector<std::string>& getListOfObjects(const std::string& dir);
+
     //    BulletDescription& getBulletDescription(const std::string& key);
     //
     //    ShootingWeapon& getWeapon(const std::string& key);
@@ -30,6 +32,7 @@ namespace editor {
     private:
         ResourceManager();
 
+        void loadListOfObjects(const std::string& dir);
     //    void loadBulletDescription(const std::string& key);
     //
     //    void loadWeapon(const std::string& key);
@@ -39,6 +42,8 @@ namespace editor {
     //
     //    std::unordered_map<std::string, ShootingWeapon> weapons_;
     //    std::unordered_map<std::string, BulletDescription> bullets_;
+
+        std::unordered_map<std::string, std::vector<std::string>> list_of_objects_;
     };
 } // namespace editor
 

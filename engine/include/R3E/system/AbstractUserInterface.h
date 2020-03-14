@@ -11,7 +11,7 @@
 
 namespace r3e {
 
-    class AbstractUserInterface : public AbstractDrawableObject {
+    class AbstractUserInterface {
 
     public:
         explicit AbstractUserInterface() = default;
@@ -24,8 +24,7 @@ namespace r3e {
 
         virtual void handleEvents(graphics::Graphics& graphics, float time_elapsed) = 0;
 
-    private:
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const override = 0;
+        virtual void draw(graphics::Graphics& graphics) = 0;
 
     };
 

@@ -129,14 +129,14 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
     }
 }
 
-void UserInterface::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void UserInterface::draw(graphics::Graphics& graphics)
 {
-    target.draw(blood_splash_, states);
-    target.draw(weapons_bar_, states);
-    target.draw(health_bar_, states);
-    target.draw(fps_text_, states);
-    target.draw(logo_, states);
-    target.draw(crosshair_, states);
+    graphics.draw(blood_splash_);
+    graphics.draw(weapons_bar_);
+    graphics.draw(health_bar_);
+    //graphics.draw(fps_text_);
+    graphics.draw(logo_);
+    graphics.draw(crosshair_);
 }
 
 inline void UserInterface::handleScrolling(float delta)

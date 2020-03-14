@@ -36,9 +36,9 @@ public:
 
     void registerCamera(Camera* camera);
 
-private:
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    void draw(graphics::Graphics& graphics) override;
 
+private:
     inline void handleScrolling(float delta);
 
     inline void handleKeys();

@@ -76,21 +76,21 @@ namespace r3e {
                                     else
                                     {
                                         throw std::logic_error("[J3X] Not handled type " + type +
-                                                               " on line " + std::to_string(line_count));
+                                                               " on line " + std::to_string(line_count) + "\n");
                                     }
                                 }
                                 catch (std::invalid_argument& e)
                                 {
                                     throw std::invalid_argument("[J3X] Parse error: Wrong type " + type +
                                                                 " of parameter on line " +
-                                                                std::to_string(line_count));
+                                                                std::to_string(line_count) + "\n");
                                 }
                             }
                         }
                         else
                         {
                             throw std::invalid_argument("[J3X] Parse error on line " +
-                                                        std::to_string(line_count));
+                                                        std::to_string(line_count) + "\n");
                         }
                     }
                 }
@@ -99,7 +99,7 @@ namespace r3e {
             }
             else
             {
-                throw std::logic_error("[J3X] J3X " + filename + " file not found!");
+                throw std::logic_error("[J3X] J3X " + filename + " file not found!\n");
             }
 
             return std::make_tuple(int_params, float_params, string_params);

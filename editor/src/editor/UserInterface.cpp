@@ -14,11 +14,14 @@ UserInterface::UserInterface() :
         logo_(sf::Vector2f{CFG.getInt("window_width_px") - LOGO_OFF_X_ * CFG.getFloat("user_interface_zoom"),
                            LOGO_OFF_Y_ * CFG.getFloat("user_interface_zoom")},
               CFG.getFloat("user_interface_zoom") * sf::Vector2f{LOGO_SIZE_X_, LOGO_SIZE_Y_},
-              &RM.getTexture("rag3_logo")) {}
+              &RM.getTexture("rag3_logo")),
+        gui_theme_("../data/config/gui_theme.txt"),
+        tiles_window_(&gui_, &gui_theme_, "Environment") {}
 
 void UserInterface::initialize(graphics::Graphics& graphics)
 {
-    graphics.getWindow().setMouseCursorVisible(false);
+    gui_.setTarget(graphics.getWindow());
+    tiles_window_.initialize({"Col tiles", "Non-col tiles"}, {CFG.getString("paths/obstacles_tiles"), CFG.getString("paths/decorations_tiles")});
 }
 
 void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapsed)
@@ -50,6 +53,8 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 static_view.setCenter(visible_area / 2.0f);
                 graphics.modifyStaticView(static_view);
 
+                gui_.setView(static_view);
+
                 logo_.setPosition(event.size.width - LOGO_OFF_X_ * CFG.getFloat("user_interface_zoom"),
                                   LOGO_OFF_Y_ * CFG.getFloat("user_interface_zoom"));
 
@@ -74,13 +79,16 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 break;
             }
         }
+
+        gui_.handleEvent(event);
     }
 }
 
-void UserInterface::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void UserInterface::draw(graphics::Graphics& graphics)
 {
-    target.draw(logo_, states);
-    target.draw(crosshair_, states);
+    gui_.draw();
+    graphics.draw(logo_);
+    graphics.draw(crosshair_);
 }
 
 inline void UserInterface::handleScrolling(float delta)

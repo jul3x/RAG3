@@ -3,9 +3,11 @@
 //
 
 #include <R3E/utils/Geometry.h>
+
 #include <editor/ResourceManager.h>
 
 #include <Editor.h>
+
 
 using namespace editor;
 

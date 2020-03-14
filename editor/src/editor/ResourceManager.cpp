@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <experimental/filesystem>
 
 #include <editor/ResourceManager.h>
 
@@ -169,6 +170,36 @@ ResourceManager& ResourceManager::getInstance()
 //
 //    return std::make_tuple(sf::Vector2i{w, h}, blocked, obstacles, decorations);
 //}
+
+const std::vector<std::string>& ResourceManager::getListOfObjects(const std::string& dir)
+{
+    auto it = list_of_objects_.find(dir);
+
+    if (it == list_of_objects_.end())
+    {
+        try
+        {
+            loadListOfObjects(dir);
+
+            return list_of_objects_.at(dir);
+        }
+        catch (std::runtime_error& e)
+        {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+
+    return it->second;
+}
+
+void ResourceManager::loadListOfObjects(const std::string& dir)
+{
+    std::experimental::filesystem::path path{dir};
+    for (const auto& file : std::experimental::filesystem::recursive_directory_iterator(path))
+    {
+        list_of_objects_[dir].emplace_back(file.path().filename().replace_extension().string());
+    }
+}
 
 ResourceManager::ResourceManager() : AbstractResourceManager("../data", "../data/textures", "../data/fonts",
                                                              "../data/sounds", "../data/music")

@@ -5,11 +5,15 @@
 #ifndef RAG3_EDITOR_USERINTERFACE_H
 #define RAG3_EDITOR_USERINTERFACE_H
 
+
+#include <TGUI/TGUI.hpp>
+
 #include <R3E/system/Config.h>
 #include <R3E/system/AbstractUserInterface.h>
 
 #include <editor/Crosshair.h>
 #include <editor/Camera.h>
+#include <editor/ListWindow.h>
 
 
 using namespace r3e;
@@ -28,9 +32,9 @@ namespace editor {
 
         void handleEvents(graphics::Graphics& graphics, float time_elapsed) override;
 
-    private:
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+        void draw(graphics::Graphics& graphics) override;
 
+    private:
         inline void handleScrolling(float delta);
 
         inline void handleKeys();
@@ -45,6 +49,11 @@ namespace editor {
         Crosshair crosshair_;
 
         AbstractDrawableObject logo_;
+
+        tgui::Gui gui_;
+        tgui::Theme gui_theme_;
+
+        ListWindow tiles_window_;
 
     };
 } // namespace editor

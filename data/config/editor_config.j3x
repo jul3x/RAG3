@@ -8,3 +8,8 @@ float camera_speed=4.0f
 float camera_zoom_speed=5.0f
 
 float user_interface_zoom=1.0f
+
+float child_windows_size_x=350.0f
+float child_windows_size_y=300.0f
+float items_padding=15.0f
+float items_size=50.0f

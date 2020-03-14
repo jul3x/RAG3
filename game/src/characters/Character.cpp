@@ -22,13 +22,13 @@ Character::Character(const sf::Vector2f& position,
                       {SIZE_X_, SIZE_Y_},
                       Collision::Box(COLLISION_SIZE_X_, COLLISION_SIZE_Y_),
                       &RM.getTexture("player_1"),
-                      sf::Color(CFG.getInt("trail_color")),
-                      CFG.getFloat("max_acceleration")),
+                      sf::Color(CFG.getInt("graphics/trail_color")),
+                      CFG.getFloat("characters/max_acceleration")),
         max_life_(max_life),
         ammo_state_(AmmoState::High),
         life_state_(LifeState::High),
         path_(nullptr),
-        gun_offset_({CFG.getFloat("gun_offset_x"), CFG.getFloat("gun_offset_y")}),
+        gun_offset_({CFG.getFloat("characters/gun_offset_x"), CFG.getFloat("characters/gun_offset_y")}),
         current_rotation_quarter_(1),
         Shootable(max_life)
 {
@@ -111,7 +111,7 @@ bool Character::update(float time_elapsed)
     auto is_negative = std::signbit(rotation_diff);
     auto rotation_sqrt = std::sqrt(std::abs(rotation_diff)) * (is_negative ? -1.0f : 1.0f);
     this->setRotation(this->getRotation() -
-                      rotation_sqrt * CFG.getFloat("mouse_reaction_speed") * time_elapsed);
+                      rotation_sqrt * CFG.getFloat("characters/mouse_reaction_speed") * time_elapsed);
 
     return life_ > 0;
 }
@@ -157,8 +157,8 @@ void Character::setRotation(float theta)
         case 1:
         {
             shape_.setTexture(&RM.getTexture("player_1"));
-            gun_offset_.x = CFG.getFloat("gun_offset_x");
-            gun_offset_.y = CFG.getFloat("gun_offset_y");
+            gun_offset_.x = CFG.getFloat("characters/gun_offset_x");
+            gun_offset_.y = CFG.getFloat("characters/gun_offset_y");
 
             if (new_quarter_ == 2 && theta >= 90.0f + Character::ROTATING_HYSTERESIS_)
                 current_rotation_quarter_ = 2;
@@ -169,8 +169,8 @@ void Character::setRotation(float theta)
         case 2:
         {
             shape_.setTexture(&RM.getTexture("player_2"));
-            gun_offset_.x = -CFG.getFloat("gun_offset_x");
-            gun_offset_.y = CFG.getFloat("gun_offset_y");
+            gun_offset_.x = -CFG.getFloat("characters/gun_offset_x");
+            gun_offset_.y = CFG.getFloat("characters/gun_offset_y");
 
             if (new_quarter_ == 1 && theta < 90.0f - Character::ROTATING_HYSTERESIS_)
                 current_rotation_quarter_ = 1;
@@ -181,8 +181,8 @@ void Character::setRotation(float theta)
         case 3:
         {
             shape_.setTexture(&RM.getTexture("player_3"));
-            gun_offset_.x = -CFG.getFloat("gun_offset_x");
-            gun_offset_.y = CFG.getFloat("gun_offset_y");
+            gun_offset_.x = -CFG.getFloat("characters/gun_offset_x");
+            gun_offset_.y = CFG.getFloat("characters/gun_offset_y");
 
             if (new_quarter_ == 4 && theta >= 270.0f + Character::ROTATING_HYSTERESIS_)
                 current_rotation_quarter_ = 4;
@@ -193,8 +193,8 @@ void Character::setRotation(float theta)
         case 4:
         {
             shape_.setTexture(&RM.getTexture("player_4"));
-            gun_offset_.x = CFG.getFloat("gun_offset_x");
-            gun_offset_.y = CFG.getFloat("gun_offset_y");
+            gun_offset_.x = CFG.getFloat("characters/gun_offset_x");
+            gun_offset_.y = CFG.getFloat("characters/gun_offset_y");
 
             if (new_quarter_ == 3 && theta < 270.0f - Character::ROTATING_HYSTERESIS_)
                 current_rotation_quarter_ = 3;

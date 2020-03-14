@@ -1,0 +1,6 @@
+string music_dir=../data/music
+string sounds_dir=../data/sounds
+string textures_dir=../data/textures
+string fonts_dir=../data/fonts
+string j3x_dir=../data
+string maps_dir=../data/maps

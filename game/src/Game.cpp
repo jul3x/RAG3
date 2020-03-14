@@ -31,7 +31,7 @@ void Game::initialize()
                                                           1000); // max search of path
 
     music_manager_ = std::make_unique<audio::MusicManager>();
-    music_manager_->addDirectoryToQueue("../data/music");
+    music_manager_->addDirectoryToQueue(CFG.getString("paths/music_dir"));
 
     music_manager_->setVolume(50.0f);
     music_manager_->play();
@@ -40,11 +40,11 @@ void Game::initialize()
     ui_->registerPlayer(player_.get());
 
     engine_->initializeGraphics(
-            sf::Vector2i{CFG.getInt("window_width_px"), CFG.getInt("window_height_px")}, "Codename: Rag3",
-            CFG.getInt("full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
-            sf::Color(CFG.getInt("background_color")));
+            sf::Vector2i{CFG.getInt("graphics/window_width_px"), CFG.getInt("graphics/window_height_px")}, "Codename: Rag3",
+            CFG.getInt("graphics/full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
+            sf::Color(CFG.getInt("graphics/background_color")));
 
-    engine_->initializeSoundManager(CFG.getFloat("sound_attenuation"));
+    engine_->initializeSoundManager(CFG.getFloat("sound/sound_attenuation"));
 
     engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
@@ -88,7 +88,7 @@ void Game::update(float time_elapsed)
 
     camera_->update(time_elapsed);
 
-    if (CFG.getInt("sound_on"))
+    if (CFG.getInt("sound/sound_on"))
     {
         Engine::changeSoundListenerPosition(player_->getPosition());
         music_manager_->update(time_elapsed);
@@ -141,7 +141,7 @@ void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
 {
     engine_->spawnAnimationEvent(std::make_shared<ExplosionEvent>(pos, r));
 
-    if (CFG.getInt("sound_on"))
+    if (CFG.getInt("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
 }
 
@@ -152,7 +152,7 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, cons
                                                           name).burst_size_);
     engine_->spawnAnimationEvent(shot_event);
 
-    if (CFG.getInt("sound_on"))
+    if (CFG.getInt("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
 }
 
@@ -171,7 +171,7 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
     auto obstacle = dynamic_cast<Obstacle*>(s_obj);
     obstacle->getShot(*bullet);
     spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                     static_cast<float>(std::pow(CFG.getFloat("sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+                     static_cast<float>(std::pow(CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
     bullet->setDead();
 }
@@ -182,7 +182,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     auto character = dynamic_cast<Character*>(d_obj);
     character->getShot(*bullet);
     spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                     static_cast<float>(std::pow(CFG.getFloat("sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+                     static_cast<float>(std::pow(CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
     bullet->setDead();
 }
@@ -222,8 +222,8 @@ void Game::setBulletTime()
     current_time_factor_ = CFG.getFloat("bullet_time_factor");
     engine_->setTimeScaleFactor(current_time_factor_);
 
-    if (CFG.getInt("sound_on"))
-        music_manager_->setPlaybackPitch(CFG.getFloat("bullet_time_music_factor"));
+    if (CFG.getInt("sound/sound_on"))
+        music_manager_->setPlaybackPitch(CFG.getFloat("sound/bullet_time_music_factor"));
 }
 
 void Game::setNormalTime()
@@ -231,7 +231,7 @@ void Game::setNormalTime()
     current_time_factor_ = 1.0f;
     engine_->setTimeScaleFactor(1.0f);
 
-    if (CFG.getInt("sound_on"))
+    if (CFG.getInt("sound/sound_on"))
         music_manager_->setPlaybackPitch(1.0f);
 }
 

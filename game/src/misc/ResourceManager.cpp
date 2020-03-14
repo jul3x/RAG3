@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include <misc/ResourceManager.h>
+#include <R3E/system/Config.h>
 
 
 ResourceManager& ResourceManager::getInstance()
@@ -113,7 +114,7 @@ void ResourceManager::loadWeapon(const std::string& key)
 std::tuple<sf::Vector2i, std::vector<std::vector<float>>, std::list<Obstacle>, std::list<Decoration>>
 ResourceManager::loadMap(const std::string& key)
 {
-    std::ifstream file("../data/" + key + ".j3x");
+    std::ifstream file(CFG.getString("paths/maps_dir") + "/" + key + ".j3x");
     std::vector<std::vector<float>> blocked;
     std::list<Obstacle> obstacles;
     std::list<Decoration> decorations;
@@ -169,8 +170,9 @@ ResourceManager::loadMap(const std::string& key)
     return std::make_tuple(sf::Vector2i{w, h}, blocked, obstacles, decorations);
 }
 
-ResourceManager::ResourceManager() : AbstractResourceManager("../data", "../data/textures", "../data/fonts",
-                                                             "../data/sounds", "../data/music")
+ResourceManager::ResourceManager() : AbstractResourceManager(CFG.getString("paths/j3x_dir"), CFG.getString("paths/textures_dir"),
+                                                             CFG.getString("paths/fonts_dir"), CFG.getString("paths/sounds_dir"),
+                                                             CFG.getString("paths/music_dir"))
 {
 
 }

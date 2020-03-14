@@ -14,7 +14,7 @@
 
 Enemy::Enemy(const sf::Vector2f& position,
              const sf::Vector2f& velocity) :
-        Character(position, velocity, CFG.getInt("enemy_max_health")),
+        Character(position, velocity, CFG.getInt("characters/enemy_max_health")),
         AbstractAgent(Game::get().getAgentsManager()),
         visibility_state_(VisibilityState::TooFar)
 {
@@ -36,13 +36,13 @@ bool Enemy::update(float time_elapsed)
     handleVisibilityState();
     handleActionState();
 
-    auto velocity = CFG.getFloat("enemy_max_speed") * this->generateVelocityForPath();
+    auto velocity = CFG.getFloat("characters/enemy_max_speed") * this->generateVelocityForPath();
 
     switch (action_state_)
     {
         case ActionState::StandBy:
         {
-            velocity = CFG.getFloat("enemy_standby_speed") * this->getWanderingDirection(0.2f, 100.0f, 20);
+            velocity = CFG.getFloat("characters/enemy_standby_speed") * this->getWanderingDirection(0.2f, 100.0f, 20);
 
             this->setNoGoal();
             this->setWeaponPointing(this->getPosition() + velocity);

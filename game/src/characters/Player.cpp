@@ -11,7 +11,7 @@
 
 Player::Player(const sf::Vector2f& position,
                const sf::Vector2f& velocity) :
-        Character(position, velocity, CFG.getInt("player_max_health")),
+        Character(position, velocity, CFG.getInt("characters/player_max_health")),
         is_alive_(true)
 {
     weapons_in_backpack_.push_back(

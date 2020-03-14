@@ -11,13 +11,17 @@
 
 int main()
 {
-    CFG.initialize("../data/config.j3x");
+    CFG.initialize("../data/config/config.j3x");
+    CFG.appendConfig("../data/config/graphics.j3x", "graphics");
+    CFG.appendConfig("../data/config/sound.j3x", "sound");
+    CFG.appendConfig("../data/config/characters.j3x", "characters");
+    CFG.appendConfig("../data/config/paths.j3x", "paths");
 
-    if (CFG.getInt("auto_resolution"))
+    if (CFG.getInt("graphics/auto_resolution"))
     {
         sf::Vector2i res = Engine::detectResolution();
-        CFG.setInt("window_width_px", res.x);
-        CFG.setInt("window_height_px", res.y);
+        CFG.setInt("graphics/window_width_px", res.x);
+        CFG.setInt("graphics/window_height_px", res.y);
     }
 
     RM.lazyLoadTexture("animation_shot");

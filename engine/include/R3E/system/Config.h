@@ -30,6 +30,19 @@ namespace r3e {
             std::tie(int_params_, float_params_, string_params_) = utils::parse(filename);
         }
 
+        void appendConfig(const std::string& filename, const std::string& ns)
+        {
+            utils::J3XIParameters new_int_params;
+            utils::J3XFParameters new_float_params;
+            utils::J3XSParameters new_string_params;
+
+            std::tie(new_int_params, new_float_params, new_string_params) = utils::parse(filename, ns);
+
+            int_params_.insert(new_int_params.begin(), new_int_params.end());
+            float_params_.insert(new_float_params.begin(), new_float_params.end());
+            string_params_.insert(new_string_params.begin(), new_string_params.end());
+        }
+
         int getInt(const std::string& key) const
         {
             return utils::getInt(int_params_, key);

@@ -13,14 +13,14 @@
 
 
 UserInterface::UserInterface() :
-        blood_splash_(sf::Vector2f(CFG.getInt("window_width_px"), CFG.getInt("window_height_px"))),
-        weapons_bar_({CFG.getInt("window_width_px") / 2.0f, CFG.getInt("window_height_px") -
-                                                            WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom")}),
-        health_bar_({HEALTH_BAR_X_ * CFG.getFloat("user_interface_zoom"),
-                     HEALTH_BAR_Y_ * CFG.getFloat("user_interface_zoom")}),
-        logo_(sf::Vector2f{CFG.getInt("window_width_px") - LOGO_OFF_X_ * CFG.getFloat("user_interface_zoom"),
-                           LOGO_OFF_Y_ * CFG.getFloat("user_interface_zoom")},
-              CFG.getFloat("user_interface_zoom") * sf::Vector2f{LOGO_SIZE_X_, LOGO_SIZE_Y_},
+        blood_splash_(sf::Vector2f(CFG.getInt("graphics/window_width_px"), CFG.getInt("graphics/window_height_px"))),
+        weapons_bar_({CFG.getInt("graphics/window_width_px") / 2.0f, CFG.getInt("graphics/window_height_px") -
+                                                            WEAPONS_BAR_OFF_Y_ * CFG.getFloat("graphics/user_interface_zoom")}),
+        health_bar_({HEALTH_BAR_X_ * CFG.getFloat("graphics/user_interface_zoom"),
+                     HEALTH_BAR_Y_ * CFG.getFloat("graphics/user_interface_zoom")}),
+        logo_(sf::Vector2f{CFG.getInt("graphics/window_width_px") - LOGO_OFF_X_ * CFG.getFloat("graphics/user_interface_zoom"),
+                           LOGO_OFF_Y_ * CFG.getFloat("graphics/user_interface_zoom")},
+              CFG.getFloat("graphics/user_interface_zoom") * sf::Vector2f{LOGO_SIZE_X_, LOGO_SIZE_Y_},
               &RM.getTexture("rag3_logo")),
         fps_text_("FPS: ", RM.getFont(), 30),
         player_(nullptr),
@@ -88,9 +88,9 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 graphics.modifyStaticView(static_view);
 
                 weapons_bar_.setPosition(event.size.width / 2.0f,
-                                         event.size.height - WEAPONS_BAR_OFF_Y_ * CFG.getFloat("user_interface_zoom"));
-                logo_.setPosition(event.size.width - LOGO_OFF_X_ * CFG.getFloat("user_interface_zoom"),
-                                  LOGO_OFF_Y_ * CFG.getFloat("user_interface_zoom"));
+                                         event.size.height - WEAPONS_BAR_OFF_Y_ * CFG.getFloat("graphics/user_interface_zoom"));
+                logo_.setPosition(event.size.width - LOGO_OFF_X_ * CFG.getFloat("graphics/user_interface_zoom"),
+                                  LOGO_OFF_Y_ * CFG.getFloat("graphics/user_interface_zoom"));
 
                 camera_->setViewNormalSize(visible_area);
                 blood_splash_.resizeWindow(visible_area);
@@ -153,20 +153,20 @@ inline void UserInterface::handleKeys()
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-        delta.x -= CFG.getFloat("player_max_speed");
+        delta.x -= CFG.getFloat("characters/player_max_speed");
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        delta.x += CFG.getFloat("player_max_speed");
+        delta.x += CFG.getFloat("characters/player_max_speed");
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
-        delta.y -= CFG.getFloat("player_max_speed");
+        delta.y -= CFG.getFloat("characters/player_max_speed");
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
-        delta.y += CFG.getFloat("player_max_speed");
+        delta.y += CFG.getFloat("characters/player_max_speed");
     }
 
     if (player_->isAlive())
@@ -193,8 +193,8 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
         {
             camera_->setPointingTo(player_->getPosition() +
                                    utils::geo::getNormalized(mouse_world_pos - player_->getPosition()) *
-                                   CFG.getFloat("camera_right_click_distance_factor"));
-            camera_->setZoomTo(CFG.getFloat("camera_right_click_zoom_factor"));
+                                   CFG.getFloat("graphics/camera_right_click_distance_factor"));
+            camera_->setZoomTo(CFG.getFloat("graphics/camera_right_click_zoom_factor"));
             Game::get().setBulletTime();
         }
         else

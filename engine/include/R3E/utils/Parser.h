@@ -20,7 +20,7 @@ namespace r3e {
         using J3XSParameters = std::map<std::string, std::string>;
         using J3XParameters = std::tuple<J3XIParameters, J3XFParameters, J3XSParameters>;
 
-        inline J3XParameters parse(const std::string& filename)
+        inline J3XParameters parse(const std::string& filename, const std::string& ns)
         {
             std::ifstream config_file(filename);
 
@@ -46,6 +46,9 @@ namespace r3e {
                         if (std::getline(s_line, key, '='))
                         {
                             std::string value;
+
+                            key = ns.empty() ? key : ns + "/" + key;
+
                             if (std::getline(s_line, value))
                             {
                                 try
@@ -100,6 +103,11 @@ namespace r3e {
             }
 
             return std::make_tuple(int_params, float_params, string_params);
+        }
+
+        inline J3XParameters parse(const std::string& filename)
+        {
+            return parse(filename, "");
         }
 
         inline int getInt(const J3XIParameters& int_params, const std::string& key)

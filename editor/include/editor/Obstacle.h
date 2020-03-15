@@ -16,7 +16,7 @@ namespace editor {
         Obstacle(const sf::Vector2f& position, int type);
 
         static constexpr float SIZE_X_ = 100.0f;
-        static constexpr float SIZE_Y_ = 100.0f;
+        static constexpr float SIZE_Y_ = 150.0f;
 
         static constexpr float OFFSET_Y_ = 25.0f;
 

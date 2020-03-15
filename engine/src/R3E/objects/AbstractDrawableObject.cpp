@@ -96,9 +96,9 @@ namespace r3e {
         shape_.setFillColor(sf::Color(r, g, b, a));
     }
 
-    void AbstractDrawableObject::changeTexture(sf::Texture* texture)
+    void AbstractDrawableObject::changeTexture(sf::Texture* texture, bool reset)
     {
-        shape_.setTexture(texture);
+        shape_.setTexture(texture, reset);
     }
 
     void AbstractDrawableObject::changeOrigin(const sf::Vector2f &origin)

@@ -7,6 +7,7 @@
 
 #include <editor/ResourceManager.h>
 #include <editor/UserInterface.h>
+#include <Editor.h>
 
 using namespace editor;
 
@@ -21,7 +22,7 @@ UserInterface::UserInterface() :
 void UserInterface::initialize(graphics::Graphics& graphics)
 {
     gui_.setTarget(graphics.getWindow());
-    tiles_window_.initialize({"Col tiles", "Non-col tiles"}, {CFG.getString("paths/obstacles_tiles"), CFG.getString("paths/decorations_tiles")});
+    tiles_window_.initialize({"obstacles_tiles", "decorations_tiles"}, {CFG.getString("paths/obstacles_tiles"), CFG.getString("paths/decorations_tiles")});
 }
 
 void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapsed)
@@ -86,9 +87,9 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 
 void UserInterface::draw(graphics::Graphics& graphics)
 {
-    gui_.draw();
-    graphics.draw(logo_);
     graphics.draw(crosshair_);
+    graphics.draw(logo_);
+    gui_.draw();
 }
 
 inline void UserInterface::handleScrolling(float delta)
@@ -106,5 +107,28 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
     auto mouse_world_pos = graphics_window.mapPixelToCoords(mouse_pos);
 
     crosshair_.setPosition(mouse_pos.x, mouse_pos.y);
+
+    const auto& current_item = Editor::get().getCurrentItem();
+
+    if (current_item.second.empty())
+    {
+        crosshair_.setColor(0, 0, 0, 0);
+    }
+    else
+    {
+        crosshair_.setColor(255, 255, 255, 255);
+        crosshair_.changeTexture(&RM.getTexture(current_item.first + "/" + current_item.second), true);
+
+        if (current_item.first == "obstacles_tiles")
+        {
+            crosshair_.setSize({Obstacle::SIZE_X_, Obstacle::SIZE_Y_});
+            crosshair_.changeOrigin({Obstacle::SIZE_X_ / 2.0f, Obstacle::SIZE_Y_ / 2.0f + Obstacle::OFFSET_Y_});
+        }
+        else
+        {
+            crosshair_.setSize({Decoration::SIZE_X_, Decoration::SIZE_Y_});
+            crosshair_.changeOrigin({Decoration::SIZE_X_ / 2.0f, Decoration::SIZE_Y_ / 2.0f});
+        }
+    }
 }
 

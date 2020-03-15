@@ -8,6 +8,7 @@
 
 #include <editor/ListWindow.h>
 #include <editor/ResourceManager.h>
+#include <Editor.h>
 
 
 using namespace editor;
@@ -54,21 +55,27 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
         grids_.back() = tgui::Grid::create();
         grids_.back()->setAutoSize(true);
 
-        scrollPanel->add(grids_.back(), tab_names_.at(grids_.size() - 1));
+        auto tab_name = tab_names_.at(grids_.size() - 1);
+
+        scrollPanel->add(grids_.back(), tab_name);
 
         const auto& items = RM.getListOfObjects(tab);
 
         int i = 0;
         for (const auto& item : items)
         {
-            auto button = tgui::Picture::create(RM.getTexture(item));
+            auto button = tgui::Picture::create(RM.getTexture(tab_name + "/" + item));
             button->setSize(CFG.getFloat("items_size"), CFG.getFloat("items_size"));
             grids_.back()->addWidget(button, i / 4, i % 4);
             clickables_.back().push_back(button);
             grids_.back()->setWidgetPadding(button, {CFG.getFloat("items_padding"), CFG.getFloat("items_padding")});
             ++i;
+
+            button->connect("Clicked", [&](const std::string& tab_name, const std::string& item_name) { Editor::get().setCurrentItem(tab_name, item_name); }, tab_name, item);
         }
     }
 
     tabs_->connect("TabSelected", onTabSelected, this, std::ref(*gui_));
+
+    tabs_->select(0);
 }

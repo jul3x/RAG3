@@ -44,7 +44,7 @@ namespace r3e {
 
         virtual void setColor(int r, int g, int b, int a);
 
-        virtual void changeTexture(sf::Texture* texture);
+        virtual void changeTexture(sf::Texture* texture, bool reset = false);
 
         virtual void changeOrigin(const sf::Vector2f &origin);
 

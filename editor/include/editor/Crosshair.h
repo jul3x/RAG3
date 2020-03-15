@@ -16,8 +16,8 @@ namespace editor {
         Crosshair();
 
     private:
-        static constexpr float SIZE_X_ = 25.0f;
-        static constexpr float SIZE_Y_ = 25.0f;
+        static constexpr float SIZE_X_ = 200.0f;
+        static constexpr float SIZE_Y_ = 200.0f;
     };
 } // namespace editor
 

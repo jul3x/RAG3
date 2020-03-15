@@ -11,7 +11,7 @@
 
 using namespace editor;
 
-Editor::Editor()
+Editor::Editor() : grid_(CFG.getInt("window_width_px"), CFG.getInt("window_height_px"))
 {
     engine_ = std::make_unique<Engine>();
     engine_->registerGame(this);
@@ -34,11 +34,16 @@ void Editor::initialize()
 
 void Editor::update(float time_elapsed)
 {
+    camera_->setViewNormalSize({CFG.getInt("window_width_px"), CFG.getInt("window_height_px")});
+    camera_->setPointingTo({100.0f, 100.0f});
+    camera_->setZoomTo(2.0f);
     camera_->update(time_elapsed);
 }
 
 void Editor::draw(graphics::Graphics& graphics)
 {
+    grid_.draw(graphics);
+
     for (auto& decoration : map_->getDecorations())
         graphics.draw(decoration);
 
@@ -54,5 +59,16 @@ void Editor::draw(graphics::Graphics& graphics)
 void Editor::start()
 {
     engine_->start();
+}
+
+void Editor::setCurrentItem(const std::string& category, const std::string& id)
+{
+    current_item_.first = category;
+    current_item_.second = id;
+}
+
+const std::pair<std::string, std::string>& Editor::getCurrentItem() const
+{
+    return current_item_;
 }
 

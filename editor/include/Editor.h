@@ -15,6 +15,7 @@
 #include <editor/Camera.h>
 #include <editor/Map.h>
 #include <editor/UserInterface.h>
+#include <editor/Grid.h>
 
 
 using namespace r3e;
@@ -47,6 +48,10 @@ namespace editor {
 
         void alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2) override {}
 
+        void setCurrentItem(const std::string& category, const std::string& id);
+
+        const std::pair<std::string, std::string>& getCurrentItem() const;
+
         void start();
 
     private:
@@ -57,6 +62,10 @@ namespace editor {
         std::unique_ptr<Camera> camera_;
 
         std::unique_ptr<Map> map_;
+
+        std::pair<std::string, std::string> current_item_;
+
+        Grid grid_;
 
     };
 } // namespace editor

@@ -41,7 +41,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
     {
         if (gui_.handleEvent(event))
             continue;
-        
+
         switch (event.type)
         {
             case sf::Event::Closed:

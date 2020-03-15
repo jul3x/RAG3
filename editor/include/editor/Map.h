@@ -34,16 +34,21 @@ namespace editor {
 
         void spawnObstacleTile(const sf::Vector2f& pos, const std::string& id);
 
+        void removeTile(const sf::Vector2f& pos);
+
     private:
         template<class T>
-        bool checkCollisions(const sf::Vector2f& pos, const std::list<T>& objs)
+        bool checkCollisions(const sf::Vector2f& pos, std::list<T>& objs, bool erase = false)
         {
-            for (const auto& obj : objs)
+            for (auto it = objs.begin(); it != objs.end(); ++it)
             {
                 if (utils::geo::isPointInRectangle(
-                        pos, obj.getPosition() - sf::Vector2f(DecorationTile::SIZE_X_ / 2.0f, DecorationTile::SIZE_Y_ / 2.0f),
+                        pos, it->getPosition() - sf::Vector2f(DecorationTile::SIZE_X_ / 2.0f, DecorationTile::SIZE_Y_ / 2.0f),
                         {DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_}))
                 {
+                    if (erase)
+                        objs.erase(it);
+
                     return true;
                 }
             }

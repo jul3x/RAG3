@@ -82,5 +82,6 @@ void Editor::placeItem(const sf::Vector2f& pos)
 
 void Editor::removeItem(const sf::Vector2f& pos)
 {
-
+    if (current_item_.first == "decorations_tiles" || current_item_.first == "obstacles_tiles")
+        map_->removeTile(pos);
 }

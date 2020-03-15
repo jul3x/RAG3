@@ -38,11 +38,6 @@ void Map::spawnDecorationTile(const sf::Vector2f& pos, const std::string& id)
     if (!this->checkCollisions(pos, decorations_tiles_) && !this->checkCollisions(pos, obstacles_tiles_))
     {
         decorations_tiles_.emplace_back(pos, id);
-        std::cout << "Decoration tile placed!" << std::endl;
-    }
-    else
-    {
-        std::cout << "Cannot place decoration tile!" << std::endl;
     }
 }
 
@@ -51,10 +46,11 @@ void Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string& id)
     if (!this->checkCollisions(pos, decorations_tiles_) && !this->checkCollisions(pos, obstacles_tiles_))
     {
         obstacles_tiles_.emplace_back(pos, id);
-        std::cout << "Obstacle tile placed!" << std::endl;
-    }
-    else
-    {
-        std::cout << "Cannot place obstacle tile!" << std::endl;
     }
 }
+
+void Map::removeTile(const sf::Vector2f& pos)
+{
+    (!this->checkCollisions(pos, decorations_tiles_, true) && !this->checkCollisions(pos, obstacles_tiles_, true));
+}
+

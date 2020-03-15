@@ -34,8 +34,14 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 {
     static sf::Event event;
 
+    auto mouse_pos = sf::Vector2f(sf::Mouse::getPosition(graphics.getWindow()).x, sf::Mouse::getPosition(graphics.getWindow()).y);
+
     handleMouse(graphics.getWindow());
     handleKeys();
+
+    for (auto& widget : gui_.getWidgets())
+        if (widget->mouseOnWidget(mouse_pos))
+            std::cout << "NOW!" << std::endl;
 
     while (graphics.getWindow().pollEvent(event))
     {
@@ -79,17 +85,6 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 camera_->setViewNormalSize(current_view.getSize());
 
                 break;
-            }
-            case sf::Event::MouseButtonPressed:
-            {
-                if (event.mouseButton.button == sf::Mouse::Left)
-                {
-                    Editor::get().placeItem(crosshair_.getPosition());
-                }
-                else
-                {
-                    Editor::get().removeItem(crosshair_.getPosition());
-                }
             }
             default:
             {
@@ -139,6 +134,24 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
         {
             crosshair_.setSize({DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_});
             crosshair_.changeOrigin({DecorationTile::SIZE_X_ / 2.0f, DecorationTile::SIZE_Y_ / 2.0f});
+        }
+    }
+
+    bool is_on_widget = false;
+
+    for (auto& widget : gui_.getWidgets())
+        if (widget->mouseOnWidget({static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y)}))
+             is_on_widget = true;
+
+    if (!is_on_widget)
+    {
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        {
+            Editor::get().placeItem(crosshair_.getPosition());
+        }
+        else if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+        {
+            Editor::get().removeItem(crosshair_.getPosition());
         }
     }
 }

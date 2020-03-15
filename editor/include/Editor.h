@@ -52,6 +52,10 @@ namespace editor {
 
         const std::pair<std::string, std::string>& getCurrentItem() const;
 
+        void placeItem(const sf::Vector2f& pos);
+
+        void removeItem(const sf::Vector2f& pos);
+
         void start();
 
     private:

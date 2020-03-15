@@ -44,10 +44,10 @@ void Editor::draw(graphics::Graphics& graphics)
 {
     grid_.draw(graphics);
 
-    for (auto& decoration : map_->getDecorations())
+    for (auto& decoration : map_->getDecorationsTiles())
         graphics.draw(decoration);
 
-    for (auto& obstacle : map_->getObstacles())
+    for (auto& obstacle : map_->getObstaclesTiles())
         graphics.drawSorted(obstacle);
 
     for (auto& character : map_->getCharacters())
@@ -72,3 +72,15 @@ const std::pair<std::string, std::string>& Editor::getCurrentItem() const
     return current_item_;
 }
 
+void Editor::placeItem(const sf::Vector2f& pos)
+{
+    if (current_item_.first == "decorations_tiles")
+        map_->spawnDecorationTile(pos, current_item_.second);
+    else if (current_item_.first == "obstacles_tiles")
+        map_->spawnObstacleTile(pos, current_item_.second);
+}
+
+void Editor::removeItem(const sf::Vector2f& pos)
+{
+
+}

@@ -8,7 +8,7 @@
 
 #include <editor/ResourceManager.h>
 #include <editor/Crosshair.h>
-#include <editor/Decoration.h>
+#include <editor/DecorationTile.h>
 
 
 using namespace editor;
@@ -23,8 +23,8 @@ Crosshair::Crosshair() :
 
 void Crosshair::setPosition(float x, float y)
 {
-    AbstractDrawableObject::setPosition(Decoration::SIZE_X_ * std::round(x / Decoration::SIZE_X_),
-                                        Decoration::SIZE_Y_ * std::round(y / Decoration::SIZE_Y_));
+    AbstractDrawableObject::setPosition(DecorationTile::SIZE_X_ * std::round(x / DecorationTile::SIZE_X_),
+                                        DecorationTile::SIZE_Y_ * std::round(y / DecorationTile::SIZE_Y_));
 }
 
 void Crosshair::setPosition(const sf::Vector2f& pos)

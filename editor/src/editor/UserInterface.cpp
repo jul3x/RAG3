@@ -39,6 +39,9 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 
     while (graphics.getWindow().pollEvent(event))
     {
+        if (gui_.handleEvent(event))
+            continue;
+        
         switch (event.type)
         {
             case sf::Event::Closed:
@@ -59,6 +62,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 static_view.setCenter(visible_area / 2.0f);
                 graphics.modifyStaticView(static_view);
 
+                camera_->setViewNormalSize(current_view.getSize());
                 gui_.setView(static_view);
 
                 logo_.setPosition(event.size.width - LOGO_OFF_X_ * CFG.getFloat("user_interface_zoom"),
@@ -76,13 +80,22 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 
                 break;
             }
+            case sf::Event::MouseButtonPressed:
+            {
+                if (event.mouseButton.button == sf::Mouse::Left)
+                {
+                    Editor::get().placeItem(crosshair_.getPosition());
+                }
+                else
+                {
+                    Editor::get().removeItem(crosshair_.getPosition());
+                }
+            }
             default:
             {
                 break;
             }
         }
-
-        gui_.handleEvent(event);
     }
 }
 
@@ -114,18 +127,18 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
     }
     else
     {
-        crosshair_.setColor(255, 255, 255, 255);
+        crosshair_.setColor(255, 255, 255, 120);
         crosshair_.changeTexture(&RM.getTexture(current_item.first + "/" + current_item.second), true);
 
         if (current_item.first == "obstacles_tiles")
         {
-            crosshair_.setSize({Obstacle::SIZE_X_, Obstacle::SIZE_Y_});
-            crosshair_.changeOrigin({Obstacle::SIZE_X_ / 2.0f, Obstacle::SIZE_Y_ / 2.0f + Obstacle::OFFSET_Y_});
+            crosshair_.setSize({ObstacleTile::SIZE_X_, ObstacleTile::SIZE_Y_});
+            crosshair_.changeOrigin({ObstacleTile::SIZE_X_ / 2.0f, ObstacleTile::SIZE_Y_ / 2.0f + ObstacleTile::OFFSET_Y_});
         }
         else
         {
-            crosshair_.setSize({Decoration::SIZE_X_, Decoration::SIZE_Y_});
-            crosshair_.changeOrigin({Decoration::SIZE_X_ / 2.0f, Decoration::SIZE_Y_ / 2.0f});
+            crosshair_.setSize({DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_});
+            crosshair_.changeOrigin({DecorationTile::SIZE_X_ / 2.0f, DecorationTile::SIZE_Y_ / 2.0f});
         }
     }
 }

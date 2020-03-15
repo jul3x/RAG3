@@ -17,7 +17,12 @@ UserInterface::UserInterface() :
               CFG.getFloat("user_interface_zoom") * sf::Vector2f{LOGO_SIZE_X_, LOGO_SIZE_Y_},
               &RM.getTexture("rag3_logo")),
         gui_theme_("../data/config/gui_theme.txt"),
-        tiles_window_(&gui_, &gui_theme_, "Environment") {}
+        tiles_window_(&gui_, &gui_theme_, "Environment", {CFG.getFloat("tiles_window_x"), CFG.getFloat("tiles_window_y")}) {}
+
+void UserInterface::registerCamera(Camera* camera)
+{
+    camera_ = camera;
+}
 
 void UserInterface::initialize(graphics::Graphics& graphics)
 {
@@ -63,16 +68,12 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
             }
             case sf::Event::MouseWheelScrolled:
             {
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
-                {
-                    auto current_view = graphics.getCurrentView();
-                    current_view.zoom(1.0f - (event.mouseWheelScroll.delta > 0 ? 0.1f : -0.1f));
-                    graphics.modifyCurrentView(current_view);
-                }
-                else
-                {
-                    handleScrolling(event.mouseWheelScroll.delta);
-                }
+                auto current_view = graphics.getCurrentView();
+                current_view.zoom(1.0f - (event.mouseWheelScroll.delta > 0 ? 0.1f : -0.1f));
+                graphics.modifyCurrentView(current_view);
+
+                camera_->setViewNormalSize(current_view.getSize());
+
                 break;
             }
             default:
@@ -87,14 +88,11 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 
 void UserInterface::draw(graphics::Graphics& graphics)
 {
+    graphics.setCurrentView();
     graphics.draw(crosshair_);
+    graphics.setStaticView();
     graphics.draw(logo_);
     gui_.draw();
-}
-
-inline void UserInterface::handleScrolling(float delta)
-{
-    auto do_increase = delta > 0 ? 1 : -1;
 }
 
 inline void UserInterface::handleKeys()
@@ -106,7 +104,7 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
     auto mouse_pos = sf::Mouse::getPosition(graphics_window);
     auto mouse_world_pos = graphics_window.mapPixelToCoords(mouse_pos);
 
-    crosshair_.setPosition(mouse_pos.x, mouse_pos.y);
+    crosshair_.setPosition(mouse_world_pos);
 
     const auto& current_item = Editor::get().getCurrentItem();
 

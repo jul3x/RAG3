@@ -13,8 +13,8 @@
 
 using namespace editor;
 
-ListWindow::ListWindow(tgui::Gui* gui, tgui::Theme* theme, std::string title) : gui_(gui), theme_(theme),
-                                                                                title_(std::move(title))
+ListWindow::ListWindow(tgui::Gui* gui, tgui::Theme* theme, std::string title, const sf::Vector2f& pos) :
+        gui_(gui), theme_(theme), title_(std::move(title)), pos_(pos)
 {
 
 }
@@ -24,7 +24,7 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
     child_ = tgui::ChildWindow::create();
     child_->setRenderer(theme_->getRenderer("ChildWindow"));
     child_->setSize({CFG.getFloat("child_windows_size_x"), CFG.getFloat("child_windows_size_y")});
-    child_->setPosition(420, 80);
+    child_->setPosition(pos_);
     child_->setTitle(title_);
     child_->setResizable(true);
     child_->setMinimumSize({CFG.getFloat("child_windows_size_x"), CFG.getFloat("child_windows_size_y")});

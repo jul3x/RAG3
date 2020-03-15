@@ -23,6 +23,9 @@ void Editor::initialize()
     camera_ = std::make_unique<Camera>();
     map_ = std::make_unique<Map>();
 
+    ui_->registerCamera(camera_.get());
+    camera_->setViewNormalSize({static_cast<float>(CFG.getInt("window_width_px")), static_cast<float>(CFG.getInt("window_height_px"))});
+
     engine_->initializeGraphics(
             sf::Vector2i{CFG.getInt("window_width_px"), CFG.getInt("window_height_px")}, "Rag3 Editor",
             CFG.getInt("full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
@@ -34,9 +37,6 @@ void Editor::initialize()
 
 void Editor::update(float time_elapsed)
 {
-    camera_->setViewNormalSize({CFG.getInt("window_width_px"), CFG.getInt("window_height_px")});
-    camera_->setPointingTo({100.0f, 100.0f});
-    camera_->setZoomTo(2.0f);
     camera_->update(time_elapsed);
 }
 

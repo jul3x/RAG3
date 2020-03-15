@@ -11,7 +11,7 @@ namespace editor {
 
     class ListWindow {
     public:
-        ListWindow(tgui::Gui *gui, tgui::Theme *theme, std::string title);
+        ListWindow(tgui::Gui *gui, tgui::Theme *theme, std::string title, const sf::Vector2f& pos);
 
         void initialize(const std::vector<std::string> &tabs, const std::vector<std::string> &paths_to_objects);
 
@@ -35,6 +35,8 @@ namespace editor {
         tgui::Tabs::Ptr tabs_;
         std::vector<std::vector<tgui::Picture::Ptr>> clickables_;
         std::vector<std::string> tab_names_;
+
+        sf::Vector2f pos_;
     };
 
 } // namespace editor

@@ -30,13 +30,13 @@ namespace editor {
 
         void initialize(graphics::Graphics& graphics) override;
 
+        void registerCamera(Camera* camera);
+
         void handleEvents(graphics::Graphics& graphics, float time_elapsed) override;
 
         void draw(graphics::Graphics& graphics) override;
 
     private:
-        inline void handleScrolling(float delta);
-
         inline void handleKeys();
 
         inline void handleMouse(sf::RenderWindow& graphics_window);
@@ -45,6 +45,8 @@ namespace editor {
         static constexpr float LOGO_OFF_Y_ = 120.0f;
         static constexpr float LOGO_SIZE_X_ = 512.0f;
         static constexpr float LOGO_SIZE_Y_ = 288.0f;
+
+        Camera* camera_;
 
         Crosshair crosshair_;
 

@@ -185,16 +185,33 @@ const std::vector<std::string>& ResourceManager::getListOfObjects(const std::str
         }
         catch (std::runtime_error& e)
         {
-            std::cerr << e.what() << std::endl;
+            std::cerr << "[ResourceManager] " << e.what() << std::endl;
         }
     }
 
     return it->second;
 }
 
+const std::vector<std::string>& ResourceManager::getFreshListOfObjects(const std::string& dir)
+{
+    try
+    {
+        loadListOfObjects(dir);
+        return list_of_objects_.at(dir);
+    }
+    catch (std::runtime_error& e)
+    {
+        std::cerr << "[ResourceManager] " << e.what() << std::endl;
+    }
+
+    return {};
+}
+
 void ResourceManager::loadListOfObjects(const std::string& dir)
 {
     std::experimental::filesystem::path path{dir};
+
+    list_of_objects_[dir].clear();
     for (const auto& file : std::experimental::filesystem::recursive_directory_iterator(path))
     {
         list_of_objects_[dir].emplace_back(file.path().filename().replace_extension().string());

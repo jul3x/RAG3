@@ -13,23 +13,14 @@
 
 using namespace editor;
 
-ListWindow::ListWindow(tgui::Gui* gui, tgui::Theme* theme, std::string title, const sf::Vector2f& pos) :
-        gui_(gui), theme_(theme), title_(std::move(title)), pos_(pos)
+ListWindow::ListWindow(tgui::Gui* gui, tgui::Theme* theme, std::string title, const sf::Vector2f& pos, std::string id) :
+        ChildWindow(gui, theme, title, pos, {CFG.getFloat("list_windows_size_x"), CFG.getFloat("list_windows_size_y")}, std::move(id))
 {
 
 }
 
 void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vector<std::string>& paths_to_objects)
 {
-    child_ = tgui::ChildWindow::create();
-    child_->setRenderer(theme_->getRenderer("ChildWindow"));
-    child_->setSize({CFG.getFloat("child_windows_size_x"), CFG.getFloat("child_windows_size_y")});
-    child_->setPosition(pos_);
-    child_->setTitle(title_);
-    child_->setResizable(true);
-    child_->setMinimumSize({CFG.getFloat("child_windows_size_x"), CFG.getFloat("child_windows_size_y")});
-    gui_->add(child_);
-
     tabs_ = tgui::Tabs::create();
     tabs_->setRenderer(theme_->getRenderer("Tabs"));
     tabs_->setTabHeight(30);

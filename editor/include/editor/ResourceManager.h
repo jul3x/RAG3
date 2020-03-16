@@ -22,6 +22,8 @@ namespace editor {
 
         const std::vector<std::string>& getListOfObjects(const std::string& dir);
 
+        const std::vector<std::string>& getFreshListOfObjects(const std::string& dir);
+
     //    BulletDescription& getBulletDescription(const std::string& key);
     //
     //    ShootingWeapon& getWeapon(const std::string& key);

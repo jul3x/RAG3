@@ -9,6 +9,7 @@
 #include <editor/UserInterface.h>
 #include <Editor.h>
 
+
 using namespace editor;
 
 UserInterface::UserInterface() :
@@ -17,7 +18,15 @@ UserInterface::UserInterface() :
               CFG.getFloat("user_interface_zoom") * sf::Vector2f{LOGO_SIZE_X_, LOGO_SIZE_Y_},
               &RM.getTexture("rag3_logo")),
         gui_theme_("../data/config/gui_theme.txt"),
-        tiles_window_(&gui_, &gui_theme_, "Environment", {CFG.getFloat("tiles_window_x"), CFG.getFloat("tiles_window_y")}) {}
+        tiles_window_(&gui_, &gui_theme_, "Environment",
+                      {CFG.getFloat("tiles_window_x"), CFG.getFloat("tiles_window_y")}, "tiles_window"),
+        menu_window_(this, &gui_, &gui_theme_),
+        save_window_(&gui_, &gui_theme_),
+        load_window_(&gui_, &gui_theme_)
+{
+    gui_.get("save_window")->setVisible(false);
+    gui_.get("load_window")->setVisible(false);
+}
 
 void UserInterface::registerCamera(Camera* camera)
 {
@@ -30,18 +39,17 @@ void UserInterface::initialize(graphics::Graphics& graphics)
     tiles_window_.initialize({"obstacles_tiles", "decorations_tiles"}, {CFG.getString("paths/obstacles_tiles"), CFG.getString("paths/decorations_tiles")});
 }
 
+void UserInterface::resetMapList()
+{
+    load_window_.refreshMapList(RM.getFreshListOfObjects(CFG.getString("paths/maps_dir")));
+}
+
 void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapsed)
 {
     static sf::Event event;
 
-    auto mouse_pos = sf::Vector2f(sf::Mouse::getPosition(graphics.getWindow()).x, sf::Mouse::getPosition(graphics.getWindow()).y);
-
     handleMouse(graphics.getWindow());
     handleKeys();
-
-    for (auto& widget : gui_.getWidgets())
-        if (widget->mouseOnWidget(mouse_pos))
-            std::cout << "NOW!" << std::endl;
 
     while (graphics.getWindow().pollEvent(event))
     {
@@ -110,6 +118,45 @@ inline void UserInterface::handleKeys()
 inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
 {
     auto mouse_pos = sf::Mouse::getPosition(graphics_window);
+
+    handleCameraCenter(graphics_window, mouse_pos);
+    handleCrosshair(graphics_window, mouse_pos);
+
+    bool is_on_widget = false;
+
+    for (auto& widget : gui_.getWidgets())
+        if (widget->mouseOnWidget({static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y)}) &&
+            widget->isVisible())
+             is_on_widget = true;
+
+    if (!is_on_widget)
+    {
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        {
+            Editor::get().placeItem(crosshair_.getPosition());
+        }
+        else if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+        {
+            Editor::get().removeItem(crosshair_.getPosition());
+        }
+    }
+}
+
+inline void UserInterface::handleCameraCenter(sf::RenderWindow& graphics_window, const sf::Vector2i& mouse_pos)
+{
+    auto max_diff_from_side = sf::Vector2f(DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_);
+
+    if (mouse_pos.x < max_diff_from_side.x || mouse_pos.x > graphics_window.getSize().x - max_diff_from_side.x ||
+        mouse_pos.y < max_diff_from_side.y || mouse_pos.y > graphics_window.getSize().y - max_diff_from_side.y)
+    {
+        auto window_center = sf::Vector2f(graphics_window.getSize().x / 2.0f, graphics_window.getSize().y / 2.0f);
+        camera_->setPointingTo(camera_->getPointingTo() +
+                               utils::geo::vectorLengthLimit((sf::Vector2f(mouse_pos.x, mouse_pos.y) - window_center) / 100.0f, 10.0f));
+    }
+}
+
+inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2i& mouse_pos)
+{
     auto mouse_world_pos = graphics_window.mapPixelToCoords(mouse_pos);
 
     crosshair_.setPosition(mouse_world_pos);
@@ -136,23 +183,4 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
             crosshair_.changeOrigin({DecorationTile::SIZE_X_ / 2.0f, DecorationTile::SIZE_Y_ / 2.0f});
         }
     }
-
-    bool is_on_widget = false;
-
-    for (auto& widget : gui_.getWidgets())
-        if (widget->mouseOnWidget({static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y)}))
-             is_on_widget = true;
-
-    if (!is_on_widget)
-    {
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-        {
-            Editor::get().placeItem(crosshair_.getPosition());
-        }
-        else if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
-        {
-            Editor::get().removeItem(crosshair_.getPosition());
-        }
-    }
 }
-

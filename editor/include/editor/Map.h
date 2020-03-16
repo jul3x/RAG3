@@ -36,6 +36,8 @@ namespace editor {
 
         void removeTile(const sf::Vector2f& pos);
 
+        std::pair<sf::Vector2f, sf::Vector2f> getTileConstraints() const;
+
     private:
         template<class T>
         bool checkCollisions(const sf::Vector2f& pos, std::list<T>& objs, bool erase = false)

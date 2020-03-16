@@ -29,6 +29,11 @@ namespace r3e {
                 return view_size_;
             }
 
+            const sf::Vector2f& getPointingTo() const
+            {
+                return pointing_to_;
+            }
+
             void setPointingTo(const sf::Vector2f& position)
             {
                 pointing_to_ = position;

@@ -38,6 +38,7 @@ void Editor::initialize()
 void Editor::update(float time_elapsed)
 {
     camera_->update(time_elapsed);
+    map_->getTileConstraints();
 }
 
 void Editor::draw(graphics::Graphics& graphics)

@@ -14,6 +14,9 @@
 #include <editor/Crosshair.h>
 #include <editor/Camera.h>
 #include <editor/ListWindow.h>
+#include <editor/MenuWindow.h>
+#include <editor/SaveWindow.h>
+#include <editor/LoadWindow.h>
 
 
 using namespace r3e;
@@ -36,10 +39,16 @@ namespace editor {
 
         void draw(graphics::Graphics& graphics) override;
 
+        void resetMapList();
+
     private:
         inline void handleKeys();
 
         inline void handleMouse(sf::RenderWindow& graphics_window);
+
+        inline void handleCameraCenter(sf::RenderWindow& graphics_window, const sf::Vector2i& mouse_pos);
+
+        inline void handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2i& mouse_pos);
 
         static constexpr float LOGO_OFF_X_ = 240.0f;
         static constexpr float LOGO_OFF_Y_ = 120.0f;
@@ -56,6 +65,10 @@ namespace editor {
         tgui::Theme gui_theme_;
 
         ListWindow tiles_window_;
+        MenuWindow menu_window_;
+
+        SaveWindow save_window_;
+        LoadWindow load_window_;
 
     };
 } // namespace editor

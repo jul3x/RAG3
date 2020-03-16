@@ -7,36 +7,30 @@
 
 #include <TGUI/TGUI.hpp>
 
+#include <editor/ChildWindow.h>
+
 namespace editor {
 
-    class ListWindow {
+    class ListWindow : public ChildWindow {
     public:
-        ListWindow(tgui::Gui *gui, tgui::Theme *theme, std::string title, const sf::Vector2f& pos);
+        ListWindow(tgui::Gui *gui, tgui::Theme *theme, std::string title, const sf::Vector2f& pos, std::string id = "");
 
         void initialize(const std::vector<std::string> &tabs, const std::vector<std::string> &paths_to_objects);
 
     private:
-        void onTabSelected(tgui::Gui& gui, std::string selectedTab)
+        void onTabSelected(tgui::Gui& gui, const std::string& selected_tab)
         {
             for (const auto &tab : tab_names_)
                 gui.get(tab)->setVisible(false);
 
-            gui.get(selectedTab)->setVisible(true);
+            gui.get(selected_tab)->setVisible(true);
         }
 
-        std::string title_;
-
-        tgui::Gui *gui_;
-        tgui::Theme *theme_;
-
-        tgui::ChildWindow::Ptr child_;
         std::vector<tgui::Grid::Ptr> grids_;
 
         tgui::Tabs::Ptr tabs_;
         std::vector<std::vector<tgui::Picture::Ptr>> clickables_;
         std::vector<std::string> tab_names_;
-
-        sf::Vector2f pos_;
     };
 
 } // namespace editor

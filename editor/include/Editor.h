@@ -56,6 +56,8 @@ namespace editor {
 
         void removeItem(const sf::Vector2f& pos);
 
+        void loadMap(const std::string& name);
+
         void start();
 
     private:

@@ -6,6 +6,8 @@
 #define RAG3_EDITOR_RESOURCEMANAGER_H
 
 #include <R3E/system/AbstractResourceManager.h>
+#include <editor/DecorationTile.h>
+#include <editor/ObstacleTile.h>
 
 
 using namespace r3e;
@@ -28,8 +30,8 @@ namespace editor {
     //
     //    ShootingWeapon& getWeapon(const std::string& key);
     //
-    //    static std::tuple<sf::Vector2i, std::vector<std::vector<float>>, std::list<Obstacle>, std::list<Decoration>>
-    //    getMap(const std::string& key);
+        static std::tuple<std::list<ObstacleTile>, std::list<DecorationTile>>
+        getMap(const std::string& key);
 
     private:
         ResourceManager();
@@ -39,8 +41,6 @@ namespace editor {
     //
     //    void loadWeapon(const std::string& key);
     //
-    //    static std::tuple<sf::Vector2i, std::vector<std::vector<float>>, std::list<Obstacle>, std::list<Decoration>>
-    //    loadMap(const std::string& key);
     //
     //    std::unordered_map<std::string, ShootingWeapon> weapons_;
     //    std::unordered_map<std::string, BulletDescription> bullets_;

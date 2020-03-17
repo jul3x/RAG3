@@ -20,7 +20,7 @@ namespace editor {
     public:
         Map() = default;
 
-        void loadMap(const std::string& name);
+        bool loadMap(const std::string& name);
 
         const sf::Vector2f& getSize() const;
 

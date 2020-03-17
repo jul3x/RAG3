@@ -5,6 +5,7 @@
 #include <R3E/system/Config.h>
 
 #include <editor/LoadWindow.h>
+#include <Editor.h>
 
 
 using namespace editor;
@@ -38,7 +39,7 @@ LoadWindow::LoadWindow(tgui::Gui* gui, tgui::Theme* theme) :
     button->setRenderer(theme_->getRenderer("Button"));
     button->setText("Load");
     button->setSize(CFG.getFloat("button_size_x"), CFG.getFloat("button_size_y"));
-    button->connect("pressed", [](){  });
+    button->connect("pressed", [&](){ Editor::get().loadMap(list_box_->getSelectedItem()); child_->close(); });
 
     grid_->addWidget(button, 2, 0);
 

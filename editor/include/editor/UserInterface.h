@@ -39,6 +39,10 @@ namespace editor {
 
         void draw(graphics::Graphics& graphics) override;
 
+        void spawnInfo(const std::string& msg);
+
+        void spawnError(const std::string& msg);
+
         void resetMapList();
 
     private:
@@ -69,6 +73,8 @@ namespace editor {
 
         SaveWindow save_window_;
         LoadWindow load_window_;
+
+        sf::Text information_;
 
     };
 } // namespace editor

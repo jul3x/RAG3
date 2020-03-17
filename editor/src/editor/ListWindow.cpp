@@ -56,6 +56,7 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
         for (const auto& item : items)
         {
             auto button = tgui::Picture::create(RM.getTexture(tab_name + "/" + item));
+
             button->setSize(CFG.getFloat("items_size"), CFG.getFloat("items_size"));
             grids_.back()->addWidget(button, i / 4, i % 4);
             clickables_.back().push_back(button);

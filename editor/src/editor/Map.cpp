@@ -8,9 +8,20 @@
 
 using namespace editor;
 
-void Map::loadMap(const std::string& name)
+bool Map::loadMap(const std::string& name)
 {
+    try
+    {
+        std::tie(obstacles_tiles_, decorations_tiles_) = ResourceManager::getMap(name);
 
+        return true;
+    }
+    catch (const std::logic_error& e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+
+    return false;
 }
 
 const sf::Vector2f& Map::getSize() const

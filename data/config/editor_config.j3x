@@ -26,3 +26,7 @@ float tiles_window_y=390.0f
 
 float popup_window_size_x=600.0f
 float popup_window_size_y=400.0f
+
+float info_x=50.0f
+float info_y=50.0f
+float info_fade_speed=1.0f

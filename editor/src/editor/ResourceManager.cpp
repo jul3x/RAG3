@@ -5,7 +5,10 @@
 #include <iostream>
 #include <experimental/filesystem>
 
+#include <R3E/system/Config.h>
+
 #include <editor/ResourceManager.h>
+
 
 using namespace editor;
 
@@ -56,19 +59,59 @@ ResourceManager& ResourceManager::getInstance()
 //    return it->second;
 //}
 //
-//std::tuple<sf::Vector2i, std::vector<std::vector<float>>, std::list<Obstacle>, std::list<Decoration>>
-//ResourceManager::getMap(const std::string& key)
-//{
-//    try
-//    {
-//        return loadMap(key);
-//    }
-//    catch (std::logic_error& e)
-//    {
-//        std::cerr << e.what() << std::endl;
-//        return {};
-//    }
-//}
+std::tuple<std::list<ObstacleTile>, std::list<DecorationTile>>
+ResourceManager::getMap(const std::string& key)
+{
+    std::ifstream file(CFG.getString("paths/maps_dir") + "/" + key + ".j3x");
+    std::list<ObstacleTile> obstacles_tiles;
+    std::list<DecorationTile> decorations_tiles;
+
+    int w, h;
+    if (file)
+    {
+        file >> w >> h;
+
+        int max_number = w * h;
+        int count = 0;
+        short int type = 0;
+
+        // type < 0 - decoration, type > 0 - obstacle
+        while (file >> type)
+        {
+            if (type < 10 && type > 0)
+            {
+                // TODO - different types, different blockage
+                obstacles_tiles.emplace_back(sf::Vector2f((count % w) * DecorationTile::SIZE_X_,
+                                                          (count / w) * DecorationTile::SIZE_Y_),
+                                             std::to_string(type));
+            }
+            else if (type > -10 && type < 0)
+            {
+                decorations_tiles.emplace_back(sf::Vector2f((count % w) * DecorationTile::SIZE_X_,
+                                                            (count / w) * DecorationTile::SIZE_Y_),
+                                               std::to_string(-type));
+            }
+            else if (type != 0)
+            {
+                throw std::logic_error("[ResourceManager] For now, not handled type of obstacle!");
+            }
+            ++count;
+        }
+
+        if (count != max_number)
+        {
+            throw std::logic_error("[ResourceManager] Wrong number of tiles!");
+        }
+    }
+    else
+    {
+        throw std::logic_error("[ResourceManager] Map file not found! This should not happen during standard runtime.");
+    }
+
+    std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
+
+    return std::make_tuple(obstacles_tiles, decorations_tiles);
+}
 //
 //void ResourceManager::loadBulletDescription(const std::string& key)
 //{
@@ -111,65 +154,7 @@ ResourceManager& ResourceManager::getInstance()
 //
 //    std::cout << "[ResourceManager] Weapon " << key << " is loaded!" << std::endl;
 //}
-//
-//std::tuple<sf::Vector2i, std::vector<std::vector<float>>, std::list<Obstacle>, std::list<Decoration>>
-//ResourceManager::loadMap(const std::string& key)
-//{
-//    std::ifstream file("../data/" + key + ".j3x");
-//    std::vector<std::vector<float>> blocked;
-//    std::list<Obstacle> obstacles;
-//    std::list<Decoration> decorations;
-//    int w, h;
-//    if (file)
-//    {
-//        file >> w >> h;
-//
-//        blocked.resize(w);
-//        for (auto& row : blocked)
-//            row.resize(h);
-//
-//        int max_number = w * h;
-//        int count = 0;
-//        short int type = 0;
-//        // type < 0 - decoration, type > 0 - obstacle
-//        while (file >> type)
-//        {
-//            blocked.at(count % w).at(count / w) = false;
-//            if (type < 10 && type > 0)
-//            {
-//                // TODO - different types, different blockage
-//                blocked.at(count % w).at(count / w) = type;
-//                obstacles.push_back({{(count % w) * Obstacle::COLLISION_SIZE_X_,
-//                                      (count / w) * Obstacle::COLLISION_SIZE_Y_},
-//                                     type});
-//            }
-//            else if (type > -10 && type < 0)
-//            {
-//                decorations.push_back(
-//                        {{(count % w) * Obstacle::COLLISION_SIZE_X_, (count / w) * Obstacle::COLLISION_SIZE_Y_},
-//                         -type});
-//            }
-//            else if (type != 0)
-//            {
-//                throw std::logic_error("[ResourceManager] For now, not handled type of obstacle!");
-//            }
-//            ++count;
-//        }
-//
-//        if (count != max_number)
-//        {
-//            throw std::logic_error("[ResourceManager] Wrong number of tiles!");
-//        }
-//    }
-//    else
-//    {
-//        throw std::logic_error("[ResourceManager] Map file not found! This should not happen during standard runtime.");
-//    }
-//
-//    std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
-//
-//    return std::make_tuple(sf::Vector2i{w, h}, blocked, obstacles, decorations);
-//}
+
 
 const std::vector<std::string>& ResourceManager::getListOfObjects(const std::string& dir)
 {
@@ -194,6 +179,8 @@ const std::vector<std::string>& ResourceManager::getListOfObjects(const std::str
 
 const std::vector<std::string>& ResourceManager::getFreshListOfObjects(const std::string& dir)
 {
+    static const std::vector<std::string> ERROR_OBJECT = {};
+
     try
     {
         loadListOfObjects(dir);
@@ -204,7 +191,7 @@ const std::vector<std::string>& ResourceManager::getFreshListOfObjects(const std
         std::cerr << "[ResourceManager] " << e.what() << std::endl;
     }
 
-    return {};
+    return ERROR_OBJECT;
 }
 
 void ResourceManager::loadListOfObjects(const std::string& dir)

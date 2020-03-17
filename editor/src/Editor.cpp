@@ -86,3 +86,16 @@ void Editor::removeItem(const sf::Vector2f& pos)
     if (current_item_.first == "decorations_tiles" || current_item_.first == "obstacles_tiles")
         map_->removeTile(pos);
 }
+
+void Editor::loadMap(const std::string& name)
+{
+    if (map_->loadMap(name))
+    {
+        camera_->setPointingTo({});
+        ui_->spawnInfo("Map " + name + " succesfully loaded!");
+    }
+    else
+    {
+        ui_->spawnError("Map loading failed!");
+    }
+}

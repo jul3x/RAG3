@@ -26,6 +26,14 @@ UserInterface::UserInterface() :
 {
     gui_.get("save_window")->setVisible(false);
     gui_.get("load_window")->setVisible(false);
+
+    information_.setPosition(CFG.getFloat("info_x"), CFG.getFloat("info_y"));
+    information_.setFillColor(sf::Color(255, 255, 255, 0));
+    information_.setFont(RM.getFont("editor"));
+    information_.setString("");
+    information_.setCharacterSize(20);
+
+    gui_.setFont(RM.getFont("editor"));
 }
 
 void UserInterface::registerCamera(Camera* camera)
@@ -50,6 +58,10 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 
     handleMouse(graphics.getWindow());
     handleKeys();
+
+    information_.setFillColor({information_.getFillColor().r, information_.getFillColor().g,
+                               information_.getFillColor().b,
+                               static_cast<sf::Uint8>(information_.getFillColor().a - time_elapsed * CFG.getFloat("info_fade_speed"))});
 
     while (graphics.getWindow().pollEvent(event))
     {
@@ -108,7 +120,20 @@ void UserInterface::draw(graphics::Graphics& graphics)
     graphics.draw(crosshair_);
     graphics.setStaticView();
     graphics.draw(logo_);
+    graphics.getWindow().draw(information_);
     gui_.draw();
+}
+
+void UserInterface::spawnInfo(const std::string& msg)
+{
+    information_.setString(msg);
+    information_.setFillColor(sf::Color::White);
+}
+
+void UserInterface::spawnError(const std::string& msg)
+{
+    information_.setString(msg);
+    information_.setFillColor(sf::Color::Red);
 }
 
 inline void UserInterface::handleKeys()

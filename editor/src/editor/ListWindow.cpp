@@ -56,6 +56,8 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
         for (const auto& item : items)
         {
             auto button = tgui::Picture::create(RM.getTexture(tab_name + "/" + item));
+            auto label = tgui::Label::create(item);
+            label->setRenderer(theme_->getRenderer("ItemLabel"));
 
             auto size = RM.getObjectSize(tab_name, item);
 
@@ -71,7 +73,8 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
             }
 
             button->setSize(size.x, size.y);
-            grids_.back()->addWidget(button, i / 4, i % 4);
+            grids_.back()->addWidget(button, (i / 4) * 2, i % 4);
+            grids_.back()->addWidget(label, (i / 4) * 2 + 1, i % 4);
             clickables_.back().push_back(button);
             grids_.back()->setWidgetPadding(button, {CFG.getFloat("items_padding"), CFG.getFloat("items_padding")});
             ++i;

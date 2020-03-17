@@ -27,12 +27,12 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
     auto button = tgui::Button::create();
     button->setSize(CFG.getFloat("button_size_x"), CFG.getFloat("button_size_y"));
     button->setText("Load map");
-    button->connect("Clicked", [&]() { ui_->resetMapList(); gui_->get("load_window")->setVisible(true); });
+    button->connect("Clicked", [this]() { this->ui_->resetMapList(); this->gui_->get("load_window")->setVisible(true); });
     grid_->addWidget(button, 0, 0);
 
     button = tgui::Button::create();
     button->setSize(CFG.getFloat("button_size_x"), CFG.getFloat("button_size_y"));
     button->setText("Save map");
     grid_->addWidget(button, 0, 1);
-    button->connect("Clicked", [&]() { ui_->resetMapList(); gui_->get("save_window")->setVisible(true); });
+    button->connect("Clicked", [this]() { this->ui_->resetMapList(); this->gui_->get("save_window")->setVisible(true); });
 }

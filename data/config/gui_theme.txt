@@ -70,6 +70,11 @@ Label {
     Scrollbar = &Scrollbar;
 }
 
+ItemLabel {
+    TextColor = rgba(40, 40, 40, 255);
+    Scrollbar = &Scrollbar;
+}
+
 ListBox {
     BackgroundColor = rgba(50, 50, 50, 215);
     BackgroundColorHover = rgba(60, 60, 60, 215);

@@ -2,3 +2,5 @@ float size_x=100.0f
 float size_y=150.0f
 
 float map_offset_y=25.0f
+
+float endurance=2.0f

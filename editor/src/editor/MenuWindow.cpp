@@ -18,10 +18,8 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
                     "menu_window")
 {
     grid_ = tgui::Grid::create();
-    grid_->setSize({CFG.getFloat("menu_window_size_x") * 0.75f, CFG.getFloat("menu_window_size_y")});
-    grid_->setPosition({CFG.getFloat("menu_window_size_x") * 0.125f, 0.0f});
-    grid_->setWidgetPadding(0, 0, {CFG.getFloat("items_padding"), CFG.getFloat("items_padding")});
-    grid_->setWidgetPadding(0, 1, {CFG.getFloat("items_padding"), CFG.getFloat("items_padding")});
+    grid_->setSize({CFG.getFloat("menu_window_size_x") * 0.75f, CFG.getFloat("menu_window_size_y") * 0.9f});
+    grid_->setPosition({CFG.getFloat("menu_window_size_x") * 0.125f, CFG.getFloat("menu_window_size_y") * 0.05f});
     child_->add(grid_);
 
     auto button = tgui::Button::create();
@@ -35,4 +33,28 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
     button->setText("Save map");
     grid_->addWidget(button, 0, 1);
     button->connect("Clicked", [this]() { this->ui_->resetMapList(); this->gui_->get("save_window")->setVisible(true); });
+
+    button = tgui::Button::create();
+    button->setSize(CFG.getFloat("button_size_x"), CFG.getFloat("button_size_y"));
+    button->setText("Edit config");
+    grid_->addWidget(button, 1, 0);
+    button->connect("Clicked", [this]() { this->ui_->openConfigWindow("config_dir", "config"); });
+
+    button = tgui::Button::create();
+    button->setSize(CFG.getFloat("button_size_x"), CFG.getFloat("button_size_y"));
+    button->setText("Edit graphics");
+    grid_->addWidget(button, 1, 1);
+    button->connect("Clicked", [this]() { this->ui_->openConfigWindow("config_dir", "graphics"); });
+
+    button = tgui::Button::create();
+    button->setSize(CFG.getFloat("button_size_x"), CFG.getFloat("button_size_y"));
+    button->setText("Edit characters");
+    grid_->addWidget(button, 2, 0);
+    button->connect("Clicked", [this]() { this->ui_->openConfigWindow("config_dir", "characters"); });
+
+    button = tgui::Button::create();
+    button->setSize(CFG.getFloat("button_size_x"), CFG.getFloat("button_size_y"));
+    button->setText("Edit sound");
+    grid_->addWidget(button, 2, 1);
+    button->connect("Clicked", [this]() { this->ui_->openConfigWindow("config_dir", "sound"); });
 }

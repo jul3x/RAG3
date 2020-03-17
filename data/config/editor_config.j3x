@@ -10,22 +10,22 @@ float camera_zoom_speed=5.0f
 float user_interface_zoom=1.0f
 
 float list_windows_size_x=350.0f
-float list_windows_size_y=300.0f
+float list_windows_size_y=250.0f
 float items_padding=15.0f
 float items_size=50.0f
 
 float menu_window_x=1500.0f
-float menu_window_y=210.0f
+float menu_window_y=250.0f
 float menu_window_size_x=350.0f
-float menu_window_size_y=60.0f
+float menu_window_size_y=120.0f
 float button_size_x=100.0f
 float button_size_y=30.0f
 
 float tiles_window_x=1500.0f
-float tiles_window_y=300.0f
+float tiles_window_y=400.0f
 
 float objects_window_x=1500.0f
-float objects_window_y=630.0f
+float objects_window_y=680.0f
 
 float popup_window_size_x=600.0f
 float popup_window_size_y=400.0f

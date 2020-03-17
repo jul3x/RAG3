@@ -7,10 +7,10 @@
 
 using namespace editor;
 
-Character::Character(const sf::Vector2f& position) :
+Character::Character(const sf::Vector2f& position, const std::string& id) :
         AbstractDrawableObject(position,
-                      {SIZE_X_, SIZE_Y_},
-                      &RM.getTexture("player_1"))
+                               RM.getObjectSize("characters", id),
+                               &RM.getTexture("characters/" + id))
 {
-    this->changeOrigin({SIZE_X_ / 2.0f, SIZE_Y_ / 2.0f + OFFSET_Y_});
+    this->changeOrigin(RM.getObjectSize("characters", id) / 2.0f + RM.getObjectOffset("characters", id));
 }

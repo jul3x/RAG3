@@ -54,6 +54,9 @@ void Editor::draw(graphics::Graphics& graphics)
     for (auto& character : map_->getCharacters())
         graphics.drawSorted(character);
 
+    for (auto& weapon : map_->getWeapons())
+        graphics.drawSorted(weapon);
+
     graphics.drawAlreadySorted();
 }
 
@@ -79,12 +82,18 @@ void Editor::placeItem(const sf::Vector2f& pos)
         map_->spawnDecorationTile(pos, current_item_.second);
     else if (current_item_.first == "obstacles_tiles")
         map_->spawnObstacleTile(pos, current_item_.second);
+    else if (current_item_.first == "weapons")
+        map_->spawnWeapon(pos, current_item_.second);
+    else if (current_item_.first == "characters")
+        map_->spawnCharacter(pos, current_item_.second);
 }
 
 void Editor::removeItem(const sf::Vector2f& pos)
 {
     if (current_item_.first == "decorations_tiles" || current_item_.first == "obstacles_tiles")
         map_->removeTile(pos);
+    else if (current_item_.first == "weapons" || current_item_.first == "characters")
+        map_->removeObject(pos);
 }
 
 void Editor::loadMap(const std::string& name)

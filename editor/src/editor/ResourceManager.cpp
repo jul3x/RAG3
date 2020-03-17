@@ -18,47 +18,50 @@ ResourceManager& ResourceManager::getInstance()
     return resource_manager_instance;
 }
 
-//BulletDescription& ResourceManager::getBulletDescription(const std::string& key)
-//{
-//    auto it = bullets_.find(key);
-//    if (it == bullets_.end())
-//    {
-//        try
-//        {
-//            loadBulletDescription(key);
-//
-//            return bullets_.at(key);
-//        }
-//        catch (std::runtime_error& e)
-//        {
-//            std::cerr << e.what() << std::endl;
-//        }
-//    }
-//
-//    return it->second;
-//}
-//
-//
-//ShootingWeapon& ResourceManager::getWeapon(const std::string& key)
-//{
-//    auto it = weapons_.find(key);
-//    if (it == weapons_.end())
-//    {
-//        try
-//        {
-//            loadWeapon(key);
-//
-//            return weapons_.at(key);
-//        }
-//        catch (std::runtime_error& e)
-//        {
-//            std::cerr << e.what() << std::endl;
-//        }
-//    }
-//
-//    return it->second;
-//}
-//
+const sf::Vector2f& ResourceManager::getObjectSize(const std::string& category, const std::string& id)
+{
+    auto key = category + "/" + id;
+    auto it = objects_constraints_.find(key);
+
+    if (it == objects_constraints_.end())
+    {
+        try
+        {
+            loadConstraints(key);
+
+            return objects_constraints_.at(key).first;
+        }
+        catch (std::runtime_error& e)
+        {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+
+    return it->second.first;
+}
+
+const sf::Vector2f& ResourceManager::getObjectOffset(const std::string& category, const std::string& id)
+{
+    auto key = category + "/" + id;
+    auto it = objects_constraints_.find(key);
+
+    if (it == objects_constraints_.end())
+    {
+        try
+        {
+            loadConstraints(key);
+
+            return objects_constraints_.at(key).second;
+        }
+        catch (std::runtime_error& e)
+        {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+
+    return it->second.second;
+}
+
 std::tuple<std::list<ObstacleTile>, std::list<DecorationTile>>
 ResourceManager::getMap(const std::string& key)
 {
@@ -112,49 +115,6 @@ ResourceManager::getMap(const std::string& key)
 
     return std::make_tuple(obstacles_tiles, decorations_tiles);
 }
-//
-//void ResourceManager::loadBulletDescription(const std::string& key)
-//{
-//    utils::J3XIParameters int_params;
-//    utils::J3XFParameters float_params;
-//    utils::J3XSParameters string_params;
-//
-//    std::tie(int_params, float_params, string_params) = getParameters("bullets/" + key);
-//
-//    bullets_.emplace(key, BulletDescription{utils::getFloat(float_params, "speed"),
-//                                            utils::getFloat(float_params, "life"),
-//                                            utils::getInt(int_params, "deadly_factor"),
-//                                            key,
-//                                            utils::getFloat(float_params, "size_x"),
-//                                            utils::getFloat(float_params, "size_y"),
-//                                            utils::getFloat(float_params, "burst_size")});
-//
-//    std::cout << "[ResourceManager] Bullet description " << key << " is loaded!" << std::endl;
-//}
-//
-//void ResourceManager::loadWeapon(const std::string& key)
-//{
-//    utils::J3XIParameters int_params;
-//    utils::J3XFParameters float_params;
-//    utils::J3XSParameters string_params;
-//
-//    std::tie(int_params, float_params, string_params) = getParameters("weapons/" + key);
-//
-//    weapons_.emplace(key, ShootingWeapon{utils::getFloat(float_params, "bullet_timeout"),
-//                                         utils::getFloat(float_params, "recoil"),
-//                                         utils::getInt(int_params, "max_ammo"),
-//                                         {utils::getFloat(float_params, "size_x"),
-//                                          utils::getFloat(float_params, "size_y")},
-//                                         {utils::getFloat(float_params, "offset_x"),
-//                                          utils::getFloat(float_params, "offset_y")},
-//                                         utils::getString(string_params, "bullet_type"),
-//                                         utils::getInt(int_params, "bullet_quantity"),
-//                                         utils::getFloat(float_params, "bullet_angular_diff"),
-//                                         key});
-//
-//    std::cout << "[ResourceManager] Weapon " << key << " is loaded!" << std::endl;
-//}
-
 
 const std::vector<std::string>& ResourceManager::getListOfObjects(const std::string& dir)
 {
@@ -205,8 +165,23 @@ void ResourceManager::loadListOfObjects(const std::string& dir)
     }
 }
 
-ResourceManager::ResourceManager() : AbstractResourceManager("../data", "../data/textures", "../data/fonts",
-                                                             "../data/sounds", "../data/music")
+void ResourceManager::loadConstraints(const std::string &key)
+{
+    utils::J3XIParameters int_params;
+    utils::J3XFParameters float_params;
+    utils::J3XSParameters string_params;
+
+    std::tie(int_params, float_params, string_params) = getParameters(key);
+
+    objects_constraints_.emplace(key, std::make_pair<sf::Vector2f, sf::Vector2f>(
+            {utils::getFloat(float_params, "size_x"), utils::getFloat(float_params, "size_y")},
+            {utils::getFloat(float_params, "map_offset_x"), utils::getFloat(float_params, "map_offset_y")}));
+
+    std::cout << "[ResourceManager] Object " << key << " constraints loaded!" << std::endl;
+}
+
+ResourceManager::ResourceManager() : AbstractResourceManager(CFG.getString("paths/j3x_dir"), CFG.getString("paths/textures_dir"), CFG.getString("paths/fonts_dir"),
+                                                             CFG.getString("paths/sounds_dir"), CFG.getString("paths/music_dir"))
 {
 
 }

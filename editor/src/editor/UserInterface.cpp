@@ -7,6 +7,9 @@
 
 #include <editor/ResourceManager.h>
 #include <editor/UserInterface.h>
+#include <editor/Character.h>
+#include <editor/Weapon.h>
+
 #include <Editor.h>
 
 
@@ -18,8 +21,10 @@ UserInterface::UserInterface() :
               CFG.getFloat("user_interface_zoom") * sf::Vector2f{LOGO_SIZE_X_, LOGO_SIZE_Y_},
               &RM.getTexture("rag3_logo")),
         gui_theme_("../data/config/gui_theme.txt"),
-        tiles_window_(&gui_, &gui_theme_, "Environment",
+        tiles_window_(&gui_, &gui_theme_, "Tiles",
                       {CFG.getFloat("tiles_window_x"), CFG.getFloat("tiles_window_y")}, "tiles_window"),
+        objects_window_(&gui_, &gui_theme_, "Objects",
+                        {CFG.getFloat("objects_window_x"), CFG.getFloat("objects_window_y")}, "tiles_window"),
         menu_window_(this, &gui_, &gui_theme_),
         save_window_(&gui_, &gui_theme_),
         load_window_(&gui_, &gui_theme_)
@@ -45,6 +50,7 @@ void UserInterface::initialize(graphics::Graphics& graphics)
 {
     gui_.setTarget(graphics.getWindow());
     tiles_window_.initialize({"obstacles_tiles", "decorations_tiles"}, {CFG.getString("paths/obstacles_tiles"), CFG.getString("paths/decorations_tiles")});
+    objects_window_.initialize({"characters", "weapons"}, {CFG.getString("paths/characters"), CFG.getString("paths/weapons")});
 }
 
 void UserInterface::resetMapList()
@@ -196,16 +202,7 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
     {
         crosshair_.setColor(255, 255, 255, 120);
         crosshair_.changeTexture(&RM.getTexture(current_item.first + "/" + current_item.second), true);
-
-        if (current_item.first == "obstacles_tiles")
-        {
-            crosshair_.setSize({ObstacleTile::SIZE_X_, ObstacleTile::SIZE_Y_});
-            crosshair_.changeOrigin({ObstacleTile::SIZE_X_ / 2.0f, ObstacleTile::SIZE_Y_ / 2.0f + ObstacleTile::OFFSET_Y_});
-        }
-        else
-        {
-            crosshair_.setSize({DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_});
-            crosshair_.changeOrigin({DecorationTile::SIZE_X_ / 2.0f, DecorationTile::SIZE_Y_ / 2.0f});
-        }
+        crosshair_.setSize(RM.getObjectSize(current_item.first, current_item.second));
+        crosshair_.changeOrigin(RM.getObjectSize(current_item.first, current_item.second) / 2.0f + RM.getObjectOffset(current_item.first, current_item.second));
     }
 }

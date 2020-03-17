@@ -68,7 +68,7 @@ namespace editor {
         tgui::Gui gui_;
         tgui::Theme gui_theme_;
 
-        ListWindow tiles_window_;
+        ListWindow tiles_window_, objects_window_;
         MenuWindow menu_window_;
 
         SaveWindow save_window_;

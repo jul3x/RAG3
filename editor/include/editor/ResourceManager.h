@@ -26,10 +26,10 @@ namespace editor {
 
         const std::vector<std::string>& getFreshListOfObjects(const std::string& dir);
 
-    //    BulletDescription& getBulletDescription(const std::string& key);
-    //
-    //    ShootingWeapon& getWeapon(const std::string& key);
-    //
+        const sf::Vector2f& getObjectSize(const std::string& category, const std::string& id);
+
+        const sf::Vector2f& getObjectOffset(const std::string& category, const std::string& id);
+
         static std::tuple<std::list<ObstacleTile>, std::list<DecorationTile>>
         getMap(const std::string& key);
 
@@ -37,13 +37,10 @@ namespace editor {
         ResourceManager();
 
         void loadListOfObjects(const std::string& dir);
-    //    void loadBulletDescription(const std::string& key);
-    //
-    //    void loadWeapon(const std::string& key);
-    //
-    //
-    //    std::unordered_map<std::string, ShootingWeapon> weapons_;
-    //    std::unordered_map<std::string, BulletDescription> bullets_;
+
+        void loadConstraints(const std::string& key);
+
+        std::unordered_map<std::string, std::pair<sf::Vector2f, sf::Vector2f>> objects_constraints_;
 
         std::unordered_map<std::string, std::vector<std::string>> list_of_objects_;
     };

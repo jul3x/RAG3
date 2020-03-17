@@ -44,6 +44,11 @@ std::list<Character>& Map::getCharacters()
     return characters_;
 }
 
+std::list<Weapon>& Map::getWeapons()
+{
+    return weapons_;
+}
+
 void Map::spawnDecorationTile(const sf::Vector2f& pos, const std::string& id)
 {
     if (!this->checkCollisions(pos, decorations_tiles_) && !this->checkCollisions(pos, obstacles_tiles_))
@@ -60,9 +65,30 @@ void Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string& id)
     }
 }
 
+void Map::spawnWeapon(const sf::Vector2f& pos, const std::string& id)
+{
+    if (!this->checkCollisions(pos, weapons_) && !this->checkCollisions(pos, characters_))
+    {
+        weapons_.emplace_back(pos, id);
+    }
+}
+
+void Map::spawnCharacter(const sf::Vector2f& pos, const std::string& id)
+{
+    if (!this->checkCollisions(pos, characters_) && !this->checkCollisions(pos, weapons_))
+    {
+        characters_.emplace_back(pos, id);
+    }
+}
+
 void Map::removeTile(const sf::Vector2f& pos)
 {
     (!this->checkCollisions(pos, decorations_tiles_, true) && !this->checkCollisions(pos, obstacles_tiles_, true));
+}
+
+void Map::removeObject(const sf::Vector2f& pos)
+{
+    (!this->checkCollisions(pos, weapons_, true) && !this->checkCollisions(pos, characters_, true));
 }
 
 std::pair<sf::Vector2f, sf::Vector2f> Map::getTileConstraints() const

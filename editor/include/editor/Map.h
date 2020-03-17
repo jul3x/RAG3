@@ -12,6 +12,8 @@
 #include <editor/DecorationTile.h>
 #include <editor/ObstacleTile.h>
 #include <editor/Character.h>
+#include <editor/Weapon.h>
+
 
 using namespace r3e;
 
@@ -30,11 +32,19 @@ namespace editor {
 
         std::list<Character>& getCharacters();
 
+        std::list<Weapon>& getWeapons();
+
         void spawnDecorationTile(const sf::Vector2f& pos, const std::string& id);
 
         void spawnObstacleTile(const sf::Vector2f& pos, const std::string& id);
 
+        void spawnWeapon(const sf::Vector2f& pos, const std::string& id);
+
+        void spawnCharacter(const sf::Vector2f& pos, const std::string& id);
+
         void removeTile(const sf::Vector2f& pos);
+
+        void removeObject(const sf::Vector2f& pos);
 
         std::pair<sf::Vector2f, sf::Vector2f> getTileConstraints() const;
 
@@ -59,6 +69,7 @@ namespace editor {
 
         std::list<ObstacleTile> obstacles_tiles_;
         std::list<Character> characters_;
+        std::list<Weapon> weapons_;
         std::list<DecorationTile> decorations_tiles_;
 
         sf::Vector2f size_;

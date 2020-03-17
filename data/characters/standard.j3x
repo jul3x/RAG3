@@ -1,0 +1,10 @@
+float max_speed=500.0f
+
+float standby_speed=100.0f
+
+int max_health=20
+
+float size_x=49.0f
+float size_y=129.0f
+
+float map_offset_y=25.0f

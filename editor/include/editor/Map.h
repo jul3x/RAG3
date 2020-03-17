@@ -22,6 +22,8 @@ namespace editor {
     public:
         Map() = default;
 
+        bool clearMap();
+
         bool loadMap(const std::string& name);
 
         const sf::Vector2f& getSize() const;

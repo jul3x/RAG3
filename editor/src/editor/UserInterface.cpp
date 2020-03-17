@@ -24,7 +24,7 @@ UserInterface::UserInterface() :
         tiles_window_(this, &gui_, &gui_theme_, "Tiles",
                       {CFG.getFloat("tiles_window_x"), CFG.getFloat("tiles_window_y")}, "tiles_window"),
         objects_window_(this, &gui_, &gui_theme_, "Objects",
-                        {CFG.getFloat("objects_window_x"), CFG.getFloat("objects_window_y")}, "tiles_window"),
+                        {CFG.getFloat("objects_window_x"), CFG.getFloat("objects_window_y")}, "objects_window"),
         menu_window_(this, &gui_, &gui_theme_),
         save_window_(&gui_, &gui_theme_),
         load_window_(&gui_, &gui_theme_),
@@ -43,6 +43,36 @@ UserInterface::UserInterface() :
     gui_.setFont(RM.getFont("editor"));
 }
 
+void UserInterface::generateMenuBar(sf::RenderWindow& window)
+{
+    auto list_menu = tgui::MenuBar::create();
+    list_menu->setRenderer(gui_theme_.getRenderer("MenuBar"));
+    list_menu->addMenu("File");
+    list_menu->addMenuItem("File", "Clear existing map");
+    list_menu->connectMenuItem("File", "Clear existing map", [&]() { Editor::get().clearMap(); });
+
+    list_menu->addMenuItem("File", "Load map");
+    list_menu->connectMenuItem("File", "Load map", [this]() { this->gui_.get("load_window")->setVisible(true); });
+
+    list_menu->addMenuItem("File", "Save map");
+    list_menu->connectMenuItem("File", "Save map", [this]() { this->gui_.get("save_window")->setVisible(true); });
+
+    list_menu->addMenuItem("File", "Exit");
+    list_menu->connectMenuItem("File", "Exit", [&window]() { window.close(); });
+
+    list_menu->addMenu("Windows");
+    list_menu->addMenuItem("Windows", "Menu");
+    list_menu->connectMenuItem("Windows", "Menu", [this]() { this->gui_.get("menu_window")->setVisible(true); });
+
+    list_menu->addMenuItem("Windows", "Tiles");
+    list_menu->connectMenuItem("Windows", "Tiles", [this]() { this->gui_.get("tiles_window")->setVisible(true); });
+
+    list_menu->addMenuItem("Windows", "Objects");
+    list_menu->connectMenuItem("Windows", "Objects", [this]() { this->gui_.get("objects_window")->setVisible(true); });
+
+    gui_.add(list_menu);
+}
+
 void UserInterface::registerCamera(Camera* camera)
 {
     camera_ = camera;
@@ -53,6 +83,8 @@ void UserInterface::initialize(graphics::Graphics& graphics)
     gui_.setTarget(graphics.getWindow());
     tiles_window_.initialize({"obstacles_tiles", "decorations_tiles"}, {CFG.getString("paths/obstacles_tiles"), CFG.getString("paths/decorations_tiles")});
     objects_window_.initialize({"characters", "weapons"}, {CFG.getString("paths/characters"), CFG.getString("paths/weapons")});
+
+    generateMenuBar(graphics.getWindow());
 }
 
 void UserInterface::resetMapList()

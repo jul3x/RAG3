@@ -96,6 +96,19 @@ void Editor::removeItem(const sf::Vector2f& pos)
         map_->removeObject(pos);
 }
 
+void Editor::clearMap()
+{
+    if (map_->clearMap())
+    {
+        camera_->setPointingTo({});
+        ui_->spawnInfo("Map cleared!");
+    }
+    else
+    {
+        ui_->spawnError("Map clearing failed!");
+    }
+}
+
 void Editor::loadMap(const std::string& name)
 {
     if (map_->loadMap(name))

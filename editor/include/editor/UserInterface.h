@@ -49,6 +49,8 @@ namespace editor {
         void openConfigWindow(const std::string& category, const std::string& id);
 
     private:
+        inline void generateMenuBar(sf::RenderWindow& window);
+
         inline void handleKeys();
 
         inline void handleMouse(sf::RenderWindow& graphics_window);

@@ -56,6 +56,8 @@ namespace editor {
 
         void removeItem(const sf::Vector2f& pos);
 
+        void clearMap();
+
         void loadMap(const std::string& name);
 
         void saveConfig(const std::string& category, const std::string& id, const std::string& content);

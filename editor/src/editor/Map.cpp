@@ -8,6 +8,16 @@
 
 using namespace editor;
 
+bool Map::clearMap()
+{
+    obstacles_tiles_.clear();
+    decorations_tiles_.clear();
+    characters_.clear();
+    weapons_.clear();
+
+    return true;
+}
+
 bool Map::loadMap(const std::string& name)
 {
     try

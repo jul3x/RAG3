@@ -8,12 +8,14 @@
 
 #include <editor/ListWindow.h>
 #include <editor/ResourceManager.h>
+#include <editor/UserInterface.h>
 #include <Editor.h>
 
 
 using namespace editor;
 
-ListWindow::ListWindow(tgui::Gui* gui, tgui::Theme* theme, std::string title, const sf::Vector2f& pos, std::string id) :
+ListWindow::ListWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme, std::string title, const sf::Vector2f& pos, std::string id) :
+        ui_(ui),
         ChildWindow(gui, theme, title, pos, {CFG.getFloat("list_windows_size_x"), CFG.getFloat("list_windows_size_y")}, std::move(id))
 {
 
@@ -80,6 +82,7 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
             ++i;
 
             button->connect("Clicked", [&](const std::string& tab_name, const std::string& item_name) { Editor::get().setCurrentItem(tab_name, item_name); }, tab_name, item);
+            button->connect("RightClicked", [&](const std::string& tab_name, const std::string& item_name) { ui_->openConfigWindow(tab_name, item_name); }, tab_name, item);
         }
     }
 

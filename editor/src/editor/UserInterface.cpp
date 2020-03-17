@@ -21,16 +21,18 @@ UserInterface::UserInterface() :
               CFG.getFloat("user_interface_zoom") * sf::Vector2f{LOGO_SIZE_X_, LOGO_SIZE_Y_},
               &RM.getTexture("rag3_logo")),
         gui_theme_("../data/config/gui_theme.txt"),
-        tiles_window_(&gui_, &gui_theme_, "Tiles",
+        tiles_window_(this, &gui_, &gui_theme_, "Tiles",
                       {CFG.getFloat("tiles_window_x"), CFG.getFloat("tiles_window_y")}, "tiles_window"),
-        objects_window_(&gui_, &gui_theme_, "Objects",
+        objects_window_(this, &gui_, &gui_theme_, "Objects",
                         {CFG.getFloat("objects_window_x"), CFG.getFloat("objects_window_y")}, "tiles_window"),
         menu_window_(this, &gui_, &gui_theme_),
         save_window_(&gui_, &gui_theme_),
-        load_window_(&gui_, &gui_theme_)
+        load_window_(&gui_, &gui_theme_),
+        config_window_(&gui_, &gui_theme_)
 {
     gui_.get("save_window")->setVisible(false);
     gui_.get("load_window")->setVisible(false);
+    gui_.get("config_window")->setVisible(false);
 
     information_.setPosition(CFG.getFloat("info_x"), CFG.getFloat("info_y"));
     information_.setFillColor(sf::Color(255, 255, 255, 0));
@@ -56,6 +58,12 @@ void UserInterface::initialize(graphics::Graphics& graphics)
 void UserInterface::resetMapList()
 {
     load_window_.refreshMapList(RM.getFreshListOfObjects(CFG.getString("paths/maps_dir")));
+}
+
+void UserInterface::openConfigWindow(const std::string& category, const std::string& id)
+{
+    config_window_.setConfigContent(category, id);
+    gui_.get("config_window")->setVisible(true);
 }
 
 void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapsed)

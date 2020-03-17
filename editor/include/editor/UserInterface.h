@@ -17,6 +17,7 @@
 #include <editor/MenuWindow.h>
 #include <editor/SaveWindow.h>
 #include <editor/LoadWindow.h>
+#include <editor/ConfigWindow.h>
 
 
 using namespace r3e;
@@ -44,6 +45,8 @@ namespace editor {
         void spawnError(const std::string& msg);
 
         void resetMapList();
+
+        void openConfigWindow(const std::string& category, const std::string& id);
 
     private:
         inline void handleKeys();
@@ -73,6 +76,7 @@ namespace editor {
 
         SaveWindow save_window_;
         LoadWindow load_window_;
+        ConfigWindow config_window_;
 
         sf::Text information_;
 

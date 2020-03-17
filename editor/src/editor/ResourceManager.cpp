@@ -116,6 +116,42 @@ ResourceManager::getMap(const std::string& key)
     return std::make_tuple(obstacles_tiles, decorations_tiles);
 }
 
+std::string ResourceManager::getConfigContent(const std::string& category, const std::string& id)
+{
+    std::ifstream file(CFG.getString("paths/" + category) + "/" + id + ".j3x");
+
+    if (!file)
+    {
+        std::cerr << "[ResourceManager] Config file not found! This should not happen during standard runtime.";
+
+        return "";
+    }
+
+    std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
+    std::cout << "[ResourceManager] Config file " << CFG.getString("paths/" + category) + "/" + id + ".j3x" << " is loaded!" << std::endl;
+
+    return str;
+}
+
+bool ResourceManager::saveConfigFile(const std::string& category, const std::string& id, const std::string& content)
+{
+    std::ofstream file(CFG.getString("paths/" + category) + "/" + id + ".j3x", std::ofstream::out | std::ofstream::trunc);
+
+    if (!file)
+    {
+        std::cerr << "[ResourceManager] Config file saving failed";
+
+        return false;
+    }
+
+    file << content;
+
+    std::cout << "[ResourceManager] Config file " << CFG.getString("paths/" + category) + "/" + id + ".j3x" << " is saved!" << std::endl;
+
+    return true;
+}
+
 const std::vector<std::string>& ResourceManager::getListOfObjects(const std::string& dir)
 {
     auto it = list_of_objects_.find(dir);

@@ -33,6 +33,10 @@ namespace editor {
         static std::tuple<std::list<ObstacleTile>, std::list<DecorationTile>>
         getMap(const std::string& key);
 
+        static std::string getConfigContent(const std::string& category, const std::string& id);
+
+        static bool saveConfigFile(const std::string& category, const std::string& id, const std::string& content);
+
     private:
         ResourceManager();
 

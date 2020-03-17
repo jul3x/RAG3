@@ -11,9 +11,11 @@
 
 namespace editor {
 
+    class UserInterface;
+
     class ListWindow : public ChildWindow {
     public:
-        ListWindow(tgui::Gui *gui, tgui::Theme *theme, std::string title, const sf::Vector2f& pos, std::string id = "");
+        ListWindow(UserInterface* ui, tgui::Gui *gui, tgui::Theme *theme, std::string title, const sf::Vector2f& pos, std::string id = "");
 
         void initialize(const std::vector<std::string> &tabs, const std::vector<std::string> &paths_to_objects);
 
@@ -25,6 +27,8 @@ namespace editor {
 
             gui.get(selected_tab)->setVisible(true);
         }
+
+        UserInterface* ui_;
 
         std::vector<tgui::Grid::Ptr> grids_;
 

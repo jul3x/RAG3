@@ -108,3 +108,15 @@ void Editor::loadMap(const std::string& name)
         ui_->spawnError("Map loading failed!");
     }
 }
+
+void Editor::saveConfig(const std::string& category, const std::string& id, const std::string& content)
+{
+    if (RM.saveConfigFile(category, id, content))
+    {
+        ui_->spawnInfo("Config file " + category + "/" + id + " succesfully saved!");
+    }
+    else
+    {
+        ui_->spawnError("Config file saving failed!");
+    }
+}

@@ -61,7 +61,7 @@ namespace r3e {
         bool operator()(const AbstractDrawableObject* lhs, const AbstractDrawableObject* rhs) const
         {
             return (lhs->getPosition().y < rhs->getPosition().y) ||
-                   (lhs->getPosition().y == rhs->getPosition().y && lhs->getPosition().x < rhs->getPosition().x);
+                   (lhs->getPosition().y == rhs->getPosition().y && lhs->getPosition().x <= rhs->getPosition().x);
         }
     };
 

@@ -21,8 +21,6 @@ namespace r3e {
 
     class AbstractPhysicalObject : public AbstractDrawableObject {
     public:
-        AbstractPhysicalObject() = delete;
-
         AbstractPhysicalObject(const sf::Vector2f& position,
                                const sf::Vector2f& size,
                                const Collision::Area& c_area,
@@ -39,8 +37,6 @@ namespace r3e {
 
     class StaticObject : public AbstractPhysicalObject {
     public:
-        StaticObject() = delete;
-
         StaticObject(const sf::Vector2f& position,
                      const sf::Vector2f& size,
                      const Collision::Area& c_area,
@@ -56,8 +52,6 @@ namespace r3e {
 
     class DynamicObject : public StaticObject {
     public:
-        DynamicObject() = delete;
-
         DynamicObject(const sf::Vector2f& position,
                       const sf::Vector2f& velocity,
                       const sf::Vector2f& size,
@@ -92,8 +86,6 @@ namespace r3e {
 
     class HoveringObject : public DynamicObject {
     public:
-        HoveringObject() = delete;
-
         HoveringObject(const sf::Vector2f& position,
                        const sf::Vector2f& velocity,
                        const sf::Vector2f& size,

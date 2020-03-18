@@ -15,6 +15,11 @@ using namespace r3e;
 
 class DecorationTile : public AbstractDrawableObject, public Identifiable {
 public:
+    enum class Type {
+        Blood = 3,
+        DestroyedWall = 2
+    };
+
     DecorationTile(const sf::Vector2f& position,
                    const std::string& id);
 

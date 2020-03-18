@@ -38,7 +38,7 @@ const utils::J3XParameters& ResourceManager::getObjectParams(const std::string& 
     return it->second;
 }
 
-Map::Description ResourceManager::getMap(const std::string& key)
+std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& key)
 {
     enum class MapReading {
         None,
@@ -51,8 +51,10 @@ Map::Description ResourceManager::getMap(const std::string& key)
     std::ifstream file(CFG.getString("paths/maps_dir") + "/" + key + ".j3x");
     std::list<ObstacleTile> obstacles_tiles;
     std::list<DecorationTile> decorations_tiles;
-    std::list<Character> characters_;
-    std::list<Collectible> collectibles_;
+    std::list<Character> characters;
+    std::list<Collectible> collectibles;
+    sf::Vector2f map_size;
+    std::vector<std::vector<float>> blocked;
 
     int w, h;
     if (file)
@@ -60,6 +62,10 @@ Map::Description ResourceManager::getMap(const std::string& key)
         std::string word;
 
         file >> w >> h;
+
+        blocked.resize(w);
+        for (auto& row : blocked)
+            row.resize(h);
 
         int max_number = w * h;
         int count = 0;
@@ -93,10 +99,12 @@ Map::Description ResourceManager::getMap(const std::string& key)
                 {
                     case MapReading::TileMap:
                     {
+                        blocked.at(count % w).at(count / w) = 0.0f;
                         type = std::stoi(word);
                         if (type < 10 && type > 0)
                         {
-                            // TODO - different types, different blockage
+                            blocked.at(count % w).at(count / w) =
+                                    utils::getFloat(RM.getObjectParams("obstacles_tiles", std::to_string(type)), "endurance");
                             obstacles_tiles.emplace_back(sf::Vector2f((count % w) * DecorationTile::SIZE_X_,
                                                                       (count / w) * DecorationTile::SIZE_Y_),
                                                          std::to_string(type));
@@ -129,7 +137,7 @@ Map::Description ResourceManager::getMap(const std::string& key)
                         else
                         {
                             current_pos.y = std::stof(word);
-                            characters_.emplace_back(current_pos, current_id);
+                            characters.emplace_back(current_pos, current_id);
                         }
                         break;
                     }
@@ -148,7 +156,7 @@ Map::Description ResourceManager::getMap(const std::string& key)
                         else
                         {
                             current_pos.y = std::stof(word);
-                            collectibles_.emplace_back(current_pos, current_id);
+                            collectibles.emplace_back(current_pos, current_id);
                         }
                         break;
                     }
@@ -170,9 +178,11 @@ Map::Description ResourceManager::getMap(const std::string& key)
         throw std::logic_error("[ResourceManager] Map file not found! This should not happen during standard runtime.");
     }
 
+    map_size = {DecorationTile::SIZE_X_ * blocked.size(), DecorationTile::SIZE_Y_ * blocked.at(0).size()};
+
     std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
 
-    return std::make_tuple(obstacles_tiles, decorations_tiles, characters_, collectibles_);
+    return {{obstacles_tiles, decorations_tiles, characters, collectibles}, {map_size, blocked}};
 }
 
 bool ResourceManager::saveMap(const std::string& name, Map& map)

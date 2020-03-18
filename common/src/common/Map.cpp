@@ -21,7 +21,13 @@ bool Map::loadMap(const std::string& name)
 {
     try
     {
-        std::tie(obstacles_tiles_, decorations_tiles_, characters_, collectibles_) = ResourceManager::getMap(name);
+        std::forward_as_tuple(
+                std::tie(obstacles_tiles_, decorations_tiles_,
+                          characters_, collectibles_),
+                std::tie(size_, blocked_.blockage_)) = ResourceManager::getMap(name);
+
+        blocked_.scale_x_ = DecorationTile::SIZE_X_;
+        blocked_.scale_y_ = DecorationTile::SIZE_X_;
 
         return true;
     }
@@ -36,6 +42,11 @@ bool Map::loadMap(const std::string& name)
 const sf::Vector2f& Map::getSize() const
 {
     return size_;
+}
+
+const ai::MapBlockage& Map::getMapBlockage() const
+{
+    return blocked_;
 }
 
 std::list<DecorationTile>& Map::getDecorationsTiles()
@@ -136,5 +147,53 @@ std::pair<sf::Vector2<size_t>, sf::Vector2f> Map::getTileConstraints() const
     return {sf::Vector2<size_t>(static_cast<size_t>((max.x - min.x) / DecorationTile::SIZE_X_) + 1,
                                 static_cast<size_t>((max.y - min.y) / DecorationTile::SIZE_Y_) + 1),
             min};
+}
+
+bool Map::update(float time_elapsed)
+{
+    // TODO Make private function that encapsulates this logic
+    for (auto it = obstacles_tiles_.begin(); it != obstacles_tiles_.end();)
+    {
+        bool do_increment = true;
+        if (!it->update(time_elapsed))
+        {
+            // draw on this place destruction
+            // spawnDecoration(it->getPosition(), Decoration::Type::DestroyedWall);
+            // Game::get().spawnExplosionEvent(it->getPosition(), 250.0f);
+
+            auto next_it = std::next(it);
+            // Game::get().deleteStaticObject(&*it);
+
+            auto grid_pos = std::make_pair(static_cast<size_t>(it->getPosition().x / DecorationTile::SIZE_X_),
+                                           static_cast<size_t>(it->getPosition().y / DecorationTile::SIZE_Y_));
+            blocked_.blockage_.at(grid_pos.first).at(grid_pos.second) = false;
+           // obstacles_tiles_.erase(it);
+            it = next_it;
+            do_increment = false;
+        }
+
+        if (do_increment) ++it;
+    }
+
+    for (auto it = characters_.begin(); it != characters_.end();)
+    {
+        bool do_increment = true;
+        if (!it->update(time_elapsed))
+        {
+            // draw on this place destruction
+            // spawnDecoration(it->getPosition(), Decoration::Type::Blood);
+            // Game::get().spawnExplosionEvent(it->getPosition(), 250.0f);
+
+            auto next_it = std::next(it);
+            // Game::get().deleteDynamicObject(&*it);
+       //     characters_.erase(it);
+            it = next_it;
+            do_increment = false;
+        }
+
+        if (do_increment) ++it;
+    }
+
+    return true;
 }
 

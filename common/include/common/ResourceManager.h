@@ -29,7 +29,7 @@ public:
 
     const utils::J3XParameters& getObjectParams(const std::string& category, const std::string& id);
 
-    static Map::Description getMap(const std::string& key);
+    static std::tuple<Map::Data, Map::TileMap> getMap(const std::string& key);
 
     static bool saveMap(const std::string& name, Map& map);
 

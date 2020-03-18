@@ -2,8 +2,8 @@
 // Created by jul3x on 16.10.19.
 //
 
-#include <weapons/AbstractWeapon.h>
-#include <misc/ResourceManager.h>
+#include <common/AbstractWeapon.h>
+#include <common/ResourceManager.h>
 
 
 AbstractWeapon::AbstractWeapon(const sf::Vector2f& size,
@@ -12,7 +12,7 @@ AbstractWeapon::AbstractWeapon(const sf::Vector2f& size,
         name_(name),
         weapon_offset_(weapon_offset),
         AbstractDrawableObject({}, size,
-                               name.empty() ? nullptr : &RM.getTexture("weapon_" + name))
+                               name.empty() ? nullptr : &RM.getTexture("weapons/" + name))
 {
 }
 

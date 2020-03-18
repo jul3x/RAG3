@@ -7,6 +7,9 @@ int max_health=20
 float size_x=49.0f
 float size_y=129.0f
 
+float collision_size_x=44.0f
+float collision_size_y=80.0f
+
 float map_offset_y=25.0f
 
 float gun_offset_x=20.0f

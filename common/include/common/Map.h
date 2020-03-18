@@ -8,6 +8,7 @@
 #include <list>
 
 #include <R3E/utils/Geometry.h>
+#include <R3E/ai/DataTypes.h>
 
 #include <common/DecorationTile.h>
 #include <common/ObstacleTile.h>
@@ -19,8 +20,9 @@ using namespace r3e;
 
 class Map {
 public:
-    using Description = std::tuple<std::list<ObstacleTile>, std::list<DecorationTile>,
-                                   std::list<Character>, std::list<Collectible>>;
+    using Data = std::tuple<std::list<ObstacleTile>, std::list<DecorationTile>,
+                            std::list<Character>, std::list<Collectible>>;
+    using TileMap = std::pair<sf::Vector2f, std::vector<std::vector<float>>>;
 
     Map() = default;
 
@@ -29,6 +31,8 @@ public:
     bool loadMap(const std::string& name);
 
     const sf::Vector2f& getSize() const;
+
+    const ai::MapBlockage& getMapBlockage() const;
 
     std::list<DecorationTile>& getDecorationsTiles();
 
@@ -51,6 +55,8 @@ public:
     void removeObject(const sf::Vector2f& pos);
 
     std::pair<sf::Vector2<size_t>, sf::Vector2f> getTileConstraints() const;
+
+    bool update(float time_elapsed);
 
 private:
     template<class T>
@@ -75,6 +81,8 @@ private:
     std::list<Character> characters_;
     std::list<Collectible> collectibles_;
     std::list<DecorationTile> decorations_tiles_;
+
+    ai::MapBlockage blocked_;
 
     sf::Vector2f size_;
 

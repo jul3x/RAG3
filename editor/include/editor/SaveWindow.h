@@ -18,7 +18,7 @@ namespace editor {
     private:
         tgui::Grid::Ptr grid_;
 
-        tgui::TextBox::Ptr text_box_;
+        tgui::EditBox::Ptr text_box_;
 
     };
 

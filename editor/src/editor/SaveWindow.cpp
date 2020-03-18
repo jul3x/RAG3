@@ -29,8 +29,8 @@ SaveWindow::SaveWindow(tgui::Gui* gui, tgui::Theme* theme) :
 
     grid_->addWidget(label, 0, 0);
 
-    text_box_ = tgui::TextBox::create();
-    text_box_->setRenderer(theme_->getRenderer("TextBox"));
+    text_box_ = tgui::EditBox::create();
+    text_box_->setRenderer(theme_->getRenderer("EditBox"));
     text_box_->setSize("70%", 20);
     grid_->addWidget(text_box_, 1, 0);
 

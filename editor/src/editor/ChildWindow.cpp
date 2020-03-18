@@ -26,7 +26,6 @@ ChildWindow::ChildWindow(tgui::Gui* gui,
     child_->setTitle(title_);
     child_->setResizable(true);
     child_->setMinimumSize(size);
-
     child_->connect("closed", [](tgui::ChildWindow::Ptr c){ c->setVisible(false); });
     gui_->add(child_, id);
 }

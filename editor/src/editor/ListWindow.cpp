@@ -39,10 +39,11 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
         this->ui_->spawnInfo("Click left to pick object or right to edit its configuration.\n");
     });
 
-    auto scrollPanel = tgui::ScrollablePanel::create({"100%", "&.height - 30"});
-    scrollPanel->setPosition({"0", "30"});
+    auto scroll_panel = tgui::ScrollablePanel::create({"100%", "&.height - 30"});
+    scroll_panel->setPosition({"0", "30"});
+    scroll_panel->setRenderer(theme_->getRenderer("ScrollablePanel"));
 
-    child_->add(scrollPanel);
+    child_->add(scroll_panel);
 
     for (const auto &tab : paths_to_objects)
     {
@@ -53,7 +54,7 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
 
         auto tab_name = tab_names_.at(grids_.size() - 1);
 
-        scrollPanel->add(grids_.back(), tab_name);
+        scroll_panel->add(grids_.back(), tab_name);
 
         const auto& items = RM.getListOfObjects(tab);
 

@@ -47,6 +47,7 @@ void UserInterface::generateMenuBar(sf::RenderWindow& window)
 {
     auto list_menu = tgui::MenuBar::create();
     list_menu->setRenderer(gui_theme_.getRenderer("MenuBar"));
+    list_menu->setSize("100%", 35);
     list_menu->addMenu("File");
     list_menu->addMenuItem("File", "Clear existing map");
     list_menu->connectMenuItem("File", "Clear existing map", [&]() { Editor::get().clearMap(); });

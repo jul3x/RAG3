@@ -46,16 +46,16 @@ void Editor::draw(graphics::Graphics& graphics)
     grid_.draw(graphics);
 
     for (auto& decoration : map_->getDecorationsTiles())
-        graphics.draw(decoration);
+        graphics.draw(*decoration);
 
     for (auto& obstacle : map_->getObstaclesTiles())
-        graphics.drawSorted(obstacle);
+        graphics.drawSorted(*obstacle);
 
     for (auto& character : map_->getCharacters())
-        graphics.drawSorted(character);
+        graphics.drawSorted(*character);
 
     for (auto& weapon : map_->getCollectibles())
-        graphics.drawSorted(weapon);
+        graphics.drawSorted(*weapon);
 
     graphics.drawAlreadySorted();
 }

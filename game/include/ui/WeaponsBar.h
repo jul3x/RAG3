@@ -15,7 +15,7 @@
 
 #include <R3E/objects/AbstractDrawableObject.h>
 
-#include <weapons/AbstractWeapon.h>
+#include <common/AbstractWeapon.h>
 
 
 using namespace r3e;
@@ -24,7 +24,7 @@ class WeaponsBar : public AbstractDrawableObject {
 public:
     explicit WeaponsBar(const sf::Vector2f& position);
 
-    void updateWeaponsList(const std::vector<std::unique_ptr<AbstractWeapon>>& weapons);
+    void updateWeaponsList(const std::vector<std::shared_ptr<AbstractWeapon>>& weapons);
 
     void updateCurrentWeapon(int curr_weapon);
 

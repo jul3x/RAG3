@@ -49,12 +49,13 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
     auto map_reading = MapReading::None;
 
     std::ifstream file(CFG.getString("paths/maps_dir") + "/" + key + ".j3x");
-    std::list<ObstacleTile> obstacles_tiles;
-    std::list<DecorationTile> decorations_tiles;
-    std::list<Character> characters;
-    std::list<Collectible> collectibles;
+    std::list<std::shared_ptr<ObstacleTile>> obstacles_tiles;
+    std::list<std::shared_ptr<DecorationTile>> decorations_tiles;
+    std::list<std::shared_ptr<Enemy>> characters;
+    std::list<std::shared_ptr<Collectible>> collectibles;
     sf::Vector2f map_size;
     std::vector<std::vector<float>> blocked;
+    sf::Vector2f player_pos;
 
     int w, h;
     if (file)
@@ -105,15 +106,17 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         {
                             blocked.at(count % w).at(count / w) =
                                     utils::getFloat(RM.getObjectParams("obstacles_tiles", std::to_string(type)), "endurance");
-                            obstacles_tiles.emplace_back(sf::Vector2f((count % w) * DecorationTile::SIZE_X_,
-                                                                      (count / w) * DecorationTile::SIZE_Y_),
-                                                         std::to_string(type));
+                            obstacles_tiles.emplace_back(std::make_shared<ObstacleTile>(
+                                    sf::Vector2f((count % w) * DecorationTile::SIZE_X_,
+                                                 (count / w) * DecorationTile::SIZE_Y_),
+                                    std::to_string(type)));
                         }
                         else if (type > -10 && type < 0)
                         {
-                            decorations_tiles.emplace_back(sf::Vector2f((count % w) * DecorationTile::SIZE_X_,
-                                                                        (count / w) * DecorationTile::SIZE_Y_),
-                                                           std::to_string(-type));
+                            decorations_tiles.emplace_back(std::make_shared<DecorationTile>(
+                                    sf::Vector2f((count % w) * DecorationTile::SIZE_X_,
+                                                 (count / w) * DecorationTile::SIZE_Y_),
+                                    std::to_string(-type)));
                         }
                         else if (type != 0)
                         {
@@ -137,7 +140,15 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         else
                         {
                             current_pos.y = std::stof(word);
-                            characters.emplace_back(current_pos, current_id);
+
+                            if (current_id == "player")
+                            {
+                                player_pos = current_pos;
+                            }
+                            else
+                            {
+                                characters.emplace_back(std::make_shared<Enemy>(current_pos, current_id));
+                            }
                         }
                         break;
                     }
@@ -156,7 +167,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         else
                         {
                             current_pos.y = std::stof(word);
-                            collectibles.emplace_back(current_pos, current_id);
+                            collectibles.emplace_back(std::make_shared<Collectible>(current_pos, current_id));
                         }
                         break;
                     }
@@ -182,7 +193,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
 
     std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
 
-    return {{obstacles_tiles, decorations_tiles, characters, collectibles}, {map_size, blocked}};
+    return {{obstacles_tiles, decorations_tiles, characters, collectibles}, {map_size, blocked, player_pos}};
 }
 
 bool ResourceManager::saveMap(const std::string& name, Map& map)
@@ -211,14 +222,14 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
 
     for (const auto& obstacle : map.getObstaclesTiles())
     {
-        matrix.at(static_cast<size_t>((obstacle.getPosition().y - map_constraints.second.y) / DecorationTile::SIZE_Y_)).
-               at(static_cast<size_t>((obstacle.getPosition().x - map_constraints.second.x) / DecorationTile::SIZE_X_)) = std::stoi(obstacle.getId());
+        matrix.at(static_cast<size_t>((obstacle->getPosition().y - map_constraints.second.y) / DecorationTile::SIZE_Y_)).
+               at(static_cast<size_t>((obstacle->getPosition().x - map_constraints.second.x) / DecorationTile::SIZE_X_)) = std::stoi(obstacle->getId());
     }
 
     for (const auto& decoration : map.getDecorationsTiles())
     {
-        matrix.at(static_cast<size_t>((decoration.getPosition().y - map_constraints.second.y) / DecorationTile::SIZE_Y_)).
-               at(static_cast<size_t>((decoration.getPosition().x - map_constraints.second.x)/ DecorationTile::SIZE_X_)) = - std::stoi(decoration.getId());
+        matrix.at(static_cast<size_t>((decoration->getPosition().y - map_constraints.second.y) / DecorationTile::SIZE_Y_)).
+               at(static_cast<size_t>((decoration->getPosition().x - map_constraints.second.x) / DecorationTile::SIZE_X_)) = - std::stoi(decoration->getId());
     }
 
     for (const auto& row : matrix)
@@ -234,9 +245,9 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
         file << std::endl << category << ": " << std::endl;
         for (const auto& obj : objects)
         {
-            file << obj.getId() << " " <<
-                 obj.getPosition().x - map_constraints.second.x << " " <<
-                 obj.getPosition().y - map_constraints.second.y<< std::endl;
+            file << obj->getId() << " " <<
+                 obj->getPosition().x - map_constraints.second.x << " " <<
+                 obj->getPosition().y - map_constraints.second.y<< std::endl;
         }
     };
 

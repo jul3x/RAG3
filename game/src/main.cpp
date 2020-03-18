@@ -5,7 +5,7 @@
 #include <R3E/system/Config.h>
 #include <R3E/system/Engine.h>
 
-#include <misc/ResourceManager.h>
+#include <common/ResourceManager.h>
 #include <Game.h>
 
 
@@ -24,15 +24,14 @@ int main()
         CFG.setInt("graphics/window_height_px", res.y);
     }
 
-    RM.lazyLoadTexture("animation_shot");
-    RM.lazyLoadTexture("animation_explosion1");
-    RM.lazyLoadTexture("animation_explosion2");
-    RM.lazyLoadTexture("animation_explosion3");
+    RM.lazyLoadTexture("animations/shot");
+    RM.lazyLoadTexture("animations/explosion_1");
+    RM.lazyLoadTexture("animations/explosion_2");
+    RM.lazyLoadTexture("animations/explosion_3");
 
     RM.lazyLoadTexture("blood_hud_1");
     RM.lazyLoadTexture("blood_hud_2");
     RM.lazyLoadTexture("blood_hud_3");
-
 
     Game::get().start();
 

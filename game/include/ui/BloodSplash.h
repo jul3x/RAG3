@@ -6,6 +6,7 @@
 #define RAG3_GAME_UI_BLOODSPLASH_H
 
 #include <R3E/objects/AbstractDrawableObject.h>
+
 #include <characters/Player.h>
 
 

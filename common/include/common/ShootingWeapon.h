@@ -3,27 +3,20 @@
 //
 
 
-#ifndef RAG3_GAME_WEAPONS_SHOOTINGWEAPON_H
-#define RAG3_GAME_WEAPONS_SHOOTINGWEAPON_H
+#ifndef RAG3_COMMON_SHOOTINGWEAPON_H
+#define RAG3_COMMON_SHOOTINGWEAPON_H
 
 #include <chrono>
 #include <cmath>
 #include <string>
 
-#include <weapons/AbstractWeapon.h>
+#include <common/AbstractWeapon.h>
 
 
 class ShootingWeapon : public AbstractWeapon {
 public:
-    ShootingWeapon(float bullet_timeout,
-                   float recoil,
-                   int ammunition,
-                   const sf::Vector2f& size,
-                   const sf::Vector2f& weapon_offset,
-                   std::string bullet_type,
-                   int bullet_quantity,
-                   float bullet_angular_diff,
-                   const std::string& texture_name);
+    ShootingWeapon(const std::string& id);
+
 
     sf::Vector2f use() override;
 
@@ -46,4 +39,4 @@ private:
 };
 
 
-#endif // RAG3_GAME_WEAPONS_SHOOTINGWEAPON_H
+#endif // RAG3_COMMON_SHOOTINGWEAPON_H

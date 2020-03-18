@@ -8,6 +8,7 @@
 
 #include <common/ResourceManager.h>
 #include <common/Character.h>
+#include <common/NoWeapon.h>
 
 
 Character::Character(const sf::Vector2f& position, const std::string& id) :
@@ -144,7 +145,7 @@ void Character::setRotation(float theta)
     {
         case 1:
         {
-            shape_.setTexture(&RM.getTexture("player_1"));
+            shape_.setTexture(&RM.getTexture("characters/" + this->getId()));
 
             gun_offset_.x = utils::getFloat(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::getFloat(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
@@ -157,7 +158,7 @@ void Character::setRotation(float theta)
         }
         case 2:
         {
-            shape_.setTexture(&RM.getTexture("player_2"));
+            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + "_2"));
             gun_offset_.x = -utils::getFloat(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::getFloat(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
@@ -169,7 +170,7 @@ void Character::setRotation(float theta)
         }
         case 3:
         {
-            shape_.setTexture(&RM.getTexture("player_3"));
+            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + "_3"));
             gun_offset_.x = -utils::getFloat(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::getFloat(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
@@ -181,7 +182,7 @@ void Character::setRotation(float theta)
         }
         case 4:
         {
-            shape_.setTexture(&RM.getTexture("player_4"));
+            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + "_4"));
             gun_offset_.x = utils::getFloat(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::getFloat(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 

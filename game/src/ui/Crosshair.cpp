@@ -4,7 +4,7 @@
 
 #include <R3E/system/Config.h>
 
-#include <misc/ResourceManager.h>
+#include <common/ResourceManager.h>
 #include <ui/Crosshair.h>
 
 

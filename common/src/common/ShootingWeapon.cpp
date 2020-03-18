@@ -4,32 +4,33 @@
 
 #include <utility>
 
-#include <weapons/ShootingWeapon.h>
+#include <common/ResourceManager.h>
+
+#include <common/ShootingWeapon.h>
 #include <Game.h>
 
 
-ShootingWeapon::ShootingWeapon(float bullet_timeout,
-                               float recoil,
-                               int ammunition,
-                               const sf::Vector2f& size,
-                               const sf::Vector2f& weapon_offset,
-                               std::string bullet_type,
-                               int bullet_quantity,
-                               float bullet_angular_diff,
-                               const std::string& texture_name) :
-        bullet_timeout_(bullet_timeout),
-        recoil_(recoil),
-        ammunition_(ammunition),
-        max_ammunition_(ammunition),
-        bullet_type_(std::move(bullet_type)),
-        bullet_quantity_(bullet_quantity),
-        bullet_angular_diff_(bullet_angular_diff),
-        AbstractWeapon(size, weapon_offset, texture_name)
+ShootingWeapon::ShootingWeapon(const std::string& id) :
+        bullet_timeout_(utils::getFloat(RM.getObjectParams("weapons", id), "bullet_timeout")),
+        recoil_(utils::getFloat(RM.getObjectParams("weapons", id), "recoil")),
+        ammunition_(utils::getInt(RM.getObjectParams("weapons", id), "max_ammo")),
+        max_ammunition_(utils::getInt(RM.getObjectParams("weapons", id), "max_ammo")),
+        bullet_type_(utils::getString(RM.getObjectParams("weapons", id), "bullet_type")),
+        bullet_quantity_(utils::getInt(RM.getObjectParams("weapons", id), "bullet_quantity")),
+        bullet_angular_diff_(utils::getFloat(RM.getObjectParams("weapons", id), "bullet_angular_diff")),
+        AbstractWeapon({utils::getFloat(RM.getObjectParams("weapons", id), "size_x"),
+                        utils::getFloat(RM.getObjectParams("weapons", id), "size_y")},
+                       {utils::getFloat(RM.getObjectParams("weapons", id), "offset_x"),
+                        utils::getFloat(RM.getObjectParams("weapons", id), "offset_y")},
+                       id)
 {
-    if (ammunition <= 0 || bullet_timeout <= 0.0f)
+    if (max_ammunition_ <= 0 || bullet_timeout_ <= 0.0f)
         throw std::invalid_argument("[ShootingWeapon] Constructor parameters are invalid!");
 
-    shape_.setOrigin({weapon_offset.x, size.y / 2.0f + weapon_offset.y});
+    this->changeOrigin(sf::Vector2f(0.0f,
+                                    utils::getFloat(RM.getObjectParams("weapons", id), "size_y")) / 2.0f +
+                       sf::Vector2f(utils::getFloat(RM.getObjectParams("weapons", id), "offset_x"),
+                                    utils::getFloat(RM.getObjectParams("weapons", id), "offset_y")));
 }
 
 sf::Vector2f ShootingWeapon::use()
@@ -52,7 +53,8 @@ sf::Vector2f ShootingWeapon::use()
         for (int i = 0; i < bullet_quantity_; ++i)
         {
             auto rotation = (primary_rotation + static_cast<float>(i) * bullet_angular_diff_) * M_PI / 180.0f;
-            Game::get().spawnBullet(bullet_type_, offset_position, rotation);
+
+            spawning_function_(bullet_type_, offset_position, rotation);
         }
 
         last_bullet_time_ = time_now;

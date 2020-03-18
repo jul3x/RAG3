@@ -6,7 +6,7 @@
 #ifndef RAG3_GAME_WEAPONS_NOWEAPON_H
 #define RAG3_GAME_WEAPONS_NOWEAPON_H
 
-#include <weapons/AbstractWeapon.h>
+#include <common/AbstractWeapon.h>
 
 
 class NoWeapon : public AbstractWeapon {

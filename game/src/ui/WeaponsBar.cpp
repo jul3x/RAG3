@@ -6,8 +6,9 @@
 
 #include <R3E/system/Config.h>
 
-#include <misc/ResourceManager.h>
-#include <weapons/ShootingWeapon.h>
+#include <common/ResourceManager.h>
+
+#include <common/ShootingWeapon.h>
 #include <ui/WeaponsBar.h>
 
 
@@ -28,7 +29,7 @@ WeaponsBar::WeaponsBar(const sf::Vector2f& position) :
     }
 }
 
-void WeaponsBar::updateWeaponsList(const std::vector<std::unique_ptr<AbstractWeapon>>& weapons)
+void WeaponsBar::updateWeaponsList(const std::vector<std::shared_ptr<AbstractWeapon>>& weapons)
 {
     weapons_.clear();
 
@@ -46,7 +47,7 @@ void WeaponsBar::updateWeaponsList(const std::vector<std::unique_ptr<AbstractWea
                                               sf::Vector2f{WEAPON_SIZE_X_ * CFG.getFloat("graphics/user_interface_zoom"), 0.0f};
             weapons_.push_back({weapon_pos, {WEAPON_SIZE_X_ * CFG.getFloat("graphics/user_interface_zoom"),
                                              WEAPON_SIZE_Y_ * CFG.getFloat("graphics/user_interface_zoom")},
-                                &RM.getTexture("weapon_mini_" + weapon_cast->getName())});
+                                &RM.getTexture("collectibles/" + weapon_cast->getName())});
 
             ammo_.at(i).setString(std::to_string(weapon_cast->getAmmunition()));
             sf::FloatRect text_rect = ammo_.at(i).getLocalBounds();

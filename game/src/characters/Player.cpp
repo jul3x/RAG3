@@ -2,30 +2,27 @@
 // Created by jul3x on 03.11.19.
 //
 
+#include <common/ResourceManager.h>
+#include <common/NoWeapon.h>
 
 #include <characters/Player.h>
-#include <weapons/ShootingWeapon.h>
-#include <weapons/NoWeapon.h>
-#include <misc/ResourceManager.h>
+#include <common/ShootingWeapon.h>
 
 
-Player::Player(const sf::Vector2f& position,
-               const sf::Vector2f& velocity) :
-        Character(position, velocity, CFG.getInt("characters/player_max_health")),
+Player::Player(const sf::Vector2f& position) :
+        Character(position, "player"),
         is_alive_(true)
 {
     weapons_in_backpack_.push_back(
-            std::make_unique<ShootingWeapon>(RM.getWeapon("m4")));
+            std::make_shared<ShootingWeapon>("m4"));
     weapons_in_backpack_.push_back(
-            std::make_unique<ShootingWeapon>(RM.getWeapon("desert_eagle")));
+            std::make_shared<ShootingWeapon>("desert_eagle"));
     weapons_in_backpack_.push_back(
-            std::make_unique<ShootingWeapon>(RM.getWeapon("shotgun")));
+            std::make_shared<ShootingWeapon>("shotgun"));
     weapons_in_backpack_.push_back(
-            std::make_unique<ShootingWeapon>(RM.getWeapon("rocket_launcher")));
+            std::make_shared<ShootingWeapon>("rocket_launcher"));
     weapons_in_backpack_.push_back(
-            std::make_unique<NoWeapon>());
-    weapons_in_backpack_.push_back(
-            std::make_unique<NoWeapon>());
+            std::make_shared<NoWeapon>());
 
     current_weapon_ = weapons_in_backpack_.begin();
 }

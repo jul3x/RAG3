@@ -16,6 +16,12 @@ AbstractWeapon::AbstractWeapon(const sf::Vector2f& size,
 {
 }
 
+
+void AbstractWeapon::registerSpawningFunction(std::function<void(const std::string&, const sf::Vector2f&, float)> func)
+{
+    spawning_function_ = func;
+}
+
 const std::string& AbstractWeapon::getName() const
 {
     return name_;

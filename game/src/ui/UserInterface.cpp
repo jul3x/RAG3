@@ -7,7 +7,8 @@
 #include <R3E/system/Engine.h>
 #include <R3E/utils/Geometry.h>
 
-#include <misc/ResourceManager.h>
+#include <common/ResourceManager.h>
+
 #include <ui/UserInterface.h>
 #include <Game.h>
 
@@ -153,20 +154,20 @@ inline void UserInterface::handleKeys()
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-        delta.x -= CFG.getFloat("characters/player_max_speed");
+        delta.x -= utils::getFloat(RM.getObjectParams("characters", "player"), "max_speed");
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        delta.x += CFG.getFloat("characters/player_max_speed");
+        delta.x += utils::getFloat(RM.getObjectParams("characters", "player"), "max_speed");
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
-        delta.y -= CFG.getFloat("characters/player_max_speed");
+        delta.y -= utils::getFloat(RM.getObjectParams("characters", "player"), "max_speed");
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
-        delta.y += CFG.getFloat("characters/player_max_speed");
+        delta.y += utils::getFloat(RM.getObjectParams("characters", "player"), "max_speed");
     }
 
     if (player_->isAlive())

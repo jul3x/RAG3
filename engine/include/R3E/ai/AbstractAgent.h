@@ -19,9 +19,11 @@ namespace r3e {
 
         class AbstractAgent {
         public:
-            explicit AbstractAgent(AgentsManager& manager);
+            explicit AbstractAgent();
 
             virtual ~AbstractAgent();
+
+            void registerAgentsManager(AgentsManager* manager);
 
             void setCurrentGoal(const ai::Goal& goal);
 
@@ -38,7 +40,7 @@ namespace r3e {
             sf::Vector2f generateVelocityForPath() const;
 
         private:
-            AgentsManager& manager_;
+            AgentsManager* manager_;
 
             ai::Timestamp latest_wander_point_time_;
             sf::Vector2f wandering_direction_;

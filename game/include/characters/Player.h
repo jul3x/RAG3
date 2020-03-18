@@ -6,13 +6,12 @@
 #ifndef RAG3_GAME_CHARACTERS_PLAYER_H
 #define RAG3_GAME_CHARACTERS_PLAYER_H
 
-#include <characters/Character.h>
+#include <common/Character.h>
 
 
 class Player : public Character {
 public:
-    Player(const sf::Vector2f& position,
-           const sf::Vector2f& velocity);
+    Player(const sf::Vector2f& position);
 
     void setDead();
 

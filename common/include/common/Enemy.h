@@ -3,12 +3,12 @@
 //
 
 
-#ifndef RAG3_GAME_CHARACTERS_ENEMY_H
-#define RAG3_GAME_CHARACTERS_ENEMY_H
+#ifndef RAG3_COMMON_ENEMY_H
+#define RAG3_COMMON_ENEMY_H
 
 #include <R3E/ai/AbstractAgent.h>
 
-#include <characters/Character.h>
+#include <common/Character.h>
 
 
 using namespace r3e;
@@ -31,8 +31,11 @@ public:
         Run
     };
 
-    Enemy(const sf::Vector2f& position,
-          const sf::Vector2f& velocity);
+    Enemy(const sf::Vector2f& position, const std::string& id);
+
+    void registerEnemy(const Character* enemy);
+
+    void registerMapBlockage(const ai::MapBlockage* map_blockage);
 
     bool update(float time_elapsed) override;
 
@@ -49,9 +52,12 @@ private:
     static constexpr float WALLS_BETWEEN_CLOSE_ = 0.0f;
     static constexpr float WALLS_BETWEEN_FAR_ = 1.0f;
 
+    const Character* enemy_;
+    const ai::MapBlockage* map_blockage_;
+
     VisibilityState visibility_state_;
     ActionState action_state_;
 
 };
 
-#endif // RAG3_GAME_CHARACTERS_ENEMY_H
+#endif // RAG3_COMMON_ENEMY_H

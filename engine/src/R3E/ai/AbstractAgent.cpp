@@ -10,24 +10,31 @@
 
 namespace r3e {
     namespace ai {
-        AbstractAgent::AbstractAgent(AgentsManager& manager) : manager_(manager)
+        AbstractAgent::AbstractAgent() : manager_(nullptr)
         {
-            manager_.registerAgent(this);
+        }
+
+        void AbstractAgent::registerAgentsManager(AgentsManager* manager)
+        {
+            manager_ = manager;
+            manager_->registerAgent(this);
+
+            this->setNoGoal();
         }
 
         AbstractAgent::~AbstractAgent()
         {
-            manager_.deleteAgent(this);
+            manager_->deleteAgent(this);
         }
 
         void AbstractAgent::setCurrentGoal(const sf::Vector2f& goal)
         {
-            manager_.setCurrentGoal(this, goal);
+            manager_->setCurrentGoal(this, goal);
         }
 
         void AbstractAgent::setNoGoal()
         {
-            manager_.setNoGoal(this);
+            manager_->setNoGoal(this);
         }
 
         const sf::Vector2f&
@@ -53,18 +60,18 @@ namespace r3e {
 
         const Path& AbstractAgent::getPath() const
         {
-            return manager_.getPath(this);
+            return manager_->getPath(this);
         }
 
         const sf::Vector2f& AbstractAgent::getCurrentGoal() const
         {
-            return manager_.getCurrentGoal(this);
+            return manager_->getCurrentGoal(this);
         }
 
         sf::Vector2f AbstractAgent::generateVelocityForPath() const
         {
             const sf::Vector2f& pos = this->getStartPosition();
-            const ai::Path& path = manager_.getPath(this);
+            const ai::Path& path = manager_->getPath(this);
             if (path.empty()) return {};
 
             sf::Vector2f point = utils::geo::getNearestForwardPointToPath(pos, path);

@@ -2,7 +2,7 @@
 // Created by jul3x on 21.11.19.
 //
 
-#include <weapons/NoWeapon.h>
+#include <common/NoWeapon.h>
 
 
 NoWeapon::NoWeapon() : AbstractWeapon({}, {}, "") {}

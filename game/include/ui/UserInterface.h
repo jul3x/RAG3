@@ -16,7 +16,6 @@
 #include <misc/Camera.h>
 
 
-
 using namespace r3e;
 
 class UserInterface : public AbstractUserInterface {

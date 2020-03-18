@@ -12,10 +12,12 @@
 #include <R3E/ai/AgentsManager.h>
 #include <R3E/audio/MusicManager.h>
 
+#include <common/Map.h>
+#include <common/Bullet.h>
+
 #include <misc/Camera.h>
 #include <characters/Player.h>
-#include <environment/Map.h>
-#include <weapons/Bullet.h>
+
 #include <ui/UserInterface.h>
 
 
@@ -80,6 +82,8 @@ public:
 
 private:
     Game();
+
+    void updateMapObjects(float time_elapsed);
 
     static constexpr float COLLISION_GRID_SIZE_ = 400.0f;
 

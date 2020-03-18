@@ -6,9 +6,10 @@
 
 #include <R3E/system/Config.h>
 
-#include <editor/ResourceManager.h>
+#include <common/ResourceManager.h>
+#include <common/DecorationTile.h>
+
 #include <editor/Crosshair.h>
-#include <editor/DecorationTile.h>
 
 
 using namespace editor;

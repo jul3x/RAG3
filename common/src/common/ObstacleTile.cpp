@@ -4,10 +4,9 @@
 
 #include <R3E/system/Config.h>
 
-#include <editor/ObstacleTile.h>
-#include <editor/ResourceManager.h>
+#include <common/ObstacleTile.h>
+#include <common/ResourceManager.h>
 
-using namespace editor;
 
 ObstacleTile::ObstacleTile(const sf::Vector2f& position, const std::string& id) :
 

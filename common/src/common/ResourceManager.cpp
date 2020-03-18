@@ -7,10 +7,8 @@
 
 #include <R3E/system/Config.h>
 
-#include <editor/ResourceManager.h>
+#include <common/ResourceManager.h>
 
-
-using namespace editor;
 
 ResourceManager& ResourceManager::getInstance()
 {

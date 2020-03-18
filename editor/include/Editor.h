@@ -12,8 +12,9 @@
 #include <R3E/ai/AgentsManager.h>
 #include <R3E/audio/MusicManager.h>
 
+#include <common/Map.h>
+
 #include <editor/Camera.h>
-#include <editor/Map.h>
 #include <editor/UserInterface.h>
 #include <editor/Grid.h>
 

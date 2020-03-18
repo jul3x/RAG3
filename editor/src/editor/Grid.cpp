@@ -2,8 +2,9 @@
 // Created by jul3x on 15.03.20.
 //
 
+#include <common/DecorationTile.h>
+
 #include <editor/Grid.h>
-#include <editor/DecorationTile.h>
 
 
 using namespace editor;

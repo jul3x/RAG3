@@ -6,8 +6,9 @@
 
 #include <R3E/system/Config.h>
 
+#include <common/ResourceManager.h>
+
 #include <editor/ListWindow.h>
-#include <editor/ResourceManager.h>
 #include <editor/UserInterface.h>
 #include <Editor.h>
 

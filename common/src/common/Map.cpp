@@ -2,11 +2,10 @@
 // Created by jul3x on 10.03.20.
 //
 
-#include <editor/ResourceManager.h>
+#include <common/ResourceManager.h>
 
-#include <editor/Map.h>
+#include <common/Map.h>
 
-using namespace editor;
 
 bool Map::clearMap()
 {

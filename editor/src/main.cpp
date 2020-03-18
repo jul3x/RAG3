@@ -5,7 +5,6 @@
 #include <R3E/system/Config.h>
 #include <R3E/system/Engine.h>
 
-#include <editor/ResourceManager.h>
 #include <Editor.h>
 
 using namespace editor;

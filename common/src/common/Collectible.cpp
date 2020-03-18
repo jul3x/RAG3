@@ -2,10 +2,8 @@
 // Created by jul3x on 17.03.20.
 //
 
-#include <editor/ResourceManager.h>
-#include <editor/Collectible.h>
-
-using namespace editor;
+#include <common/ResourceManager.h>
+#include <common/Collectible.h>
 
 
 Collectible::Collectible(const sf::Vector2f& position, const std::string& id) :

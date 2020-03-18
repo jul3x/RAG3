@@ -6,6 +6,7 @@
 
 #include <editor/Camera.h>
 
+
 using namespace editor;
 
 Camera::Camera() { center_ = {}; zoom_to_ = 1.0f; }

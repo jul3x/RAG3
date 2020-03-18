@@ -5,10 +5,11 @@
 #include <R3E/system/Engine.h>
 #include <R3E/utils/Geometry.h>
 
-#include <editor/ResourceManager.h>
+#include <common/Character.h>
+#include <common/Collectible.h>
+#include <common/ResourceManager.h>
+
 #include <editor/UserInterface.h>
-#include <editor/Character.h>
-#include <editor/Collectible.h>
 
 #include <Editor.h>
 

@@ -4,7 +4,8 @@
 
 #include <R3E/system/Config.h>
 
-#include <editor/ResourceManager.h>
+#include <common/ResourceManager.h>
+
 #include <editor/ConfigWindow.h>
 #include <Editor.h>
 

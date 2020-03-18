@@ -2,10 +2,9 @@
 // Created by jul3x on 10.03.20.
 //
 
-#include <editor/DecorationTile.h>
-#include <editor/ResourceManager.h>
+#include <common/DecorationTile.h>
+#include <common/ResourceManager.h>
 
-using namespace editor;
 
 DecorationTile::DecorationTile(const sf::Vector2f& position,
                                const std::string& id) :

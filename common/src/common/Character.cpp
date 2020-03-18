@@ -2,10 +2,9 @@
 // Created by jul3x on 10.03.20.
 //
 
-#include <editor/ResourceManager.h>
-#include <editor/Character.h>
+#include <common/ResourceManager.h>
+#include <common/Character.h>
 
-using namespace editor;
 
 Character::Character(const sf::Vector2f& position, const std::string& id) :
         Identifiable(id),

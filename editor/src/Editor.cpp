@@ -4,7 +4,7 @@
 
 #include <R3E/utils/Geometry.h>
 
-#include <editor/ResourceManager.h>
+#include <common/ResourceManager.h>
 
 #include <Editor.h>
 

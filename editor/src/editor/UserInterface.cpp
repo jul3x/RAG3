@@ -8,7 +8,7 @@
 #include <editor/ResourceManager.h>
 #include <editor/UserInterface.h>
 #include <editor/Character.h>
-#include <editor/Weapon.h>
+#include <editor/Collectible.h>
 
 #include <Editor.h>
 
@@ -83,7 +83,7 @@ void UserInterface::initialize(graphics::Graphics& graphics)
 {
     gui_.setTarget(graphics.getWindow());
     tiles_window_.initialize({"obstacles_tiles", "decorations_tiles"}, {CFG.getString("paths/obstacles_tiles"), CFG.getString("paths/decorations_tiles")});
-    objects_window_.initialize({"characters", "weapons"}, {CFG.getString("paths/characters"), CFG.getString("paths/weapons")});
+    objects_window_.initialize({"characters", "collectibles"}, {CFG.getString("paths/characters"), CFG.getString("paths/collectibles")});
 
     generateMenuBar(graphics.getWindow());
 }

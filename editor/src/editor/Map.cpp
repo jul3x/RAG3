@@ -13,7 +13,7 @@ bool Map::clearMap()
     obstacles_tiles_.clear();
     decorations_tiles_.clear();
     characters_.clear();
-    weapons_.clear();
+    collectibles_.clear();
 
     return true;
 }
@@ -22,7 +22,7 @@ bool Map::loadMap(const std::string& name)
 {
     try
     {
-        std::tie(obstacles_tiles_, decorations_tiles_, characters_, weapons_) = ResourceManager::getMap(name);
+        std::tie(obstacles_tiles_, decorations_tiles_, characters_, collectibles_) = ResourceManager::getMap(name);
 
         return true;
     }
@@ -54,9 +54,9 @@ std::list<Character>& Map::getCharacters()
     return characters_;
 }
 
-std::list<Weapon>& Map::getWeapons()
+std::list<Collectible>& Map::getCollectibles()
 {
-    return weapons_;
+    return collectibles_;
 }
 
 void Map::spawnDecorationTile(const sf::Vector2f& pos, const std::string& id)
@@ -77,15 +77,15 @@ void Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string& id)
 
 void Map::spawnWeapon(const sf::Vector2f& pos, const std::string& id)
 {
-    if (!this->checkCollisions(pos, weapons_) && !this->checkCollisions(pos, characters_))
+    if (!this->checkCollisions(pos, collectibles_) && !this->checkCollisions(pos, characters_))
     {
-        weapons_.emplace_back(pos, id);
+        collectibles_.emplace_back(pos, id);
     }
 }
 
 void Map::spawnCharacter(const sf::Vector2f& pos, const std::string& id)
 {
-    if (!this->checkCollisions(pos, characters_) && !this->checkCollisions(pos, weapons_))
+    if (!this->checkCollisions(pos, characters_) && !this->checkCollisions(pos, collectibles_))
     {
         characters_.emplace_back(pos, id);
     }
@@ -98,7 +98,7 @@ void Map::removeTile(const sf::Vector2f& pos)
 
 void Map::removeObject(const sf::Vector2f& pos)
 {
-    (!this->checkCollisions(pos, weapons_, true) && !this->checkCollisions(pos, characters_, true));
+    (!this->checkCollisions(pos, collectibles_, true) && !this->checkCollisions(pos, characters_, true));
 }
 
 std::pair<sf::Vector2<size_t>, sf::Vector2f> Map::getTileConstraints() const

@@ -46,7 +46,7 @@ Map::Description ResourceManager::getMap(const std::string& key)
         None,
         TileMap,
         Characters,
-        Weapons
+        Collectibles
     };
     auto map_reading = MapReading::None;
 
@@ -54,7 +54,7 @@ Map::Description ResourceManager::getMap(const std::string& key)
     std::list<ObstacleTile> obstacles_tiles;
     std::list<DecorationTile> decorations_tiles;
     std::list<Character> characters_;
-    std::list<Weapon> weapons_;
+    std::list<Collectible> collectibles_;
 
     int w, h;
     if (file)
@@ -84,10 +84,10 @@ Map::Description ResourceManager::getMap(const std::string& key)
                 number = 0;
                 map_reading = MapReading::Characters;
             }
-            else if (word == "weapons:")
+            else if (word == "collectibles:")
             {
                 number = 0;
-                map_reading = MapReading::Weapons;
+                map_reading = MapReading::Collectibles;
             }
             else
             {
@@ -135,7 +135,7 @@ Map::Description ResourceManager::getMap(const std::string& key)
                         }
                         break;
                     }
-                    case MapReading::Weapons:
+                    case MapReading::Collectibles:
                     {
                         ++number;
 
@@ -150,7 +150,7 @@ Map::Description ResourceManager::getMap(const std::string& key)
                         else
                         {
                             current_pos.y = std::stof(word);
-                            weapons_.emplace_back(current_pos, current_id);
+                            collectibles_.emplace_back(current_pos, current_id);
                         }
                         break;
                     }
@@ -174,7 +174,7 @@ Map::Description ResourceManager::getMap(const std::string& key)
 
     std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
 
-    return std::make_tuple(obstacles_tiles, decorations_tiles, characters_, weapons_);
+    return std::make_tuple(obstacles_tiles, decorations_tiles, characters_, collectibles_);
 }
 
 bool ResourceManager::saveMap(const std::string& name, Map& map)
@@ -233,7 +233,7 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
     };
 
     addObjToFile("characters", map.getCharacters());
-    addObjToFile("weapons", map.getWeapons());
+    addObjToFile("collectibles", map.getCollectibles());
 
     std::cout << "[ResourceManager] Map file " << CFG.getString("paths/maps_dir") + "/" + name + ".j3x" << " is saved!" << std::endl;
 

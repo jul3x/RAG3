@@ -211,4 +211,5 @@ standard 1000 1000
 standard 1900 1000
 standard 2000 2100
 
-weapons: 
+collectibles: 
+rocket_launcher 400 200

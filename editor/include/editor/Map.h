@@ -12,7 +12,7 @@
 #include <editor/DecorationTile.h>
 #include <editor/ObstacleTile.h>
 #include <editor/Character.h>
-#include <editor/Weapon.h>
+#include <editor/Collectible.h>
 
 
 using namespace r3e;
@@ -21,7 +21,7 @@ namespace editor {
     class Map {
     public:
         using Description = std::tuple<std::list<ObstacleTile>, std::list<DecorationTile>,
-                                       std::list<Character>, std::list<Weapon>>;
+                                       std::list<Character>, std::list<Collectible>>;
 
         Map() = default;
 
@@ -37,7 +37,7 @@ namespace editor {
 
         std::list<Character>& getCharacters();
 
-        std::list<Weapon>& getWeapons();
+        std::list<Collectible>& getCollectibles();
 
         void spawnDecorationTile(const sf::Vector2f& pos, const std::string& id);
 
@@ -74,7 +74,7 @@ namespace editor {
 
         std::list<ObstacleTile> obstacles_tiles_;
         std::list<Character> characters_;
-        std::list<Weapon> weapons_;
+        std::list<Collectible> collectibles_;
         std::list<DecorationTile> decorations_tiles_;
 
         sf::Vector2f size_;

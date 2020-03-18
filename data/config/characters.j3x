@@ -1,11 +1,3 @@
-float player_max_speed=700.0f
-
-int player_max_health=160
-
-float gun_offset_x=20.0f
-
-float gun_offset_y=-5.0f
-
 float max_acceleration=1000.0f
 
 float mouse_reaction_speed=100.0f

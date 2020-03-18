@@ -189,9 +189,10 @@ inline void UserInterface::handleKeys()
 inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
 {
     auto mouse_pos = sf::Mouse::getPosition(graphics_window);
+    auto mouse_world_pos = graphics_window.mapPixelToCoords(mouse_pos);
 
-    handleCameraCenter(graphics_window, mouse_pos);
-    handleCrosshair(graphics_window, mouse_pos);
+    handleCameraCenter(graphics_window, mouse_world_pos);
+    handleCrosshair(graphics_window, mouse_world_pos);
 
     bool is_on_widget = false;
 
@@ -200,7 +201,7 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
             widget->isVisible())
              is_on_widget = true;
 
-    if (!is_on_widget)
+    if (!is_on_widget && !sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
     {
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {
@@ -213,23 +214,20 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
     }
 }
 
-inline void UserInterface::handleCameraCenter(sf::RenderWindow& graphics_window, const sf::Vector2i& mouse_pos)
+inline void UserInterface::handleCameraCenter(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos)
 {
-    auto max_diff_from_side = sf::Vector2f(DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_);
-
-    if (mouse_pos.x < max_diff_from_side.x || mouse_pos.x > graphics_window.getSize().x - max_diff_from_side.x ||
-        mouse_pos.y < max_diff_from_side.y || mouse_pos.y > graphics_window.getSize().y - max_diff_from_side.y)
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        auto window_center = sf::Vector2f(graphics_window.getSize().x / 2.0f, graphics_window.getSize().y / 2.0f);
         camera_->setPointingTo(camera_->getPointingTo() +
-                               utils::geo::vectorLengthLimit((sf::Vector2f(mouse_pos.x, mouse_pos.y) - window_center) / 100.0f, 10.0f));
+                               CFG.getFloat("view_move_speed") *
+                               utils::geo::vectorLengthLimit(previous_mouse_world_pos_ - mouse_world_pos, 1.0f));
     }
+
+    previous_mouse_world_pos_ = mouse_world_pos;
 }
 
-inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2i& mouse_pos)
+inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos)
 {
-    auto mouse_world_pos = graphics_window.mapPixelToCoords(mouse_pos);
-
     crosshair_.setPosition(mouse_world_pos);
 
     const auto& current_item = Editor::get().getCurrentItem();

@@ -35,6 +35,9 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
     }
 
     child_->add(tabs_);
+    child_->connect("MouseEntered", [this]() {
+        this->ui_->spawnInfo("Click left to pick object or right to edit its configuration.\n");
+    });
 
     auto scrollPanel = tgui::ScrollablePanel::create({"100%", "&.height - 30"});
     scrollPanel->setPosition({"0", "30"});
@@ -81,8 +84,13 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
             grids_.back()->setWidgetPadding(button, {CFG.getFloat("items_padding"), CFG.getFloat("items_padding")});
             ++i;
 
-            button->connect("Clicked", [&](const std::string& tab_name, const std::string& item_name) { Editor::get().setCurrentItem(tab_name, item_name); }, tab_name, item);
-            button->connect("RightClicked", [&](const std::string& tab_name, const std::string& item_name) { ui_->openConfigWindow(tab_name, item_name); }, tab_name, item);
+            button->connect("Clicked", [&](const std::string& tab_name, const std::string& item_name) {
+                Editor::get().setCurrentItem(tab_name, item_name);
+                ui_->spawnInfo("Place it using left mouse button or delete existing one using right mouse button.");
+            }, tab_name, item);
+            button->connect("RightClicked", [&](const std::string& tab_name, const std::string& item_name) {
+                ui_->openConfigWindow(tab_name, item_name);
+            }, tab_name, item);
         }
     }
 

@@ -7,12 +7,13 @@
 #define RAG3_EDITOR_CHARACTER_H
 
 #include <R3E/objects/AbstractDrawableObject.h>
+#include <R3E/objects/Identifiable.h>
 
 
 using namespace r3e;
 
 namespace editor {
-    class Character : public AbstractDrawableObject {
+    class Character : public AbstractDrawableObject, public Identifiable {
     public:
         Character(const sf::Vector2f& position, const std::string& id);
     };

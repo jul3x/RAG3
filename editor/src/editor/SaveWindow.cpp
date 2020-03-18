@@ -5,6 +5,7 @@
 #include <R3E/system/Config.h>
 
 #include <editor/SaveWindow.h>
+#include <Editor.h>
 
 
 using namespace editor;
@@ -17,9 +18,37 @@ SaveWindow::SaveWindow(tgui::Gui* gui, tgui::Theme* theme) :
                     "save_window")
 {
     grid_ = tgui::Grid::create();
-//    grid_->setSize({CFG.getFloat("menu_window_size_x") * 0.75f, CFG.getFloat("menu_window_size_y")});
-//    grid_->setPosition({CFG.getFloat("menu_window_size_x") * 0.125f, 0.0f});
-//    grid_->setWidgetPadding(0, 0, {CFG.getFloat("items_padding"), CFG.getFloat("items_padding")});
-//    grid_->setWidgetPadding(0, 1, {CFG.getFloat("items_padding"), CFG.getFloat("items_padding")});
+    grid_->setPosition("50% - width/2", "50% - height/2");
+    grid_->setSize("100%", "100%");
     child_->add(grid_);
+
+    auto label = tgui::Label::create();
+    label->setRenderer(theme_->getRenderer("Label"));
+    label->setText("Enter map name:");
+    label->setTextSize(14);
+
+    grid_->addWidget(label, 0, 0);
+
+    text_box_ = tgui::TextBox::create();
+    text_box_->setRenderer(theme_->getRenderer("TextBox"));
+    text_box_->setSize("70%", 20);
+    grid_->addWidget(text_box_, 1, 0);
+
+    auto button = tgui::Button::create();
+    button->setRenderer(theme_->getRenderer("Button"));
+    button->setText("Save");
+    button->setSize(CFG.getFloat("button_size_x"), CFG.getFloat("button_size_y"));
+    button->connect("pressed", [&](){ Editor::get().saveMap(text_box_->getText()); child_->close(); });
+
+    grid_->addWidget(button, 2, 0);
+
+    grid_->setWidgetPadding(0, 0, {CFG.getFloat("items_padding"), CFG.getFloat("items_padding")});
+    grid_->setWidgetPadding(1, 0, {CFG.getFloat("items_padding"), CFG.getFloat("items_padding")});
+    grid_->setWidgetPadding(2, 0, {CFG.getFloat("items_padding"), CFG.getFloat("items_padding")});
+}
+
+
+void SaveWindow::refreshMapName(const std::string& map_name)
+{
+    text_box_->setText(map_name);
 }

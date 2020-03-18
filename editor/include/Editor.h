@@ -58,7 +58,11 @@ namespace editor {
 
         void clearMap();
 
+        const std::string& getCurrentMapName() const;
+
         void loadMap(const std::string& name);
+
+        void saveMap(const std::string& name);
 
         void saveConfig(const std::string& category, const std::string& id, const std::string& content);
 
@@ -72,6 +76,8 @@ namespace editor {
         std::unique_ptr<Camera> camera_;
 
         std::unique_ptr<Map> map_;
+
+        std::string current_map_name_;
 
         std::pair<std::string, std::string> current_item_;
 

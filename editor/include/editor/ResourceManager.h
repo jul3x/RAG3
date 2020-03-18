@@ -8,6 +8,7 @@
 #include <R3E/system/AbstractResourceManager.h>
 #include <editor/DecorationTile.h>
 #include <editor/ObstacleTile.h>
+#include <editor/Map.h>
 
 
 using namespace r3e;
@@ -26,12 +27,11 @@ namespace editor {
 
         const std::vector<std::string>& getFreshListOfObjects(const std::string& dir);
 
-        const sf::Vector2f& getObjectSize(const std::string& category, const std::string& id);
+        const utils::J3XParameters& getObjectParams(const std::string& category, const std::string& id);
 
-        const sf::Vector2f& getObjectOffset(const std::string& category, const std::string& id);
+        static Map::Description getMap(const std::string& key);
 
-        static std::tuple<std::list<ObstacleTile>, std::list<DecorationTile>>
-        getMap(const std::string& key);
+        static bool saveMap(const std::string& name, Map& map);
 
         static std::string getConfigContent(const std::string& category, const std::string& id);
 
@@ -42,9 +42,9 @@ namespace editor {
 
         void loadListOfObjects(const std::string& dir);
 
-        void loadConstraints(const std::string& key);
+        void loadObjectParams(const std::string& key);
 
-        std::unordered_map<std::string, std::pair<sf::Vector2f, sf::Vector2f>> objects_constraints_;
+        std::unordered_map<std::string, utils::J3XParameters> objects_params_;
 
         std::unordered_map<std::string, std::vector<std::string>> list_of_objects_;
     };

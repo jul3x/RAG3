@@ -9,15 +9,15 @@
 #include <fstream>
 #include <iostream>
 #include <tuple>
-#include <map>
+#include <unordered_map>
 
 
 namespace r3e {
     namespace utils {
 
-        using J3XIParameters = std::map<std::string, int>;
-        using J3XFParameters = std::map<std::string, float>;
-        using J3XSParameters = std::map<std::string, std::string>;
+        using J3XIParameters = std::unordered_map<std::string, int>;
+        using J3XFParameters = std::unordered_map<std::string, float>;
+        using J3XSParameters = std::unordered_map<std::string, std::string>;
         using J3XParameters = std::tuple<J3XIParameters, J3XFParameters, J3XSParameters>;
 
         inline J3XParameters parse(const std::string& filename, const std::string& ns)
@@ -122,6 +122,11 @@ namespace r3e {
             return it->second;
         }
 
+        inline int getInt(const J3XParameters& params, const std::string& key)
+        {
+            return getInt(std::get<0>(params), key);
+        }
+
         inline float getFloat(const J3XFParameters& float_params, const std::string& key)
         {
             auto it = float_params.find(key);
@@ -132,6 +137,11 @@ namespace r3e {
             }
 
             return it->second;
+        }
+
+        inline float getFloat(const J3XParameters& params, const std::string& key)
+        {
+            return getFloat(std::get<1>(params), key);
         }
 
         inline const std::string& getString(const J3XSParameters& string_params, const std::string& key)
@@ -146,6 +156,11 @@ namespace r3e {
             }
 
             return it->second;
+        }
+
+        inline const std::string& getString(const J3XParameters& params, const std::string& key)
+        {
+            return getString(std::get<2>(params), key);
         }
 
         inline void setInt(J3XIParameters& int_params, const std::string& key, int value)

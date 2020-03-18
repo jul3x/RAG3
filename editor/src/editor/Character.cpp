@@ -8,9 +8,14 @@
 using namespace editor;
 
 Character::Character(const sf::Vector2f& position, const std::string& id) :
+        Identifiable(id),
         AbstractDrawableObject(position,
-                               RM.getObjectSize("characters", id),
+                               {utils::getFloat(RM.getObjectParams("characters", id), "size_x"),
+                                utils::getFloat(RM.getObjectParams("characters", id), "size_y")},
                                &RM.getTexture("characters/" + id))
 {
-    this->changeOrigin(RM.getObjectSize("characters", id) / 2.0f + RM.getObjectOffset("characters", id));
+    this->changeOrigin(sf::Vector2f(utils::getFloat(RM.getObjectParams("characters", id), "size_x"),
+                                    utils::getFloat(RM.getObjectParams("characters", id), "size_y")) / 2.0f +
+                       sf::Vector2f(utils::getFloat(RM.getObjectParams("characters", id), "map_offset_x"),
+                                    utils::getFloat(RM.getObjectParams("characters", id), "map_offset_y")));
 }

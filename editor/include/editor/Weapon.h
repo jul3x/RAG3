@@ -7,12 +7,12 @@
 #define RAG3_EDITOR_WEAPON_H
 
 #include <R3E/objects/AbstractDrawableObject.h>
-
+#include <R3E/objects/Identifiable.h>
 
 using namespace r3e;
 
 namespace editor {
-    class Weapon : public AbstractDrawableObject {
+    class Weapon : public AbstractDrawableObject, public Identifiable {
     public:
         Weapon(const sf::Vector2f& position, const std::string& id);
     };

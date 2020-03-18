@@ -18,18 +18,18 @@ ResourceManager& ResourceManager::getInstance()
     return resource_manager_instance;
 }
 
-const sf::Vector2f& ResourceManager::getObjectSize(const std::string& category, const std::string& id)
+const utils::J3XParameters& ResourceManager::getObjectParams(const std::string& category, const std::string& id)
 {
     auto key = category + "/" + id;
-    auto it = objects_constraints_.find(key);
+    auto it = objects_params_.find(key);
 
-    if (it == objects_constraints_.end())
+    if (it == objects_params_.end())
     {
         try
         {
-            loadConstraints(key);
+            loadObjectParams(key);
 
-            return objects_constraints_.at(key).first;
+            return objects_params_.at(key);
         }
         catch (std::runtime_error& e)
         {
@@ -37,68 +37,129 @@ const sf::Vector2f& ResourceManager::getObjectSize(const std::string& category, 
         }
     }
 
-    return it->second.first;
+    return it->second;
 }
 
-const sf::Vector2f& ResourceManager::getObjectOffset(const std::string& category, const std::string& id)
+Map::Description ResourceManager::getMap(const std::string& key)
 {
-    auto key = category + "/" + id;
-    auto it = objects_constraints_.find(key);
+    enum class MapReading {
+        None,
+        TileMap,
+        Characters,
+        Weapons
+    };
+    auto map_reading = MapReading::None;
 
-    if (it == objects_constraints_.end())
-    {
-        try
-        {
-            loadConstraints(key);
-
-            return objects_constraints_.at(key).second;
-        }
-        catch (std::runtime_error& e)
-        {
-            std::cerr << e.what() << std::endl;
-        }
-    }
-
-    return it->second.second;
-}
-
-std::tuple<std::list<ObstacleTile>, std::list<DecorationTile>>
-ResourceManager::getMap(const std::string& key)
-{
     std::ifstream file(CFG.getString("paths/maps_dir") + "/" + key + ".j3x");
     std::list<ObstacleTile> obstacles_tiles;
     std::list<DecorationTile> decorations_tiles;
+    std::list<Character> characters_;
+    std::list<Weapon> weapons_;
 
     int w, h;
     if (file)
     {
+        std::string word;
+
         file >> w >> h;
 
         int max_number = w * h;
         int count = 0;
-        short int type = 0;
+        int number = 0;
+        int type = 0;
+
+        std::string current_id = "";
+        sf::Vector2f current_pos = {};
 
         // type < 0 - decoration, type > 0 - obstacle
-        while (file >> type)
+        while (file >> word)
         {
-            if (type < 10 && type > 0)
+            if (word == "tile_map:")
             {
-                // TODO - different types, different blockage
-                obstacles_tiles.emplace_back(sf::Vector2f((count % w) * DecorationTile::SIZE_X_,
-                                                          (count / w) * DecorationTile::SIZE_Y_),
-                                             std::to_string(type));
+                count = 0;
+                map_reading = MapReading::TileMap;
             }
-            else if (type > -10 && type < 0)
+            else if (word == "characters:")
             {
-                decorations_tiles.emplace_back(sf::Vector2f((count % w) * DecorationTile::SIZE_X_,
-                                                            (count / w) * DecorationTile::SIZE_Y_),
-                                               std::to_string(-type));
+                number = 0;
+                map_reading = MapReading::Characters;
             }
-            else if (type != 0)
+            else if (word == "weapons:")
             {
-                throw std::logic_error("[ResourceManager] For now, not handled type of obstacle!");
+                number = 0;
+                map_reading = MapReading::Weapons;
             }
-            ++count;
+            else
+            {
+                switch (map_reading)
+                {
+                    case MapReading::TileMap:
+                    {
+                        type = std::stoi(word);
+                        if (type < 10 && type > 0)
+                        {
+                            // TODO - different types, different blockage
+                            obstacles_tiles.emplace_back(sf::Vector2f((count % w) * DecorationTile::SIZE_X_,
+                                                                      (count / w) * DecorationTile::SIZE_Y_),
+                                                         std::to_string(type));
+                        }
+                        else if (type > -10 && type < 0)
+                        {
+                            decorations_tiles.emplace_back(sf::Vector2f((count % w) * DecorationTile::SIZE_X_,
+                                                                        (count / w) * DecorationTile::SIZE_Y_),
+                                                           std::to_string(-type));
+                        }
+                        else if (type != 0)
+                        {
+                            throw std::logic_error("[ResourceManager] For now, not handled type of obstacle!");
+                        }
+                        ++count;
+                        break;
+                    }
+                    case MapReading::Characters:
+                    {
+                        ++number;
+
+                        if (number % 3 == 1)
+                        {
+                            current_id = word;
+                        }
+                        else if (number % 3 == 2)
+                        {
+                            current_pos.x = std::stof(word);
+                        }
+                        else
+                        {
+                            current_pos.y = std::stof(word);
+                            characters_.emplace_back(current_pos, current_id);
+                        }
+                        break;
+                    }
+                    case MapReading::Weapons:
+                    {
+                        ++number;
+
+                        if (number % 3 == 1)
+                        {
+                            current_id = word;
+                        }
+                        else if (number % 3 == 2)
+                        {
+                            current_pos.x = std::stof(word);
+                        }
+                        else
+                        {
+                            current_pos.y = std::stof(word);
+                            weapons_.emplace_back(current_pos, current_id);
+                        }
+                        break;
+                    }
+                    default:
+                    {
+                        throw std::logic_error("[ResourceManager] Wrong map format!");
+                    }
+                }
+            }
         }
 
         if (count != max_number)
@@ -113,7 +174,70 @@ ResourceManager::getMap(const std::string& key)
 
     std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
 
-    return std::make_tuple(obstacles_tiles, decorations_tiles);
+    return std::make_tuple(obstacles_tiles, decorations_tiles, characters_, weapons_);
+}
+
+bool ResourceManager::saveMap(const std::string& name, Map& map)
+{
+    std::ofstream file(CFG.getString("paths/maps_dir") + "/" + name + ".j3x", std::ofstream::out | std::ofstream::trunc);
+
+    if (!file)
+    {
+        std::cerr << "[ResourceManager] Map saving failed";
+
+        return false;
+    }
+
+    auto map_constraints = map.getTileConstraints();
+    file << map_constraints.first.x << " " << map_constraints.first.y << std::endl;
+
+    file << "tile_map:" << std::endl;
+
+    std::vector<std::vector<int>> matrix;
+    matrix.resize(map_constraints.first.y);
+
+    for (auto& row : matrix)
+    {
+        row.resize(map_constraints.first.x, 0);
+    }
+
+    for (const auto& obstacle : map.getObstaclesTiles())
+    {
+        matrix.at(static_cast<size_t>((obstacle.getPosition().y - map_constraints.second.y) / DecorationTile::SIZE_Y_)).
+               at(static_cast<size_t>((obstacle.getPosition().x - map_constraints.second.x) / DecorationTile::SIZE_X_)) = std::stoi(obstacle.getId());
+    }
+
+    for (const auto& decoration : map.getDecorationsTiles())
+    {
+        matrix.at(static_cast<size_t>((decoration.getPosition().y - map_constraints.second.y) / DecorationTile::SIZE_Y_)).
+               at(static_cast<size_t>((decoration.getPosition().x - map_constraints.second.x)/ DecorationTile::SIZE_X_)) = - std::stoi(decoration.getId());
+    }
+
+    for (const auto& row : matrix)
+    {
+        for (const auto& item : row)
+        {
+            file << item << " ";
+        }
+        file << std::endl;
+    }
+
+    auto addObjToFile = [&file, &map_constraints](const std::string& category, auto& objects) {
+        file << std::endl << category << ": " << std::endl;
+        for (const auto& obj : objects)
+        {
+            file << obj.getId() << " " <<
+                 obj.getPosition().x - map_constraints.second.x << " " <<
+                 obj.getPosition().y - map_constraints.second.y<< std::endl;
+        }
+    };
+
+    addObjToFile("characters", map.getCharacters());
+    addObjToFile("weapons", map.getWeapons());
+
+    std::cout << "[ResourceManager] Map file " << CFG.getString("paths/maps_dir") + "/" + name + ".j3x" << " is saved!" << std::endl;
+
+    return true;
 }
 
 std::string ResourceManager::getConfigContent(const std::string& category, const std::string& id)
@@ -201,19 +325,11 @@ void ResourceManager::loadListOfObjects(const std::string& dir)
     }
 }
 
-void ResourceManager::loadConstraints(const std::string &key)
+void ResourceManager::loadObjectParams(const std::string &key)
 {
-    utils::J3XIParameters int_params;
-    utils::J3XFParameters float_params;
-    utils::J3XSParameters string_params;
+    objects_params_.emplace(key, getParameters(key));
 
-    std::tie(int_params, float_params, string_params) = getParameters(key);
-
-    objects_constraints_.emplace(key, std::make_pair<sf::Vector2f, sf::Vector2f>(
-            {utils::getFloat(float_params, "size_x"), utils::getFloat(float_params, "size_y")},
-            {utils::getFloat(float_params, "map_offset_x"), utils::getFloat(float_params, "map_offset_y")}));
-
-    std::cout << "[ResourceManager] Object " << key << " constraints loaded!" << std::endl;
+    std::cout << "[ResourceManager] Object " << key << " params loaded!" << std::endl;
 }
 
 ResourceManager::ResourceManager() : AbstractResourceManager(CFG.getString("paths/j3x_dir"), CFG.getString("paths/textures_dir"), CFG.getString("paths/fonts_dir"),

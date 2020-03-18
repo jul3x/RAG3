@@ -22,7 +22,7 @@ bool Map::loadMap(const std::string& name)
 {
     try
     {
-        std::tie(obstacles_tiles_, decorations_tiles_) = ResourceManager::getMap(name);
+        std::tie(obstacles_tiles_, decorations_tiles_, characters_, weapons_) = ResourceManager::getMap(name);
 
         return true;
     }
@@ -101,7 +101,7 @@ void Map::removeObject(const sf::Vector2f& pos)
     (!this->checkCollisions(pos, weapons_, true) && !this->checkCollisions(pos, characters_, true));
 }
 
-std::pair<sf::Vector2f, sf::Vector2f> Map::getTileConstraints() const
+std::pair<sf::Vector2<size_t>, sf::Vector2f> Map::getTileConstraints() const
 {
     sf::Vector2f min = {std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity()};
     sf::Vector2f max = {-std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity()};
@@ -132,6 +132,10 @@ std::pair<sf::Vector2f, sf::Vector2f> Map::getTileConstraints() const
             max.y = dec.getPosition().y;
     }
 
-    return {min, max};
+    if (obstacles_tiles_.empty() && decorations_tiles_.empty()) return {{0, 0}, {0.0f, 0.0f}};
+
+    return {sf::Vector2<size_t>(static_cast<size_t>((max.x - min.x) / DecorationTile::SIZE_X_) + 1,
+                                static_cast<size_t>((max.y - min.y) / DecorationTile::SIZE_Y_) + 1),
+            min};
 }
 

@@ -8,12 +8,13 @@
 #include <string>
 
 #include <R3E/objects/AbstractDrawableObject.h>
+#include <R3E/objects/Identifiable.h>
 
 
 using namespace r3e;
 
 namespace editor {
-    class DecorationTile : public AbstractDrawableObject {
+    class DecorationTile : public AbstractDrawableObject, public Identifiable {
     public:
         DecorationTile(const sf::Vector2f& position,
                        const std::string& id);

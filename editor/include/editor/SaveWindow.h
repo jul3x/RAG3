@@ -14,8 +14,11 @@ namespace editor {
     public:
         SaveWindow(tgui::Gui *gui, tgui::Theme *theme);
 
+        void refreshMapName(const std::string& map_name);
     private:
         tgui::Grid::Ptr grid_;
+
+        tgui::TextBox::Ptr text_box_;
 
     };
 

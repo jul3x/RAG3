@@ -90,6 +90,7 @@ void UserInterface::initialize(graphics::Graphics& graphics)
 void UserInterface::resetMapList()
 {
     load_window_.refreshMapList(RM.getFreshListOfObjects(CFG.getString("paths/maps_dir")));
+    save_window_.refreshMapName(Editor::get().getCurrentMapName());
 }
 
 void UserInterface::openConfigWindow(const std::string& category, const std::string& id)
@@ -240,7 +241,13 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
     {
         crosshair_.setColor(255, 255, 255, 120);
         crosshair_.changeTexture(&RM.getTexture(current_item.first + "/" + current_item.second), true);
-        crosshair_.setSize(RM.getObjectSize(current_item.first, current_item.second));
-        crosshair_.changeOrigin(RM.getObjectSize(current_item.first, current_item.second) / 2.0f + RM.getObjectOffset(current_item.first, current_item.second));
+        crosshair_.setSize(
+                sf::Vector2f(utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
+                             utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_y")));
+        crosshair_.changeOrigin(
+                sf::Vector2f(utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
+                             utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_y")) / 2.0f +
+                        sf::Vector2f(utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "map_offset_x"),
+                                     utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "map_offset_y")));
     }
 }

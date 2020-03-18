@@ -20,6 +20,9 @@ using namespace r3e;
 namespace editor {
     class Map {
     public:
+        using Description = std::tuple<std::list<ObstacleTile>, std::list<DecorationTile>,
+                                       std::list<Character>, std::list<Weapon>>;
+
         Map() = default;
 
         bool clearMap();
@@ -48,7 +51,7 @@ namespace editor {
 
         void removeObject(const sf::Vector2f& pos);
 
-        std::pair<sf::Vector2f, sf::Vector2f> getTileConstraints() const;
+        std::pair<sf::Vector2<size_t>, sf::Vector2f> getTileConstraints() const;
 
     private:
         template<class T>

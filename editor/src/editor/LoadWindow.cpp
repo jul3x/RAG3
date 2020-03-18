@@ -40,6 +40,7 @@ LoadWindow::LoadWindow(tgui::Gui* gui, tgui::Theme* theme) :
     button->setText("Load");
     button->setSize(CFG.getFloat("button_size_x"), CFG.getFloat("button_size_y"));
     button->connect("pressed", [&](){ Editor::get().loadMap(list_box_->getSelectedItem()); child_->close(); });
+    list_box_->connect("DoubleClicked", [&](){ Editor::get().loadMap(list_box_->getSelectedItem()); child_->close(); });
 
     grid_->addWidget(button, 2, 0);
 

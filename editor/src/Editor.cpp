@@ -76,6 +76,11 @@ const std::pair<std::string, std::string>& Editor::getCurrentItem() const
     return current_item_;
 }
 
+const std::string& Editor::getCurrentMapName() const
+{
+    return current_map_name_;
+}
+
 void Editor::placeItem(const sf::Vector2f& pos)
 {
     if (current_item_.first == "decorations_tiles")
@@ -102,6 +107,7 @@ void Editor::clearMap()
     {
         camera_->setPointingTo({});
         ui_->spawnInfo("Map cleared!");
+        current_map_name_ = "";
     }
     else
     {
@@ -115,10 +121,24 @@ void Editor::loadMap(const std::string& name)
     {
         camera_->setPointingTo({});
         ui_->spawnInfo("Map " + name + " succesfully loaded!");
+        current_map_name_ = name;
     }
     else
     {
         ui_->spawnError("Map loading failed!");
+    }
+}
+
+void Editor::saveMap(const std::string& name)
+{
+    if (RM.saveMap(name, *map_))
+    {
+        ui_->spawnInfo("Map " + name + " succesfully saved!");
+        current_map_name_ = name;
+    }
+    else
+    {
+        ui_->spawnError("Map saving failed!");
     }
 }
 

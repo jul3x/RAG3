@@ -42,10 +42,6 @@ private:
 
     void loadListOfObjects(const std::string& dir);
 
-    void loadObjectParams(const std::string& key);
-
-    std::unordered_map<std::string, utils::J3XParameters> objects_params_;
-
     std::unordered_map<std::string, std::vector<std::string>> list_of_objects_;
 };
 

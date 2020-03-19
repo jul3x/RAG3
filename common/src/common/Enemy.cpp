@@ -25,6 +25,8 @@ Enemy::Enemy(const sf::Vector2f& position,
     weapons_in_backpack_.push_back(std::make_shared<ShootingWeapon>("desert_eagle"));
 
     current_weapon_ = weapons_in_backpack_.begin();
+
+    this->setPosition(position);
 }
 
 
@@ -38,7 +40,7 @@ void Enemy::registerMapBlockage(const ai::MapBlockage* map_blockage)
     map_blockage_ = map_blockage;
 }
 
-bool Enemy::update(float time_elapsed)
+bool Enemy::update(float time_elapsed, float time_factor)
 {
     if (!this->isVisible()) return true;
     bool is_alive = Character::update(time_elapsed);
@@ -73,7 +75,7 @@ bool Enemy::update(float time_elapsed)
             this->setNoGoal();
 
             if (this->isAlreadyRotated())
-                this->shot();
+                this->shot(time_factor);
             break;
         }
         case ActionState::Shot:
@@ -82,7 +84,7 @@ bool Enemy::update(float time_elapsed)
             this->setNoGoal();
 
             if (this->isAlreadyRotated())
-                this->shot();
+                this->shot(time_factor);
 
             break;
         }
@@ -92,7 +94,7 @@ bool Enemy::update(float time_elapsed)
             this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - player_position));
 
             if (this->isAlreadyRotated())
-                this->shot();
+                this->shot(time_factor);
             break;
         }
         case ActionState::Run:

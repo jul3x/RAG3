@@ -7,7 +7,6 @@
 #include <common/ResourceManager.h>
 
 #include <common/ShootingWeapon.h>
-#include <Game.h>
 
 
 ShootingWeapon::ShootingWeapon(const std::string& id) :
@@ -33,12 +32,12 @@ ShootingWeapon::ShootingWeapon(const std::string& id) :
                                     utils::getFloat(RM.getObjectParams("weapons", id), "offset_y")));
 }
 
-sf::Vector2f ShootingWeapon::use()
+sf::Vector2f ShootingWeapon::use(float time_factor)
 {
     auto time_now = std::chrono::system_clock::now();
     if (ammunition_ > 0 &&
         std::chrono::duration_cast<std::chrono::milliseconds>(
-                time_now - last_bullet_time_).count() >= bullet_timeout_ / Game::get().getCurrentTimeFactor())
+                time_now - last_bullet_time_).count() >= bullet_timeout_ / time_factor)
     {
         auto sine = static_cast<float>(std::sin(this->getRotation() * M_PI / 180.0f));
         auto cosine = static_cast<float>(std::cos(this->getRotation() * M_PI / 180.0f));

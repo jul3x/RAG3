@@ -37,7 +37,7 @@ public:
 
     void registerMapBlockage(const ai::MapBlockage* map_blockage);
 
-    bool update(float time_elapsed) override;
+    bool update(float time_elapsed, float time_factor);
 
     const sf::Vector2f& getStartPosition() const override;
 

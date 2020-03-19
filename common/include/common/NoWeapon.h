@@ -13,7 +13,7 @@ class NoWeapon : public AbstractWeapon {
 public:
     NoWeapon();
 
-    sf::Vector2f use() override;
+    sf::Vector2f use(float time_factor) override;
 
     float getState() const override;
 };

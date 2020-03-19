@@ -52,7 +52,12 @@ void Game::initialize()
     engine_->registerUI(ui_.get());
 
     map_->loadMap("map");
-    player_->setPosition(map_->getPlayerStartingPos());
+
+    for (auto& special : map_->getSpecials())
+    {
+        if (special->getId() == "starting_position")
+            player_->setPosition(special->getPosition());
+    }
 
     engine_->initializeCollisions(map_->getSize(), COLLISION_GRID_SIZE_);
 
@@ -149,7 +154,7 @@ void Game::updateMapObjects(float time_elapsed)
     for (auto it = enemies.begin(); it != enemies.end();)
     {
         bool do_increment = true;
-        if (!(*it)->update(time_elapsed))
+        if (!(*it)->update(time_elapsed, this->getCurrentTimeFactor()))
         {
             // draw on this place destruction
             map_->spawnDecorationTile((*it)->getPosition(), std::to_string(static_cast<int>(DecorationTile::Type::Blood)));

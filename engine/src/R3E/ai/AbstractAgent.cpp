@@ -24,7 +24,8 @@ namespace r3e {
 
         AbstractAgent::~AbstractAgent()
         {
-            manager_->deleteAgent(this);
+            if (manager_ != nullptr)
+                manager_->deleteAgent(this);
         }
 
         void AbstractAgent::setCurrentGoal(const sf::Vector2f& goal)

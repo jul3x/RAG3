@@ -11,3 +11,4 @@ string characters=../data/characters
 string weapons=../data/weapons
 string collectibles=../data/collectibles
 string bullets=../data/bullets
+string specials=../data/specials

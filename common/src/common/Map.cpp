@@ -7,12 +7,17 @@
 #include <common/Map.h>
 
 
+Map::Map()
+{
+}
+
 bool Map::clearMap()
 {
     obstacles_tiles_.clear();
     decorations_tiles_.clear();
     characters_.clear();
     collectibles_.clear();
+    specials_.clear();
 
     return true;
 }
@@ -23,8 +28,8 @@ bool Map::loadMap(const std::string& name)
     {
         std::forward_as_tuple(
                 std::tie(obstacles_tiles_, decorations_tiles_,
-                          characters_, collectibles_),
-                std::tie(size_, blocked_.blockage_, player_starting_pos_)) = ResourceManager::getMap(name);
+                          characters_, collectibles_, specials_),
+                std::tie(size_, blocked_.blockage_)) = ResourceManager::getMap(name);
 
         blocked_.scale_x_ = DecorationTile::SIZE_X_;
         blocked_.scale_y_ = DecorationTile::SIZE_X_;
@@ -49,11 +54,6 @@ ai::MapBlockage& Map::getMapBlockage()
     return blocked_;
 }
 
-const sf::Vector2f& Map::getPlayerStartingPos() const
-{
-    return player_starting_pos_;
-}
-
 std::list<std::shared_ptr<DecorationTile>>& Map::getDecorationsTiles()
 {
     return decorations_tiles_;
@@ -74,6 +74,11 @@ std::list<std::shared_ptr<Collectible>>& Map::getCollectibles()
     return collectibles_;
 }
 
+std::list<std::shared_ptr<Special>>& Map::getSpecials()
+{
+    return specials_;
+}
+
 void Map::spawnDecorationTile(const sf::Vector2f& pos, const std::string& id)
 {
     if (!this->checkCollisions(pos, decorations_tiles_) && !this->checkCollisions(pos, obstacles_tiles_))
@@ -92,7 +97,8 @@ void Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string& id)
 
 void Map::spawnWeapon(const sf::Vector2f& pos, const std::string& id)
 {
-    if (!this->checkCollisions(pos, collectibles_) && !this->checkCollisions(pos, characters_))
+    if (!this->checkCollisions(pos, collectibles_) && !this->checkCollisions(pos, characters_) &&
+        !this->checkCollisions(pos, specials_))
     {
         collectibles_.emplace_back(std::make_shared<Collectible>(pos, id));
     }
@@ -100,9 +106,19 @@ void Map::spawnWeapon(const sf::Vector2f& pos, const std::string& id)
 
 void Map::spawnCharacter(const sf::Vector2f& pos, const std::string& id)
 {
-    if (!this->checkCollisions(pos, characters_) && !this->checkCollisions(pos, collectibles_))
+    if (!this->checkCollisions(pos, characters_) && !this->checkCollisions(pos, collectibles_) &&
+        !this->checkCollisions(pos, specials_))
     {
         characters_.emplace_back(std::make_shared<Enemy>(pos, id));
+    }
+}
+
+void Map::spawnSpecial(const sf::Vector2f& pos, const std::string& id)
+{
+    if (!this->checkCollisions(pos, characters_) && !this->checkCollisions(pos, collectibles_) &&
+        !this->checkCollisions(pos, specials_))
+    {
+        specials_.emplace_back(std::make_shared<Special>(pos, id));
     }
 }
 
@@ -113,7 +129,8 @@ void Map::removeTile(const sf::Vector2f& pos)
 
 void Map::removeObject(const sf::Vector2f& pos)
 {
-    (!this->checkCollisions(pos, collectibles_, true) && !this->checkCollisions(pos, characters_, true));
+    (!this->checkCollisions(pos, collectibles_, true) && !this->checkCollisions(pos, characters_, true) &&
+     !this->checkCollisions(pos, specials_, true));
 }
 
 std::pair<sf::Vector2<size_t>, sf::Vector2f> Map::getTileConstraints() const

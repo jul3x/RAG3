@@ -35,9 +35,9 @@ Character::Character(const sf::Vector2f& position, const std::string& id) :
                                     utils::getFloat(RM.getObjectParams("characters", id), "map_offset_y")));
 }
 
-bool Character::shot()
+bool Character::shot(float time_factor)
 {
-    auto new_velocity = (*current_weapon_)->use();
+    auto new_velocity = (*current_weapon_)->use(time_factor);
 
     if (!utils::num::isNearlyEqual(new_velocity, {0.0f, 0.0f}))
     {

@@ -83,8 +83,10 @@ void UserInterface::registerCamera(Camera* camera)
 void UserInterface::initialize(graphics::Graphics& graphics)
 {
     gui_.setTarget(graphics.getWindow());
-    tiles_window_.initialize({"obstacles_tiles", "decorations_tiles"}, {CFG.getString("paths/obstacles_tiles"), CFG.getString("paths/decorations_tiles")});
-    objects_window_.initialize({"characters", "collectibles"}, {CFG.getString("paths/characters"), CFG.getString("paths/collectibles")});
+    tiles_window_.initialize({"obstacles_tiles", "decorations_tiles"},
+                             {CFG.getString("paths/obstacles_tiles"), CFG.getString("paths/decorations_tiles")});
+    objects_window_.initialize({"characters", "collectibles", "specials"},
+                               {CFG.getString("paths/characters"), CFG.getString("paths/collectibles"), CFG.getString("paths/specials")});
 
     generateMenuBar(graphics.getWindow());
 }

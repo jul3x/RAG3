@@ -14,6 +14,7 @@
 #include <common/ObstacleTile.h>
 #include <common/Enemy.h>
 #include <common/Collectible.h>
+#include <common/Special.h>
 
 
 using namespace r3e;
@@ -21,10 +22,11 @@ using namespace r3e;
 class Map {
 public:
     using Data = std::tuple<std::list<std::shared_ptr<ObstacleTile>>, std::list<std::shared_ptr<DecorationTile>>,
-                            std::list<std::shared_ptr<Enemy>>, std::list<std::shared_ptr<Collectible>>>;
-    using TileMap = std::tuple<sf::Vector2f, std::vector<std::vector<float>>, sf::Vector2f>;
+                            std::list<std::shared_ptr<Enemy>>, std::list<std::shared_ptr<Collectible>>,
+                            std::list<std::shared_ptr<Special>>>;
+    using TileMap = std::tuple<sf::Vector2f, std::vector<std::vector<float>>>;
 
-    Map() = default;
+    Map();
 
     bool clearMap();
 
@@ -34,8 +36,6 @@ public:
 
     ai::MapBlockage& getMapBlockage();
 
-    const sf::Vector2f& getPlayerStartingPos() const;
-
     std::list<std::shared_ptr<DecorationTile>>& getDecorationsTiles();
 
     std::list<std::shared_ptr<ObstacleTile>>& getObstaclesTiles();
@@ -44,6 +44,8 @@ public:
 
     std::list<std::shared_ptr<Collectible>>& getCollectibles();
 
+    std::list<std::shared_ptr<Special>>& getSpecials();
+
     void spawnDecorationTile(const sf::Vector2f& pos, const std::string& id);
 
     void spawnObstacleTile(const sf::Vector2f& pos, const std::string& id);
@@ -51,6 +53,8 @@ public:
     void spawnWeapon(const sf::Vector2f& pos, const std::string& id);
 
     void spawnCharacter(const sf::Vector2f& pos, const std::string& id);
+
+    void spawnSpecial(const sf::Vector2f& pos, const std::string& id);
 
     void removeTile(const sf::Vector2f& pos);
 
@@ -77,12 +81,12 @@ private:
         return false;
     }
 
+
     std::list<std::shared_ptr<ObstacleTile>> obstacles_tiles_;
     std::list<std::shared_ptr<Enemy>> characters_;
     std::list<std::shared_ptr<Collectible>> collectibles_;
     std::list<std::shared_ptr<DecorationTile>> decorations_tiles_;
-
-    sf::Vector2f player_starting_pos_;
+    std::list<std::shared_ptr<Special>> specials_;
 
     ai::MapBlockage blocked_;
 

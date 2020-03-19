@@ -18,7 +18,7 @@ public:
     ShootingWeapon(const std::string& id);
 
 
-    sf::Vector2f use() override;
+    sf::Vector2f use(float time_factor) override;
 
     int getAmmunition() const;
 

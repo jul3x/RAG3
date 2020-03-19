@@ -18,24 +18,7 @@ ResourceManager& ResourceManager::getInstance()
 
 const utils::J3XParameters& ResourceManager::getObjectParams(const std::string& category, const std::string& id)
 {
-    auto key = category + "/" + id;
-    auto it = objects_params_.find(key);
-
-    if (it == objects_params_.end())
-    {
-        try
-        {
-            loadObjectParams(key);
-
-            return objects_params_.at(key);
-        }
-        catch (std::runtime_error& e)
-        {
-            std::cerr << e.what() << std::endl;
-        }
-    }
-
-    return it->second;
+    return getParameters(category + "/" + id);
 }
 
 std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& key)
@@ -44,7 +27,8 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
         None,
         TileMap,
         Characters,
-        Collectibles
+        Collectibles,
+        Specials
     };
     auto map_reading = MapReading::None;
 
@@ -53,9 +37,9 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
     std::list<std::shared_ptr<DecorationTile>> decorations_tiles;
     std::list<std::shared_ptr<Enemy>> characters;
     std::list<std::shared_ptr<Collectible>> collectibles;
+    std::list<std::shared_ptr<Special>> specials;
     sf::Vector2f map_size;
     std::vector<std::vector<float>> blocked;
-    sf::Vector2f player_pos;
 
     int w, h;
     if (file)
@@ -93,6 +77,11 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
             {
                 number = 0;
                 map_reading = MapReading::Collectibles;
+            }
+            else if (word == "specials:")
+            {
+                number = 0;
+                map_reading = MapReading::Specials;
             }
             else
             {
@@ -141,14 +130,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         {
                             current_pos.y = std::stof(word);
 
-                            if (current_id == "player")
-                            {
-                                player_pos = current_pos;
-                            }
-                            else
-                            {
-                                characters.emplace_back(std::make_shared<Enemy>(current_pos, current_id));
-                            }
+                            characters.emplace_back(std::make_shared<Enemy>(current_pos, current_id));
                         }
                         break;
                     }
@@ -168,6 +150,25 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         {
                             current_pos.y = std::stof(word);
                             collectibles.emplace_back(std::make_shared<Collectible>(current_pos, current_id));
+                        }
+                        break;
+                    }
+                    case MapReading::Specials:
+                    {
+                        ++number;
+
+                        if (number % 3 == 1)
+                        {
+                            current_id = word;
+                        }
+                        else if (number % 3 == 2)
+                        {
+                            current_pos.x = std::stof(word);
+                        }
+                        else
+                        {
+                            current_pos.y = std::stof(word);
+                            specials.emplace_back(std::make_shared<Special>(current_pos, current_id));
                         }
                         break;
                     }
@@ -193,7 +194,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
 
     std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
 
-    return {{obstacles_tiles, decorations_tiles, characters, collectibles}, {map_size, blocked, player_pos}};
+    return {{obstacles_tiles, decorations_tiles, characters, collectibles, specials}, {map_size, blocked}};
 }
 
 bool ResourceManager::saveMap(const std::string& name, Map& map)
@@ -253,6 +254,7 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
 
     addObjToFile("characters", map.getCharacters());
     addObjToFile("collectibles", map.getCollectibles());
+    addObjToFile("specials", map.getSpecials());
 
     std::cout << "[ResourceManager] Map file " << CFG.getString("paths/maps_dir") + "/" + name + ".j3x" << " is saved!" << std::endl;
 
@@ -342,13 +344,6 @@ void ResourceManager::loadListOfObjects(const std::string& dir)
     {
         list_of_objects_[dir].emplace_back(file.path().filename().replace_extension().string());
     }
-}
-
-void ResourceManager::loadObjectParams(const std::string &key)
-{
-    objects_params_.emplace(key, getParameters(key));
-
-    std::cout << "[ResourceManager] Object " << key << " params loaded!" << std::endl;
 }
 
 ResourceManager::ResourceManager() : AbstractResourceManager(CFG.getString("paths/j3x_dir"), CFG.getString("paths/textures_dir"), CFG.getString("paths/fonts_dir"),

@@ -54,6 +54,9 @@ void Editor::draw(graphics::Graphics& graphics)
     for (auto& character : map_->getCharacters())
         graphics.drawSorted(*character);
 
+    for (auto& special : map_->getSpecials())
+        graphics.drawSorted(*special);
+
     for (auto& weapon : map_->getCollectibles())
         graphics.drawSorted(*weapon);
 
@@ -91,13 +94,15 @@ void Editor::placeItem(const sf::Vector2f& pos)
         map_->spawnWeapon(pos, current_item_.second);
     else if (current_item_.first == "characters")
         map_->spawnCharacter(pos, current_item_.second);
+    else if (current_item_.first == "specials")
+        map_->spawnSpecial(pos, current_item_.second);
 }
 
 void Editor::removeItem(const sf::Vector2f& pos)
 {
     if (current_item_.first == "decorations_tiles" || current_item_.first == "obstacles_tiles")
         map_->removeTile(pos);
-    else if (current_item_.first == "collectibles" || current_item_.first == "characters")
+    else if (current_item_.first == "collectibles" || current_item_.first == "characters" || current_item_.first == "specials")
         map_->removeObject(pos);
 }
 

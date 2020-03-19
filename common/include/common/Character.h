@@ -34,7 +34,7 @@ public:
     Character(const sf::Vector2f& position,
               const std::string& id);
 
-    bool shot();
+    bool shot(float ime_factor);
 
     void getShot(const Bullet& bullet) override;
 

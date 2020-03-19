@@ -202,7 +202,6 @@ tile_map:
 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
 
 characters: 
-player 900 4100
 standard 1400 1200
 standard 70 70
 standard 1000 100
@@ -212,4 +211,6 @@ standard 1900 1000
 standard 2000 2100
 
 collectibles: 
-rocket_launcher 400 200
+
+specials: 
+starting_position 900 4100

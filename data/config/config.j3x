@@ -1,0 +1,10 @@
+int obstacles_endurance_factor=3
+
+float get_shot_factor=100.0f
+
+float bullet_time_factor=0.3f
+
+
+
+
+

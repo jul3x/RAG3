@@ -1,0 +1,33 @@
+bool auto_resolution=1
+
+bool full_screen=1
+
+int window_height_px=1500
+
+int window_width_px=3000
+
+int32 background_color=0x11111100
+
+int32 trail_color=0xFFFFFF30
+
+int32 font_color=0xFFFFFFAA
+
+float camera_speed=4.0f
+
+float camera_zoom_speed=5.0f
+
+float camera_rotation_recoil=8.0f
+
+float camera_position_recoil=1.0f
+
+float camera_shaking_time=0.4f
+
+float camera_right_click_distance_factor=300.0f
+
+float camera_right_click_zoom_factor=0.6f
+
+float user_interface_zoom=1.0f
+
+float blood_pulsating_time=5.0f
+
+float sparks_size_factor=30000.0f

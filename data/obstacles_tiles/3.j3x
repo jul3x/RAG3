@@ -1,0 +1,9 @@
+float size_x=100.0f
+float size_y=150.0f
+
+float collision_size_x=100.0f
+float collision_size_y=100.0f
+
+float map_offset_y=25.0f
+
+float endurance=1000.0f

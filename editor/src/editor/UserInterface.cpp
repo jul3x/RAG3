@@ -85,8 +85,9 @@ void UserInterface::initialize(graphics::Graphics& graphics)
     gui_.setTarget(graphics.getWindow());
     tiles_window_.initialize({"obstacles_tiles", "decorations_tiles"},
                              {CFG.getString("paths/obstacles_tiles"), CFG.getString("paths/decorations_tiles")});
-    objects_window_.initialize({"characters", "collectibles", "specials"},
-                               {CFG.getString("paths/characters"), CFG.getString("paths/collectibles"), CFG.getString("paths/specials")});
+    objects_window_.initialize({"characters", "collectibles", "specials", "decorations"},
+                               {CFG.getString("paths/characters"), CFG.getString("paths/collectibles"),
+                                CFG.getString("paths/specials"), CFG.getString("paths/decorations")});
 
     generateMenuBar(graphics.getWindow());
 }

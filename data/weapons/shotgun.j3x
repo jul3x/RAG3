@@ -8,3 +8,6 @@ float offset_y=0.0f
 string bullet_type=light
 int bullet_quantity=5
 float bullet_angular_diff=10.0f
+
+float map_offset_x=0.0f
+float map_offset_y=0.0f

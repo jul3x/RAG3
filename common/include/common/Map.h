@@ -15,6 +15,7 @@
 #include <common/Enemy.h>
 #include <common/Collectible.h>
 #include <common/Special.h>
+#include <common/Decoration.h>
 
 
 using namespace r3e;
@@ -23,7 +24,7 @@ class Map {
 public:
     using Data = std::tuple<std::list<std::shared_ptr<ObstacleTile>>, std::list<std::shared_ptr<DecorationTile>>,
                             std::list<std::shared_ptr<Enemy>>, std::list<std::shared_ptr<Collectible>>,
-                            std::list<std::shared_ptr<Special>>>;
+                            std::list<std::shared_ptr<Special>>, std::list<std::shared_ptr<Decoration>>>;
     using TileMap = std::tuple<sf::Vector2f, std::vector<std::vector<float>>>;
 
     Map();
@@ -46,15 +47,19 @@ public:
 
     std::list<std::shared_ptr<Special>>& getSpecials();
 
-    void spawnDecorationTile(const sf::Vector2f& pos, const std::string& id);
+    std::list<std::shared_ptr<Decoration>>& getDecorations();
 
-    void spawnObstacleTile(const sf::Vector2f& pos, const std::string& id);
+    void spawnDecorationTile(const sf::Vector2f& pos, const std::string& id, bool check = false);
 
-    void spawnWeapon(const sf::Vector2f& pos, const std::string& id);
+    void spawnObstacleTile(const sf::Vector2f& pos, const std::string& id, bool check = false);
 
-    void spawnCharacter(const sf::Vector2f& pos, const std::string& id);
+    void spawnWeapon(const sf::Vector2f& pos, const std::string& id, bool check = false);
 
-    void spawnSpecial(const sf::Vector2f& pos, const std::string& id);
+    void spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check = false);
+
+    void spawnSpecial(const sf::Vector2f& pos, const std::string& id, bool check = false);
+
+    void spawnDecoration(const sf::Vector2f& pos, const std::string& id, bool check = false);
 
     void removeTile(const sf::Vector2f& pos);
 
@@ -87,6 +92,7 @@ private:
     std::list<std::shared_ptr<Collectible>> collectibles_;
     std::list<std::shared_ptr<DecorationTile>> decorations_tiles_;
     std::list<std::shared_ptr<Special>> specials_;
+    std::list<std::shared_ptr<Decoration>> decorations_;
 
     ai::MapBlockage blocked_;
 

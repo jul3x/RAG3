@@ -28,7 +28,8 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
         TileMap,
         Characters,
         Collectibles,
-        Specials
+        Specials,
+        Decorations
     };
     auto map_reading = MapReading::None;
 
@@ -38,6 +39,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
     std::list<std::shared_ptr<Enemy>> characters;
     std::list<std::shared_ptr<Collectible>> collectibles;
     std::list<std::shared_ptr<Special>> specials;
+    std::list<std::shared_ptr<Decoration>> decorations;
     sf::Vector2f map_size;
     std::vector<std::vector<float>> blocked;
 
@@ -82,6 +84,11 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
             {
                 number = 0;
                 map_reading = MapReading::Specials;
+            }
+            else if (word == "decorations:")
+            {
+                number = 0;
+                map_reading = MapReading::Decorations;
             }
             else
             {
@@ -172,6 +179,25 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         }
                         break;
                     }
+                    case MapReading::Decorations:
+                    {
+                        ++number;
+
+                        if (number % 3 == 1)
+                        {
+                            current_id = word;
+                        }
+                        else if (number % 3 == 2)
+                        {
+                            current_pos.x = std::stof(word);
+                        }
+                        else
+                        {
+                            current_pos.y = std::stof(word);
+                            decorations.emplace_back(std::make_shared<Decoration>(current_pos, current_id));
+                        }
+                        break;
+                    }
                     default:
                     {
                         throw std::logic_error("[ResourceManager] Wrong map format!");
@@ -194,7 +220,8 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
 
     std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
 
-    return {{obstacles_tiles, decorations_tiles, characters, collectibles, specials}, {map_size, blocked}};
+    return {{obstacles_tiles, decorations_tiles, characters, collectibles, specials, decorations},
+            {map_size, blocked}};
 }
 
 bool ResourceManager::saveMap(const std::string& name, Map& map)
@@ -255,6 +282,7 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
     addObjToFile("characters", map.getCharacters());
     addObjToFile("collectibles", map.getCollectibles());
     addObjToFile("specials", map.getSpecials());
+    addObjToFile("decorations", map.getDecorations());
 
     std::cout << "[ResourceManager] Map file " << CFG.getString("paths/maps_dir") + "/" + name + ".j3x" << " is saved!" << std::endl;
 

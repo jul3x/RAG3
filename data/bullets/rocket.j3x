@@ -4,3 +4,5 @@ int deadly_factor=5
 float size_x=30.0f
 float size_y=10.0f
 float burst_size=200.0f
+float map_offset_x=0.0f
+float map_offset_y=0.0f

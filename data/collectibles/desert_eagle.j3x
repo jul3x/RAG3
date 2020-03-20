@@ -1,3 +1,6 @@
 float size_x=60.0f
 float size_y=60.0f
 
+float map_offset_x=0.0f
+float map_offset_y=0.0f
+

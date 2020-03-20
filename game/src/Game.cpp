@@ -93,7 +93,7 @@ void Game::update(float time_elapsed)
 
     if (player_->isAlive() && !player_->update(time_elapsed))
     {
-        map_->spawnDecorationTile(player_->getPosition(), std::to_string(static_cast<int>(DecorationTile::Type::DestroyedWall)));
+        map_->spawnDecoration(player_->getPosition(), "blood");
         spawnExplosionEvent(player_->getPosition(), 25.0f);
         player_->setDead();
         deleteDynamicObject(player_.get());
@@ -133,7 +133,7 @@ void Game::updateMapObjects(float time_elapsed)
         if (!(*it)->update(time_elapsed))
         {
             // draw on this place destruction
-            map_->spawnDecorationTile((*it)->getPosition(), std::to_string(static_cast<int>(DecorationTile::Type::DestroyedWall)));
+            map_->spawnDecoration((*it)->getPosition(), "destroyed_wall");
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
 
             auto next_it = std::next(it);
@@ -157,7 +157,7 @@ void Game::updateMapObjects(float time_elapsed)
         if (!(*it)->update(time_elapsed, this->getCurrentTimeFactor()))
         {
             // draw on this place destruction
-            map_->spawnDecorationTile((*it)->getPosition(), std::to_string(static_cast<int>(DecorationTile::Type::Blood)));
+            map_->spawnDecoration((*it)->getPosition(), "blood");
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
 
             auto next_it = std::next(it);
@@ -175,6 +175,9 @@ void Game::updateMapObjects(float time_elapsed)
 void Game::draw(graphics::Graphics& graphics)
 {
     for (auto& decoration : map_->getDecorationsTiles())
+        graphics.draw(*decoration);
+
+    for (auto& decoration : map_->getDecorations())
         graphics.draw(*decoration);
 
     for (auto& obstacle : map_->getObstaclesTiles())

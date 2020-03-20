@@ -48,7 +48,15 @@ namespace r3e {
 
         virtual void changeOrigin(const sf::Vector2f &origin);
 
+        virtual bool updateAnimation(float time_elapsed, float current_animation_period);
+
     protected:
+        float time_elapsed_;
+        short int max_frames_count_;
+        sf::Vector2i frame_size_;
+
+        sf::IntRect animation_source_;
+
         sf::RectangleShape shape_;
         bool is_visible_;
 

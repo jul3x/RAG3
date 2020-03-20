@@ -34,7 +34,7 @@ namespace r3e {
                                sf::Texture* texture) :
             AbstractPhysicalObject(position, size, c_area, texture) {}
 
-    bool StaticObject::update(float time_elapsed) {}
+    bool StaticObject::update(float time_elapsed) { return true; }
 
 //
 // DynamicObject

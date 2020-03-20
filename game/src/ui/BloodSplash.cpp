@@ -38,7 +38,7 @@ void BloodSplash::resizeWindow(const sf::Vector2f& new_size)
     critical_.setSize(new_size);
 }
 
-void BloodSplash::update(float time_elapsed)
+bool BloodSplash::update(float time_elapsed)
 {
     time_elapsed_ += time_elapsed;
     transparency_ = std::abs(255.0f * std::cos(time_elapsed_ / CFG.getFloat("graphics/blood_pulsating_time") * M_PI * 2.0f));
@@ -47,6 +47,8 @@ void BloodSplash::update(float time_elapsed)
 
     critical_.setColor(255, 255, 255, transparency_);
     low_.setColor(255, 255, 255, transparency_);
+
+    return true;
 }
 
 

@@ -104,6 +104,14 @@ bool Character::update(float time_elapsed)
 {
     DynamicObject::update(time_elapsed);
 
+
+    // NEDED TO BE FIXED !
+    auto vel = std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
+    if (vel > 0.5f) {
+        auto animation_period = 400.0f / std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
+        this->updateAnimation(time_elapsed, animation_period);
+    }
+
     handleAmmoState();
     handleLifeState();
 

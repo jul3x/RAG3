@@ -26,6 +26,13 @@ namespace r3e {
             shape_.setSize(size);
             shape_.setOrigin(size.x / 2.0f, size.y / 2.0f);
             shape_.setTexture(texture);
+
+            // animation
+            frame_size_ = sf::Vector2i(size.x, size.y);
+          //  animation_period_ = 0.5f;
+            max_frames_count_ = 4;
+            time_elapsed_ = 0.0f;
+            animation_source_ = sf::IntRect({0, 0}, frame_size_);
         }
     }
 
@@ -104,6 +111,26 @@ namespace r3e {
     void AbstractDrawableObject::changeOrigin(const sf::Vector2f &origin)
     {
         shape_.setOrigin(origin);
+    }
+
+    bool AbstractDrawableObject::updateAnimation(float time_elapsed, float current_animation_period)
+    {
+        time_elapsed_ += time_elapsed;
+
+        auto current_frame = static_cast<short int>(time_elapsed_ * max_frames_count_ / current_animation_period);
+
+        if (current_frame >= max_frames_count_)
+        {
+            current_frame = 0;
+            time_elapsed_ -= current_animation_period;
+        }
+
+        animation_source_.left = frame_size_.x * current_frame;
+        animation_source_.top = 0;
+
+        shape_.setTextureRect(animation_source_);
+
+        return true;
     }
 
 } // namespace r3e

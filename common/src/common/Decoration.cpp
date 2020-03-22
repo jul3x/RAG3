@@ -11,7 +11,9 @@ Decoration::Decoration(const sf::Vector2f& position, const std::string& id) :
         AbstractDrawableObject(position,
                                {utils::getFloat(RM.getObjectParams("decorations", id), "size_x"),
                                 utils::getFloat(RM.getObjectParams("decorations", id), "size_y")},
-                               &RM.getTexture("decorations/" + id))
+                               &RM.getTexture("decorations/" + id),
+                               utils::getInt(RM.getObjectParams("decorations", id), "frames_number"),
+                               utils::getFloat(RM.getObjectParams("decorations", id), "frame_duration"))
 {
     this->changeOrigin(sf::Vector2f(utils::getFloat(RM.getObjectParams("decorations", id), "size_x"),
                                     utils::getFloat(RM.getObjectParams("decorations", id), "size_y")) / 2.0f +

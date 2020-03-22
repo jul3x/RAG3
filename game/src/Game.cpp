@@ -122,7 +122,6 @@ void Game::update(float time_elapsed)
 
 void Game::updateMapObjects(float time_elapsed)
 {
-    // TODO Make private function that encapsulates this logic
     auto& obstacles_tiles = map_->getObstaclesTiles();
     auto& enemies = map_->getCharacters();
     auto& blockage = map_->getMapBlockage();
@@ -134,6 +133,7 @@ void Game::updateMapObjects(float time_elapsed)
         {
             // draw on this place destruction
             map_->spawnDecoration((*it)->getPosition(), "destroyed_wall");
+            map_->spawnDecoration((*it)->getPosition(), "flame");
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
 
             auto next_it = std::next(it);
@@ -170,6 +170,13 @@ void Game::updateMapObjects(float time_elapsed)
 
         if (do_increment) ++it;
     }
+
+    for (auto& decoration : map_->getDecorations())
+        decoration->updateAnimation(time_elapsed);
+
+    for (auto& collectible : map_->getCollectibles())
+        collectible->updateAnimation(time_elapsed);
+
 }
 
 void Game::draw(graphics::Graphics& graphics)

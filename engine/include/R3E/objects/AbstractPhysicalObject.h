@@ -24,7 +24,9 @@ namespace r3e {
         AbstractPhysicalObject(const sf::Vector2f& position,
                                const sf::Vector2f& size,
                                const Collision::Area& c_area,
-                               sf::Texture* texture);
+                               sf::Texture* texture,
+                               short int frames_number = 1,
+                               float frame_duration = 0.0f);
 
         const Collision::Area& getCollisionArea() const;
 
@@ -40,7 +42,9 @@ namespace r3e {
         StaticObject(const sf::Vector2f& position,
                      const sf::Vector2f& size,
                      const Collision::Area& c_area,
-                     sf::Texture* texture);
+                     sf::Texture* texture,
+                     short int frames_number,
+                     float frame_duration);
 
         bool update(float time_elapsed) override;
 
@@ -57,6 +61,8 @@ namespace r3e {
                       const sf::Vector2f& size,
                       const Collision::Area& c_area,
                       sf::Texture* texture,
+                      short int frames_number,
+                      float frame_duration,
                       const sf::Color& trail_color,
                       float acceleration);
 
@@ -91,6 +97,8 @@ namespace r3e {
                        const sf::Vector2f& size,
                        const Collision::Area& c_area,
                        sf::Texture* texture,
+                       short int frames_number,
+                       float frame_duration,
                        const sf::Color& trail_color,
                        float acceleration);
     };

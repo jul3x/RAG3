@@ -18,7 +18,9 @@ namespace r3e {
 
         AbstractDrawableObject(const sf::Vector2f& position,
                                const sf::Vector2f& size,
-                               sf::Texture* texture_name);
+                               sf::Texture* texture_name,
+                               short int frames_number = 1,
+                               float frame_duration = 0.0f);
 
         virtual const sf::Vector2f& getPosition() const;
 
@@ -48,14 +50,16 @@ namespace r3e {
 
         virtual void changeOrigin(const sf::Vector2f &origin);
 
-        virtual bool updateAnimation(float time_elapsed, float current_animation_period);
+        virtual bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f);
 
     protected:
         float time_elapsed_;
-        short int max_frames_count_;
+        short int current_frame_;
         sf::Vector2i frame_size_;
-
         sf::IntRect animation_source_;
+
+        short int frames_number_;
+        float frame_duration_;
 
         sf::RectangleShape shape_;
         bool is_visible_;

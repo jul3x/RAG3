@@ -12,7 +12,9 @@ AbstractWeapon::AbstractWeapon(const sf::Vector2f& size,
         name_(name),
         weapon_offset_(weapon_offset),
         AbstractDrawableObject({}, size,
-                               name.empty() ? nullptr : &RM.getTexture("weapons/" + name))
+                               name.empty() ? nullptr : &RM.getTexture("weapons/" + name),
+                               name.empty() ? 1 : utils::getInt(RM.getObjectParams("weapons", name), "frames_number"),
+                               name.empty() ? 0.0f :utils::getFloat(RM.getObjectParams("weapons", name), "frame_duration"))
 {
 }
 

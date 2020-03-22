@@ -18,6 +18,8 @@ Character::Character(const sf::Vector2f& position, const std::string& id) :
                       Collision::Box({utils::getFloat(RM.getObjectParams("characters", id), "collision_size_x"),
                                       utils::getFloat(RM.getObjectParams("characters", id), "collision_size_y")}),
                       &RM.getTexture("characters/" + id),
+                      utils::getInt(RM.getObjectParams("characters", id), "frames_number"),
+                      utils::getFloat(RM.getObjectParams("characters", id), "frame_duration"),
                       sf::Color::Transparent,
                       CFG.getFloat("characters/max_acceleration")),
         max_life_(utils::getInt(RM.getObjectParams("characters", id), "max_health")),
@@ -104,13 +106,9 @@ bool Character::update(float time_elapsed)
 {
     DynamicObject::update(time_elapsed);
 
-
-    // NEDED TO BE FIXED !
     auto vel = std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
-    if (vel > 0.5f) {
-        auto animation_period = 400.0f / std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
-        this->updateAnimation(time_elapsed, animation_period);
-    }
+    this->updateAnimation(time_elapsed,
+                          vel / utils::getFloat(RM.getObjectParams("characters", this->getId()), "max_speed"));
 
     handleAmmoState();
     handleLifeState();

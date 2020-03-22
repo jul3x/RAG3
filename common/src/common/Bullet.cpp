@@ -19,6 +19,7 @@ Bullet::Bullet(const sf::Vector2f& position,
                        Collision::Box(utils::getFloat(RM.getObjectParams("bullets", id), "size_x"),
                                       utils::getFloat(RM.getObjectParams("bullets", id), "size_y")),
                        &RM.getTexture("bullets/" + id),
+                       0, 0.0f,
                        sf::Color(CFG.getInt("graphics/trail_color")),
                        0.0f)
 {

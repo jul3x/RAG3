@@ -15,6 +15,8 @@
 #include <common/Enemy.h>
 #include <common/Collectible.h>
 #include <common/Special.h>
+#include <common/Obstacle.h>
+#include <common/Decoration.h>
 
 
 using namespace r3e;
@@ -23,7 +25,8 @@ class Map {
 public:
     using Data = std::tuple<std::list<std::shared_ptr<ObstacleTile>>, std::list<std::shared_ptr<DecorationTile>>,
                             std::list<std::shared_ptr<Enemy>>, std::list<std::shared_ptr<Collectible>>,
-                            std::list<std::shared_ptr<Special>>>;
+                            std::list<std::shared_ptr<Special>>, std::list<std::shared_ptr<Obstacle>>,
+                            std::list<std::shared_ptr<Decoration>>>;
     using TileMap = std::tuple<sf::Vector2f, std::vector<std::vector<float>>>;
 
     Map();
@@ -46,15 +49,23 @@ public:
 
     std::list<std::shared_ptr<Special>>& getSpecials();
 
-    void spawnDecorationTile(const sf::Vector2f& pos, const std::string& id);
+    std::list<std::shared_ptr<Decoration>>& getDecorations();
 
-    void spawnObstacleTile(const sf::Vector2f& pos, const std::string& id);
+    std::list<std::shared_ptr<Obstacle>>& getObstacles();
 
-    void spawnWeapon(const sf::Vector2f& pos, const std::string& id);
+    void spawnDecorationTile(const sf::Vector2f& pos, const std::string& id, bool check = false);
 
-    void spawnCharacter(const sf::Vector2f& pos, const std::string& id);
+    void spawnObstacleTile(const sf::Vector2f& pos, const std::string& id, bool check = false);
 
-    void spawnSpecial(const sf::Vector2f& pos, const std::string& id);
+    void spawnWeapon(const sf::Vector2f& pos, const std::string& id, bool check = false);
+
+    void spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check = false);
+
+    void spawnSpecial(const sf::Vector2f& pos, const std::string& id, bool check = false);
+
+    void spawnDecoration(const sf::Vector2f& pos, const std::string& id, bool check = false);
+
+    void spawnObstacle(const sf::Vector2f& pos, const std::string& id, bool check = false);
 
     void removeTile(const sf::Vector2f& pos);
 
@@ -64,7 +75,7 @@ public:
 
 private:
     template<class T>
-    bool checkCollisions(const sf::Vector2f& pos, std::list<T>& objs, bool erase = false)
+    inline bool checkCollisions(const sf::Vector2f& pos, std::list<T>& objs, bool erase = false)
     {
         for (auto it = objs.begin(); it != objs.end(); ++it)
         {
@@ -81,12 +92,21 @@ private:
         return false;
     }
 
+    inline bool checkCollisionsObjects(const sf::Vector2f& pos, bool erase = false)
+    {
+        return (!this->checkCollisions(pos, collectibles_, erase) && !this->checkCollisions(pos, characters_, erase) &&
+                !this->checkCollisions(pos, specials_, erase) && !this->checkCollisions(pos, decorations_, erase) &&
+                !this->checkCollisions(pos, obstacles_, erase));
+    }
+
 
     std::list<std::shared_ptr<ObstacleTile>> obstacles_tiles_;
     std::list<std::shared_ptr<Enemy>> characters_;
     std::list<std::shared_ptr<Collectible>> collectibles_;
     std::list<std::shared_ptr<DecorationTile>> decorations_tiles_;
     std::list<std::shared_ptr<Special>> specials_;
+    std::list<std::shared_ptr<Decoration>> decorations_;
+    std::list<std::shared_ptr<Obstacle>> obstacles_;
 
     ai::MapBlockage blocked_;
 

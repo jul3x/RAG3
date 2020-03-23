@@ -12,6 +12,10 @@ using namespace editor;
 int main()
 {
     CFG.initialize("../data/config/editor_config.j3x");
+    CFG.appendConfig("../data/config/config.j3x", "");
+    CFG.appendConfig("../data/config/graphics.j3x", "graphics");
+    CFG.appendConfig("../data/config/sound.j3x", "sound");
+    CFG.appendConfig("../data/config/characters.j3x", "characters");
     CFG.appendConfig("../data/config/paths.j3x", "paths");
 
     if (CFG.getInt("auto_resolution"))

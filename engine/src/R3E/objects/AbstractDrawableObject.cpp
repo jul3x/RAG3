@@ -17,7 +17,15 @@ namespace r3e {
 
     AbstractDrawableObject::AbstractDrawableObject(const sf::Vector2f& position,
                                                    const sf::Vector2f& size,
-                                                   sf::Texture* texture) :
+                                                   sf::Texture* texture,
+                                                   short int frames_number,
+                                                   float frame_duration) :
+            frames_number_(frames_number),
+            frame_duration_(frame_duration),
+            frame_size_(sf::Vector2i(size.x, size.y)),
+            current_frame_(0),
+            time_elapsed_(0.0f),
+            animation_source_({0, 0}, frame_size_),
             is_visible_(true)
     {
         if (texture != nullptr)
@@ -26,6 +34,9 @@ namespace r3e {
             shape_.setSize(size);
             shape_.setOrigin(size.x / 2.0f, size.y / 2.0f);
             shape_.setTexture(texture);
+
+            if (frames_number > 1)
+                shape_.setTextureRect(animation_source_);
         }
     }
 
@@ -101,9 +112,38 @@ namespace r3e {
         shape_.setTexture(texture, reset);
     }
 
+    void AbstractDrawableObject::changeTextureRect(const sf::IntRect& rect)
+    {
+        shape_.setTextureRect(rect);
+    }
+
     void AbstractDrawableObject::changeOrigin(const sf::Vector2f &origin)
     {
         shape_.setOrigin(origin);
+    }
+
+    bool AbstractDrawableObject::updateAnimation(float time_elapsed, float animation_speed_factor)
+    {
+        if (frames_number_ <= 1) return true;
+
+        time_elapsed_ += time_elapsed * animation_speed_factor;
+
+        auto frames_to_add = static_cast<short int>(time_elapsed_ / frame_duration_);
+        time_elapsed_ -= frames_to_add * frame_duration_;
+
+        current_frame_ = current_frame_ + frames_to_add;
+
+        if (current_frame_ >= frames_number_)
+        {
+            current_frame_ -= frames_number_;
+        }
+
+        animation_source_.left = frame_size_.x * current_frame_;
+        animation_source_.top = 0;
+
+        shape_.setTextureRect(animation_source_);
+
+        return true;
     }
 
 } // namespace r3e

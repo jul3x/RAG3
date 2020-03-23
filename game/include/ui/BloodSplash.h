@@ -20,7 +20,7 @@ public:
 
     void resizeWindow(const sf::Vector2f& new_size);
 
-    void update(float time_elapsed);
+    bool update(float time_elapsed);
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

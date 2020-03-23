@@ -209,8 +209,21 @@ standard 70 1100
 standard 1000 1000
 standard 1900 1000
 standard 2000 2100
+player 200 0
+player 100 0
+player 0 -0
 
 collectibles: 
 
 specials: 
 starting_position 900 4100
+
+obstacles: 
+fence 2300 2000
+fence 2400 2000
+fence 2500 2000
+
+decorations: 
+blood 1100 3700
+blood 600 3900
+blood 1600 3800

@@ -62,12 +62,18 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
         int i = 0;
         for (const auto& item : items)
         {
-            auto button = tgui::Picture::create(RM.getTexture(tab_name + "/" + item));
-            auto label = tgui::Label::create(item);
-            label->setRenderer(theme_->getRenderer("ItemLabel"));
-
             auto size = sf::Vector2f(utils::getFloat(RM.getObjectParams(tab_name, item), "size_x"),
                                      utils::getFloat(RM.getObjectParams(tab_name, item), "size_y"));
+
+            if (utils::getInt(RM.getObjectParams(tab_name, item), "frames_number") == 1)
+                button_textures_[tab_name + "/" + item].load(RM.getTexture(tab_name + "/" + item));
+            else
+                button_textures_[tab_name + "/" + item].load(
+                        RM.getTexture(tab_name + "/" + item), sf::IntRect({0, 0}, sf::Vector2i(size.x, size.y)));
+
+            auto button = tgui::Picture::create(button_textures_[tab_name + "/" + item]);
+            auto label = tgui::Label::create(item);
+            label->setRenderer(theme_->getRenderer("ItemLabel"));
 
             if (size.x > size.y)
             {

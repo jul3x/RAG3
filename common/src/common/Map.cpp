@@ -18,6 +18,8 @@ bool Map::clearMap()
     characters_.clear();
     collectibles_.clear();
     specials_.clear();
+    obstacles_.clear();
+    decorations_.clear();
 
     return true;
 }
@@ -28,7 +30,8 @@ bool Map::loadMap(const std::string& name)
     {
         std::forward_as_tuple(
                 std::tie(obstacles_tiles_, decorations_tiles_,
-                          characters_, collectibles_, specials_),
+                         characters_, collectibles_, specials_,
+                         obstacles_, decorations_),
                 std::tie(size_, blocked_.blockage_)) = ResourceManager::getMap(name);
 
         blocked_.scale_x_ = DecorationTile::SIZE_X_;
@@ -79,46 +82,69 @@ std::list<std::shared_ptr<Special>>& Map::getSpecials()
     return specials_;
 }
 
-void Map::spawnDecorationTile(const sf::Vector2f& pos, const std::string& id)
+std::list<std::shared_ptr<Decoration>>& Map::getDecorations()
 {
-    if (!this->checkCollisions(pos, decorations_tiles_) && !this->checkCollisions(pos, obstacles_tiles_))
+    return decorations_;
+}
+
+std::list<std::shared_ptr<Obstacle>>& Map::getObstacles()
+{
+    return obstacles_;
+}
+
+void Map::spawnDecorationTile(const sf::Vector2f& pos, const std::string& id, bool check)
+{
+    if (!check || (!this->checkCollisions(pos, decorations_tiles_) && !this->checkCollisions(pos, obstacles_tiles_)))
     {
         decorations_tiles_.emplace_back(std::make_shared<DecorationTile>(pos, id));
     }
 }
 
-void Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string& id)
+void Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string& id, bool check)
 {
-    if (!this->checkCollisions(pos, decorations_tiles_) && !this->checkCollisions(pos, obstacles_tiles_))
+    if (!check || (!this->checkCollisions(pos, decorations_tiles_) && !this->checkCollisions(pos, obstacles_tiles_)))
     {
         obstacles_tiles_.emplace_back(std::make_shared<ObstacleTile>(pos, id));
     }
 }
 
-void Map::spawnWeapon(const sf::Vector2f& pos, const std::string& id)
+void Map::spawnWeapon(const sf::Vector2f& pos, const std::string& id, bool check)
 {
-    if (!this->checkCollisions(pos, collectibles_) && !this->checkCollisions(pos, characters_) &&
-        !this->checkCollisions(pos, specials_))
+    if (!check || this->checkCollisionsObjects(pos))
     {
         collectibles_.emplace_back(std::make_shared<Collectible>(pos, id));
     }
 }
 
-void Map::spawnCharacter(const sf::Vector2f& pos, const std::string& id)
+void Map::spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check)
 {
-    if (!this->checkCollisions(pos, characters_) && !this->checkCollisions(pos, collectibles_) &&
-        !this->checkCollisions(pos, specials_))
+    if (!check || this->checkCollisionsObjects(pos))
     {
         characters_.emplace_back(std::make_shared<Enemy>(pos, id));
     }
 }
 
-void Map::spawnSpecial(const sf::Vector2f& pos, const std::string& id)
+void Map::spawnSpecial(const sf::Vector2f& pos, const std::string& id, bool check)
 {
-    if (!this->checkCollisions(pos, characters_) && !this->checkCollisions(pos, collectibles_) &&
-        !this->checkCollisions(pos, specials_))
+    if (!check || this->checkCollisionsObjects(pos))
     {
         specials_.emplace_back(std::make_shared<Special>(pos, id));
+    }
+}
+
+void Map::spawnDecoration(const sf::Vector2f& pos, const std::string& id, bool check)
+{
+    if (!check || this->checkCollisionsObjects(pos))
+    {
+        decorations_.emplace_back(std::make_shared<Decoration>(pos, id));
+    }
+}
+
+void Map::spawnObstacle(const sf::Vector2f& pos, const std::string& id, bool check)
+{
+    if (!check || this->checkCollisionsObjects(pos))
+    {
+        obstacles_.emplace_back(std::make_shared<Obstacle>(pos, id));
     }
 }
 
@@ -129,8 +155,7 @@ void Map::removeTile(const sf::Vector2f& pos)
 
 void Map::removeObject(const sf::Vector2f& pos)
 {
-    (!this->checkCollisions(pos, collectibles_, true) && !this->checkCollisions(pos, characters_, true) &&
-     !this->checkCollisions(pos, specials_, true));
+    checkCollisionsObjects(pos, true);
 }
 
 std::pair<sf::Vector2<size_t>, sf::Vector2f> Map::getTileConstraints() const

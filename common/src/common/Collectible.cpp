@@ -11,7 +11,9 @@ Collectible::Collectible(const sf::Vector2f& position, const std::string& id) :
         AbstractDrawableObject(position,
                                {utils::getFloat(RM.getObjectParams("collectibles", id), "size_x"),
                                 utils::getFloat(RM.getObjectParams("collectibles", id), "size_y")},
-                               &RM.getTexture("collectibles/" + id))
+                               &RM.getTexture("collectibles/" + id),
+                               utils::getInt(RM.getObjectParams("collectibles", id), "frames_number"),
+                               utils::getFloat(RM.getObjectParams("collectibles", id), "frame_duration"))
 {
     this->changeOrigin(sf::Vector2f(utils::getFloat(RM.getObjectParams("collectibles", id), "size_x"),
                                     utils::getFloat(RM.getObjectParams("collectibles", id), "size_y")) / 2.0f +

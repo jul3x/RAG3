@@ -38,7 +38,27 @@ void Editor::initialize()
 void Editor::update(float time_elapsed)
 {
     camera_->update(time_elapsed);
-    map_->getTileConstraints();
+
+    for (auto& decoration : map_->getDecorationsTiles())
+        decoration->updateAnimation(time_elapsed);
+    
+    for (auto& decoration : map_->getDecorations())
+        decoration->updateAnimation(time_elapsed);
+
+    for (auto& obstacle : map_->getObstaclesTiles())
+        obstacle->updateAnimation(time_elapsed);
+
+    for (auto& obstacle : map_->getObstacles())
+        obstacle->updateAnimation(time_elapsed);
+
+    for (auto& character : map_->getCharacters())
+        character->updateAnimation(time_elapsed);
+
+    for (auto& special : map_->getSpecials())
+        special->updateAnimation(time_elapsed);
+
+    for (auto& weapon : map_->getCollectibles())
+        weapon->updateAnimation(time_elapsed);
 }
 
 void Editor::draw(graphics::Graphics& graphics)
@@ -48,7 +68,13 @@ void Editor::draw(graphics::Graphics& graphics)
     for (auto& decoration : map_->getDecorationsTiles())
         graphics.draw(*decoration);
 
+    for (auto& decoration : map_->getDecorations())
+        graphics.drawSorted(*decoration);
+
     for (auto& obstacle : map_->getObstaclesTiles())
+        graphics.drawSorted(*obstacle);
+
+    for (auto& obstacle : map_->getObstacles())
         graphics.drawSorted(*obstacle);
 
     for (auto& character : map_->getCharacters())
@@ -87,22 +113,29 @@ const std::string& Editor::getCurrentMapName() const
 void Editor::placeItem(const sf::Vector2f& pos)
 {
     if (current_item_.first == "decorations_tiles")
-        map_->spawnDecorationTile(pos, current_item_.second);
+        map_->spawnDecorationTile(pos, current_item_.second, true);
     else if (current_item_.first == "obstacles_tiles")
-        map_->spawnObstacleTile(pos, current_item_.second);
+        map_->spawnObstacleTile(pos, current_item_.second, true);
     else if (current_item_.first == "collectibles")
-        map_->spawnWeapon(pos, current_item_.second);
+        map_->spawnWeapon(pos, current_item_.second, true);
     else if (current_item_.first == "characters")
-        map_->spawnCharacter(pos, current_item_.second);
+        map_->spawnCharacter(pos, current_item_.second, true);
     else if (current_item_.first == "specials")
-        map_->spawnSpecial(pos, current_item_.second);
+        map_->spawnSpecial(pos, current_item_.second, true);
+    else if (current_item_.first == "decorations")
+        map_->spawnDecoration(pos, current_item_.second, true);
+    else if (current_item_.first == "obstacles")
+        map_->spawnObstacle(pos, current_item_.second, true);
+
 }
 
 void Editor::removeItem(const sf::Vector2f& pos)
 {
     if (current_item_.first == "decorations_tiles" || current_item_.first == "obstacles_tiles")
         map_->removeTile(pos);
-    else if (current_item_.first == "collectibles" || current_item_.first == "characters" || current_item_.first == "specials")
+    else if (current_item_.first == "collectibles" || current_item_.first == "characters" ||
+             current_item_.first == "specials" || current_item_.first == "decorations" ||
+             current_item_.first == "obstacles")
         map_->removeObject(pos);
 }
 

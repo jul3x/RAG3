@@ -85,8 +85,10 @@ void UserInterface::initialize(graphics::Graphics& graphics)
     gui_.setTarget(graphics.getWindow());
     tiles_window_.initialize({"obstacles_tiles", "decorations_tiles"},
                              {CFG.getString("paths/obstacles_tiles"), CFG.getString("paths/decorations_tiles")});
-    objects_window_.initialize({"characters", "collectibles", "specials"},
-                               {CFG.getString("paths/characters"), CFG.getString("paths/collectibles"), CFG.getString("paths/specials")});
+    objects_window_.initialize({"characters", "collectibles", "specials", "obstacles", "decorations"},
+                               {CFG.getString("paths/characters"), CFG.getString("paths/collectibles"),
+                                CFG.getString("paths/specials"), CFG.getString("paths/obstacles"),
+                                CFG.getString("paths/decorations")});
 
     generateMenuBar(graphics.getWindow());
 }
@@ -244,7 +246,14 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
     else
     {
         crosshair_.setColor(255, 255, 255, 120);
+
         crosshair_.changeTexture(&RM.getTexture(current_item.first + "/" + current_item.second), true);
+
+        if (utils::getInt(RM.getObjectParams(current_item.first, current_item.second), "frames_number") > 1)
+            crosshair_.changeTextureRect({{0, 0},
+                                          sf::Vector2i(utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
+                                                       utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_y"))});
+
         crosshair_.setSize(
                 sf::Vector2f(utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
                              utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_y")));

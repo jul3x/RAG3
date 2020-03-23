@@ -15,7 +15,8 @@ ObstacleTile::ObstacleTile(const sf::Vector2f& position, const std::string& id) 
                       utils::getFloat(RM.getObjectParams("obstacles_tiles", id), "size_y")},
                      Collision::Box(utils::getFloat(RM.getObjectParams("obstacles_tiles", id), "collision_size_x"),
                                     utils::getFloat(RM.getObjectParams("obstacles_tiles", id), "collision_size_y")),
-                     &RM.getTexture("obstacles_tiles/" + id)),
+                     &RM.getTexture("obstacles_tiles/" + id),
+                     0, 0.0f),
         Shootable(static_cast<int>(utils::getFloat(RM.getObjectParams("obstacles_tiles", id), "endurance")) *
                   CFG.getInt("obstacles_endurance_factor"))
 {

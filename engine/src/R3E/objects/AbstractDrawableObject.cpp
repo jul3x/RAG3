@@ -112,6 +112,11 @@ namespace r3e {
         shape_.setTexture(texture, reset);
     }
 
+    void AbstractDrawableObject::changeTextureRect(const sf::IntRect& rect)
+    {
+        shape_.setTextureRect(rect);
+    }
+
     void AbstractDrawableObject::changeOrigin(const sf::Vector2f &origin)
     {
         shape_.setOrigin(origin);

@@ -64,6 +64,9 @@ void Game::initialize()
     for (auto& obstacle : map_->getObstaclesTiles())
         engine_->registerStaticObject(obstacle.get());
 
+    for (auto& obstacle : map_->getObstacles())
+        engine_->registerStaticObject(obstacle.get());
+
     for (auto& character : map_->getCharacters())
     {
         engine_->registerDynamicObject(character.get());
@@ -123,6 +126,7 @@ void Game::update(float time_elapsed)
 void Game::updateMapObjects(float time_elapsed)
 {
     auto& obstacles_tiles = map_->getObstaclesTiles();
+    auto& obstacles = map_->getObstacles();
     auto& enemies = map_->getCharacters();
     auto& blockage = map_->getMapBlockage();
 
@@ -144,6 +148,31 @@ void Game::updateMapObjects(float time_elapsed)
             blockage.blockage_.at(grid_pos.first).at(grid_pos.second) = false;
 
             obstacles_tiles.erase(it);
+            it = next_it;
+            do_increment = false;
+        }
+
+        if (do_increment) ++it;
+    }
+
+    for (auto it = obstacles.begin(); it != obstacles.end();)
+    {
+        bool do_increment = true;
+        (*it)->updateAnimation(time_elapsed);
+        if (!(*it)->update(time_elapsed))
+        {
+            // draw on this place destruction
+            map_->spawnDecoration((*it)->getPosition(), "flame");
+            this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
+
+            auto next_it = std::next(it);
+            this->deleteStaticObject(it->get());
+
+            auto grid_pos = std::make_pair(static_cast<size_t>((*it)->getPosition().x / DecorationTile::SIZE_X_),
+                                           static_cast<size_t>((*it)->getPosition().y / DecorationTile::SIZE_Y_));
+            blockage.blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
+
+            obstacles.erase(it);
             it = next_it;
             do_increment = false;
         }
@@ -188,6 +217,9 @@ void Game::draw(graphics::Graphics& graphics)
         graphics.draw(*decoration);
 
     for (auto& obstacle : map_->getObstaclesTiles())
+        graphics.drawSorted(*obstacle);
+
+    for (auto& obstacle : map_->getObstacles())
         graphics.drawSorted(*obstacle);
 
     for (auto& character : map_->getCharacters())
@@ -253,7 +285,7 @@ void Game::spawnBullet(const std::string& name, const sf::Vector2f& pos, const f
 void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
 {
     auto bullet = dynamic_cast<Bullet*>(h_obj);
-    auto obstacle = dynamic_cast<ObstacleTile*>(s_obj);
+    auto obstacle = dynamic_cast<Shootable*>(s_obj);
     obstacle->getShot(*bullet);
     spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
                      static_cast<float>(std::pow(CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));

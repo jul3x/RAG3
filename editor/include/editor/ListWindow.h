@@ -5,6 +5,8 @@
 #ifndef RAG3_EDITOR_LISTWINDOW_H
 #define RAG3_EDITOR_LISTWINDOW_H
 
+#include <unordered_map>
+
 #include <TGUI/TGUI.hpp>
 
 #include <editor/ChildWindow.h>
@@ -31,6 +33,8 @@ namespace editor {
         UserInterface* ui_;
 
         std::vector<tgui::Grid::Ptr> grids_;
+
+        std::unordered_map<std::string, tgui::Texture> button_textures_;
 
         tgui::Tabs::Ptr tabs_;
         std::vector<std::vector<tgui::Picture::Ptr>> clickables_;

@@ -8,7 +8,6 @@
 #include <R3E/objects/AbstractPhysicalObject.h>
 #include <R3E/objects/Identifiable.h>
 
-#include <common/Bullet.h>
 #include <common/Shootable.h>
 
 

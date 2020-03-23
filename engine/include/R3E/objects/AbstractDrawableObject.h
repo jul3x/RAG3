@@ -48,6 +48,8 @@ namespace r3e {
 
         virtual void changeTexture(sf::Texture* texture, bool reset = false);
 
+        virtual void changeTextureRect(const sf::IntRect &rect);
+
         virtual void changeOrigin(const sf::Vector2f &origin);
 
         virtual bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f);

@@ -12,4 +12,5 @@ string weapons=../data/weapons
 string collectibles=../data/collectibles
 string bullets=../data/bullets
 string specials=../data/specials
+string obstacles=../data/obstacles
 string decorations=../data/decorations

@@ -209,9 +209,9 @@ standard 70 1100
 standard 1000 1000
 standard 1900 1000
 standard 2000 2100
-player 200 0
-player 100 0
-player 0 -0
+standard 200 0
+standard 100 0
+standard 0 -0
 
 collectibles: 
 

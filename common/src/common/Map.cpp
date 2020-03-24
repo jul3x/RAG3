@@ -92,59 +92,66 @@ std::list<std::shared_ptr<Obstacle>>& Map::getObstacles()
     return obstacles_;
 }
 
-void Map::spawnDecorationTile(const sf::Vector2f& pos, const std::string& id, bool check)
+DecorationTile* Map::spawnDecorationTile(const sf::Vector2f& pos, const std::string& id, bool check)
 {
     if (!check || (!this->checkCollisions(pos, decorations_tiles_) && !this->checkCollisions(pos, obstacles_tiles_)))
     {
         decorations_tiles_.emplace_back(std::make_shared<DecorationTile>(pos, id));
+        return decorations_tiles_.back().get();
     }
 }
 
-void Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string& id, bool check)
+ObstacleTile* Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string& id, bool check)
 {
     if (!check || (!this->checkCollisions(pos, decorations_tiles_) && !this->checkCollisions(pos, obstacles_tiles_)))
     {
         obstacles_tiles_.emplace_back(std::make_shared<ObstacleTile>(pos, id));
+        return obstacles_tiles_.back().get();
     }
 }
 
-void Map::spawnWeapon(const sf::Vector2f& pos, const std::string& id, bool check)
+Collectible* Map::spawnCollectible(const sf::Vector2f& pos, const std::string& id, bool check)
 {
     if (!check || this->checkCollisionsObjects(pos))
     {
         collectibles_.emplace_back(std::make_shared<Collectible>(pos, id));
+        return collectibles_.back().get();
     }
 }
 
-void Map::spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check)
+Enemy* Map::spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check)
 {
     if (!check || this->checkCollisionsObjects(pos))
     {
         characters_.emplace_back(std::make_shared<Enemy>(pos, id));
+        return characters_.back().get();
     }
 }
 
-void Map::spawnSpecial(const sf::Vector2f& pos, const std::string& id, bool check)
+Special* Map::spawnSpecial(const sf::Vector2f& pos, const std::string& id, bool check)
 {
     if (!check || this->checkCollisionsObjects(pos))
     {
         specials_.emplace_back(std::make_shared<Special>(pos, id));
+        return specials_.back().get();
     }
 }
 
-void Map::spawnDecoration(const sf::Vector2f& pos, const std::string& id, bool check)
+Decoration* Map::spawnDecoration(const sf::Vector2f& pos, const std::string& id, bool check)
 {
     if (!check || this->checkCollisionsObjects(pos))
     {
         decorations_.emplace_back(std::make_shared<Decoration>(pos, id));
+        return decorations_.back().get();
     }
 }
 
-void Map::spawnObstacle(const sf::Vector2f& pos, const std::string& id, bool check)
+Obstacle* Map::spawnObstacle(const sf::Vector2f& pos, const std::string& id, bool check)
 {
     if (!check || this->checkCollisionsObjects(pos))
     {
         obstacles_.emplace_back(std::make_shared<Obstacle>(pos, id));
+        return obstacles_.back().get();
     }
 }
 

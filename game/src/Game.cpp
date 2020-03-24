@@ -15,7 +15,7 @@
 #include <Game.h>
 
 
-Game::Game() : current_time_factor_(1.0f)
+Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal)
 {
     engine_ = std::make_unique<Engine>();
     engine_->registerGame(this);
@@ -26,6 +26,7 @@ void Game::initialize()
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     ui_ = std::make_unique<UserInterface>();
     camera_ = std::make_unique<Camera>();
+    journal_ = std::make_unique<Journal>(CFG.getFloat("journal_max_time"), CFG.getFloat("journal_sampling_rate"));
     map_ = std::make_unique<Map>();
     agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
                                                           1000.0f, // max time without recalculation of path in ms
@@ -90,36 +91,58 @@ void Game::initialize()
 
 void Game::update(float time_elapsed)
 {
-    agents_manager_->update();
-
-    updateMapObjects(time_elapsed);
-
-    if (player_->isAlive() && !player_->update(time_elapsed))
+    switch (state_)
     {
-        map_->spawnDecoration(player_->getPosition(), "blood");
-        spawnExplosionEvent(player_->getPosition(), 25.0f);
-        player_->setDead();
-        deleteDynamicObject(player_.get());
-        music_manager_->stop();
-    }
-
-    for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
-    {
-        if (!(*it)->update(time_elapsed))
+        case GameState::Paused:
         {
-            deleteHoveringObject(it->get());
-            auto next_it = std::next(it);
-            bullets_.erase(it);
-            it = next_it;
+            break;
         }
-    }
+        case GameState::Normal:
+        {
+            agents_manager_->update();
+            journal_->update(time_elapsed);
 
-    camera_->update(time_elapsed);
+            updateMapObjects(time_elapsed);
 
-    if (CFG.getInt("sound/sound_on"))
-    {
-        Engine::changeSoundListenerPosition(player_->getPosition());
-        music_manager_->update(time_elapsed);
+            if (player_->isAlive() && !player_->update(time_elapsed))
+            {
+                map_->spawnDecoration(player_->getPosition(), "blood");
+                spawnExplosionEvent(player_->getPosition(), 25.0f);
+                player_->setDead();
+                deleteDynamicObject(player_.get());
+                music_manager_->stop();
+            }
+
+            for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
+            {
+                if (!(*it)->update(time_elapsed))
+                {
+                    deleteHoveringObject(it->get());
+                    auto next_it = std::next(it);
+                    bullets_.erase(it);
+                    it = next_it;
+                }
+            }
+
+            camera_->update(time_elapsed);
+
+            if (CFG.getInt("sound/sound_on"))
+            {
+                Engine::changeSoundListenerPosition(player_->getPosition());
+                music_manager_->update(time_elapsed);
+            }
+            break;
+        }
+        case GameState::Reverse:
+        {
+            if (!journal_->executeTimeReversal(CFG.getFloat("time_reversal_speed_factor") * time_elapsed))
+            {
+                journal_->clear();
+                state_ = GameState::Normal;
+            }
+
+            break;
+        }
     }
 }
 
@@ -185,6 +208,8 @@ void Game::updateMapObjects(float time_elapsed)
         bool do_increment = true;
         if (!(*it)->update(time_elapsed, this->getCurrentTimeFactor()))
         {
+            journal_->eventEnemyDestroyed(it->get());
+
             // draw on this place destruction
             map_->spawnDecoration((*it)->getPosition(), "blood");
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
@@ -244,6 +269,11 @@ void Game::start()
 const sf::Vector2f& Game::getPlayerPosition() const
 {
     return player_->getPosition();
+}
+
+Map& Game::getMap()
+{
+    return *map_;
 }
 
 const ai::MapBlockage& Game::getMapBlockage() const
@@ -329,6 +359,23 @@ void Game::deleteDynamicObject(DynamicObject* d_obj)
     engine_->deleteDynamicObject(d_obj);
 }
 
+Enemy* Game::spawnNewEnemy(const std::string& id)
+{
+    auto ptr = map_->spawnCharacter({}, id);
+    engine_->registerDynamicObject(ptr);
+
+    ptr->registerAgentsManager(agents_manager_.get());
+    ptr->registerEnemy(player_.get());
+    ptr->registerMapBlockage(&map_->getMapBlockage());
+
+    for (auto& weapon : ptr->getWeapons())
+    {
+        weapon->registerSpawningFunction(std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    }
+
+    return ptr;
+}
+
 ai::AgentsManager& Game::getAgentsManager() const
 {
     return *agents_manager_;
@@ -350,6 +397,16 @@ void Game::setNormalTime()
 
     if (CFG.getInt("sound/sound_on"))
         music_manager_->setPlaybackPitch(1.0f);
+}
+
+void Game::setGameState(Game::GameState state)
+{
+    state_ = state;
+}
+
+Game::GameState Game::getGameState() const
+{
+    return state_;
 }
 
 float Game::getCurrentTimeFactor() const

@@ -4,7 +4,8 @@ float get_shot_factor=100.0f
 
 float bullet_time_factor=0.3f
 
+float journal_sampling_rate=10.0f
 
+float journal_max_time=10.0f
 
-
-
+float time_reversal_speed_factor=6.0f

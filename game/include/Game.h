@@ -16,6 +16,7 @@
 #include <common/Bullet.h>
 
 #include <misc/Camera.h>
+#include <misc/Journal.h>
 #include <characters/Player.h>
 
 #include <ui/UserInterface.h>
@@ -26,6 +27,13 @@ using namespace r3e;
 class Game : public AbstractGame {
 
 public:
+    enum class GameState
+    {
+        Paused,
+        Normal,
+        Reverse
+    };
+
     Game(const Game&) = delete;
 
     Game& operator=(const Game&) = delete;
@@ -37,6 +45,8 @@ public:
     }
 
     const sf::Vector2f& getPlayerPosition() const;
+
+    Map& getMap();
 
     const ai::MapBlockage& getMapBlockage() const;
 
@@ -70,9 +80,15 @@ public:
 
     void deleteDynamicObject(DynamicObject* d_obj);
 
+    Enemy* spawnNewEnemy(const std::string& id);
+
     void setBulletTime();
 
     void setNormalTime();
+
+    void setGameState(Game::GameState state);
+
+    Game::GameState getGameState() const;
 
     float getCurrentTimeFactor() const;
 
@@ -93,10 +109,12 @@ private:
     std::unique_ptr<ai::AgentsManager> agents_manager_;
     std::unique_ptr<audio::MusicManager> music_manager_;
 
+    std::unique_ptr<Journal> journal_;
     std::unique_ptr<Player> player_;
     std::unique_ptr<Map> map_;
     std::list<std::unique_ptr<Bullet>> bullets_;
 
+    Game::GameState state_;
     float current_time_factor_;
 
 };

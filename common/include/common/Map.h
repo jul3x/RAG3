@@ -53,19 +53,19 @@ public:
 
     std::list<std::shared_ptr<Obstacle>>& getObstacles();
 
-    void spawnDecorationTile(const sf::Vector2f& pos, const std::string& id, bool check = false);
+    DecorationTile* spawnDecorationTile(const sf::Vector2f& pos, const std::string& id, bool check = false);
 
-    void spawnObstacleTile(const sf::Vector2f& pos, const std::string& id, bool check = false);
+    ObstacleTile* spawnObstacleTile(const sf::Vector2f& pos, const std::string& id, bool check = false);
 
-    void spawnWeapon(const sf::Vector2f& pos, const std::string& id, bool check = false);
+    Collectible* spawnCollectible(const sf::Vector2f& pos, const std::string& id, bool check = false);
 
-    void spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check = false);
+    Enemy* spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check = false);
 
-    void spawnSpecial(const sf::Vector2f& pos, const std::string& id, bool check = false);
+    Special* spawnSpecial(const sf::Vector2f& pos, const std::string& id, bool check = false);
 
-    void spawnDecoration(const sf::Vector2f& pos, const std::string& id, bool check = false);
+    Decoration* spawnDecoration(const sf::Vector2f& pos, const std::string& id, bool check = false);
 
-    void spawnObstacle(const sf::Vector2f& pos, const std::string& id, bool check = false);
+    Obstacle* spawnObstacle(const sf::Vector2f& pos, const std::string& id, bool check = false);
 
     void removeTile(const sf::Vector2f& pos);
 

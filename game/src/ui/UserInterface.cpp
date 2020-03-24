@@ -120,6 +120,17 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                     player_->setForcedVelocity(utils::geo::polarToCartesian(1000.0f,
                                                                             M_PI / 180.0f * player_->getRotation()));
                 }
+                else if (event.key.code == sf::Keyboard::Escape)
+                {
+                    if (Game::get().getGameState() == Game::GameState::Paused)
+                        Game::get().setGameState(Game::GameState::Normal);
+                    else
+                        Game::get().setGameState(Game::GameState::Paused);
+                }
+                else if (event.key.code == sf::Keyboard::R)
+                {
+                    Game::get().setGameState(Game::GameState::Reverse);
+                }
                 break;
             }
             default:

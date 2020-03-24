@@ -117,6 +117,7 @@ void Game::update(float time_elapsed)
             {
                 if (!(*it)->update(time_elapsed))
                 {
+                    journal_->eventBulletDestroyed(it->get());
                     deleteHoveringObject(it->get());
                     auto next_it = std::next(it);
                     bullets_.erase(it);
@@ -276,6 +277,11 @@ Map& Game::getMap()
     return *map_;
 }
 
+const std::list<std::unique_ptr<Bullet>>& Game::getBullets() const
+{
+    return bullets_;
+}
+
 const ai::MapBlockage& Game::getMapBlockage() const
 {
     return map_->getMapBlockage();
@@ -306,9 +312,8 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, cons
 
 void Game::spawnBullet(const std::string& name, const sf::Vector2f& pos, const float dir)
 {
-    bullets_.emplace_back(std::make_unique<Bullet>(pos, name, dir));
-    engine_->registerHoveringObject(bullets_.back().get());
-
+    auto ptr = this->spawnNewBullet(name, pos, dir);
+    journal_->eventBulletSpawned(ptr);
     this->spawnShotEvent(name, pos, dir);
 }
 
@@ -359,6 +364,17 @@ void Game::deleteDynamicObject(DynamicObject* d_obj)
     engine_->deleteDynamicObject(d_obj);
 }
 
+Bullet* Game::spawnNewBullet(const std::string &id, const sf::Vector2f &pos, float dir)
+{
+    bullets_.emplace_back(std::make_unique<Bullet>(pos, id, dir));
+
+    auto ptr = bullets_.back().get();
+
+    engine_->registerHoveringObject(ptr);
+
+    return ptr;
+}
+
 Enemy* Game::spawnNewEnemy(const std::string& id)
 {
     auto ptr = map_->spawnCharacter({}, id);
@@ -374,6 +390,21 @@ Enemy* Game::spawnNewEnemy(const std::string& id)
     }
 
     return ptr;
+}
+
+void Game::findAndDeleteBullet(Bullet* ptr)
+{
+    for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
+    {
+        if (it->get() == ptr)
+        {
+            deleteHoveringObject(ptr);
+            bullets_.erase(it);
+            return;
+        }
+    }
+
+    std::cerr << "[Game] Warning - bullet to delete not found!" << std::endl;
 }
 
 ai::AgentsManager& Game::getAgentsManager() const

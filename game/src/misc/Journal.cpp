@@ -13,6 +13,7 @@ JournalEntry::JournalEntry(Journal* father) : father_(father)
 EnemyEntry::EnemyEntry(Journal* father, Enemy* enemy) : JournalEntry(father), ptr_(enemy)
 {
     pos_ = enemy->getPosition();
+    rotation_ = enemy->getRotation();
     life_ = enemy->getHealth();
     ammo_state_ = enemy->getWeapons().at(enemy->getCurrentWeapon())->getState();
 }
@@ -21,6 +22,7 @@ void EnemyEntry::executeEntryReversal()
 {
     auto new_ptr = father_->getUpdatedPtr(ptr_);
     new_ptr->setPosition(pos_);
+    new_ptr->setRotation(rotation_);
     //        new_ptr->setLife(life_);
     //        new_ptr->setAmmoState(ammo_state_);
 }
@@ -36,6 +38,40 @@ void DestroyEnemyEntry::executeEntryReversal()
     father_->setUpdatedPtr(ptr_, new_ptr);
 }
 
+BulletEntry::BulletEntry(Journal* father, Bullet* bullet) : JournalEntry(father), ptr_(bullet)
+{
+    pos_ = bullet->getPosition();
+}
+
+void BulletEntry::executeEntryReversal()
+{
+    auto new_ptr = father_->getUpdatedPtr(ptr_);
+    new_ptr->setPosition(pos_);
+}
+
+DestroyBulletEntry::DestroyBulletEntry(Journal* father, Bullet* bullet) : JournalEntry(father), ptr_(bullet)
+{
+    id_ = bullet->getId();
+    direction_ = bullet->getRotation();
+}
+
+void DestroyBulletEntry::executeEntryReversal()
+{
+    auto new_ptr = Game::get().spawnNewBullet(id_, {}, direction_);
+    new_ptr->setRotation(direction_);
+    father_->setUpdatedPtr(ptr_, new_ptr);
+}
+
+SpawnBulletEntry::SpawnBulletEntry(Journal* father, Bullet* bullet) : JournalEntry(father), ptr_(bullet)
+{
+}
+
+void SpawnBulletEntry::executeEntryReversal()
+{
+    auto new_ptr = father_->getUpdatedPtr(ptr_);
+    Game::get().findAndDeleteBullet(new_ptr);
+}
+
 Journal::Journal(float max_time_back, float sampling_rate) : time_elapsed_(0.0f)
 {
     frame_time_ = 1.0f / sampling_rate;
@@ -49,6 +85,7 @@ void Journal::clear()
 {
     journal_.clear();
     enemy_ptr_map_.clear();
+    bullet_ptr_map_.clear();
     journal_.emplace_back();
 
     time_elapsed_ = 0.0f;
@@ -57,6 +94,16 @@ void Journal::clear()
 void Journal::eventEnemyDestroyed(Enemy* enemy)
 {
     journal_.back().emplace_back(std::make_unique<DestroyEnemyEntry>(this, enemy));
+}
+
+void Journal::eventBulletDestroyed(Bullet* bullet)
+{
+    journal_.back().emplace_back(std::make_unique<DestroyBulletEntry>(this, bullet));
+}
+
+void Journal::eventBulletSpawned(Bullet* bullet)
+{
+    journal_.back().emplace_back(std::make_unique<SpawnBulletEntry>(this, bullet));
 }
 
 void Journal::update(float time_elapsed)
@@ -74,11 +121,17 @@ void Journal::update(float time_elapsed)
         }
 
         auto& enemies = Game::get().getMap().getCharacters();
+        auto& bullets = Game::get().getBullets();
 
         auto& journal_back = journal_.back();
         for (const auto& enemy : enemies)
         {
             journal_back.emplace_back(std::make_unique<EnemyEntry>(this, enemy.get()));
+        }
+
+        for (const auto& bullet : bullets)
+        {
+            journal_back.emplace_back(std::make_unique<BulletEntry>(this, bullet.get()));
         }
     }
 }
@@ -122,4 +175,16 @@ Enemy* Journal::getUpdatedPtr(Enemy* ptr)
 void Journal::setUpdatedPtr(Enemy* ptr, Enemy* new_ptr)
 {
     enemy_ptr_map_[ptr] = new_ptr;
+}
+
+Bullet* Journal::getUpdatedPtr(Bullet* ptr)
+{
+    auto it = bullet_ptr_map_.find(ptr);
+
+    return it != bullet_ptr_map_.end() ? it->second : ptr;
+}
+
+void Journal::setUpdatedPtr(Bullet* ptr, Bullet* new_ptr)
+{
+    bullet_ptr_map_[ptr] = new_ptr;
 }

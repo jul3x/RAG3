@@ -41,6 +41,8 @@ private:
     Enemy* ptr_;
 
     sf::Vector2f pos_;
+
+    float rotation_;
     float life_;
     float ammo_state_;
 
@@ -60,6 +62,45 @@ private:
 
 };
 
+
+class BulletEntry : public JournalEntry {
+public:
+    BulletEntry(Journal* father, Bullet* bullet);
+
+    void executeEntryReversal() override;
+
+private:
+    Bullet* ptr_;
+
+    sf::Vector2f pos_;
+
+};
+
+class DestroyBulletEntry : public JournalEntry {
+public:
+    DestroyBulletEntry(Journal* father, Bullet* bullet);
+
+    void executeEntryReversal() override;
+
+private:
+    Bullet* ptr_;
+
+    std::string id_;
+    float direction_;
+
+};
+
+class SpawnBulletEntry : public JournalEntry {
+public:
+    SpawnBulletEntry(Journal* father, Bullet* bullet);
+
+    void executeEntryReversal() override;
+
+private:
+    Bullet* ptr_;
+
+};
+
 class Journal {
 public:
     explicit Journal(float max_time_back = 1.0f, float sampling_rate = 1.0f);
@@ -67,6 +108,10 @@ public:
     void clear();
 
     void eventEnemyDestroyed(Enemy* enemy);
+
+    void eventBulletDestroyed(Bullet* bullet);
+
+    void eventBulletSpawned(Bullet* bullet);
 
     void update(float time_elapsed);
 
@@ -76,12 +121,18 @@ public:
 
     void setUpdatedPtr(Enemy* ptr, Enemy* new_ptr);
 
+    Bullet* getUpdatedPtr(Bullet* ptr);
+
+    void setUpdatedPtr(Bullet* ptr, Bullet* new_ptr);
+
 private:
     size_t journal_max_size_;
 
     std::deque<std::vector<std::unique_ptr<JournalEntry>>> journal_;
 
     std::unordered_map<Enemy*, Enemy*> enemy_ptr_map_;
+
+    std::unordered_map<Bullet*, Bullet*> bullet_ptr_map_;
 
     float time_elapsed_;
     float frame_time_;

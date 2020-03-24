@@ -48,6 +48,8 @@ public:
 
     Map& getMap();
 
+    const std::list<std::unique_ptr<Bullet>>& getBullets() const;
+
     const ai::MapBlockage& getMapBlockage() const;
 
     ai::AgentsManager& getAgentsManager() const;
@@ -81,6 +83,10 @@ public:
     void deleteDynamicObject(DynamicObject* d_obj);
 
     Enemy* spawnNewEnemy(const std::string& id);
+
+    Bullet* spawnNewBullet(const std::string& id, const sf::Vector2f& pos, float dir);
+
+    void findAndDeleteBullet(Bullet* ptr);
 
     void setBulletTime();
 

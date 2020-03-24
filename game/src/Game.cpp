@@ -159,6 +159,7 @@ void Game::updateMapObjects(float time_elapsed)
         bool do_increment = true;
         if (!(*it)->update(time_elapsed))
         {
+            journal_->eventObstacleTileDestroyed(it->get());
             // draw on this place destruction
             map_->spawnDecoration((*it)->getPosition(), "destroyed_wall");
             map_->spawnDecoration((*it)->getPosition(), "flame");
@@ -185,6 +186,7 @@ void Game::updateMapObjects(float time_elapsed)
         (*it)->updateAnimation(time_elapsed);
         if (!(*it)->update(time_elapsed))
         {
+            journal_->eventObstacleDestroyed(it->get());
             // draw on this place destruction
             map_->spawnDecoration((*it)->getPosition(), "flame");
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
@@ -320,8 +322,22 @@ void Game::spawnBullet(const std::string& name, const sf::Vector2f& pos, const f
 void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
 {
     auto bullet = dynamic_cast<Bullet*>(h_obj);
-    auto obstacle = dynamic_cast<Shootable*>(s_obj);
-    obstacle->getShot(*bullet);
+    auto obstacle = dynamic_cast<Obstacle*>(s_obj);
+    auto obstacle_tile = dynamic_cast<ObstacleTile*>(s_obj);
+
+    if (obstacle != nullptr)
+    {
+        journal_->eventObstacleShot(obstacle);
+
+        obstacle->getShot(*bullet);
+    }
+    else
+    {
+        journal_->eventObstacleTileShot(obstacle_tile);
+
+        obstacle_tile->getShot(*bullet);
+    }
+
     spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
                      static_cast<float>(std::pow(CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
@@ -392,6 +408,21 @@ Enemy* Game::spawnNewEnemy(const std::string& id)
     return ptr;
 }
 
+ObstacleTile* Game::spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos)
+{
+    auto new_ptr = map_->spawnObstacleTile(pos, id);
+    engine_->registerStaticObject(new_ptr);
+    return new_ptr;
+}
+
+
+Obstacle* Game::spawnNewObstacle(const std::string& id, const sf::Vector2f& pos)
+{
+    auto new_ptr = map_->spawnObstacle(pos, id);
+    engine_->registerStaticObject(new_ptr);
+    return new_ptr;
+}
+
 void Game::findAndDeleteBullet(Bullet* ptr)
 {
     for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
@@ -432,6 +463,9 @@ void Game::setNormalTime()
 
 void Game::setGameState(Game::GameState state)
 {
+    if (state_ == Game::GameState::Reverse && state == Game::GameState::Normal)
+        journal_->clear();
+
     state_ = state;
 }
 

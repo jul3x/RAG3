@@ -71,11 +71,6 @@ const std::vector<std::shared_ptr<AbstractWeapon>>& Character::getWeapons() cons
     return this->weapons_in_backpack_;
 }
 
-int Character::getHealth() const
-{
-    return this->life_;
-}
-
 int Character::getMaxHealth() const
 {
     return this->max_life_;

@@ -20,6 +20,16 @@ public:
         life_ = life_ < 0 ? 0 : life_;
     }
 
+    virtual int getHealth() const
+    {
+        return life_;
+    }
+
+    virtual void setHealth(int life)
+    {
+        life_ = life;
+    }
+
 protected:
     int life_;
 };

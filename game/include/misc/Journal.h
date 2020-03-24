@@ -12,94 +12,10 @@
 
 #include <common/Map.h>
 
+#include <misc/JournalEntries.h>
 
 using namespace r3e;
 
-class Journal;
-
-class JournalEntry {
-public:
-    JournalEntry() = default;
-
-    JournalEntry(Journal* father);
-
-    virtual void executeEntryReversal() = 0;
-
-protected:
-    Journal* father_;
-
-};
-
-
-class EnemyEntry : public JournalEntry {
-public:
-    EnemyEntry(Journal* father, Enemy* enemy);
-
-    void executeEntryReversal() override;
-
-private:
-    Enemy* ptr_;
-
-    sf::Vector2f pos_;
-
-    float rotation_;
-    float life_;
-    float ammo_state_;
-
-};
-
-
-class DestroyEnemyEntry : public JournalEntry {
-public:
-    DestroyEnemyEntry(Journal* father, Enemy* enemy);
-
-    void executeEntryReversal() override;
-
-private:
-    Enemy* ptr_;
-
-    std::string id_;
-
-};
-
-
-class BulletEntry : public JournalEntry {
-public:
-    BulletEntry(Journal* father, Bullet* bullet);
-
-    void executeEntryReversal() override;
-
-private:
-    Bullet* ptr_;
-
-    sf::Vector2f pos_;
-
-};
-
-class DestroyBulletEntry : public JournalEntry {
-public:
-    DestroyBulletEntry(Journal* father, Bullet* bullet);
-
-    void executeEntryReversal() override;
-
-private:
-    Bullet* ptr_;
-
-    std::string id_;
-    float direction_;
-
-};
-
-class SpawnBulletEntry : public JournalEntry {
-public:
-    SpawnBulletEntry(Journal* father, Bullet* bullet);
-
-    void executeEntryReversal() override;
-
-private:
-    Bullet* ptr_;
-
-};
 
 class Journal {
 public:
@@ -113,6 +29,14 @@ public:
 
     void eventBulletSpawned(Bullet* bullet);
 
+    void eventObstacleDestroyed(Obstacle* ptr);
+
+    void eventObstacleShot(Obstacle* ptr);
+
+    void eventObstacleTileDestroyed(ObstacleTile* ptr);
+
+    void eventObstacleTileShot(ObstacleTile* ptr);
+
     void update(float time_elapsed);
 
     bool executeTimeReversal(float time_elapsed);
@@ -125,17 +49,28 @@ public:
 
     void setUpdatedPtr(Bullet* ptr, Bullet* new_ptr);
 
+    Obstacle* getUpdatedPtr(Obstacle* ptr);
+
+    void setUpdatedPtr(Obstacle* ptr, Obstacle* new_ptr);
+
+    ObstacleTile* getUpdatedPtr(ObstacleTile* ptr);
+
+    void setUpdatedPtr(ObstacleTile* ptr, ObstacleTile* new_ptr);
+
 private:
+    static constexpr size_t MIN_JOURNAL_SIZE_ = 10;
     size_t journal_max_size_;
 
     std::deque<std::vector<std::unique_ptr<JournalEntry>>> journal_;
 
     std::unordered_map<Enemy*, Enemy*> enemy_ptr_map_;
-
     std::unordered_map<Bullet*, Bullet*> bullet_ptr_map_;
+    std::unordered_map<ObstacleTile*, ObstacleTile*> obstacle_tile_ptr_map_;
+    std::unordered_map<Obstacle*, Obstacle*> obstacle_ptr_map_;
 
     float time_elapsed_;
     float frame_time_;
 };
+
 
 #endif //RAG3_GAME_MISC_JOURNAL_H

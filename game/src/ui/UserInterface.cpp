@@ -133,6 +133,14 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 }
                 break;
             }
+            case sf::Event::KeyReleased:
+            {
+                if (event.key.code == sf::Keyboard::R)
+                {
+                    Game::get().setGameState(Game::GameState::Normal);
+                }
+                break;
+            }
             default:
             {
                 break;
@@ -192,7 +200,7 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
 
     crosshair_.setPosition(mouse_pos.x, mouse_pos.y);
 
-    if (player_->isAlive())
+    if (player_->isAlive() && Game::get().getGameState() == Game::GameState::Normal)
     {
         player_->setWeaponPointing(mouse_world_pos);
 

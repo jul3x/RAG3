@@ -44,8 +44,6 @@ public:
 
     const std::vector<std::shared_ptr<AbstractWeapon>>& getWeapons() const;
 
-    int getHealth() const;
-
     int getMaxHealth() const;
 
     LifeState getLifeState() const;

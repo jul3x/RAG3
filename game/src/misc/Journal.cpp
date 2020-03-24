@@ -2,75 +2,11 @@
 // Created by jul3x on 24.03.2020.
 //
 
-#include <misc/Journal.h>
 #include <Game.h>
 
+#include <misc/JournalEntries.h>
+#include <misc/Journal.h>
 
-JournalEntry::JournalEntry(Journal* father) : father_(father)
-{
-}
-
-EnemyEntry::EnemyEntry(Journal* father, Enemy* enemy) : JournalEntry(father), ptr_(enemy)
-{
-    pos_ = enemy->getPosition();
-    rotation_ = enemy->getRotation();
-    life_ = enemy->getHealth();
-    ammo_state_ = enemy->getWeapons().at(enemy->getCurrentWeapon())->getState();
-}
-
-void EnemyEntry::executeEntryReversal()
-{
-    auto new_ptr = father_->getUpdatedPtr(ptr_);
-    new_ptr->setPosition(pos_);
-    new_ptr->setRotation(rotation_);
-    //        new_ptr->setLife(life_);
-    //        new_ptr->setAmmoState(ammo_state_);
-}
-
-DestroyEnemyEntry::DestroyEnemyEntry(Journal* father, Enemy* enemy) : JournalEntry(father), ptr_(enemy)
-{
-    id_ = enemy->getId();
-}
-
-void DestroyEnemyEntry::executeEntryReversal()
-{
-    auto new_ptr = Game::get().spawnNewEnemy(id_);
-    father_->setUpdatedPtr(ptr_, new_ptr);
-}
-
-BulletEntry::BulletEntry(Journal* father, Bullet* bullet) : JournalEntry(father), ptr_(bullet)
-{
-    pos_ = bullet->getPosition();
-}
-
-void BulletEntry::executeEntryReversal()
-{
-    auto new_ptr = father_->getUpdatedPtr(ptr_);
-    new_ptr->setPosition(pos_);
-}
-
-DestroyBulletEntry::DestroyBulletEntry(Journal* father, Bullet* bullet) : JournalEntry(father), ptr_(bullet)
-{
-    id_ = bullet->getId();
-    direction_ = bullet->getRotation();
-}
-
-void DestroyBulletEntry::executeEntryReversal()
-{
-    auto new_ptr = Game::get().spawnNewBullet(id_, {}, direction_);
-    new_ptr->setRotation(direction_);
-    father_->setUpdatedPtr(ptr_, new_ptr);
-}
-
-SpawnBulletEntry::SpawnBulletEntry(Journal* father, Bullet* bullet) : JournalEntry(father), ptr_(bullet)
-{
-}
-
-void SpawnBulletEntry::executeEntryReversal()
-{
-    auto new_ptr = father_->getUpdatedPtr(ptr_);
-    Game::get().findAndDeleteBullet(new_ptr);
-}
 
 Journal::Journal(float max_time_back, float sampling_rate) : time_elapsed_(0.0f)
 {
@@ -86,6 +22,8 @@ void Journal::clear()
     journal_.clear();
     enemy_ptr_map_.clear();
     bullet_ptr_map_.clear();
+    obstacle_tile_ptr_map_.clear();
+    obstacle_ptr_map_.clear();
     journal_.emplace_back();
 
     time_elapsed_ = 0.0f;
@@ -105,6 +43,31 @@ void Journal::eventBulletSpawned(Bullet* bullet)
 {
     journal_.back().emplace_back(std::make_unique<SpawnBulletEntry>(this, bullet));
 }
+
+void Journal::eventObstacleDestroyed(Obstacle* ptr)
+{
+    journal_.back().emplace_back(
+            std::make_unique<DestroyObstacleEntry>(this, ptr));
+}
+
+void Journal::eventObstacleShot(Obstacle* ptr)
+{
+    journal_.back().emplace_back(
+            std::make_unique<ShotObstacleEntry>(this, ptr));
+}
+
+void Journal::eventObstacleTileDestroyed(ObstacleTile* ptr)
+{
+    journal_.back().emplace_back(
+            std::make_unique<DestroyObstacleTileEntry>(this, ptr));
+}
+
+void Journal::eventObstacleTileShot(ObstacleTile* ptr)
+{
+    journal_.back().emplace_back(
+            std::make_unique<ShotObstacleTileEntry>(this, ptr));
+}
+
 
 void Journal::update(float time_elapsed)
 {
@@ -138,6 +101,12 @@ void Journal::update(float time_elapsed)
 
 bool Journal::executeTimeReversal(float time_elapsed)
 {
+    if (journal_.size() < MIN_JOURNAL_SIZE_)
+    {
+        std::cout << "[Journal] Warning - could not execute time reversal" << std::endl;
+        return false;
+    }
+
     time_elapsed_ += time_elapsed;
 
     auto frames_elapsed = static_cast<short int>(time_elapsed_ / frame_time_);
@@ -187,4 +156,28 @@ Bullet* Journal::getUpdatedPtr(Bullet* ptr)
 void Journal::setUpdatedPtr(Bullet* ptr, Bullet* new_ptr)
 {
     bullet_ptr_map_[ptr] = new_ptr;
+}
+
+Obstacle* Journal::getUpdatedPtr(Obstacle* ptr)
+{
+    auto it = obstacle_ptr_map_.find(ptr);
+
+    return it != obstacle_ptr_map_.end() ? it->second : ptr;
+}
+
+void Journal::setUpdatedPtr(Obstacle* ptr, Obstacle* new_ptr)
+{
+    obstacle_ptr_map_[ptr] = new_ptr;
+}
+
+ObstacleTile* Journal::getUpdatedPtr(ObstacleTile* ptr)
+{
+    auto it = obstacle_tile_ptr_map_.find(ptr);
+
+    return it != obstacle_tile_ptr_map_.end() ? it->second : ptr;
+}
+
+void Journal::setUpdatedPtr(ObstacleTile* ptr, ObstacleTile* new_ptr)
+{
+    obstacle_tile_ptr_map_[ptr] = new_ptr;
 }

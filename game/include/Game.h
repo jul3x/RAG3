@@ -86,6 +86,10 @@ public:
 
     Bullet* spawnNewBullet(const std::string& id, const sf::Vector2f& pos, float dir);
 
+    Obstacle* spawnNewObstacle(const std::string& id, const sf::Vector2f& pos);
+
+    ObstacleTile* spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos);
+
     void findAndDeleteBullet(Bullet* ptr);
 
     void setBulletTime();

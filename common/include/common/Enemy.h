@@ -35,6 +35,8 @@ public:
 
     void registerEnemy(const Character* enemy);
 
+    void clearEnemies();
+
     void registerMapBlockage(const ai::MapBlockage* map_blockage);
 
     bool update(float time_elapsed, float time_factor);
@@ -42,6 +44,8 @@ public:
     const sf::Vector2f& getStartPosition() const override;
 
 private:
+    inline void handleEnemySelection();
+
     inline void handleVisibilityState();
 
     inline void handleActionState();
@@ -52,7 +56,9 @@ private:
     static constexpr float WALLS_BETWEEN_CLOSE_ = 0.0f;
     static constexpr float WALLS_BETWEEN_FAR_ = 1.0f;
 
-    const Character* enemy_;
+    std::list<const Character*> enemies_;
+    const Character* current_enemy_;
+
     const ai::MapBlockage* map_blockage_;
 
     VisibilityState visibility_state_;

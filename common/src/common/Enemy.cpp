@@ -32,7 +32,14 @@ Enemy::Enemy(const sf::Vector2f& position,
 
 void Enemy::registerEnemy(const Character* enemy)
 {
-    enemy_ = enemy;
+    enemies_.push_back(enemy);
+    current_enemy_ = enemy;
+}
+
+void Enemy::clearEnemies()
+{
+    enemies_.clear();
+    current_enemy_ = nullptr;
 }
 
 void Enemy::registerMapBlockage(const ai::MapBlockage* map_blockage)
@@ -45,11 +52,11 @@ bool Enemy::update(float time_elapsed, float time_factor)
     if (!this->isVisible()) return true;
     bool is_alive = Character::update(time_elapsed);
 
-    auto& player_position = enemy_->getPosition();
-
+    handleEnemySelection();
     handleVisibilityState();
     handleActionState();
 
+    auto& enemy_position = current_enemy_->getPosition();
     auto velocity = utils::getFloat(RM.getObjectParams("characters", this->getId()), "max_speed") * this->generateVelocityForPath();
 
     switch (action_state_)
@@ -64,14 +71,14 @@ bool Enemy::update(float time_elapsed, float time_factor)
         }
         case ActionState::Follow:
         {
-            this->setWeaponPointing(player_position);
-            this->setCurrentGoal(player_position);
+            this->setWeaponPointing(enemy_position);
+            this->setCurrentGoal(enemy_position);
             this->setWeaponPointing(this->getPosition() + velocity);
             break;
         }
         case ActionState::DestroyWall:
         {
-            this->setWeaponPointing(player_position);
+            this->setWeaponPointing(enemy_position);
             this->setNoGoal();
 
             if (this->isAlreadyRotated())
@@ -80,7 +87,7 @@ bool Enemy::update(float time_elapsed, float time_factor)
         }
         case ActionState::Shot:
         {
-            this->setWeaponPointing(player_position);
+            this->setWeaponPointing(enemy_position);
             this->setNoGoal();
 
             if (this->isAlreadyRotated())
@@ -90,8 +97,8 @@ bool Enemy::update(float time_elapsed, float time_factor)
         }
         case ActionState::ShotAndRun:
         {
-            this->setWeaponPointing(player_position);
-            this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - player_position));
+            this->setWeaponPointing(enemy_position);
+            this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - enemy_position));
 
             if (this->isAlreadyRotated())
                 this->shot(time_factor);
@@ -100,7 +107,7 @@ bool Enemy::update(float time_elapsed, float time_factor)
         case ActionState::Run:
         {
             this->setWeaponPointing(this->getPosition() + velocity);
-            this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - player_position));
+            this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - enemy_position));
             break;
         }
     }
@@ -115,14 +122,30 @@ const sf::Vector2f& Enemy::getStartPosition() const
     return this->getPosition();
 }
 
+void Enemy::handleEnemySelection()
+{
+    current_enemy_ = enemies_.front();
+    auto current_distance = utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition());
+    for (const auto& enemy : enemies_)
+    {
+        auto new_distance = utils::geo::getDistance(enemy->getPosition(), this->getPosition());
+        if (new_distance < current_distance)
+        {
+            current_enemy_ = enemy;
+            current_distance = new_distance;
+        }
+    }
+
+}
+
 void Enemy::handleVisibilityState()
 {
     float start_x = std::round(this->getPosition().x / map_blockage_->scale_x_);
     float start_y = std::round(this->getPosition().y / map_blockage_->scale_y_);
-    float goal_x = std::round(enemy_->getPosition().x / map_blockage_->scale_x_);
-    float goal_y = std::round(enemy_->getPosition().y / map_blockage_->scale_y_);
+    float goal_x = std::round(current_enemy_->getPosition().x / map_blockage_->scale_x_);
+    float goal_y = std::round(current_enemy_->getPosition().y / map_blockage_->scale_y_);
 
-    auto dir = utils::geo::getNormalized(enemy_->getPosition() - this->getPosition());
+    auto dir = utils::geo::getNormalized(current_enemy_->getPosition() - this->getPosition());
 
     float walls_between = 0;
     while (!utils::num::isNearlyEqual(start_x, goal_x, 1.0f) ||
@@ -143,7 +166,7 @@ void Enemy::handleVisibilityState()
         if (walls_between > Enemy::WALLS_BETWEEN_FAR_) break;
     }
 
-    if (utils::geo::getDistance(enemy_->getPosition(), this->getPosition()) > Enemy::MAX_DISTANCE_)
+    if (utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition()) > Enemy::MAX_DISTANCE_)
         visibility_state_ = VisibilityState::OutOfRange;
     else if (walls_between <= Enemy::WALLS_BETWEEN_CLOSE_)
         visibility_state_ = VisibilityState::Close;

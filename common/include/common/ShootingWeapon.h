@@ -17,12 +17,13 @@ class ShootingWeapon : public AbstractWeapon {
 public:
     ShootingWeapon(const std::string& id);
 
-
     sf::Vector2f use(float time_factor) override;
 
     int getAmmunition() const;
 
     float getState() const override;
+
+    void setState(float state) override;
 
 private:
     static constexpr float BULLET_STARTING_OFFSET_ = 20.0f;

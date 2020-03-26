@@ -20,6 +20,8 @@ EnemyEntry::EnemyEntry(Journal* father, Enemy* enemy) : JournalEntry(father), pt
     rotation_ = enemy->getRotation();
     life_ = enemy->getHealth();
     ammo_state_ = enemy->getWeapons().at(enemy->getCurrentWeapon())->getState();
+
+    std::cout << "ZAPISUJE NA TYLE" << ammo_state_ << "Entry no. " << this << std::endl;
 }
 
 void EnemyEntry::executeEntryReversal()
@@ -28,7 +30,8 @@ void EnemyEntry::executeEntryReversal()
     new_ptr->setPosition(pos_);
     new_ptr->setRotation(rotation_);
     new_ptr->setHealth(life_);
-    //        new_ptr->setAmmoState(ammo_state_);
+    new_ptr->getWeapons().at(new_ptr->getCurrentWeapon())->setState(ammo_state_);
+    std::cout << "USTAWIAM NA : " << new_ptr->getWeapons().at(new_ptr->getCurrentWeapon())->getState() << "Entry no. " << this << std::endl;
 }
 
 DestroyEnemyEntry::DestroyEnemyEntry(Journal* father, Enemy* enemy) : JournalEntry(father), ptr_(enemy)

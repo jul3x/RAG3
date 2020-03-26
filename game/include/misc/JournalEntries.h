@@ -38,7 +38,7 @@ private:
     sf::Vector2f pos_;
 
     float rotation_;
-    float life_;
+    int life_;
     float ammo_state_;
 
 };

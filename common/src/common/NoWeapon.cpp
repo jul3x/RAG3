@@ -16,3 +16,7 @@ float NoWeapon::getState() const
 {
     return 0.0f;
 }
+
+void NoWeapon::setState(float state)
+{
+}

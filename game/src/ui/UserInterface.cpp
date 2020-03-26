@@ -251,7 +251,7 @@ inline void UserInterface::updatePlayerStates()
     health_bar_.updateHealth(player_->getHealth());
 
     time_bar_.updateTime(Game::get().getJournal().getDurationSaved());
-    time_bar_.setFreeze(Game::get().isJournalFreezed());
+    time_bar_.setFreeze(Game::get().isJournalFreezed() && Game::get().getGameState() != Game::GameState::Reverse);
 
     blood_splash_.updateLifeState(player_->getLifeState());
 }

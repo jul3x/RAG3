@@ -495,7 +495,7 @@ Game::GameState Game::getGameState() const
 
 bool Game::isJournalFreezed() const
 {
-    return journal_->getDurationSaved() < CFG.getFloat("journal_min_time") && state_ != Game::GameState::Reverse;
+    return journal_->getDurationSaved() < CFG.getFloat("journal_min_time");
 }
 
 float Game::getCurrentTimeFactor() const

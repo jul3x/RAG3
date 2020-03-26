@@ -2,11 +2,14 @@
 // Created by jul3x on 03.11.19.
 //
 
+#include <R3E/system/Config.h>
+
 #include <common/ResourceManager.h>
 #include <common/NoWeapon.h>
 
 #include <characters/Player.h>
 #include <common/ShootingWeapon.h>
+
 
 
 Player::Player(const sf::Vector2f& position) :

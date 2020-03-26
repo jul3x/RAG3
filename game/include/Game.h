@@ -48,6 +48,8 @@ public:
 
     Map& getMap();
 
+    const Journal& getJournal() const;
+
     const std::list<std::unique_ptr<Bullet>>& getBullets() const;
 
     const ai::MapBlockage& getMapBlockage() const;
@@ -95,6 +97,8 @@ public:
     void setBulletTime();
 
     void setNormalTime();
+
+    bool isJournalFreezed() const;
 
     void setGameState(Game::GameState state);
 

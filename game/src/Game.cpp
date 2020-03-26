@@ -100,7 +100,6 @@ void Game::update(float time_elapsed)
         case GameState::Normal:
         {
             agents_manager_->update();
-            journal_->update(time_elapsed);
 
             updateMapObjects(time_elapsed);
 
@@ -125,6 +124,7 @@ void Game::update(float time_elapsed)
                 }
             }
 
+            journal_->update(time_elapsed);
             camera_->update(time_elapsed);
 
             if (CFG.getInt("sound/sound_on"))
@@ -138,8 +138,7 @@ void Game::update(float time_elapsed)
         {
             if (!journal_->executeTimeReversal(CFG.getFloat("time_reversal_speed_factor") * time_elapsed))
             {
-                journal_->clear();
-                state_ = GameState::Normal;
+                this->setGameState(GameState::Normal);
             }
 
             break;
@@ -277,6 +276,11 @@ const sf::Vector2f& Game::getPlayerPosition() const
 Map& Game::getMap()
 {
     return *map_;
+}
+
+const Journal& Game::getJournal() const
+{
+    return *journal_;
 }
 
 const std::list<std::unique_ptr<Bullet>>& Game::getBullets() const
@@ -463,8 +467,23 @@ void Game::setNormalTime()
 
 void Game::setGameState(Game::GameState state)
 {
-    if (state_ == Game::GameState::Reverse && state == Game::GameState::Normal)
-        journal_->clear();
+    switch (state)
+    {
+        case GameState::Normal:
+            if (state_ == GameState::Reverse)
+                journal_->clear();
+
+            engine_->turnOnCollisions();
+            break;
+        case GameState::Reverse:
+            if (this->isJournalFreezed())
+                return;
+
+            engine_->turnOffCollisions();
+            break;
+        case GameState::Paused:
+            break;
+    }
 
     state_ = state;
 }
@@ -472,6 +491,11 @@ void Game::setGameState(Game::GameState state)
 Game::GameState Game::getGameState() const
 {
     return state_;
+}
+
+bool Game::isJournalFreezed() const
+{
+    return journal_->getDurationSaved() < CFG.getFloat("journal_min_time") && state_ != Game::GameState::Reverse;
 }
 
 float Game::getCurrentTimeFactor() const

@@ -12,7 +12,6 @@ Journal::Journal(float max_time_back, float sampling_rate) : time_elapsed_(0.0f)
 {
     frame_time_ = 1.0f / sampling_rate;
     journal_max_size_ = static_cast<size_t>(max_time_back * sampling_rate);
-    std::cout << journal_max_size_ << std::endl;
 
     journal_.emplace_back();
 }
@@ -68,6 +67,10 @@ void Journal::eventObstacleTileShot(ObstacleTile* ptr)
             std::make_unique<ShotObstacleTileEntry>(this, ptr));
 }
 
+float Journal::getDurationSaved() const
+{
+    return journal_.size() * frame_time_;
+}
 
 void Journal::update(float time_elapsed)
 {

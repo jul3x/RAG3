@@ -38,6 +38,10 @@ namespace r3e {
 
         void initializeCollisions(const sf::Vector2f& size, float grid);
 
+        void turnOnCollisions();
+
+        void turnOffCollisions();
+
         void registerUI(AbstractUserInterface* user_interface);
 
         void registerCamera(graphics::AbstractCamera* camera);
@@ -91,6 +95,7 @@ namespace r3e {
 
         float time_scale_factor_;
         float frame_time_;
+        float collisions_on_;
 
         std::list<std::shared_ptr<graphics::AnimationEvent>> animation_events_;
     };

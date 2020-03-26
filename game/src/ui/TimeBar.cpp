@@ -22,14 +22,14 @@ TimeBar::TimeBar(const sf::Vector2f& position) :
     curr_time_.setTexture(&RM.getTexture("current_time_bar"));
 }
 
-void TimeBar::setMaxTime(int max_time)
+void TimeBar::setMaxTime(float max_time)
 {
     this->max_time_ = max_time;
 }
 
-void TimeBar::updateTime(int time)
+void TimeBar::updateTime(float time)
 {
-    float percentage = static_cast<float>(time) / static_cast<float>(max_time_);
+    float percentage = time / max_time_;
     float theta = M_PI_2 + M_PI_4 - percentage * M_PI;
 
     if (theta < M_PI_4)
@@ -37,23 +37,31 @@ void TimeBar::updateTime(int time)
         curr_time_.setPoint(1, TIME_SIZE_X_ / 2.0f / std::cos(theta) * sf::Vector2f{std::cos(theta),
                                                                                     -std::sin(theta)});
         curr_time_.setPoint(2, {TIME_SIZE_X_ / 2.0f, -TIME_SIZE_Y_ / 2.0f});
-        curr_time_.setTextureRect({{0, 0}, {static_cast<int>(curr_time_.getLocalBounds().width),
-                                            static_cast<int>(curr_time_.getLocalBounds().height)}});
     }
     else
     {
         curr_time_.setPoint(1, TIME_SIZE_X_ / 2.0f / std::sin(theta) * sf::Vector2f{std::cos(theta),
                                                                                     -std::sin(theta)});
         curr_time_.setPoint(2, {-TIME_SIZE_X_ / 2.0f, -TIME_SIZE_Y_ / 2.0f});
-
-        curr_time_.setTextureRect({
-            sf::Vector2i{0, 0},
-            sf::Vector2i{static_cast<int>(curr_time_.getLocalBounds().width),
-                         static_cast<int>(curr_time_.getLocalBounds().height)}});
     }
 
+    curr_time_.setTextureRect({sf::Vector2i{0, 0},
+                               sf::Vector2i{static_cast<int>(curr_time_.getLocalBounds().width),
+                                            static_cast<int>(curr_time_.getLocalBounds().height)}});
+}
 
-
+void TimeBar::setFreeze(bool freeze)
+{
+    if (freeze)
+    {
+        shape_.setFillColor(sf::Color(100, 100, 100, 100));
+        curr_time_.setFillColor(sf::Color(100, 100, 100, 100));
+    }
+    else
+    {
+        shape_.setFillColor(sf::Color(255, 255, 255, 255));
+        curr_time_.setFillColor(sf::Color(255, 255, 255, 255));
+    }
 }
 
 void TimeBar::draw(sf::RenderTarget& target, sf::RenderStates states) const

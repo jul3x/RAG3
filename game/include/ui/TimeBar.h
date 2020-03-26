@@ -17,9 +17,11 @@ class TimeBar : public AbstractDrawableObject {
 public:
     explicit TimeBar(const sf::Vector2f& position);
 
-    void setMaxTime(int max_time);
+    void setMaxTime(float max_time);
 
-    void updateTime(int time);
+    void updateTime(float time);
+
+    void setFreeze(bool freeze);
 
     void setPosition(float x, float y) override;
 
@@ -31,7 +33,7 @@ private:
     static constexpr float TIME_SIZE_X_ = 250.0f;
     static constexpr float TIME_SIZE_Y_ = 250.0f;
 
-    int max_time_;
+    float max_time_;
 
     sf::ConvexShape curr_time_;
 };

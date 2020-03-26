@@ -39,7 +39,7 @@ void UserInterface::initialize(graphics::Graphics& graphics)
         throw std::runtime_error("[UserInterface] player_ or camera_ is nullptr!");
     }
     health_bar_.setMaxHealth(player_->getMaxHealth());
-    time_bar_.setMaxTime(player_->getMaxHealth()); // TODO temporarily
+    time_bar_.setMaxTime(CFG.getFloat("journal_max_time"));
 
     fps_text_.setFillColor(sf::Color::White);
     fps_text_.setPosition(FPS_X_, FPS_Y_);
@@ -141,7 +141,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                     else
                         Game::get().setGameState(Game::GameState::Paused);
                 }
-                else if (event.key.code == sf::Keyboard::R)
+                else if (event.key.code == sf::Keyboard::R && !Game::get().isJournalFreezed())
                 {
                     Game::get().setGameState(Game::GameState::Reverse);
                 }
@@ -250,7 +250,8 @@ inline void UserInterface::updatePlayerStates()
 
     health_bar_.updateHealth(player_->getHealth());
 
-    time_bar_.updateTime(player_->getHealth());
+    time_bar_.updateTime(Game::get().getJournal().getDurationSaved());
+    time_bar_.setFreeze(Game::get().isJournalFreezed());
 
     blood_splash_.updateLifeState(player_->getLifeState());
 }

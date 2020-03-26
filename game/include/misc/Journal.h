@@ -37,6 +37,8 @@ public:
 
     void eventObstacleTileShot(ObstacleTile* ptr);
 
+    float getDurationSaved() const;
+
     void update(float time_elapsed);
 
     bool executeTimeReversal(float time_elapsed);

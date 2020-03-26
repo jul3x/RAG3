@@ -67,6 +67,12 @@ void Journal::eventObstacleTileShot(ObstacleTile* ptr)
             std::make_unique<ShotObstacleTileEntry>(this, ptr));
 }
 
+void Journal::eventDecorationSpawned(Decoration* ptr)
+{
+    journal_.back().emplace_back(
+            std::make_unique<SpawnDecorationEntry>(this, ptr));
+}
+
 float Journal::getDurationSaved() const
 {
     return journal_.size() * frame_time_;

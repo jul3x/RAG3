@@ -160,8 +160,11 @@ void Game::updateMapObjects(float time_elapsed)
         {
             journal_->eventObstacleTileDestroyed(it->get());
             // draw on this place destruction
-            map_->spawnDecoration((*it)->getPosition(), "destroyed_wall");
-            map_->spawnDecoration((*it)->getPosition(), "flame");
+            auto dec_ptr = map_->spawnDecoration((*it)->getPosition(), "destroyed_wall");
+            journal_->eventDecorationSpawned(dec_ptr);
+            dec_ptr = map_->spawnDecoration((*it)->getPosition(), "flame");
+            journal_->eventDecorationSpawned(dec_ptr);
+
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
 
             auto next_it = std::next(it);
@@ -187,7 +190,9 @@ void Game::updateMapObjects(float time_elapsed)
         {
             journal_->eventObstacleDestroyed(it->get());
             // draw on this place destruction
-            map_->spawnDecoration((*it)->getPosition(), "flame");
+            auto dec_ptr = map_->spawnDecoration((*it)->getPosition(), "flame");
+            journal_->eventDecorationSpawned(dec_ptr);
+
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
 
             auto next_it = std::next(it);
@@ -213,7 +218,9 @@ void Game::updateMapObjects(float time_elapsed)
             journal_->eventEnemyDestroyed(it->get());
 
             // draw on this place destruction
-            map_->spawnDecoration((*it)->getPosition(), "blood");
+            auto dec_ptr = map_->spawnDecoration((*it)->getPosition(), "blood");
+            journal_->eventDecorationSpawned(dec_ptr);
+
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
 
             auto next_it = std::next(it);
@@ -429,17 +436,32 @@ Obstacle* Game::spawnNewObstacle(const std::string& id, const sf::Vector2f& pos)
 
 void Game::findAndDeleteBullet(Bullet* ptr)
 {
-    for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
+    for (auto it = bullets_.rbegin(); it != bullets_.rend(); ++it)
     {
         if (it->get() == ptr)
         {
             deleteHoveringObject(ptr);
-            bullets_.erase(it);
+            bullets_.erase((++it).base());
             return;
         }
     }
 
     std::cerr << "[Game] Warning - bullet to delete not found!" << std::endl;
+}
+
+void Game::findAndDeleteDecoration(Decoration* ptr)
+{
+    auto& decorations = map_->getDecorations();
+    for (auto it = decorations.rbegin(); it != decorations.rend(); ++it)
+    {
+        if (it->get() == ptr)
+        {
+            decorations.erase((++it).base());
+            return;
+        }
+    }
+
+    std::cerr << "[Game] Warning - decoration to delete not found!" << std::endl;
 }
 
 ai::AgentsManager& Game::getAgentsManager() const

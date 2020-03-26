@@ -37,6 +37,8 @@ public:
 
     void eventObstacleTileShot(ObstacleTile* ptr);
 
+    void eventDecorationSpawned(Decoration* ptr);
+
     float getDurationSaved() const;
 
     void update(float time_elapsed);

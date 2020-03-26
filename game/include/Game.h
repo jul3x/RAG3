@@ -94,6 +94,8 @@ public:
 
     void findAndDeleteBullet(Bullet* ptr);
 
+    void findAndDeleteDecoration(Decoration* ptr);
+
     void setBulletTime();
 
     void setNormalTime();

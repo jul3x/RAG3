@@ -151,4 +151,16 @@ private:
 };
 
 
+class SpawnDecorationEntry : public JournalEntry {
+public:
+    SpawnDecorationEntry(Journal* father, Decoration* ptr);
+
+    void executeEntryReversal() override;
+
+private:
+    Decoration* ptr_;
+
+};
+
+
 #endif //RAG3_GAME_MISC_JOURNALENTRIES_H

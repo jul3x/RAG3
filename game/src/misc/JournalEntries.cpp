@@ -127,3 +127,12 @@ void ShotObstacleTileEntry::executeEntryReversal()
     auto new_ptr = father_->getUpdatedPtr(ptr_);
     new_ptr->setHealth(life_);
 }
+
+SpawnDecorationEntry::SpawnDecorationEntry(Journal* father, Decoration* ptr) : JournalEntry(father), ptr_(ptr)
+{
+}
+
+void SpawnDecorationEntry::executeEntryReversal()
+{
+    Game::get().findAndDeleteDecoration(ptr_);
+}

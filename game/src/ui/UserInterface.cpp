@@ -15,15 +15,20 @@
 
 UserInterface::UserInterface() :
         blood_splash_(sf::Vector2f(CFG.getInt("graphics/window_width_px"), CFG.getInt("graphics/window_height_px"))),
-        weapons_bar_({CFG.getInt("graphics/window_width_px") / 2.0f, CFG.getInt("graphics/window_height_px") -
-                                                            WEAPONS_BAR_OFF_Y_ * CFG.getFloat("graphics/user_interface_zoom")}),
-        health_bar_({HEALTH_BAR_X_ * CFG.getFloat("graphics/user_interface_zoom"),
-                     HEALTH_BAR_Y_ * CFG.getFloat("graphics/user_interface_zoom")}),
+        weapons_bar_({static_cast<float>(CFG.getInt("graphics/window_width_px")),
+                      static_cast<float>(CFG.getInt("graphics/window_height_px"))}),
+        health_bar_({CFG.getInt("graphics/window_width_px") - HEALTH_BAR_X_ * CFG.getFloat("graphics/user_interface_zoom"),
+                     CFG.getInt("graphics/window_height_px") - HEALTH_BAR_Y_ * CFG.getFloat("graphics/user_interface_zoom")}),
+        time_bar_({TIME_BAR_X_ * CFG.getFloat("graphics/user_interface_zoom"),
+                   CFG.getInt("graphics/window_height_px") - TIME_BAR_Y_ * CFG.getFloat("graphics/user_interface_zoom")}),
         logo_(sf::Vector2f{CFG.getInt("graphics/window_width_px") - LOGO_OFF_X_ * CFG.getFloat("graphics/user_interface_zoom"),
                            LOGO_OFF_Y_ * CFG.getFloat("graphics/user_interface_zoom")},
               CFG.getFloat("graphics/user_interface_zoom") * sf::Vector2f{LOGO_SIZE_X_, LOGO_SIZE_Y_},
               &RM.getTexture("rag3_logo")),
         fps_text_("FPS: ", RM.getFont(), 30),
+        left_hud_({0.0f, static_cast<float>(CFG.getInt("graphics/window_height_px"))}),
+        right_hud_({static_cast<float>(CFG.getInt("graphics/window_width_px")),
+                    static_cast<float>(CFG.getInt("graphics/window_height_px"))}),
         player_(nullptr),
         camera_(nullptr) {}
 
@@ -34,6 +39,7 @@ void UserInterface::initialize(graphics::Graphics& graphics)
         throw std::runtime_error("[UserInterface] player_ or camera_ is nullptr!");
     }
     health_bar_.setMaxHealth(player_->getMaxHealth());
+    time_bar_.setMaxTime(player_->getMaxHealth()); // TODO temporarily
 
     fps_text_.setFillColor(sf::Color::White);
     fps_text_.setPosition(FPS_X_, FPS_Y_);
@@ -88,10 +94,18 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 static_view.setCenter(visible_area / 2.0f);
                 graphics.modifyStaticView(static_view);
 
-                weapons_bar_.setPosition(event.size.width / 2.0f,
-                                         event.size.height - WEAPONS_BAR_OFF_Y_ * CFG.getFloat("graphics/user_interface_zoom"));
+                health_bar_.setPosition(event.size.width - HEALTH_BAR_X_ * CFG.getFloat("graphics/user_interface_zoom"),
+                                        event.size.height - HEALTH_BAR_Y_ * CFG.getFloat("graphics/user_interface_zoom"));
+
+                time_bar_.setPosition(TIME_BAR_X_ * CFG.getFloat("graphics/user_interface_zoom"),
+                                        event.size.height - TIME_BAR_Y_ * CFG.getFloat("graphics/user_interface_zoom"));
+
+                weapons_bar_.setPosition(event.size.width, event.size.height);
                 logo_.setPosition(event.size.width - LOGO_OFF_X_ * CFG.getFloat("graphics/user_interface_zoom"),
                                   LOGO_OFF_Y_ * CFG.getFloat("graphics/user_interface_zoom"));
+
+                left_hud_.setPosition(0.0f, event.size.height);
+                right_hud_.setPosition(event.size.width, event.size.height);
 
                 camera_->setViewNormalSize(visible_area);
                 blood_splash_.resizeWindow(visible_area);
@@ -152,10 +166,14 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 void UserInterface::draw(graphics::Graphics& graphics)
 {
     graphics.draw(blood_splash_);
-    graphics.draw(weapons_bar_);
-    graphics.draw(health_bar_);
+
     //graphics.draw(fps_text_);
     graphics.draw(logo_);
+    graphics.draw(left_hud_);
+    graphics.draw(right_hud_);
+    graphics.draw(health_bar_);
+    graphics.draw(time_bar_);
+    graphics.draw(weapons_bar_);
     graphics.draw(crosshair_);
 }
 
@@ -228,10 +246,11 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
 
 inline void UserInterface::updatePlayerStates()
 {
-    weapons_bar_.updateWeaponsList(player_->getWeapons());
-    weapons_bar_.updateCurrentWeapon(player_->getCurrentWeapon());
+    weapons_bar_.updateWeaponsList(player_->getWeapons(), player_->getCurrentWeapon());
 
     health_bar_.updateHealth(player_->getHealth());
+
+    time_bar_.updateTime(player_->getHealth());
 
     blood_splash_.updateLifeState(player_->getLifeState());
 }

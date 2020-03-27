@@ -449,6 +449,10 @@ NPC* Game::spawnNewNPC(const std::string &id)
 
     ptr->registerAgentsManager(agents_manager_.get());
     ptr->registerEnemy(player_.get());
+
+    if (player_clone_ != nullptr)
+        player_clone_->registerEnemy(ptr);
+
     ptr->registerMapBlockage(&map_->getMapBlockage());
 
     for (auto& weapon : ptr->getWeapons())
@@ -466,7 +470,7 @@ NPC* Game::spawnNewPlayerClone()
         this->cleanPlayerClone();
     }
 
-    player_clone_ = std::make_unique<PlayerClone>(this->getPlayerPosition(),
+    player_clone_ = std::make_unique<PlayerClone>(this->getPlayerPosition(), player_.get(),
                                                   journal_->getDurationSaved() * CFG.getFloat("player_clone_time_factor"));
     engine_->registerDynamicObject(player_clone_.get());
 

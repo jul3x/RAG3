@@ -11,6 +11,7 @@
 #include <events/ExplosionEvent.h>
 #include <events/ShotEvent.h>
 #include <events/SparksEvent.h>
+#include <events/TeleportationEvent.h>
 
 #include <Game.h>
 
@@ -105,12 +106,20 @@ void Game::update(float time_elapsed)
 
             if (player_clone_ != nullptr && !player_clone_->update(time_elapsed, this->getCurrentTimeFactor()))
             {
-                this->cleanPlayerClone();
                 // draw on this place destruction
                 auto dec_ptr = map_->spawnDecoration(player_clone_->getPosition(), "blood");
                 journal_->eventDecorationSpawned(dec_ptr);
 
                 this->spawnExplosionEvent(player_clone_->getPosition(), 250.0f);
+                this->cleanPlayerClone();
+
+                player_->setHealth(0); // player clone is dead - so do player
+            }
+
+            if (player_clone_ != nullptr && !player_clone_->isLifeTime())
+            {
+                this->spawnTeleportationEvent(player_clone_->getPosition());
+                this->cleanPlayerClone();
             }
 
             if (player_->isAlive() && !player_->update(time_elapsed))
@@ -336,6 +345,14 @@ void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
         engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
 }
 
+void Game::spawnTeleportationEvent(const sf::Vector2f& pos)
+{
+    engine_->spawnAnimationEvent(std::make_shared<TeleportationEvent>(pos));
+
+    if (CFG.getInt("sound/sound_on"))
+        engine_->spawnSoundEvent(RM.getSound("teleportation"), pos);
+}
+
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir)
 {
     auto shot_event = std::make_shared<ShotEvent>(pos, dir * 180.0f / M_PI,
@@ -449,7 +466,8 @@ NPC* Game::spawnNewPlayerClone()
         this->cleanPlayerClone();
     }
 
-    player_clone_ = std::make_unique<PlayerClone>(this->getPlayerPosition());
+    player_clone_ = std::make_unique<PlayerClone>(this->getPlayerPosition(),
+                                                  journal_->getDurationSaved() * CFG.getFloat("player_clone_time_factor"));
     engine_->registerDynamicObject(player_clone_.get());
 
     player_clone_->registerAgentsManager(agents_manager_.get());
@@ -554,13 +572,18 @@ void Game::setGameState(Game::GameState state)
     {
         case GameState::Normal:
             if (state_ == GameState::Reverse)
+            {
+                player_clone_->updateLifeTimeDependingOnPrevious(journal_->getDurationSaved() * CFG.getFloat("player_clone_time_factor"));
                 journal_->clear();
+            }
 
             engine_->turnOnCollisions();
             break;
         case GameState::Reverse:
             if (this->isJournalFreezed())
                 return;
+
+            this->spawnTeleportationEvent(player_->getPosition());
 
             engine_->turnOffCollisions();
             journal_->eventTimeReversal();

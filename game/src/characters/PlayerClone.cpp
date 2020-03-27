@@ -8,13 +8,26 @@
 #include <characters/PlayerClone.h>
 
 
-PlayerClone::PlayerClone(const sf::Vector2f& position) :
-        NPC(position, "player")
+PlayerClone::PlayerClone(const sf::Vector2f& position, float life_time) :
+        NPC(position, "player"),
+        life_time_(life_time)
 {
+}
+
+void PlayerClone::updateLifeTimeDependingOnPrevious(float life_time)
+{
+    life_time_ -= life_time;
+}
+
+bool PlayerClone::isLifeTime() const
+{
+    return life_time_ > 0.0f;
 }
 
 bool PlayerClone::update(float time_elapsed, float time_factor)
 {
+    life_time_ -= time_elapsed;
+
     if (!this->isVisible()) return true;
     bool is_alive = Character::update(time_elapsed);
 

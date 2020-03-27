@@ -45,6 +45,8 @@ void UserInterface::initialize(graphics::Graphics& graphics)
     fps_text_.setPosition(FPS_X_, FPS_Y_);
 
     graphics.getWindow().setMouseCursorVisible(false);
+    graphics.getWindow().setKeyRepeatEnabled(false);
+
     camera_->setViewNormalSize(graphics.getWindow().getView().getSize());
 }
 

@@ -67,6 +67,8 @@ public:
 
     void spawnExplosionEvent(const sf::Vector2f& pos, float r);
 
+    void spawnTeleportationEvent(const sf::Vector2f& pos);
+
     void initialize() override;
 
     void update(float time_elapsed) override;
@@ -134,7 +136,7 @@ private:
 
     std::unique_ptr<Journal> journal_;
     std::unique_ptr<Player> player_;
-    std::unique_ptr<NPC> player_clone_;
+    std::unique_ptr<PlayerClone> player_clone_;
     std::unique_ptr<Map> map_;
     std::list<std::unique_ptr<Bullet>> bullets_;
 

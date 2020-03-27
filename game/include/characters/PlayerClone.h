@@ -12,14 +12,21 @@ using namespace r3e;
 
 class PlayerClone : public NPC {
 public:
-    PlayerClone(const sf::Vector2f& position);
+    PlayerClone(const sf::Vector2f& position, float life_time);
 
     bool update(float time_elapsed, float time_factor) override;
+
+    void updateLifeTimeDependingOnPrevious(float life_time);
+
+    bool isLifeTime() const;
 
 protected:
     void handleActionState() override;
 
     sf::Vector2f findNearestSafeSpot(const sf::Vector2f& direction) const override;
+
+private:
+    float life_time_;
 
 };
 

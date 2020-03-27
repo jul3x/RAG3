@@ -8,8 +8,6 @@
 #include <misc/JournalEntries.h>
 
 
-
-
 JournalEntry::JournalEntry(Journal* father) : father_(father)
 {
 }
@@ -48,7 +46,7 @@ DestroyCharacterEntry::DestroyCharacterEntry(Journal* father, Character* ptr) : 
 
 void DestroyCharacterEntry::executeEntryReversal()
 {
-    auto new_ptr = Game::get().spawnNewEnemy(id_);
+    auto new_ptr = Game::get().spawnNewNPC(id_);
     father_->setUpdatedPtr(ptr_, new_ptr);
 }
 

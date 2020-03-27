@@ -10,13 +10,13 @@
 
 #include <common/ResourceManager.h>
 
-#include <common/Enemy.h>
+#include <common/NPC.h>
 
 #include <common/NoWeapon.h>
 #include <common/ShootingWeapon.h>
 
 
-Enemy::Enemy(const sf::Vector2f& position,
+NPC::NPC(const sf::Vector2f& position,
              const std::string& id) :
         Character(position, id),
         AbstractAgent(),
@@ -30,13 +30,13 @@ Enemy::Enemy(const sf::Vector2f& position,
 }
 
 
-void Enemy::registerEnemy(const Character* enemy)
+void NPC::registerEnemy(const Character* enemy)
 {
     enemies_.push_back(enemy);
     current_enemy_ = enemy;
 }
 
-void Enemy::removeEnemy(const Character* enemy)
+void NPC::removeEnemy(const Character* enemy)
 {
     auto it = std::find(enemies_.begin(), enemies_.end(), enemy);
 
@@ -47,18 +47,18 @@ void Enemy::removeEnemy(const Character* enemy)
     }
 }
 
-void Enemy::clearEnemies()
+void NPC::clearEnemies()
 {
     enemies_.clear();
     current_enemy_ = nullptr;
 }
 
-void Enemy::registerMapBlockage(const ai::MapBlockage* map_blockage)
+void NPC::registerMapBlockage(const ai::MapBlockage* map_blockage)
 {
     map_blockage_ = map_blockage;
 }
 
-bool Enemy::update(float time_elapsed, float time_factor)
+bool NPC::update(float time_elapsed, float time_factor)
 {
     if (!this->isVisible()) return true;
     bool is_alive = Character::update(time_elapsed);
@@ -128,12 +128,12 @@ bool Enemy::update(float time_elapsed, float time_factor)
     return is_alive;
 }
 
-const sf::Vector2f& Enemy::getStartPosition() const
+const sf::Vector2f& NPC::getStartPosition() const
 {
     return this->getPosition();
 }
 
-void Enemy::handleEnemySelection()
+void NPC::handleEnemySelection()
 {
     current_enemy_ = enemies_.front();
     auto current_distance = utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition());
@@ -149,7 +149,7 @@ void Enemy::handleEnemySelection()
 
 }
 
-void Enemy::handleVisibilityState()
+void NPC::handleVisibilityState()
 {
     float start_x = std::round(this->getPosition().x / map_blockage_->scale_x_);
     float start_y = std::round(this->getPosition().y / map_blockage_->scale_y_);
@@ -174,20 +174,20 @@ void Enemy::handleVisibilityState()
 
         walls_between += map_blockage_->blockage_.at(rounded_x).at(rounded_y);
 
-        if (walls_between > Enemy::WALLS_BETWEEN_FAR_) break;
+        if (walls_between > NPC::WALLS_BETWEEN_FAR_) break;
     }
 
-    if (utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition()) > Enemy::MAX_DISTANCE_)
+    if (utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition()) > NPC::MAX_DISTANCE_)
         visibility_state_ = VisibilityState::OutOfRange;
-    else if (walls_between <= Enemy::WALLS_BETWEEN_CLOSE_)
+    else if (walls_between <= NPC::WALLS_BETWEEN_CLOSE_)
         visibility_state_ = VisibilityState::Close;
-    else if (walls_between <= Enemy::WALLS_BETWEEN_FAR_)
+    else if (walls_between <= NPC::WALLS_BETWEEN_FAR_)
         visibility_state_ = VisibilityState::Far;
     else
         visibility_state_ = VisibilityState::TooFar;
 }
 
-void Enemy::handleActionState()
+void NPC::handleActionState()
 {
     switch (visibility_state_)
     {
@@ -313,7 +313,7 @@ void Enemy::handleActionState()
     }
 }
 
-sf::Vector2f Enemy::findNearestSafeSpot(const sf::Vector2f& direction) const
+sf::Vector2f NPC::findNearestSafeSpot(const sf::Vector2f& direction) const
 {
     auto dir = utils::geo::getNormalized(direction);
     auto current = sf::Vector2f{std::round(this->getPosition().x / map_blockage_->scale_x_),

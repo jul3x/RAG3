@@ -37,7 +37,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
     std::ifstream file(CFG.getString("paths/maps_dir") + "/" + key + ".j3x");
     std::list<std::shared_ptr<ObstacleTile>> obstacles_tiles;
     std::list<std::shared_ptr<DecorationTile>> decorations_tiles;
-    std::list<std::shared_ptr<Enemy>> characters;
+    std::list<std::shared_ptr<NPC>> characters;
     std::list<std::shared_ptr<Collectible>> collectibles;
     std::list<std::shared_ptr<Special>> specials;
     std::list<std::shared_ptr<Obstacle>> obstacles;
@@ -164,7 +164,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                     switch (map_reading)
                     {
                         case MapReading::Characters:
-                            characters.emplace_back(std::make_shared<Enemy>(current_pos, current_id));
+                            characters.emplace_back(std::make_shared<NPC>(current_pos, current_id));
                             break;
                         case MapReading::Collectibles:
                             collectibles.emplace_back(std::make_shared<Collectible>(current_pos, current_id));
@@ -259,7 +259,7 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
         }
     };
 
-    addObjToFile("characters", map.getCharacters());
+    addObjToFile("characters", map.getNPCs());
     addObjToFile("collectibles", map.getCollectibles());
     addObjToFile("specials", map.getSpecials());
     addObjToFile("obstacles", map.getObstacles());

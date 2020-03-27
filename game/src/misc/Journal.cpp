@@ -97,7 +97,7 @@ void Journal::update(float time_elapsed)
             journal_.pop_front();
         }
 
-        auto& enemies = Game::get().getMap().getCharacters();
+        auto& enemies = Game::get().getMap().getNPCs();
         auto& bullets = Game::get().getBullets();
 
         auto& journal_back = journal_.back();

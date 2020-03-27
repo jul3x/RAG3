@@ -67,7 +67,7 @@ std::list<std::shared_ptr<ObstacleTile>>& Map::getObstaclesTiles()
     return obstacles_tiles_;
 }
 
-std::list<std::shared_ptr<Enemy>>& Map::getCharacters()
+std::list<std::shared_ptr<NPC>>& Map::getNPCs()
 {
     return characters_;
 }
@@ -119,11 +119,11 @@ Collectible* Map::spawnCollectible(const sf::Vector2f& pos, const std::string& i
     }
 }
 
-Enemy* Map::spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check)
+NPC* Map::spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check)
 {
     if (!check || this->checkCollisionsObjects(pos))
     {
-        characters_.emplace_back(std::make_shared<Enemy>(pos, id));
+        characters_.emplace_back(std::make_shared<NPC>(pos, id));
         return characters_.back().get();
     }
 }

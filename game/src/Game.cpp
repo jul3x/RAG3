@@ -68,7 +68,7 @@ void Game::initialize()
     for (auto& obstacle : map_->getObstacles())
         engine_->registerStaticObject(obstacle.get());
 
-    for (auto& character : map_->getCharacters())
+    for (auto& character : map_->getNPCs())
     {
         engine_->registerDynamicObject(character.get());
 
@@ -160,7 +160,7 @@ void Game::updateMapObjects(float time_elapsed)
 {
     auto& obstacles_tiles = map_->getObstaclesTiles();
     auto& obstacles = map_->getObstacles();
-    auto& enemies = map_->getCharacters();
+    auto& npcs = map_->getNPCs();
     auto& blockage = map_->getMapBlockage();
 
     for (auto it = obstacles_tiles.begin(); it != obstacles_tiles.end();)
@@ -220,7 +220,7 @@ void Game::updateMapObjects(float time_elapsed)
         if (do_increment) ++it;
     }
 
-    for (auto it = enemies.begin(); it != enemies.end();)
+    for (auto it = npcs.begin(); it != npcs.end();)
     {
         bool do_increment = true;
         if (!(*it)->update(time_elapsed, this->getCurrentTimeFactor()))
@@ -241,7 +241,7 @@ void Game::updateMapObjects(float time_elapsed)
             auto next_it = std::next(it);
             this->deleteDynamicObject(it->get());
 
-            enemies.erase(it);
+            npcs.erase(it);
             it = next_it;
             do_increment = false;
         }
@@ -271,7 +271,7 @@ void Game::draw(graphics::Graphics& graphics)
     for (auto& obstacle : map_->getObstacles())
         graphics.drawSorted(*obstacle);
 
-    for (auto& character : map_->getCharacters())
+    for (auto& character : map_->getNPCs())
         graphics.drawSorted(*character);
 
     for (auto& bullet : bullets_)
@@ -425,7 +425,7 @@ Bullet* Game::spawnNewBullet(const std::string &id, const sf::Vector2f &pos, flo
     return ptr;
 }
 
-Enemy* Game::spawnNewEnemy(const std::string& id)
+NPC* Game::spawnNewNPC(const std::string &id)
 {
     auto ptr = map_->spawnCharacter({}, id);
     engine_->registerDynamicObject(ptr);
@@ -442,20 +442,20 @@ Enemy* Game::spawnNewEnemy(const std::string& id)
     return ptr;
 }
 
-Enemy* Game::spawnNewPlayerClone()
+NPC* Game::spawnNewPlayerClone()
 {
     if (player_clone_ != nullptr)
     {
         this->cleanPlayerClone();
     }
 
-    player_clone_ = std::make_unique<Enemy>(this->getPlayerPosition(), "player");
+    player_clone_ = std::make_unique<NPC>(this->getPlayerPosition(), "player");
     engine_->registerDynamicObject(player_clone_.get());
 
     player_clone_->registerAgentsManager(agents_manager_.get());
     player_clone_->registerMapBlockage(&map_->getMapBlockage());
 
-    for (auto& enemy : map_->getCharacters())
+    for (auto& enemy : map_->getNPCs())
     {
         player_clone_->registerEnemy(enemy.get());
 
@@ -472,7 +472,7 @@ Enemy* Game::spawnNewPlayerClone()
 
 void Game::cleanPlayerClone()
 {
-    for (auto& enemy : map_->getCharacters())
+    for (auto& enemy : map_->getNPCs())
     {
         enemy->removeEnemy(player_clone_.get());
     }

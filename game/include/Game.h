@@ -86,9 +86,9 @@ public:
 
     void deleteDynamicObject(DynamicObject* d_obj);
 
-    Enemy* spawnNewEnemy(const std::string& id);
+    NPC* spawnNewNPC(const std::string &id);
 
-    Enemy* spawnNewPlayerClone();
+    NPC* spawnNewPlayerClone();
 
     void cleanPlayerClone();
 
@@ -133,7 +133,7 @@ private:
 
     std::unique_ptr<Journal> journal_;
     std::unique_ptr<Player> player_;
-    std::unique_ptr<Enemy> player_clone_;
+    std::unique_ptr<NPC> player_clone_;
     std::unique_ptr<Map> map_;
     std::list<std::unique_ptr<Bullet>> bullets_;
 

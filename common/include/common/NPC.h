@@ -3,8 +3,8 @@
 //
 
 
-#ifndef RAG3_COMMON_ENEMY_H
-#define RAG3_COMMON_ENEMY_H
+#ifndef RAG3_COMMON_NPC_H
+#define RAG3_COMMON_NPC_H
 
 #include <R3E/ai/AbstractAgent.h>
 
@@ -13,7 +13,7 @@
 
 using namespace r3e;
 
-class Enemy : public Character, public ai::AbstractAgent {
+class NPC : public Character, public ai::AbstractAgent {
 public:
     enum class VisibilityState {
         Close,
@@ -31,7 +31,7 @@ public:
         Run
     };
 
-    Enemy(const sf::Vector2f& position, const std::string& id);
+    NPC(const sf::Vector2f& position, const std::string& id);
 
     void registerEnemy(const Character* enemy);
 
@@ -68,4 +68,4 @@ private:
 
 };
 
-#endif // RAG3_COMMON_ENEMY_H
+#endif // RAG3_COMMON_NPC_H

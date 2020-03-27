@@ -35,6 +35,8 @@ public:
 
     void registerEnemy(const Character* enemy);
 
+    void removeEnemy(const Character* enemy);
+
     void clearEnemies();
 
     void registerMapBlockage(const ai::MapBlockage* map_blockage);

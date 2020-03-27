@@ -23,7 +23,9 @@ public:
 
     void clear();
 
-    void eventEnemyDestroyed(Enemy* enemy);
+    void eventTimeReversal();
+
+    void eventCharacterDestroyed(Character* character);
 
     void eventBulletDestroyed(Bullet* bullet);
 
@@ -45,9 +47,9 @@ public:
 
     bool executeTimeReversal(float time_elapsed);
 
-    Enemy* getUpdatedPtr(Enemy* ptr);
+    Character* getUpdatedPtr(Character* ptr);
 
-    void setUpdatedPtr(Enemy* ptr, Enemy* new_ptr);
+    void setUpdatedPtr(Character* ptr, Character* new_ptr);
 
     Bullet* getUpdatedPtr(Bullet* ptr);
 
@@ -67,7 +69,7 @@ private:
 
     std::deque<std::vector<std::unique_ptr<JournalEntry>>> journal_;
 
-    std::unordered_map<Enemy*, Enemy*> enemy_ptr_map_;
+    std::unordered_map<Character*, Character*> character_ptr_map_;
     std::unordered_map<Bullet*, Bullet*> bullet_ptr_map_;
     std::unordered_map<ObstacleTile*, ObstacleTile*> obstacle_tile_ptr_map_;
     std::unordered_map<Obstacle*, Obstacle*> obstacle_ptr_map_;

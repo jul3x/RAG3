@@ -19,7 +19,7 @@ Journal::Journal(float max_time_back, float sampling_rate) : time_elapsed_(0.0f)
 void Journal::clear()
 {
     journal_.clear();
-    enemy_ptr_map_.clear();
+    character_ptr_map_.clear();
     bullet_ptr_map_.clear();
     obstacle_tile_ptr_map_.clear();
     obstacle_ptr_map_.clear();
@@ -28,9 +28,14 @@ void Journal::clear()
     time_elapsed_ = 0.0f;
 }
 
-void Journal::eventEnemyDestroyed(Enemy* enemy)
+void Journal::eventTimeReversal()
 {
-    journal_.back().emplace_back(std::make_unique<DestroyEnemyEntry>(this, enemy));
+    journal_.back().emplace_back(std::make_unique<TimeReversalEntry>(this));
+}
+
+void Journal::eventCharacterDestroyed(Character* ptr)
+{
+    journal_.back().emplace_back(std::make_unique<DestroyCharacterEntry>(this, ptr));
 }
 
 void Journal::eventBulletDestroyed(Bullet* bullet)
@@ -98,13 +103,16 @@ void Journal::update(float time_elapsed)
         auto& journal_back = journal_.back();
         for (const auto& enemy : enemies)
         {
-            journal_back.emplace_back(std::make_unique<EnemyEntry>(this, enemy.get()));
+            journal_back.emplace_back(std::make_unique<CharacterEntry>(this, enemy.get()));
         }
 
         for (const auto& bullet : bullets)
         {
             journal_back.emplace_back(std::make_unique<BulletEntry>(this, bullet.get()));
         }
+
+        // player clone
+        journal_back.emplace_back(std::make_unique<CharacterEntry>(this, &Game::get().getPlayer()));
     }
 }
 
@@ -143,16 +151,16 @@ bool Journal::executeTimeReversal(float time_elapsed)
     return true;
 }
 
-Enemy* Journal::getUpdatedPtr(Enemy* ptr)
+Character* Journal::getUpdatedPtr(Character* ptr)
 {
-    auto it = enemy_ptr_map_.find(ptr);
+    auto it = character_ptr_map_.find(ptr);
 
-    return it != enemy_ptr_map_.end() ? it->second : ptr;
+    return it != character_ptr_map_.end() ? it->second : ptr;
 }
 
-void Journal::setUpdatedPtr(Enemy* ptr, Enemy* new_ptr)
+void Journal::setUpdatedPtr(Character* ptr, Character* new_ptr)
 {
-    enemy_ptr_map_[ptr] = new_ptr;
+    character_ptr_map_[ptr] = new_ptr;
 }
 
 Bullet* Journal::getUpdatedPtr(Bullet* ptr)

@@ -103,6 +103,16 @@ void Game::update(float time_elapsed)
 
             updateMapObjects(time_elapsed);
 
+            if (player_clone_ != nullptr && !player_clone_->update(time_elapsed, this->getCurrentTimeFactor()))
+            {
+                this->cleanPlayerClone();
+                // draw on this place destruction
+                auto dec_ptr = map_->spawnDecoration(player_clone_->getPosition(), "blood");
+                journal_->eventDecorationSpawned(dec_ptr);
+
+                this->spawnExplosionEvent(player_clone_->getPosition(), 250.0f);
+            }
+
             if (player_->isAlive() && !player_->update(time_elapsed))
             {
                 map_->spawnDecoration(player_->getPosition(), "blood");
@@ -215,7 +225,12 @@ void Game::updateMapObjects(float time_elapsed)
         bool do_increment = true;
         if (!(*it)->update(time_elapsed, this->getCurrentTimeFactor()))
         {
-            journal_->eventEnemyDestroyed(it->get());
+            journal_->eventCharacterDestroyed(it->get());
+
+            if (player_clone_ != nullptr)
+            {
+                player_clone_->removeEnemy(it->get());
+            }
 
             // draw on this place destruction
             auto dec_ptr = map_->spawnDecoration((*it)->getPosition(), "blood");
@@ -265,6 +280,9 @@ void Game::draw(graphics::Graphics& graphics)
     if (player_->isAlive())
         graphics.drawSorted(*player_);
 
+    if (player_clone_ != nullptr)
+        graphics.drawSorted(*player_clone_);
+
     engine_->drawSortedAnimationEvents();
 
     graphics.drawAlreadySorted();
@@ -283,6 +301,11 @@ const sf::Vector2f& Game::getPlayerPosition() const
 Map& Game::getMap()
 {
     return *map_;
+}
+
+Player& Game::getPlayer()
+{
+    return *player_;
 }
 
 const Journal& Game::getJournal() const
@@ -419,13 +442,51 @@ Enemy* Game::spawnNewEnemy(const std::string& id)
     return ptr;
 }
 
+Enemy* Game::spawnNewPlayerClone()
+{
+    if (player_clone_ != nullptr)
+    {
+        this->cleanPlayerClone();
+    }
+
+    player_clone_ = std::make_unique<Enemy>(this->getPlayerPosition(), "player");
+    engine_->registerDynamicObject(player_clone_.get());
+
+    player_clone_->registerAgentsManager(agents_manager_.get());
+    player_clone_->registerMapBlockage(&map_->getMapBlockage());
+
+    for (auto& enemy : map_->getCharacters())
+    {
+        player_clone_->registerEnemy(enemy.get());
+
+        enemy->registerEnemy(player_clone_.get());
+    }
+
+    for (auto& weapon : player_clone_->getWeapons())
+    {
+        weapon->registerSpawningFunction(std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    }
+
+    return player_clone_.get();
+}
+
+void Game::cleanPlayerClone()
+{
+    for (auto& enemy : map_->getCharacters())
+    {
+        enemy->removeEnemy(player_clone_.get());
+    }
+
+    this->deleteDynamicObject(player_clone_.get());
+    player_clone_.reset();
+}
+
 ObstacleTile* Game::spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos)
 {
     auto new_ptr = map_->spawnObstacleTile(pos, id);
     engine_->registerStaticObject(new_ptr);
     return new_ptr;
 }
-
 
 Obstacle* Game::spawnNewObstacle(const std::string& id, const sf::Vector2f& pos)
 {
@@ -502,6 +563,7 @@ void Game::setGameState(Game::GameState state)
                 return;
 
             engine_->turnOffCollisions();
+            journal_->eventTimeReversal();
             break;
         case GameState::Paused:
             break;

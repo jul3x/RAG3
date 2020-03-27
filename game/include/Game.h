@@ -48,6 +48,8 @@ public:
 
     Map& getMap();
 
+    Player& getPlayer();
+
     const Journal& getJournal() const;
 
     const std::list<std::unique_ptr<Bullet>>& getBullets() const;
@@ -85,6 +87,10 @@ public:
     void deleteDynamicObject(DynamicObject* d_obj);
 
     Enemy* spawnNewEnemy(const std::string& id);
+
+    Enemy* spawnNewPlayerClone();
+
+    void cleanPlayerClone();
 
     Bullet* spawnNewBullet(const std::string& id, const sf::Vector2f& pos, float dir);
 
@@ -127,6 +133,7 @@ private:
 
     std::unique_ptr<Journal> journal_;
     std::unique_ptr<Player> player_;
+    std::unique_ptr<Enemy> player_clone_;
     std::unique_ptr<Map> map_;
     std::list<std::unique_ptr<Bullet>> bullets_;
 

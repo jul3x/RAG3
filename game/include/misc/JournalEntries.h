@@ -25,15 +25,23 @@ protected:
 
 };
 
-
-class EnemyEntry : public JournalEntry {
+class TimeReversalEntry : public JournalEntry {
 public:
-    EnemyEntry(Journal* father, Enemy* enemy);
+    TimeReversalEntry(Journal* father);
+
+    void executeEntryReversal() override;
+
+};
+
+
+class CharacterEntry : public JournalEntry {
+public:
+    CharacterEntry(Journal* father, Character* ptr);
 
     void executeEntryReversal() override;
 
 private:
-    Enemy* ptr_;
+    Character* ptr_;
 
     sf::Vector2f pos_;
 
@@ -44,14 +52,14 @@ private:
 };
 
 
-class DestroyEnemyEntry : public JournalEntry {
+class DestroyCharacterEntry : public JournalEntry {
 public:
-    DestroyEnemyEntry(Journal* father, Enemy* enemy);
+    DestroyCharacterEntry(Journal* father, Character* ptr);
 
     void executeEntryReversal() override;
 
 private:
-    Enemy* ptr_;
+    Character* ptr_;
 
     std::string id_;
 

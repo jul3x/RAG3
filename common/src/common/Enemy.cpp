@@ -36,6 +36,17 @@ void Enemy::registerEnemy(const Character* enemy)
     current_enemy_ = enemy;
 }
 
+void Enemy::removeEnemy(const Character* enemy)
+{
+    auto it = std::find(enemies_.begin(), enemies_.end(), enemy);
+
+    if (it != enemies_.end())
+    {
+        enemies_.erase(it);
+        current_enemy_ = enemies_.empty() ? nullptr : enemies_.front();
+    }
+}
+
 void Enemy::clearEnemies()
 {
     enemies_.clear();

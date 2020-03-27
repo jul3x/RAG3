@@ -14,32 +14,39 @@ JournalEntry::JournalEntry(Journal* father) : father_(father)
 {
 }
 
-EnemyEntry::EnemyEntry(Journal* father, Enemy* enemy) : JournalEntry(father), ptr_(enemy)
+TimeReversalEntry::TimeReversalEntry(Journal* father) : JournalEntry(father)
 {
-    pos_ = enemy->getPosition();
-    rotation_ = enemy->getRotation();
-    life_ = enemy->getHealth();
-    ammo_state_ = enemy->getWeapons().at(enemy->getCurrentWeapon())->getState();
-
-    std::cout << "ZAPISUJE NA TYLE" << ammo_state_ << "Entry no. " << this << std::endl;
 }
 
-void EnemyEntry::executeEntryReversal()
+void TimeReversalEntry::executeEntryReversal()
+{
+    auto new_ptr = Game::get().spawnNewPlayerClone();
+    father_->setUpdatedPtr(&Game::get().getPlayer(), new_ptr);
+}
+
+CharacterEntry::CharacterEntry(Journal* father, Character* ptr) : JournalEntry(father), ptr_(ptr)
+{
+    pos_ = ptr->getPosition();
+    rotation_ = ptr->getRotation();
+    life_ = ptr->getHealth();
+    ammo_state_ = ptr->getWeapons().at(ptr->getCurrentWeapon())->getState();
+}
+
+void CharacterEntry::executeEntryReversal()
 {
     auto new_ptr = father_->getUpdatedPtr(ptr_);
     new_ptr->setPosition(pos_);
     new_ptr->setRotation(rotation_);
     new_ptr->setHealth(life_);
     new_ptr->getWeapons().at(new_ptr->getCurrentWeapon())->setState(ammo_state_);
-    std::cout << "USTAWIAM NA : " << new_ptr->getWeapons().at(new_ptr->getCurrentWeapon())->getState() << "Entry no. " << this << std::endl;
 }
 
-DestroyEnemyEntry::DestroyEnemyEntry(Journal* father, Enemy* enemy) : JournalEntry(father), ptr_(enemy)
+DestroyCharacterEntry::DestroyCharacterEntry(Journal* father, Character* ptr) : JournalEntry(father), ptr_(ptr)
 {
-    id_ = enemy->getId();
+    id_ = ptr->getId();
 }
 
-void DestroyEnemyEntry::executeEntryReversal()
+void DestroyCharacterEntry::executeEntryReversal()
 {
     auto new_ptr = Game::get().spawnNewEnemy(id_);
     father_->setUpdatedPtr(ptr_, new_ptr);

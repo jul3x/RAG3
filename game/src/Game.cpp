@@ -449,7 +449,7 @@ NPC* Game::spawnNewPlayerClone()
         this->cleanPlayerClone();
     }
 
-    player_clone_ = std::make_unique<NPC>(this->getPlayerPosition(), "player");
+    player_clone_ = std::make_unique<PlayerClone>(this->getPlayerPosition());
     engine_->registerDynamicObject(player_clone_.get());
 
     player_clone_->registerAgentsManager(agents_manager_.get());

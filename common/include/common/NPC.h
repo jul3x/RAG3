@@ -41,18 +41,18 @@ public:
 
     void registerMapBlockage(const ai::MapBlockage* map_blockage);
 
-    bool update(float time_elapsed, float time_factor);
+    virtual bool update(float time_elapsed, float time_factor);
 
     const sf::Vector2f& getStartPosition() const override;
 
-private:
-    inline void handleEnemySelection();
+protected:
+    void handleEnemySelection();
 
-    inline void handleVisibilityState();
+    void handleVisibilityState();
 
-    inline void handleActionState();
+    virtual void handleActionState();
 
-    inline sf::Vector2f findNearestSafeSpot(const sf::Vector2f& direction) const;
+    virtual sf::Vector2f findNearestSafeSpot(const sf::Vector2f& direction) const;
 
     static constexpr float MAX_DISTANCE_ = 1500.0f;
     static constexpr float WALLS_BETWEEN_CLOSE_ = 0.0f;

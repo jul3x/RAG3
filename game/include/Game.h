@@ -18,6 +18,7 @@
 #include <misc/Camera.h>
 #include <misc/Journal.h>
 #include <characters/Player.h>
+#include <characters/PlayerClone.h>
 
 #include <ui/UserInterface.h>
 

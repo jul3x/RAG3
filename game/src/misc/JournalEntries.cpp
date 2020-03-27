@@ -14,12 +14,17 @@ JournalEntry::JournalEntry(Journal* father) : father_(father)
 
 TimeReversalEntry::TimeReversalEntry(Journal* father) : JournalEntry(father)
 {
+    auto& player = Game::get().getPlayer();
+    picked_weapon_ = player.getWeapons().at(player.getCurrentWeapon())->getName();
 }
 
 void TimeReversalEntry::executeEntryReversal()
 {
     auto new_ptr = Game::get().spawnNewPlayerClone();
     father_->setUpdatedPtr(&Game::get().getPlayer(), new_ptr);
+    new_ptr->makeOnlyOneWeapon(picked_weapon_, 0.0f);
+    new_ptr->getWeapons().front()->registerSpawningFunction(
+            std::bind(&Game::spawnBullet, &Game::get(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
 
 CharacterEntry::CharacterEntry(Journal* father, Character* ptr) : JournalEntry(father), ptr_(ptr)

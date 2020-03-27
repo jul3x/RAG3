@@ -30,6 +30,8 @@ public:
     TimeReversalEntry(Journal* father);
 
     void executeEntryReversal() override;
+private:
+    std::string picked_weapon_;
 
 };
 
@@ -40,7 +42,7 @@ public:
 
     void executeEntryReversal() override;
 
-private:
+protected:
     Character* ptr_;
 
     sf::Vector2f pos_;

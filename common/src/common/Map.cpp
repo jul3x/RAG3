@@ -105,6 +105,12 @@ ObstacleTile* Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string&
 {
     if (!check || (!this->checkCollisions(pos, decorations_tiles_) && !this->checkCollisions(pos, obstacles_tiles_)))
     {
+        auto grid_pos = std::make_pair(static_cast<size_t>(pos.x / DecorationTile::SIZE_X_),
+                                       static_cast<size_t>(pos.y / DecorationTile::SIZE_Y_));
+
+        blocked_.blockage_.at(grid_pos.first).at(grid_pos.second) =
+                utils::getFloat(RM.getObjectParams("obstacles_tiles", id), "endurance");
+
         obstacles_tiles_.emplace_back(std::make_shared<ObstacleTile>(pos, id));
         return obstacles_tiles_.back().get();
     }
@@ -150,6 +156,12 @@ Obstacle* Map::spawnObstacle(const sf::Vector2f& pos, const std::string& id, boo
 {
     if (!check || this->checkCollisionsObjects(pos))
     {
+        auto grid_pos = std::make_pair(static_cast<size_t>(pos.x / DecorationTile::SIZE_X_),
+                                       static_cast<size_t>(pos.y / DecorationTile::SIZE_Y_));
+
+        blocked_.blockage_.at(grid_pos.first).at(grid_pos.second) =
+                utils::getFloat(RM.getObjectParams("obstacle", id), "endurance");
+
         obstacles_.emplace_back(std::make_shared<Obstacle>(pos, id));
         return obstacles_.back().get();
     }

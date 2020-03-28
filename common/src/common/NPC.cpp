@@ -60,7 +60,7 @@ void NPC::registerMapBlockage(const ai::MapBlockage* map_blockage)
 
 bool NPC::update(float time_elapsed, float time_factor)
 {
-    if (!this->isVisible()) return true;
+//    if (!this->isVisible()) return true;
     bool is_alive = Character::update(time_elapsed);
 
     handleEnemySelection();

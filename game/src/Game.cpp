@@ -119,6 +119,20 @@ void Game::update(float time_elapsed)
             if (player_clone_ != nullptr && !player_clone_->isLifeTime())
             {
                 this->spawnTeleportationEvent(player_clone_->getPosition());
+
+                const auto& player_clone_weapon = player_clone_->getWeapons().at(player_clone_->getCurrentWeapon());
+                auto player_weapon = std::find_if(player_->getWeapons().begin(), player_->getWeapons().end(),
+                    [&player_clone_weapon](const auto& it) {
+                        return player_clone_weapon->getName() == it->getName();
+                    });
+
+                if (player_weapon != player_->getWeapons().end())
+                    (*player_weapon)->setState(player_clone_weapon->getState());
+
+                player_->setHealth(player_clone_->getHealth());
+
+                camera_->setZoomInOut();
+
                 this->cleanPlayerClone();
             }
 
@@ -160,6 +174,7 @@ void Game::update(float time_elapsed)
                 this->setGameState(GameState::Normal);
             }
 
+            camera_->update(time_elapsed);
             break;
         }
     }
@@ -583,6 +598,7 @@ void Game::setGameState(Game::GameState state)
                 journal_->clear();
             }
 
+            camera_->setNormal();
             engine_->turnOnCollisions();
             break;
         case GameState::Reverse:
@@ -591,6 +607,7 @@ void Game::setGameState(Game::GameState state)
 
             this->spawnTeleportationEvent(player_->getPosition());
 
+            camera_->setReverse();
             engine_->turnOffCollisions();
             journal_->eventTimeReversal();
             break;

@@ -160,7 +160,7 @@ Obstacle* Map::spawnObstacle(const sf::Vector2f& pos, const std::string& id, boo
                                        static_cast<size_t>(pos.y / DecorationTile::SIZE_Y_));
 
         blocked_.blockage_.at(grid_pos.first).at(grid_pos.second) =
-                utils::getFloat(RM.getObjectParams("obstacle", id), "endurance");
+                utils::getFloat(RM.getObjectParams("obstacles", id), "endurance");
 
         obstacles_.emplace_back(std::make_shared<Obstacle>(pos, id));
         return obstacles_.back().get();

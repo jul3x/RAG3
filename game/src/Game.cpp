@@ -577,7 +577,9 @@ void Game::setGameState(Game::GameState state)
         case GameState::Normal:
             if (state_ == GameState::Reverse)
             {
-                player_clone_->updateLifeTimeDependingOnPrevious(journal_->getDurationSaved() * CFG.getFloat("player_clone_time_factor"));
+                if (player_clone_ != nullptr)
+                    player_clone_->updateLifeTimeDependingOnPrevious(
+                            journal_->getDurationSaved() * CFG.getFloat("player_clone_time_factor"));
                 journal_->clear();
             }
 

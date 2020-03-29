@@ -8,11 +8,13 @@
 
 #include <R3E/objects/AbstractPhysicalObject.h>
 
+#include <R3E/objects/Identifiable.h>
+
 
 using namespace r3e;
 
 
-class Bullet : public HoveringObject {
+class Bullet : public HoveringObject, public Identifiable {
 public:
     Bullet(const sf::Vector2f& position,
            const std::string& id,

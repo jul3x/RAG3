@@ -42,6 +42,17 @@ namespace r3e {
     {
         collisions_ = std::make_unique<Collisions>();
         collisions_->initialize(size, grid);
+        collisions_on_ = true;
+    }
+
+    void Engine::turnOnCollisions()
+    {
+        collisions_on_ = true;
+    }
+
+    void Engine::turnOffCollisions()
+    {
+        collisions_on_ = false;
     }
 
     void Engine::registerUI(AbstractUserInterface* user_interface)
@@ -85,7 +96,7 @@ namespace r3e {
             ui_->handleEvents(*graphics_, time_scale_factor_ * frame_time_);
             game_->update(time_scale_factor_ * frame_time_);
 
-            if (collisions_ != nullptr)
+            if (collisions_ != nullptr && collisions_on_)
                 collisions_->update(game_);
 
             updateAnimationEvents(time_scale_factor_ * frame_time_);

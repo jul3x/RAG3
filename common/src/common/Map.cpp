@@ -67,7 +67,7 @@ std::list<std::shared_ptr<ObstacleTile>>& Map::getObstaclesTiles()
     return obstacles_tiles_;
 }
 
-std::list<std::shared_ptr<Enemy>>& Map::getCharacters()
+std::list<std::shared_ptr<NPC>>& Map::getNPCs()
 {
     return characters_;
 }
@@ -92,59 +92,78 @@ std::list<std::shared_ptr<Obstacle>>& Map::getObstacles()
     return obstacles_;
 }
 
-void Map::spawnDecorationTile(const sf::Vector2f& pos, const std::string& id, bool check)
+DecorationTile* Map::spawnDecorationTile(const sf::Vector2f& pos, const std::string& id, bool check)
 {
     if (!check || (!this->checkCollisions(pos, decorations_tiles_) && !this->checkCollisions(pos, obstacles_tiles_)))
     {
         decorations_tiles_.emplace_back(std::make_shared<DecorationTile>(pos, id));
+        return decorations_tiles_.back().get();
     }
 }
 
-void Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string& id, bool check)
+ObstacleTile* Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string& id, bool check)
 {
     if (!check || (!this->checkCollisions(pos, decorations_tiles_) && !this->checkCollisions(pos, obstacles_tiles_)))
     {
+        auto grid_pos = std::make_pair(static_cast<size_t>(pos.x / DecorationTile::SIZE_X_),
+                                       static_cast<size_t>(pos.y / DecorationTile::SIZE_Y_));
+
+        blocked_.blockage_.at(grid_pos.first).at(grid_pos.second) =
+                utils::getFloat(RM.getObjectParams("obstacles_tiles", id), "endurance");
+
         obstacles_tiles_.emplace_back(std::make_shared<ObstacleTile>(pos, id));
+        return obstacles_tiles_.back().get();
     }
 }
 
-void Map::spawnWeapon(const sf::Vector2f& pos, const std::string& id, bool check)
+Collectible* Map::spawnCollectible(const sf::Vector2f& pos, const std::string& id, bool check)
 {
     if (!check || this->checkCollisionsObjects(pos))
     {
         collectibles_.emplace_back(std::make_shared<Collectible>(pos, id));
+        return collectibles_.back().get();
     }
 }
 
-void Map::spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check)
+NPC* Map::spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check)
 {
     if (!check || this->checkCollisionsObjects(pos))
     {
-        characters_.emplace_back(std::make_shared<Enemy>(pos, id));
+        characters_.emplace_back(std::make_shared<NPC>(pos, id));
+        return characters_.back().get();
     }
 }
 
-void Map::spawnSpecial(const sf::Vector2f& pos, const std::string& id, bool check)
+Special* Map::spawnSpecial(const sf::Vector2f& pos, const std::string& id, bool check)
 {
     if (!check || this->checkCollisionsObjects(pos))
     {
         specials_.emplace_back(std::make_shared<Special>(pos, id));
+        return specials_.back().get();
     }
 }
 
-void Map::spawnDecoration(const sf::Vector2f& pos, const std::string& id, bool check)
+Decoration* Map::spawnDecoration(const sf::Vector2f& pos, const std::string& id, bool check)
 {
     if (!check || this->checkCollisionsObjects(pos))
     {
         decorations_.emplace_back(std::make_shared<Decoration>(pos, id));
+        return decorations_.back().get();
     }
 }
 
-void Map::spawnObstacle(const sf::Vector2f& pos, const std::string& id, bool check)
+Obstacle* Map::spawnObstacle(const sf::Vector2f& pos, const std::string& id, bool check)
 {
     if (!check || this->checkCollisionsObjects(pos))
     {
+        auto grid_pos = std::make_pair(static_cast<size_t>(pos.x / DecorationTile::SIZE_X_),
+                                       static_cast<size_t>(pos.y / DecorationTile::SIZE_Y_));
+
+        blocked_.blockage_.at(grid_pos.first).at(grid_pos.second) =
+                utils::getFloat(RM.getObjectParams("obstacles", id), "endurance");
+
         obstacles_.emplace_back(std::make_shared<Obstacle>(pos, id));
+        return obstacles_.back().get();
     }
 }
 

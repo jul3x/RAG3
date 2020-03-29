@@ -17,9 +17,11 @@ public:
 
     bool isAlive() const;
 
+    float getMaxTimeManipulation() const;
 
 private:
     bool is_alive_;
+
 };
 
 #endif // RAG3_GAME_CHARACTERS_PLAYER_H

@@ -16,7 +16,9 @@
 #include <common/Bullet.h>
 
 #include <misc/Camera.h>
+#include <misc/Journal.h>
 #include <characters/Player.h>
+#include <characters/PlayerClone.h>
 
 #include <ui/UserInterface.h>
 
@@ -26,6 +28,13 @@ using namespace r3e;
 class Game : public AbstractGame {
 
 public:
+    enum class GameState
+    {
+        Paused,
+        Normal,
+        Reverse
+    };
+
     Game(const Game&) = delete;
 
     Game& operator=(const Game&) = delete;
@@ -38,6 +47,14 @@ public:
 
     const sf::Vector2f& getPlayerPosition() const;
 
+    Map& getMap();
+
+    Player& getPlayer();
+
+    const Journal& getJournal() const;
+
+    const std::list<std::unique_ptr<Bullet>>& getBullets() const;
+
     const ai::MapBlockage& getMapBlockage() const;
 
     ai::AgentsManager& getAgentsManager() const;
@@ -49,6 +66,8 @@ public:
     void spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir);
 
     void spawnExplosionEvent(const sf::Vector2f& pos, float r);
+
+    void spawnTeleportationEvent(const sf::Vector2f& pos);
 
     void initialize() override;
 
@@ -70,9 +89,31 @@ public:
 
     void deleteDynamicObject(DynamicObject* d_obj);
 
+    NPC* spawnNewNPC(const std::string &id);
+
+    NPC* spawnNewPlayerClone();
+
+    void cleanPlayerClone();
+
+    Bullet* spawnNewBullet(const std::string& id, const sf::Vector2f& pos, float dir);
+
+    Obstacle* spawnNewObstacle(const std::string& id, const sf::Vector2f& pos);
+
+    ObstacleTile* spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos);
+
+    void findAndDeleteBullet(Bullet* ptr);
+
+    void findAndDeleteDecoration(Decoration* ptr);
+
     void setBulletTime();
 
     void setNormalTime();
+
+    bool isJournalFreezed() const;
+
+    void setGameState(Game::GameState state);
+
+    Game::GameState getGameState() const;
 
     float getCurrentTimeFactor() const;
 
@@ -93,10 +134,13 @@ private:
     std::unique_ptr<ai::AgentsManager> agents_manager_;
     std::unique_ptr<audio::MusicManager> music_manager_;
 
+    std::unique_ptr<Journal> journal_;
     std::unique_ptr<Player> player_;
+    std::unique_ptr<PlayerClone> player_clone_;
     std::unique_ptr<Map> map_;
     std::list<std::unique_ptr<Bullet>> bullets_;
 
+    Game::GameState state_;
     float current_time_factor_;
 
 };

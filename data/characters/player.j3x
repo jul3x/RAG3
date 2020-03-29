@@ -1,5 +1,7 @@
 float max_speed=500.0f
 
+float standby_speed=100.0f
+
 int max_health=160
 
 float size_x=49.0f

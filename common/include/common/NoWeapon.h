@@ -16,6 +16,8 @@ public:
     sf::Vector2f use(float time_factor) override;
 
     float getState() const override;
+
+    void setState(float state) override;
 };
 
 #endif // RAG3_GAME_WEAPONS_NOWEAPON_H

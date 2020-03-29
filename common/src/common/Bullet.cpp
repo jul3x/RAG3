@@ -11,6 +11,7 @@
 Bullet::Bullet(const sf::Vector2f& position,
                const std::string& id,
                const float direction) :
+        Identifiable(id),
         HoveringObject(position,
                        utils::getFloat(RM.getObjectParams("bullets", id), "speed") *
                                sf::Vector2f(std::cos(direction), std::sin(direction)),

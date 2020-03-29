@@ -42,9 +42,9 @@ public:
 
     int getCurrentWeapon() const;
 
-    const std::vector<std::shared_ptr<AbstractWeapon>>& getWeapons() const;
+    void makeOnlyOneWeapon(const std::string& id, float state);
 
-    int getHealth() const;
+    const std::vector<std::shared_ptr<AbstractWeapon>>& getWeapons() const;
 
     int getMaxHealth() const;
 

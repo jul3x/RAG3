@@ -9,6 +9,7 @@
 #include <common/ResourceManager.h>
 #include <common/Character.h>
 #include <common/NoWeapon.h>
+#include <common/ShootingWeapon.h>
 
 
 Character::Character(const sf::Vector2f& position, const std::string& id) :
@@ -66,14 +67,18 @@ int Character::getCurrentWeapon() const
             this->weapons_in_backpack_.begin(), this->current_weapon_));
 }
 
+void Character::makeOnlyOneWeapon(const std::string& id, float state)
+{
+    weapons_in_backpack_.clear();
+    weapons_in_backpack_.emplace_back(std::make_shared<ShootingWeapon>(id));
+    current_weapon_ = weapons_in_backpack_.begin();
+
+    (*current_weapon_)->setState(state);
+}
+
 const std::vector<std::shared_ptr<AbstractWeapon>>& Character::getWeapons() const
 {
     return this->weapons_in_backpack_;
-}
-
-int Character::getHealth() const
-{
-    return this->life_;
 }
 
 int Character::getMaxHealth() const

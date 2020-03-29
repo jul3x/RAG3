@@ -16,11 +16,19 @@ float camera_speed=4.0f
 
 float camera_zoom_speed=5.0f
 
+float camera_zoom_inout_speed=4000.0f
+
+float camera_reverse_rotation=400.0f
+
+float camera_reverse_return_rotation=3.0f
+
 float camera_rotation_recoil=8.0f
 
 float camera_position_recoil=1.0f
 
 float camera_shaking_time=0.4f
+
+float camera_zoom_inout_time=0.7f
 
 float camera_right_click_distance_factor=300.0f
 

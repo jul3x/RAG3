@@ -16,13 +16,21 @@ public:
     Camera();
 
     void setShaking();
+    
+    void setZoomInOut();
+
+    void setNormal();
+
+    void setReverse();
 
     void update(float time_elapsed) override;
 
 private:
     enum class State {
-        NORMAL,
-        SHOOTING
+        Normal,
+        Shooting,
+        ZoomInOut,
+        Reverse
     };
 
     Camera::State state_;

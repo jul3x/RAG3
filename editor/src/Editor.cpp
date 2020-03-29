@@ -51,7 +51,7 @@ void Editor::update(float time_elapsed)
     for (auto& obstacle : map_->getObstacles())
         obstacle->updateAnimation(time_elapsed);
 
-    for (auto& character : map_->getCharacters())
+    for (auto& character : map_->getNPCs())
         character->updateAnimation(time_elapsed);
 
     for (auto& special : map_->getSpecials())
@@ -77,7 +77,7 @@ void Editor::draw(graphics::Graphics& graphics)
     for (auto& obstacle : map_->getObstacles())
         graphics.drawSorted(*obstacle);
 
-    for (auto& character : map_->getCharacters())
+    for (auto& character : map_->getNPCs())
         graphics.drawSorted(*character);
 
     for (auto& special : map_->getSpecials())
@@ -117,7 +117,7 @@ void Editor::placeItem(const sf::Vector2f& pos)
     else if (current_item_.first == "obstacles_tiles")
         map_->spawnObstacleTile(pos, current_item_.second, true);
     else if (current_item_.first == "collectibles")
-        map_->spawnWeapon(pos, current_item_.second, true);
+        map_->spawnCollectible(pos, current_item_.second, true);
     else if (current_item_.first == "characters")
         map_->spawnCharacter(pos, current_item_.second, true);
     else if (current_item_.first == "specials")

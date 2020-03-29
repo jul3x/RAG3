@@ -203,15 +203,12 @@ tile_map:
 
 characters: 
 standard 1400 1200
-standard 70 70
 standard 1000 100
-standard 70 1100
 standard 1000 1000
 standard 1900 1000
 standard 2000 2100
-player 200 0
-player 100 0
-player 0 -0
+standard 100 1100
+standard 300 100
 
 collectibles: 
 

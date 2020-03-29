@@ -26,6 +26,8 @@ public:
 
     virtual float getState() const = 0;
 
+    virtual void setState(float state) = 0;
+
     const sf::Vector2f& getWeaponOffset() const;
 
     const std::string& getName() const;

@@ -28,11 +28,11 @@ namespace r3e {
             animation_source_({0, 0}, frame_size_),
             is_visible_(true)
     {
+        shape_.setPosition(position);
+        shape_.setSize(size);
+        shape_.setOrigin(size.x / 2.0f, size.y / 2.0f);
         if (texture != nullptr)
         {
-            shape_.setPosition(position);
-            shape_.setSize(size);
-            shape_.setOrigin(size.x / 2.0f, size.y / 2.0f);
             shape_.setTexture(texture);
 
             if (frames_number > 1)

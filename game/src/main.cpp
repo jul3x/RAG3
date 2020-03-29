@@ -28,6 +28,7 @@ int main()
     RM.lazyLoadTexture("animations/explosion_1");
     RM.lazyLoadTexture("animations/explosion_2");
     RM.lazyLoadTexture("animations/explosion_3");
+    RM.lazyLoadTexture("animations/teleportation");
 
     RM.lazyLoadTexture("blood_hud_1");
     RM.lazyLoadTexture("blood_hud_2");

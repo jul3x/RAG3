@@ -73,3 +73,8 @@ float ShootingWeapon::getState() const
 {
     return static_cast<float>(ammunition_) / static_cast<float>(max_ammunition_);
 }
+
+void ShootingWeapon::setState(float state)
+{
+    ammunition_ = static_cast<int>(state * max_ammunition_);
+}

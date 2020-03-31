@@ -19,6 +19,7 @@
 #include <editor/LoadWindow.h>
 #include <editor/ConfigWindow.h>
 #include <editor/UniqueObjectWindow.h>
+#include <editor/SpecialObjectWindow.h>
 
 
 using namespace r3e;
@@ -50,6 +51,8 @@ namespace editor {
         void openConfigWindow(const std::string& category, const std::string& id);
 
         void openUniqueObjectWindow(const std::string& category, const std::string& name, int id);
+
+        void openSpecialObjectWindow(const std::string& category, Special* spec);
 
     private:
         inline void generateMenuBar(sf::RenderWindow& window);
@@ -83,6 +86,7 @@ namespace editor {
         LoadWindow load_window_;
         ConfigWindow config_window_;
         UniqueObjectWindow unique_object_window_;
+        SpecialObjectWindow special_object_window_;
 
         sf::Text information_;
 

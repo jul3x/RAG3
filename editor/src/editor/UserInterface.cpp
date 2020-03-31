@@ -30,12 +30,14 @@ UserInterface::UserInterface() :
         save_window_(&gui_, &gui_theme_),
         load_window_(&gui_, &gui_theme_),
         config_window_(&gui_, &gui_theme_),
-        unique_object_window_(&gui_, &gui_theme_)
+        unique_object_window_(&gui_, &gui_theme_),
+        special_object_window_(&gui_, &gui_theme_)
 {
     gui_.get("save_window")->setVisible(false);
     gui_.get("load_window")->setVisible(false);
     gui_.get("config_window")->setVisible(false);
     gui_.get("unique_object_window")->setVisible(false);
+    gui_.get("special_object_window")->setVisible(false);
 
     information_.setPosition(CFG.getFloat("info_x"), CFG.getFloat("info_y"));
     information_.setFillColor(sf::Color(255, 255, 255, 0));
@@ -113,6 +115,11 @@ void UserInterface::openUniqueObjectWindow(const std::string& category, const st
     gui_.get("unique_object_window")->setVisible(true);
 }
 
+void UserInterface::openSpecialObjectWindow(const std::string& category, Special* special)
+{
+    special_object_window_.setObjectContent(category, special);
+    gui_.get("special_object_window")->setVisible(true);
+}
 
 void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapsed)
 {

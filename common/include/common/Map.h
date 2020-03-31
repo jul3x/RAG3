@@ -73,6 +73,8 @@ public:
 
     std::tuple<std::string, std::string, int> getObjectInfo(const sf::Vector2f& pos);
 
+    Special* getSpecialObject(const sf::Vector2f& pos);
+
     std::pair<sf::Vector2<size_t>, sf::Vector2f> getTileConstraints() const;
 
 private:
@@ -95,8 +97,7 @@ private:
     }
 
     template<class T>
-    inline std::tuple<std::string, int>
-    getItemInfo(const sf::Vector2f& pos, std::list<T>& objs)
+    T* getItemInfo(const sf::Vector2f& pos, std::list<std::shared_ptr<T>>& objs)
     {
         for (auto it = objs.begin(); it != objs.end(); ++it)
         {
@@ -104,10 +105,10 @@ private:
                     pos, (*it)->getPosition() - sf::Vector2f(DecorationTile::SIZE_X_ / 2.0f, DecorationTile::SIZE_Y_ / 2.0f),
                     {DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_}))
             {
-                return std::make_tuple((*it)->getId(), (*it)->getUniqueId());
+                return it->get();
             }
         }
-        return std::make_tuple("", -1);
+        return nullptr;
     }
 
     inline bool checkCollisionsObjects(const sf::Vector2f& pos, bool erase = false)

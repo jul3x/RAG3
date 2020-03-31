@@ -181,25 +181,28 @@ void Map::removeObject(const sf::Vector2f& pos)
 
 std::tuple<std::string, std::string, int> Map::getObjectInfo(const sf::Vector2f& pos)
 {
-    std::tuple<std::string, int> ret;
+    auto ch = getItemInfo(pos, characters_);
+    if (ch != nullptr)
+        return std::make_tuple("characters", ch->getId(), ch->getUniqueId());
 
-    ret = getItemInfo(pos, characters_);
-    if (!std::get<0>(ret).empty())
-        return std::make_tuple("characters", std::get<0>(ret), std::get<1>(ret));
-    ret = getItemInfo(pos, collectibles_);
-    if (!std::get<0>(ret).empty())
-        return std::make_tuple("collectibles", std::get<0>(ret), std::get<1>(ret));
-    ret = getItemInfo(pos, specials_);
-    if (!std::get<0>(ret).empty())
-        return std::make_tuple("specials", std::get<0>(ret), std::get<1>(ret));
-    ret = getItemInfo(pos, decorations_);
-    if (!std::get<0>(ret).empty())
-        return std::make_tuple("decorations", std::get<0>(ret), std::get<1>(ret));
-    ret = getItemInfo(pos, obstacles_);
-    if (!std::get<0>(ret).empty())
-        return std::make_tuple("obstacles", std::get<0>(ret), std::get<1>(ret));
+    auto col = getItemInfo(pos, collectibles_);
+    if (col != nullptr)
+        return std::make_tuple("collectibles", col->getId(), col->getUniqueId());
+
+    auto dec = getItemInfo(pos, decorations_);
+    if (dec != nullptr)
+        return std::make_tuple("decorations", dec->getId(), dec->getUniqueId());
+
+    auto obs = getItemInfo(pos, obstacles_);
+    if (obs != nullptr)
+        return std::make_tuple("obstacles", obs->getId(), obs->getUniqueId());
 
     return std::make_tuple("", "", -1);
+}
+
+Special* Map::getSpecialObject(const sf::Vector2f& pos)
+{
+    return getItemInfo(pos, specials_);
 }
 
 std::pair<sf::Vector2<size_t>, sf::Vector2f> Map::getTileConstraints() const

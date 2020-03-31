@@ -6,13 +6,15 @@
 #ifndef RAG3_COMMON_SPECIAL_H
 #define RAG3_COMMON_SPECIAL_H
 
-#include <R3E/objects/AbstractDrawableObject.h>
+#include <functional>
+
+#include <R3E/objects/AbstractPhysicalObject.h>
 #include <R3E/objects/Identifiable.h>
 #include <R3E/objects/Unique.h>
 
 using namespace r3e;
 
-class Special : public AbstractDrawableObject, public Identifiable, public Unique {
+class Special : public HoveringObject, public Identifiable, public Unique {
 public:
     Special(const sf::Vector2f& position, const std::string& id, int u_id = -1);
 
@@ -32,8 +34,14 @@ public:
 
     void setData(const std::string& str);
 
+    void bindFunction(std::function<void(const std::string&)> func);
+
+    void use();
+
 private:
     std::string activation_, function_, data_;
+
+    std::function<void(const std::string&)> func_;
 
 };
 

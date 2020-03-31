@@ -224,3 +224,4 @@ blood 1600 3800 14
 
 specials: 
 starting_position 900 4100 8 OnEnter MapStart null
+ending_position 600 3700 16 OnEnter MapEnd null

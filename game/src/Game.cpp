@@ -28,6 +28,8 @@ void Game::initialize()
     ui_ = std::make_unique<UserInterface>();
     camera_ = std::make_unique<Camera>();
     journal_ = std::make_unique<Journal>(CFG.getFloat("journal_max_time"), CFG.getFloat("journal_sampling_rate"));
+    special_functions_ = std::make_unique<SpecialFunctions>();
+
     map_ = std::make_unique<Map>();
     agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
                                                           1000.0f, // max time without recalculation of path in ms
@@ -87,6 +89,13 @@ void Game::initialize()
     for (auto& weapon : player_->getWeapons())
     {
         weapon->registerSpawningFunction(std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    }
+
+
+    for (auto& special : map_->getSpecials())
+    {
+        engine_->registerHoveringObject(special.get());
+        special->bindFunction(special_functions_->bindFunction( special->getFunction() ));
     }
 }
 
@@ -414,11 +423,24 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
 {
     auto bullet = dynamic_cast<Bullet*>(h_obj);
     auto character = dynamic_cast<Character*>(d_obj);
-    character->getShot(*bullet);
-    spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                     static_cast<float>(std::pow(CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
-    bullet->setDead();
+    if (bullet != nullptr)
+    {
+        character->getShot(*bullet);
+        spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
+                         static_cast<float>(std::pow(
+                                 CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+
+        bullet->setDead();
+    }
+
+    auto special = dynamic_cast<Special*>(h_obj);
+    auto player = dynamic_cast<Player*>(d_obj);
+
+    if (special != nullptr && player != nullptr)
+    {
+        special->use();
+    }
 }
 
 void Game::alertCollision(DynamicObject* d_obj, StaticObject* s_obj)

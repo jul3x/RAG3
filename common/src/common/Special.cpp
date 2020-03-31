@@ -21,10 +21,16 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
                  const std::string& data, int u_id) :
         Identifiable(id),
         Unique(u_id),
-        AbstractDrawableObject(position,
-                               {utils::getFloat(RM.getObjectParams("specials", id), "size_x"),
-                                utils::getFloat(RM.getObjectParams("specials", id), "size_y")},
-                               &RM.getTexture("specials/" + id)),
+        HoveringObject(position, {},
+                       {utils::getFloat(RM.getObjectParams("specials", id), "size_x"),
+                        utils::getFloat(RM.getObjectParams("specials", id), "size_y")},
+                       Collision::Box(utils::getFloat(RM.getObjectParams("specials", id), "collision_size_x"),
+                                      utils::getFloat(RM.getObjectParams("specials", id), "collision_size_y")),
+                       &RM.getTexture("specials/" + id),
+                       utils::getInt(RM.getObjectParams("specials", id), "frames_number"),
+                       utils::getFloat(RM.getObjectParams("specials", id), "frame_duration"),
+                       sf::Color::Transparent,
+                       0.0f),
         activation_(activation),
         function_(function),
         data_(data)
@@ -64,4 +70,15 @@ void Special::setFunction(const std::string& str)
 void Special::setData(const std::string& str)
 {
     data_ = str;
+}
+
+
+void Special::bindFunction(std::function<void(const std::string&)> func)
+{
+    func_ = func;
+}
+
+void Special::use()
+{
+    func_(data_);
 }

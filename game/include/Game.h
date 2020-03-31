@@ -17,6 +17,7 @@
 
 #include <misc/Camera.h>
 #include <misc/Journal.h>
+#include <misc/SpecialFunctions.h>
 #include <characters/Player.h>
 #include <characters/PlayerClone.h>
 
@@ -134,6 +135,7 @@ private:
     std::unique_ptr<ai::AgentsManager> agents_manager_;
     std::unique_ptr<audio::MusicManager> music_manager_;
 
+    std::unique_ptr<SpecialFunctions> special_functions_;
     std::unique_ptr<Journal> journal_;
     std::unique_ptr<Player> player_;
     std::unique_ptr<PlayerClone> player_clone_;

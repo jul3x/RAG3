@@ -202,25 +202,25 @@ tile_map:
 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
 
 characters: 
-standard 1400 1200
-standard 1000 100
-standard 1000 1000
-standard 1900 1000
-standard 2000 2100
-standard 100 1100
-standard 300 100
+standard 1400 1200 1
+standard 1000 100 2
+standard 1000 1000 3
+standard 1900 1000 4
+standard 2000 2100 5
+standard 100 1100 6
+standard 300 100 7
 
 collectibles: 
 
-specials: 
-starting_position 900 4100
-
 obstacles: 
-fence 2300 2000
-fence 2400 2000
-fence 2500 2000
+fence 2300 2000 9
+fence 2400 2000 10
+fence 2500 2000 11
 
 decorations: 
-blood 1100 3700
-blood 600 3900
-blood 1600 3800
+blood 1100 3700 12
+blood 600 3900 13
+blood 1600 3800 14
+
+specials: 
+starting_position 900 4100 8 OnEnter MapStart null

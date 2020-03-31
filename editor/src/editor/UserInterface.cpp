@@ -181,6 +181,14 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 {
                     Editor::get().readItemInfo(crosshair_.getPosition());
                 }
+                else if (event.key.code == sf::Keyboard::Escape)
+                {
+                    gui_.get("save_window")->setVisible(false);
+                    gui_.get("load_window")->setVisible(false);
+                    gui_.get("config_window")->setVisible(false);
+                    gui_.get("unique_object_window")->setVisible(false);
+                    gui_.get("special_object_window")->setVisible(false);
+                }
             }
             default:
             {

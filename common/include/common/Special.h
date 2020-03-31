@@ -16,6 +16,10 @@ class Special : public AbstractDrawableObject, public Identifiable, public Uniqu
 public:
     Special(const sf::Vector2f& position, const std::string& id, int u_id = -1);
 
+    Special(const sf::Vector2f& position, const std::string& id,
+            const std::string& activation, const std::string& function,
+            const std::string& data, int u_id = -1);
+
     const std::string& getActivation() const;
 
     const std::string& getFunction() const;

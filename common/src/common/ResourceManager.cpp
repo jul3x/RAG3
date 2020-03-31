@@ -66,6 +66,10 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
         sf::Vector2f current_pos = {};
         int u_id = -1;
 
+        std::string activation = "";
+        std::string function = "";
+        std::string f_data = "";
+
         // type < 0 - decoration, type > 0 - obstacle
         while (file >> word)
         {
@@ -132,7 +136,6 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                     }
                     case MapReading::Characters:
                     case MapReading::Collectibles:
-                    case MapReading::Specials:
                     case MapReading::Obstacles:
                     case MapReading::Decorations:
                     {
@@ -158,6 +161,43 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         }
                         break;
                     }
+                    case MapReading::Specials:
+                    {
+                        ++number;
+                        should_add_new_object = false;
+
+                        if (number % 7 == 1)
+                        {
+                            current_id = word;
+                        }
+                        else if (number % 7 == 2)
+                        {
+                            current_pos.x = std::stof(word);
+                        }
+                        else if (number % 7 == 3)
+                        {
+                            current_pos.y = std::stof(word);
+                        }
+                        else if (number % 7 == 4)
+                        {
+                            u_id = std::stoi(word);
+                        }
+                        else if (number % 7 == 5)
+                        {
+                            activation = word;
+                        }
+                        else if (number % 7 == 6)
+                        {
+                            function = word;
+                        }
+                        else
+                        {
+                            f_data = word;
+                            should_add_new_object = true;
+                        }
+
+                        break;
+                    }
                     default:
                     {
                         throw std::logic_error("[ResourceManager] Wrong map format!");
@@ -175,7 +215,8 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             collectibles.emplace_back(std::make_shared<Collectible>(current_pos, current_id, u_id));
                             break;
                         case MapReading::Specials:
-                            specials.emplace_back(std::make_shared<Special>(current_pos, current_id, u_id));
+                            specials.emplace_back(std::make_shared<Special>(current_pos, current_id,
+                                                                            activation, function, f_data, u_id));
                             break;
                         case MapReading::Obstacles:
                             obstacles.emplace_back(std::make_shared<Obstacle>(current_pos, current_id, u_id));
@@ -267,9 +308,20 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
 
     addObjToFile("characters", map.getNPCs());
     addObjToFile("collectibles", map.getCollectibles());
-    addObjToFile("specials", map.getSpecials());
     addObjToFile("obstacles", map.getObstacles());
     addObjToFile("decorations", map.getDecorations());
+
+    file << std::endl << "specials: " << std::endl;
+    for (const auto& obj : map.getSpecials())
+    {
+        file << obj->getId() << " " <<
+             obj->getPosition().x - map_constraints.second.x << " " <<
+             obj->getPosition().y - map_constraints.second.y << " " <<
+             obj->getUniqueId() << " " <<
+             obj->getActivation() << " " <<
+             obj->getFunction() << " " <<
+             obj->getData() << std::endl;
+    }
 
     std::cout << "[ResourceManager] Map file " << CFG.getString("paths/maps_dir") + "/" + name + ".j3x" << " is saved!" << std::endl;
 

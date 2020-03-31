@@ -18,6 +18,7 @@
 #include <editor/SaveWindow.h>
 #include <editor/LoadWindow.h>
 #include <editor/ConfigWindow.h>
+#include <editor/UniqueObjectWindow.h>
 
 
 using namespace r3e;
@@ -47,6 +48,8 @@ namespace editor {
         void resetMapList();
 
         void openConfigWindow(const std::string& category, const std::string& id);
+
+        void openUniqueObjectWindow(const std::string& category, const std::string& name, int id);
 
     private:
         inline void generateMenuBar(sf::RenderWindow& window);
@@ -79,6 +82,7 @@ namespace editor {
         SaveWindow save_window_;
         LoadWindow load_window_;
         ConfigWindow config_window_;
+        UniqueObjectWindow unique_object_window_;
 
         sf::Text information_;
 

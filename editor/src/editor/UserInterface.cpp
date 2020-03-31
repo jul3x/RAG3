@@ -29,11 +29,13 @@ UserInterface::UserInterface() :
         menu_window_(this, &gui_, &gui_theme_),
         save_window_(&gui_, &gui_theme_),
         load_window_(&gui_, &gui_theme_),
-        config_window_(&gui_, &gui_theme_)
+        config_window_(&gui_, &gui_theme_),
+        unique_object_window_(&gui_, &gui_theme_)
 {
     gui_.get("save_window")->setVisible(false);
     gui_.get("load_window")->setVisible(false);
     gui_.get("config_window")->setVisible(false);
+    gui_.get("unique_object_window")->setVisible(false);
 
     information_.setPosition(CFG.getFloat("info_x"), CFG.getFloat("info_y"));
     information_.setFillColor(sf::Color(255, 255, 255, 0));
@@ -105,6 +107,13 @@ void UserInterface::openConfigWindow(const std::string& category, const std::str
     gui_.get("config_window")->setVisible(true);
 }
 
+void UserInterface::openUniqueObjectWindow(const std::string& category, const std::string& name, int id)
+{
+    unique_object_window_.setObjectContent(category, name, id);
+    gui_.get("unique_object_window")->setVisible(true);
+}
+
+
 void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapsed)
 {
     static sf::Event event;
@@ -158,6 +167,13 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 camera_->setViewNormalSize(current_view.getSize());
 
                 break;
+            }
+            case sf::Event::KeyPressed:
+            {
+                if (event.key.code == sf::Keyboard::E)
+                {
+                    Editor::get().readItemInfo(crosshair_.getPosition());
+                }
             }
             default:
             {

@@ -6,8 +6,9 @@
 #include <common/ResourceManager.h>
 
 
-Decoration::Decoration(const sf::Vector2f& position, const std::string& id) :
+Decoration::Decoration(const sf::Vector2f& position, const std::string& id, int u_id) :
         Identifiable(id),
+        Unique(u_id),
         AbstractDrawableObject(position,
                                {utils::getFloat(RM.getObjectParams("decorations", id), "size_x"),
                                 utils::getFloat(RM.getObjectParams("decorations", id), "size_y")},

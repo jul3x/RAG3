@@ -16,9 +16,8 @@
 #include <common/ShootingWeapon.h>
 
 
-NPC::NPC(const sf::Vector2f& position,
-             const std::string& id) :
-        Character(position, id),
+NPC::NPC(const sf::Vector2f& position, const std::string& id, int u_id) :
+        Character(position, id, u_id),
         AbstractAgent(),
         visibility_state_(VisibilityState::TooFar)
 {

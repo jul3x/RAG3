@@ -6,8 +6,9 @@
 #include <common/Special.h>
 
 
-Special::Special(const sf::Vector2f& position, const std::string& id) :
+Special::Special(const sf::Vector2f& position, const std::string& id, int u_id) :
         Identifiable(id),
+        Unique(u_id),
         AbstractDrawableObject(position,
                                {utils::getFloat(RM.getObjectParams("specials", id), "size_x"),
                                 utils::getFloat(RM.getObjectParams("specials", id), "size_y")},

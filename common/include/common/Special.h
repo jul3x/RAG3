@@ -8,12 +8,13 @@
 
 #include <R3E/objects/AbstractDrawableObject.h>
 #include <R3E/objects/Identifiable.h>
+#include <R3E/objects/Unique.h>
 
 using namespace r3e;
 
-class Special : public AbstractDrawableObject, public Identifiable {
+class Special : public AbstractDrawableObject, public Identifiable, public Unique {
 public:
-    Special(const sf::Vector2f& position, const std::string& id);
+    Special(const sf::Vector2f& position, const std::string& id, int u_id = -1);
 };
 
 #endif // RAG3_COMMON_SPECIAL_H

@@ -10,13 +10,14 @@
 
 #include <R3E/objects/AbstractPhysicalObject.h>
 #include <R3E/objects/Identifiable.h>
+#include <R3E/objects/Unique.h>
 
 #include <common/AbstractWeapon.h>
 #include <common/Shootable.h>
 
 using namespace r3e;
 
-class Character : public DynamicObject, public Shootable, public Identifiable {
+class Character : public DynamicObject, public Shootable, public Identifiable, public Unique {
 public:
     enum class LifeState {
         High,
@@ -32,7 +33,8 @@ public:
     };
 
     Character(const sf::Vector2f& position,
-              const std::string& id);
+              const std::string& id,
+              int u_id = -1);
 
     bool shot(float ime_factor);
 

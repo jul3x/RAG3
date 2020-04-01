@@ -8,6 +8,8 @@
 
 #include <functional>
 
+#include <SFML/Graphics/CircleShape.hpp>
+
 #include <R3E/objects/AbstractPhysicalObject.h>
 #include <R3E/objects/Identifiable.h>
 #include <R3E/objects/Unique.h>

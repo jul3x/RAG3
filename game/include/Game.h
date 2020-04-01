@@ -18,6 +18,7 @@
 #include <misc/Camera.h>
 #include <misc/Journal.h>
 #include <misc/SpecialFunctions.h>
+#include <misc/Thought.h>
 #include <characters/Player.h>
 #include <characters/PlayerClone.h>
 
@@ -69,6 +70,8 @@ public:
     void spawnExplosionEvent(const sf::Vector2f& pos, float r);
 
     void spawnTeleportationEvent(const sf::Vector2f& pos);
+
+    void spawnThought(const std::string& text);
 
     void initialize() override;
 
@@ -144,7 +147,9 @@ private:
     std::unique_ptr<Player> player_;
     std::unique_ptr<PlayerClone> player_clone_;
     std::unique_ptr<Map> map_;
+
     std::list<std::unique_ptr<Bullet>> bullets_;
+    std::list<std::unique_ptr<Thought>> thoughts_;
 
     Special* current_special_object_;
 

@@ -168,6 +168,16 @@ void Game::update(float time_elapsed)
                 }
             }
 
+            for (auto it = thoughts_.begin(); it != thoughts_.end(); ++it)
+            {
+                if (!(*it)->update(time_elapsed))
+                {
+                    auto next_it = std::next(it);
+                    thoughts_.erase(it);
+                    it = next_it;
+                }
+            }
+
             journal_->update(time_elapsed);
             camera_->update(time_elapsed);
 
@@ -325,6 +335,9 @@ void Game::draw(graphics::Graphics& graphics)
     engine_->drawSortedAnimationEvents();
 
     graphics.drawAlreadySorted();
+
+    for (auto& thought : thoughts_)
+        graphics.draw(*thought);
 }
 
 void Game::start()
@@ -381,6 +394,11 @@ void Game::spawnTeleportationEvent(const sf::Vector2f& pos)
 
     if (CFG.getInt("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("teleportation"), pos);
+}
+
+void Game::spawnThought(const std::string& text)
+{
+    thoughts_.emplace_back(std::make_unique<Thought>(player_.get(), text, CFG.getFloat("thought_duration")));
 }
 
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir)

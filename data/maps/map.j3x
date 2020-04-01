@@ -233,3 +233,5 @@ blood 1600 3800 14
 specials: 
 starting_position 900 4100 8 OnEnter MapStart null
 lever 1100 4000 27 OnUse OpenDoor 26
+note 1300 4700 33 OnUse ReadNote I_can't_handle_it_anymore..._Please_someone_help_US!
+note 700 5200 34 OnUse ReadNote Example_text

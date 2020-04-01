@@ -192,6 +192,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         }
                         else
                         {
+                            std::replace(word.begin(), word.end(), '_', ' ');
                             f_data = word;
                             should_add_new_object = true;
                         }
@@ -314,13 +315,16 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
     file << std::endl << "specials: " << std::endl;
     for (const auto& obj : map.getSpecials())
     {
+        auto new_data = obj->getData();
+        std::replace(new_data.begin(), new_data.end(), ' ', '_');
+
         file << obj->getId() << " " <<
              obj->getPosition().x - map_constraints.second.x << " " <<
              obj->getPosition().y - map_constraints.second.y << " " <<
              obj->getUniqueId() << " " <<
              obj->getActivation() << " " <<
              obj->getFunction() << " " <<
-             obj->getData() << std::endl;
+             new_data << std::endl;
     }
 
     std::cout << "[ResourceManager] Map file " << CFG.getString("paths/maps_dir") + "/" + name + ".j3x" << " is saved!" << std::endl;

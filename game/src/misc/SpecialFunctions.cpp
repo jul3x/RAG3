@@ -14,6 +14,7 @@ SpecialFunctions::SpecialFunctions()
     functions_["MapStart"] = &mapStart;
     functions_["MapEnd"]= &mapEnd;
     functions_["OpenDoor"] = &openDoor;
+    functions_["ReadNote"] = &readNote;
 }
 
 void SpecialFunctions::mapStart(Special* obj, const std::string& data)
@@ -53,7 +54,11 @@ void SpecialFunctions::openDoor(Special* obj, const std::string& data)
 
         Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
     }
+}
 
+void SpecialFunctions::readNote(Special* obj, const std::string& data)
+{
+    Game::get().spawnThought(data);
 }
 
 std::function<void(Special*, const std::string&)> SpecialFunctions::bindFunction(const std::string& key) const

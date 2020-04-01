@@ -26,6 +26,11 @@ namespace r3e {
         return c_area_;
     }
 
+    void AbstractPhysicalObject::changeCollisionArea(const Collision::Area& area)
+    {
+        c_area_ = area;
+    }
+
 //
 // StaticObject
 //

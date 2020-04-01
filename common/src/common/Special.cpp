@@ -33,7 +33,9 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
                        0.0f),
         activation_(activation),
         function_(function),
-        data_(data)
+        data_(data),
+        is_drawable_(utils::getInt(RM.getObjectParams("specials", id), "is_drawable")),
+        is_active_(true)
 {
     this->changeOrigin(sf::Vector2f(utils::getFloat(RM.getObjectParams("specials", id), "size_x"),
                                     utils::getFloat(RM.getObjectParams("specials", id), "size_y")) / 2.0f +
@@ -41,6 +43,10 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
                                     utils::getFloat(RM.getObjectParams("specials", id), "map_offset_y")));
 }
 
+bool Special::isDrawable() const
+{
+    return is_drawable_;
+}
 
 const std::string& Special::getActivation() const
 {
@@ -72,13 +78,22 @@ void Special::setData(const std::string& str)
     data_ = str;
 }
 
+bool Special::isActive() const
+{
+    return is_active_;
+}
 
-void Special::bindFunction(std::function<void(const std::string&)> func)
+void Special::deactivate()
+{
+    is_active_ = false;
+}
+
+void Special::bindFunction(std::function<void(Special*, const std::string&)> func)
 {
     func_ = func;
 }
 
 void Special::use()
 {
-    func_(data_);
+    func_(this, data_);
 }

@@ -205,6 +205,16 @@ Special* Map::getSpecialObject(const sf::Vector2f& pos)
     return getItemInfo(pos, specials_);
 }
 
+Special* Map::getSpecialObject(int id)
+{
+    return getObject(id, specials_);
+}
+
+Obstacle* Map::getObstacleObject(int id)
+{
+    return getObject(id, obstacles_);
+}
+
 std::pair<sf::Vector2<size_t>, sf::Vector2f> Map::getTileConstraints() const
 {
     sf::Vector2f min = {std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity()};

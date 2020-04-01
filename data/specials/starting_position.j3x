@@ -13,3 +13,5 @@ float frame_duration=0.0f
 string default_activation=OnEnter
 string default_function=MapStart
 string default_data=null
+
+bool is_drawable=0

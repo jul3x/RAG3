@@ -106,6 +106,10 @@ public:
 
     void findAndDeleteDecoration(Decoration* ptr);
 
+    Special* getCurrentSpecialObject() const;
+
+    void useSpecialObject();
+
     void setBulletTime();
 
     void setNormalTime();
@@ -141,6 +145,8 @@ private:
     std::unique_ptr<PlayerClone> player_clone_;
     std::unique_ptr<Map> map_;
     std::list<std::unique_ptr<Bullet>> bullets_;
+
+    Special* current_special_object_;
 
     Game::GameState state_;
     float current_time_factor_;

@@ -16,7 +16,7 @@
 #include <Game.h>
 
 
-Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal)
+Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal), current_special_object_(nullptr)
 {
     engine_ = std::make_unique<Engine>();
     engine_->registerGame(this);
@@ -101,6 +101,8 @@ void Game::initialize()
 
 void Game::update(float time_elapsed)
 {
+    current_special_object_ = nullptr;
+
     switch (state_)
     {
         case GameState::Paused:
@@ -298,6 +300,10 @@ void Game::draw(graphics::Graphics& graphics)
     for (auto& decoration : map_->getDecorations())
         graphics.draw(*decoration);
 
+    for (auto& special : map_->getSpecials())
+        if (special->isDrawable())
+            graphics.draw(*special);
+
     for (auto& obstacle : map_->getObstaclesTiles())
         graphics.drawSorted(*obstacle);
 
@@ -400,23 +406,29 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
     auto obstacle = dynamic_cast<Obstacle*>(s_obj);
     auto obstacle_tile = dynamic_cast<ObstacleTile*>(s_obj);
 
-    if (obstacle != nullptr)
+    if (obstacle != nullptr && bullet != nullptr)
     {
         journal_->eventObstacleShot(obstacle);
 
         obstacle->getShot(*bullet);
+
+        spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
+                         static_cast<float>(std::pow(CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+
+        bullet->setDead();
     }
-    else
+    else if (obstacle_tile != nullptr && bullet != nullptr)
     {
         journal_->eventObstacleTileShot(obstacle_tile);
 
         obstacle_tile->getShot(*bullet);
+
+        spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
+                         static_cast<float>(std::pow(CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+
+        bullet->setDead();
     }
 
-    spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                     static_cast<float>(std::pow(CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
-
-    bullet->setDead();
 }
 
 void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
@@ -437,9 +449,12 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     auto special = dynamic_cast<Special*>(h_obj);
     auto player = dynamic_cast<Player*>(d_obj);
 
-    if (special != nullptr && player != nullptr)
+    if (special != nullptr && player != nullptr && special->isActive())
     {
-        special->use();
+        if (special->getActivation() == "OnEnter")
+            special->use();
+        else
+            current_special_object_ = special;
     }
 }
 
@@ -587,6 +602,19 @@ void Game::findAndDeleteDecoration(Decoration* ptr)
 ai::AgentsManager& Game::getAgentsManager() const
 {
     return *agents_manager_;
+}
+
+Special* Game::getCurrentSpecialObject() const
+{
+    return current_special_object_;
+}
+
+void Game::useSpecialObject()
+{
+    if (current_special_object_ != nullptr)
+    {
+        current_special_object_->use();
+    }
 }
 
 void Game::setBulletTime()

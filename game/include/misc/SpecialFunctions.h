@@ -10,18 +10,21 @@
 #include <functional>
 #include <string>
 
+#include <common/Special.h>
+
 class SpecialFunctions
 {
 public:
     SpecialFunctions();
 
-    static void mapStart(const std::string& data);
-    static void mapEnd(const std::string& data);
+    static void mapStart(Special* obj, const std::string& data);
+    static void mapEnd(Special* obj, const std::string& data);
+    static void openDoor(Special* obj, const std::string& data);
 
-    std::function<void(const std::string&)> bindFunction(const std::string& key) const;
+    std::function<void(Special*, const std::string&)> bindFunction(const std::string& key) const;
 
 private:
-    std::unordered_map<std::string, std::function<void(const std::string&)>> functions_;
+    std::unordered_map<std::string, std::function<void(Special*, const std::string&)>> functions_;
 
 };
 

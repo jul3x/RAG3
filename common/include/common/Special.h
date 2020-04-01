@@ -22,6 +22,8 @@ public:
             const std::string& activation, const std::string& function,
             const std::string& data, int u_id = -1);
 
+    bool isDrawable() const;
+
     const std::string& getActivation() const;
 
     const std::string& getFunction() const;
@@ -34,14 +36,20 @@ public:
 
     void setData(const std::string& str);
 
-    void bindFunction(std::function<void(const std::string&)> func);
+    void bindFunction(std::function<void(Special*, const std::string&)> func);
+
+    bool isActive() const;
+
+    void deactivate();
 
     void use();
 
 private:
+    bool is_drawable_, is_active_;
+
     std::string activation_, function_, data_;
 
-    std::function<void(const std::string&)> func_;
+    std::function<void(Special*, const std::string&)> func_;
 
 };
 

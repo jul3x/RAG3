@@ -209,6 +209,7 @@ standard 1900 1000 4
 standard 2000 2100 5
 standard 100 1100 6
 standard 300 100 7
+standard 900 3600 28
 
 collectibles: 
 
@@ -231,5 +232,4 @@ blood 1600 3800 14
 
 specials: 
 starting_position 900 4100 8 OnEnter MapStart null
-ending_position 900 3600 17 OnEnter MapEnd null
 lever 1100 4000 27 OnUse OpenDoor 26

@@ -15,8 +15,11 @@ Camera::Camera() : state_(State::Normal) { center_ = {}; }
 
 void Camera::setShaking()
 {
-    state_ = State::Shooting;
-    time_elapsed_ = CFG.getFloat("graphics/camera_shaking_time");
+    if (state_ == State::Normal || state_ == State::Shooting)
+    {
+        state_ = State::Shooting;
+        time_elapsed_ = CFG.getFloat("graphics/camera_shaking_time");
+    }
 }
 
 void Camera::setZoomInOut()

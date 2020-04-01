@@ -122,6 +122,14 @@ bool NPC::update(float time_elapsed, float time_factor)
         }
     }
 
+    if (utils::num::isNearlyEqual(velocity, {0.0f, 0.0f}) &&
+        action_state_ != ActionState::Shot && action_state_ != ActionState::DestroyWall)
+    {
+        velocity = utils::getFloat(RM.getObjectParams("characters", this->getId()), "standby_speed") *
+                   this->getWanderingDirection(0.2f, 100.0f, 20);
+        this->setWeaponPointing(this->getPosition() + velocity);
+    }
+
     this->setVelocity(velocity);
 
     return is_alive;

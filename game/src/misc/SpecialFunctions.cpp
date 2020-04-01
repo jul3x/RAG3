@@ -30,13 +30,30 @@ void SpecialFunctions::openDoor(Special* obj, const std::string& data)
 {
     auto door_id = std::stoi(data);
     auto door = Game::get().getMap().getObstacleObject(door_id);
+    auto grid_pos = std::make_pair(static_cast<size_t>(door->getPosition().x / DecorationTile::SIZE_X_),
+                                   static_cast<size_t>(door->getPosition().y / DecorationTile::SIZE_Y_));
 
-    door->changeTexture(&RM.getTexture("obstacles/" + door->getId() + "_open"));
-    door->changeCollisionArea(Collision::None());
+    if (door->getCollisionArea().getType() == Collision::Area::Type::None)
+    {
+        door->changeTexture(&RM.getTexture("obstacles/" + door->getId()));
+        door->changeCollisionArea(Collision::Box(utils::getFloat(RM.getObjectParams("obstacles", door->getId()), "collision_size_x"),
+                                                 utils::getFloat(RM.getObjectParams("obstacles", door->getId()), "collision_size_y")));
 
-    obj->changeTexture(&RM.getTexture("specials/" + obj->getId() + "_open"));
+        obj->changeTexture(&RM.getTexture("specials/" + obj->getId()));
 
-    obj->deactivate();
+        Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) =
+                utils::getFloat(RM.getObjectParams("obstacles", door->getId()), "endurance");
+    }
+    else
+    {
+        door->changeTexture(&RM.getTexture("obstacles/" + door->getId() + "_open"));
+        door->changeCollisionArea(Collision::None());
+
+        obj->changeTexture(&RM.getTexture("specials/" + obj->getId() + "_open"));
+
+        Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
+    }
+
 }
 
 std::function<void(Special*, const std::string&)> SpecialFunctions::bindFunction(const std::string& key) const

@@ -58,7 +58,9 @@ void SpecialFunctions::openDoor(Special* obj, const std::string& data)
 
 void SpecialFunctions::readNote(Special* obj, const std::string& data)
 {
-    Game::get().spawnThought(data);
+    auto str = data;
+    std::replace(str.begin(), str.end(), '$', '\n');
+    Game::get().spawnThought(str);
 }
 
 std::function<void(Special*, const std::string&)> SpecialFunctions::bindFunction(const std::string& key) const

@@ -15,6 +15,11 @@ SpecialFunctions::SpecialFunctions()
     functions_["MapEnd"]= &mapEnd;
     functions_["OpenDoor"] = &openDoor;
     functions_["ReadNote"] = &readNote;
+
+    text_to_use_["MapStart"] = "[F] Start new map";
+    text_to_use_["MapEnd"] = "[F] End this map";
+    text_to_use_["OpenDoor"] = "[F] Use object";
+    text_to_use_["ReadNote"] = "[F] Read note";
 }
 
 void SpecialFunctions::mapStart(Special* obj, const std::string& data)
@@ -68,6 +73,18 @@ std::function<void(Special*, const std::string&)> SpecialFunctions::bindFunction
     auto it = functions_.find(key);
 
     if (it == functions_.end())
+    {
+        throw std::invalid_argument("[SpecialFunctions] Function " + key + " is not handled!");
+    }
+
+    return it->second;
+}
+
+const std::string& SpecialFunctions::bindTextToUse(const std::string &key) const
+{
+    auto it = text_to_use_.find(key);
+
+    if (it == text_to_use_.end())
     {
         throw std::invalid_argument("[SpecialFunctions] Function " + key + " is not handled!");
     }

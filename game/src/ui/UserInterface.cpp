@@ -46,9 +46,6 @@ void UserInterface::initialize(graphics::Graphics& graphics)
     fps_text_.setPosition(FPS_X_, FPS_Y_);
 
     object_use_text_.setFillColor(sf::Color::White);
-    auto object_use_text_rect = object_use_text_.getLocalBounds();
-    object_use_text_.setOrigin(object_use_text_rect.left + object_use_text_rect.width/2.0f,
-                               object_use_text_rect.top  + object_use_text_rect.height/2.0f);
 
     graphics.getWindow().setMouseCursorVisible(false);
     graphics.getWindow().setKeyRepeatEnabled(false);
@@ -83,6 +80,11 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
     auto special_object = Game::get().getCurrentSpecialObject();
     if (special_object != nullptr)
     {
+        object_use_text_.setString(special_object->getTextToUse());
+        auto object_use_text_rect = object_use_text_.getLocalBounds();
+        object_use_text_.setOrigin(object_use_text_rect.left + object_use_text_rect.width/2.0f,
+                                   object_use_text_rect.top  + object_use_text_rect.height/2.0f);
+
         object_use_text_.setPosition(special_object->getPosition() - sf::Vector2f{0.0f, OBJECT_USE_TEXT_OFFSET_Y_});
         object_use_text_.setFillColor(sf::Color::White);
     }

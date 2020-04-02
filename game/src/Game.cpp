@@ -95,7 +95,8 @@ void Game::initialize()
     for (auto& special : map_->getSpecials())
     {
         engine_->registerHoveringObject(special.get());
-        special->bindFunction(special_functions_->bindFunction( special->getFunction() ));
+        special->bindFunction(special_functions_->bindFunction( special->getFunction() ),
+                              special_functions_->bindTextToUse( special->getFunction() ));
     }
 }
 

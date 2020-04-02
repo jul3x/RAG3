@@ -32,13 +32,15 @@ public:
 
     const std::string& getData() const;
 
+    const std::string& getTextToUse() const;
+
     void setActivation(const std::string& str);
 
     void setFunction(const std::string& str);
 
     void setData(const std::string& str);
 
-    void bindFunction(std::function<void(Special*, const std::string&)> func);
+    void bindFunction(std::function<void(Special*, const std::string&)> func, const std::string& text);
 
     bool isActive() const;
 
@@ -52,6 +54,8 @@ private:
     std::string activation_, function_, data_;
 
     std::function<void(Special*, const std::string&)> func_;
+
+    const std::string* text_to_use_;
 
 };
 

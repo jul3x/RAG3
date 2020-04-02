@@ -30,6 +30,8 @@ namespace r3e {
 
         const Collision::Area& getCollisionArea() const;
 
+        void changeCollisionArea(const Collision::Area& area);
+
         virtual bool update(float time_elapsed) = 0;
 
     private:

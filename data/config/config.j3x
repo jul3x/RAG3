@@ -13,3 +13,5 @@ float journal_min_time=3.0f
 float time_reversal_speed_factor=5.0f
 
 float player_clone_time_factor=3.0f
+
+float thought_duration=5.0f

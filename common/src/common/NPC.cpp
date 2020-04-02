@@ -16,9 +16,8 @@
 #include <common/ShootingWeapon.h>
 
 
-NPC::NPC(const sf::Vector2f& position,
-             const std::string& id) :
-        Character(position, id),
+NPC::NPC(const sf::Vector2f& position, const std::string& id, int u_id) :
+        Character(position, id, u_id),
         AbstractAgent(),
         visibility_state_(VisibilityState::TooFar)
 {
@@ -121,6 +120,14 @@ bool NPC::update(float time_elapsed, float time_factor)
             this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - enemy_position));
             break;
         }
+    }
+
+    if (utils::num::isNearlyEqual(velocity, {0.0f, 0.0f}) &&
+        action_state_ != ActionState::Shot && action_state_ != ActionState::DestroyWall)
+    {
+        velocity = utils::getFloat(RM.getObjectParams("characters", this->getId()), "standby_speed") *
+                   this->getWanderingDirection(0.2f, 100.0f, 20);
+        this->setWeaponPointing(this->getPosition() + velocity);
     }
 
     this->setVelocity(velocity);

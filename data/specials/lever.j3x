@@ -1,8 +1,8 @@
-float size_x=100.0f
-float size_y=100.0f
+float size_x=80.0f
+float size_y=80.0f
 
 float map_offset_x=0.0f
-float map_offset_y=0.0f
+float map_offset_y=25.0f
 
 float collision_size_x=100.0f
 float collision_size_y=100.0f
@@ -10,8 +10,8 @@ float collision_size_y=100.0f
 int frames_number=1
 float frame_duration=0.0f
 
-string default_activation=OnEnter
-string default_function=MapEnd
+string default_activation=OnUse
+string default_function=OpenDoor
 string default_data=null
 
-bool is_drawable=0
+bool is_drawable=1

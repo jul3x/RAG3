@@ -65,6 +65,8 @@ private:
     static constexpr float FPS_X_ = 150.0f;
     static constexpr float FPS_Y_ = 300.0f;
 
+    static constexpr float OBJECT_USE_TEXT_OFFSET_Y_ = 100.0f;
+
     WeaponsBar weapons_bar_;
     Crosshair crosshair_;
     BloodSplash blood_splash_;
@@ -76,6 +78,7 @@ private:
     AbstractDrawableObject logo_;
 
     sf::Text fps_text_;
+    sf::Text object_use_text_;
 
     Player* player_;
     Camera* camera_;

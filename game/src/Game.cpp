@@ -16,7 +16,7 @@
 #include <Game.h>
 
 
-Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal)
+Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal), current_special_object_(nullptr)
 {
     engine_ = std::make_unique<Engine>();
     engine_->registerGame(this);
@@ -28,6 +28,8 @@ void Game::initialize()
     ui_ = std::make_unique<UserInterface>();
     camera_ = std::make_unique<Camera>();
     journal_ = std::make_unique<Journal>(CFG.getFloat("journal_max_time"), CFG.getFloat("journal_sampling_rate"));
+    special_functions_ = std::make_unique<SpecialFunctions>();
+
     map_ = std::make_unique<Map>();
     agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
                                                           1000.0f, // max time without recalculation of path in ms
@@ -88,10 +90,20 @@ void Game::initialize()
     {
         weapon->registerSpawningFunction(std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     }
+
+
+    for (auto& special : map_->getSpecials())
+    {
+        engine_->registerHoveringObject(special.get());
+        special->bindFunction(special_functions_->bindFunction( special->getFunction() ),
+                              special_functions_->bindTextToUse( special->getFunction() ));
+    }
 }
 
 void Game::update(float time_elapsed)
 {
+    current_special_object_ = nullptr;
+
     switch (state_)
     {
         case GameState::Paused:
@@ -153,6 +165,16 @@ void Game::update(float time_elapsed)
                     deleteHoveringObject(it->get());
                     auto next_it = std::next(it);
                     bullets_.erase(it);
+                    it = next_it;
+                }
+            }
+
+            for (auto it = thoughts_.begin(); it != thoughts_.end(); ++it)
+            {
+                if (!(*it)->update(time_elapsed))
+                {
+                    auto next_it = std::next(it);
+                    thoughts_.erase(it);
                     it = next_it;
                 }
             }
@@ -289,6 +311,10 @@ void Game::draw(graphics::Graphics& graphics)
     for (auto& decoration : map_->getDecorations())
         graphics.draw(*decoration);
 
+    for (auto& special : map_->getSpecials())
+        if (special->isDrawable())
+            graphics.draw(*special);
+
     for (auto& obstacle : map_->getObstaclesTiles())
         graphics.drawSorted(*obstacle);
 
@@ -310,6 +336,9 @@ void Game::draw(graphics::Graphics& graphics)
     engine_->drawSortedAnimationEvents();
 
     graphics.drawAlreadySorted();
+
+    for (auto& thought : thoughts_)
+        graphics.draw(*thought);
 }
 
 void Game::start()
@@ -368,6 +397,11 @@ void Game::spawnTeleportationEvent(const sf::Vector2f& pos)
         engine_->spawnSoundEvent(RM.getSound("teleportation"), pos);
 }
 
+void Game::spawnThought(const std::string& text)
+{
+    thoughts_.emplace_back(std::make_unique<Thought>(player_.get(), text, CFG.getFloat("thought_duration")));
+}
+
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir)
 {
     auto shot_event = std::make_shared<ShotEvent>(pos, dir * 180.0f / M_PI,
@@ -391,34 +425,56 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
     auto obstacle = dynamic_cast<Obstacle*>(s_obj);
     auto obstacle_tile = dynamic_cast<ObstacleTile*>(s_obj);
 
-    if (obstacle != nullptr)
+    if (obstacle != nullptr && bullet != nullptr)
     {
         journal_->eventObstacleShot(obstacle);
 
         obstacle->getShot(*bullet);
+
+        spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
+                         static_cast<float>(std::pow(CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+
+        bullet->setDead();
     }
-    else
+    else if (obstacle_tile != nullptr && bullet != nullptr)
     {
         journal_->eventObstacleTileShot(obstacle_tile);
 
         obstacle_tile->getShot(*bullet);
+
+        spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
+                         static_cast<float>(std::pow(CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+
+        bullet->setDead();
     }
 
-    spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                     static_cast<float>(std::pow(CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
-
-    bullet->setDead();
 }
 
 void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
 {
     auto bullet = dynamic_cast<Bullet*>(h_obj);
     auto character = dynamic_cast<Character*>(d_obj);
-    character->getShot(*bullet);
-    spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                     static_cast<float>(std::pow(CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
-    bullet->setDead();
+    if (bullet != nullptr)
+    {
+        character->getShot(*bullet);
+        spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
+                         static_cast<float>(std::pow(
+                                 CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+
+        bullet->setDead();
+    }
+
+    auto special = dynamic_cast<Special*>(h_obj);
+    auto player = dynamic_cast<Player*>(d_obj);
+
+    if (special != nullptr && player != nullptr && special->isActive())
+    {
+        if (special->getActivation() == "OnEnter")
+            special->use();
+        else
+            current_special_object_ = special;
+    }
 }
 
 void Game::alertCollision(DynamicObject* d_obj, StaticObject* s_obj)
@@ -565,6 +621,19 @@ void Game::findAndDeleteDecoration(Decoration* ptr)
 ai::AgentsManager& Game::getAgentsManager() const
 {
     return *agents_manager_;
+}
+
+Special* Game::getCurrentSpecialObject() const
+{
+    return current_special_object_;
+}
+
+void Game::useSpecialObject()
+{
+    if (current_special_object_ != nullptr)
+    {
+        current_special_object_->use();
+    }
 }
 
 void Game::setBulletTime()

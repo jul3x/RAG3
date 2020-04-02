@@ -110,6 +110,19 @@ const std::string& Editor::getCurrentMapName() const
     return current_map_name_;
 }
 
+void Editor::readItemInfo(const sf::Vector2f& pos)
+{
+    auto ret_special = map_->getSpecialObject(pos);
+
+    if (ret_special != nullptr)
+        ui_->openSpecialObjectWindow("specials", ret_special);
+
+    auto ret = map_->getObjectInfo(pos);
+
+    if (!(std::get<0>(ret).empty() && std::get<1>(ret).empty()))
+        ui_->openUniqueObjectWindow(std::get<0>(ret), std::get<1>(ret), std::get<2>(ret));
+}
+
 void Editor::placeItem(const sf::Vector2f& pos)
 {
     if (current_item_.first == "decorations_tiles")

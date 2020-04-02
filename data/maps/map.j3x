@@ -36,9 +36,9 @@ tile_map:
 2 -1 -1 1 1 -1 -1 -1 -1 -1 -1 1 -1 -1 -1 -1 -1 -1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 
 2 -1 -1 1 1 -1 -1 -1 -1 -1 -1 1 -1 -1 1 1 -1 -1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 
 2 -1 -1 1 1 1 1 1 1 1 1 1 -1 -1 1 1 -1 -1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 
-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 -1 -1 1 1 1 1 1 1 1 1 1 
-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 
-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 
+1 -1 -1 -1 -1 -1 -1 2 -1 -1 -1 2 -1 -1 -1 -1 -1 -1 1 -1 -1 1 1 1 1 1 1 1 1 1 
+1 -1 -1 -1 -1 -1 -1 2 -1 -1 -1 2 -1 -1 -1 -1 -1 -1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 
+1 -1 -1 -1 -1 -1 -1 2 -1 -1 -1 2 -1 -1 -1 -1 -1 -1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 
 1 1 1 1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 
@@ -202,25 +202,36 @@ tile_map:
 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
 
 characters: 
-standard 1400 1200
-standard 1000 100
-standard 1000 1000
-standard 1900 1000
-standard 2000 2100
-standard 100 1100
-standard 300 100
+standard 1400 1200 1
+standard 1000 100 2
+standard 1000 1000 3
+standard 1900 1000 4
+standard 2000 2100 5
+standard 100 1100 6
+standard 300 100 7
+standard 900 3600 28
 
 collectibles: 
 
-specials: 
-starting_position 900 4100
-
 obstacles: 
-fence 2300 2000
-fence 2400 2000
-fence 2500 2000
+fence 2300 2000 9
+fence 2400 2000 10
+fence 2500 2000 11
+fence 1100 3900 18
+fence 1000 3900 19
+fence 800 3900 20
+fence 700 3900 21
+fence 500 3900 22
+fence 600 3900 23
+fence 1200 3900 24
+fence 1300 3900 25
+door 900 3900 26
 
 decorations: 
-blood 1100 3700
-blood 600 3900
-blood 1600 3800
+blood 1600 3800 14
+
+specials: 
+starting_position 900 4100 8 OnEnter MapStart null
+lever 1100 4000 27 OnUse OpenDoor 26
+note 1300 4700 33 OnUse ReadNote "I_can't_handle_it_anymore...$Please_someone_help_US!"$ugh..._these_guys_are_fucked!
+note 700 5200 34 OnUse ReadNote "As_I_walk_through_the_valley$of_shadow_of_death...$I_fear_no_evil..."$Seriously_fucked_in_the_head.

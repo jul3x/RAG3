@@ -12,7 +12,8 @@
 #include <common/ShootingWeapon.h>
 
 
-Character::Character(const sf::Vector2f& position, const std::string& id) :
+Character::Character(const sf::Vector2f& position, const std::string& id, int u_id) :
+        Unique(u_id),
         DynamicObject(position, {},
                       {utils::getFloat(RM.getObjectParams("characters", id), "size_x"),
                        utils::getFloat(RM.getObjectParams("characters", id), "size_y")},

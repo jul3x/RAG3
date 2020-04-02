@@ -64,6 +64,11 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
 
         std::string current_id = "";
         sf::Vector2f current_pos = {};
+        int u_id = -1;
+
+        std::string activation = "";
+        std::string function = "";
+        std::string f_data = "";
 
         // type < 0 - decoration, type > 0 - obstacle
         while (file >> word)
@@ -131,26 +136,67 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                     }
                     case MapReading::Characters:
                     case MapReading::Collectibles:
-                    case MapReading::Specials:
                     case MapReading::Obstacles:
                     case MapReading::Decorations:
                     {
                         ++number;
                         should_add_new_object = false;
 
-                        if (number % 3 == 1)
+                        if (number % 4 == 1)
                         {
                             current_id = word;
                         }
-                        else if (number % 3 == 2)
+                        else if (number % 4 == 2)
                         {
                             current_pos.x = std::stof(word);
                         }
-                        else
+                        else if (number % 4 == 3)
                         {
                             current_pos.y = std::stof(word);
+                        }
+                        else
+                        {
+                            u_id = std::stoi(word);
                             should_add_new_object = true;
                         }
+                        break;
+                    }
+                    case MapReading::Specials:
+                    {
+                        ++number;
+                        should_add_new_object = false;
+
+                        if (number % 7 == 1)
+                        {
+                            current_id = word;
+                        }
+                        else if (number % 7 == 2)
+                        {
+                            current_pos.x = std::stof(word);
+                        }
+                        else if (number % 7 == 3)
+                        {
+                            current_pos.y = std::stof(word);
+                        }
+                        else if (number % 7 == 4)
+                        {
+                            u_id = std::stoi(word);
+                        }
+                        else if (number % 7 == 5)
+                        {
+                            activation = word;
+                        }
+                        else if (number % 7 == 6)
+                        {
+                            function = word;
+                        }
+                        else
+                        {
+                            std::replace(word.begin(), word.end(), '_', ' ');
+                            f_data = word;
+                            should_add_new_object = true;
+                        }
+
                         break;
                     }
                     default:
@@ -164,22 +210,23 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                     switch (map_reading)
                     {
                         case MapReading::Characters:
-                            characters.emplace_back(std::make_shared<NPC>(current_pos, current_id));
+                            characters.emplace_back(std::make_shared<NPC>(current_pos, current_id, u_id));
                             break;
                         case MapReading::Collectibles:
-                            collectibles.emplace_back(std::make_shared<Collectible>(current_pos, current_id));
+                            collectibles.emplace_back(std::make_shared<Collectible>(current_pos, current_id, u_id));
                             break;
                         case MapReading::Specials:
-                            specials.emplace_back(std::make_shared<Special>(current_pos, current_id));
+                            specials.emplace_back(std::make_shared<Special>(current_pos, current_id,
+                                                                            activation, function, f_data, u_id));
                             break;
                         case MapReading::Obstacles:
-                            obstacles.emplace_back(std::make_shared<Obstacle>(current_pos, current_id));
+                            obstacles.emplace_back(std::make_shared<Obstacle>(current_pos, current_id, u_id));
                             blocked.at(static_cast<size_t>(current_pos.x / DecorationTile::SIZE_X_)).
                                     at(static_cast<size_t>(current_pos.y / DecorationTile::SIZE_Y_)) =
                                     utils::getFloat(RM.getObjectParams("obstacles", current_id), "endurance");
                             break;
                         case MapReading::Decorations:
-                            decorations.emplace_back(std::make_shared<Decoration>(current_pos, current_id));
+                            decorations.emplace_back(std::make_shared<Decoration>(current_pos, current_id, u_id));
                             break;
                     }
                 }
@@ -255,15 +302,30 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
         {
             file << obj->getId() << " " <<
                  obj->getPosition().x - map_constraints.second.x << " " <<
-                 obj->getPosition().y - map_constraints.second.y<< std::endl;
+                 obj->getPosition().y - map_constraints.second.y << " " <<
+                 obj->getUniqueId() << std::endl;
         }
     };
 
     addObjToFile("characters", map.getNPCs());
     addObjToFile("collectibles", map.getCollectibles());
-    addObjToFile("specials", map.getSpecials());
     addObjToFile("obstacles", map.getObstacles());
     addObjToFile("decorations", map.getDecorations());
+
+    file << std::endl << "specials: " << std::endl;
+    for (const auto& obj : map.getSpecials())
+    {
+        auto new_data = obj->getData();
+        std::replace(new_data.begin(), new_data.end(), ' ', '_');
+
+        file << obj->getId() << " " <<
+             obj->getPosition().x - map_constraints.second.x << " " <<
+             obj->getPosition().y - map_constraints.second.y << " " <<
+             obj->getUniqueId() << " " <<
+             obj->getActivation() << " " <<
+             obj->getFunction() << " " <<
+             new_data << std::endl;
+    }
 
     std::cout << "[ResourceManager] Map file " << CFG.getString("paths/maps_dir") + "/" + name + ".j3x" << " is saved!" << std::endl;
 

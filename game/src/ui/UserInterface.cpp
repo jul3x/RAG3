@@ -26,6 +26,7 @@ UserInterface::UserInterface() :
               CFG.getFloat("graphics/user_interface_zoom") * sf::Vector2f{LOGO_SIZE_X_, LOGO_SIZE_Y_},
               &RM.getTexture("rag3_logo")),
         fps_text_("FPS: ", RM.getFont(), 30),
+        object_use_text_("[F] Use object", RM.getFont(), 24 * CFG.getFloat("graphics/user_interface_zoom")),
         left_hud_({0.0f, static_cast<float>(CFG.getInt("graphics/window_height_px"))}),
         right_hud_({static_cast<float>(CFG.getInt("graphics/window_width_px")),
                     static_cast<float>(CFG.getInt("graphics/window_height_px"))}),
@@ -43,6 +44,8 @@ void UserInterface::initialize(graphics::Graphics& graphics)
 
     fps_text_.setFillColor(sf::Color::White);
     fps_text_.setPosition(FPS_X_, FPS_Y_);
+
+    object_use_text_.setFillColor(sf::Color::White);
 
     graphics.getWindow().setMouseCursorVisible(false);
     graphics.getWindow().setKeyRepeatEnabled(false);
@@ -70,9 +73,25 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 
     blood_splash_.update(time_elapsed);
 
-    std::stringstream fps_stream;
-    fps_stream << std::fixed << std::setprecision(2) << Game::get().getFPS();
-    fps_text_.setString("FPS: " + fps_stream.str());
+//    std::stringstream fps_stream;
+//    fps_stream << std::fixed << std::setprecision(2) << Game::get().getFPS();
+//    fps_text_.setString("FPS: " + fps_stream.str());
+
+    auto special_object = Game::get().getCurrentSpecialObject();
+    if (special_object != nullptr)
+    {
+        object_use_text_.setString(special_object->getTextToUse());
+        auto object_use_text_rect = object_use_text_.getLocalBounds();
+        object_use_text_.setOrigin(object_use_text_rect.left + object_use_text_rect.width/2.0f,
+                                   object_use_text_rect.top  + object_use_text_rect.height/2.0f);
+
+        object_use_text_.setPosition(special_object->getPosition() - sf::Vector2f{0.0f, OBJECT_USE_TEXT_OFFSET_Y_});
+        object_use_text_.setFillColor(sf::Color::White);
+    }
+    else
+    {
+        object_use_text_.setFillColor(sf::Color::Transparent);
+    }
 
     while (graphics.getWindow().pollEvent(event))
     {
@@ -133,8 +152,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
             {
                 if (event.key.code == sf::Keyboard::F)
                 {
-                    player_->setForcedVelocity(utils::geo::polarToCartesian(1000.0f,
-                                                                            M_PI / 180.0f * player_->getRotation()));
+                    Game::get().useSpecialObject();
                 }
                 else if (event.key.code == sf::Keyboard::Escape)
                 {
@@ -167,6 +185,10 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 
 void UserInterface::draw(graphics::Graphics& graphics)
 {
+    graphics.setCurrentView();
+    graphics.getWindow().draw(object_use_text_);
+    graphics.setStaticView();
+
     graphics.draw(blood_splash_);
 
     //graphics.draw(fps_text_);

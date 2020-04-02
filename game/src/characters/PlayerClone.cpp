@@ -2,6 +2,8 @@
 // Created by jul3x on 27.03.20.
 //
 
+#include <R3E/utils/Utils.h>
+
 #include <common/ResourceManager.h>
 #include <common/ShootingWeapon.h>
 
@@ -92,6 +94,14 @@ bool PlayerClone::update(float time_elapsed, float time_factor)
             this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - enemy_position));
             break;
         }
+    }
+
+    if (utils::num::isNearlyEqual(velocity, {0.0f, 0.0f}) &&
+        action_state_ != ActionState::Shot && action_state_ != ActionState::DestroyWall)
+    {
+        velocity = utils::getFloat(RM.getObjectParams("characters", this->getId()), "max_speed") *
+                   this->getWanderingDirection(0.2f, 100.0f, 20);
+        this->setWeaponPointing(this->getPosition() + velocity);
     }
 
     this->setVelocity(velocity);

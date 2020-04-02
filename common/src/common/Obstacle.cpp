@@ -8,8 +8,9 @@
 #include <common/ResourceManager.h>
 
 
-Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id) :
+Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id, int u_id) :
         Identifiable(id),
+        Unique(u_id),
         StaticObject(position,
                      {utils::getFloat(RM.getObjectParams("obstacles", id), "size_x"),
                       utils::getFloat(RM.getObjectParams("obstacles", id), "size_y")},

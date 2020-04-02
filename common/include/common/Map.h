@@ -71,6 +71,14 @@ public:
 
     void removeObject(const sf::Vector2f& pos);
 
+    std::tuple<std::string, std::string, int> getObjectInfo(const sf::Vector2f& pos);
+
+    Special* getSpecialObject(const sf::Vector2f& pos);
+
+    Special* getSpecialObject(int id);
+
+    Obstacle* getObstacleObject(int id);
+
     std::pair<sf::Vector2<size_t>, sf::Vector2f> getTileConstraints() const;
 
 private:
@@ -90,6 +98,34 @@ private:
             }
         }
         return false;
+    }
+
+    template<class T>
+    T* getItemInfo(const sf::Vector2f& pos, std::list<std::shared_ptr<T>>& objs)
+    {
+        for (auto it = objs.begin(); it != objs.end(); ++it)
+        {
+            if (utils::geo::isPointInRectangle(
+                    pos, (*it)->getPosition() - sf::Vector2f(DecorationTile::SIZE_X_ / 2.0f, DecorationTile::SIZE_Y_ / 2.0f),
+                    {DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_}))
+            {
+                return it->get();
+            }
+        }
+        return nullptr;
+    }
+
+    template<class T>
+    T* getObject(int id, std::list<std::shared_ptr<T>>& objs)
+    {
+        for (auto it = objs.begin(); it != objs.end(); ++it)
+        {
+            if ((*it)->getUniqueId() == id)
+            {
+                return it->get();
+            }
+        }
+        return nullptr;
     }
 
     inline bool checkCollisionsObjects(const sf::Vector2f& pos, bool erase = false)

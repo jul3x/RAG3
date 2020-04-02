@@ -31,7 +31,7 @@ public:
         Run
     };
 
-    NPC(const sf::Vector2f& position, const std::string& id);
+    NPC(const sf::Vector2f& position, const std::string& id, int u_id = -1);
 
     void registerEnemy(const Character* enemy);
 

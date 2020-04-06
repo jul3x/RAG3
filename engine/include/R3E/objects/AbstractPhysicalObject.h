@@ -6,7 +6,6 @@
 #ifndef RAG3_ENGINE_OBJECTS_ABSTRACTPHYSICALOBJECT_H
 #define RAG3_ENGINE_OBJECTS_ABSTRACTPHYSICALOBJECT_H
 
-#include <deque>
 #include <iostream>
 #include <cmath>
 
@@ -65,7 +64,6 @@ namespace r3e {
                       sf::Texture* texture,
                       short int frames_number,
                       float frame_duration,
-                      const sf::Color& trail_color,
                       float acceleration);
 
         const sf::Vector2f& getVelocity() const;
@@ -78,18 +76,10 @@ namespace r3e {
 
         bool update(float time_elapsed) override;
 
-    protected:
-        std::deque<sf::Vector2f> trail_;
-
     private:
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-
-        static constexpr size_t TRAIL_COUNT_ = 10;
-
         float acceleration_;
 
         sf::Vector2f curr_v_, set_v_;
-        sf::Color trail_color_;
     };
 
     class HoveringObject : public DynamicObject {
@@ -101,7 +91,6 @@ namespace r3e {
                        sf::Texture* texture,
                        short int frames_number,
                        float frame_duration,
-                       const sf::Color& trail_color,
                        float acceleration);
     };
 

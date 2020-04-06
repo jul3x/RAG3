@@ -22,7 +22,6 @@ Character::Character(const sf::Vector2f& position, const std::string& id, int u_
                       &RM.getTexture("characters/" + id),
                       utils::getInt(RM.getObjectParams("characters", id), "frames_number"),
                       utils::getFloat(RM.getObjectParams("characters", id), "frame_duration"),
-                      sf::Color::Transparent,
                       CFG.getFloat("characters/max_acceleration")),
         max_life_(utils::getInt(RM.getObjectParams("characters", id), "max_health")),
         ammo_state_(AmmoState::High),

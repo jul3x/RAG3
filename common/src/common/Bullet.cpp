@@ -21,11 +21,13 @@ Bullet::Bullet(const sf::Vector2f& position,
                                       utils::getFloat(RM.getObjectParams("bullets", id), "size_y")),
                        &RM.getTexture("bullets/" + id),
                        0, 0.0f, 0.0f),
-        trail_color_(sf::Color(CFG.getInt("graphics/trail_color")))
+        trail_color_(sf::Color(CFG.getInt("graphics/trail_color"))),
+        trail_time_elapsed_(0.0f),
+        trail_time_step_(CFG.getFloat("graphics/full_trail_time") / TRAIL_COUNT_),
+        life_(utils::getFloat(RM.getObjectParams("bullets", id), "life")),
+        deadly_factor_(utils::getInt(RM.getObjectParams("bullets", id), "deadly_factor"))
 {
     this->setRotation(direction * 180.0f / static_cast<float>(M_PI));
-    life_ = utils::getFloat(RM.getObjectParams("bullets", id), "life");
-    deadly_factor_ = utils::getInt(RM.getObjectParams("bullets", id), "deadly_factor");
 }
 
 int Bullet::getDeadlyFactor() const
@@ -42,14 +44,21 @@ bool Bullet::update(float time_elapsed)
 {
     DynamicObject::update(time_elapsed);
 
-    trail_.push_back(this->getPosition());
+    trail_time_elapsed_ += time_elapsed;
 
-    if (trail_.size() > TRAIL_COUNT_)
+    if (trail_time_elapsed_ > trail_time_step_)
     {
-        trail_.pop_front();
+        trail_time_elapsed_ -= trail_time_step_;
+
+        trail_.push_back(this->getPosition());
+
+        if (trail_.size() > TRAIL_COUNT_)
+        {
+            trail_.pop_front();
+        }
     }
 
-    life_ -= time_elapsed * 1000.0f;
+    life_ -= time_elapsed;
 
     return life_ > 0.0f;
 }

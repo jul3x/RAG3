@@ -36,6 +36,8 @@ private:
     std::deque<sf::Vector2f> trail_;
     sf::Color trail_color_;
 
+    const float trail_time_step_;
+    float trail_time_elapsed_;
     float life_;
     int deadly_factor_;
 

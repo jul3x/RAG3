@@ -10,6 +10,8 @@ int32 background_color=0x11111100
 
 int32 trail_color=0xFFFFFF30
 
+float full_trail_time=0.2f
+
 int32 font_color=0xFFFFFFAA
 
 float camera_speed=4.0f

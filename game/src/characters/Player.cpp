@@ -14,7 +14,8 @@
 
 Player::Player(const sf::Vector2f& position) :
         Character(position, "player"),
-        is_alive_(true)
+        is_alive_(true),
+        side_stepping_freeze_time_(-1.0f)
 {
     weapons_in_backpack_.push_back(
             std::make_shared<ShootingWeapon>("m4"));
@@ -40,9 +41,20 @@ bool Player::isAlive() const
 
 bool Player::sideStep(Player::SideStepDir dir)
 {
-    this->setForcedVelocity(
-            utils::geo::polarToCartesian(
-                    utils::getFloat(RM.getObjectParams("characters", "player"), "side_step_speed"),
-                    (this->getRotation() + static_cast<int>(dir) * 90.0f) * M_PI / 180.0f));
+    if (side_stepping_freeze_time_ <= 0.0f)
+    {
+        this->setForcedVelocity(
+                utils::geo::polarToCartesian(
+                        utils::getFloat(RM.getObjectParams("characters", "player"), "side_step_speed"),
+                        (this->getRotation() + static_cast<int>(dir) * 90.0f) * M_PI / 180.0f));
+
+        side_stepping_freeze_time_ = CFG.getFloat("side_stepping_freeze_time");
+    }
+}
+
+bool Player::update(float time_elapsed)
+{
+    side_stepping_freeze_time_ -= time_elapsed;
+    return Character::update(time_elapsed);
 }
 

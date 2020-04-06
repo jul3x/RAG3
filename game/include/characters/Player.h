@@ -26,6 +26,8 @@ public:
 
     bool sideStep(Player::SideStepDir dir);
 
+    bool update(float time_elapsed) override;
+
 private:
     float side_stepping_freeze_time_;
 

@@ -150,21 +150,43 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
             }
             case sf::Event::KeyPressed:
             {
-                if (event.key.code == sf::Keyboard::F)
+                switch (event.key.code)
                 {
-                    Game::get().useSpecialObject();
+                    case sf::Keyboard::Q:
+                    {
+                        Game::get().getPlayer().sideStep(Player::SideStepDir::Left);
+                        break;
+                    }
+                    case sf::Keyboard::E:
+                    {
+                        Game::get().getPlayer().sideStep(Player::SideStepDir::Right);
+                        break;
+                    }
+                    case sf::Keyboard::F:
+                    {
+                        Game::get().useSpecialObject();
+                        break;
+                    }
+                    case sf::Keyboard::Escape:
+                    {
+                        if (Game::get().getGameState() == Game::GameState::Paused)
+                            Game::get().setGameState(Game::GameState::Normal);
+                        else
+                            Game::get().setGameState(Game::GameState::Paused);
+                        break;
+                    }
+                    case sf::Keyboard::R:
+                    {
+                        if (!Game::get().isJournalFreezed())
+                            Game::get().setGameState(Game::GameState::Reverse);
+                        break;
+                    }
+                    default:
+                    {
+                        break;
+                    }
                 }
-                else if (event.key.code == sf::Keyboard::Escape)
-                {
-                    if (Game::get().getGameState() == Game::GameState::Paused)
-                        Game::get().setGameState(Game::GameState::Normal);
-                    else
-                        Game::get().setGameState(Game::GameState::Paused);
-                }
-                else if (event.key.code == sf::Keyboard::R && !Game::get().isJournalFreezed())
-                {
-                    Game::get().setGameState(Game::GameState::Reverse);
-                }
+
                 break;
             }
             case sf::Event::KeyReleased:

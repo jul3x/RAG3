@@ -11,6 +11,11 @@
 
 class Player : public Character {
 public:
+    enum class SideStepDir {
+        Left = -1,
+        Right = 1
+    };
+
     Player(const sf::Vector2f& position);
 
     void setDead();
@@ -19,7 +24,13 @@ public:
 
     float getMaxTimeManipulation() const;
 
+    bool sideStep(Player::SideStepDir dir);
+
+    bool update(float time_elapsed) override;
+
 private:
+    float side_stepping_freeze_time_;
+
     bool is_alive_;
 
 };

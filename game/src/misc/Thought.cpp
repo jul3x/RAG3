@@ -43,6 +43,7 @@ bool Thought::update(float time_elapsed)
     top_.setPosition(father_->getPosition() + sf::Vector2f{GLOBAL_OFFSET_X_, GLOBAL_OFFSET_Y_ - center_.size() * SIZE_Y_CENTER_ - SIZE_Y_BOTTOM_});
     text_.setPosition(father_->getPosition() + sf::Vector2f{GLOBAL_OFFSET_X_ + TEXT_MARGIN_, GLOBAL_OFFSET_Y_ - center_.size() * SIZE_Y_CENTER_ - SIZE_Y_BOTTOM_ + SIZE_Y_TOP_ / 2.0f - TEXT_SIZE_});
 
+    std::cout << time_elapsed_ << std::endl;
     return time_elapsed_ > 0.0f;
 }
 

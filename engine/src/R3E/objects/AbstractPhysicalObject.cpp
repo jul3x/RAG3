@@ -84,24 +84,8 @@ namespace r3e {
 
     bool DynamicObject::update(float time_elapsed)
     {
-        if (utils::num::isNearlyEqual(set_v_.x, 0.0f, 0.01f) &&
-            utils::num::isNearlyEqual(curr_v_.x, 0.0f, 0.05f))
-        {
-            curr_v_.x = 0.0f;
-        }
-        else
-        {
-            curr_v_.x = curr_v_.x - std::copysign(acceleration_ * time_elapsed, curr_v_.x - set_v_.x);
-        }
-        if (utils::num::isNearlyEqual(set_v_.y, 0.0f, 0.01f) &&
-            utils::num::isNearlyEqual(curr_v_.y, 0.0f, 0.05f))
-        {
-            curr_v_.y = 0.0f;
-        }
-        else
-        {
-            curr_v_.y = curr_v_.y - std::copysign(acceleration_ * time_elapsed, curr_v_.y - set_v_.y);
-        }
+        auto steering = utils::geo::vectorLengthLimit(set_v_ - curr_v_, acceleration_ * time_elapsed);
+        curr_v_ = curr_v_ + steering;
 
         this->setPosition(this->getPosition() + curr_v_ * time_elapsed);
 

@@ -56,10 +56,8 @@ namespace r3e {
                                  sf::Texture* texture,
                                  short int frames_number,
                                  float frame_duration,
-                                 const sf::Color& trail_color,
                                  const float acceleration) :
             StaticObject(position, size, c_area, texture, frames_number, frame_duration),
-            trail_color_(trail_color),
             curr_v_(velocity), set_v_(velocity),
             acceleration_(acceleration) {}
 
@@ -107,47 +105,7 @@ namespace r3e {
 
         this->setPosition(this->getPosition() + curr_v_ * time_elapsed);
 
-        trail_.push_back(this->getPosition());
-
-        if (trail_.size() > TRAIL_COUNT_)
-        {
-            trail_.pop_front();
-        }
-
         return true;
-    }
-
-    void DynamicObject::draw(sf::RenderTarget& target, sf::RenderStates states) const
-    {
-        auto pixel_size = this->getSize().x / 5.0f;
-
-        {
-            std::vector<sf::Vertex> trail_vert;
-
-            float factor = pixel_size / static_cast<float>(trail_.size() * trail_.size());
-
-            if (trail_.size() >= 2)
-            {
-                trail_vert.emplace_back(trail_.front(), trail_color_, sf::Vector2f{});
-
-                for (size_t i = 1; i < trail_.size(); ++i)
-                {
-                    float temp_r = factor * i * i;
-                    // make 2 points
-                    sf::Vector2f diff = trail_.at(i) - trail_.at(i - 1);
-                    auto dir = static_cast<float>(std::atan2(diff.y, diff.x) + M_PI_2);
-
-                    sf::Vector2f norm = {std::cos(dir), std::sin(dir)};
-                    trail_vert.emplace_back(trail_.at(i) - temp_r * norm,
-                                            trail_color_, sf::Vector2f{});
-                    trail_vert.emplace_back(trail_.at(i) + temp_r * norm,
-                                            trail_color_, sf::Vector2f{});
-                }
-
-                target.draw(&trail_vert[0], trail_vert.size(), sf::TriangleStrip, states);
-            }
-        }
-        target.draw(shape_, states);
     }
 
 //
@@ -161,9 +119,7 @@ namespace r3e {
                                    sf::Texture* texture,
                                    short int frames_number,
                                    float frame_duration,
-                                   const sf::Color& trail_color,
                                    float acceleration) :
-            DynamicObject(position, velocity, size, c_area, texture, frames_number, frame_duration,
-                          trail_color, acceleration) {}
+            DynamicObject(position, velocity, size, c_area, texture, frames_number, frame_duration, acceleration) {}
 
 } // namespace r3e

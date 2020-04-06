@@ -12,6 +12,7 @@
 
 #include <common/Special.h>
 
+
 class SpecialFunctions
 {
 public:

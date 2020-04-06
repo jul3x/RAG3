@@ -6,6 +6,8 @@
 #ifndef RAG3_COMMON_BULLET_H
 #define RAG3_COMMON_BULLET_H
 
+#include <deque>
+
 #include <R3E/objects/AbstractPhysicalObject.h>
 
 #include <R3E/objects/Identifiable.h>
@@ -27,8 +29,15 @@ public:
     int getDeadlyFactor() const;
 
 private:
-    static constexpr size_t TRAIL_COUNT_ = 4;
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
+    static constexpr size_t TRAIL_COUNT_ = 10;
+
+    std::deque<sf::Vector2f> trail_;
+    sf::Color trail_color_;
+
+    const float trail_time_step_;
+    float trail_time_elapsed_;
     float life_;
     int deadly_factor_;
 

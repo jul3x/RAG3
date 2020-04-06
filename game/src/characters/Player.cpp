@@ -37,3 +37,12 @@ bool Player::isAlive() const
 {
     return is_alive_;
 }
+
+bool Player::sideStep(Player::SideStepDir dir)
+{
+    this->setForcedVelocity(
+            utils::geo::polarToCartesian(
+                    utils::getFloat(RM.getObjectParams("characters", "player"), "side_step_speed"),
+                    (this->getRotation() + static_cast<int>(dir) * 90.0f) * M_PI / 180.0f));
+}
+

@@ -82,17 +82,7 @@ void SpecialFunctions::addWeapon(Special* obj, const std::string& data)
             std::bind(&Game::spawnBullet, &Game::get(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     player.addWeaponToBackpack(weapon);
 
-    auto& specials = Game::get().getMap().getSpecials();
-
-    Game::get().deleteHoveringObject(obj);
-    for (auto it = specials.begin(); it != specials.end(); ++it)
-    {
-        if (it->get() == obj)
-        {
-            specials.erase(it);
-            return;
-        }
-    }
+    obj->deactivate();
 }
 
 std::function<void(Special*, const std::string&)> SpecialFunctions::bindFunction(const std::string& key) const

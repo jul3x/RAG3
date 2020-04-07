@@ -207,6 +207,7 @@ void Game::updateMapObjects(float time_elapsed)
     auto& obstacles = map_->getObstacles();
     auto& npcs = map_->getNPCs();
     auto& blockage = map_->getMapBlockage();
+    auto& specials = map_->getSpecials();
 
     for (auto it = obstacles_tiles.begin(); it != obstacles_tiles.end();)
     {
@@ -287,6 +288,24 @@ void Game::updateMapObjects(float time_elapsed)
             this->deleteDynamicObject(it->get());
 
             npcs.erase(it);
+            it = next_it;
+            do_increment = false;
+        }
+
+        if (do_increment) ++it;
+    }
+
+    for (auto it = specials.begin(); it != specials.end();)
+    {
+        bool do_increment = true;
+        (*it)->updateAnimation(time_elapsed);
+
+        if (!(*it)->isActive())
+        {
+            auto next_it = std::next(it);
+            this->deleteHoveringObject(it->get());
+
+            specials.erase(it);
             it = next_it;
             do_increment = false;
         }
@@ -459,6 +478,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
                                  CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
         bullet->setDead();
+        return;
     }
 
     auto special = dynamic_cast<Special*>(h_obj);

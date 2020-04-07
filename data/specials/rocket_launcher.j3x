@@ -1,8 +1,7 @@
 float size_x=140.0f
 float size_y=90.0f
 
-float collision_size_x=140.0f
-float collision_size_y=90.0f
+float collision_size_x=90.0f
 
 float map_offset_x=0.0f
 float map_offset_y=0.0f

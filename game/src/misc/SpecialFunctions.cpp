@@ -17,12 +17,16 @@ SpecialFunctions::SpecialFunctions()
     functions_["OpenDoor"] = &openDoor;
     functions_["ReadNote"] = &readNote;
     functions_["AddWeapon"] = &addWeapon;
+    functions_["AddAmmo"] = &addAmmo;
+    functions_["AddHealth"] = &addHealth;
 
     text_to_use_["MapStart"] = "[F] Start new map";
     text_to_use_["MapEnd"] = "[F] End this map";
     text_to_use_["OpenDoor"] = "[F] Use object";
     text_to_use_["ReadNote"] = "[F] Read note";
     text_to_use_["AddWeapon"] = "[F} Pick weapon";
+    text_to_use_["AddAmmo"] = "[F] Pick ammunition";
+    text_to_use_["AddHealth"] = "[F] Pick to heal yourself";
 }
 
 void SpecialFunctions::mapStart(Special* obj, const std::string& data)
@@ -81,6 +85,31 @@ void SpecialFunctions::addWeapon(Special* obj, const std::string& data)
     weapon->registerSpawningFunction(
             std::bind(&Game::spawnBullet, &Game::get(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     player.addWeaponToBackpack(weapon);
+
+    Game::get().spawnThought("Fuck yeah!");
+
+    obj->deactivate();
+}
+
+void SpecialFunctions::addAmmo(Special* obj, const std::string& data)
+{
+    auto& player = Game::get().getPlayer();
+    auto data_parsed = data;
+    std::replace(data_parsed.begin(), data_parsed.end(), ' ', '_');
+
+    player.addAmmoToWeapon(data_parsed);
+
+    obj->deactivate();
+}
+
+void SpecialFunctions::addHealth(Special* obj, const std::string& data)
+{
+    auto& player = Game::get().getPlayer();
+    auto data_parsed = std::stoi(data);
+
+    player.setHealth(player.getHealth() + data_parsed);
+
+    Game::get().spawnThought("Uff!\nThat's what I needed...");
 
     obj->deactivate();
 }

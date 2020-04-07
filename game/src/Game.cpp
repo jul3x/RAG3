@@ -55,7 +55,7 @@ void Game::initialize()
     engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
 
-    map_->loadMap("map");
+    map_->loadMap("test_map");
 
     for (auto& special : map_->getSpecials())
     {

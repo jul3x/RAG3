@@ -237,3 +237,4 @@ m4 500 4100 35 OnEnter AddWeapon m4
 desert_eagle 400 4400 36 OnEnter AddWeapon desert_eagle
 rocket_launcher 400 4200 37 OnEnter AddWeapon rocket_launcher
 shotgun 400 4300 38 OnEnter AddWeapon shotgun
+health 1000 3600 39 OnEnter AddHealth 30

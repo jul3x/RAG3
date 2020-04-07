@@ -89,7 +89,8 @@ void Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
     }
 
     // If there is less than 4 weapons in backpack
-    for (auto &weapon : weapons_in_backpack_) {
+    for (auto &weapon : weapons_in_backpack_)
+    {
         if (weapon->getName().empty())
         {
             weapon = ptr;
@@ -98,6 +99,20 @@ void Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
     }
 
     weapons_in_backpack_.emplace_back(ptr);
+}
+
+void Character::addAmmoToWeapon(const std::string& id)
+{
+    for (auto& weapon : weapons_in_backpack_)
+    {
+        if (weapon->getName() == id)
+        {
+            weapon->setState(std::min(1.0f, weapon->getState() +
+                                            static_cast<float>(utils::getInt(RM.getObjectParams("weapons", id), "ammo_portion")) /
+                                            static_cast<float>(utils::getInt(RM.getObjectParams("weapons", id), "max_ammo"))));
+            return;
+        }
+    }
 }
 
 const std::vector<std::shared_ptr<AbstractWeapon>>& Character::getWeapons() const

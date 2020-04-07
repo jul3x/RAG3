@@ -48,6 +48,8 @@ public:
 
     void addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr);
 
+    void addAmmoToWeapon(const std::string& id);
+
     const std::vector<std::shared_ptr<AbstractWeapon>>& getWeapons() const;
 
     int getMaxHealth() const;

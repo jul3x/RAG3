@@ -16,7 +16,6 @@ bool Map::clearMap()
     obstacles_tiles_.clear();
     decorations_tiles_.clear();
     characters_.clear();
-    collectibles_.clear();
     specials_.clear();
     obstacles_.clear();
     decorations_.clear();
@@ -30,7 +29,7 @@ bool Map::loadMap(const std::string& name)
     {
         std::forward_as_tuple(
                 std::tie(obstacles_tiles_, decorations_tiles_,
-                         characters_, collectibles_, specials_,
+                         characters_, specials_,
                          obstacles_, decorations_),
                 std::tie(size_, blocked_.blockage_)) = ResourceManager::getMap(name);
 
@@ -72,11 +71,6 @@ std::list<std::shared_ptr<NPC>>& Map::getNPCs()
     return characters_;
 }
 
-std::list<std::shared_ptr<Collectible>>& Map::getCollectibles()
-{
-    return collectibles_;
-}
-
 std::list<std::shared_ptr<Special>>& Map::getSpecials()
 {
     return specials_;
@@ -114,15 +108,6 @@ ObstacleTile* Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string&
 
         obstacles_tiles_.emplace_back(std::make_shared<ObstacleTile>(pos, id));
         return obstacles_tiles_.back().get();
-    }
-}
-
-Collectible* Map::spawnCollectible(const sf::Vector2f& pos, const std::string& id, bool check)
-{
-    if (!check || this->checkCollisionsObjects(pos))
-    {
-        collectibles_.emplace_back(std::make_shared<Collectible>(pos, id));
-        return collectibles_.back().get();
     }
 }
 
@@ -184,10 +169,6 @@ std::tuple<std::string, std::string, int> Map::getObjectInfo(const sf::Vector2f&
     auto ch = getItemInfo(pos, characters_);
     if (ch != nullptr)
         return std::make_tuple("characters", ch->getId(), ch->getUniqueId());
-
-    auto col = getItemInfo(pos, collectibles_);
-    if (col != nullptr)
-        return std::make_tuple("collectibles", col->getId(), col->getUniqueId());
 
     auto dec = getItemInfo(pos, decorations_);
     if (dec != nullptr)

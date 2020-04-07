@@ -27,7 +27,6 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
         None,
         TileMap,
         Characters,
-        Collectibles,
         Specials,
         Obstacles,
         Decorations
@@ -38,7 +37,6 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
     std::list<std::shared_ptr<ObstacleTile>> obstacles_tiles;
     std::list<std::shared_ptr<DecorationTile>> decorations_tiles;
     std::list<std::shared_ptr<NPC>> characters;
-    std::list<std::shared_ptr<Collectible>> collectibles;
     std::list<std::shared_ptr<Special>> specials;
     std::list<std::shared_ptr<Obstacle>> obstacles;
     std::list<std::shared_ptr<Decoration>> decorations;
@@ -82,11 +80,6 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
             {
                 number = 0;
                 map_reading = MapReading::Characters;
-            }
-            else if (word == "collectibles:")
-            {
-                number = 0;
-                map_reading = MapReading::Collectibles;
             }
             else if (word == "specials:")
             {
@@ -135,7 +128,6 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         break;
                     }
                     case MapReading::Characters:
-                    case MapReading::Collectibles:
                     case MapReading::Obstacles:
                     case MapReading::Decorations:
                     {
@@ -212,9 +204,6 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         case MapReading::Characters:
                             characters.emplace_back(std::make_shared<NPC>(current_pos, current_id, u_id));
                             break;
-                        case MapReading::Collectibles:
-                            collectibles.emplace_back(std::make_shared<Collectible>(current_pos, current_id, u_id));
-                            break;
                         case MapReading::Specials:
                             specials.emplace_back(std::make_shared<Special>(current_pos, current_id,
                                                                             activation, function, f_data, u_id));
@@ -247,7 +236,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
 
     std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
 
-    return {{obstacles_tiles, decorations_tiles, characters, collectibles, specials, obstacles, decorations},
+    return {{obstacles_tiles, decorations_tiles, characters, specials, obstacles, decorations},
             {map_size, blocked}};
 }
 
@@ -308,7 +297,6 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
     };
 
     addObjToFile("characters", map.getNPCs());
-    addObjToFile("collectibles", map.getCollectibles());
     addObjToFile("obstacles", map.getObstacles());
     addObjToFile("decorations", map.getDecorations());
 

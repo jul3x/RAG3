@@ -3,6 +3,7 @@
 //
 
 #include <common/ResourceManager.h>
+#include <common/ShootingWeapon.h>
 
 #include <misc/SpecialFunctions.h>
 
@@ -15,11 +16,13 @@ SpecialFunctions::SpecialFunctions()
     functions_["MapEnd"]= &mapEnd;
     functions_["OpenDoor"] = &openDoor;
     functions_["ReadNote"] = &readNote;
+    functions_["AddWeapon"] = &addWeapon;
 
     text_to_use_["MapStart"] = "[F] Start new map";
     text_to_use_["MapEnd"] = "[F] End this map";
     text_to_use_["OpenDoor"] = "[F] Use object";
     text_to_use_["ReadNote"] = "[F] Read note";
+    text_to_use_["AddWeapon"] = "[F} Pick weapon";
 }
 
 void SpecialFunctions::mapStart(Special* obj, const std::string& data)
@@ -66,6 +69,30 @@ void SpecialFunctions::readNote(Special* obj, const std::string& data)
     auto str = data;
     std::replace(str.begin(), str.end(), '$', '\n');
     Game::get().spawnThought(str);
+}
+
+void SpecialFunctions::addWeapon(Special* obj, const std::string& data)
+{
+    auto& player = Game::get().getPlayer();
+    auto data_parsed = data;
+    std::replace(data_parsed.begin(), data_parsed.end(), ' ', '_');
+
+    std::shared_ptr<AbstractWeapon> weapon = std::make_shared<ShootingWeapon>(data_parsed);
+    weapon->registerSpawningFunction(
+            std::bind(&Game::spawnBullet, &Game::get(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    player.addWeaponToBackpack(weapon);
+
+    auto& specials = Game::get().getMap().getSpecials();
+
+    Game::get().deleteHoveringObject(obj);
+    for (auto it = specials.begin(); it != specials.end(); ++it)
+    {
+        if (it->get() == obj)
+        {
+            specials.erase(it);
+            return;
+        }
+    }
 }
 
 std::function<void(Special*, const std::string&)> SpecialFunctions::bindFunction(const std::string& key) const

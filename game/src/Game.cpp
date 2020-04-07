@@ -91,7 +91,6 @@ void Game::initialize()
         weapon->registerSpawningFunction(std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     }
 
-
     for (auto& special : map_->getSpecials())
     {
         engine_->registerHoveringObject(special.get());
@@ -297,9 +296,6 @@ void Game::updateMapObjects(float time_elapsed)
 
     for (auto& decoration : map_->getDecorations())
         decoration->updateAnimation(time_elapsed);
-
-    for (auto& collectible : map_->getCollectibles())
-        collectible->updateAnimation(time_elapsed);
 
 }
 

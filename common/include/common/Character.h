@@ -46,6 +46,8 @@ public:
 
     void makeOnlyOneWeapon(const std::string& id, float state);
 
+    void addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr);
+
     const std::vector<std::shared_ptr<AbstractWeapon>>& getWeapons() const;
 
     int getMaxHealth() const;

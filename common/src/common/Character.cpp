@@ -76,6 +76,30 @@ void Character::makeOnlyOneWeapon(const std::string& id, float state)
     (*current_weapon_)->setState(state);
 }
 
+void Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
+{
+    // If weapon exists
+    for (auto& weapon : weapons_in_backpack_)
+    {
+        if (weapon->getName() == ptr->getName())
+        {
+            weapon->setState(1.0f);
+            return;
+        }
+    }
+
+    // If there is less than 4 weapons in backpack
+    for (auto &weapon : weapons_in_backpack_) {
+        if (weapon->getName().empty())
+        {
+            weapon = ptr;
+            return;
+        }
+    }
+
+    weapons_in_backpack_.emplace_back(ptr);
+}
+
 const std::vector<std::shared_ptr<AbstractWeapon>>& Character::getWeapons() const
 {
     return this->weapons_in_backpack_;

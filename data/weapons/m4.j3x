@@ -1,6 +1,6 @@
 float recoil=150.0f
 int max_ammo=150
-int ammo_portion=30
+int ammo_portion=10
 float bullet_timeout=100.0f
 
 float size_x=70.0f

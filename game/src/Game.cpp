@@ -271,22 +271,9 @@ void Game::updateMapObjects(float time_elapsed)
         bool do_increment = true;
         if (!(*it)->update(time_elapsed, this->getCurrentTimeFactor()))
         {
-            journal_->eventCharacterDestroyed(it->get());
-
-            if (player_clone_ != nullptr)
-            {
-                player_clone_->removeEnemy(it->get());
-            }
-
-            // draw on this place destruction
-            auto dec_ptr = map_->spawnDecoration((*it)->getPosition(), "blood");
-            journal_->eventDecorationSpawned(dec_ptr);
-
-            this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
+            this->killNPC(it->get());
 
             auto next_it = std::next(it);
-            this->deleteDynamicObject(it->get());
-
             npcs.erase(it);
             it = next_it;
             do_increment = false;
@@ -316,6 +303,40 @@ void Game::updateMapObjects(float time_elapsed)
     for (auto& decoration : map_->getDecorations())
         decoration->updateAnimation(time_elapsed);
 
+}
+
+void Game::killNPC(NPC* npc)
+{
+    journal_->eventCharacterDestroyed(npc);
+
+    if (player_clone_ != nullptr)
+    {
+        player_clone_->removeEnemy(npc);
+    }
+
+    // draw on this place destruction
+    auto dec_ptr = map_->spawnDecoration((npc)->getPosition(), "blood");
+    journal_->eventDecorationSpawned(dec_ptr);
+
+    // spawn ammo
+    auto& weapon = npc->getWeapons().at(npc->getCurrentWeapon())->getName();
+    auto& bullet_name = utils::getString(RM.getObjectParams("weapons", weapon), "bullet_type");
+
+    auto ammo_offset = CFG.getFloat("characters/ammo_drop_offset");
+    for (size_t i = 0; i < CFG.getInt("characters/ammo_dropped"); ++i)
+    {
+        auto offset = sf::Vector2f(utils::num::getRandom(-ammo_offset, ammo_offset),
+                                   utils::num::getRandom(-ammo_offset, ammo_offset));
+        auto ammo_ptr = map_->spawnSpecial(npc->getPosition() + offset, bullet_name + "_ammo");
+        ammo_ptr->setData(weapon);
+        engine_->registerHoveringObject(ammo_ptr);
+        ammo_ptr->bindFunction(special_functions_->bindFunction(ammo_ptr->getFunction()),
+                               special_functions_->bindTextToUse(ammo_ptr->getFunction()));
+    }
+
+    this->spawnExplosionEvent(npc->getPosition(), 250.0f);
+
+    this->deleteDynamicObject(npc);
 }
 
 void Game::draw(graphics::Graphics& graphics)

@@ -29,6 +29,8 @@ void Game::initialize()
     camera_ = std::make_unique<Camera>();
     journal_ = std::make_unique<Journal>(CFG.getFloat("journal_max_time"), CFG.getFloat("journal_sampling_rate"));
     special_functions_ = std::make_unique<SpecialFunctions>();
+    stats_ = std::make_unique<Stats>();
+    achievements_ = std::make_unique<Achievements>();
 
     map_ = std::make_unique<Map>();
     agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
@@ -308,6 +310,7 @@ void Game::updateMapObjects(float time_elapsed)
 void Game::killNPC(NPC* npc)
 {
     journal_->eventCharacterDestroyed(npc);
+    stats_->killEnemy();
 
     if (player_clone_ != nullptr)
     {
@@ -395,6 +398,11 @@ Map& Game::getMap()
 Player& Game::getPlayer()
 {
     return *player_;
+}
+
+Stats& Game::getStats()
+{
+    return *stats_;
 }
 
 const Journal& Game::getJournal() const

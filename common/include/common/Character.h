@@ -74,6 +74,10 @@ public:
 
     bool isAlreadyRotated() const;
 
+    void setSpeedFactor(float factor);
+
+    float getSpeedFactor() const;
+
 protected:
     std::vector<std::shared_ptr<AbstractWeapon>> weapons_in_backpack_;
     std::vector<std::shared_ptr<AbstractWeapon>>::iterator current_weapon_;
@@ -94,6 +98,8 @@ private:
 
     sf::Vector2f gun_offset_;
     float rotate_to_;
+
+    float speed_factor_;
 
     short int current_rotation_quarter_;
 

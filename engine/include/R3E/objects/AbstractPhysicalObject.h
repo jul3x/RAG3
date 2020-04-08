@@ -74,6 +74,10 @@ namespace r3e {
 
         virtual void setForcedVelocity(const sf::Vector2f& velocity);
 
+        virtual void setAcceleration(float acc);
+
+        float getAcceleration() const;
+
         bool update(float time_elapsed) override;
 
     private:

@@ -155,3 +155,4 @@ light_ammo 2900 4400 253 OnEnter AddAmmo m4
 heavy_ammo 1700 3800 255 OnEnter AddAmmo desert_eagle
 rocket_ammo 2500 2800 256 OnEnter AddAmmo rocket_launcher
 rocket_ammo 2600 2700 257 OnEnter AddAmmo rocket_launcher
+more_speed 800 2200 259 OnEnter AddSpeed 0.25f

@@ -254,7 +254,7 @@ inline void UserInterface::handleKeys()
     }
 
     if (player_->isAlive())
-        player_->setVelocity(delta.x, delta.y);
+        player_->setVelocity(sf::Vector2f{delta.x, delta.y} * player_->getSpeedFactor());
 }
 
 inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)

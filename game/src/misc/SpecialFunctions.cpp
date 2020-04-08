@@ -19,6 +19,7 @@ SpecialFunctions::SpecialFunctions()
     functions_["AddWeapon"] = &addWeapon;
     functions_["AddAmmo"] = &addAmmo;
     functions_["AddHealth"] = &addHealth;
+    functions_["AddSpeed"] = &addSpeed;
 
     text_to_use_["MapStart"] = "[F] Start new map";
     text_to_use_["MapEnd"] = "[F] End this map";
@@ -27,6 +28,7 @@ SpecialFunctions::SpecialFunctions()
     text_to_use_["AddWeapon"] = "[F} Pick weapon";
     text_to_use_["AddAmmo"] = "[F] Pick ammunition";
     text_to_use_["AddHealth"] = "[F] Pick to heal yourself";
+    text_to_use_["AddSpeed"] = "[F] Pick to inject";
 }
 
 void SpecialFunctions::mapStart(Special* obj, const std::string& data)
@@ -110,6 +112,18 @@ void SpecialFunctions::addHealth(Special* obj, const std::string& data)
     player.setHealth(player.getHealth() + data_parsed);
 
     Game::get().spawnThought("Uff!\nThat's what I needed...");
+
+    obj->deactivate();
+}
+
+void SpecialFunctions::addSpeed(Special* obj, const std::string& data)
+{
+    auto& player = Game::get().getPlayer();
+    auto data_parsed = std::stof(data);
+
+    player.setSpeedFactor(player.getSpeedFactor() + data_parsed);
+
+    Game::get().spawnThought("Woah!\nI feel... faster...");
 
     obj->deactivate();
 }

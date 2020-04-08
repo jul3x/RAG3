@@ -82,6 +82,16 @@ namespace r3e {
         curr_v_ = velocity;
     }
 
+    void DynamicObject::setAcceleration(float acc)
+    {
+        acceleration_ = acc;
+    }
+
+    float DynamicObject::getAcceleration() const
+    {
+        return acceleration_;
+    }
+
     bool DynamicObject::update(float time_elapsed)
     {
         auto steering = utils::geo::vectorLengthLimit(set_v_ - curr_v_, acceleration_ * time_elapsed);

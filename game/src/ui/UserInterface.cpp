@@ -67,7 +67,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 {
     static sf::Event event;
 
-    updatePlayerStates();
+    updatePlayerStates(time_elapsed);
     handleMouse(graphics.getWindow());
     handleKeys();
 
@@ -290,13 +290,13 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
     }
 }
 
-inline void UserInterface::updatePlayerStates()
+inline void UserInterface::updatePlayerStates(float time_elapsed)
 {
-    weapons_bar_.updateWeaponsList(player_->getWeapons(), player_->getCurrentWeapon());
+    weapons_bar_.update(player_->getWeapons(), player_->getCurrentWeapon(), time_elapsed);
 
-    health_bar_.updateHealth(player_->getHealth());
+    health_bar_.update(player_->getHealth(), time_elapsed);
 
-    time_bar_.updateTime(Game::get().getJournal().getDurationSaved());
+    time_bar_.update(Game::get().getJournal().getDurationSaved(), time_elapsed);
     time_bar_.setFreeze(Game::get().isJournalFreezed() && Game::get().getGameState() != Game::GameState::Reverse);
 
     blood_splash_.updateLifeState(player_->getLifeState());

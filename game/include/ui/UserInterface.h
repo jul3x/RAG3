@@ -47,7 +47,7 @@ private:
 
     inline void handleMouse(sf::RenderWindow& graphics_window);
 
-    inline void updatePlayerStates();
+    inline void updatePlayerStates(float time_elapsed);
 
     static constexpr float WEAPONS_BAR_OFF_Y_ = 70.0f;
 

@@ -41,3 +41,5 @@ float user_interface_zoom=1.0f
 float blood_pulsating_time=5.0f
 
 float sparks_size_factor=30000.0f
+
+float inertial_states_change_speed=4.0f

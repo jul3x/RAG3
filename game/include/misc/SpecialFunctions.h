@@ -22,6 +22,10 @@ public:
     static void mapEnd(Special* obj, const std::string& data);
     static void openDoor(Special* obj, const std::string& data);
     static void readNote(Special* obj, const std::string& data);
+    static void addWeapon(Special* obj, const std::string& data);
+    static void addAmmo(Special* obj, const std::string& data);
+    static void addHealth(Special* obj, const std::string& data);
+    static void addSpeed(Special* obj, const std::string& data);
 
     std::function<void(Special*, const std::string&)> bindFunction(const std::string& key) const;
     const std::string& bindTextToUse(const std::string& key) const;

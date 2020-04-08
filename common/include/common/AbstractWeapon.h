@@ -35,7 +35,6 @@ public:
 protected:
     sf::Vector2f weapon_offset_;
 
-
     std::function<void(const std::string&, const sf::Vector2f&, float)> spawning_function_;
 
 private:

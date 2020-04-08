@@ -15,6 +15,7 @@ PlayerClone::PlayerClone(const sf::Vector2f& position, const Player* player, flo
         player_(player),
         life_time_(life_time)
 {
+    this->setSpeedFactor(player->getSpeedFactor());
 }
 
 void PlayerClone::updateLifeTimeDependingOnPrevious(float life_time)
@@ -39,7 +40,8 @@ bool PlayerClone::update(float time_elapsed, float time_factor)
     handleActionState();
 
     auto& enemy_position = current_enemy_->getPosition();
-    auto velocity = utils::getFloat(RM.getObjectParams("characters", this->getId()), "max_speed") * this->generateVelocityForPath();
+    auto velocity = utils::getFloat(RM.getObjectParams("characters", this->getId()), "max_speed") *
+                    this->getSpeedFactor() * this->generateVelocityForPath();
 
     switch (action_state_)
     {
@@ -99,7 +101,8 @@ bool PlayerClone::update(float time_elapsed, float time_factor)
     if (utils::num::isNearlyEqual(velocity, {0.0f, 0.0f}) &&
         action_state_ != ActionState::Shot && action_state_ != ActionState::DestroyWall)
     {
-        velocity = utils::getFloat(RM.getObjectParams("characters", this->getId()), "max_speed") *
+        velocity = utils::getFloat(RM.getObjectParams("characters", this->getId()), "standby_speed") *
+                   this->getSpeedFactor() *
                    this->getWanderingDirection(0.2f, 100.0f, 20);
         this->setWeaponPointing(this->getPosition() + velocity);
     }

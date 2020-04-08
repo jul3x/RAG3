@@ -6,7 +6,6 @@
 #include <R3E/utils/Geometry.h>
 
 #include <common/Character.h>
-#include <common/Collectible.h>
 #include <common/ResourceManager.h>
 
 #include <editor/UserInterface.h>
@@ -89,10 +88,9 @@ void UserInterface::initialize(graphics::Graphics& graphics)
     gui_.setTarget(graphics.getWindow());
     tiles_window_.initialize({"obstacles_tiles", "decorations_tiles"},
                              {CFG.getString("paths/obstacles_tiles"), CFG.getString("paths/decorations_tiles")});
-    objects_window_.initialize({"characters", "collectibles", "specials", "obstacles", "decorations"},
-                               {CFG.getString("paths/characters"), CFG.getString("paths/collectibles"),
-                                CFG.getString("paths/specials"), CFG.getString("paths/obstacles"),
-                                CFG.getString("paths/decorations")});
+    objects_window_.initialize({"characters", "specials", "obstacles", "decorations"},
+                               {CFG.getString("paths/characters"), CFG.getString("paths/specials"), 
+                                CFG.getString("paths/obstacles"), CFG.getString("paths/decorations")});
 
     generateMenuBar(graphics.getWindow());
 }

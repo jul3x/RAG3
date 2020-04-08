@@ -211,8 +211,6 @@ standard 100 1100 6
 standard 300 100 7
 standard 900 3600 28
 
-collectibles: 
-
 obstacles: 
 fence 2300 2000 9
 fence 2400 2000 10
@@ -235,3 +233,8 @@ starting_position 900 4100 8 OnEnter MapStart null
 lever 1100 4000 27 OnUse OpenDoor 26
 note 1300 4700 33 OnUse ReadNote "I_can't_handle_it_anymore...$Please_someone_help_US!"$ugh..._these_guys_are_fucked!
 note 700 5200 34 OnUse ReadNote "As_I_walk_through_the_valley$of_shadow_of_death...$I_fear_no_evil..."$Seriously_fucked_in_the_head.
+m4 500 4100 35 OnEnter AddWeapon m4
+desert_eagle 400 4400 36 OnEnter AddWeapon desert_eagle
+rocket_launcher 400 4200 37 OnEnter AddWeapon rocket_launcher
+shotgun 400 4300 38 OnEnter AddWeapon shotgun
+health 1000 3600 39 OnEnter AddHealth 30

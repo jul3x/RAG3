@@ -29,6 +29,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id, int u_
         gun_offset_({utils::getFloat(RM.getObjectParams("characters", id), "gun_offset_x"),
                      utils::getFloat(RM.getObjectParams("characters", id), "gun_offset_y")}),
         current_rotation_quarter_(1),
+        speed_factor_(1.0f),
         Shootable(utils::getInt(RM.getObjectParams("characters", id), "max_health")),
         Identifiable(id)
 {
@@ -74,6 +75,45 @@ void Character::makeOnlyOneWeapon(const std::string& id, float state)
     current_weapon_ = weapons_in_backpack_.begin();
 
     (*current_weapon_)->setState(state);
+}
+
+void Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
+{
+    // If weapon exists
+    for (auto& weapon : weapons_in_backpack_)
+    {
+        if (weapon->getName() == ptr->getName())
+        {
+            weapon->setState(1.0f);
+            return;
+        }
+    }
+
+    // If there is less than 4 weapons in backpack
+    for (auto &weapon : weapons_in_backpack_)
+    {
+        if (weapon->getName().empty())
+        {
+            weapon = ptr;
+            return;
+        }
+    }
+
+    weapons_in_backpack_.emplace_back(ptr);
+}
+
+void Character::addAmmoToWeapon(const std::string& id)
+{
+    for (auto& weapon : weapons_in_backpack_)
+    {
+        if (weapon->getName() == id)
+        {
+            weapon->setState(std::min(1.0f, weapon->getState() +
+                                            static_cast<float>(utils::getInt(RM.getObjectParams("weapons", id), "ammo_portion")) /
+                                            static_cast<float>(utils::getInt(RM.getObjectParams("weapons", id), "max_ammo"))));
+            return;
+        }
+    }
 }
 
 const std::vector<std::shared_ptr<AbstractWeapon>>& Character::getWeapons() const
@@ -122,7 +162,7 @@ bool Character::update(float time_elapsed)
     auto is_negative = std::signbit(rotation_diff);
     auto rotation_sqrt = std::sqrt(std::abs(rotation_diff)) * (is_negative ? -1.0f : 1.0f);
     this->setRotation(this->getRotation() -
-                      rotation_sqrt * CFG.getFloat("characters/mouse_reaction_speed") * time_elapsed);
+                      rotation_sqrt * CFG.getFloat("characters/mouse_reaction_speed") * speed_factor_ * time_elapsed);
 
     return life_ > 0;
 }
@@ -247,6 +287,16 @@ bool Character::isAlreadyRotated() const
     return utils::num::isNearlyEqual(utils::geo::getAngleBetweenDegree(this->getRotation(), rotate_to_), 0.0f, ERROR);
 }
 
+void Character::setSpeedFactor(float factor)
+{
+    speed_factor_ = factor;
+    this->setAcceleration(speed_factor_ * CFG.getFloat("characters/max_acceleration"));
+}
+
+float Character::getSpeedFactor() const
+{
+    return speed_factor_;
+}
 
 void Character::handleLifeState()
 {

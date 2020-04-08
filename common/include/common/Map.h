@@ -13,7 +13,6 @@
 #include <common/DecorationTile.h>
 #include <common/ObstacleTile.h>
 #include <common/NPC.h>
-#include <common/Collectible.h>
 #include <common/Special.h>
 #include <common/Obstacle.h>
 #include <common/Decoration.h>
@@ -24,9 +23,8 @@ using namespace r3e;
 class Map {
 public:
     using Data = std::tuple<std::list<std::shared_ptr<ObstacleTile>>, std::list<std::shared_ptr<DecorationTile>>,
-                            std::list<std::shared_ptr<NPC>>, std::list<std::shared_ptr<Collectible>>,
-                            std::list<std::shared_ptr<Special>>, std::list<std::shared_ptr<Obstacle>>,
-                            std::list<std::shared_ptr<Decoration>>>;
+                            std::list<std::shared_ptr<NPC>>, std::list<std::shared_ptr<Special>>,
+                            std::list<std::shared_ptr<Obstacle>>, std::list<std::shared_ptr<Decoration>>>;
     using TileMap = std::tuple<sf::Vector2f, std::vector<std::vector<float>>>;
 
     Map();
@@ -45,8 +43,6 @@ public:
 
     std::list<std::shared_ptr<NPC>>& getNPCs();
 
-    std::list<std::shared_ptr<Collectible>>& getCollectibles();
-
     std::list<std::shared_ptr<Special>>& getSpecials();
 
     std::list<std::shared_ptr<Decoration>>& getDecorations();
@@ -56,8 +52,6 @@ public:
     DecorationTile* spawnDecorationTile(const sf::Vector2f& pos, const std::string& id, bool check = false);
 
     ObstacleTile* spawnObstacleTile(const sf::Vector2f& pos, const std::string& id, bool check = false);
-
-    Collectible* spawnCollectible(const sf::Vector2f& pos, const std::string& id, bool check = false);
 
     NPC* spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check = false);
 
@@ -130,15 +124,13 @@ private:
 
     inline bool checkCollisionsObjects(const sf::Vector2f& pos, bool erase = false)
     {
-        return (!this->checkCollisions(pos, collectibles_, erase) && !this->checkCollisions(pos, characters_, erase) &&
-                !this->checkCollisions(pos, specials_, erase) && !this->checkCollisions(pos, decorations_, erase) &&
-                !this->checkCollisions(pos, obstacles_, erase));
+        return (!this->checkCollisions(pos, characters_, erase) && !this->checkCollisions(pos, specials_, erase) &&
+                !this->checkCollisions(pos, decorations_, erase) && !this->checkCollisions(pos, obstacles_, erase));
     }
 
 
     std::list<std::shared_ptr<ObstacleTile>> obstacles_tiles_;
     std::list<std::shared_ptr<NPC>> characters_;
-    std::list<std::shared_ptr<Collectible>> collectibles_;
     std::list<std::shared_ptr<DecorationTile>> decorations_tiles_;
     std::list<std::shared_ptr<Special>> specials_;
     std::list<std::shared_ptr<Decoration>> decorations_;

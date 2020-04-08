@@ -46,6 +46,10 @@ public:
 
     void makeOnlyOneWeapon(const std::string& id, float state);
 
+    void addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr);
+
+    void addAmmoToWeapon(const std::string& id);
+
     const std::vector<std::shared_ptr<AbstractWeapon>>& getWeapons() const;
 
     int getMaxHealth() const;
@@ -70,6 +74,10 @@ public:
 
     bool isAlreadyRotated() const;
 
+    void setSpeedFactor(float factor);
+
+    float getSpeedFactor() const;
+
 protected:
     std::vector<std::shared_ptr<AbstractWeapon>> weapons_in_backpack_;
     std::vector<std::shared_ptr<AbstractWeapon>>::iterator current_weapon_;
@@ -90,6 +98,8 @@ private:
 
     sf::Vector2f gun_offset_;
     float rotate_to_;
+
+    float speed_factor_;
 
     short int current_rotation_quarter_;
 

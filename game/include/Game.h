@@ -134,6 +134,8 @@ private:
 
     void updateMapObjects(float time_elapsed);
 
+    void killNPC(NPC* npc);
+
     static constexpr float COLLISION_GRID_SIZE_ = 400.0f;
 
     std::unique_ptr<Engine> engine_;

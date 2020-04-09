@@ -30,6 +30,7 @@ UserInterface::UserInterface() :
         left_hud_({0.0f, static_cast<float>(CFG.getInt("graphics/window_height_px"))}),
         right_hud_({static_cast<float>(CFG.getInt("graphics/window_width_px")),
                     static_cast<float>(CFG.getInt("graphics/window_height_px"))}),
+        stats_hud_({0.0f, 0.0f}),
         player_(nullptr),
         camera_(nullptr) {}
 
@@ -220,6 +221,7 @@ void UserInterface::draw(graphics::Graphics& graphics)
     graphics.draw(health_bar_);
     graphics.draw(time_bar_);
     graphics.draw(weapons_bar_);
+    graphics.draw(stats_hud_);
     graphics.draw(crosshair_);
 }
 
@@ -300,4 +302,7 @@ inline void UserInterface::updatePlayerStates(float time_elapsed)
     time_bar_.setFreeze(Game::get().isJournalFreezed() && Game::get().getGameState() != Game::GameState::Reverse);
 
     blood_splash_.updateLifeState(player_->getLifeState());
+
+    auto& stats = Game::get().getStats();
+    stats_hud_.update(stats.getEnemiesKilled(), stats.getCrystalsPicked(), time_elapsed);
 }

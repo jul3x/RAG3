@@ -15,6 +15,7 @@
 #include <ui/BloodSplash.h>
 #include <ui/LeftHud.h>
 #include <ui/RightHud.h>
+#include <ui/StatsHud.h>
 #include <characters/Player.h>
 #include <misc/Camera.h>
 
@@ -74,6 +75,7 @@ private:
     RightHud right_hud_;
     HealthBar health_bar_;
     TimeBar time_bar_;
+    StatsHud stats_hud_;
 
     AbstractDrawableObject logo_;
 

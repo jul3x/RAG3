@@ -4,7 +4,7 @@
 
 #include <misc/Stats.h>
 
-Stats::Stats()
+Stats::Stats() : enemies_killed_(0), crystals_picked_(0)
 {
 }
 

@@ -3,6 +3,7 @@
 //
 
 #include <misc/Stats.h>
+#include <Game.h>
 
 Stats::Stats() : enemies_killed_(0), crystals_picked_(0)
 {
@@ -16,7 +17,7 @@ void Stats::killEnemy()
     {
         achievements_.emplace_back(Achievements::Type::FirstEnemyKill);
 
-//        Game::get().spawnAchievement(Achievements::Type::FirstEnemyKill);
+        Game::get().spawnAchievement(Achievements::Type::FirstEnemyKill);
     }
 }
 
@@ -24,11 +25,11 @@ void Stats::pickCrystal()
 {
     ++crystals_picked_;
 
-    if (enemies_killed_ == 1)
+    if (crystals_picked_ == 1)
     {
         achievements_.emplace_back(Achievements::Type::FirstCrystalPick);
 
-//        Game::get().spawnAchievement(Achievements::Type::FirstCrystalPick);
+        Game::get().spawnAchievement(Achievements::Type::FirstCrystalPick);
     }
 }
 

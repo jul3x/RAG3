@@ -446,6 +446,15 @@ void Game::spawnThought(const std::string& text)
     thoughts_.emplace_back(std::make_unique<Thought>(player_.get(), text, CFG.getFloat("thought_duration")));
 }
 
+void Game::spawnAchievement(Achievements::Type type)
+{
+    ui_->spawnAchievement(
+            achievements_->getAchievementTitle(type),
+            achievements_->getAchievementText(type),
+            achievements_->getAchievementTexture(type)
+            );
+}
+
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir)
 {
     auto shot_event = std::make_shared<ShotEvent>(pos, dir * 180.0f / M_PI,

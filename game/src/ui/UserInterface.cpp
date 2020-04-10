@@ -21,10 +21,6 @@ UserInterface::UserInterface() :
                      CFG.getInt("graphics/window_height_px") - HEALTH_BAR_Y_ * CFG.getFloat("graphics/user_interface_zoom")}),
         time_bar_({TIME_BAR_X_ * CFG.getFloat("graphics/user_interface_zoom"),
                    CFG.getInt("graphics/window_height_px") - TIME_BAR_Y_ * CFG.getFloat("graphics/user_interface_zoom")}),
-        logo_(sf::Vector2f{CFG.getInt("graphics/window_width_px") - LOGO_OFF_X_ * CFG.getFloat("graphics/user_interface_zoom"),
-                           LOGO_OFF_Y_ * CFG.getFloat("graphics/user_interface_zoom")},
-              CFG.getFloat("graphics/user_interface_zoom") * sf::Vector2f{LOGO_SIZE_X_, LOGO_SIZE_Y_},
-              &RM.getTexture("rag3_logo")),
         fps_text_("FPS: ", RM.getFont(), 30),
         object_use_text_("[F] Use object", RM.getFont(), 24 * CFG.getFloat("graphics/user_interface_zoom")),
         left_hud_({0.0f, static_cast<float>(CFG.getInt("graphics/window_height_px"))}),
@@ -64,9 +60,30 @@ void UserInterface::registerCamera(Camera* camera)
     camera_ = camera;
 }
 
+void UserInterface::spawnAchievement(const std::string& title, const std::string& text, const std::string& tex)
+{
+    achievements_.emplace_back(sf::Vector2f{CFG.getInt("graphics/window_width_px") - ACHIEVEMENTS_MARGIN_,
+                                            (ACHIEVEMENTS_MARGIN_ + Achievement::SIZE_Y_) * (achievements_.size() + 1)},
+                               title, text, &RM.getTexture(tex));
+}
+
 void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapsed)
 {
     static sf::Event event;
+
+    for (auto it = achievements_.begin(); it != achievements_.end();)
+    {
+        bool do_increment = true;
+        if (!(it)->update(time_elapsed))
+        {
+            auto next_it = std::next(it);
+            achievements_.erase(it);
+            it = next_it;
+            do_increment = false;
+        }
+
+        if (do_increment) ++it;
+    }
 
     updatePlayerStates(time_elapsed);
     handleMouse(graphics.getWindow());
@@ -123,8 +140,6 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                                         event.size.height - TIME_BAR_Y_ * CFG.getFloat("graphics/user_interface_zoom"));
 
                 weapons_bar_.setPosition(event.size.width, event.size.height);
-                logo_.setPosition(event.size.width - LOGO_OFF_X_ * CFG.getFloat("graphics/user_interface_zoom"),
-                                  LOGO_OFF_Y_ * CFG.getFloat("graphics/user_interface_zoom"));
 
                 left_hud_.setPosition(0.0f, event.size.height);
                 right_hud_.setPosition(event.size.width, event.size.height);
@@ -215,13 +230,18 @@ void UserInterface::draw(graphics::Graphics& graphics)
     graphics.draw(blood_splash_);
 
     //graphics.draw(fps_text_);
-    graphics.draw(logo_);
     graphics.draw(left_hud_);
     graphics.draw(right_hud_);
     graphics.draw(health_bar_);
     graphics.draw(time_bar_);
     graphics.draw(weapons_bar_);
     graphics.draw(stats_hud_);
+
+    for (auto& achievement : achievements_)
+    {
+        graphics.draw(achievement);
+    }
+
     graphics.draw(crosshair_);
 }
 

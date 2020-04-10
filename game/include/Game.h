@@ -77,6 +77,8 @@ public:
 
     void spawnThought(const std::string& text);
 
+    void spawnAchievement(Achievements::Type type);
+
     void initialize() override;
 
     void update(float time_elapsed) override;

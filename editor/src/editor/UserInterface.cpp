@@ -264,9 +264,18 @@ inline void UserInterface::handleCameraCenter(sf::RenderWindow& graphics_window,
 
 inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos)
 {
-    crosshair_.setPosition(mouse_world_pos);
-
     const auto& current_item = Editor::get().getCurrentItem();
+
+    if (current_item.first.find("tile") != std::string::npos)
+    {
+        crosshair_.setPosition(DecorationTile::SIZE_X_ * std::round(mouse_world_pos.x / DecorationTile::SIZE_X_),
+                               DecorationTile::SIZE_Y_ * std::round(mouse_world_pos.y / DecorationTile::SIZE_Y_));
+    }
+    else
+    {
+        crosshair_.setPosition(DecorationTile::SIZE_X_ / 4.0f * std::round(mouse_world_pos.x / DecorationTile::SIZE_X_ * 4.0f),
+                               DecorationTile::SIZE_Y_ / 4.0f * std::round(mouse_world_pos.y / DecorationTile::SIZE_Y_ * 4.0f));
+    }
 
     if (current_item.second.empty())
     {

@@ -15,6 +15,9 @@
 #include <ui/BloodSplash.h>
 #include <ui/LeftHud.h>
 #include <ui/RightHud.h>
+#include <ui/StatsHud.h>
+#include <ui/Achievement.h>
+
 #include <characters/Player.h>
 #include <misc/Camera.h>
 
@@ -38,6 +41,8 @@ public:
 
     void registerCamera(Camera* camera);
 
+    void spawnAchievement(const std::string& title, const std::string& text, const std::string& tex);
+
     void draw(graphics::Graphics& graphics) override;
 
 private:
@@ -47,12 +52,11 @@ private:
 
     inline void handleMouse(sf::RenderWindow& graphics_window);
 
-    inline void updatePlayerStates();
+    inline void updatePlayerStates(float time_elapsed);
 
     static constexpr float WEAPONS_BAR_OFF_Y_ = 70.0f;
 
-    static constexpr float LOGO_OFF_X_ = 240.0f;
-    static constexpr float LOGO_OFF_Y_ = 120.0f;
+    static constexpr float ACHIEVEMENTS_MARGIN_ = 20.0f;
     static constexpr float LOGO_SIZE_X_ = 512.0f;
     static constexpr float LOGO_SIZE_Y_ = 288.0f;
 
@@ -74,8 +78,9 @@ private:
     RightHud right_hud_;
     HealthBar health_bar_;
     TimeBar time_bar_;
+    StatsHud stats_hud_;
 
-    AbstractDrawableObject logo_;
+    std::list<Achievement> achievements_;
 
     sf::Text fps_text_;
     sf::Text object_use_text_;

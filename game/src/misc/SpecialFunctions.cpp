@@ -20,6 +20,7 @@ SpecialFunctions::SpecialFunctions()
     functions_["AddAmmo"] = &addAmmo;
     functions_["AddHealth"] = &addHealth;
     functions_["AddSpeed"] = &addSpeed;
+    functions_["PickCrystal"] = &pickCrystal;
 
     text_to_use_["MapStart"] = "[F] Start new map";
     text_to_use_["MapEnd"] = "[F] End this map";
@@ -29,6 +30,7 @@ SpecialFunctions::SpecialFunctions()
     text_to_use_["AddAmmo"] = "[F] Pick ammunition";
     text_to_use_["AddHealth"] = "[F] Pick to heal yourself";
     text_to_use_["AddSpeed"] = "[F] Pick to inject";
+    text_to_use_["PickCrystal"] = "[F] Pick crystal";
 }
 
 void SpecialFunctions::mapStart(Special* obj, const std::string& data)
@@ -124,6 +126,15 @@ void SpecialFunctions::addSpeed(Special* obj, const std::string& data)
     player.setSpeedFactor(player.getSpeedFactor() + data_parsed);
 
     Game::get().spawnThought("Woah!\nI feel... faster...");
+
+    obj->deactivate();
+}
+
+void SpecialFunctions::pickCrystal(Special* obj, const std::string& data)
+{
+    Game::get().getStats().pickCrystal();
+
+    Game::get().spawnThought("I need more of them!");
 
     obj->deactivate();
 }

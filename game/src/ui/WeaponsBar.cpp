@@ -21,12 +21,19 @@ WeaponsBar::WeaponsBar(const sf::Vector2f& position) :
     {
         ammo_.emplace_back("0", RM.getFont(), 16 * CFG.getFloat("graphics/user_interface_zoom"));
         ammo_.at(i).setFillColor(sf::Color(CFG.getInt("graphics/font_color")));
+
+        ammo_quantity_.emplace_back(CFG.getFloat("graphics/inertial_states_change_speed"));
     }
 }
 
-void WeaponsBar::updateWeaponsList(const std::vector<std::shared_ptr<AbstractWeapon>>& weapons, int curr_weapon)
+void WeaponsBar::update(const std::vector<std::shared_ptr<AbstractWeapon>>& weapons, int curr_weapon, float time_elapsed)
 {
     weapons_.clear();
+
+    for (auto& quantity : ammo_quantity_)
+    {
+        quantity.update(time_elapsed);
+    }
 
     auto base_position = this->getPosition();
     for (size_t i = 0; i < SLOTS_; ++i)
@@ -42,12 +49,14 @@ void WeaponsBar::updateWeaponsList(const std::vector<std::shared_ptr<AbstractWea
             weapons_.emplace_back(weapon_pos, size * CFG.getFloat("graphics/user_interface_zoom"),
                                   &RM.getTexture("specials/" + weapon_cast->getName()));
 
-            ammo_.at(i).setString(std::to_string(weapon_cast->getAmmunition()));
+            ammo_quantity_.at(i).setState(weapon_cast->getAmmunition());
+
+            ammo_.at(i).setString(std::to_string(static_cast<int>(std::round(ammo_quantity_.at(i).getState()))));
 
             sf::FloatRect text_rect = ammo_.at(i).getLocalBounds();
             ammo_.at(i).setOrigin(text_rect.left + text_rect.width / 2.0f,
                                   text_rect.top + text_rect.height / 2.0f);
-            ammo_.at(i).setPosition(weapon_pos + sf::Vector2f{0.0f, -30.0f * CFG.getFloat("graphics/user_interface_zoom")});
+            ammo_.at(i).setPosition(weapon_pos + sf::Vector2f{-20.0f, -30.0f * CFG.getFloat("graphics/user_interface_zoom")});
         }
         else
         {

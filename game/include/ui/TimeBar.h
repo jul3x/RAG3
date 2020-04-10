@@ -9,6 +9,7 @@
 #include <SFML/Graphics/ConvexShape.hpp>
 
 #include <R3E/objects/AbstractDrawableObject.h>
+#include <R3E/objects/StateWithInertia.h>
 
 
 using namespace r3e;
@@ -19,7 +20,7 @@ public:
 
     void setMaxTime(float max_time);
 
-    void updateTime(float time);
+    void update(float time, float time_elapsed);
 
     void setFreeze(bool freeze);
 
@@ -34,8 +35,9 @@ private:
     static constexpr float TIME_SIZE_Y_ = 250.0f;
 
     float max_time_;
+    StateWithInertia<float> curr_time_;
 
-    sf::ConvexShape curr_time_;
+    sf::ConvexShape curr_time_shape_;
 };
 
 #endif // RAG3_GAME_UI_TIMEBAR_H

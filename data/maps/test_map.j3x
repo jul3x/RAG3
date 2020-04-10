@@ -97,6 +97,14 @@ fence 3900 1900 196
 fence 3800 1900 197
 fence 3700 1900 198
 fence 3600 1900 199
+fence_side 3750 4475 263
+fence_side 3750 4325 265
+fence 3700 4225 268
+fence 3600 4225 272
+fence 3500 4225 273
+fence 3400 4225 274
+fence 3300 4225 275
+fence 3200 4225 276
 
 decorations: 
 flame 900 1900 165
@@ -120,8 +128,6 @@ blood 1900 4300 214
 blood 2400 5100 215
 blood 3500 5100 216
 blood 2700 4200 217
-blood 3700 4100 218
-blood 3800 4100 219
 blood 3900 3200 220
 blood 2800 2800 221
 blood 2000 3100 222
@@ -130,6 +136,22 @@ blood 3700 2200 225
 blood 3100 1900 226
 blood 2300 900 227
 blood 4400 1000 228
+flame 3225 4275 277
+flame 3300 4325 278
+flame 3225 4375 279
+flame 3500 4275 280
+flame 3625 4400 281
+flame 3650 4300 282
+flame 3500 4350 283
+flame 3375 4425 284
+flame 3500 4425 286
+flame 3575 4325 287
+blood 3425 4375 288
+flame 3400 4300 289
+flame 3350 4350 290
+flame 3275 4425 291
+flame 3700 4375 292
+flame 3550 4425 293
 
 specials: 
 lever 1200 2900 164 OnUse OpenDoor 163
@@ -156,3 +178,7 @@ heavy_ammo 1700 3800 255 OnEnter AddAmmo desert_eagle
 rocket_ammo 2500 2800 256 OnEnter AddAmmo rocket_launcher
 rocket_ammo 2600 2700 257 OnEnter AddAmmo rocket_launcher
 more_speed 800 2200 259 OnEnter AddSpeed 0.25f
+crystal 700 2075 294 OnEnter PickCrystal null
+crystal 1400 3150 295 OnEnter PickCrystal null
+crystal 4000 2550 296 OnEnter PickCrystal null
+crystal 2875 875 297 OnEnter PickCrystal null

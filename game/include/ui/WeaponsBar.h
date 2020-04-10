@@ -14,6 +14,7 @@
 #include <SFML/Graphics/Text.hpp>
 
 #include <R3E/objects/AbstractDrawableObject.h>
+#include <R3E/objects/StateWithInertia.h>
 
 #include <common/AbstractWeapon.h>
 
@@ -24,7 +25,7 @@ class WeaponsBar : public AbstractDrawableObject {
 public:
     explicit WeaponsBar(const sf::Vector2f& position);
 
-    void updateWeaponsList(const std::vector<std::shared_ptr<AbstractWeapon>>& weapons, int curr_weapon);
+    void update(const std::vector<std::shared_ptr<AbstractWeapon>>& weapons, int curr_weapon, float time_elapsed);
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -39,6 +40,7 @@ private:
 
     std::list<AbstractDrawableObject> weapons_;
     std::vector<sf::Text> ammo_;
+    std::vector<StateWithInertia<float>> ammo_quantity_;
 
 };
 

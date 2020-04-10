@@ -9,6 +9,7 @@
 #include <SFML/Graphics/ConvexShape.hpp>
 
 #include <R3E/objects/AbstractDrawableObject.h>
+#include <R3E/objects/StateWithInertia.h>
 
 
 using namespace r3e;
@@ -19,7 +20,7 @@ public:
 
     void setMaxHealth(int max_health);
 
-    void updateHealth(int health);
+    void update(int health, float time_elapsed);
 
     void setPosition(float x, float y) override;
 
@@ -32,8 +33,9 @@ private:
     static constexpr float HEALTH_SIZE_Y_ = 250.0f;
 
     int max_health_;
+    StateWithInertia<float> curr_health_;
 
-    sf::ConvexShape curr_health_;
+    sf::ConvexShape curr_health_shape_;
 };
 
 #endif // RAG3_GAME_UI_HEALTHBAR_H

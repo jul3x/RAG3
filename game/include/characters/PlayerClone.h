@@ -16,7 +16,7 @@ class PlayerClone : public NPC {
 public:
     PlayerClone(const sf::Vector2f& position, const Player* player, float life_time);
 
-    bool update(float time_elapsed, float time_factor) override;
+    bool update(float time_elapsed) override;
 
     void updateLifeTimeDependingOnPrevious(float life_time);
 

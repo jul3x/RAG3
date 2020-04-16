@@ -8,7 +8,7 @@
 
 NoWeapon::NoWeapon() : AbstractWeapon({}, {}, "") {}
 
-sf::Vector2f NoWeapon::use(float time_factor)
+sf::Vector2f NoWeapon::use()
 {
     return {0.0f, 0.0f};
 }

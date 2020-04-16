@@ -11,6 +11,7 @@ AbstractWeapon::AbstractWeapon(const sf::Vector2f& size,
                                const std::string& name) :
         name_(name),
         weapon_offset_(weapon_offset),
+        time_elapsed_(0.0f),
         AbstractDrawableObject({}, size,
                                name.empty() ? nullptr : &RM.getTexture("weapons/" + name),
                                name.empty() ? 1 : utils::getInt(RM.getObjectParams("weapons", name), "frames_number"),
@@ -32,4 +33,9 @@ const std::string& AbstractWeapon::getName() const
 const sf::Vector2f& AbstractWeapon::getWeaponOffset() const
 {
     return weapon_offset_;
+}
+
+void AbstractWeapon::update(float time_elapsed)
+{
+    time_elapsed_ -= time_elapsed;
 }

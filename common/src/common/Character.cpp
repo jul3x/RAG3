@@ -39,9 +39,9 @@ Character::Character(const sf::Vector2f& position, const std::string& id, int u_
                                     utils::getFloat(RM.getObjectParams("characters", id), "map_offset_y")));
 }
 
-bool Character::shot(float time_factor)
+bool Character::shot()
 {
-    auto new_velocity = (*current_weapon_)->use(time_factor);
+    auto new_velocity = (*current_weapon_)->use();
 
     if (!utils::num::isNearlyEqual(new_velocity, {0.0f, 0.0f}))
     {
@@ -150,6 +150,7 @@ void Character::switchWeapon(int relative_position_backpack)
 bool Character::update(float time_elapsed)
 {
     DynamicObject::update(time_elapsed);
+    (*current_weapon_)->update(time_elapsed);
 
     auto vel = std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
     this->updateAnimation(time_elapsed,

@@ -290,7 +290,7 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
     {
         player_->setWeaponPointing(mouse_world_pos);
 
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player_->shot(Game::get().getCurrentTimeFactor()))
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player_->shot())
         {
             camera_->setShaking();
         }

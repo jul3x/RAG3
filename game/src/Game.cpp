@@ -117,7 +117,7 @@ void Game::update(float time_elapsed)
 
             updateMapObjects(time_elapsed);
 
-            if (player_clone_ != nullptr && !player_clone_->update(time_elapsed, this->getCurrentTimeFactor()))
+            if (player_clone_ != nullptr && !player_clone_->update(time_elapsed))
             {
                 // draw on this place destruction
                 auto dec_ptr = map_->spawnDecoration(player_clone_->getPosition(), "blood");
@@ -271,7 +271,7 @@ void Game::updateMapObjects(float time_elapsed)
     for (auto it = npcs.begin(); it != npcs.end();)
     {
         bool do_increment = true;
-        if (!(*it)->update(time_elapsed, this->getCurrentTimeFactor()))
+        if (!(*it)->update(time_elapsed))
         {
             this->killNPC(it->get());
 

@@ -36,7 +36,7 @@ public:
               const std::string& id,
               int u_id = -1);
 
-    bool shot(float ime_factor);
+    bool shot();
 
     void getShot(const Bullet& bullet) override;
 

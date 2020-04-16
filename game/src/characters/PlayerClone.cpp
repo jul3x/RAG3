@@ -28,7 +28,7 @@ bool PlayerClone::isLifeTime() const
     return life_time_ > 0.0f;
 }
 
-bool PlayerClone::update(float time_elapsed, float time_factor)
+bool PlayerClone::update(float time_elapsed)
 {
     life_time_ -= time_elapsed;
 
@@ -68,7 +68,7 @@ bool PlayerClone::update(float time_elapsed, float time_factor)
             this->setNoGoal();
 
             if (this->isAlreadyRotated())
-                this->shot(time_factor);
+                this->shot();
             break;
         }
         case ActionState::Shot:
@@ -77,7 +77,7 @@ bool PlayerClone::update(float time_elapsed, float time_factor)
             this->setNoGoal();
 
             if (this->isAlreadyRotated())
-                this->shot(time_factor);
+                this->shot();
 
             break;
         }
@@ -87,7 +87,7 @@ bool PlayerClone::update(float time_elapsed, float time_factor)
             this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - enemy_position));
 
             if (this->isAlreadyRotated())
-                this->shot(time_factor);
+                this->shot();
             break;
         }
         case ActionState::Run:

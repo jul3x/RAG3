@@ -6,7 +6,6 @@
 #ifndef RAG3_COMMON_SHOOTINGWEAPON_H
 #define RAG3_COMMON_SHOOTINGWEAPON_H
 
-#include <chrono>
 #include <cmath>
 #include <string>
 
@@ -17,7 +16,7 @@ class ShootingWeapon : public AbstractWeapon {
 public:
     ShootingWeapon(const std::string& id);
 
-    sf::Vector2f use(float time_factor) override;
+    sf::Vector2f use() override;
 
     int getAmmunition() const;
 
@@ -34,8 +33,6 @@ private:
     float bullet_timeout_;
     float recoil_;
     int ammunition_, max_ammunition_;
-
-    std::chrono::system_clock::time_point last_bullet_time_;
 
 };
 

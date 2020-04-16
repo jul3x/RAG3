@@ -57,7 +57,7 @@ void NPC::registerMapBlockage(const ai::MapBlockage* map_blockage)
     map_blockage_ = map_blockage;
 }
 
-bool NPC::update(float time_elapsed, float time_factor)
+bool NPC::update(float time_elapsed)
 {
 //    if (!this->isVisible()) return true;
     bool is_alive = Character::update(time_elapsed);
@@ -92,7 +92,7 @@ bool NPC::update(float time_elapsed, float time_factor)
             this->setNoGoal();
 
             if (this->isAlreadyRotated())
-                this->shot(time_factor);
+                this->shot();
             break;
         }
         case ActionState::Shot:
@@ -101,7 +101,7 @@ bool NPC::update(float time_elapsed, float time_factor)
             this->setNoGoal();
 
             if (this->isAlreadyRotated())
-                this->shot(time_factor);
+                this->shot();
 
             break;
         }
@@ -111,7 +111,7 @@ bool NPC::update(float time_elapsed, float time_factor)
             this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - enemy_position));
 
             if (this->isAlreadyRotated())
-                this->shot(time_factor);
+                this->shot();
             break;
         }
         case ActionState::Run:

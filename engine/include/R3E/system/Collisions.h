@@ -145,7 +145,7 @@ namespace r3e {
                              bool respond = false)
         {
             static std::vector<sf::Vector2<int>> grids_to_check =
-                    {{-1, -1}, {0, -1}, {1, 1}, {0, -1}, {0, 0}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+                    {{-1, -1}, {-1, 1}, {1, -1}, {0, -1}, {0, 1}, {0, 0}, {1, 0}, {-1, 0}, {1, 1}};
             for (size_t i = 0; i < grid_size_x_; ++i)
             {
                 for (size_t j = 0; j < grid_size_y_; ++j)

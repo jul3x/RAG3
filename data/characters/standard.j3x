@@ -18,3 +18,7 @@ float gun_offset_y=-25.0f
 
 int frames_number=4
 float frame_duration=0.07f
+
+string default_activation=OnKill
+list[string] default_functions=[null]
+list[string] default_datas=[null]

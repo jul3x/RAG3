@@ -81,6 +81,12 @@ void Game::initialize()
         character->registerEnemy(player_.get());
         character->registerMapBlockage(&map_->getMapBlockage());
 
+        for (const auto& function : character->getFunctions())
+        {
+            character->bindFunction(special_functions_->bindFunction( function ),
+                                    special_functions_->bindTextToUse( function ));
+        }
+
         for (auto& weapon : character->getWeapons())
         {
             weapon->registerSpawningFunction(std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
@@ -96,8 +102,12 @@ void Game::initialize()
     for (auto& special : map_->getSpecials())
     {
         engine_->registerHoveringObject(special.get());
-        special->bindFunction(special_functions_->bindFunction( special->getFunction() ),
-                              special_functions_->bindTextToUse( special->getFunction() ));
+
+        for (const auto& function : special->getFunctions())
+        {
+            special->bindFunction(special_functions_->bindFunction( function ),
+                                  special_functions_->bindTextToUse( function ));
+        }
     }
 }
 
@@ -323,7 +333,7 @@ void Game::killNPC(NPC* npc)
 
     // spawn ammo
     auto& weapon = npc->getWeapons().at(npc->getCurrentWeapon())->getName();
-    auto& bullet_name = utils::getString(RM.getObjectParams("weapons", weapon), "bullet_type");
+    auto& bullet_name = utils::j3x::getString(RM.getObjectParams("weapons", weapon), "bullet_type");
 
     auto ammo_offset = CFG.getFloat("characters/ammo_drop_offset");
     for (size_t i = 0; i < CFG.getInt("characters/ammo_dropped"); ++i)
@@ -331,15 +341,21 @@ void Game::killNPC(NPC* npc)
         auto offset = sf::Vector2f(utils::num::getRandom(-ammo_offset, ammo_offset),
                                    utils::num::getRandom(-ammo_offset, ammo_offset));
         auto ammo_ptr = map_->spawnSpecial(npc->getPosition() + offset, bullet_name + "_ammo");
-        ammo_ptr->setData(weapon);
+
+        ammo_ptr->setDatasStr(weapon);
         engine_->registerHoveringObject(ammo_ptr);
-        ammo_ptr->bindFunction(special_functions_->bindFunction(ammo_ptr->getFunction()),
-                               special_functions_->bindTextToUse(ammo_ptr->getFunction()));
+        ammo_ptr->bindFunction(special_functions_->bindFunction(ammo_ptr->getFunctions().at(0)),
+                               special_functions_->bindTextToUse(ammo_ptr->getFunctions().at(0)));
     }
 
     this->spawnExplosionEvent(npc->getPosition(), 250.0f);
 
     this->deleteDynamicObject(npc);
+
+    if (npc->getActivation() == "OnKill")
+    {
+        npc->use();
+    }
 }
 
 void Game::draw(graphics::Graphics& graphics)
@@ -458,7 +474,7 @@ void Game::spawnAchievement(Achievements::Type type)
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir)
 {
     auto shot_event = std::make_shared<ShotEvent>(pos, dir * 180.0f / M_PI,
-                                                  utils::getFloat(RM.getObjectParams("bullets", name), "burst_size"));
+                                                  utils::j3x::getFloat(RM.getObjectParams("bullets", name), "burst_size"));
     engine_->spawnAnimationEvent(shot_event);
 
     if (CFG.getInt("sound/sound_on"))
@@ -583,6 +599,12 @@ NPC* Game::spawnNewNPC(const std::string &id)
     for (auto& weapon : ptr->getWeapons())
     {
         weapon->registerSpawningFunction(std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    }
+
+    for (const auto& function : ptr->getFunctions())
+    {
+        ptr->bindFunction(special_functions_->bindFunction( function ),
+                          special_functions_->bindTextToUse( function ));
     }
 
     return ptr;

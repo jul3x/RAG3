@@ -27,7 +27,7 @@ public:
 
     const std::vector<std::string>& getFreshListOfObjects(const std::string& dir);
 
-    const utils::J3XParameters& getObjectParams(const std::string& category, const std::string& id);
+    const utils::j3x::Parameters& getObjectParams(const std::string& category, const std::string& id);
 
     static std::tuple<Map::Data, Map::TileMap> getMap(const std::string& key);
 

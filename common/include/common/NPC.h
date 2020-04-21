@@ -6,9 +6,12 @@
 #ifndef RAG3_COMMON_NPC_H
 #define RAG3_COMMON_NPC_H
 
+#include <functional>
+
 #include <R3E/ai/AbstractAgent.h>
 
 #include <common/Character.h>
+#include <common/Special.h>
 
 
 using namespace r3e;
@@ -33,6 +36,10 @@ public:
 
     NPC(const sf::Vector2f& position, const std::string& id, int u_id = -1);
 
+    NPC(const sf::Vector2f& position, const std::string& id,
+        const std::string& activation, const std::vector<std::string>& functions,
+        const std::vector<std::string>& datas, int u_id = -1);
+
     void registerEnemy(const Character* enemy);
 
     void removeEnemy(const Character* enemy);
@@ -44,6 +51,8 @@ public:
     virtual bool update(float time_elapsed);
 
     const sf::Vector2f& getStartPosition() const override;
+
+    void bindFunctionOnEnd(std::function<void(Special*, const std::string&)> func);
 
 protected:
     void handleEnemySelection();

@@ -13,19 +13,19 @@ Bullet::Bullet(const sf::Vector2f& position,
                const float direction) :
         Identifiable(id),
         HoveringObject(position,
-                       utils::getFloat(RM.getObjectParams("bullets", id), "speed") *
+                       utils::j3x::getFloat(RM.getObjectParams("bullets", id), "speed") *
                                sf::Vector2f(std::cos(direction), std::sin(direction)),
-                       {utils::getFloat(RM.getObjectParams("bullets", id), "size_x"),
-                        utils::getFloat(RM.getObjectParams("bullets", id), "size_y")},
-                       Collision::Box(utils::getFloat(RM.getObjectParams("bullets", id), "size_x"),
-                                      utils::getFloat(RM.getObjectParams("bullets", id), "size_y")),
+                       {utils::j3x::getFloat(RM.getObjectParams("bullets", id), "size_x"),
+                        utils::j3x::getFloat(RM.getObjectParams("bullets", id), "size_y")},
+                       Collision::Box(utils::j3x::getFloat(RM.getObjectParams("bullets", id), "size_x"),
+                                      utils::j3x::getFloat(RM.getObjectParams("bullets", id), "size_y")),
                        &RM.getTexture("bullets/" + id),
                        0, 0.0f, 0.0f),
         trail_color_(sf::Color(CFG.getInt("graphics/trail_color"))),
         trail_time_elapsed_(0.0f),
         trail_time_step_(CFG.getFloat("graphics/full_trail_time") / TRAIL_COUNT_),
-        life_(utils::getFloat(RM.getObjectParams("bullets", id), "life")),
-        deadly_factor_(utils::getInt(RM.getObjectParams("bullets", id), "deadly_factor"))
+        life_(utils::j3x::getFloat(RM.getObjectParams("bullets", id), "life")),
+        deadly_factor_(utils::j3x::getInt(RM.getObjectParams("bullets", id), "deadly_factor"))
 {
     this->setRotation(direction * 180.0f / static_cast<float>(M_PI));
 }

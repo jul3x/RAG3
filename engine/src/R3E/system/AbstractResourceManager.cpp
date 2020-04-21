@@ -22,7 +22,7 @@ namespace r3e {
 
     }
 
-    utils::J3XParameters& AbstractResourceManager::getParameters(const std::string& key)
+    utils::j3x::Parameters& AbstractResourceManager::getParameters(const std::string& key)
     {
         auto it = parameters_.find(key);
         if (it == parameters_.end())
@@ -136,9 +136,9 @@ namespace r3e {
 
     void AbstractResourceManager::loadJ3XFile(const std::string& key)
     {
-        utils::J3XParameters params;
+        utils::j3x::Parameters params;
 
-        params = utils::parse(j3x_directory_ + "/" + key + ".j3x");
+        params = utils::j3x::parse(j3x_directory_ + "/" + key + ".j3x");
 
         parameters_.emplace(key, params);
 

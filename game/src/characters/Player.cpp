@@ -41,7 +41,7 @@ bool Player::sideStep(Player::SideStepDir dir)
     {
         this->setForcedVelocity(
                 utils::geo::polarToCartesian(
-                        utils::getFloat(RM.getObjectParams("characters", "player"), "side_step_speed"),
+                        utils::j3x::getFloat(RM.getObjectParams("characters", "player"), "side_step_speed"),
                         (this->getRotation() + static_cast<int>(dir) * 90.0f) * M_PI / 180.0f));
 
         side_stepping_freeze_time_ = CFG.getFloat("side_stepping_freeze_time");

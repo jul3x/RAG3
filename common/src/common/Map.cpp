@@ -104,7 +104,7 @@ ObstacleTile* Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string&
 
         if (blocked_.blockage_.size() > grid_pos.first && blocked_.blockage_.at(0).size() > grid_pos.second)
             blocked_.blockage_.at(grid_pos.first).at(grid_pos.second) =
-                    utils::getFloat(RM.getObjectParams("obstacles_tiles", id), "endurance");
+                    utils::j3x::getFloat(RM.getObjectParams("obstacles_tiles", id), "endurance");
 
         obstacles_tiles_.emplace_back(std::make_shared<ObstacleTile>(pos, id));
         return obstacles_tiles_.back().get();
@@ -147,7 +147,7 @@ Obstacle* Map::spawnObstacle(const sf::Vector2f& pos, const std::string& id, boo
 
         if (blocked_.blockage_.size() > grid_pos.first && blocked_.blockage_.at(0).size() > grid_pos.second)
             blocked_.blockage_.at(grid_pos.first).at(grid_pos.second) =
-                    utils::getFloat(RM.getObjectParams("obstacles", id), "endurance");
+                    utils::j3x::getFloat(RM.getObjectParams("obstacles", id), "endurance");
 
         obstacles_.emplace_back(std::make_shared<Obstacle>(pos, id));
         return obstacles_.back().get();
@@ -184,6 +184,11 @@ std::tuple<std::string, std::string, int> Map::getObjectInfo(const sf::Vector2f&
 Special* Map::getSpecialObject(const sf::Vector2f& pos)
 {
     return getItemInfo(pos, specials_);
+}
+
+NPC* Map::getNPCObject(const sf::Vector2f& pos)
+{
+    return getItemInfo(pos, characters_);
 }
 
 Special* Map::getSpecialObject(int id)

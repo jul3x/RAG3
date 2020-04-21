@@ -109,7 +109,18 @@ void Editor::readItemInfo(const sf::Vector2f& pos)
     auto ret_special = map_->getSpecialObject(pos);
 
     if (ret_special != nullptr)
+    {
         ui_->openSpecialObjectWindow("specials", ret_special);
+        return;
+    }
+
+    auto ret_npc = map_->getNPCObject(pos);
+
+    if (ret_npc != nullptr)
+    {
+        ui_->openSpecialObjectWindow("characters", ret_npc);
+        return;
+    }
 
     auto ret = map_->getObjectInfo(pos);
 

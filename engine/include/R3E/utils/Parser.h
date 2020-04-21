@@ -10,174 +10,65 @@
 #include <iostream>
 #include <tuple>
 #include <unordered_map>
+#include <vector>
 
 
 namespace r3e {
     namespace utils {
+        namespace j3x {
+            using IParameters = std::unordered_map<std::string, int>;
+            using FParameters = std::unordered_map<std::string, float>;
+            using SParameters = std::unordered_map<std::string, std::string>;
 
-        using J3XIParameters = std::unordered_map<std::string, int>;
-        using J3XFParameters = std::unordered_map<std::string, float>;
-        using J3XSParameters = std::unordered_map<std::string, std::string>;
-        using J3XParameters = std::tuple<J3XIParameters, J3XFParameters, J3XSParameters>;
+            using IListParameters = std::unordered_map<std::string, std::vector<int>>;
+            using FListParameters = std::unordered_map<std::string, std::vector<float>>;
+            using SListParameters = std::unordered_map<std::string, std::vector<std::string>>;
+            using Parameters = std::tuple<IParameters, FParameters, SParameters,
+                                             IListParameters, FListParameters, SListParameters>;
 
-        inline J3XParameters parse(const std::string& filename, const std::string& ns)
-        {
-            std::ifstream config_file(filename);
+            Parameters parse(const std::string& filename, const std::string& ns);
 
-            J3XFParameters float_params;
-            J3XIParameters int_params;
-            J3XSParameters string_params;
+            Parameters parse(const std::string& filename);
 
-            if (config_file)
-            {
-                std::cout << "[J3X] Started parsing of " + filename + " file." << std::endl;
-                std::stringstream s_file;
-                s_file << config_file.rdbuf();
+            void tokenize(const std::string &str, char delimiter, std::vector<std::string>& out);
 
-                std::string line;
-                int line_count = 0;
-                while (std::getline(s_file, line))
-                {
-                    ++line_count;
-                    std::istringstream s_line(line);
-                    std::string type, key;
-                    if (std::getline(s_line, type, ' '))
-                    {
-                        if (std::getline(s_line, key, '='))
-                        {
-                            std::string value;
+            int getInt(const IParameters& int_params, const std::string& key);
 
-                            key = ns.empty() ? key : ns + "/" + key;
+            int getInt(const Parameters& params, const std::string& key);
 
-                            if (std::getline(s_line, value))
-                            {
-                                try
-                                {
-                                    if (type == "int")
-                                    {
-                                        int_params[key] = std::stoi(value);
-                                    }
-                                    else if (type == "int32")
-                                    {
-                                        int_params[key] = std::stoll(value, 0, 16);
-                                    }
-                                    else if (type == "float")
-                                    {
-                                        float_params[key] = std::stof(value);
-                                    }
-                                    else if (type == "string")
-                                    {
-                                        string_params[key] = value;
-                                    }
-                                    else if (type == "bool")
-                                    {
-                                        int_params[key] = std::stoi(value);
-                                    }
-                                    else
-                                    {
-                                        throw std::logic_error("[J3X] Not handled type " + type +
-                                                               " on line " + std::to_string(line_count) + "\n");
-                                    }
-                                }
-                                catch (std::invalid_argument& e)
-                                {
-                                    throw std::invalid_argument("[J3X] Parse error: Wrong type " + type +
-                                                                " of parameter on line " +
-                                                                std::to_string(line_count) + "\n");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            throw std::invalid_argument("[J3X] Parse error on line " +
-                                                        std::to_string(line_count) + "\n");
-                        }
-                    }
-                }
-                std::cout << "[J3X] Parsing of " + filename + " successful!" << std::endl;
-                config_file.close();
-            }
-            else
-            {
-                throw std::logic_error("[J3X] J3X " + filename + " file not found!\n");
-            }
+            float getFloat(const FParameters& float_params, const std::string& key);
 
-            return std::make_tuple(int_params, float_params, string_params);
-        }
+            float getFloat(const Parameters& params, const std::string& key);
 
-        inline J3XParameters parse(const std::string& filename)
-        {
-            return parse(filename, "");
-        }
+            const std::string& getString(const SParameters& string_params, const std::string& key);
 
-        inline int getInt(const J3XIParameters& int_params, const std::string& key)
-        {
-            auto it = int_params.find(key);
-            if (it == int_params.end())
-            {
-                std::cerr << "[J3X] Param " << key << " not found!" << std::endl;
-                return 0;
-            }
+            const std::string& getString(const Parameters& params, const std::string& key);
 
-            return it->second;
-        }
+            const std::vector<int>& getListInt(const IListParameters& list_int_params, const std::string& key);
 
-        inline int getInt(const J3XParameters& params, const std::string& key)
-        {
-            return getInt(std::get<0>(params), key);
-        }
+            const std::vector<int>& getListInt(const Parameters& params, const std::string& key);
 
-        inline float getFloat(const J3XFParameters& float_params, const std::string& key)
-        {
-            auto it = float_params.find(key);
-            if (it == float_params.end())
-            {
-                std::cerr << "[J3X] Param " << key << " not found!" << std::endl;
-                return 0.0f;
-            }
+            const std::vector<float>& getListFloat(const FListParameters& list_float_params, const std::string& key);
 
-            return it->second;
-        }
+            const std::vector<float>& getListFloat(const Parameters& params, const std::string& key);
 
-        inline float getFloat(const J3XParameters& params, const std::string& key)
-        {
-            return getFloat(std::get<1>(params), key);
-        }
+            const std::vector<std::string>& getListString(const SListParameters& list_string_params, const std::string& key);
 
-        inline const std::string& getString(const J3XSParameters& string_params, const std::string& key)
-        {
-            static const std::string ERROR_STRING;
+            const std::vector<std::string>& getListString(const Parameters& params, const std::string& key);
 
-            auto it = string_params.find(key);
-            if (it == string_params.end())
-            {
-                std::cerr << "[J3X] Param " << key << " not found!" << std::endl;
-                return ERROR_STRING;
-            }
+            void setInt(IParameters& int_params, const std::string& key, int value);
 
-            return it->second;
-        }
+            void setFloat(FParameters& float_params, const std::string& key, float value);
 
-        inline const std::string& getString(const J3XParameters& params, const std::string& key)
-        {
-            return getString(std::get<2>(params), key);
-        }
+            void setString(SParameters& string_params, const std::string& key, const std::string& value);
 
-        inline void setInt(J3XIParameters& int_params, const std::string& key, int value)
-        {
-            int_params[key] = value;
-        }
+            void setListInt(IListParameters& list_int_params, const std::string& key, const std::vector<int>& value);
 
-        inline void setFloat(J3XFParameters& float_params, const std::string& key, float value)
-        {
-            float_params[key] = value;
-        }
+            void setListFloat(FListParameters& list_float_params, const std::string& key, const std::vector<float>& value);
 
-        inline void setString(J3XSParameters& string_params, const std::string& key, const std::string& value)
-        {
-            string_params[key] = value;
-        }
+            void setListString(SListParameters& list_string_params, const std::string& key, const std::vector<std::string>& value);
 
+        } // namespace j3x
     } // namespace utils
 } // namespace r3e
 

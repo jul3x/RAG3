@@ -10,7 +10,7 @@
 #include <functional>
 #include <string>
 
-#include <common/Special.h>
+#include <common/Functional.h>
 
 
 class SpecialFunctions
@@ -18,21 +18,25 @@ class SpecialFunctions
 public:
     SpecialFunctions();
 
-    static void mapStart(Special* obj, const std::string& data);
-    static void mapEnd(Special* obj, const std::string& data);
-    static void openDoor(Special* obj, const std::string& data);
-    static void readNote(Special* obj, const std::string& data);
-    static void addWeapon(Special* obj, const std::string& data);
-    static void addAmmo(Special* obj, const std::string& data);
-    static void addHealth(Special* obj, const std::string& data);
-    static void addSpeed(Special* obj, const std::string& data);
-    static void pickCrystal(Special* obj, const std::string& data);
+    static void mapStart(Functional* obj, const std::string& data);
+    static void mapEnd(Functional* obj, const std::string& data);
+    static void openDoor(Functional* obj, const std::string& data);
+    static void changeOpenState(Functional* obj, const std::string& data);
+    static void readNote(Functional* obj, const std::string& data);
+    static void addWeapon(Functional* obj, const std::string& data);
+    static void addAmmo(Functional* obj, const std::string& data);
+    static void addHealth(Functional* obj, const std::string& data);
+    static void addSpeed(Functional* obj, const std::string& data);
+    static void pickCrystal(Functional* obj, const std::string& data);
+    static void spawnThought(Functional* obj, const std::string& data);
+    static void nullFunc(Functional* obj, const std::string& data);
+    static void deactivate(Functional* obj, const std::string& data);
 
-    std::function<void(Special*, const std::string&)> bindFunction(const std::string& key) const;
+    std::function<void(Functional*, const std::string&)> bindFunction(const std::string& key) const;
     const std::string& bindTextToUse(const std::string& key) const;
 
 private:
-    std::unordered_map<std::string, std::function<void(Special*, const std::string&)>> functions_;
+    std::unordered_map<std::string, std::function<void(Functional*, const std::string&)>> functions_;
     std::unordered_map<std::string, std::string> text_to_use_;
 
 };

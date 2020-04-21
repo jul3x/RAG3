@@ -46,6 +46,7 @@ set(SFML_ROOT "C:/SFML-2.5.1")
 find_package(SFML 2 REQUIRED COMPONENTS graphics window system audio)
 
 include_directories(../engine/include)
+include_directories(../common/include)
 include_directories(../game/include)
 include_directories(${SFML_INCLUDE_DIR})
 

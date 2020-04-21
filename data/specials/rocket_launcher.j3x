@@ -10,7 +10,7 @@ int frames_number=1
 float frame_duration=0.0f
 
 string default_activation=OnEnter
-string default_function=AddWeapon
-string default_data=rocket_launcher
+list[string] default_functions=[AddWeapon]
+list[string] default_datas=[rocket_launcher]
 
 bool is_drawable=1

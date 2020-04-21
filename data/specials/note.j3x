@@ -1,6 +1,6 @@
 string default_activation=OnUse
-string default_function=ReadNote
-string default_data=Example text
+list[string] default_functions=[ReadNote]
+list[string] default_datas=[Example text]
 
 float size_x=50.0f
 float size_y=50.0f

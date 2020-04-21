@@ -17,9 +17,18 @@
 
 
 NPC::NPC(const sf::Vector2f& position, const std::string& id, int u_id) :
-        Character(position, id, u_id),
-        AbstractAgent(),
-        visibility_state_(VisibilityState::TooFar)
+        NPC(position, id,
+            utils::j3x::getString(RM.getObjectParams("characters", id), "default_activation"),
+            utils::j3x::getListString(RM.getObjectParams("characters", id), "default_functions"),
+            utils::j3x::getListString(RM.getObjectParams("characters", id), "default_datas"), u_id)
+{
+
+}
+
+NPC::NPC(const sf::Vector2f& position, const std::string& id,
+         const std::string& activation, const std::vector<std::string>& functions,
+         const std::vector<std::string>& datas, int u_id) :
+        Character(position, id, activation, functions, datas, u_id)
 {
     weapons_in_backpack_.push_back(std::make_shared<ShootingWeapon>("desert_eagle"));
 
@@ -27,7 +36,6 @@ NPC::NPC(const sf::Vector2f& position, const std::string& id, int u_id) :
 
     this->setPosition(position);
 }
-
 
 void NPC::registerEnemy(const Character* enemy)
 {
@@ -67,13 +75,13 @@ bool NPC::update(float time_elapsed)
     handleActionState();
 
     auto& enemy_position = current_enemy_->getPosition();
-    auto velocity = utils::getFloat(RM.getObjectParams("characters", this->getId()), "max_speed") * this->generateVelocityForPath();
+    auto velocity = utils::j3x::getFloat(RM.getObjectParams("characters", this->getId()), "max_speed") * this->generateVelocityForPath();
 
     switch (action_state_)
     {
         case ActionState::StandBy:
         {
-            velocity = utils::getFloat(RM.getObjectParams("characters", this->getId()), "standby_speed") * this->getWanderingDirection(0.2f, 100.0f, 20);
+            velocity = utils::j3x::getFloat(RM.getObjectParams("characters", this->getId()), "standby_speed") * this->getWanderingDirection(0.2f, 100.0f, 20);
 
             this->setNoGoal();
             this->setWeaponPointing(this->getPosition() + velocity);
@@ -125,7 +133,7 @@ bool NPC::update(float time_elapsed)
     if (utils::num::isNearlyEqual(velocity, {0.0f, 0.0f}) &&
         action_state_ != ActionState::Shot && action_state_ != ActionState::DestroyWall)
     {
-        velocity = utils::getFloat(RM.getObjectParams("characters", this->getId()), "standby_speed") *
+        velocity = utils::j3x::getFloat(RM.getObjectParams("characters", this->getId()), "standby_speed") *
                    this->getWanderingDirection(0.2f, 100.0f, 20);
         this->setWeaponPointing(this->getPosition() + velocity);
     }

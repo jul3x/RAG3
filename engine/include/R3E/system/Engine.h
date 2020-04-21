@@ -79,6 +79,8 @@ namespace r3e {
         static sf::Vector2i detectResolution();
 
     private:
+        static constexpr int MINIMUM_FPS = 10;
+
         void updateAnimationEvents(float time_elapsed);
 
         void draw();

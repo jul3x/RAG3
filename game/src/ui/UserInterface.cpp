@@ -259,20 +259,20 @@ inline void UserInterface::handleKeys()
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-        delta.x -= utils::getFloat(RM.getObjectParams("characters", "player"), "max_speed");
+        delta.x -= utils::j3x::getFloat(RM.getObjectParams("characters", "player"), "max_speed");
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        delta.x += utils::getFloat(RM.getObjectParams("characters", "player"), "max_speed");
+        delta.x += utils::j3x::getFloat(RM.getObjectParams("characters", "player"), "max_speed");
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
-        delta.y -= utils::getFloat(RM.getObjectParams("characters", "player"), "max_speed");
+        delta.y -= utils::j3x::getFloat(RM.getObjectParams("characters", "player"), "max_speed");
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
-        delta.y += utils::getFloat(RM.getObjectParams("characters", "player"), "max_speed");
+        delta.y += utils::j3x::getFloat(RM.getObjectParams("characters", "player"), "max_speed");
     }
 
     if (player_->isAlive())

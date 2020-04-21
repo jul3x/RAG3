@@ -21,6 +21,10 @@ SpecialFunctions::SpecialFunctions()
     functions_["AddHealth"] = &addHealth;
     functions_["AddSpeed"] = &addSpeed;
     functions_["PickCrystal"] = &pickCrystal;
+    functions_["SpawnThought"] = &spawnThought;
+    functions_["ChangeOpenState"] = &changeOpenState;
+    functions_["null"] = &nullFunc;
+    functions_["deactivate"] = &deactivate;
 
     text_to_use_["MapStart"] = "[F] Start new map";
     text_to_use_["MapEnd"] = "[F] End this map";
@@ -31,19 +35,23 @@ SpecialFunctions::SpecialFunctions()
     text_to_use_["AddHealth"] = "[F] Pick to heal yourself";
     text_to_use_["AddSpeed"] = "[F] Pick to inject";
     text_to_use_["PickCrystal"] = "[F] Pick crystal";
+    text_to_use_["SpawnThought"] = "[F] Talk";
+    text_to_use_["ChangeOpenState"] = "[F] Use object";
+    text_to_use_["null"] = "";
+    text_to_use_["deactivate"] = "";
 }
 
-void SpecialFunctions::mapStart(Special* obj, const std::string& data)
+void SpecialFunctions::mapStart(Functional* obj, const std::string& data)
 {
     // empty
 }
 
-void SpecialFunctions::mapEnd(Special* obj, const std::string& data)
+void SpecialFunctions::mapEnd(Functional* obj, const std::string& data)
 {
     Game::get().getPlayer().setHealth(0);
 }
 
-void SpecialFunctions::openDoor(Special* obj, const std::string& data)
+void SpecialFunctions::openDoor(Functional* obj, const std::string& data)
 {
     auto door_id = std::stoi(data);
     auto door = Game::get().getMap().getObstacleObject(door_id);
@@ -53,33 +61,45 @@ void SpecialFunctions::openDoor(Special* obj, const std::string& data)
     if (door->getCollisionArea().getType() == Collision::Area::Type::None)
     {
         door->changeTexture(&RM.getTexture("obstacles/" + door->getId()));
-        door->changeCollisionArea(Collision::Box(utils::getFloat(RM.getObjectParams("obstacles", door->getId()), "collision_size_x"),
-                                                 utils::getFloat(RM.getObjectParams("obstacles", door->getId()), "collision_size_y")));
-
-        obj->changeTexture(&RM.getTexture("specials/" + obj->getId()));
+        door->changeCollisionArea(Collision::Box(utils::j3x::getFloat(RM.getObjectParams("obstacles", door->getId()), "collision_size_x"),
+                                                 utils::j3x::getFloat(RM.getObjectParams("obstacles", door->getId()), "collision_size_y")));
 
         Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) =
-                utils::getFloat(RM.getObjectParams("obstacles", door->getId()), "endurance");
+                utils::j3x::getFloat(RM.getObjectParams("obstacles", door->getId()), "endurance");
     }
     else
     {
         door->changeTexture(&RM.getTexture("obstacles/" + door->getId() + "_open"));
         door->changeCollisionArea(Collision::None());
 
-        obj->changeTexture(&RM.getTexture("specials/" + obj->getId() + "_open"));
-
         Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
     }
 }
 
-void SpecialFunctions::readNote(Special* obj, const std::string& data)
+void SpecialFunctions::changeOpenState(Functional* obj, const std::string& data)
+{
+    auto door_id = std::stoi(data);
+    auto door = Game::get().getMap().getObstacleObject(door_id);
+    auto special_obj = Game::get().getMap().getSpecialObject(obj->getUniqueId());
+
+    if (door->getCollisionArea().getType() == Collision::Area::Type::None)
+    {
+        special_obj->changeTexture(&RM.getTexture("specials/" + obj->getId()));
+    }
+    else
+    {
+        special_obj->changeTexture(&RM.getTexture("specials/" + obj->getId() + "_open"));
+    }
+}
+
+void SpecialFunctions::readNote(Functional* obj, const std::string& data)
 {
     auto str = data;
     std::replace(str.begin(), str.end(), '$', '\n');
     Game::get().spawnThought(str);
 }
 
-void SpecialFunctions::addWeapon(Special* obj, const std::string& data)
+void SpecialFunctions::addWeapon(Functional* obj, const std::string& data)
 {
     auto& player = Game::get().getPlayer();
     auto data_parsed = data;
@@ -90,12 +110,10 @@ void SpecialFunctions::addWeapon(Special* obj, const std::string& data)
             std::bind(&Game::spawnBullet, &Game::get(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     player.addWeaponToBackpack(weapon);
 
-    Game::get().spawnThought("Fuck yeah!");
-
     obj->deactivate();
 }
 
-void SpecialFunctions::addAmmo(Special* obj, const std::string& data)
+void SpecialFunctions::addAmmo(Functional* obj, const std::string& data)
 {
     auto& player = Game::get().getPlayer();
     auto data_parsed = data;
@@ -106,7 +124,7 @@ void SpecialFunctions::addAmmo(Special* obj, const std::string& data)
     obj->deactivate();
 }
 
-void SpecialFunctions::addHealth(Special* obj, const std::string& data)
+void SpecialFunctions::addHealth(Functional* obj, const std::string& data)
 {
     auto& player = Game::get().getPlayer();
     auto data_parsed = std::stoi(data);
@@ -118,7 +136,7 @@ void SpecialFunctions::addHealth(Special* obj, const std::string& data)
     obj->deactivate();
 }
 
-void SpecialFunctions::addSpeed(Special* obj, const std::string& data)
+void SpecialFunctions::addSpeed(Functional* obj, const std::string& data)
 {
     auto& player = Game::get().getPlayer();
     auto data_parsed = std::stof(data);
@@ -130,7 +148,7 @@ void SpecialFunctions::addSpeed(Special* obj, const std::string& data)
     obj->deactivate();
 }
 
-void SpecialFunctions::pickCrystal(Special* obj, const std::string& data)
+void SpecialFunctions::pickCrystal(Functional* obj, const std::string& data)
 {
     Game::get().getStats().pickCrystal();
 
@@ -139,7 +157,24 @@ void SpecialFunctions::pickCrystal(Special* obj, const std::string& data)
     obj->deactivate();
 }
 
-std::function<void(Special*, const std::string&)> SpecialFunctions::bindFunction(const std::string& key) const
+void SpecialFunctions::spawnThought(Functional* obj, const std::string& data)
+{
+    auto str = data;
+    std::replace(str.begin(), str.end(), '$', '\n');
+    Game::get().spawnThought(str);
+}
+
+void SpecialFunctions::nullFunc(Functional *obj, const std::string &data)
+{
+
+}
+
+void SpecialFunctions::deactivate(Functional *obj, const std::string &data)
+{
+    obj->deactivate();
+}
+
+std::function<void(Functional*, const std::string&)> SpecialFunctions::bindFunction(const std::string& key) const
 {
     auto it = functions_.find(key);
 

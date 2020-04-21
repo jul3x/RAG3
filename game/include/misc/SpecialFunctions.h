@@ -30,6 +30,7 @@ public:
     static void pickCrystal(Functional* obj, const std::string& data);
     static void spawnThought(Functional* obj, const std::string& data);
     static void nullFunc(Functional* obj, const std::string& data);
+    static void deactivate(Functional* obj, const std::string& data);
 
     std::function<void(Functional*, const std::string&)> bindFunction(const std::string& key) const;
     const std::string& bindTextToUse(const std::string& key) const;

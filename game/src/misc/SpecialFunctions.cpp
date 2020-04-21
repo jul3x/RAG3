@@ -24,6 +24,7 @@ SpecialFunctions::SpecialFunctions()
     functions_["SpawnThought"] = &spawnThought;
     functions_["ChangeOpenState"] = &changeOpenState;
     functions_["null"] = &nullFunc;
+    functions_["deactivate"] = &deactivate;
 
     text_to_use_["MapStart"] = "[F] Start new map";
     text_to_use_["MapEnd"] = "[F] End this map";
@@ -37,6 +38,7 @@ SpecialFunctions::SpecialFunctions()
     text_to_use_["SpawnThought"] = "[F] Talk";
     text_to_use_["ChangeOpenState"] = "[F] Use object";
     text_to_use_["null"] = "";
+    text_to_use_["deactivate"] = "";
 }
 
 void SpecialFunctions::mapStart(Functional* obj, const std::string& data)
@@ -165,6 +167,11 @@ void SpecialFunctions::spawnThought(Functional* obj, const std::string& data)
 void SpecialFunctions::nullFunc(Functional *obj, const std::string &data)
 {
 
+}
+
+void SpecialFunctions::deactivate(Functional *obj, const std::string &data)
+{
+    obj->deactivate();
 }
 
 std::function<void(Functional*, const std::string&)> SpecialFunctions::bindFunction(const std::string& key) const

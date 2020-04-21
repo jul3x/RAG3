@@ -32,7 +32,7 @@ const std::string& Functional::getFunctionsStr() const
 
     for (auto& function : functions_)
     {
-        result += function + ',';
+        result += function + ';';
     }
 
     if (result.length() >= 1)
@@ -48,7 +48,7 @@ const std::string& Functional::getDatasStr() const
 
     for (auto& data : datas_)
     {
-        result += data + ',';
+        result += data + ';';
     }
 
     if (result.length() >= 1)

@@ -126,6 +126,7 @@ fence_side 1375 1100 368
 fence_side 1275 1100 370
 fence 1325 1150 371
 door 300 975 373
+door 3800 1225 376
 
 decorations: 
 flame 2500 3400 165
@@ -245,3 +246,5 @@ crystal 625 1175 351 OnEnter [PickCrystal] [null]
 m4 625 1075 352 OnEnter [AddWeapon;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor] [m4;320;321;322;324;325;326;314;315;316;317;318;319]
 ending_position 300 500 374 OnEnter [MapEnd] [null]
 note 875 1075 375 OnUse [ReadNote] ["Brace_yourself!"]
+lever 5725 1625 377 OnUse [OpenDoor;ChangeOpenState] [376;376]
+special_event 3200 1100 382 OnEnter [OpenDoor;deactivate] [376;null]

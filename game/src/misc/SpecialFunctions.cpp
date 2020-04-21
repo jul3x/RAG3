@@ -21,6 +21,8 @@ SpecialFunctions::SpecialFunctions()
     functions_["AddHealth"] = &addHealth;
     functions_["AddSpeed"] = &addSpeed;
     functions_["PickCrystal"] = &pickCrystal;
+    functions_["SpawnThought"] = &spawnThought;
+    functions_["ChangeOpenState"] = &changeOpenState;
 
     text_to_use_["MapStart"] = "[F] Start new map";
     text_to_use_["MapEnd"] = "[F] End this map";
@@ -31,6 +33,8 @@ SpecialFunctions::SpecialFunctions()
     text_to_use_["AddHealth"] = "[F] Pick to heal yourself";
     text_to_use_["AddSpeed"] = "[F] Pick to inject";
     text_to_use_["PickCrystal"] = "[F] Pick crystal";
+    text_to_use_["SpawnThought"] = "[F] Talk";
+    text_to_use_["ChangeOpenState"] = "[F] Use object";
 }
 
 void SpecialFunctions::mapStart(Special* obj, const std::string& data)
@@ -56,8 +60,6 @@ void SpecialFunctions::openDoor(Special* obj, const std::string& data)
         door->changeCollisionArea(Collision::Box(utils::j3x::getFloat(RM.getObjectParams("obstacles", door->getId()), "collision_size_x"),
                                                  utils::j3x::getFloat(RM.getObjectParams("obstacles", door->getId()), "collision_size_y")));
 
-        obj->changeTexture(&RM.getTexture("specials/" + obj->getId()));
-
         Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) =
                 utils::j3x::getFloat(RM.getObjectParams("obstacles", door->getId()), "endurance");
     }
@@ -66,9 +68,22 @@ void SpecialFunctions::openDoor(Special* obj, const std::string& data)
         door->changeTexture(&RM.getTexture("obstacles/" + door->getId() + "_open"));
         door->changeCollisionArea(Collision::None());
 
-        obj->changeTexture(&RM.getTexture("specials/" + obj->getId() + "_open"));
-
         Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
+    }
+}
+
+void SpecialFunctions::changeOpenState(Special* obj, const std::string& data)
+{
+    auto door_id = std::stoi(data);
+    auto door = Game::get().getMap().getObstacleObject(door_id);
+
+    if (door->getCollisionArea().getType() == Collision::Area::Type::None)
+    {
+        obj->changeTexture(&RM.getTexture("specials/" + obj->getId()));
+    }
+    else
+    {
+        obj->changeTexture(&RM.getTexture("specials/" + obj->getId() + "_open"));
     }
 }
 
@@ -89,8 +104,6 @@ void SpecialFunctions::addWeapon(Special* obj, const std::string& data)
     weapon->registerSpawningFunction(
             std::bind(&Game::spawnBullet, &Game::get(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     player.addWeaponToBackpack(weapon);
-
-    Game::get().spawnThought("Fuck yeah!");
 
     obj->deactivate();
 }
@@ -137,6 +150,13 @@ void SpecialFunctions::pickCrystal(Special* obj, const std::string& data)
     Game::get().spawnThought("I need more of them!");
 
     obj->deactivate();
+}
+
+void SpecialFunctions::spawnThought(Special* obj, const std::string& data)
+{
+    auto str = data;
+    std::replace(str.begin(), str.end(), '$', '\n');
+    Game::get().spawnThought(str);
 }
 
 std::function<void(Special*, const std::string&)> SpecialFunctions::bindFunction(const std::string& key) const

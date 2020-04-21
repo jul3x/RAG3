@@ -10,7 +10,7 @@ int frames_number=1
 float frame_duration=0.0f
 
 string default_activation=OnEnter
-string default_function=AddHealth
-string default_data=30
+list[string] default_functions=[AddHealth]
+list[string] default_datas=[30]
 
 bool is_drawable=1

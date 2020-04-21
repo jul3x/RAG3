@@ -10,7 +10,7 @@ int frames_number=1
 float frame_duration=0.0f
 
 string default_activation=OnEnter
-string default_function=AddSpeed
-string default_data=0.25f
+list[string] default_functions=[AddSpeed]
+list[string] default_datas=[0.25f]
 
 bool is_drawable=1

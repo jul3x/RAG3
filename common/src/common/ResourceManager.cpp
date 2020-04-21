@@ -65,8 +65,8 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
         int u_id = -1;
 
         std::string activation = "";
-        std::string function = "";
-        std::string f_data = "";
+        std::vector<std::string> functions;
+        std::vector<std::string> f_datas;
 
         // type < 0 - decoration, type > 0 - obstacle
         while (file >> word)
@@ -180,12 +180,19 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         }
                         else if (number % 7 == 6)
                         {
-                            function = word;
+                            if (word.length() < 2)
+                                throw std::logic_error("[ResourceManager] Wrong map list object format!");
+
+                            utils::j3x::tokenize(word.substr(1, word.length() - 2), ',', functions);
                         }
                         else
                         {
                             std::replace(word.begin(), word.end(), '_', ' ');
-                            f_data = word;
+
+                            if (word.length() < 2)
+                                throw std::logic_error("[ResourceManager] Wrong map list object format!");
+
+                            utils::j3x::tokenize(word.substr(1, word.length() - 2), ',', f_datas);
                             should_add_new_object = true;
                         }
 
@@ -205,8 +212,13 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             characters.emplace_back(std::make_shared<NPC>(current_pos, current_id, u_id));
                             break;
                         case MapReading::Specials:
+                            if (functions.size() != f_datas.size())
+                            {
+                                throw std::logic_error("[ResourceManager] Wrong map special object data and function format!");
+                            }
+
                             specials.emplace_back(std::make_shared<Special>(current_pos, current_id,
-                                                                            activation, function, f_data, u_id));
+                                                                            activation, functions, f_datas, u_id));
                             break;
                         case MapReading::Obstacles:
                             obstacles.emplace_back(std::make_shared<Obstacle>(current_pos, current_id, u_id));
@@ -303,7 +315,7 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
     file << std::endl << "specials: " << std::endl;
     for (const auto& obj : map.getSpecials())
     {
-        auto new_data = obj->getData();
+        auto new_data = obj->getDatasStr();
         std::replace(new_data.begin(), new_data.end(), ' ', '_');
 
         file << obj->getId() << " " <<
@@ -311,8 +323,8 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
              obj->getPosition().y - map_constraints.second.y << " " <<
              obj->getUniqueId() << " " <<
              obj->getActivation() << " " <<
-             obj->getFunction() << " " <<
-             new_data << std::endl;
+             "[" << obj->getFunctionsStr() << "] [" <<
+             new_data << "]" << std::endl;
     }
 
     std::cout << "[ResourceManager] Map file " << CFG.getString("paths/maps_dir") + "/" + name + ".j3x" << " is saved!" << std::endl;

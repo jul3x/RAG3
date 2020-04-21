@@ -2,7 +2,7 @@
 // Created by jul3x on 21.04.20.
 //
 
-#include <r3e/utils/Numeric.h>
+#include <R3E/utils/Numeric.h>
 
 
 namespace r3e {

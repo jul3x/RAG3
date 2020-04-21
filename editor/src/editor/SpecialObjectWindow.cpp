@@ -56,9 +56,9 @@ SpecialObjectWindow::SpecialObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
 
     grid_->addWidget(label, 2, 0);
 
-    fun_box_ = tgui::EditBox::create();
-    fun_box_->setRenderer(theme_->getRenderer("EditBox"));
-    fun_box_->setSize("35%", 20);
+    fun_box_ = tgui::TextBox::create();
+    fun_box_->setRenderer(theme_->getRenderer("TextBox"));
+    fun_box_->setSize("35%", "45%");
     fun_box_->setTextSize(14);
     grid_->addWidget(fun_box_, 3, 0);
 
@@ -69,9 +69,9 @@ SpecialObjectWindow::SpecialObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
 
     grid_->addWidget(label, 2, 1);
 
-    data_box_ = tgui::EditBox::create();
-    data_box_->setRenderer(theme_->getRenderer("EditBox"));
-    data_box_->setSize("35%", 20);
+    data_box_ = tgui::TextBox::create();
+    data_box_->setRenderer(theme_->getRenderer("TextBox"));
+    data_box_->setSize("35%", "45%");
     data_box_->setTextSize(14);
     grid_->addWidget(data_box_, 3, 1);
 
@@ -99,13 +99,13 @@ void SpecialObjectWindow::setObjectContent(const std::string& category, Special*
     child_->setTitle(category + "/" + special_->getId());
     id_box_->setText(std::to_string(special_->getUniqueId()));
     act_box_->setText(special_->getActivation());
-    fun_box_->setText(special_->getFunction());
-    data_box_->setText(special_->getData());
+    fun_box_->setText(special_->getFunctionsStr());
+    data_box_->setText(special_->getDatasStr());
 
     button_->connect("pressed", [this]() {
         this->special_->setActivation(this->act_box_->getText());
-        this->special_->setFunction(this->fun_box_->getText());
-        this->special_->setData(this->data_box_->getText());
+        this->special_->setFunctionsStr(this->fun_box_->getText());
+        this->special_->setDatasStr(this->data_box_->getText());
         child_->close();
     });
 }

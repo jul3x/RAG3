@@ -9,16 +9,16 @@
 Special::Special(const sf::Vector2f& position, const std::string& id, int u_id) :
         Special(position, id,
                 utils::j3x::getString(RM.getObjectParams("specials", id), "default_activation"),
-                utils::j3x::getString(RM.getObjectParams("specials", id), "default_function"),
-                utils::j3x::getString(RM.getObjectParams("specials", id), "default_data"), u_id)
+                utils::j3x::getListString(RM.getObjectParams("specials", id), "default_functions"),
+                utils::j3x::getListString(RM.getObjectParams("specials", id), "default_datas"), u_id)
 {
 
 }
 
 
 Special::Special(const sf::Vector2f& position, const std::string& id,
-                 const std::string& activation, const std::string& function,
-                 const std::string& data, int u_id) :
+                 const std::string& activation, const std::vector<std::string>& functions,
+                 const std::vector<std::string>& datas, int u_id) :
         Identifiable(id),
         Unique(u_id),
         HoveringObject(position, {},
@@ -30,8 +30,8 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
                        utils::j3x::getFloat(RM.getObjectParams("specials", id), "frame_duration"),
                        0.0f),
         activation_(activation),
-        function_(function),
-        data_(data),
+        functions_(functions),
+        datas_(datas),
         is_drawable_(utils::j3x::getInt(RM.getObjectParams("specials", id), "is_drawable")),
         is_active_(true),
         text_to_use_(nullptr)
@@ -52,14 +52,36 @@ const std::string& Special::getActivation() const
     return activation_;
 }
 
-const std::string& Special::getFunction() const
+const std::string& Special::getFunctionsStr() const
 {
-    return function_;
+    static std::string result;
+    result.clear();
+
+    for (auto& function : functions_)
+    {
+        result += function + ',';
+    }
+
+    if (result.length() >= 1)
+        result.pop_back();
+
+    return result;
 }
 
-const std::string& Special::getData() const
+const std::string& Special::getDatasStr() const
 {
-    return data_;
+    static std::string result;
+    result.clear();
+
+    for (auto& data : datas_)
+    {
+        result += data + ',';
+    }
+
+    if (result.length() >= 1)
+        result.pop_back();
+
+    return result;
 }
 
 const std::string& Special::getTextToUse() const
@@ -67,19 +89,29 @@ const std::string& Special::getTextToUse() const
     return *text_to_use_;
 }
 
+const std::vector<std::string>& Special::getFunctions() const
+{
+    return functions_;
+}
+
+const std::vector<std::string>& Special::getDatas() const
+{
+    return datas_;
+}
+
 void Special::setActivation(const std::string& str)
 {
     activation_ = str;
 }
 
-void Special::setFunction(const std::string& str)
+void Special::setFunctionsStr(const std::string& str)
 {
-    function_ = str;
+    utils::j3x::tokenize(str, ',', functions_);
 }
 
-void Special::setData(const std::string& str)
+void Special::setDatasStr(const std::string& str)
 {
-    data_ = str;
+    utils::j3x::tokenize(str, ',', datas_);
 }
 
 bool Special::isActive() const
@@ -94,11 +126,12 @@ void Special::deactivate()
 
 void Special::bindFunction(std::function<void(Special*, const std::string&)> func, const std::string& text)
 {
-    func_ = func;
+    funcs_.emplace_back(func);
     text_to_use_ = &text;
 }
 
 void Special::use()
 {
-    func_(this, data_);
+    for (size_t i = 0; i < funcs_.size(); ++i)
+        funcs_.at(i)(this, datas_.at(i));
 }

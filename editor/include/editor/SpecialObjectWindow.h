@@ -27,7 +27,8 @@ namespace editor {
 
         tgui::Button::Ptr button_;
 
-        tgui::EditBox::Ptr id_box_, act_box_, fun_box_, data_box_;
+        tgui::EditBox::Ptr id_box_, act_box_;
+        tgui::TextBox::Ptr fun_box_, data_box_;
 
     };
 

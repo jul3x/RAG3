@@ -96,8 +96,12 @@ void Game::initialize()
     for (auto& special : map_->getSpecials())
     {
         engine_->registerHoveringObject(special.get());
-        special->bindFunction(special_functions_->bindFunction( special->getFunction() ),
-                              special_functions_->bindTextToUse( special->getFunction() ));
+
+        for (const auto& function : special->getFunctions())
+        {
+            special->bindFunction(special_functions_->bindFunction( function ),
+                                  special_functions_->bindTextToUse( function ));
+        }
     }
 }
 
@@ -331,10 +335,11 @@ void Game::killNPC(NPC* npc)
         auto offset = sf::Vector2f(utils::num::getRandom(-ammo_offset, ammo_offset),
                                    utils::num::getRandom(-ammo_offset, ammo_offset));
         auto ammo_ptr = map_->spawnSpecial(npc->getPosition() + offset, bullet_name + "_ammo");
-        ammo_ptr->setData(weapon);
+
+        ammo_ptr->setDatasStr(weapon);
         engine_->registerHoveringObject(ammo_ptr);
-        ammo_ptr->bindFunction(special_functions_->bindFunction(ammo_ptr->getFunction()),
-                               special_functions_->bindTextToUse(ammo_ptr->getFunction()));
+        ammo_ptr->bindFunction(special_functions_->bindFunction(ammo_ptr->getFunctions().at(0)),
+                               special_functions_->bindTextToUse(ammo_ptr->getFunctions().at(0)));
     }
 
     this->spawnExplosionEvent(npc->getPosition(), 250.0f);

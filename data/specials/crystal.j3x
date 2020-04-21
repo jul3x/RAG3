@@ -1,6 +1,6 @@
 string default_activation=OnEnter
-string default_function=PickCrystal
-string default_data=null
+list[string] default_functions=[PickCrystal]
+list[string] default_datas=[null]
 
 float size_x=80.0f
 float size_y=80.0f

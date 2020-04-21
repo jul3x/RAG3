@@ -2,7 +2,7 @@
 // Created by jul3x on 21.04.20.
 //
 
-#include <r3e/utils/Parser.h>
+#include <R3E/utils/Parser.h>
 
 
 namespace r3e {
@@ -135,6 +135,8 @@ namespace r3e {
 
             void tokenize(const std::string &str, char delimiter, std::vector<std::string>& out)
             {
+                out.clear();
+
                 size_t start;
                 size_t end = 0;
 

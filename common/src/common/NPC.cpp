@@ -67,13 +67,13 @@ bool NPC::update(float time_elapsed)
     handleActionState();
 
     auto& enemy_position = current_enemy_->getPosition();
-    auto velocity = utils::getFloat(RM.getObjectParams("characters", this->getId()), "max_speed") * this->generateVelocityForPath();
+    auto velocity = utils::j3x::getFloat(RM.getObjectParams("characters", this->getId()), "max_speed") * this->generateVelocityForPath();
 
     switch (action_state_)
     {
         case ActionState::StandBy:
         {
-            velocity = utils::getFloat(RM.getObjectParams("characters", this->getId()), "standby_speed") * this->getWanderingDirection(0.2f, 100.0f, 20);
+            velocity = utils::j3x::getFloat(RM.getObjectParams("characters", this->getId()), "standby_speed") * this->getWanderingDirection(0.2f, 100.0f, 20);
 
             this->setNoGoal();
             this->setWeaponPointing(this->getPosition() + velocity);
@@ -125,7 +125,7 @@ bool NPC::update(float time_elapsed)
     if (utils::num::isNearlyEqual(velocity, {0.0f, 0.0f}) &&
         action_state_ != ActionState::Shot && action_state_ != ActionState::DestroyWall)
     {
-        velocity = utils::getFloat(RM.getObjectParams("characters", this->getId()), "standby_speed") *
+        velocity = utils::j3x::getFloat(RM.getObjectParams("characters", this->getId()), "standby_speed") *
                    this->getWanderingDirection(0.2f, 100.0f, 20);
         this->setWeaponPointing(this->getPosition() + velocity);
     }

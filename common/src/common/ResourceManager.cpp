@@ -16,7 +16,7 @@ ResourceManager& ResourceManager::getInstance()
     return resource_manager_instance;
 }
 
-const utils::J3XParameters& ResourceManager::getObjectParams(const std::string& category, const std::string& id)
+const utils::j3x::Parameters& ResourceManager::getObjectParams(const std::string& category, const std::string& id)
 {
     return getParameters(category + "/" + id);
 }
@@ -107,7 +107,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         if (type < 10 && type > 0)
                         {
                             blocked.at(count % w).at(count / w) =
-                                    utils::getFloat(RM.getObjectParams("obstacles_tiles", std::to_string(type)), "endurance");
+                                    utils::j3x::getFloat(RM.getObjectParams("obstacles_tiles", std::to_string(type)), "endurance");
                             obstacles_tiles.emplace_back(std::make_shared<ObstacleTile>(
                                     sf::Vector2f((count % w) * DecorationTile::SIZE_X_,
                                                  (count / w) * DecorationTile::SIZE_Y_),
@@ -212,7 +212,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             obstacles.emplace_back(std::make_shared<Obstacle>(current_pos, current_id, u_id));
                             blocked.at(static_cast<size_t>(current_pos.x / DecorationTile::SIZE_X_)).
                                     at(static_cast<size_t>(current_pos.y / DecorationTile::SIZE_Y_)) =
-                                    utils::getFloat(RM.getObjectParams("obstacles", current_id), "endurance");
+                                    utils::j3x::getFloat(RM.getObjectParams("obstacles", current_id), "endurance");
                             break;
                         case MapReading::Decorations:
                             decorations.emplace_back(std::make_shared<Decoration>(current_pos, current_id, u_id));

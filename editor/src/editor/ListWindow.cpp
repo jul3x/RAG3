@@ -62,10 +62,10 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
         int i = 0;
         for (const auto& item : items)
         {
-            auto size = sf::Vector2f(utils::getFloat(RM.getObjectParams(tab_name, item), "size_x"),
-                                     utils::getFloat(RM.getObjectParams(tab_name, item), "size_y"));
+            auto size = sf::Vector2f(utils::j3x::getFloat(RM.getObjectParams(tab_name, item), "size_x"),
+                                     utils::j3x::getFloat(RM.getObjectParams(tab_name, item), "size_y"));
 
-            if (utils::getInt(RM.getObjectParams(tab_name, item), "frames_number") == 1)
+            if (utils::j3x::getInt(RM.getObjectParams(tab_name, item), "frames_number") == 1)
                 button_textures_[tab_name + "/" + item].load(RM.getTexture(tab_name + "/" + item));
             else
                 button_textures_[tab_name + "/" + item].load(

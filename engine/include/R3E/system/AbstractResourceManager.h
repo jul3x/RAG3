@@ -35,7 +35,7 @@ namespace r3e {
 
         sf::Font& getFont(const std::string& key);
 
-        utils::J3XParameters& getParameters(const std::string& key);
+        utils::j3x::Parameters& getParameters(const std::string& key);
 
         sf::Font& getFont();
 
@@ -58,7 +58,7 @@ namespace r3e {
         std::unordered_map<std::string, sf::SoundBuffer> sounds_;
         std::unordered_map<std::string, sf::Music> music_;
         std::unordered_map<std::string, sf::Font> fonts_;
-        std::unordered_map<std::string, utils::J3XParameters> parameters_;
+        std::unordered_map<std::string, utils::j3x::Parameters> parameters_;
 
         std::string j3x_directory_;
         std::string textures_directory_;

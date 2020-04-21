@@ -323,7 +323,7 @@ void Game::killNPC(NPC* npc)
 
     // spawn ammo
     auto& weapon = npc->getWeapons().at(npc->getCurrentWeapon())->getName();
-    auto& bullet_name = utils::getString(RM.getObjectParams("weapons", weapon), "bullet_type");
+    auto& bullet_name = utils::j3x::getString(RM.getObjectParams("weapons", weapon), "bullet_type");
 
     auto ammo_offset = CFG.getFloat("characters/ammo_drop_offset");
     for (size_t i = 0; i < CFG.getInt("characters/ammo_dropped"); ++i)
@@ -458,7 +458,7 @@ void Game::spawnAchievement(Achievements::Type type)
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir)
 {
     auto shot_event = std::make_shared<ShotEvent>(pos, dir * 180.0f / M_PI,
-                                                  utils::getFloat(RM.getObjectParams("bullets", name), "burst_size"));
+                                                  utils::j3x::getFloat(RM.getObjectParams("bullets", name), "burst_size"));
     engine_->spawnAnimationEvent(shot_event);
 
     if (CFG.getInt("sound/sound_on"))

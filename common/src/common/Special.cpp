@@ -8,9 +8,9 @@
 
 Special::Special(const sf::Vector2f& position, const std::string& id, int u_id) :
         Special(position, id,
-                utils::getString(RM.getObjectParams("specials", id), "default_activation"),
-                utils::getString(RM.getObjectParams("specials", id), "default_function"),
-                utils::getString(RM.getObjectParams("specials", id), "default_data"), u_id)
+                utils::j3x::getString(RM.getObjectParams("specials", id), "default_activation"),
+                utils::j3x::getString(RM.getObjectParams("specials", id), "default_function"),
+                utils::j3x::getString(RM.getObjectParams("specials", id), "default_data"), u_id)
 {
 
 }
@@ -22,24 +22,24 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
         Identifiable(id),
         Unique(u_id),
         HoveringObject(position, {},
-                       {utils::getFloat(RM.getObjectParams("specials", id), "size_x"),
-                        utils::getFloat(RM.getObjectParams("specials", id), "size_y")},
-                       Collision::Circle(utils::getFloat(RM.getObjectParams("specials", id), "collision_size_x")),
+                       {utils::j3x::getFloat(RM.getObjectParams("specials", id), "size_x"),
+                        utils::j3x::getFloat(RM.getObjectParams("specials", id), "size_y")},
+                       Collision::Circle(utils::j3x::getFloat(RM.getObjectParams("specials", id), "collision_size_x")),
                        &RM.getTexture("specials/" + id),
-                       utils::getInt(RM.getObjectParams("specials", id), "frames_number"),
-                       utils::getFloat(RM.getObjectParams("specials", id), "frame_duration"),
+                       utils::j3x::getInt(RM.getObjectParams("specials", id), "frames_number"),
+                       utils::j3x::getFloat(RM.getObjectParams("specials", id), "frame_duration"),
                        0.0f),
         activation_(activation),
         function_(function),
         data_(data),
-        is_drawable_(utils::getInt(RM.getObjectParams("specials", id), "is_drawable")),
+        is_drawable_(utils::j3x::getInt(RM.getObjectParams("specials", id), "is_drawable")),
         is_active_(true),
         text_to_use_(nullptr)
 {
-    this->changeOrigin(sf::Vector2f(utils::getFloat(RM.getObjectParams("specials", id), "size_x"),
-                                    utils::getFloat(RM.getObjectParams("specials", id), "size_y")) / 2.0f +
-                       sf::Vector2f(utils::getFloat(RM.getObjectParams("specials", id), "map_offset_x"),
-                                    utils::getFloat(RM.getObjectParams("specials", id), "map_offset_y")));
+    this->changeOrigin(sf::Vector2f(utils::j3x::getFloat(RM.getObjectParams("specials", id), "size_x"),
+                                    utils::j3x::getFloat(RM.getObjectParams("specials", id), "size_y")) / 2.0f +
+                       sf::Vector2f(utils::j3x::getFloat(RM.getObjectParams("specials", id), "map_offset_x"),
+                                    utils::j3x::getFloat(RM.getObjectParams("specials", id), "map_offset_y")));
 }
 
 bool Special::isDrawable() const

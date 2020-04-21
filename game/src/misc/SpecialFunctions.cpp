@@ -53,13 +53,13 @@ void SpecialFunctions::openDoor(Special* obj, const std::string& data)
     if (door->getCollisionArea().getType() == Collision::Area::Type::None)
     {
         door->changeTexture(&RM.getTexture("obstacles/" + door->getId()));
-        door->changeCollisionArea(Collision::Box(utils::getFloat(RM.getObjectParams("obstacles", door->getId()), "collision_size_x"),
-                                                 utils::getFloat(RM.getObjectParams("obstacles", door->getId()), "collision_size_y")));
+        door->changeCollisionArea(Collision::Box(utils::j3x::getFloat(RM.getObjectParams("obstacles", door->getId()), "collision_size_x"),
+                                                 utils::j3x::getFloat(RM.getObjectParams("obstacles", door->getId()), "collision_size_y")));
 
         obj->changeTexture(&RM.getTexture("specials/" + obj->getId()));
 
         Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) =
-                utils::getFloat(RM.getObjectParams("obstacles", door->getId()), "endurance");
+                utils::j3x::getFloat(RM.getObjectParams("obstacles", door->getId()), "endurance");
     }
     else
     {

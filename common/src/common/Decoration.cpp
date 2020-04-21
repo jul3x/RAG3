@@ -10,14 +10,14 @@ Decoration::Decoration(const sf::Vector2f& position, const std::string& id, int 
         Identifiable(id),
         Unique(u_id),
         AbstractDrawableObject(position,
-                               {utils::getFloat(RM.getObjectParams("decorations", id), "size_x"),
-                                utils::getFloat(RM.getObjectParams("decorations", id), "size_y")},
+                               {utils::j3x::getFloat(RM.getObjectParams("decorations", id), "size_x"),
+                                utils::j3x::getFloat(RM.getObjectParams("decorations", id), "size_y")},
                                &RM.getTexture("decorations/" + id),
-                               utils::getInt(RM.getObjectParams("decorations", id), "frames_number"),
-                               utils::getFloat(RM.getObjectParams("decorations", id), "frame_duration"))
+                               utils::j3x::getInt(RM.getObjectParams("decorations", id), "frames_number"),
+                               utils::j3x::getFloat(RM.getObjectParams("decorations", id), "frame_duration"))
 {
-    this->changeOrigin(sf::Vector2f(utils::getFloat(RM.getObjectParams("decorations", id), "size_x"),
-                                    utils::getFloat(RM.getObjectParams("decorations", id), "size_y")) / 2.0f +
-                       sf::Vector2f(utils::getFloat(RM.getObjectParams("decorations", id), "map_offset_x"),
-                                    utils::getFloat(RM.getObjectParams("decorations", id), "map_offset_y")));
+    this->changeOrigin(sf::Vector2f(utils::j3x::getFloat(RM.getObjectParams("decorations", id), "size_x"),
+                                    utils::j3x::getFloat(RM.getObjectParams("decorations", id), "size_y")) / 2.0f +
+                       sf::Vector2f(utils::j3x::getFloat(RM.getObjectParams("decorations", id), "map_offset_x"),
+                                    utils::j3x::getFloat(RM.getObjectParams("decorations", id), "map_offset_y")));
 }

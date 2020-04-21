@@ -287,18 +287,18 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
 
         crosshair_.changeTexture(&RM.getTexture(current_item.first + "/" + current_item.second), true);
 
-        if (utils::getInt(RM.getObjectParams(current_item.first, current_item.second), "frames_number") > 1)
+        if (utils::j3x::getInt(RM.getObjectParams(current_item.first, current_item.second), "frames_number") > 1)
             crosshair_.changeTextureRect({{0, 0},
-                                          sf::Vector2i(utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
-                                                       utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_y"))});
+                                          sf::Vector2i(utils::j3x::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
+                                                       utils::j3x::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_y"))});
 
         crosshair_.setSize(
-                sf::Vector2f(utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
-                             utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_y")));
+                sf::Vector2f(utils::j3x::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
+                             utils::j3x::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_y")));
         crosshair_.changeOrigin(
-                sf::Vector2f(utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
-                             utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_y")) / 2.0f +
-                        sf::Vector2f(utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "map_offset_x"),
-                                     utils::getFloat(RM.getObjectParams(current_item.first, current_item.second), "map_offset_y")));
+                sf::Vector2f(utils::j3x::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
+                             utils::j3x::getFloat(RM.getObjectParams(current_item.first, current_item.second), "size_y")) / 2.0f +
+                        sf::Vector2f(utils::j3x::getFloat(RM.getObjectParams(current_item.first, current_item.second), "map_offset_x"),
+                                     utils::j3x::getFloat(RM.getObjectParams(current_item.first, current_item.second), "map_offset_y")));
     }
 }

@@ -17,9 +17,18 @@
 
 
 NPC::NPC(const sf::Vector2f& position, const std::string& id, int u_id) :
-        Character(position, id, u_id),
-        AbstractAgent(),
-        visibility_state_(VisibilityState::TooFar)
+        NPC(position, id,
+            utils::j3x::getString(RM.getObjectParams("characters", id), "default_activation"),
+            utils::j3x::getListString(RM.getObjectParams("characters", id), "default_functions"),
+            utils::j3x::getListString(RM.getObjectParams("characters", id), "default_datas"), u_id)
+{
+
+}
+
+NPC::NPC(const sf::Vector2f& position, const std::string& id,
+         const std::string& activation, const std::vector<std::string>& functions,
+         const std::vector<std::string>& datas, int u_id) :
+        Character(position, id, activation, functions, datas, u_id)
 {
     weapons_in_backpack_.push_back(std::make_shared<ShootingWeapon>("desert_eagle"));
 
@@ -27,7 +36,6 @@ NPC::NPC(const sf::Vector2f& position, const std::string& id, int u_id) :
 
     this->setPosition(position);
 }
-
 
 void NPC::registerEnemy(const Character* enemy)
 {

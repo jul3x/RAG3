@@ -202,14 +202,14 @@ tile_map:
 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
 
 characters: 
-standard 1400 1200 1
-standard 1000 100 2
-standard 1000 1000 3
-standard 1900 1000 4
-standard 2000 2100 5
-standard 100 1100 6
-standard 300 100 7
-standard 900 3600 28
+standard 1400 1200 1 OnKill [null] [null]
+standard 1000 100 2 OnKill [null] [null]
+standard 1000 1000 3 OnKill [null] [null]
+standard 1900 1000 4 OnKill [null] [null]
+standard 2000 2100 5 OnKill [null] [null]
+standard 100 1100 6 OnKill [null] [null]
+standard 300 100 7 OnKill [null] [null]
+standard 900 3600 28 OnKill [null] [null]
 
 obstacles: 
 fence 2300 2000 9
@@ -230,7 +230,7 @@ blood 1600 3800 14
 
 specials: 
 starting_position 900 4100 8 OnEnter [MapStart] [null]
-lever 1100 4000 27 OnUse [OpenDoor,ChangeOpenState] [26,26]
+lever 1100 4000 27 OnUse [OpenDoor;ChangeOpenState] [26;26]
 note 1300 4700 33 OnUse [ReadNote] ["I_can't_handle_it_anymore...$Please_someone_help_US!"$ugh..._these_guys_are_fucked!]
 note 700 5200 34 OnUse [ReadNote] ["As_I_walk_through_the_valley$of_shadow_of_death...$I_fear_no_evil..."$Seriously_fucked_in_the_head.]
 m4 500 4100 35 OnEnter [AddWeapon] [m4]

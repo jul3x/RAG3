@@ -13,7 +13,18 @@
 
 
 Character::Character(const sf::Vector2f& position, const std::string& id, int u_id) :
-        Unique(u_id),
+        Character(position, id,
+                  utils::j3x::getString(RM.getObjectParams("characters", id), "default_activation"),
+                  utils::j3x::getListString(RM.getObjectParams("characters", id), "default_functions"),
+                  utils::j3x::getListString(RM.getObjectParams("characters", id), "default_datas"), u_id)
+{
+
+}
+
+Character::Character(const sf::Vector2f& position, const std::string& id,
+                     const std::string& activation, const std::vector<std::string>& functions,
+                     const std::vector<std::string>& datas, int u_id) :
+        Functional(activation, functions, datas, id, u_id),
         DynamicObject(position, {},
                       {utils::j3x::getFloat(RM.getObjectParams("characters", id), "size_x"),
                        utils::j3x::getFloat(RM.getObjectParams("characters", id), "size_y")},
@@ -30,8 +41,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id, int u_
                      utils::j3x::getFloat(RM.getObjectParams("characters", id), "gun_offset_y")}),
         current_rotation_quarter_(1),
         speed_factor_(1.0f),
-        Shootable(utils::j3x::getInt(RM.getObjectParams("characters", id), "max_health")),
-        Identifiable(id)
+        Shootable(utils::j3x::getInt(RM.getObjectParams("characters", id), "max_health"))
 {
     this->changeOrigin(sf::Vector2f(utils::j3x::getFloat(RM.getObjectParams("characters", id), "size_x"),
                                     utils::j3x::getFloat(RM.getObjectParams("characters", id), "size_y")) / 2.0f +

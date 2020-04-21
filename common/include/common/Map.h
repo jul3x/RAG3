@@ -69,6 +69,8 @@ public:
 
     Special* getSpecialObject(const sf::Vector2f& pos);
 
+    NPC* getNPCObject(const sf::Vector2f& pos);
+
     Special* getSpecialObject(int id);
 
     Obstacle* getObstacleObject(int id);

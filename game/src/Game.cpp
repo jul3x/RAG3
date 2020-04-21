@@ -81,6 +81,12 @@ void Game::initialize()
         character->registerEnemy(player_.get());
         character->registerMapBlockage(&map_->getMapBlockage());
 
+        for (const auto& function : character->getFunctions())
+        {
+            character->bindFunction(special_functions_->bindFunction( function ),
+                                    special_functions_->bindTextToUse( function ));
+        }
+
         for (auto& weapon : character->getWeapons())
         {
             weapon->registerSpawningFunction(std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
@@ -345,6 +351,11 @@ void Game::killNPC(NPC* npc)
     this->spawnExplosionEvent(npc->getPosition(), 250.0f);
 
     this->deleteDynamicObject(npc);
+
+    if (npc->getActivation() == "OnKill")
+    {
+        npc->use();
+    }
 }
 
 void Game::draw(graphics::Graphics& graphics)
@@ -588,6 +599,12 @@ NPC* Game::spawnNewNPC(const std::string &id)
     for (auto& weapon : ptr->getWeapons())
     {
         weapon->registerSpawningFunction(std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    }
+
+    for (const auto& function : ptr->getFunctions())
+    {
+        ptr->bindFunction(special_functions_->bindFunction( function ),
+                          special_functions_->bindTextToUse( function ));
     }
 
     return ptr;

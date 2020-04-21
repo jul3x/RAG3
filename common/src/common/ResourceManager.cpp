@@ -127,7 +127,6 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         ++count;
                         break;
                     }
-                    case MapReading::Characters:
                     case MapReading::Obstacles:
                     case MapReading::Decorations:
                     {
@@ -154,6 +153,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         break;
                     }
                     case MapReading::Specials:
+                    case MapReading::Characters:
                     {
                         ++number;
                         should_add_new_object = false;
@@ -183,7 +183,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             if (word.length() < 2)
                                 throw std::logic_error("[ResourceManager] Wrong map list object format!");
 
-                            utils::j3x::tokenize(word.substr(1, word.length() - 2), ',', functions);
+                            utils::j3x::tokenize(word.substr(1, word.length() - 2), ';', functions);
                         }
                         else
                         {
@@ -192,7 +192,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             if (word.length() < 2)
                                 throw std::logic_error("[ResourceManager] Wrong map list object format!");
 
-                            utils::j3x::tokenize(word.substr(1, word.length() - 2), ',', f_datas);
+                            utils::j3x::tokenize(word.substr(1, word.length() - 2), ';', f_datas);
                             should_add_new_object = true;
                         }
 
@@ -209,7 +209,13 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                     switch (map_reading)
                     {
                         case MapReading::Characters:
-                            characters.emplace_back(std::make_shared<NPC>(current_pos, current_id, u_id));
+                            if (functions.size() != f_datas.size())
+                            {
+                                throw std::logic_error("[ResourceManager] Wrong map special object data and function format!");
+                            }
+
+                            characters.emplace_back(std::make_shared<NPC>(current_pos, current_id,
+                                                                          activation, functions, f_datas, u_id));
                             break;
                         case MapReading::Specials:
                             if (functions.size() != f_datas.size())
@@ -308,24 +314,27 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
         }
     };
 
-    addObjToFile("characters", map.getNPCs());
+    auto addFunctionalObjToFile = [&file, &map_constraints](const std::string& category, auto& objects) {
+        file << std::endl << category << ": " << std::endl;
+        for (const auto& obj : objects)
+        {
+            auto new_data = obj->getDatasStr();
+            std::replace(new_data.begin(), new_data.end(), ' ', '_');
+
+            file << obj->getId() << " " <<
+                 obj->getPosition().x - map_constraints.second.x << " " <<
+                 obj->getPosition().y - map_constraints.second.y << " " <<
+                 obj->getUniqueId() << " " <<
+                 obj->getActivation() << " " <<
+                 "[" << obj->getFunctionsStr() << "] [" <<
+                 new_data << "]" << std::endl;
+        }
+    };
+
     addObjToFile("obstacles", map.getObstacles());
     addObjToFile("decorations", map.getDecorations());
-
-    file << std::endl << "specials: " << std::endl;
-    for (const auto& obj : map.getSpecials())
-    {
-        auto new_data = obj->getDatasStr();
-        std::replace(new_data.begin(), new_data.end(), ' ', '_');
-
-        file << obj->getId() << " " <<
-             obj->getPosition().x - map_constraints.second.x << " " <<
-             obj->getPosition().y - map_constraints.second.y << " " <<
-             obj->getUniqueId() << " " <<
-             obj->getActivation() << " " <<
-             "[" << obj->getFunctionsStr() << "] [" <<
-             new_data << "]" << std::endl;
-    }
+    addFunctionalObjToFile("characters", map.getNPCs());
+    addFunctionalObjToFile("specials", map.getSpecials());
 
     std::cout << "[ResourceManager] Map file " << CFG.getString("paths/maps_dir") + "/" + name + ".j3x" << " is saved!" << std::endl;
 

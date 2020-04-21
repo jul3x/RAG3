@@ -52,7 +52,7 @@ namespace editor {
 
         void openUniqueObjectWindow(const std::string& category, const std::string& name, int id);
 
-        void openSpecialObjectWindow(const std::string& category, Special* spec);
+        void openSpecialObjectWindow(const std::string& category, Functional* obj);
 
     private:
         inline void generateMenuBar(sf::RenderWindow& window);

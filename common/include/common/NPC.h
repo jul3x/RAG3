@@ -36,6 +36,10 @@ public:
 
     NPC(const sf::Vector2f& position, const std::string& id, int u_id = -1);
 
+    NPC(const sf::Vector2f& position, const std::string& id,
+        const std::string& activation, const std::vector<std::string>& functions,
+        const std::vector<std::string>& datas, int u_id = -1);
+
     void registerEnemy(const Character* enemy);
 
     void removeEnemy(const Character* enemy);

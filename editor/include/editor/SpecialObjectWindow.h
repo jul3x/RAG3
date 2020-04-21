@@ -18,10 +18,10 @@ namespace editor {
     public:
         SpecialObjectWindow(tgui::Gui* gui, tgui::Theme* theme);
 
-        void setObjectContent(const std::string& category, Special* special);
+        void setObjectContent(const std::string& category, Functional* special);
 
     private:
-        Special* special_;
+        Functional* functional_;
 
         tgui::Grid::Ptr grid_;
 

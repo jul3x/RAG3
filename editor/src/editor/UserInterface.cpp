@@ -113,9 +113,9 @@ void UserInterface::openUniqueObjectWindow(const std::string& category, const st
     gui_.get("unique_object_window")->setVisible(true);
 }
 
-void UserInterface::openSpecialObjectWindow(const std::string& category, Special* special)
+void UserInterface::openSpecialObjectWindow(const std::string& category, Functional* obj)
 {
-    special_object_window_.setObjectContent(category, special);
+    special_object_window_.setObjectContent(category, obj);
     gui_.get("special_object_window")->setVisible(true);
 }
 

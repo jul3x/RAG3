@@ -186,6 +186,11 @@ Special* Map::getSpecialObject(const sf::Vector2f& pos)
     return getItemInfo(pos, specials_);
 }
 
+NPC* Map::getNPCObject(const sf::Vector2f& pos)
+{
+    return getItemInfo(pos, characters_);
+}
+
 Special* Map::getSpecialObject(int id)
 {
     return getObject(id, specials_);

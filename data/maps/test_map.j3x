@@ -71,31 +71,6 @@ tile_map:
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 -1 -1 1 1 1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 0 0 0 0 0 0 0 0 0 0 
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 0 
 
-characters: 
-standard 2600 4800 231
-standard 4100 6700 233
-standard 4300 5900 234
-standard 5300 4600 235
-standard 3400 5400 236
-standard 4200 3200 237
-standard 5700 2700 238
-standard 3600 1800 239
-standard 6100 1700 240
-standard 2250 1975 327
-standard 2450 2025 328
-standard 2375 1825 329
-standard 1700 1850 330
-standard 1800 2025 331
-standard 1125 1975 332
-standard 1225 1875 333
-standard 1025 275 334
-standard 1200 150 335
-standard 1650 150 336
-standard 1825 275 337
-standard 2275 300 338
-standard 2350 175 340
-standard 2450 325 341
-
 obstacles: 
 fence 2200 3400 153
 fence 2100 3400 154
@@ -208,15 +183,40 @@ blood 1000 750 359
 blood 1825 150 360
 blood 2175 1375 362
 
+characters: 
+standard 2600 4800 231 OnKill [SpawnThought] [Die_motherfucker,_die!]
+standard 4100 6700 233 OnKill [null] [null]
+standard 4300 5900 234 OnKill [null] [null]
+standard 5300 4600 235 OnKill [null] [null]
+standard 3400 5400 236 OnKill [null] [null]
+standard 4200 3200 237 OnKill [null] [null]
+standard 5700 2700 238 OnKill [null] [null]
+standard 3600 1800 239 OnKill [null] [null]
+standard 6100 1700 240 OnKill [null] [null]
+standard 2250 1975 327 OnKill [null] [null]
+standard 2450 2025 328 OnKill [null] [null]
+standard 2375 1825 329 OnKill [null] [null]
+standard 1700 1850 330 OnKill [null] [null]
+standard 1800 2025 331 OnKill [null] [null]
+standard 1125 1975 332 OnKill [null] [null]
+standard 1225 1875 333 OnKill [null] [null]
+standard 1025 275 334 OnKill [null] [null]
+standard 1200 150 335 OnKill [OpenDoor] [373]
+standard 1650 150 336 OnKill [null] [null]
+standard 1825 275 337 OnKill [null] [null]
+standard 2275 300 338 OnKill [null] [null]
+standard 2350 175 340 OnKill [null] [null]
+standard 2450 325 341 OnKill [null] [null]
+
 specials: 
-lever 2800 4400 164 OnUse [OpenDoor,ChangeOpenState] [163,163]
-lever 3800 5000 200 OnUse [OpenDoor,ChangeOpenState] [187,187]
-lever 3600 4800 201 OnUse [OpenDoor,ChangeOpenState] [187,187]
-lever 2800 4800 202 OnUse [OpenDoor,ChangeOpenState] [163,163]
-lever 5200 5400 203 OnUse [OpenDoor,ChangeOpenState] [185,185]
-lever 5200 5200 204 OnUse [OpenDoor,ChangeOpenState] [185,185]
+lever 2800 4400 164 OnUse [OpenDoor;ChangeOpenState] [163;163]
+lever 3800 5000 200 OnUse [OpenDoor;ChangeOpenState] [187;187]
+lever 3600 4800 201 OnUse [OpenDoor;ChangeOpenState] [187;187]
+lever 2800 4800 202 OnUse [OpenDoor;ChangeOpenState] [163;163]
+lever 5200 5400 203 OnUse [OpenDoor;ChangeOpenState] [185;185]
+lever 5200 5200 204 OnUse [OpenDoor;ChangeOpenState] [185;185]
 starting_position 2000 3200 206 OnEnter [MapStart] [null]
-m4 2200 3100 208 OnEnter [AddWeapon,SpawnThought] [m4,Fuck_yeah!]
+m4 2200 3100 208 OnEnter [AddWeapon;SpawnThought] [m4;Fuck_yeah!]
 health 4100 5800 229 OnEnter [AddHealth] [30]
 desert_eagle 4000 5800 230 OnEnter [AddWeapon] [desert_eagle]
 rocket_launcher 3300 5200 241 OnEnter [AddWeapon] [rocket_launcher]
@@ -242,6 +242,6 @@ health 625 1350 348 OnEnter [AddHealth] [30]
 more_speed 625 1275 349 OnEnter [AddSpeed] [0.25f]
 more_speed 625 875 350 OnEnter [AddSpeed] [0.25f]
 crystal 625 1175 351 OnEnter [PickCrystal] [null]
-m4 625 1075 352 OnEnter [AddWeapon,OpenDoor,OpenDoor,OpenDoor,OpenDoor,OpenDoor,OpenDoor,OpenDoor,OpenDoor,OpenDoor,OpenDoor,OpenDoor,OpenDoor] [m4,320,321,322,324,325,326,314,315,316,317,318,319]
+m4 625 1075 352 OnEnter [AddWeapon;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor] [m4;320;321;322;324;325;326;314;315;316;317;318;319]
 ending_position 300 500 374 OnEnter [MapEnd] [null]
 note 875 1075 375 OnUse [ReadNote] ["Brace_yourself!"]

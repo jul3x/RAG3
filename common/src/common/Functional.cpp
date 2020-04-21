@@ -79,12 +79,12 @@ void Functional::setActivation(const std::string& str)
 
 void Functional::setFunctionsStr(const std::string& str)
 {
-    utils::j3x::tokenize(str, ',', functions_);
+    utils::j3x::tokenize(str, ';', functions_);
 }
 
 void Functional::setDatasStr(const std::string& str)
 {
-    utils::j3x::tokenize(str, ',', datas_);
+    utils::j3x::tokenize(str, ';', datas_);
 }
 
 bool Functional::isActive() const

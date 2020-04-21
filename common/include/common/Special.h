@@ -7,6 +7,7 @@
 #define RAG3_COMMON_SPECIAL_H
 
 #include <functional>
+#include <string>
 
 #include <SFML/Graphics/CircleShape.hpp>
 
@@ -14,9 +15,12 @@
 #include <R3E/objects/Identifiable.h>
 #include <R3E/objects/Unique.h>
 
+#include <common/Functional.h>
+
+
 using namespace r3e;
 
-class Special : public HoveringObject, public Identifiable, public Unique {
+class Special : public HoveringObject, public Functional {
 public:
     Special(const sf::Vector2f& position, const std::string& id, int u_id = -1);
 
@@ -26,41 +30,8 @@ public:
 
     bool isDrawable() const;
 
-    const std::string& getActivation() const;
-
-    const std::string& getFunctionsStr() const;
-
-    const std::string& getDatasStr() const;
-
-    const std::vector<std::string>& getFunctions() const;
-
-    const std::vector<std::string>& getDatas() const;
-
-    const std::string& getTextToUse() const;
-
-    void setActivation(const std::string& str);
-
-    void setFunctionsStr(const std::string& str);
-
-    void setDatasStr(const std::string& str);
-
-    void bindFunction(std::function<void(Special*, const std::string&)> func, const std::string& text);
-
-    bool isActive() const;
-
-    void deactivate();
-
-    void use();
-
 private:
-    bool is_drawable_, is_active_;
-
-    std::string activation_;
-    std::vector<std::string> functions_, datas_;
-
-    std::vector<std::function<void(Special*, const std::string&)>> funcs_;
-
-    const std::string* text_to_use_;
+    bool is_drawable_;
 
 };
 

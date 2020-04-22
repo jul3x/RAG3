@@ -12,6 +12,6 @@ float frame_duration=0.0f
 
 string default_activation=OnEnter
 list[string] default_functions=[MapStart]
-list[string] default_datas=[null]
+list[string] default_datas=[Null]
 
 bool is_drawable=0

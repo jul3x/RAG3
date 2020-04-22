@@ -23,8 +23,9 @@ SpecialFunctions::SpecialFunctions()
     functions_["PickCrystal"] = &pickCrystal;
     functions_["SpawnThought"] = &spawnThought;
     functions_["ChangeOpenState"] = &changeOpenState;
-    functions_["null"] = &nullFunc;
-    functions_["deactivate"] = &deactivate;
+    functions_["Null"] = &nullFunc;
+    functions_["Deactivate"] = &deactivate;
+    functions_["Teleport"] = &teleport;
 
     text_to_use_["MapStart"] = "[F] Start new map";
     text_to_use_["MapEnd"] = "[F] End this map";
@@ -37,8 +38,9 @@ SpecialFunctions::SpecialFunctions()
     text_to_use_["PickCrystal"] = "[F] Pick crystal";
     text_to_use_["SpawnThought"] = "[F] Talk";
     text_to_use_["ChangeOpenState"] = "[F] Use object";
-    text_to_use_["null"] = "";
-    text_to_use_["deactivate"] = "";
+    text_to_use_["Null"] = "";
+    text_to_use_["Deactivate"] = "";
+    text_to_use_["Teleport"] = "[F] To enter";
 }
 
 void SpecialFunctions::mapStart(Functional* obj, const std::string& data)
@@ -162,6 +164,24 @@ void SpecialFunctions::spawnThought(Functional* obj, const std::string& data)
     auto str = data;
     std::replace(str.begin(), str.end(), '$', '\n');
     Game::get().spawnThought(str);
+}
+
+void SpecialFunctions::teleport(Functional* obj, const std::string& data)
+{
+    std::vector<std::string> data_str;
+    
+    try 
+    {
+        auto str = data.substr(1, data.length() - 1);
+
+        utils::j3x::tokenize(str, ',', data_str);
+
+        Game::get().getPlayer().setPosition(std::stof(data_str.at(0)), std::stof(data_str.at(1)));
+    }
+    catch (const std::exception& e)
+    {
+        throw std::invalid_argument("[SpecialFunctions] Bad format of position type in function data!");
+    }
 }
 
 void SpecialFunctions::nullFunc(Functional *obj, const std::string &data)

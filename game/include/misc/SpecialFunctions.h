@@ -29,6 +29,7 @@ public:
     static void addSpeed(Functional* obj, const std::string& data);
     static void pickCrystal(Functional* obj, const std::string& data);
     static void spawnThought(Functional* obj, const std::string& data);
+    static void teleport(Functional* obj, const std::string& data);
     static void nullFunc(Functional* obj, const std::string& data);
     static void deactivate(Functional* obj, const std::string& data);
 

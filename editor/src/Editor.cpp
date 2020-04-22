@@ -104,6 +104,13 @@ const std::string& Editor::getCurrentMapName() const
     return current_map_name_;
 }
 
+sf::Vector2f Editor::getMapCoordinates(const sf::Vector2f& pos) const
+{
+    auto map_constraints = map_->getTileConstraints();
+
+    return {pos.x - map_constraints.second.x, pos.y - map_constraints.second.y};
+}
+
 void Editor::readItemInfo(const sf::Vector2f& pos)
 {
     auto ret_special = map_->getSpecialObject(pos);

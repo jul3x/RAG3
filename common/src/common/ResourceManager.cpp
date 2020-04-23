@@ -6,8 +6,10 @@
 #include <experimental/filesystem>
 
 #include <R3E/system/Config.h>
+#include <R3E/utils/Utils.h>
 
 #include <common/ResourceManager.h>
+
 
 
 ResourceManager& ResourceManager::getInstance()
@@ -251,6 +253,24 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
     }
 
     map_size = {DecorationTile::SIZE_X_ * blocked.size(), DecorationTile::SIZE_Y_ * blocked.at(0).size()};
+
+    auto setRandomInitialFrame = [](auto& objects)
+    {
+        for (auto& object : objects)
+        {
+            auto number = object->getFramesNumber();
+            if (number <= 1) continue;
+
+            object->setCurrentFrame(utils::num::getRandom<int>(0, number - 1));
+        }
+    };
+
+    setRandomInitialFrame(obstacles_tiles);
+    setRandomInitialFrame(decorations_tiles);
+    setRandomInitialFrame(characters);
+    setRandomInitialFrame(specials);
+    setRandomInitialFrame(obstacles);
+    setRandomInitialFrame(decorations);
 
     std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
 

@@ -54,6 +54,12 @@ namespace r3e {
 
         virtual bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f);
 
+        virtual short int getFramesNumber() const;
+
+        virtual short int getCurrentFrame() const;
+
+        virtual void setCurrentFrame(short int frame);
+
     protected:
         float time_elapsed_;
         short int current_frame_;

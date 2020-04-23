@@ -146,4 +146,24 @@ namespace r3e {
         return true;
     }
 
+    short int AbstractDrawableObject::getFramesNumber() const
+    {
+        return frames_number_;
+    }
+
+    short int AbstractDrawableObject::getCurrentFrame() const
+    {
+        return current_frame_;
+    }
+
+    void AbstractDrawableObject::setCurrentFrame(short int frame)
+    {
+        if (frame >= frames_number_)
+        {
+            throw std::invalid_argument("[AbstractDrawableObject] Frame to set should be less then frames_number_");
+        }
+
+        current_frame_ = frame;
+    }
+
 } // namespace r3e

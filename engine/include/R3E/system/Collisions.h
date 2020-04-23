@@ -8,9 +8,9 @@
 #include <list>
 #include <iostream>
 
-#include "../objects/AbstractPhysicalObject.h"
-#include "R3E/utils/Numeric.h"
-#include "AbstractGame.h"
+#include <R3E/objects/AbstractPhysicalObject.h>
+#include <R3E/utils/Numeric.h>
+#include <R3E/system/AbstractGame.h>
 
 
 namespace r3e {

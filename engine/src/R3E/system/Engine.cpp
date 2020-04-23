@@ -80,6 +80,11 @@ namespace r3e {
         sound_manager_->playSound(buffer, position, volume);
     }
 
+    void Engine::spawnEffect(const std::shared_ptr<graphics::Effect>& effect)
+    {
+        effects_.push_back(effect);
+    }
+
     void Engine::start()
     {
         game_->initialize();
@@ -106,6 +111,7 @@ namespace r3e {
                 collisions_->update(game_);
 
             updateAnimationEvents(time_scale_factor_ * frame_time_);
+            updateEffects(time_scale_factor_ * frame_time_);
 
             draw();
 
@@ -167,6 +173,19 @@ namespace r3e {
         }
     }
 
+    void Engine::updateEffects(float time_elapsed)
+    {
+        for (auto it = effects_.begin(); it != effects_.end(); ++it)
+        {
+            if ((*it)->update(time_elapsed))
+            {
+                auto next_it = std::next(it);
+                effects_.erase(it);
+                it = next_it;
+            }
+        }
+    }
+
     void Engine::draw()
     {
         graphics_->clear();
@@ -176,7 +195,14 @@ namespace r3e {
         game_->draw(*graphics_);
 
         graphics_->setStaticView();
+
+        for (auto& effect : effects_)
+        {
+            graphics_->draw(*effect);
+        }
+
         ui_->draw(*graphics_);
+
         graphics_->setCurrentView();
 
         graphics_->display();

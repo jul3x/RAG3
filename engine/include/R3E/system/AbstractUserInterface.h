@@ -5,8 +5,8 @@
 #ifndef RAG3_ENGINE_SYSTEM_ABSTRACTUSERINTERFACE_H
 #define RAG3_ENGINE_SYSTEM_ABSTRACTUSERINTERFACE_H
 
-#include "../objects/AbstractDrawableObject.h"
-#include "../graphics/Graphics.h"
+#include <R3E/objects/AbstractDrawableObject.h>
+#include <R3E/graphics/Graphics.h>
 
 
 namespace r3e {

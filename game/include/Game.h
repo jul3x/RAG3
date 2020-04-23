@@ -55,6 +55,8 @@ public:
 
     Player& getPlayer();
 
+    Camera& getCamera();
+
     Stats& getStats();
 
     const Journal& getJournal() const;
@@ -74,6 +76,8 @@ public:
     void spawnExplosionEvent(const sf::Vector2f& pos, float r);
 
     void spawnTeleportationEvent(const sf::Vector2f& pos);
+
+    void spawnFadeInOut();
 
     void spawnThought(const std::string& text);
 

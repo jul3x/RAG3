@@ -5,8 +5,8 @@
 #ifndef RAG3_ENGINE_SYSTEM_ABSTRACTGAME_H
 #define RAG3_ENGINE_SYSTEM_ABSTRACTGAME_H
 
-#include "../graphics/Graphics.h"
-#include "../objects/AbstractPhysicalObject.h"
+#include <R3E/graphics/Graphics.h>
+#include <R3E/objects/AbstractPhysicalObject.h>
 
 
 namespace r3e {

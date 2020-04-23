@@ -169,14 +169,19 @@ void SpecialFunctions::spawnThought(Functional* obj, const std::string& data)
 void SpecialFunctions::teleport(Functional* obj, const std::string& data)
 {
     std::vector<std::string> data_str;
-    
-    try 
+
+    try
     {
         auto str = data.substr(1, data.length() - 1);
 
         utils::j3x::tokenize(str, ',', data_str);
 
-        Game::get().getPlayer().setPosition(std::stof(data_str.at(0)), std::stof(data_str.at(1)));
+        auto& player = Game::get().getPlayer();
+        player.setPosition(std::stof(data_str.at(0)), std::stof(data_str.at(1)));
+        player.setForcedVelocity({0.0f, 0.0f});
+
+        Game::get().spawnFadeInOut();
+        Game::get().getCamera().setCenter({player.getPosition().x, player.getPosition().y, 0.0f});
     }
     catch (const std::exception& e)
     {

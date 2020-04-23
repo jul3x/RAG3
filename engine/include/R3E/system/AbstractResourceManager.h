@@ -14,7 +14,7 @@
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Audio/Music.hpp>
 
-#include "R3E/utils/Parser.h"
+#include <R3E/utils/Parser.h>
 
 
 namespace r3e {

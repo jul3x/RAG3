@@ -34,6 +34,11 @@ namespace r3e {
                 return pointing_to_;
             }
 
+            void setCenter(const sf::Vector3f& position)
+            {
+                center_ = position;
+            }
+
             void setPointingTo(const sf::Vector2f& position)
             {
                 pointing_to_ = position;

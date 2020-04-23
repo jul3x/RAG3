@@ -416,6 +416,11 @@ Player& Game::getPlayer()
     return *player_;
 }
 
+Camera& Game::getCamera()
+{
+    return *camera_;
+}
+
 Stats& Game::getStats()
 {
     return *stats_;
@@ -455,6 +460,15 @@ void Game::spawnTeleportationEvent(const sf::Vector2f& pos)
 
     if (CFG.getInt("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("teleportation"), pos);
+}
+
+void Game::spawnFadeInOut()
+{
+    engine_->spawnEffect(std::make_shared<graphics::FadeInOut>(
+            sf::Vector2f{static_cast<float>(CFG.getInt("graphics/window_width_px")),
+                         static_cast<float>(CFG.getInt("graphics/window_height_px"))}, sf::Color::Black,
+            CFG.getFloat("fade_in_out_duration")
+            ));
 }
 
 void Game::spawnThought(const std::string& text)

@@ -30,6 +30,7 @@ public:
     static void pickCrystal(Functional* obj, const std::string& data);
     static void spawnThought(Functional* obj, const std::string& data);
     static void teleport(Functional* obj, const std::string& data);
+    static void kill(Functional* obj, const std::string& data);
     static void nullFunc(Functional* obj, const std::string& data);
     static void deactivate(Functional* obj, const std::string& data);
 

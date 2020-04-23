@@ -23,9 +23,10 @@ SpecialFunctions::SpecialFunctions()
     functions_["PickCrystal"] = &pickCrystal;
     functions_["SpawnThought"] = &spawnThought;
     functions_["ChangeOpenState"] = &changeOpenState;
+    functions_["Teleport"] = &teleport;
+    functions_["Kill"] = &kill;
     functions_["Null"] = &nullFunc;
     functions_["Deactivate"] = &deactivate;
-    functions_["Teleport"] = &teleport;
 
     text_to_use_["MapStart"] = "[F] Start new map";
     text_to_use_["MapEnd"] = "[F] End this map";
@@ -38,9 +39,10 @@ SpecialFunctions::SpecialFunctions()
     text_to_use_["PickCrystal"] = "[F] Pick crystal";
     text_to_use_["SpawnThought"] = "[F] Talk";
     text_to_use_["ChangeOpenState"] = "[F] Use object";
+    text_to_use_["Teleport"] = "[F] To enter";
+    text_to_use_["Kill"] = "[F] To use";
     text_to_use_["Null"] = "";
     text_to_use_["Deactivate"] = "";
-    text_to_use_["Teleport"] = "[F] To enter";
 }
 
 void SpecialFunctions::mapStart(Functional* obj, const std::string& data)
@@ -187,6 +189,13 @@ void SpecialFunctions::teleport(Functional* obj, const std::string& data)
     {
         throw std::invalid_argument("[SpecialFunctions] Bad format of position type in function data!");
     }
+}
+
+void SpecialFunctions::kill(Functional* obj, const std::string& data)
+{
+    Game::get().getPlayer().setHealth(0);
+
+    // Game::get().spawnAnimationEvent(data);
 }
 
 void SpecialFunctions::nullFunc(Functional *obj, const std::string &data)

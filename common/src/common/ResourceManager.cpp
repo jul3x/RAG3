@@ -185,7 +185,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             if (word.length() < 2)
                                 throw std::logic_error("[ResourceManager] Wrong map list object format!");
 
-                            utils::j3x::tokenize(word.substr(1, word.length() - 2), ';', functions);
+                            utils::j3x::tokenize(word.substr(1, word.length() - 2), utils::j3x::Delimiter, functions);
                         }
                         else
                         {
@@ -194,7 +194,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             if (word.length() < 2)
                                 throw std::logic_error("[ResourceManager] Wrong map list object format!");
 
-                            utils::j3x::tokenize(word.substr(1, word.length() - 2), ';', f_datas);
+                            utils::j3x::tokenize(word.substr(1, word.length() - 2), utils::j3x::Delimiter, f_datas);
                             should_add_new_object = true;
                         }
 

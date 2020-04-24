@@ -6,6 +6,7 @@
 
 #include <common/ResourceManager.h>
 #include <common/Functional.h>
+#include <common/Character.h>
 
 
 Functional::Functional(const std::string& activation, const std::vector<std::string>& functions,
@@ -16,8 +17,10 @@ Functional::Functional(const std::string& activation, const std::vector<std::str
         functions_(functions),
         datas_(datas),
         is_active_(true),
-        text_to_use_(nullptr)
+        text_to_use_(nullptr),
+        is_usable_by_npc_(true)
 {
+
 }
 
 const std::string& Functional::getActivation() const
@@ -32,7 +35,7 @@ const std::string& Functional::getFunctionsStr() const
 
     for (auto& function : functions_)
     {
-        result += function + ';';
+        result += function + utils::j3x::Delimiter;
     }
 
     if (result.length() >= 1)
@@ -48,7 +51,7 @@ const std::string& Functional::getDatasStr() const
 
     for (auto& data : datas_)
     {
-        result += data + ';';
+        result += data + utils::j3x::Delimiter;
     }
 
     if (result.length() >= 1)
@@ -79,12 +82,13 @@ void Functional::setActivation(const std::string& str)
 
 void Functional::setFunctionsStr(const std::string& str)
 {
-    utils::j3x::tokenize(str, ';', functions_);
+    // TODO Delimiter
+    utils::j3x::tokenize(str, utils::j3x::Delimiter, functions_);
 }
 
 void Functional::setDatasStr(const std::string& str)
 {
-    utils::j3x::tokenize(str, ';', datas_);
+    utils::j3x::tokenize(str, utils::j3x::Delimiter, datas_);
 }
 
 bool Functional::isActive() const
@@ -97,14 +101,22 @@ void Functional::deactivate()
     is_active_ = false;
 }
 
-void Functional::bindFunction(std::function<void(Functional*, const std::string&)> func, const std::string& text)
+void Functional::bindFunction(std::function<void(Functional*, const std::string&, Character*)> func, const std::string& text, bool is_usable_by_npc)
 {
     funcs_.emplace_back(func);
     text_to_use_ = &text;
+
+    if (!is_usable_by_npc)
+        is_usable_by_npc_ = false;
 }
 
-void Functional::use()
+void Functional::use(Character* user)
 {
     for (size_t i = 0; i < funcs_.size(); ++i)
-        funcs_.at(i)(this, datas_.at(i));
+        funcs_.at(i)(this, datas_.at(i), user);
+}
+
+bool Functional::isUsableByNPC() const
+{
+    return is_usable_by_npc_;
 }

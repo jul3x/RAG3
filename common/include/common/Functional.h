@@ -9,7 +9,10 @@
 #include <functional>
 #include <string>
 
+
 using namespace r3e;
+
+class Character;
 
 class Functional : public Identifiable, public Unique {
 public:
@@ -34,13 +37,16 @@ public:
 
     void setDatasStr(const std::string& str);
 
-    void bindFunction(std::function<void(Functional*, const std::string&)> func, const std::string& text);
+    void bindFunction(std::function<void(Functional*, const std::string&, Character*)> func, const std::string& text,
+                      bool is_usable_by_npc);
 
     bool isActive() const;
 
     void deactivate();
 
-    void use();
+    void use(Character* user);
+
+    bool isUsableByNPC() const;
 
 private:
     bool is_active_;
@@ -48,9 +54,11 @@ private:
     std::string activation_;
     std::vector<std::string> functions_, datas_;
 
-    std::vector<std::function<void(Functional*, const std::string&)>> funcs_;
+    std::vector<std::function<void(Functional*, const std::string&, Character*)>> funcs_;
 
     const std::string* text_to_use_;
+
+    bool is_usable_by_npc_;
 
 };
 

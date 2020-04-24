@@ -11,7 +11,7 @@ int frames_number=1
 float frame_duration=0.0f
 
 string default_activation=OnEnter
-list[string] default_functions=[null;Deactivate]
-list[string] default_datas=[null;null]
+list[string] default_functions=[Null;Deactivate]
+list[string] default_datas=[Null;Null]
 
 bool is_drawable=0

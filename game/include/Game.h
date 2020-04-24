@@ -79,7 +79,7 @@ public:
 
     void spawnFadeInOut();
 
-    void spawnThought(const std::string& text);
+    void spawnThought(Character* user, const std::string& text);
 
     void spawnAchievement(Achievements::Type type);
 
@@ -164,8 +164,6 @@ private:
 
     std::list<std::unique_ptr<Bullet>> bullets_;
     std::list<std::unique_ptr<Thought>> thoughts_;
-
-    Special* current_special_object_;
 
     Game::GameState state_;
     float current_time_factor_;

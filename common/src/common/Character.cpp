@@ -41,6 +41,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
                      utils::j3x::getFloat(RM.getObjectParams("characters", id), "gun_offset_y")}),
         current_rotation_quarter_(1),
         speed_factor_(1.0f),
+        current_special_object_(nullptr),
         Shootable(utils::j3x::getInt(RM.getObjectParams("characters", id), "max_health"))
 {
     this->changeOrigin(sf::Vector2f(utils::j3x::getFloat(RM.getObjectParams("characters", id), "size_x"),
@@ -121,6 +122,7 @@ void Character::addAmmoToWeapon(const std::string& id)
             weapon->setState(std::min(1.0f, weapon->getState() +
                                             static_cast<float>(utils::j3x::getInt(RM.getObjectParams("weapons", id), "ammo_portion")) /
                                             static_cast<float>(utils::j3x::getInt(RM.getObjectParams("weapons", id), "max_ammo"))));
+
             return;
         }
     }
@@ -307,6 +309,16 @@ void Character::setSpeedFactor(float factor)
 float Character::getSpeedFactor() const
 {
     return speed_factor_;
+}
+
+void Character::setCurrentSpecialObject(Special* obj)
+{
+    current_special_object_ = obj;
+}
+
+Special* Character::getCurrentSpecialObject() const
+{
+    return current_special_object_;
 }
 
 void Character::handleLifeState()

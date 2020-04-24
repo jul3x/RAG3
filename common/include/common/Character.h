@@ -15,6 +15,7 @@
 #include <common/Functional.h>
 #include <common/AbstractWeapon.h>
 #include <common/Shootable.h>
+#include <common/Special.h>
 
 using namespace r3e;
 
@@ -83,6 +84,10 @@ public:
 
     float getSpeedFactor() const;
 
+    void setCurrentSpecialObject(Special* obj);
+
+    Special* getCurrentSpecialObject() const;
+
 protected:
     std::vector<std::shared_ptr<AbstractWeapon>> weapons_in_backpack_;
     std::vector<std::shared_ptr<AbstractWeapon>>::iterator current_weapon_;
@@ -107,6 +112,8 @@ private:
     float speed_factor_;
 
     short int current_rotation_quarter_;
+
+    Special* current_special_object_;
 
 };
 

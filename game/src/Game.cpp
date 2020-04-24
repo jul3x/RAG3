@@ -27,7 +27,7 @@ void Game::initialize()
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     ui_ = std::make_unique<UserInterface>();
     camera_ = std::make_unique<Camera>();
-    journal_ = std::make_unique<Journal>(CFG.getFloat("journal_max_time"), CFG.getFloat("journal_sampling_rate"));
+    journal_ = std::make_unique<Journal>(CFG.get<float>("journal_max_time"), CFG.get<float>("journal_sampling_rate"));
     special_functions_ = std::make_unique<SpecialFunctions>();
     stats_ = std::make_unique<Stats>();
     achievements_ = std::make_unique<Achievements>();
@@ -39,7 +39,7 @@ void Game::initialize()
                                                           1000); // max search of path
 
     music_manager_ = std::make_unique<audio::MusicManager>();
-    music_manager_->addDirectoryToQueue(CFG.getString("paths/music_dir"));
+    music_manager_->addDirectoryToQueue(CFG.get<std::string>("paths/music_dir"));
 
     music_manager_->setVolume(50.0f);
     music_manager_->play();
@@ -48,11 +48,11 @@ void Game::initialize()
     ui_->registerPlayer(player_.get());
 
     engine_->initializeGraphics(
-            sf::Vector2i{CFG.getInt("graphics/window_width_px"), CFG.getInt("graphics/window_height_px")}, "Codename: Rag3",
-            CFG.getInt("graphics/full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
-            sf::Color(CFG.getInt("graphics/background_color")));
+            sf::Vector2i{CFG.get<int>("graphics/window_width_px"), CFG.get<int>("graphics/window_height_px")}, "Codename: Rag3",
+            CFG.get<int>("graphics/full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
+            sf::Color(CFG.get<int>("graphics/background_color")));
 
-    engine_->initializeSoundManager(CFG.getFloat("sound/sound_attenuation"));
+    engine_->initializeSoundManager(CFG.get<float>("sound/sound_attenuation"));
 
     engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
@@ -198,7 +198,7 @@ void Game::update(float time_elapsed)
             journal_->update(time_elapsed);
             camera_->update(time_elapsed);
 
-            if (CFG.getInt("sound/sound_on"))
+            if (CFG.get<int>("sound/sound_on"))
             {
                 Engine::changeSoundListenerPosition(player_->getPosition());
                 music_manager_->update(time_elapsed);
@@ -207,7 +207,7 @@ void Game::update(float time_elapsed)
         }
         case GameState::Reverse:
         {
-            if (!journal_->executeTimeReversal(CFG.getFloat("time_reversal_speed_factor") * time_elapsed))
+            if (!journal_->executeTimeReversal(CFG.get<float>("time_reversal_speed_factor") * time_elapsed))
             {
                 this->setGameState(GameState::Normal);
             }
@@ -339,10 +339,10 @@ void Game::killNPC(NPC* npc)
 
     // spawn ammo
     auto& weapon = npc->getWeapons().at(npc->getCurrentWeapon())->getName();
-    auto& bullet_name = utils::j3x::getString(RM.getObjectParams("weapons", weapon), "bullet_type");
+    auto& bullet_name = utils::j3x::get<std::string>(RM.getObjectParams("weapons", weapon), "bullet_type");
 
-    auto ammo_offset = CFG.getFloat("characters/ammo_drop_offset");
-    for (size_t i = 0; i < CFG.getInt("characters/ammo_dropped"); ++i)
+    auto ammo_offset = CFG.get<float>("characters/ammo_drop_offset");
+    for (size_t i = 0; i < CFG.get<int>("characters/ammo_dropped"); ++i)
     {
         auto offset = sf::Vector2f(utils::num::getRandom(-ammo_offset, ammo_offset),
                                    utils::num::getRandom(-ammo_offset, ammo_offset));
@@ -457,7 +457,7 @@ void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
 {
     engine_->spawnAnimationEvent(std::make_shared<ExplosionEvent>(pos, r));
 
-    if (CFG.getInt("sound/sound_on"))
+    if (CFG.get<int>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
 }
 
@@ -465,22 +465,22 @@ void Game::spawnTeleportationEvent(const sf::Vector2f& pos)
 {
     engine_->spawnAnimationEvent(std::make_shared<TeleportationEvent>(pos));
 
-    if (CFG.getInt("sound/sound_on"))
+    if (CFG.get<int>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("teleportation"), pos);
 }
 
 void Game::spawnFadeInOut()
 {
     engine_->spawnEffect(std::make_shared<graphics::FadeInOut>(
-            sf::Vector2f{static_cast<float>(CFG.getInt("graphics/window_width_px")),
-                         static_cast<float>(CFG.getInt("graphics/window_height_px"))}, sf::Color::Black,
-            CFG.getFloat("fade_in_out_duration")
+            sf::Vector2f{static_cast<float>(CFG.get<int>("graphics/window_width_px")),
+                         static_cast<float>(CFG.get<int>("graphics/window_height_px"))}, sf::Color::Black,
+            CFG.get<float>("fade_in_out_duration")
             ));
 }
 
 void Game::spawnThought(Character* user, const std::string& text)
 {
-    thoughts_.emplace_back(std::make_unique<Thought>(user, text, CFG.getFloat("thought_duration")));
+    thoughts_.emplace_back(std::make_unique<Thought>(user, text, CFG.get<float>("thought_duration")));
 }
 
 void Game::spawnAchievement(Achievements::Type type)
@@ -495,10 +495,10 @@ void Game::spawnAchievement(Achievements::Type type)
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir)
 {
     auto shot_event = std::make_shared<ShotEvent>(pos, dir * 180.0f / M_PI,
-                                                  utils::j3x::getFloat(RM.getObjectParams("bullets", name), "burst_size"));
+                                                  utils::j3x::get<float>(RM.getObjectParams("bullets", name), "burst_size"));
     engine_->spawnAnimationEvent(shot_event);
 
-    if (CFG.getInt("sound/sound_on"))
+    if (CFG.get<int>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
 }
 
@@ -522,7 +522,7 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
         obstacle->getShot(*bullet);
 
         spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                         static_cast<float>(std::pow(CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+                         static_cast<float>(std::pow(CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
         bullet->setDead();
     }
@@ -533,7 +533,7 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
         obstacle_tile->getShot(*bullet);
 
         spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                         static_cast<float>(std::pow(CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+                         static_cast<float>(std::pow(CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
         bullet->setDead();
     }
@@ -550,7 +550,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         character->getShot(*bullet);
         spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
                          static_cast<float>(std::pow(
-                                 CFG.getFloat("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+                                 CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
         bullet->setDead();
         return;
@@ -651,7 +651,7 @@ NPC* Game::spawnNewPlayerClone()
     }
 
     player_clone_ = std::make_unique<PlayerClone>(this->getPlayerPosition(), player_.get(),
-                                                  journal_->getDurationSaved() * CFG.getFloat("player_clone_time_factor"));
+                                                  journal_->getDurationSaved() * CFG.get<float>("player_clone_time_factor"));
     engine_->registerDynamicObject(player_clone_.get());
 
     player_clone_->registerAgentsManager(agents_manager_.get());
@@ -748,11 +748,11 @@ void Game::useSpecialObject()
 
 void Game::setBulletTime()
 {
-    current_time_factor_ = CFG.getFloat("bullet_time_factor");
+    current_time_factor_ = CFG.get<float>("bullet_time_factor");
     engine_->setTimeScaleFactor(current_time_factor_);
 
-    if (CFG.getInt("sound/sound_on"))
-        music_manager_->setPlaybackPitch(CFG.getFloat("sound/bullet_time_music_factor"));
+    if (CFG.get<int>("sound/sound_on"))
+        music_manager_->setPlaybackPitch(CFG.get<float>("sound/bullet_time_music_factor"));
 }
 
 void Game::setNormalTime()
@@ -760,7 +760,7 @@ void Game::setNormalTime()
     current_time_factor_ = 1.0f;
     engine_->setTimeScaleFactor(1.0f);
 
-    if (CFG.getInt("sound/sound_on"))
+    if (CFG.get<int>("sound/sound_on"))
         music_manager_->setPlaybackPitch(1.0f);
 }
 
@@ -773,7 +773,7 @@ void Game::setGameState(Game::GameState state)
             {
                 if (player_clone_ != nullptr)
                     player_clone_->updateLifeTimeDependingOnPrevious(
-                            journal_->getDurationSaved() * CFG.getFloat("player_clone_time_factor"));
+                            journal_->getDurationSaved() * CFG.get<float>("player_clone_time_factor"));
                 journal_->clear();
             }
 
@@ -804,7 +804,7 @@ Game::GameState Game::getGameState() const
 
 bool Game::isJournalFreezed() const
 {
-    return journal_->getDurationSaved() < CFG.getFloat("journal_min_time");
+    return journal_->getDurationSaved() < CFG.get<float>("journal_min_time");
 }
 
 float Game::getCurrentTimeFactor() const

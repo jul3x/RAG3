@@ -10,8 +10,8 @@
 
 Crosshair::Crosshair() :
         AbstractDrawableObject({0.0f, 0.0f},
-                               {SIZE_X_ * CFG.getFloat("graphics/user_interface_zoom"),
-                                SIZE_Y_ * CFG.getFloat("graphics/user_interface_zoom")},
+                               {SIZE_X_ * CFG.get<float>("graphics/user_interface_zoom"),
+                                SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom")},
                                &RM.getTexture("crosshair"))
 {
 }

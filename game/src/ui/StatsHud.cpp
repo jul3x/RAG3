@@ -10,11 +10,11 @@
 
 StatsHud::StatsHud(const sf::Vector2f& position) :
         AbstractDrawableObject(position,
-                               {SIZE_X_ * CFG.getFloat("graphics/user_interface_zoom"),
-                                SIZE_Y_ * CFG.getFloat("graphics/user_interface_zoom")},
+                               {SIZE_X_ * CFG.get<float>("graphics/user_interface_zoom"),
+                                SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom")},
                                &RM.getTexture("stats_hud")),
-        deaths_(CFG.getFloat("graphics/inertial_states_change_speed")),
-        crystals_(CFG.getFloat("graphics/inertial_states_change_speed")),
+        deaths_(CFG.get<float>("graphics/inertial_states_change_speed")),
+        crystals_(CFG.get<float>("graphics/inertial_states_change_speed")),
         deaths_text_("0000000", RM.getFont(), 36),
         crystals_text_("0000000", RM.getFont(), 36)
 {

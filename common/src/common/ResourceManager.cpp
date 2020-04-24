@@ -35,7 +35,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
     };
     auto map_reading = MapReading::None;
 
-    std::ifstream file(CFG.getString("paths/maps_dir") + "/" + key + ".j3x");
+    std::ifstream file(CFG.get<std::string>("paths/maps_dir") + "/" + key + ".j3x");
     std::list<std::shared_ptr<ObstacleTile>> obstacles_tiles;
     std::list<std::shared_ptr<DecorationTile>> decorations_tiles;
     std::list<std::shared_ptr<NPC>> characters;
@@ -109,7 +109,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         if (type < 10 && type > 0)
                         {
                             blocked.at(count % w).at(count / w) =
-                                    utils::j3x::getFloat(RM.getObjectParams("obstacles_tiles", std::to_string(type)), "endurance");
+                                    utils::j3x::get<float>(RM.getObjectParams("obstacles_tiles", std::to_string(type)), "endurance");
                             obstacles_tiles.emplace_back(std::make_shared<ObstacleTile>(
                                     sf::Vector2f((count % w) * DecorationTile::SIZE_X_,
                                                  (count / w) * DecorationTile::SIZE_Y_),
@@ -232,7 +232,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             obstacles.emplace_back(std::make_shared<Obstacle>(current_pos, current_id, u_id));
                             blocked.at(static_cast<size_t>(current_pos.x / DecorationTile::SIZE_X_)).
                                     at(static_cast<size_t>(current_pos.y / DecorationTile::SIZE_Y_)) =
-                                    utils::j3x::getFloat(RM.getObjectParams("obstacles", current_id), "endurance");
+                                    utils::j3x::get<float>(RM.getObjectParams("obstacles", current_id), "endurance");
                             break;
                         case MapReading::Decorations:
                             decorations.emplace_back(std::make_shared<Decoration>(current_pos, current_id, u_id));
@@ -280,7 +280,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
 
 bool ResourceManager::saveMap(const std::string& name, Map& map)
 {
-    std::ofstream file(CFG.getString("paths/maps_dir") + "/" + name + ".j3x", std::ofstream::out | std::ofstream::trunc);
+    std::ofstream file(CFG.get<std::string>("paths/maps_dir") + "/" + name + ".j3x", std::ofstream::out | std::ofstream::trunc);
 
     if (!file)
     {
@@ -356,14 +356,14 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
     addFunctionalObjToFile("characters", map.getNPCs());
     addFunctionalObjToFile("specials", map.getSpecials());
 
-    std::cout << "[ResourceManager] Map file " << CFG.getString("paths/maps_dir") + "/" + name + ".j3x" << " is saved!" << std::endl;
+    std::cout << "[ResourceManager] Map file " << CFG.get<std::string>("paths/maps_dir") + "/" + name + ".j3x" << " is saved!" << std::endl;
 
     return true;
 }
 
 std::string ResourceManager::getConfigContent(const std::string& category, const std::string& id)
 {
-    std::ifstream file(CFG.getString("paths/" + category) + "/" + id + ".j3x");
+    std::ifstream file(CFG.get<std::string>("paths/" + category) + "/" + id + ".j3x");
 
     if (!file)
     {
@@ -374,14 +374,14 @@ std::string ResourceManager::getConfigContent(const std::string& category, const
 
     std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
-    std::cout << "[ResourceManager] Config file " << CFG.getString("paths/" + category) + "/" + id + ".j3x" << " is loaded!" << std::endl;
+    std::cout << "[ResourceManager] Config file " << CFG.get<std::string>("paths/" + category) + "/" + id + ".j3x" << " is loaded!" << std::endl;
 
     return str;
 }
 
 bool ResourceManager::saveConfigFile(const std::string& category, const std::string& id, const std::string& content)
 {
-    std::ofstream file(CFG.getString("paths/" + category) + "/" + id + ".j3x", std::ofstream::out | std::ofstream::trunc);
+    std::ofstream file(CFG.get<std::string>("paths/" + category) + "/" + id + ".j3x", std::ofstream::out | std::ofstream::trunc);
 
     if (!file)
     {
@@ -392,7 +392,7 @@ bool ResourceManager::saveConfigFile(const std::string& category, const std::str
 
     file << content;
 
-    std::cout << "[ResourceManager] Config file " << CFG.getString("paths/" + category) + "/" + id + ".j3x" << " is saved!" << std::endl;
+    std::cout << "[ResourceManager] Config file " << CFG.get<std::string>("paths/" + category) + "/" + id + ".j3x" << " is saved!" << std::endl;
 
     return true;
 }
@@ -446,8 +446,8 @@ void ResourceManager::loadListOfObjects(const std::string& dir)
     }
 }
 
-ResourceManager::ResourceManager() : AbstractResourceManager(CFG.getString("paths/j3x_dir"), CFG.getString("paths/textures_dir"), CFG.getString("paths/fonts_dir"),
-                                                             CFG.getString("paths/sounds_dir"), CFG.getString("paths/music_dir"))
+ResourceManager::ResourceManager() : AbstractResourceManager(CFG.get<std::string>("paths/j3x_dir"), CFG.get<std::string>("paths/textures_dir"), CFG.get<std::string>("paths/fonts_dir"),
+                                                             CFG.get<std::string>("paths/sounds_dir"), CFG.get<std::string>("paths/music_dir"))
 {
 
 }

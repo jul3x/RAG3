@@ -18,9 +18,9 @@
 
 NPC::NPC(const sf::Vector2f& position, const std::string& id, int u_id) :
         NPC(position, id,
-            utils::j3x::getString(RM.getObjectParams("characters", id), "default_activation"),
-            utils::j3x::getListString(RM.getObjectParams("characters", id), "default_functions"),
-            utils::j3x::getListString(RM.getObjectParams("characters", id), "default_datas"), u_id)
+            utils::j3x::get<std::string>(RM.getObjectParams("characters", id), "default_activation"),
+            utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("characters", id), "default_functions"),
+            utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("characters", id), "default_datas"), u_id)
 {
 
 }
@@ -75,13 +75,13 @@ bool NPC::update(float time_elapsed)
     handleActionState();
 
     auto& enemy_position = current_enemy_->getPosition();
-    auto velocity = utils::j3x::getFloat(RM.getObjectParams("characters", this->getId()), "max_speed") * this->generateVelocityForPath();
+    auto velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") * this->generateVelocityForPath();
 
     switch (action_state_)
     {
         case ActionState::StandBy:
         {
-            velocity = utils::j3x::getFloat(RM.getObjectParams("characters", this->getId()), "standby_speed") * this->getWanderingDirection(0.2f, 100.0f, 20);
+            velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed") * this->getWanderingDirection(0.2f, 100.0f, 20);
 
             this->setNoGoal();
             this->setWeaponPointing(this->getPosition() + velocity);
@@ -133,7 +133,7 @@ bool NPC::update(float time_elapsed)
     if (utils::num::isNearlyEqual(velocity, {0.0f, 0.0f}) &&
         action_state_ != ActionState::Shot && action_state_ != ActionState::DestroyWall)
     {
-        velocity = utils::j3x::getFloat(RM.getObjectParams("characters", this->getId()), "standby_speed") *
+        velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed") *
                    this->getWanderingDirection(0.2f, 100.0f, 20);
         this->setWeaponPointing(this->getPosition() + velocity);
     }

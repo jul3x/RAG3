@@ -18,57 +18,123 @@ namespace r3e {
         namespace j3x {
             constexpr char Delimiter = ';';
 
-            using IParameters = std::unordered_map<std::string, int>;
-            using FParameters = std::unordered_map<std::string, float>;
-            using SParameters = std::unordered_map<std::string, std::string>;
+            template <class T>
+            using Params = std::unordered_map<std::string, T>;
 
-            using IListParameters = std::unordered_map<std::string, std::vector<int>>;
-            using FListParameters = std::unordered_map<std::string, std::vector<float>>;
-            using SListParameters = std::unordered_map<std::string, std::vector<std::string>>;
-            using Parameters = std::tuple<IParameters, FParameters, SParameters,
-                                             IListParameters, FListParameters, SListParameters>;
+            using Parameters = std::tuple<Params<int>, Params<float>, Params<std::string>,
+                    Params<std::vector<int>>, Params<std::vector<float>>, Params<std::vector<std::string>>>;
 
             Parameters parse(const std::string& filename, const std::string& ns);
 
             Parameters parse(const std::string& filename);
 
+            void mergeParams(Parameters& params, const Parameters& new_params);
+
             void tokenize(const std::string &str, char delimiter, std::vector<std::string>& out);
 
-            int getInt(const IParameters& int_params, const std::string& key);
+            template <class T>
+            const T& get(const Params<T>& params, const std::string& key)
+            {
+                static T ERR = {};
+                auto it = params.find(key);
+                if (it == params.end())
+                {
+                    std::cerr << "[J3X] Param " << key << " not found!" << std::endl;
+                    return ERR;
+                }
 
-            int getInt(const Parameters& params, const std::string& key);
+                return it->second;
+            }
 
-            float getFloat(const FParameters& float_params, const std::string& key);
+            template <class T>
+            const T& get(const Parameters& params, const std::string& key)
+            {
+                throw std::invalid_argument("[J3X] Parameter type not handled!");
+            }
 
-            float getFloat(const Parameters& params, const std::string& key);
+            template <class T>
+            void set(Params<T>& params, const std::string& key, const T& value)
+            {
+                params[key] = value;
+            }
 
-            const std::string& getString(const SParameters& string_params, const std::string& key);
+            template <class T>
+            void set(Parameters& params, const std::string& key, const T& value)
+            {
+                throw std::invalid_argument("[J3X] Parameter type not handled!");
+            }
+            
+            template <>
+            inline const int& get<int>(const Parameters& params, const std::string& key)
+            {
+                return get<int>(std::get<0>(params), key);
+            }
 
-            const std::string& getString(const Parameters& params, const std::string& key);
+            template <>
+            inline const float& get<float>(const Parameters& params, const std::string& key)
+            {
+                return get<float>(std::get<1>(params), key);
+            }
 
-            const std::vector<int>& getListInt(const IListParameters& list_int_params, const std::string& key);
+            template <>
+            inline const std::string& get<std::string>(const Parameters& params, const std::string& key)
+            {
+                return get<std::string>(std::get<2>(params), key);
+            }
 
-            const std::vector<int>& getListInt(const Parameters& params, const std::string& key);
+            template <>
+            inline const std::vector<int>& get<std::vector<int>>(const Parameters& params, const std::string& key)
+            {
+                return get<std::vector<int>>(std::get<3>(params), key);
+            }
 
-            const std::vector<float>& getListFloat(const FListParameters& list_float_params, const std::string& key);
+            template <>
+            inline const std::vector<float>& get<std::vector<float>>(const Parameters& params, const std::string& key)
+            {
+                return get<std::vector<float>>(std::get<4>(params), key);
+            }
 
-            const std::vector<float>& getListFloat(const Parameters& params, const std::string& key);
+            template <>
+            inline const std::vector<std::string>& get<std::vector<std::string>>(const Parameters& params, const std::string& key)
+            {
+                return get<std::vector<std::string>>(std::get<5>(params), key);
+            }
 
-            const std::vector<std::string>& getListString(const SListParameters& list_string_params, const std::string& key);
+            template <>
+            inline void set<int>(Parameters& params, const std::string& key, const int& value)
+            {
+                set<int>(std::get<0>(params), key, value);
+            }
 
-            const std::vector<std::string>& getListString(const Parameters& params, const std::string& key);
+            template <>
+            inline void set<float>(Parameters& params, const std::string& key, const float& value)
+            {
+                set<float>(std::get<1>(params), key, value);
+            }
 
-            void setInt(IParameters& int_params, const std::string& key, int value);
+            template <>
+            inline void set<std::string>(Parameters& params, const std::string& key, const std::string& value)
+            {
+                set<std::string>(std::get<2>(params), key, value);
+            }
 
-            void setFloat(FParameters& float_params, const std::string& key, float value);
+            template <>
+            inline void set<std::vector<int>>(Parameters& params, const std::string& key, const std::vector<int>& value)
+            {
+                set<std::vector<int>>(std::get<3>(params), key, value);
+            }
 
-            void setString(SParameters& string_params, const std::string& key, const std::string& value);
+            template <>
+            inline void set<std::vector<float>>(Parameters& params, const std::string& key, const std::vector<float>& value)
+            {
+                set<std::vector<float>>(std::get<4>(params), key, value);
+            }
 
-            void setListInt(IListParameters& list_int_params, const std::string& key, const std::vector<int>& value);
-
-            void setListFloat(FListParameters& list_float_params, const std::string& key, const std::vector<float>& value);
-
-            void setListString(SListParameters& list_string_params, const std::string& key, const std::vector<std::string>& value);
+            template <>
+            inline void set<std::vector<std::string>>(Parameters& params, const std::string& key, const std::vector<std::string>& value)
+            {
+                set<std::vector<std::string>>(std::get<5>(params), key, value);
+            }
 
         } // namespace j3x
     } // namespace utils

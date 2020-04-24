@@ -17,7 +17,7 @@ using namespace editor;
 
 ListWindow::ListWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme, std::string title, const sf::Vector2f& pos, std::string id) :
         ui_(ui),
-        ChildWindow(gui, theme, title, pos, {CFG.getFloat("list_windows_size_x"), CFG.getFloat("list_windows_size_y")}, std::move(id))
+        ChildWindow(gui, theme, title, pos, {CFG.get<float>("list_windows_size_x"), CFG.get<float>("list_windows_size_y")}, std::move(id))
 {
 
 }
@@ -62,10 +62,10 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
         int i = 0;
         for (const auto& item : items)
         {
-            auto size = sf::Vector2f(utils::j3x::getFloat(RM.getObjectParams(tab_name, item), "size_x"),
-                                     utils::j3x::getFloat(RM.getObjectParams(tab_name, item), "size_y"));
+            auto size = sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams(tab_name, item), "size_x"),
+                                     utils::j3x::get<float>(RM.getObjectParams(tab_name, item), "size_y"));
 
-            if (utils::j3x::getInt(RM.getObjectParams(tab_name, item), "frames_number") == 1)
+            if (utils::j3x::get<int>(RM.getObjectParams(tab_name, item), "frames_number") == 1)
                 button_textures_[tab_name + "/" + item].load(RM.getTexture(tab_name + "/" + item));
             else
                 button_textures_[tab_name + "/" + item].load(
@@ -77,20 +77,20 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
 
             if (size.x > size.y)
             {
-                size.y = size.y * CFG.getFloat("items_size") / size.x;
-                size.x = CFG.getFloat("items_size");
+                size.y = size.y * CFG.get<float>("items_size") / size.x;
+                size.x = CFG.get<float>("items_size");
             }
             else
             {
-                size.x = size.x * CFG.getFloat("items_size") / size.y;
-                size.y = CFG.getFloat("items_size");
+                size.x = size.x * CFG.get<float>("items_size") / size.y;
+                size.y = CFG.get<float>("items_size");
             }
 
             button->setSize(size.x, size.y);
             grids_.back()->addWidget(button, (i / 4) * 2, i % 4);
             grids_.back()->addWidget(label, (i / 4) * 2 + 1, i % 4);
             clickables_.back().push_back(button);
-            grids_.back()->setWidgetPadding(button, {CFG.getFloat("items_padding"), CFG.getFloat("items_padding")});
+            grids_.back()->setWidgetPadding(button, {CFG.get<float>("items_padding"), CFG.get<float>("items_padding")});
             ++i;
 
             button->connect("Clicked", [&](const std::string& tab_name, const std::string& item_name) {

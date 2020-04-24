@@ -10,11 +10,11 @@
 
 TimeBar::TimeBar(const sf::Vector2f& position) :
         AbstractDrawableObject(position,
-                               {TIME_SIZE_X_ * CFG.getFloat("graphics/user_interface_zoom"),
-                                TIME_SIZE_Y_ * CFG.getFloat("graphics/user_interface_zoom")},
+                               {TIME_SIZE_X_ * CFG.get<float>("graphics/user_interface_zoom"),
+                                TIME_SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom")},
                                &RM.getTexture("full_time_bar")),
         curr_time_shape_(4),
-        curr_time_(CFG.getFloat("graphics/inertial_states_change_speed"))
+        curr_time_(CFG.get<float>("graphics/inertial_states_change_speed"))
 {
 
     curr_time_shape_.setPosition(position);

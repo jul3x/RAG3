@@ -18,11 +18,11 @@ int main()
     CFG.appendConfig("../data/config/characters.j3x", "characters");
     CFG.appendConfig("../data/config/paths.j3x", "paths");
 
-    if (CFG.getInt("auto_resolution"))
+    if (CFG.get<int>("auto_resolution"))
     {
         sf::Vector2i res = Engine::detectResolution();
-        CFG.setInt("window_width_px", res.x);
-        CFG.setInt("window_height_px", res.y);
+        CFG.set<int>("window_width_px", res.x);
+        CFG.set<int>("window_height_px", res.y);
     }
 
     Editor::get().start();

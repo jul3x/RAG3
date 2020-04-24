@@ -2,6 +2,8 @@
 // Created by jul3x on 21.04.20.
 //
 
+#include <utility>
+
 #include <R3E/utils/Parser.h>
 
 
@@ -13,13 +15,13 @@ namespace r3e {
             {
                 std::ifstream config_file(filename);
 
-                FParameters float_params;
-                IParameters int_params;
-                SParameters string_params;
+                Params<float> float_params;
+                Params<int> int_params;
+                Params<std::string> string_params;
 
-                FListParameters list_float_params;
-                IListParameters list_int_params;
-                SListParameters list_string_params;
+                Params<std::vector<float>> list_float_params;
+                Params<std::vector<int>> list_int_params;
+                Params<std::vector<std::string>> list_string_params;
 
                 if (config_file)
                 {
@@ -133,6 +135,16 @@ namespace r3e {
                 return parse(filename, "");
             }
 
+            void mergeParams(Parameters& params, const Parameters& new_params)
+            {
+                std::get<0>(params).insert(std::get<0>(new_params).begin(), std::get<0>(new_params).end());
+                std::get<1>(params).insert(std::get<1>(new_params).begin(), std::get<1>(new_params).end());
+                std::get<2>(params).insert(std::get<2>(new_params).begin(), std::get<2>(new_params).end());
+                std::get<3>(params).insert(std::get<3>(new_params).begin(), std::get<3>(new_params).end());
+                std::get<4>(params).insert(std::get<4>(new_params).begin(), std::get<4>(new_params).end());
+                std::get<5>(params).insert(std::get<5>(new_params).begin(), std::get<5>(new_params).end());
+            }
+
             void tokenize(const std::string &str, char delimiter, std::vector<std::string>& out)
             {
                 out.clear();
@@ -147,149 +159,6 @@ namespace r3e {
                 }
             }
 
-
-            int getInt(const IParameters &int_params, const std::string &key)
-            {
-                auto it = int_params.find(key);
-                if (it == int_params.end())
-                {
-                    std::cerr << "[J3X] Param " << key << " not found!" << std::endl;
-                    return 0;
-                }
-
-                return it->second;
-            }
-
-            int getInt(const Parameters &params, const std::string &key)
-            {
-                return getInt(std::get<0>(params), key);
-            }
-
-            float getFloat(const FParameters &float_params, const std::string &key)
-            {
-                auto it = float_params.find(key);
-                if (it == float_params.end())
-                {
-                    std::cerr << "[J3X] Param " << key << " not found!" << std::endl;
-                    return 0.0f;
-                }
-
-                return it->second;
-            }
-
-            float getFloat(const Parameters &params, const std::string &key)
-            {
-                return getFloat(std::get<1>(params), key);
-            }
-
-            const std::string &getString(const SParameters &string_params, const std::string &key)
-            {
-                static const std::string ERROR_STRING;
-
-                auto it = string_params.find(key);
-                if (it == string_params.end())
-                {
-                    std::cerr << "[J3X] Param " << key << " not found!" << std::endl;
-                    return ERROR_STRING;
-                }
-
-                return it->second;
-            }
-
-            const std::string &getString(const Parameters &params, const std::string &key)
-            {
-                return getString(std::get<2>(params), key);
-            }
-
-            const std::vector<int> &getListInt(const IListParameters &list_int_params, const std::string &key)
-            {
-                static std::vector<int> ERR = {};
-                auto it = list_int_params.find(key);
-                if (it == list_int_params.end())
-                {
-                    std::cerr << "[J3X] Param " << key << " not found!" << std::endl;
-                    return ERR;
-                }
-
-                return it->second;
-            }
-
-            const std::vector<int> &getListInt(const Parameters &params, const std::string &key)
-            {
-                return getListInt(std::get<3>(params), key);
-            }
-
-            const std::vector<float> &
-            getListFloat(const FListParameters &list_float_params, const std::string &key)
-            {
-                static std::vector<float> ERR = {};
-                auto it = list_float_params.find(key);
-                if (it == list_float_params.end())
-                {
-                    std::cerr << "[J3X] Param " << key << " not found!" << std::endl;
-                    return ERR;
-                }
-
-                return it->second;
-            }
-
-            const std::vector<float> &getListFloat(const Parameters &params, const std::string &key)
-            {
-                return getListFloat(std::get<4>(params), key);
-            }
-
-            const std::vector<std::string> &
-            getListString(const SListParameters &list_string_params, const std::string &key)
-            {
-                static const std::vector<std::string> ERR = {};
-
-                auto it = list_string_params.find(key);
-                if (it == list_string_params.end())
-                {
-                    std::cerr << "[J3X] Param " << key << " not found!" << std::endl;
-                    return ERR;
-                }
-
-                return it->second;
-            }
-
-            const std::vector<std::string> &getListString(const Parameters &params, const std::string &key)
-            {
-                return getListString(std::get<5>(params), key);
-            }
-
-            void setInt(IParameters &int_params, const std::string &key, int value)
-            {
-                int_params[key] = value;
-            }
-
-            void setFloat(FParameters &float_params, const std::string &key, float value)
-            {
-                float_params[key] = value;
-            }
-
-            void setString(SParameters &string_params, const std::string &key, const std::string &value)
-            {
-                string_params[key] = value;
-            }
-
-            void
-            setListInt(IListParameters &list_int_params, const std::string &key, const std::vector<int> &value)
-            {
-                list_int_params[key] = value;
-            }
-
-            void setListFloat(FListParameters &list_float_params, const std::string &key,
-                              const std::vector<float> &value)
-            {
-                list_float_params[key] = value;
-            }
-
-            void setListString(SListParameters &list_string_params, const std::string &key,
-                               const std::vector<std::string> &value)
-            {
-                list_string_params[key] = value;
-            }
         } // namespace j3x
     } // namespace utils
 } // namespace r3e

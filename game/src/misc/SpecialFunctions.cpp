@@ -154,7 +154,7 @@ void SpecialFunctions::addHealth(Functional* obj, const std::string& data, Chara
     std::cout << "[SpecialFunction] Adding health." << std::endl;
     auto data_parsed = std::stoi(data);
 
-    user->setHealth(std::max(user->getHealth() + data_parsed, user->getMaxHealth()));
+    user->setHealth(std::min(user->getHealth() + data_parsed, user->getMaxHealth()));
 
     Game::get().spawnThought(user, "Uff!\nThat's what I needed...");
 

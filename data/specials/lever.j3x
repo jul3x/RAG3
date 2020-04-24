@@ -11,6 +11,6 @@ float frame_duration=0.0f
 
 string default_activation=OnUse
 list[string] default_functions=[OpenDoor;ChangeOpenState]
-list[string] default_datas=[null;null]
+list[string] default_datas=[Null;Null]
 
 bool is_drawable=1

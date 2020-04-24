@@ -57,7 +57,7 @@ namespace r3e {
 
                                             value = value.substr(1, value.length() - 2);
 
-                                            tokenize(value, ';', values);
+                                            tokenize(value, utils::j3x::Delimiter, values);
                                             vectorized = true;
                                         } else {
                                             vectorized = false;

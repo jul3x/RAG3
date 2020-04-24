@@ -16,7 +16,7 @@
 #include <Game.h>
 
 
-Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal), current_special_object_(nullptr)
+Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal)
 {
     engine_ = std::make_unique<Engine>();
     engine_->registerGame(this);
@@ -84,7 +84,8 @@ void Game::initialize()
         for (const auto& function : character->getFunctions())
         {
             character->bindFunction(special_functions_->bindFunction( function ),
-                                    special_functions_->bindTextToUse( function ));
+                                    special_functions_->bindTextToUse( function ),
+                                    special_functions_->isUsableByNPC( function ));
         }
 
         for (auto& weapon : character->getWeapons())
@@ -106,15 +107,14 @@ void Game::initialize()
         for (const auto& function : special->getFunctions())
         {
             special->bindFunction(special_functions_->bindFunction( function ),
-                                  special_functions_->bindTextToUse( function ));
+                                  special_functions_->bindTextToUse( function ),
+                                  special_functions_->isUsableByNPC( function ));
         }
     }
 }
 
 void Game::update(float time_elapsed)
 {
-    current_special_object_ = nullptr;
-
     switch (state_)
     {
         case GameState::Paused:
@@ -127,38 +127,43 @@ void Game::update(float time_elapsed)
 
             updateMapObjects(time_elapsed);
 
-            if (player_clone_ != nullptr && !player_clone_->update(time_elapsed))
+            if (player_clone_ != nullptr)
             {
-                // draw on this place destruction
-                auto dec_ptr = map_->spawnDecoration(player_clone_->getPosition(), "blood");
-                journal_->eventDecorationSpawned(dec_ptr);
+                player_clone_->setCurrentSpecialObject(nullptr);
+                if (!player_clone_->update(time_elapsed))
+                {
+                    // draw on this place destruction
+                    auto dec_ptr = map_->spawnDecoration(player_clone_->getPosition(), "blood");
+                    journal_->eventDecorationSpawned(dec_ptr);
 
-                this->spawnExplosionEvent(player_clone_->getPosition(), 250.0f);
-                this->cleanPlayerClone();
+                    this->spawnExplosionEvent(player_clone_->getPosition(), 250.0f);
+                    this->cleanPlayerClone();
 
-                player_->setHealth(0); // player clone is dead - so do player
+                    player_->setHealth(0); // player clone is dead - so do player
+                }
+
+                if (!player_clone_->isLifeTime())
+                {
+                    this->spawnTeleportationEvent(player_clone_->getPosition());
+
+                    const auto &player_clone_weapon = player_clone_->getWeapons().at(player_clone_->getCurrentWeapon());
+                    auto player_weapon = std::find_if(player_->getWeapons().begin(), player_->getWeapons().end(),
+                                                      [&player_clone_weapon](const auto &it) {
+                                                          return player_clone_weapon->getName() == it->getName();
+                                                      });
+
+                    if (player_weapon != player_->getWeapons().end())
+                        (*player_weapon)->setState(player_clone_weapon->getState());
+
+                    player_->setHealth(player_clone_->getHealth());
+
+                    camera_->setZoomInOut();
+
+                    this->cleanPlayerClone();
+                }
             }
 
-            if (player_clone_ != nullptr && !player_clone_->isLifeTime())
-            {
-                this->spawnTeleportationEvent(player_clone_->getPosition());
-
-                const auto& player_clone_weapon = player_clone_->getWeapons().at(player_clone_->getCurrentWeapon());
-                auto player_weapon = std::find_if(player_->getWeapons().begin(), player_->getWeapons().end(),
-                    [&player_clone_weapon](const auto& it) {
-                        return player_clone_weapon->getName() == it->getName();
-                    });
-
-                if (player_weapon != player_->getWeapons().end())
-                    (*player_weapon)->setState(player_clone_weapon->getState());
-
-                player_->setHealth(player_clone_->getHealth());
-
-                camera_->setZoomInOut();
-
-                this->cleanPlayerClone();
-            }
-
+            player_->setCurrentSpecialObject(nullptr);
             if (player_->isAlive() && !player_->update(time_elapsed))
             {
                 map_->spawnDecoration(player_->getPosition(), "blood");
@@ -281,6 +286,7 @@ void Game::updateMapObjects(float time_elapsed)
     for (auto it = npcs.begin(); it != npcs.end();)
     {
         bool do_increment = true;
+        (*it)->setCurrentSpecialObject(nullptr);
         if (!(*it)->update(time_elapsed))
         {
             this->killNPC(it->get());
@@ -345,7 +351,8 @@ void Game::killNPC(NPC* npc)
         ammo_ptr->setDatasStr(weapon);
         engine_->registerHoveringObject(ammo_ptr);
         ammo_ptr->bindFunction(special_functions_->bindFunction(ammo_ptr->getFunctions().at(0)),
-                               special_functions_->bindTextToUse(ammo_ptr->getFunctions().at(0)));
+                               special_functions_->bindTextToUse(ammo_ptr->getFunctions().at(0)),
+                               special_functions_->isUsableByNPC(ammo_ptr->getFunctions().at(0)));
     }
 
     this->spawnExplosionEvent(npc->getPosition(), 250.0f);
@@ -354,7 +361,7 @@ void Game::killNPC(NPC* npc)
 
     if (npc->getActivation() == "OnKill")
     {
-        npc->use();
+        npc->use(player_.get());
     }
 }
 
@@ -416,6 +423,11 @@ Player& Game::getPlayer()
     return *player_;
 }
 
+Camera& Game::getCamera()
+{
+    return *camera_;
+}
+
 Stats& Game::getStats()
 {
     return *stats_;
@@ -457,9 +469,18 @@ void Game::spawnTeleportationEvent(const sf::Vector2f& pos)
         engine_->spawnSoundEvent(RM.getSound("teleportation"), pos);
 }
 
-void Game::spawnThought(const std::string& text)
+void Game::spawnFadeInOut()
 {
-    thoughts_.emplace_back(std::make_unique<Thought>(player_.get(), text, CFG.getFloat("thought_duration")));
+    engine_->spawnEffect(std::make_shared<graphics::FadeInOut>(
+            sf::Vector2f{static_cast<float>(CFG.getInt("graphics/window_width_px")),
+                         static_cast<float>(CFG.getInt("graphics/window_height_px"))}, sf::Color::Black,
+            CFG.getFloat("fade_in_out_duration")
+            ));
+}
+
+void Game::spawnThought(Character* user, const std::string& text)
+{
+    thoughts_.emplace_back(std::make_unique<Thought>(user, text, CFG.getFloat("thought_duration")));
 }
 
 void Game::spawnAchievement(Achievements::Type type)
@@ -536,14 +557,25 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     }
 
     auto special = dynamic_cast<Special*>(h_obj);
-    auto player = dynamic_cast<Player*>(d_obj);
 
-    if (special != nullptr && player != nullptr && special->isActive())
+    if (special != nullptr && character != nullptr && special->isActive())
     {
         if (special->getActivation() == "OnEnter")
-            special->use();
+        {
+            auto player = dynamic_cast<Player*>(d_obj);
+            if (special->isUsableByNPC())
+            {
+                special->use(character);
+            }
+            else if (player != nullptr)
+            {
+                special->use(player);
+            }
+        }
         else
-            current_special_object_ = special;
+        {
+            character->setCurrentSpecialObject(special);
+        }
     }
 }
 
@@ -604,7 +636,8 @@ NPC* Game::spawnNewNPC(const std::string &id)
     for (const auto& function : ptr->getFunctions())
     {
         ptr->bindFunction(special_functions_->bindFunction( function ),
-                          special_functions_->bindTextToUse( function ));
+                          special_functions_->bindTextToUse( function ),
+                          special_functions_->isUsableByNPC( function ));
     }
 
     return ptr;
@@ -701,14 +734,15 @@ ai::AgentsManager& Game::getAgentsManager() const
 
 Special* Game::getCurrentSpecialObject() const
 {
-    return current_special_object_;
+    return player_->getCurrentSpecialObject();
 }
 
 void Game::useSpecialObject()
 {
-    if (current_special_object_ != nullptr)
+    auto curr = player_->getCurrentSpecialObject();
+    if (curr != nullptr)
     {
-        current_special_object_->use();
+        curr->use(player_.get());
     }
 }
 

@@ -1,11 +1,11 @@
 string default_activation=OnEnter
-list[string] default_functions=[PickCrystal]
-list[string] default_datas=[Null]
+list[string] default_functions=[Teleport]
+list[string] default_datas=[(0,0)]
 
-float size_x=80.0f
-float size_y=80.0f
+float size_x=100.0f
+float size_y=100.0f
 
-float collision_size_x=40.0f
+float collision_size_x=50.0f
 
 float map_offset_x=0.0f
 float map_offset_y=0.0f

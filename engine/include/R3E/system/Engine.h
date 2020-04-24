@@ -9,14 +9,15 @@
 #include <unordered_set>
 #include <list>
 
-#include "../audio/SoundManager.h"
-#include "../graphics/Graphics.h"
-#include "../graphics/AbstractCamera.h"
-#include "../graphics/AnimationEvent.h"
-#include "AbstractUserInterface.h"
-#include "AbstractGame.h"
-#include "Collisions.h"
-#include "../objects/AbstractPhysicalObject.h"
+#include <R3E/audio/SoundManager.h>
+#include <R3E/graphics/Graphics.h>
+#include <R3E/graphics/AbstractCamera.h>
+#include <R3E/graphics/AnimationEvent.h>
+#include <R3E/graphics/Effect.h>
+#include <R3E/system/AbstractUserInterface.h>
+#include <R3E/system/AbstractGame.h>
+#include <R3E/system/Collisions.h>
+#include <R3E/objects/AbstractPhysicalObject.h>
 
 
 namespace r3e {
@@ -64,6 +65,8 @@ namespace r3e {
 
         void spawnSoundEvent(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume = 100.0f);
 
+        void spawnEffect(const std::shared_ptr<graphics::Effect>& effect);
+
         float getCurrentFPS() const;
 
         void setTimeScaleFactor(float factor);
@@ -83,6 +86,8 @@ namespace r3e {
 
         void updateAnimationEvents(float time_elapsed);
 
+        void updateEffects(float time_elapsed);
+
         void draw();
 
         // Engine components
@@ -100,6 +105,7 @@ namespace r3e {
         float collisions_on_;
 
         std::list<std::shared_ptr<graphics::AnimationEvent>> animation_events_;
+        std::list<std::shared_ptr<graphics::Effect>> effects_;
     };
 
 } // namespace r3e

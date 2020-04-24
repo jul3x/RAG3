@@ -16,6 +16,8 @@
 namespace r3e {
     namespace utils {
         namespace j3x {
+            constexpr char Delimiter = ';';
+
             using IParameters = std::unordered_map<std::string, int>;
             using FParameters = std::unordered_map<std::string, float>;
             using SParameters = std::unordered_map<std::string, std::string>;

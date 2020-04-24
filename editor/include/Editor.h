@@ -62,6 +62,8 @@ namespace editor {
         void clearMap();
 
         const std::string& getCurrentMapName() const;
+        
+        sf::Vector2f getMapCoordinates(const sf::Vector2f& pos) const;
 
         void loadMap(const std::string& name);
 

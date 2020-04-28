@@ -7,6 +7,7 @@
 
 #include <list>
 #include <string>
+#include <functional>
 #include <unordered_map>
 
 #include <SFML/Graphics/Texture.hpp>
@@ -44,6 +45,28 @@ namespace r3e {
         void lazyLoadTexture(const std::string& key);
 
     private:
+        template<class T>
+        T& getOrLoad(std::unordered_map<std::string, T>& objs,
+                     const std::function<void(const std::string&)>& func, const std::string& key)
+        {
+            auto it = objs.find(key);
+            if (it == objs.end())
+            {
+                try
+                {
+                    func(key);
+
+                    return objs.at(key);
+                }
+                catch (std::runtime_error& e)
+                {
+                    std::cerr << e.what() << std::endl;
+                }
+            }
+
+            return it->second;
+        }
+
         void loadJ3XFile(const std::string& key);
 
         void loadTexture(const std::string& key);

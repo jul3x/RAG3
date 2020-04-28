@@ -24,22 +24,8 @@ namespace r3e {
 
     utils::j3x::Parameters& AbstractResourceManager::getParameters(const std::string& key)
     {
-        auto it = parameters_.find(key);
-        if (it == parameters_.end())
-        {
-            try
-            {
-                loadJ3XFile(key);
-
-                return parameters_.at(key);
-            }
-            catch (std::runtime_error& e)
-            {
-                std::cerr << e.what() << std::endl;
-            }
-        }
-
-        return it->second;
+//        std::function<void(const std::string&)> load = &AbstractResourceManager::loadJ3XFile;
+//        return getOrLoad(parameters_, load, key);
     }
 
     sf::Texture& AbstractResourceManager::getTexture(const std::string& key)

@@ -24,28 +24,28 @@ namespace r3e {
 
     utils::j3x::Parameters& AbstractResourceManager::getParameters(const std::string& key)
     {
-        return getOrLoad(parameters_, std::bind(&loadJ3XFile, this, std::placeholders::_1), key);
+        return getOrLoad(parameters_, std::bind(&AbstractResourceManager::loadJ3XFile, this, std::placeholders::_1), key);
     }
 
     sf::Texture& AbstractResourceManager::getTexture(const std::string& key)
     {
-        return getOrLoad(textures_, std::bind(&loadTexture, this, std::placeholders::_1), key);
+        return getOrLoad(textures_, std::bind(&AbstractResourceManager::loadTexture, this, std::placeholders::_1), key);
     }
 
     sf::Font& AbstractResourceManager::getFont(const std::string& key)
     {
-        return getOrLoad(fonts_, std::bind(&loadFont, this, std::placeholders::_1), key);
+        return getOrLoad(fonts_, std::bind(&AbstractResourceManager::loadFont, this, std::placeholders::_1), key);
     }
 
 
     sf::SoundBuffer& AbstractResourceManager::getSound(const std::string& key)
     {
-        return getOrLoad(sounds_, std::bind(&loadSound, this, std::placeholders::_1), key);
+        return getOrLoad(sounds_, std::bind(&AbstractResourceManager::loadSound, this, std::placeholders::_1), key);
     }
 
     sf::Music& AbstractResourceManager::getMusic(const std::string& key)
     {
-        return getOrLoad(music_, std::bind(&loadMusic, this, std::placeholders::_1), key);
+        return getOrLoad(music_, std::bind(&AbstractResourceManager::loadMusic, this, std::placeholders::_1), key);
     }
 
     sf::Font& AbstractResourceManager::getFont()

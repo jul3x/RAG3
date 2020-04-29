@@ -399,7 +399,7 @@ bool ResourceManager::saveConfigFile(const std::string& category, const std::str
 
 std::vector<std::string>& ResourceManager::getListOfObjects(const std::string& dir)
 {
-    return getOrLoad(list_of_objects_, std::bind(&loadListOfObjects, this, std::placeholders::_1), dir);
+    return getOrLoad(list_of_objects_, std::bind(&ResourceManager::loadListOfObjects, this, std::placeholders::_1), dir);
 }
 
 std::vector<std::string>& ResourceManager::getFreshListOfObjects(const std::string& dir)

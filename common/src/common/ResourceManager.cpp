@@ -397,30 +397,14 @@ bool ResourceManager::saveConfigFile(const std::string& category, const std::str
     return true;
 }
 
-const std::vector<std::string>& ResourceManager::getListOfObjects(const std::string& dir)
+std::vector<std::string>& ResourceManager::getListOfObjects(const std::string& dir)
 {
-    auto it = list_of_objects_.find(dir);
-
-    if (it == list_of_objects_.end())
-    {
-        try
-        {
-            loadListOfObjects(dir);
-
-            return list_of_objects_.at(dir);
-        }
-        catch (std::runtime_error& e)
-        {
-            std::cerr << "[ResourceManager] " << e.what() << std::endl;
-        }
-    }
-
-    return it->second;
+    return getOrLoad(list_of_objects_, std::bind(&loadListOfObjects, this, std::placeholders::_1), dir);
 }
 
-const std::vector<std::string>& ResourceManager::getFreshListOfObjects(const std::string& dir)
+std::vector<std::string>& ResourceManager::getFreshListOfObjects(const std::string& dir)
 {
-    static const std::vector<std::string> ERROR_OBJECT = {};
+    static std::vector<std::string> ERROR_OBJECT = {};
 
     try
     {

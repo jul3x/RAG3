@@ -2,8 +2,8 @@
 // Created by jul3x on 25.06.19.
 //
 
-#ifndef RAG3_ENGINE_SYSTEM_RESOURCEMANAGER_H
-#define RAG3_ENGINE_SYSTEM_RESOURCEMANAGER_H
+#ifndef RAG3_ENGINE_SYSTEM_ABSTRACTRESOURCEMANAGER_H
+#define RAG3_ENGINE_SYSTEM_ABSTRACTRESOURCEMANAGER_H
 
 #include <list>
 #include <string>
@@ -44,10 +44,11 @@ namespace r3e {
         // TODO - templates
         void lazyLoadTexture(const std::string& key);
 
-    private:
+    protected:
         template<class T>
         T& getOrLoad(std::unordered_map<std::string, T>& objs,
-                     const std::function<void(const std::string&)>& func, const std::string& key)
+                     std::function<void(const std::string&)> func,
+                     const std::string& key)
         {
             auto it = objs.find(key);
             if (it == objs.end())
@@ -67,6 +68,7 @@ namespace r3e {
             return it->second;
         }
 
+    private:
         void loadJ3XFile(const std::string& key);
 
         void loadTexture(const std::string& key);
@@ -92,4 +94,4 @@ namespace r3e {
 
 } // namespace r3e
 
-#endif //RAG3_ENGINE_SYSTEM_RESOURCEMANAGER_H
+#endif //RAG3_ENGINE_SYSTEM_ABSTRACTRESOURCEMANAGER_H

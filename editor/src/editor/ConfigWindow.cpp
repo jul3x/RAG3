@@ -14,9 +14,9 @@ using namespace editor;
 
 ConfigWindow::ConfigWindow(tgui::Gui* gui, tgui::Theme* theme) :
         ChildWindow(gui, theme, "Edit configuration",
-                    sf::Vector2f(CFG.getInt("window_width_px") - CFG.getFloat("popup_window_size_x"),
-                                 CFG.getInt("window_height_px") - CFG.getFloat("popup_window_size_y")) / 2.0f,
-                    {CFG.getFloat("popup_window_size_x"), CFG.getFloat("popup_window_size_y")},
+                    sf::Vector2f(CFG.get<int>("window_width_px") - CFG.get<float>("popup_window_size_x"),
+                                 CFG.get<int>("window_height_px") - CFG.get<float>("popup_window_size_y")) / 2.0f,
+                    {CFG.get<float>("popup_window_size_x"), CFG.get<float>("popup_window_size_y")},
                     "config_window")
 {
     grid_ = tgui::Grid::create();
@@ -41,13 +41,13 @@ ConfigWindow::ConfigWindow(tgui::Gui* gui, tgui::Theme* theme) :
     button_ = tgui::Button::create();
     button_->setRenderer(theme_->getRenderer("Button"));
     button_->setText("Save");
-    button_->setSize(CFG.getFloat("button_size_x"), CFG.getFloat("button_size_y"));
+    button_->setSize(CFG.get<float>("button_size_x"), CFG.get<float>("button_size_y"));
 
     grid_->addWidget(button_, 2, 0);
 
-    grid_->setWidgetPadding(0, 0, {CFG.getFloat("items_padding"), CFG.getFloat("items_padding")});
-    grid_->setWidgetPadding(1, 0, {CFG.getFloat("items_padding"), CFG.getFloat("items_padding")});
-    grid_->setWidgetPadding(2, 0, {CFG.getFloat("items_padding"), CFG.getFloat("items_padding")});
+    grid_->setWidgetPadding(0, 0, {CFG.get<float>("items_padding"), CFG.get<float>("items_padding")});
+    grid_->setWidgetPadding(1, 0, {CFG.get<float>("items_padding"), CFG.get<float>("items_padding")});
+    grid_->setWidgetPadding(2, 0, {CFG.get<float>("items_padding"), CFG.get<float>("items_padding")});
 }
 
 void ConfigWindow::setConfigContent(const std::string& category, const std::string& id)

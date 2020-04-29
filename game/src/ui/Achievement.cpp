@@ -14,14 +14,14 @@ Achievement::Achievement(const sf::Vector2f& position,
                          const std::string& text,
                          sf::Texture* tex) :
         AbstractDrawableObject({position.x + IMG_X_, -SIZE_Y_ + IMG_Y_},
-                               {IMG_SIZE_X_ * CFG.getFloat("graphics/user_interface_zoom"),
-                                IMG_SIZE_Y_ * CFG.getFloat("graphics/user_interface_zoom")},
+                               {IMG_SIZE_X_ * CFG.get<float>("graphics/user_interface_zoom"),
+                                IMG_SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom")},
                                tex),
-        position_(CFG.getFloat("graphics/achievement_show_speed")),
+        position_(CFG.get<float>("graphics/achievement_show_speed")),
         title_text_(title, RM.getFont(), 20),
         text_text_(text, RM.getFont(), 16),
         bg_(sf::Quads, 4),
-        time_elapsed_(CFG.getFloat("graphics/achievement_show_time"))
+        time_elapsed_(CFG.get<float>("graphics/achievement_show_time"))
 {
     bg_[0].position = sf::Vector2f(position.x, -SIZE_Y_);
     bg_[1].position = sf::Vector2f(position.x - SIZE_X_, -SIZE_Y_);

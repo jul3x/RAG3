@@ -23,9 +23,9 @@ public:
 
     static ResourceManager& getInstance();
 
-    const std::vector<std::string>& getListOfObjects(const std::string& dir);
+    std::vector<std::string>& getListOfObjects(const std::string& dir);
 
-    const std::vector<std::string>& getFreshListOfObjects(const std::string& dir);
+    std::vector<std::string>& getFreshListOfObjects(const std::string& dir);
 
     const utils::j3x::Parameters& getObjectParams(const std::string& category, const std::string& id);
 

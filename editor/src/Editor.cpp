@@ -11,7 +11,7 @@
 
 using namespace editor;
 
-Editor::Editor() : grid_(CFG.getInt("window_width_px"), CFG.getInt("window_height_px"))
+Editor::Editor() : grid_(CFG.get<int>("window_width_px"), CFG.get<int>("window_height_px"))
 {
     engine_ = std::make_unique<Engine>();
     engine_->registerGame(this);
@@ -24,12 +24,12 @@ void Editor::initialize()
     map_ = std::make_unique<Map>();
 
     ui_->registerCamera(camera_.get());
-    camera_->setViewNormalSize({static_cast<float>(CFG.getInt("window_width_px")), static_cast<float>(CFG.getInt("window_height_px"))});
+    camera_->setViewNormalSize({static_cast<float>(CFG.get<int>("window_width_px")), static_cast<float>(CFG.get<int>("window_height_px"))});
 
     engine_->initializeGraphics(
-            sf::Vector2i{CFG.getInt("window_width_px"), CFG.getInt("window_height_px")}, "Rag3 Editor",
-            CFG.getInt("full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
-            sf::Color(CFG.getInt("background_color")));
+            sf::Vector2i{CFG.get<int>("window_width_px"), CFG.get<int>("window_height_px")}, "Rag3 Editor",
+            CFG.get<int>("full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
+            sf::Color(CFG.get<int>("background_color")));
 
     engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());

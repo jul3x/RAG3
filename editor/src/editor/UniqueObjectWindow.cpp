@@ -11,9 +11,9 @@ using namespace editor;
 
 UniqueObjectWindow::UniqueObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
         ChildWindow(gui, theme, "Unique identifier of object",
-                    sf::Vector2f(CFG.getInt("window_width_px") - CFG.getFloat("popup_window_size_x"),
-                                 CFG.getInt("window_height_px") - CFG.getFloat("popup_window_size_y")) / 2.0f,
-                    {CFG.getFloat("unique_object_window_size_x"), CFG.getFloat("unique_object_window_size_y")},
+                    sf::Vector2f(CFG.get<int>("window_width_px") - CFG.get<float>("popup_window_size_x"),
+                                 CFG.get<int>("window_height_px") - CFG.get<float>("popup_window_size_y")) / 2.0f,
+                    {CFG.get<float>("unique_object_window_size_x"), CFG.get<float>("unique_object_window_size_y")},
                     "unique_object_window")
 {
     grid_ = tgui::Grid::create();
@@ -35,8 +35,8 @@ UniqueObjectWindow::UniqueObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
     text_box_->setTextSize(14);
     grid_->addWidget(text_box_, 1, 0);
 
-    grid_->setWidgetPadding(0, 0, {CFG.getFloat("items_padding"), CFG.getFloat("items_padding")});
-    grid_->setWidgetPadding(1, 0, {CFG.getFloat("items_padding"), CFG.getFloat("items_padding")});
+    grid_->setWidgetPadding(0, 0, {CFG.get<float>("items_padding"), CFG.get<float>("items_padding")});
+    grid_->setWidgetPadding(1, 0, {CFG.get<float>("items_padding"), CFG.get<float>("items_padding")});
 }
 
 void UniqueObjectWindow::setObjectContent(const std::string& category, const std::string& name, int id)

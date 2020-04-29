@@ -10,14 +10,14 @@
 
 LeftHud::LeftHud(const sf::Vector2f& position) :
         AbstractDrawableObject(position,
-                               {SIZE_X_ * CFG.getFloat("graphics/user_interface_zoom"),
-                                SIZE_Y_ * CFG.getFloat("graphics/user_interface_zoom")},
+                               {SIZE_X_ * CFG.get<float>("graphics/user_interface_zoom"),
+                                SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom")},
                                &RM.getTexture("hud_left")),
         crystal_(position + sf::Vector2f{CRYSTAL_OFFSET_X_, CRYSTAL_OFFSET_Y_},
                  {CRYSTAL_SIZE_X_, CRYSTAL_SIZE_Y_},
                  &RM.getTexture("crystal"))
 {
-    this->changeOrigin({0.0f, SIZE_Y_ * CFG.getFloat("graphics/user_interface_zoom")});
+    this->changeOrigin({0.0f, SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom")});
 }
 
 void LeftHud::updateState(float current, float max)

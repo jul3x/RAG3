@@ -14,18 +14,18 @@
 
 
 UserInterface::UserInterface() :
-        blood_splash_(sf::Vector2f(CFG.getInt("graphics/window_width_px"), CFG.getInt("graphics/window_height_px"))),
-        weapons_bar_({static_cast<float>(CFG.getInt("graphics/window_width_px")),
-                      static_cast<float>(CFG.getInt("graphics/window_height_px"))}),
-        health_bar_({CFG.getInt("graphics/window_width_px") - HEALTH_BAR_X_ * CFG.getFloat("graphics/user_interface_zoom"),
-                     CFG.getInt("graphics/window_height_px") - HEALTH_BAR_Y_ * CFG.getFloat("graphics/user_interface_zoom")}),
-        time_bar_({TIME_BAR_X_ * CFG.getFloat("graphics/user_interface_zoom"),
-                   CFG.getInt("graphics/window_height_px") - TIME_BAR_Y_ * CFG.getFloat("graphics/user_interface_zoom")}),
+        blood_splash_(sf::Vector2f(CFG.get<int>("graphics/window_width_px"), CFG.get<int>("graphics/window_height_px"))),
+        weapons_bar_({static_cast<float>(CFG.get<int>("graphics/window_width_px")),
+                      static_cast<float>(CFG.get<int>("graphics/window_height_px"))}),
+        health_bar_({CFG.get<int>("graphics/window_width_px") - HEALTH_BAR_X_ * CFG.get<float>("graphics/user_interface_zoom"),
+                     CFG.get<int>("graphics/window_height_px") - HEALTH_BAR_Y_ * CFG.get<float>("graphics/user_interface_zoom")}),
+        time_bar_({TIME_BAR_X_ * CFG.get<float>("graphics/user_interface_zoom"),
+                   CFG.get<int>("graphics/window_height_px") - TIME_BAR_Y_ * CFG.get<float>("graphics/user_interface_zoom")}),
         fps_text_("FPS: ", RM.getFont(), 30),
-        object_use_text_("[F] Use object", RM.getFont(), 24 * CFG.getFloat("graphics/user_interface_zoom")),
-        left_hud_({0.0f, static_cast<float>(CFG.getInt("graphics/window_height_px"))}),
-        right_hud_({static_cast<float>(CFG.getInt("graphics/window_width_px")),
-                    static_cast<float>(CFG.getInt("graphics/window_height_px"))}),
+        object_use_text_("[F] Use object", RM.getFont(), 24 * CFG.get<float>("graphics/user_interface_zoom")),
+        left_hud_({0.0f, static_cast<float>(CFG.get<int>("graphics/window_height_px"))}),
+        right_hud_({static_cast<float>(CFG.get<int>("graphics/window_width_px")),
+                    static_cast<float>(CFG.get<int>("graphics/window_height_px"))}),
         stats_hud_({0.0f, 0.0f}),
         player_(nullptr),
         camera_(nullptr) {}
@@ -37,7 +37,7 @@ void UserInterface::initialize(graphics::Graphics& graphics)
         throw std::runtime_error("[UserInterface] player_ or camera_ is nullptr!");
     }
     health_bar_.setMaxHealth(player_->getMaxHealth());
-    time_bar_.setMaxTime(CFG.getFloat("journal_max_time"));
+    time_bar_.setMaxTime(CFG.get<float>("journal_max_time"));
 
     fps_text_.setFillColor(sf::Color::White);
     fps_text_.setPosition(FPS_X_, FPS_Y_);
@@ -62,7 +62,7 @@ void UserInterface::registerCamera(Camera* camera)
 
 void UserInterface::spawnAchievement(const std::string& title, const std::string& text, const std::string& tex)
 {
-    achievements_.emplace_back(sf::Vector2f{CFG.getInt("graphics/window_width_px") - ACHIEVEMENTS_MARGIN_,
+    achievements_.emplace_back(sf::Vector2f{CFG.get<int>("graphics/window_width_px") - ACHIEVEMENTS_MARGIN_,
                                             (ACHIEVEMENTS_MARGIN_ + Achievement::SIZE_Y_) * (achievements_.size() + 1)},
                                title, text, &RM.getTexture(tex));
 }
@@ -133,11 +133,11 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 static_view.setCenter(visible_area / 2.0f);
                 graphics.modifyStaticView(static_view);
 
-                health_bar_.setPosition(event.size.width - HEALTH_BAR_X_ * CFG.getFloat("graphics/user_interface_zoom"),
-                                        event.size.height - HEALTH_BAR_Y_ * CFG.getFloat("graphics/user_interface_zoom"));
+                health_bar_.setPosition(event.size.width - HEALTH_BAR_X_ * CFG.get<float>("graphics/user_interface_zoom"),
+                                        event.size.height - HEALTH_BAR_Y_ * CFG.get<float>("graphics/user_interface_zoom"));
 
-                time_bar_.setPosition(TIME_BAR_X_ * CFG.getFloat("graphics/user_interface_zoom"),
-                                        event.size.height - TIME_BAR_Y_ * CFG.getFloat("graphics/user_interface_zoom"));
+                time_bar_.setPosition(TIME_BAR_X_ * CFG.get<float>("graphics/user_interface_zoom"),
+                                        event.size.height - TIME_BAR_Y_ * CFG.get<float>("graphics/user_interface_zoom"));
 
                 weapons_bar_.setPosition(event.size.width, event.size.height);
 
@@ -259,20 +259,20 @@ inline void UserInterface::handleKeys()
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-        delta.x -= utils::j3x::getFloat(RM.getObjectParams("characters", "player"), "max_speed");
+        delta.x -= utils::j3x::get<float>(RM.getObjectParams("characters", "player"), "max_speed");
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        delta.x += utils::j3x::getFloat(RM.getObjectParams("characters", "player"), "max_speed");
+        delta.x += utils::j3x::get<float>(RM.getObjectParams("characters", "player"), "max_speed");
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
-        delta.y -= utils::j3x::getFloat(RM.getObjectParams("characters", "player"), "max_speed");
+        delta.y -= utils::j3x::get<float>(RM.getObjectParams("characters", "player"), "max_speed");
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
-        delta.y += utils::j3x::getFloat(RM.getObjectParams("characters", "player"), "max_speed");
+        delta.y += utils::j3x::get<float>(RM.getObjectParams("characters", "player"), "max_speed");
     }
 
     if (player_->isAlive())
@@ -299,8 +299,8 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
         {
             camera_->setPointingTo(player_->getPosition() +
                                    utils::geo::getNormalized(mouse_world_pos - player_->getPosition()) *
-                                   CFG.getFloat("graphics/camera_right_click_distance_factor"));
-            camera_->setZoomTo(CFG.getFloat("graphics/camera_right_click_zoom_factor"));
+                                   CFG.get<float>("graphics/camera_right_click_distance_factor"));
+            camera_->setZoomTo(CFG.get<float>("graphics/camera_right_click_zoom_factor"));
             Game::get().setBulletTime();
         }
         else

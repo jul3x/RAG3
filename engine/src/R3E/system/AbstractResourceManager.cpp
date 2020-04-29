@@ -24,105 +24,29 @@ namespace r3e {
 
     utils::j3x::Parameters& AbstractResourceManager::getParameters(const std::string& key)
     {
-        auto it = parameters_.find(key);
-        if (it == parameters_.end())
-        {
-            try
-            {
-                loadJ3XFile(key);
-
-                return parameters_.at(key);
-            }
-            catch (std::runtime_error& e)
-            {
-                std::cerr << e.what() << std::endl;
-            }
-        }
-
-        return it->second;
+        return getOrLoad(parameters_, std::bind(&AbstractResourceManager::loadJ3XFile, this, std::placeholders::_1), key);
     }
 
     sf::Texture& AbstractResourceManager::getTexture(const std::string& key)
     {
-        auto it = textures_.find(key);
-        if (it == textures_.end())
-        {
-            try
-            {
-                loadTexture(key);
-
-                return textures_.at(key);
-            }
-            catch (std::runtime_error& e)
-            {
-                std::cerr << e.what() << std::endl;
-            }
-        }
-
-        return it->second;
+        return getOrLoad(textures_, std::bind(&AbstractResourceManager::loadTexture, this, std::placeholders::_1), key);
     }
 
     sf::Font& AbstractResourceManager::getFont(const std::string& key)
     {
-        auto it = fonts_.find(key);
-        if (it == fonts_.end())
-        {
-            try
-            {
-                loadFont(key);
-
-                return fonts_.at(key);
-            }
-            catch (std::runtime_error& e)
-            {
-                std::cerr << e.what() << std::endl;
-            }
-        }
-
-        return it->second;
+        return getOrLoad(fonts_, std::bind(&AbstractResourceManager::loadFont, this, std::placeholders::_1), key);
     }
 
 
     sf::SoundBuffer& AbstractResourceManager::getSound(const std::string& key)
     {
-        auto it = sounds_.find(key);
-        if (it == sounds_.end())
-        {
-            try
-            {
-                loadSound(key);
-
-                return sounds_.at(key);
-            }
-            catch (std::runtime_error& e)
-            {
-                std::cerr << e.what() << std::endl;
-            }
-        }
-
-        return it->second;
+        return getOrLoad(sounds_, std::bind(&AbstractResourceManager::loadSound, this, std::placeholders::_1), key);
     }
 
     sf::Music& AbstractResourceManager::getMusic(const std::string& key)
     {
-        auto it = music_.find(key);
-        if (it == music_.end())
-        {
-            try
-            {
-                loadMusic(key);
-
-                return music_.at(key);
-            }
-            catch (std::runtime_error& e)
-            {
-                std::cerr << e.what() << std::endl;
-            }
-        }
-
-        return it->second;
+        return getOrLoad(music_, std::bind(&AbstractResourceManager::loadMusic, this, std::placeholders::_1), key);
     }
-
 
     sf::Font& AbstractResourceManager::getFont()
     {

@@ -19,10 +19,10 @@ WeaponsBar::WeaponsBar(const sf::Vector2f& position) :
 {
     for (int i = 0; i < SLOTS_; ++i)
     {
-        ammo_.emplace_back("0", RM.getFont(), 16 * CFG.getFloat("graphics/user_interface_zoom"));
-        ammo_.at(i).setFillColor(sf::Color(CFG.getInt("graphics/font_color")));
+        ammo_.emplace_back("0", RM.getFont(), 16 * CFG.get<float>("graphics/user_interface_zoom"));
+        ammo_.at(i).setFillColor(sf::Color(CFG.get<int>("graphics/font_color")));
 
-        ammo_quantity_.emplace_back(CFG.getFloat("graphics/inertial_states_change_speed"));
+        ammo_quantity_.emplace_back(CFG.get<float>("graphics/inertial_states_change_speed"));
     }
 }
 
@@ -45,8 +45,8 @@ void WeaponsBar::update(const std::vector<std::shared_ptr<AbstractWeapon>>& weap
 
         if (weapon_cast != nullptr)
         {
-            auto weapon_pos = base_position + weapons_positions_.at(i) * CFG.getFloat("graphics/user_interface_zoom");
-            weapons_.emplace_back(weapon_pos, size * CFG.getFloat("graphics/user_interface_zoom"),
+            auto weapon_pos = base_position + weapons_positions_.at(i) * CFG.get<float>("graphics/user_interface_zoom");
+            weapons_.emplace_back(weapon_pos, size * CFG.get<float>("graphics/user_interface_zoom"),
                                   &RM.getTexture("specials/" + weapon_cast->getName()));
 
             ammo_quantity_.at(i).setState(weapon_cast->getAmmunition());
@@ -56,7 +56,7 @@ void WeaponsBar::update(const std::vector<std::shared_ptr<AbstractWeapon>>& weap
             sf::FloatRect text_rect = ammo_.at(i).getLocalBounds();
             ammo_.at(i).setOrigin(text_rect.left + text_rect.width / 2.0f,
                                   text_rect.top + text_rect.height / 2.0f);
-            ammo_.at(i).setPosition(weapon_pos + sf::Vector2f{-20.0f, -30.0f * CFG.getFloat("graphics/user_interface_zoom")});
+            ammo_.at(i).setPosition(weapon_pos + sf::Vector2f{-20.0f, -30.0f * CFG.get<float>("graphics/user_interface_zoom")});
         }
         else
         {

@@ -10,11 +10,11 @@
 
 HealthBar::HealthBar(const sf::Vector2f& position) :
         AbstractDrawableObject(position,
-                               {HEALTH_SIZE_X_ * CFG.getFloat("graphics/user_interface_zoom"),
-                                HEALTH_SIZE_Y_ * CFG.getFloat("graphics/user_interface_zoom")},
+                               {HEALTH_SIZE_X_ * CFG.get<float>("graphics/user_interface_zoom"),
+                                HEALTH_SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom")},
                                &RM.getTexture("full_health_bar")),
         curr_health_shape_(4),
-        curr_health_(CFG.getFloat("graphics/inertial_states_change_speed"))
+        curr_health_(CFG.get<float>("graphics/inertial_states_change_speed"))
 {
 
     curr_health_shape_.setPosition(position);

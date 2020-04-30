@@ -194,6 +194,21 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 auto mouse_pos = sf::Mouse::getPosition(graphics.getWindow());
                 auto mouse_world_pos = graphics.getWindow().mapPixelToCoords(mouse_pos);
                 previous_mouse_world_pos_ = mouse_world_pos;
+
+                if (!mouse_on_widget_)
+                {
+                    if (event.mouseButton.button == sf::Mouse::Left &&
+                        !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl))
+                    {
+                        Editor::get().placeItem(crosshair_.getPosition());
+                    }
+                    else if (event.mouseButton.button == sf::Mouse::Right &&
+                             !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl))
+                    {
+                        Editor::get().removeItem(crosshair_.getPosition());
+                    }
+                }
+
                 break;
             }
             default:
@@ -240,16 +255,17 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window, float 
     handleCameraCenter(graphics_window, mouse_world_pos, time_elapsed);
     handleCrosshair(graphics_window, mouse_world_pos, time_elapsed);
 
-    bool is_on_widget = false;
+    mouse_on_widget_ = false;
 
     for (auto& widget : gui_.getWidgets())
         if (widget->mouseOnWidget({static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y)}) &&
             widget->isVisible())
-             is_on_widget = true;
+                mouse_on_widget_ = true;
 
-    if (!is_on_widget && !sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+    if (!mouse_on_widget_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) &&
+        Editor::get().getCurrentItem().first.find("tile") != std::string::npos)
     {
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) )
         {
             Editor::get().placeItem(crosshair_.getPosition());
         }

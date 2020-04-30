@@ -19,6 +19,7 @@ namespace r3e {
         AbstractDrawableObject(const sf::Vector2f& position,
                                const sf::Vector2f& size,
                                sf::Texture* texture_name,
+                               int z_index = 0,
                                short int frames_number = 1,
                                float frame_duration = 0.0f);
 
@@ -54,6 +55,8 @@ namespace r3e {
 
         virtual bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f);
 
+        virtual int getZIndex() const;
+
         virtual short int getFramesNumber() const;
 
         virtual short int getCurrentFrame() const;
@@ -71,6 +74,7 @@ namespace r3e {
 
         sf::RectangleShape shape_;
         bool is_visible_;
+        int z_index_;
 
     private:
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -80,8 +84,10 @@ namespace r3e {
     struct AbstractDrawableObjectsCmp {
         bool operator()(const AbstractDrawableObject* lhs, const AbstractDrawableObject* rhs) const
         {
-            return (lhs->getPosition().y < rhs->getPosition().y) ||
-                   (lhs->getPosition().y == rhs->getPosition().y && lhs->getPosition().x <= rhs->getPosition().x);
+            return (lhs->getZIndex() < rhs->getZIndex()) ||
+                   (lhs->getZIndex() == rhs->getZIndex() && lhs->getPosition().y < rhs->getPosition().y) ||
+                   (lhs->getZIndex() == rhs->getZIndex() && lhs->getPosition().y == rhs->getPosition().y &&
+                    lhs->getPosition().x <= rhs->getPosition().x);
         }
     };
 

@@ -91,6 +91,7 @@ namespace editor {
         sf::Text information_;
         float information_a_;
 
+        bool mouse_on_widget_;
         sf::Vector2f previous_mouse_world_pos_;
 
     };

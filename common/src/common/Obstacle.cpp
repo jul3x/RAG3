@@ -17,6 +17,7 @@ Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id, int u_id
                      Collision::Box(utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_size_x"),
                                     utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_size_y")),
                      &RM.getTexture("obstacles/" + id),
+                     utils::j3x::get<int>(RM.getObjectParams("obstacles", id), "z_index"),
                      utils::j3x::get<int>(RM.getObjectParams("obstacles", id), "frames_number"),
                      utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "frame_duration")),
         Shootable(static_cast<int>(utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "endurance")) *

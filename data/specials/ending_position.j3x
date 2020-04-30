@@ -14,5 +14,6 @@ string default_activation=OnEnter
 list[string] default_functions=[MapEnd]
 list[string] default_datas=[Null]
 
-
 bool is_drawable=0
+
+int z_index=0

@@ -81,34 +81,45 @@ private:
     template<class T>
     inline bool checkCollisions(const sf::Vector2f& pos, std::list<T>& objs, bool erase = false)
     {
+        std::list<typename std::list<T>::iterator> found;
         for (auto it = objs.begin(); it != objs.end(); ++it)
         {
             if (utils::geo::isPointInRectangle(
                     pos, (*it)->getPosition() - sf::Vector2f(DecorationTile::SIZE_X_ / 2.0f, DecorationTile::SIZE_Y_ / 2.0f),
                     {DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_}))
             {
-                if (erase)
-                    objs.erase(it);
-
-                return true;
+                found.emplace_back(it);
             }
         }
-        return false;
+
+        if (found.empty())
+            return false;
+
+        if (erase)
+            objs.erase(found.back());
+
+        return true;
     }
 
     template<class T>
     T* getItemInfo(const sf::Vector2f& pos, std::list<std::shared_ptr<T>>& objs)
     {
+        std::list<typename std::list<std::shared_ptr<T>>::iterator> found;
+
         for (auto it = objs.begin(); it != objs.end(); ++it)
         {
             if (utils::geo::isPointInRectangle(
                     pos, (*it)->getPosition() - sf::Vector2f(DecorationTile::SIZE_X_ / 2.0f, DecorationTile::SIZE_Y_ / 2.0f),
                     {DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_}))
             {
-                return it->get();
+                found.emplace_back(it);
             }
         }
-        return nullptr;
+
+        if (found.empty())
+            return nullptr;
+
+        return found.back()->get();
     }
 
     template<class T>

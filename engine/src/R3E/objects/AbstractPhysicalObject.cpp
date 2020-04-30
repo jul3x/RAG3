@@ -16,9 +16,10 @@ namespace r3e {
                                                    const sf::Vector2f& size,
                                                    const Collision::Area& c_area,
                                                    sf::Texture* texture,
+                                                   int z_index,
                                                    short int frames_number,
                                                    float frame_duration) :
-            AbstractDrawableObject(position, size, texture, frames_number, frame_duration),
+            AbstractDrawableObject(position, size, texture, z_index, frames_number, frame_duration),
             c_area_(c_area) {}
 
     const Collision::Area& AbstractPhysicalObject::getCollisionArea() const
@@ -39,9 +40,10 @@ namespace r3e {
                                const sf::Vector2f& size,
                                const Collision::Area& c_area,
                                sf::Texture* texture,
+                               int z_index,
                                short int frames_number,
                                float frame_duration) :
-            AbstractPhysicalObject(position, size, c_area, texture, frames_number, frame_duration) {}
+            AbstractPhysicalObject(position, size, c_area, texture, z_index, frames_number, frame_duration) {}
 
     bool StaticObject::update(float time_elapsed) { return true; }
 
@@ -54,10 +56,11 @@ namespace r3e {
                                  const sf::Vector2f& size,
                                  const Collision::Area& c_area,
                                  sf::Texture* texture,
+                                 int z_index,
                                  short int frames_number,
                                  float frame_duration,
                                  const float acceleration) :
-            StaticObject(position, size, c_area, texture, frames_number, frame_duration),
+            StaticObject(position, size, c_area, texture, z_index,  frames_number, frame_duration),
             curr_v_(velocity), set_v_(velocity),
             acceleration_(acceleration) {}
 
@@ -111,9 +114,10 @@ namespace r3e {
                                    const sf::Vector2f& size,
                                    const Collision::Area& c_area,
                                    sf::Texture* texture,
+                                   int z_index,
                                    short int frames_number,
                                    float frame_duration,
                                    float acceleration) :
-            DynamicObject(position, velocity, size, c_area, texture, frames_number, frame_duration, acceleration) {}
+            DynamicObject(position, velocity, size, c_area, texture, z_index, frames_number, frame_duration, acceleration) {}
 
 } // namespace r3e

@@ -233,7 +233,17 @@ destroyed_wall 1200 1000 656
 destroyed_wall 1200 900 657
 destroyed_wall 1200 800 658
 destroyed_wall 1200 700 659
-destroyed_wall 1200 600 660
+floor_side 1200 550 669
+destroyed_wall 1200 600 671
+flame 600 500 672
+flame 625 475 673
+flame 500 450 674
+flame 575 325 675
+flame 575 400 676
+flame 550 500 677
+flame 650 425 678
+flame 525 400 679
+flame 600 450 680
 
 characters: 
 standard 4200 4800 231 OnKill [SpawnThought] [Die_motherfucker,_die!]

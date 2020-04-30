@@ -13,6 +13,7 @@ Decoration::Decoration(const sf::Vector2f& position, const std::string& id, int 
                                {utils::j3x::get<float>(RM.getObjectParams("decorations", id), "size_x"),
                                 utils::j3x::get<float>(RM.getObjectParams("decorations", id), "size_y")},
                                &RM.getTexture("decorations/" + id),
+                               utils::j3x::get<int>(RM.getObjectParams("decorations", id), "z_index"),
                                utils::j3x::get<int>(RM.getObjectParams("decorations", id), "frames_number"),
                                utils::j3x::get<float>(RM.getObjectParams("decorations", id), "frame_duration"))
 {

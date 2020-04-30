@@ -14,3 +14,5 @@ list[string] default_functions=[AddWeapon]
 list[string] default_datas=[shotgun]
 
 bool is_drawable=1
+
+int z_index=0

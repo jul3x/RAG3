@@ -368,14 +368,14 @@ void Game::killNPC(NPC* npc)
 void Game::draw(graphics::Graphics& graphics)
 {
     for (auto& decoration : map_->getDecorationsTiles())
-        graphics.draw(*decoration);
+        graphics.drawSorted(*decoration);
 
     for (auto& decoration : map_->getDecorations())
-        graphics.draw(*decoration);
+        graphics.drawSorted(*decoration);
 
     for (auto& special : map_->getSpecials())
         if (special->isDrawable())
-            graphics.draw(*special);
+            graphics.drawSorted(*special);
 
     for (auto& obstacle : map_->getObstaclesTiles())
         graphics.drawSorted(*obstacle);

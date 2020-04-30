@@ -11,3 +11,5 @@ int frames_number=1
 float frame_duration=0.0f
 
 float endurance=99999999.0f
+
+int z_index=1

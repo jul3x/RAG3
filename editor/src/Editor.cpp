@@ -142,14 +142,13 @@ void Editor::placeItem(const sf::Vector2f& pos)
     else if (current_item_.first == "obstacles_tiles")
         map_->spawnObstacleTile(pos, current_item_.second, true);
     else if (current_item_.first == "characters")
-        map_->spawnCharacter(pos, current_item_.second, true);
+        map_->spawnCharacter(pos, current_item_.second, false);
     else if (current_item_.first == "specials")
-        map_->spawnSpecial(pos, current_item_.second, true);
+        map_->spawnSpecial(pos, current_item_.second, false);
     else if (current_item_.first == "decorations")
-        map_->spawnDecoration(pos, current_item_.second, true);
+        map_->spawnDecoration(pos, current_item_.second, false);
     else if (current_item_.first == "obstacles")
-        map_->spawnObstacle(pos, current_item_.second, true);
-
+        map_->spawnObstacle(pos, current_item_.second, false);
 }
 
 void Editor::removeItem(const sf::Vector2f& pos)

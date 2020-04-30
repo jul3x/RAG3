@@ -47,35 +47,35 @@ TEST(NumericTest, IsNearlyEqual) {
 
 TEST(NumericTest, IsNearlyEqualVec) {
     // positive values
-    EXPECT_TRUE(utils::num::isNearlyEqual({0.0f, 0.0f}, {0.0f, 0.0f}, 0.001f));
-    EXPECT_TRUE(utils::num::isNearlyEqual({0.0f, 0.0f}, {0.999f, 0.0f}, 1.000f));
-    EXPECT_TRUE(utils::num::isNearlyEqual({0.0f, 0.0f}, {0.999f, 0.999f}, 1.000f));
-    EXPECT_TRUE(utils::num::isNearlyEqual({0.0f, 0.0f}, {0.0f, 0.999f}, 1.000f));
-    EXPECT_TRUE(utils::num::isNearlyEqual({0.999f, 0.999f}, {0.999f, 0.999f}, 0.001f));
+    EXPECT_TRUE(utils::num::isNearlyEqual(sf::Vector2f{0.0f, 0.0f}, sf::Vector2f{0.0f, 0.0f}, 0.001f));
+    EXPECT_TRUE(utils::num::isNearlyEqual(sf::Vector2f{0.0f, 0.0f}, sf::Vector2f{0.999f, 0.0f}, 1.000f));
+    EXPECT_TRUE(utils::num::isNearlyEqual(sf::Vector2f{0.0f, 0.0f}, sf::Vector2f{0.999f, 0.999f}, 1.000f));
+    EXPECT_TRUE(utils::num::isNearlyEqual(sf::Vector2f{0.0f, 0.0f}, sf::Vector2f{0.0f, 0.999f}, 1.000f));
+    EXPECT_TRUE(utils::num::isNearlyEqual(sf::Vector2f{0.999f, 0.999f}, sf::Vector2f{0.999f, 0.999f}, 0.001f));
 
-    EXPECT_FALSE(utils::num::isNearlyEqual({0.999f, 0.0f}, {0.995f, 0.0f}, 0.001f));
-    EXPECT_FALSE(utils::num::isNearlyEqual({0.0f, 0.999f}, {0.0f, 0.995f}, 0.001f));
+    EXPECT_FALSE(utils::num::isNearlyEqual(sf::Vector2f{0.999f, 0.0f}, sf::Vector2f{0.995f, 0.0f}, 0.001f));
+    EXPECT_FALSE(utils::num::isNearlyEqual(sf::Vector2f{0.0f, 0.999f}, sf::Vector2f{0.0f, 0.995f}, 0.001f));
 
     // negative values
-    EXPECT_TRUE(utils::num::isNearlyEqual({0.0f, 0.0f}, {-0.999f, 0.0f}, 1.000f));
-    EXPECT_TRUE(utils::num::isNearlyEqual({0.0f, 0.0f}, {-0.999f, -0.999f}, 1.000f));
-    EXPECT_TRUE(utils::num::isNearlyEqual({0.0f, 0.0f}, {0.0f, -0.999f}, 1.000f));
-    EXPECT_TRUE(utils::num::isNearlyEqual({-0.999f, -0.999f}, {-0.999f, -0.999f}, 0.001f));
+    EXPECT_TRUE(utils::num::isNearlyEqual(sf::Vector2f{0.0f, 0.0f}, sf::Vector2f{-0.999f, 0.0f}, 1.000f));
+    EXPECT_TRUE(utils::num::isNearlyEqual(sf::Vector2f{0.0f, 0.0f}, sf::Vector2f{-0.999f, -0.999f}, 1.000f));
+    EXPECT_TRUE(utils::num::isNearlyEqual(sf::Vector2f{0.0f, 0.0f}, sf::Vector2f{0.0f, -0.999f}, 1.000f));
+    EXPECT_TRUE(utils::num::isNearlyEqual(sf::Vector2f{-0.999f, -0.999f}, sf::Vector2f{-0.999f, -0.999f}, 0.001f));
 
-    EXPECT_FALSE(utils::num::isNearlyEqual({-0.999f, 0.0f}, {-0.995f, 0.0f}, 0.001f));
-    EXPECT_FALSE(utils::num::isNearlyEqual({0.0f, -0.999f}, {0.0f, -0.995f}, 0.001f));
+    EXPECT_FALSE(utils::num::isNearlyEqual(sf::Vector2f{-0.999f, 0.0f}, sf::Vector2f{-0.995f, 0.0f}, 0.001f));
+    EXPECT_FALSE(utils::num::isNearlyEqual(sf::Vector2f{0.0f, -0.999f}, sf::Vector2f{0.0f, -0.995f}, 0.001f));
 
     // positive-negative values
-    EXPECT_TRUE(utils::num::isNearlyEqual({0.0f, 0.0f}, {-0.999f, 0.0f}, 1.000f));
-    EXPECT_TRUE(utils::num::isNearlyEqual({0.0f, 0.0f}, {-0.999f, 0.999f}, 1.000f));
-    EXPECT_TRUE(utils::num::isNearlyEqual({-0.999f, 0.999f}, {-0.999f, 0.999f}, 0.001f));
-    EXPECT_TRUE(utils::num::isNearlyEqual({0.999f, -0.999f}, {0.999f, -0.999f}, 0.001f));
+    EXPECT_TRUE(utils::num::isNearlyEqual(sf::Vector2f{0.0f, 0.0f}, sf::Vector2f{-0.999f, 0.0f}, 1.000f));
+    EXPECT_TRUE(utils::num::isNearlyEqual(sf::Vector2f{0.0f, 0.0f}, sf::Vector2f{-0.999f, 0.999f}, 1.000f));
+    EXPECT_TRUE(utils::num::isNearlyEqual(sf::Vector2f{-0.999f, 0.999f}, sf::Vector2f{-0.999f, 0.999f}, 0.001f));
+    EXPECT_TRUE(utils::num::isNearlyEqual(sf::Vector2f{0.999f, -0.999f}, sf::Vector2f{0.999f, -0.999f}, 0.001f));
 
-    EXPECT_FALSE(utils::num::isNearlyEqual({-0.999f, 0.0f}, {0.995f, 0.0f}, 0.001f));
-    EXPECT_FALSE(utils::num::isNearlyEqual({0.0f, -0.999f}, {0.0f, 0.995f}, 0.001f));
+    EXPECT_FALSE(utils::num::isNearlyEqual(sf::Vector2f{-0.999f, 0.0f}, sf::Vector2f{0.995f, 0.0f}, 0.001f));
+    EXPECT_FALSE(utils::num::isNearlyEqual(sf::Vector2f{0.0f, -0.999f}, sf::Vector2f{0.0f, 0.995f}, 0.001f));
 
     // negavite error
-    EXPECT_FALSE(utils::num::isNearlyEqual({0.0f, 0.0f}, {0.0f, 0.0f}, -0.003f));
+    EXPECT_FALSE(utils::num::isNearlyEqual(sf::Vector2f{0.0f, 0.0f}, sf::Vector2f{0.0f, 0.0f}, -0.003f));
 }
 
 TEST(NumericTest, IsBetween) {

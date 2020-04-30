@@ -8,10 +8,7 @@
 
 #include <common/ResourceManager.h>
 
-#include <events/ExplosionEvent.h>
-#include <events/ShotEvent.h>
-#include <events/SparksEvent.h>
-#include <events/TeleportationEvent.h>
+#include <events/Event.h>
 
 #include <Game.h>
 
@@ -450,12 +447,13 @@ const ai::MapBlockage& Game::getMapBlockage() const
 
 void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const float r)
 {
-    engine_->spawnAnimationEvent(std::make_shared<SparksEvent>(pos, dir, r));
+    engine_->spawnAnimationEvent(std::make_shared<Event>(pos, "sparks", dir, r));
 }
 
 void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
 {
-    engine_->spawnAnimationEvent(std::make_shared<ExplosionEvent>(pos, r));
+    auto number = std::to_string(utils::num::getRandom(1, 3));
+    engine_->spawnAnimationEvent(std::make_shared<Event>(pos, "explosion_" + number, 0.0f, r));
 
     if (CFG.get<int>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
@@ -463,7 +461,7 @@ void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
 
 void Game::spawnTeleportationEvent(const sf::Vector2f& pos)
 {
-    engine_->spawnAnimationEvent(std::make_shared<TeleportationEvent>(pos));
+    engine_->spawnAnimationEvent(std::make_shared<Event>(pos + sf::Vector2f{0.0f, 10.0f}, "teleportation"));
 
     if (CFG.get<int>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("teleportation"), pos);
@@ -494,7 +492,7 @@ void Game::spawnAchievement(Achievements::Type type)
 
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir)
 {
-    auto shot_event = std::make_shared<ShotEvent>(pos, dir * 180.0f / M_PI,
+    auto shot_event = std::make_shared<Event>(pos, "shot", dir * 180.0f / M_PI,
                                                   utils::j3x::get<float>(RM.getObjectParams("bullets", name), "burst_size"));
     engine_->spawnAnimationEvent(shot_event);
 

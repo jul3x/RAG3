@@ -13,3 +13,4 @@ string bullets=../data/bullets
 string specials=../data/specials
 string obstacles=../data/obstacles
 string decorations=../data/decorations
+string animations=../data/animations

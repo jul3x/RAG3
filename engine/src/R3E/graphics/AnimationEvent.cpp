@@ -14,11 +14,12 @@ namespace r3e {
         AnimationEvent::AnimationEvent(sf::Texture* texture,
                                        const sf::Vector2i& frame_size,
                                        const sf::Vector2f& position,
+                                       int z_index,
                                        float duration_s, short int frames_count,
                                        const AnimationType& animation_type) :
                 AbstractDrawableObject(position,
                                        static_cast<sf::Vector2f>(frame_size),
-                                       texture),
+                                       texture, z_index),
                 frame_size_(frame_size),
                 animation_source_({0, 0}, frame_size),
                 type_(animation_type),

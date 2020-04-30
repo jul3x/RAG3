@@ -189,6 +189,13 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                     gui_.get("special_object_window")->setVisible(false);
                 }
             }
+            case sf::Event::MouseButtonPressed:
+            {
+                auto mouse_pos = sf::Mouse::getPosition(graphics.getWindow());
+                auto mouse_world_pos = graphics.getWindow().mapPixelToCoords(mouse_pos);
+                previous_mouse_world_pos_ = mouse_world_pos;
+                break;
+            }
             default:
             {
                 break;
@@ -257,12 +264,9 @@ inline void UserInterface::handleCameraCenter(sf::RenderWindow& graphics_window,
 {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        camera_->setPointingTo(camera_->getPointingTo() +
-                               CFG.get<float>("view_move_speed") * time_elapsed *
-                               utils::geo::vectorLengthLimit(previous_mouse_world_pos_ - mouse_world_pos, 1.0f));
+        sf::Vector2f vec = camera_->getPointingTo() + previous_mouse_world_pos_ - mouse_world_pos;
+        camera_->setPointingTo(vec);
     }
-
-    previous_mouse_world_pos_ = mouse_world_pos;
 }
 
 inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos, float time_elapsed)

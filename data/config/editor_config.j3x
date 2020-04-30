@@ -6,7 +6,6 @@ int32 background_color=0x33333300
 
 float camera_speed=4.0f
 float camera_zoom_speed=5.0f
-float view_move_speed=50000.0f
 
 float user_interface_zoom=1.0f
 

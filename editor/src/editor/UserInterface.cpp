@@ -120,6 +120,16 @@ void UserInterface::openSpecialObjectWindow(const std::string& category, Functio
     gui_.get("special_object_window")->setVisible(true);
 }
 
+void UserInterface::setZIndex(int value)
+{
+    max_z_index_ = value;
+}
+
+int UserInterface::getZIndex() const
+{
+    return max_z_index_;
+}
+
 void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapsed)
 {
     static sf::Event event;

@@ -54,6 +54,10 @@ namespace editor {
 
         void openSpecialObjectWindow(const std::string& category, Functional* obj);
 
+        void setZIndex(int value);
+
+        int getZIndex() const;
+
     private:
         inline void generateMenuBar(sf::RenderWindow& window);
 
@@ -93,6 +97,8 @@ namespace editor {
 
         bool mouse_on_widget_;
         sf::Vector2f previous_mouse_world_pos_;
+
+        int max_z_index_;
 
     };
 } // namespace editor

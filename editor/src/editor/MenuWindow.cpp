@@ -78,7 +78,11 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
     z_index_slider_->setMaximum(10);
     grid_->addWidget(z_index_slider_, 3, 1);
 
+    this->ui_->setZIndex(10);
+
     z_index_slider_->connect("ValueChanged", [this]() {
-        this->z_index_label_->setText("Visible z-index: " + std::to_string(static_cast<int>(this->z_index_slider_->getValue())));
+        int value = this->z_index_slider_->getValue();
+        this->z_index_label_->setText("Visible z-index: " + std::to_string(value));
+        this->ui_->setZIndex(value);
     });
 }

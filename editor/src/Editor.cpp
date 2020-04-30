@@ -61,24 +61,31 @@ void Editor::update(float time_elapsed)
 void Editor::draw(graphics::Graphics& graphics)
 {
     grid_.draw(graphics);
+    auto max_z_index = ui_->getZIndex();
 
     for (auto& decoration : map_->getDecorationsTiles())
-        graphics.draw(*decoration);
+        if (decoration->getZIndex() <= max_z_index)
+            graphics.draw(*decoration);
 
     for (auto& decoration : map_->getDecorations())
-        graphics.drawSorted(*decoration);
+        if (decoration->getZIndex() <= max_z_index)
+            graphics.drawSorted(*decoration);
 
     for (auto& obstacle : map_->getObstaclesTiles())
-        graphics.drawSorted(*obstacle);
+        if (obstacle->getZIndex() <= max_z_index)
+            graphics.drawSorted(*obstacle);
 
     for (auto& obstacle : map_->getObstacles())
-        graphics.drawSorted(*obstacle);
+        if (obstacle->getZIndex() <= max_z_index)
+            graphics.drawSorted(*obstacle);
 
     for (auto& character : map_->getNPCs())
-        graphics.drawSorted(*character);
+        if (character->getZIndex() <= max_z_index)
+            graphics.drawSorted(*character);
 
     for (auto& special : map_->getSpecials())
-        graphics.drawSorted(*special);
+        if (special->getZIndex() <= max_z_index)
+            graphics.drawSorted(*special);
 
     graphics.drawAlreadySorted();
 }

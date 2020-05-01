@@ -23,8 +23,8 @@ using namespace r3e;
 class Map {
 public:
     using Data = std::tuple<std::list<std::shared_ptr<ObstacleTile>>, std::list<std::shared_ptr<DecorationTile>>,
-                            std::list<std::shared_ptr<NPC>>, std::list<std::shared_ptr<Special>>,
-                            std::list<std::shared_ptr<Obstacle>>, std::list<std::shared_ptr<Decoration>>>;
+            std::list<std::shared_ptr<NPC>>, std::list<std::shared_ptr<Special>>,
+            std::list<std::shared_ptr<Obstacle>>, std::list<std::shared_ptr<Decoration>>>;
     using TileMap = std::tuple<sf::Vector2f, std::vector<std::vector<float>>>;
 
     Map();
@@ -49,66 +49,98 @@ public:
 
     std::list<std::shared_ptr<Obstacle>>& getObstacles();
 
-    DecorationTile* spawnDecorationTile(const sf::Vector2f& pos, const std::string& id, bool check = false);
+    DecorationTile*
+    spawnDecorationTile(const sf::Vector2f& pos, const std::string& id, bool check = false,
+                        int max_z_index = std::numeric_limits<int>::infinity());
 
-    ObstacleTile* spawnObstacleTile(const sf::Vector2f& pos, const std::string& id, bool check = false);
+    ObstacleTile*
+    spawnObstacleTile(const sf::Vector2f& pos, const std::string& id, bool check = false,
+                      int max_z_index = std::numeric_limits<int>::infinity());
 
-    NPC* spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check = false);
+    NPC*
+    spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check = false,
+                   int max_z_index = std::numeric_limits<int>::infinity());
 
-    Special* spawnSpecial(const sf::Vector2f& pos, const std::string& id, bool check = false);
+    Special*
+    spawnSpecial(const sf::Vector2f& pos, const std::string& id, bool check = false,
+                 int max_z_index = std::numeric_limits<int>::infinity());
 
-    Decoration* spawnDecoration(const sf::Vector2f& pos, const std::string& id, bool check = false);
+    Decoration*
+    spawnDecoration(const sf::Vector2f& pos, const std::string& id, bool check = false,
+                    int max_z_index = std::numeric_limits<int>::infinity());
 
-    Obstacle* spawnObstacle(const sf::Vector2f& pos, const std::string& id, bool check = false);
+    Obstacle*
+    spawnObstacle(const sf::Vector2f& pos, const std::string& id, bool check = false,
+                  int max_z_index = std::numeric_limits<int>::infinity());
 
-    void removeTile(const sf::Vector2f& pos);
+    void removeTile(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
 
-    void removeObject(const sf::Vector2f& pos);
+    void removeObject(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
 
-    std::tuple<std::string, std::string, int> getObjectInfo(const sf::Vector2f& pos);
+    std::tuple<std::string, std::string, int>
+    getObjectInfo(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
 
-    Special* getSpecialObject(const sf::Vector2f& pos);
+    Special*
+    getSpecialObject(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
 
-    NPC* getNPCObject(const sf::Vector2f& pos);
+    NPC*
+    getNPCObject(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
 
-    Special* getSpecialObject(int id);
+    Special*
+    getSpecialObject(int id);
 
-    Obstacle* getObstacleObject(int id);
+    Obstacle*
+    getObstacleObject(int id);
 
     std::pair<sf::Vector2<size_t>, sf::Vector2f> getTileConstraints() const;
 
 private:
     template<class T>
-    inline bool checkCollisions(const sf::Vector2f& pos, std::list<T>& objs, bool erase = false)
+    inline bool checkCollisions(const sf::Vector2f& pos, std::list<T>& objs, bool erase = false,
+                                int max_z_index = std::numeric_limits<int>::infinity())
     {
+        std::list<typename std::list<T>::iterator> found;
         for (auto it = objs.begin(); it != objs.end(); ++it)
         {
-            if (utils::geo::isPointInRectangle(
-                    pos, (*it)->getPosition() - sf::Vector2f(DecorationTile::SIZE_X_ / 2.0f, DecorationTile::SIZE_Y_ / 2.0f),
-                    {DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_}))
+            if ((*it)->getZIndex() <= max_z_index &&
+                utils::geo::isPointInRectangle(pos, (*it)->getPosition() - sf::Vector2f(DecorationTile::SIZE_X_ / 2.0f,
+                                                                                        DecorationTile::SIZE_Y_ / 2.0f),
+                                               {DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_}))
             {
-                if (erase)
-                    objs.erase(it);
-
-                return true;
+                found.emplace_back(it);
             }
         }
-        return false;
+
+        if (found.empty())
+            return false;
+
+        if (erase)
+            objs.erase(found.back());
+
+        return true;
     }
 
     template<class T>
-    T* getItemInfo(const sf::Vector2f& pos, std::list<std::shared_ptr<T>>& objs)
+    T* getItemInfo(const sf::Vector2f& pos, std::list<std::shared_ptr<T>>& objs,
+                   int max_z_index = std::numeric_limits<int>::infinity())
     {
+        std::list<typename std::list<std::shared_ptr<T>>::iterator> found;
+
         for (auto it = objs.begin(); it != objs.end(); ++it)
         {
-            if (utils::geo::isPointInRectangle(
-                    pos, (*it)->getPosition() - sf::Vector2f(DecorationTile::SIZE_X_ / 2.0f, DecorationTile::SIZE_Y_ / 2.0f),
-                    {DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_}))
+            if ((*it)->getZIndex() <= max_z_index &&
+                utils::geo::isPointInRectangle(pos, (*it)->getPosition() - sf::Vector2f(DecorationTile::SIZE_X_ / 2.0f,
+                                                                                        DecorationTile::SIZE_Y_ / 2.0f),
+                                               {DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_}))
             {
-                return it->get();
+                found.emplace_back(it);
             }
         }
-        return nullptr;
+
+        if (found.empty())
+            return nullptr;
+
+        return found.back()->get();
     }
 
     template<class T>
@@ -124,10 +156,13 @@ private:
         return nullptr;
     }
 
-    inline bool checkCollisionsObjects(const sf::Vector2f& pos, bool erase = false)
+    inline bool checkCollisionsObjects(const sf::Vector2f& pos, bool erase = false,
+                                       int max_z_index = std::numeric_limits<int>::infinity())
     {
-        return (!this->checkCollisions(pos, characters_, erase) && !this->checkCollisions(pos, specials_, erase) &&
-                !this->checkCollisions(pos, decorations_, erase) && !this->checkCollisions(pos, obstacles_, erase));
+        return (!this->checkCollisions(pos, characters_, erase, max_z_index) &&
+                !this->checkCollisions(pos, specials_, erase, max_z_index) &&
+                !this->checkCollisions(pos, decorations_, erase, max_z_index) &&
+                !this->checkCollisions(pos, obstacles_, erase, max_z_index));
     }
 
 

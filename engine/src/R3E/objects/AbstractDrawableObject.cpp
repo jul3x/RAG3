@@ -10,7 +10,7 @@
 
 namespace r3e {
 
-    AbstractDrawableObject::AbstractDrawableObject() : is_visible_(true)
+    AbstractDrawableObject::AbstractDrawableObject() : is_visible_(true), z_index_(0)
     {
     }
 
@@ -18,10 +18,12 @@ namespace r3e {
     AbstractDrawableObject::AbstractDrawableObject(const sf::Vector2f& position,
                                                    const sf::Vector2f& size,
                                                    sf::Texture* texture,
+                                                   int z_index,
                                                    short int frames_number,
                                                    float frame_duration) :
             frames_number_(frames_number),
             frame_duration_(frame_duration),
+            z_index_(z_index),
             frame_size_(sf::Vector2i(size.x, size.y)),
             current_frame_(0),
             time_elapsed_(0.0f),
@@ -117,7 +119,7 @@ namespace r3e {
         shape_.setTextureRect(rect);
     }
 
-    void AbstractDrawableObject::changeOrigin(const sf::Vector2f &origin)
+    void AbstractDrawableObject::changeOrigin(const sf::Vector2f& origin)
     {
         shape_.setOrigin(origin);
     }
@@ -144,6 +146,11 @@ namespace r3e {
         shape_.setTextureRect(animation_source_);
 
         return true;
+    }
+
+    int AbstractDrawableObject::getZIndex() const
+    {
+        return z_index_;
     }
 
     short int AbstractDrawableObject::getFramesNumber() const

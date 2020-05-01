@@ -19,7 +19,8 @@ namespace editor {
         UserInterface* ui_;
         tgui::Grid::Ptr grid_;
 
-
+        tgui::Slider::Ptr z_index_slider_;
+        tgui::Label::Ptr z_index_label_;
     };
 
 } // namespace editor

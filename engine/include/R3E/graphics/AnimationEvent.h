@@ -27,6 +27,7 @@ namespace r3e {
             AnimationEvent(sf::Texture* texture,
                            const sf::Vector2i& frame_size,
                            const sf::Vector2f& position,
+                           int z_index,
                            float duration_s, short int frames_count,
                            const AnimationType& animation_type = AnimationType::LINEAR);
 

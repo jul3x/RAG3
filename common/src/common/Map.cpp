@@ -86,18 +86,18 @@ std::list<std::shared_ptr<Obstacle>>& Map::getObstacles()
     return obstacles_;
 }
 
-DecorationTile* Map::spawnDecorationTile(const sf::Vector2f& pos, const std::string& id, bool check)
+DecorationTile* Map::spawnDecorationTile(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
 {
-    if (!check || (!this->checkCollisions(pos, decorations_tiles_) && !this->checkCollisions(pos, obstacles_tiles_)))
+    if (!check || (!this->checkCollisions(pos, decorations_tiles_, false, max_z_index) && !this->checkCollisions(pos, obstacles_tiles_, false, max_z_index)))
     {
         decorations_tiles_.emplace_back(std::make_shared<DecorationTile>(pos, id));
         return decorations_tiles_.back().get();
     }
 }
 
-ObstacleTile* Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string& id, bool check)
+ObstacleTile* Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
 {
-    if (!check || (!this->checkCollisions(pos, decorations_tiles_) && !this->checkCollisions(pos, obstacles_tiles_)))
+    if (!check || (!this->checkCollisions(pos, decorations_tiles_, false, max_z_index) && !this->checkCollisions(pos, obstacles_tiles_, false, max_z_index)))
     {
         auto grid_pos = std::make_pair(static_cast<size_t>(pos.x / DecorationTile::SIZE_X_),
                                        static_cast<size_t>(pos.y / DecorationTile::SIZE_Y_));
@@ -111,36 +111,36 @@ ObstacleTile* Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string&
     }
 }
 
-NPC* Map::spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check)
+NPC* Map::spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
 {
-    if (!check || this->checkCollisionsObjects(pos))
+    if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
     {
         characters_.emplace_back(std::make_shared<NPC>(pos, id));
         return characters_.back().get();
     }
 }
 
-Special* Map::spawnSpecial(const sf::Vector2f& pos, const std::string& id, bool check)
+Special* Map::spawnSpecial(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
 {
-    if (!check || this->checkCollisionsObjects(pos))
+    if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
     {
         specials_.emplace_back(std::make_shared<Special>(pos, id));
         return specials_.back().get();
     }
 }
 
-Decoration* Map::spawnDecoration(const sf::Vector2f& pos, const std::string& id, bool check)
+Decoration* Map::spawnDecoration(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
 {
-    if (!check || this->checkCollisionsObjects(pos))
+    if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
     {
         decorations_.emplace_back(std::make_shared<Decoration>(pos, id));
         return decorations_.back().get();
     }
 }
 
-Obstacle* Map::spawnObstacle(const sf::Vector2f& pos, const std::string& id, bool check)
+Obstacle* Map::spawnObstacle(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
 {
-    if (!check || this->checkCollisionsObjects(pos))
+    if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
     {
         auto grid_pos = std::make_pair(static_cast<size_t>(pos.x / DecorationTile::SIZE_X_),
                                        static_cast<size_t>(pos.y / DecorationTile::SIZE_Y_));
@@ -154,41 +154,41 @@ Obstacle* Map::spawnObstacle(const sf::Vector2f& pos, const std::string& id, boo
     }
 }
 
-void Map::removeTile(const sf::Vector2f& pos)
+void Map::removeTile(const sf::Vector2f& pos, int max_z_index)
 {
-    (!this->checkCollisions(pos, decorations_tiles_, true) && !this->checkCollisions(pos, obstacles_tiles_, true));
+    (!this->checkCollisions(pos, decorations_tiles_, true, max_z_index) && !this->checkCollisions(pos, obstacles_tiles_, true, max_z_index));
 }
 
-void Map::removeObject(const sf::Vector2f& pos)
+void Map::removeObject(const sf::Vector2f& pos, int max_z_index)
 {
-    checkCollisionsObjects(pos, true);
+    checkCollisionsObjects(pos, true, max_z_index);
 }
 
-std::tuple<std::string, std::string, int> Map::getObjectInfo(const sf::Vector2f& pos)
+std::tuple<std::string, std::string, int> Map::getObjectInfo(const sf::Vector2f& pos, int max_z_index)
 {
-    auto ch = getItemInfo(pos, characters_);
+    auto ch = getItemInfo(pos, characters_, max_z_index);
     if (ch != nullptr)
         return std::make_tuple("characters", ch->getId(), ch->getUniqueId());
 
-    auto dec = getItemInfo(pos, decorations_);
+    auto dec = getItemInfo(pos, decorations_, max_z_index);
     if (dec != nullptr)
         return std::make_tuple("decorations", dec->getId(), dec->getUniqueId());
 
-    auto obs = getItemInfo(pos, obstacles_);
+    auto obs = getItemInfo(pos, obstacles_, max_z_index);
     if (obs != nullptr)
         return std::make_tuple("obstacles", obs->getId(), obs->getUniqueId());
 
     return std::make_tuple("", "", -1);
 }
 
-Special* Map::getSpecialObject(const sf::Vector2f& pos)
+Special* Map::getSpecialObject(const sf::Vector2f& pos, int max_z_index)
 {
-    return getItemInfo(pos, specials_);
+    return getItemInfo(pos, specials_, max_z_index);
 }
 
-NPC* Map::getNPCObject(const sf::Vector2f& pos)
+NPC* Map::getNPCObject(const sf::Vector2f& pos, int max_z_index)
 {
-    return getItemInfo(pos, characters_);
+    return getItemInfo(pos, characters_, max_z_index);
 }
 
 Special* Map::getSpecialObject(int id)

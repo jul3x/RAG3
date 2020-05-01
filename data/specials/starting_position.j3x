@@ -15,3 +15,5 @@ list[string] default_functions=[MapStart]
 list[string] default_datas=[Null]
 
 bool is_drawable=0
+
+int z_index=0

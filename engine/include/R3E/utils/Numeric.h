@@ -30,11 +30,23 @@ namespace r3e {
                 return static_cast<int>(std::lround(utils::num::getRandom<float>(left, right)));
             }
 
-            bool isBetween(float num, float a, float b);
+            template<class T>
+            bool isBetween(const T& num, const T& a, const T& b)
+            {
+                return a < num && num < b;
+            }
 
-            bool isNearlyEqual(float a, float b, float abs_error = 0.001f);
+            template<class T>
+            bool isNearlyEqual(const T& a, const T& b, float abs_error = 0.001f)
+            {
+                return std::abs(a - b) < abs_error;
+            }
 
-            bool isNearlyEqual(const sf::Vector2f& a, const sf::Vector2f& b, float abs_error = 0.001f);
+            template<class T>
+            bool isNearlyEqual(const sf::Vector2<T>& a, const sf::Vector2<T>& b, float abs_error = 0.001f)
+            {
+                return std::abs(a.x - b.x) < abs_error && std::abs(a.y - b.y) < abs_error;
+            }
 
         } // namespace num
     } // namespace utils

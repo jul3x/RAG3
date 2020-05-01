@@ -6,7 +6,6 @@ int32 background_color=0x33333300
 
 float camera_speed=4.0f
 float camera_zoom_speed=5.0f
-float view_move_speed=150.0f
 
 float user_interface_zoom=1.0f
 
@@ -18,15 +17,15 @@ float items_size=50.0f
 float menu_window_x=1500.0f
 float menu_window_y=250.0f
 float menu_window_size_x=350.0f
-float menu_window_size_y=120.0f
+float menu_window_size_y=200.0f
 float button_size_x=100.0f
 float button_size_y=30.0f
 
 float tiles_window_x=1500.0f
-float tiles_window_y=400.0f
+float tiles_window_y=480.0f
 
 float objects_window_x=1500.0f
-float objects_window_y=680.0f
+float objects_window_y=760.0f
 
 float popup_window_size_x=600.0f
 float popup_window_size_y=400.0f
@@ -36,4 +35,4 @@ float unique_object_window_size_y=100.0f
 
 float info_x=50.0f
 float info_y=50.0f
-float info_fade_speed=1.0f
+float info_fade_speed=200.0f

@@ -11,5 +11,5 @@ DecorationTile::DecorationTile(const sf::Vector2f& position,
         Identifiable(id),
         AbstractDrawableObject(position,
                                {SIZE_X_, SIZE_Y_},
-                               &RM.getTexture(
-                                       "decorations_tiles/" + id)) {}
+                               &RM.getTexture("decorations_tiles/" + id),
+                               utils::j3x::get<int>(RM.getObjectParams("decorations_tiles", id), "z_index")) {}

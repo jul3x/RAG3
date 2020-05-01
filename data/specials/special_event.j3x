@@ -15,3 +15,5 @@ list[string] default_functions=[Null;Deactivate]
 list[string] default_datas=[Null;Null]
 
 bool is_drawable=0
+
+int z_index=0

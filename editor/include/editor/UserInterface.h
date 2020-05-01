@@ -54,16 +54,20 @@ namespace editor {
 
         void openSpecialObjectWindow(const std::string& category, Functional* obj);
 
+        void setZIndex(int value);
+
+        int getZIndex() const;
+
     private:
         inline void generateMenuBar(sf::RenderWindow& window);
 
         inline void handleKeys();
 
-        inline void handleMouse(sf::RenderWindow& graphics_window);
+        inline void handleMouse(sf::RenderWindow& graphics_window, float time_elapsed);
 
-        inline void handleCameraCenter(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos);
+        inline void handleCameraCenter(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos, float time_elapsed);
 
-        inline void handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos);
+        inline void handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos, float time_elapsed);
 
         static constexpr float LOGO_OFF_X_ = 240.0f;
         static constexpr float LOGO_OFF_Y_ = 120.0f;
@@ -89,8 +93,12 @@ namespace editor {
         SpecialObjectWindow special_object_window_;
 
         sf::Text information_;
+        float information_a_;
 
+        bool mouse_on_widget_;
         sf::Vector2f previous_mouse_world_pos_;
+
+        int max_z_index_;
 
     };
 } // namespace editor

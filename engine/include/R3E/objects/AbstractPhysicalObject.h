@@ -24,6 +24,7 @@ namespace r3e {
                                const sf::Vector2f& size,
                                const Collision::Area& c_area,
                                sf::Texture* texture,
+                               int z_index = 0,
                                short int frames_number = 1,
                                float frame_duration = 0.0f);
 
@@ -44,8 +45,9 @@ namespace r3e {
                      const sf::Vector2f& size,
                      const Collision::Area& c_area,
                      sf::Texture* texture,
-                     short int frames_number,
-                     float frame_duration);
+                     int z_index = 0,
+                     short int frames_number = 1,
+                     float frame_duration = 0.0f);
 
         bool update(float time_elapsed) override;
 
@@ -62,6 +64,7 @@ namespace r3e {
                       const sf::Vector2f& size,
                       const Collision::Area& c_area,
                       sf::Texture* texture,
+                      int z_index,
                       short int frames_number,
                       float frame_duration,
                       float acceleration);
@@ -93,6 +96,7 @@ namespace r3e {
                        const sf::Vector2f& size,
                        const Collision::Area& c_area,
                        sf::Texture* texture,
+                       int z_index,
                        short int frames_number,
                        float frame_duration,
                        float acceleration);

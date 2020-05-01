@@ -43,6 +43,7 @@ UserInterface::UserInterface() :
     information_.setFont(RM.getFont("editor"));
     information_.setString("");
     information_.setCharacterSize(20);
+    information_a_ = 0.0f;
 
     gui_.setFont(RM.getFont("editor"));
 }
@@ -119,16 +120,26 @@ void UserInterface::openSpecialObjectWindow(const std::string& category, Functio
     gui_.get("special_object_window")->setVisible(true);
 }
 
+void UserInterface::setZIndex(int value)
+{
+    max_z_index_ = value;
+}
+
+int UserInterface::getZIndex() const
+{
+    return max_z_index_;
+}
+
 void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapsed)
 {
     static sf::Event event;
 
-    handleMouse(graphics.getWindow());
+    handleMouse(graphics.getWindow(), time_elapsed);
     handleKeys();
 
+    information_a_ = std::max(0.0f, information_a_ - time_elapsed * CFG.get<float>("info_fade_speed"));
     information_.setFillColor({information_.getFillColor().r, information_.getFillColor().g,
-                               information_.getFillColor().b,
-                               static_cast<sf::Uint8>(information_.getFillColor().a - time_elapsed * CFG.get<float>("info_fade_speed"))});
+                               information_.getFillColor().b, static_cast<sf::Uint8>(information_a_)});
 
     while (graphics.getWindow().pollEvent(event))
     {
@@ -188,6 +199,28 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                     gui_.get("special_object_window")->setVisible(false);
                 }
             }
+            case sf::Event::MouseButtonPressed:
+            {
+                auto mouse_pos = sf::Mouse::getPosition(graphics.getWindow());
+                auto mouse_world_pos = graphics.getWindow().mapPixelToCoords(mouse_pos);
+                previous_mouse_world_pos_ = mouse_world_pos;
+
+                if (!mouse_on_widget_)
+                {
+                    if (event.mouseButton.button == sf::Mouse::Left &&
+                        !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl))
+                    {
+                        Editor::get().placeItem(crosshair_.getPosition());
+                    }
+                    else if (event.mouseButton.button == sf::Mouse::Right &&
+                             !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl))
+                    {
+                        Editor::get().removeItem(crosshair_.getPosition());
+                    }
+                }
+
+                break;
+            }
             default:
             {
                 break;
@@ -210,36 +243,39 @@ void UserInterface::spawnInfo(const std::string& msg)
 {
     information_.setString(msg);
     information_.setFillColor(sf::Color::White);
+    information_a_ = 255.0f;
 }
 
 void UserInterface::spawnError(const std::string& msg)
 {
     information_.setString(msg);
     information_.setFillColor(sf::Color::Red);
+    information_a_ = 255.0f;
 }
 
 inline void UserInterface::handleKeys()
 {
 }
 
-inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
+inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window, float time_elapsed)
 {
     auto mouse_pos = sf::Mouse::getPosition(graphics_window);
     auto mouse_world_pos = graphics_window.mapPixelToCoords(mouse_pos);
 
-    handleCameraCenter(graphics_window, mouse_world_pos);
-    handleCrosshair(graphics_window, mouse_world_pos);
+    handleCameraCenter(graphics_window, mouse_world_pos, time_elapsed);
+    handleCrosshair(graphics_window, mouse_world_pos, time_elapsed);
 
-    bool is_on_widget = false;
+    mouse_on_widget_ = false;
 
     for (auto& widget : gui_.getWidgets())
         if (widget->mouseOnWidget({static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y)}) &&
             widget->isVisible())
-             is_on_widget = true;
+                mouse_on_widget_ = true;
 
-    if (!is_on_widget && !sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+    if (!mouse_on_widget_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) &&
+        Editor::get().getCurrentItem().first.find("tile") != std::string::npos)
     {
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) )
         {
             Editor::get().placeItem(crosshair_.getPosition());
         }
@@ -250,19 +286,16 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
     }
 }
 
-inline void UserInterface::handleCameraCenter(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos)
+inline void UserInterface::handleCameraCenter(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos, float time_elapsed)
 {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        camera_->setPointingTo(camera_->getPointingTo() +
-                               CFG.get<float>("view_move_speed") *
-                               utils::geo::vectorLengthLimit(previous_mouse_world_pos_ - mouse_world_pos, 1.0f));
+        sf::Vector2f vec = camera_->getPointingTo() + previous_mouse_world_pos_ - mouse_world_pos;
+        camera_->setPointingTo(vec);
     }
-
-    previous_mouse_world_pos_ = mouse_world_pos;
 }
 
-inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos)
+inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos, float time_elapsed)
 {
     const auto& current_item = Editor::get().getCurrentItem();
 

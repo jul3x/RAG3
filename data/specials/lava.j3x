@@ -14,3 +14,5 @@ list[string] default_functions=[Kill]
 list[string] default_datas=[lava]
 
 bool is_drawable=1
+
+int z_index=-1

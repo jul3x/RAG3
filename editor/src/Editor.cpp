@@ -61,24 +61,31 @@ void Editor::update(float time_elapsed)
 void Editor::draw(graphics::Graphics& graphics)
 {
     grid_.draw(graphics);
+    auto max_z_index = ui_->getZIndex();
 
     for (auto& decoration : map_->getDecorationsTiles())
-        graphics.draw(*decoration);
+        if (decoration->getZIndex() <= max_z_index)
+            graphics.draw(*decoration);
 
     for (auto& decoration : map_->getDecorations())
-        graphics.drawSorted(*decoration);
+        if (decoration->getZIndex() <= max_z_index)
+            graphics.drawSorted(*decoration);
 
     for (auto& obstacle : map_->getObstaclesTiles())
-        graphics.drawSorted(*obstacle);
+        if (obstacle->getZIndex() <= max_z_index)
+            graphics.drawSorted(*obstacle);
 
     for (auto& obstacle : map_->getObstacles())
-        graphics.drawSorted(*obstacle);
+        if (obstacle->getZIndex() <= max_z_index)
+            graphics.drawSorted(*obstacle);
 
     for (auto& character : map_->getNPCs())
-        graphics.drawSorted(*character);
+        if (character->getZIndex() <= max_z_index)
+            graphics.drawSorted(*character);
 
     for (auto& special : map_->getSpecials())
-        graphics.drawSorted(*special);
+        if (special->getZIndex() <= max_z_index)
+            graphics.drawSorted(*special);
 
     graphics.drawAlreadySorted();
 }
@@ -137,28 +144,29 @@ void Editor::readItemInfo(const sf::Vector2f& pos)
 
 void Editor::placeItem(const sf::Vector2f& pos)
 {
+    auto max_z_index = ui_->getZIndex();
     if (current_item_.first == "decorations_tiles")
-        map_->spawnDecorationTile(pos, current_item_.second, true);
+        map_->spawnDecorationTile(pos, current_item_.second, true, max_z_index);
     else if (current_item_.first == "obstacles_tiles")
-        map_->spawnObstacleTile(pos, current_item_.second, true);
+        map_->spawnObstacleTile(pos, current_item_.second, true, max_z_index);
     else if (current_item_.first == "characters")
-        map_->spawnCharacter(pos, current_item_.second, true);
+        map_->spawnCharacter(pos, current_item_.second, false, max_z_index);
     else if (current_item_.first == "specials")
-        map_->spawnSpecial(pos, current_item_.second, true);
+        map_->spawnSpecial(pos, current_item_.second, false, max_z_index);
     else if (current_item_.first == "decorations")
-        map_->spawnDecoration(pos, current_item_.second, true);
+        map_->spawnDecoration(pos, current_item_.second, false, max_z_index);
     else if (current_item_.first == "obstacles")
-        map_->spawnObstacle(pos, current_item_.second, true);
-
+        map_->spawnObstacle(pos, current_item_.second, false, max_z_index);
 }
 
 void Editor::removeItem(const sf::Vector2f& pos)
 {
+    auto max_z_index = ui_->getZIndex();
     if (current_item_.first == "decorations_tiles" || current_item_.first == "obstacles_tiles")
-        map_->removeTile(pos);
+        map_->removeTile(pos, max_z_index);
     else if (current_item_.first == "characters" || current_item_.first == "specials" || 
              current_item_.first == "decorations" || current_item_.first == "obstacles")
-        map_->removeObject(pos);
+        map_->removeObject(pos, max_z_index);
 }
 
 void Editor::clearMap()

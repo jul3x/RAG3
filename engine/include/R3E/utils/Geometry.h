@@ -16,48 +16,44 @@
 #include <R3E/ai/DataTypes.h>
 
 
-namespace r3e {
-    namespace utils {
-        namespace geo {
-            float getDistance(const sf::Vector2f& a, const sf::Vector2f& b);
+namespace r3e::utils::geo {
+    float getDistance(const sf::Vector2f& a, const sf::Vector2f& b);
 
-            sf::Vector2f polarToCartesian(float r, float theta_rad);
+    sf::Vector2f polarToCartesian(float r, float theta_rad);
 
-            std::tuple<float, float> cartesianToPolar(const sf::Vector2f& vector);
+    std::tuple<float, float> cartesianToPolar(const sf::Vector2f& vector);
 
-            sf::Vector2f vectorLengthLimit(const sf::Vector2f& vector_in, float max_length);
+    sf::Vector2f vectorLengthLimit(const sf::Vector2f& vector_in, float max_length);
 
-            sf::Vector2f getNormalized(const sf::Vector2f& vector);
+    sf::Vector2f getNormalized(const sf::Vector2f& vector);
 
-            bool isPointInRectangle(const sf::Vector2f& p, const sf::Vector2f& rect_pos, const sf::Vector2f& rect_size);
+    bool isPointInRectangle(const sf::Vector2f& p, const sf::Vector2f& rect_pos, const sf::Vector2f& rect_size);
 
-            short int AABB(const sf::Vector2f& a_origin, const sf::Vector2f& a_size,
-                           const sf::Vector2f& b_origin, const sf::Vector2f& b_size);
+    short int AABB(const sf::Vector2f& a_origin, const sf::Vector2f& a_size,
+                   const sf::Vector2f& b_origin, const sf::Vector2f& b_size);
 
-            bool circleCircle(const sf::Vector2f& a_origin, float a_r,
-                              const sf::Vector2f& b_origin, float b_r);
+    bool circleCircle(const sf::Vector2f& a_origin, float a_r,
+                      const sf::Vector2f& b_origin, float b_r);
 
-            short int ABCircle(const sf::Vector2f& a_origin, const sf::Vector2f& a_size,
-                               const sf::Vector2f& b_origin, float b_r);
+    short int ABCircle(const sf::Vector2f& a_origin, const sf::Vector2f& a_size,
+                       const sf::Vector2f& b_origin, float b_r);
 
-            std::tuple<sf::Vector2f, sf::Vector2f, sf::Vector2f> generateCollisionAABB(const StaticObject& a);
+    std::tuple<sf::Vector2f, sf::Vector2f, sf::Vector2f> generateCollisionAABB(const StaticObject& a);
 
-            float dotProduct(const sf::Vector2f& a, const sf::Vector2f& b);
+    float dotProduct(const sf::Vector2f& a, const sf::Vector2f& b);
 
-            float getAngle(const sf::Vector2f& a, const sf::Vector2f& b);
+    float getAngle(const sf::Vector2f& a, const sf::Vector2f& b);
 
-            float wrapAngle0_360(float angle);
+    float wrapAngle0_360(float angle);
 
-            float wrapAngle0_2PI(float angle);
+    float wrapAngle0_2PI(float angle);
 
-            float getAngleBetweenDegree(float angle_1, float angle_2);
+    float getAngleBetweenDegree(float angle_1, float angle_2);
 
-            float getAngleBetweenRadian(float angle_1, float angle_2);
+    float getAngleBetweenRadian(float angle_1, float angle_2);
 
-            sf::Vector2f getNearestForwardPointToPath(const sf::Vector2f& pos, const ai::Path& path);
+    sf::Vector2f getNearestForwardPointToPath(const sf::Vector2f& pos, const ai::Path& path);
 
-        } // namespace geo
-    } // namespace utils
-} // namespace r3e
+} // namespace r3e::utils::geo
 
 #endif // RAG3_ENGINE_UTILS_GEOMETRY_H

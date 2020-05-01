@@ -1,5 +1,7 @@
 bool god_mode=1
 
+bool no_clip_mode=1
+
 int obstacles_endurance_factor=3
 
 float get_shot_factor=100.0f

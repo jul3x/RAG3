@@ -23,6 +23,11 @@ Player::Player(const sf::Vector2f& position) :
     weapons_in_backpack_.push_back(std::make_shared<NoWeapon>());
 
     current_weapon_ = weapons_in_backpack_.begin();
+
+    if (CFG.get<int>("no_clip_mode"))
+    {
+        this->changeCollisionArea(Collision::None());
+    }
 }
 
 void Player::setDead()

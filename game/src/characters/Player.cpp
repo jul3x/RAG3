@@ -54,3 +54,18 @@ bool Player::update(float time_elapsed)
     return Character::update(time_elapsed);
 }
 
+void Player::setHealth(int life)
+{
+    if (!CFG.get<int>("god_mode"))
+    {
+        Character::setHealth(life);
+    }
+}
+
+void Player::getShot(const Bullet& bullet)
+{
+    if (!CFG.get<int>("god_mode"))
+    {
+        Character::getShot(bullet);
+    }
+}

@@ -134,6 +134,11 @@ const std::vector<std::shared_ptr<AbstractWeapon>>& Character::getWeapons() cons
     return this->weapons_in_backpack_;
 }
 
+void Character::setMaxHealth(int health)
+{
+    max_life_ = health;
+}
+
 int Character::getMaxHealth() const
 {
     return this->max_life_;

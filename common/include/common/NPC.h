@@ -61,6 +61,10 @@ protected:
 
     void handleActionState();
 
+    void standardAI(float time_elapsed);
+
+    void noneAI(float time_elapsed);
+
     sf::Vector2f findNearestSafeSpot(const sf::Vector2f& direction) const;
 
     static constexpr float MAX_DISTANCE_ = 1500.0f;
@@ -74,6 +78,8 @@ protected:
 
     VisibilityState visibility_state_;
     ActionState action_state_;
+
+    std::function<void(NPC*, float)> ai_function_;
 
 };
 

@@ -42,6 +42,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
                      utils::j3x::get<float>(RM.getObjectParams("characters", id), "gun_offset_y")}),
         current_rotation_quarter_(1),
         speed_factor_(1.0f),
+        rotate_to_(0.0f),
         current_special_object_(nullptr),
         Shootable(utils::j3x::get<int>(RM.getObjectParams("characters", id), "max_health"))
 {

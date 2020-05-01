@@ -12,7 +12,7 @@ tile_map:
 0 0 2 -2 -2 -2 -2 0 0 0 0 0 0 0 0 0 0 0 2 -2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
 0 0 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 2 -2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
 0 0 0 0 2 -2 -2 -2 2 0 0 0 0 0 0 0 0 2 2 -2 -2 -2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-0 0 0 2 2 -2 -2 -2 -2 2 2 0 0 2 2 0 2 2 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 2 -1 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 2 2 0 0 0 0 2 2 0 0 2 2 0 2 2 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 2 -1 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
 0 0 2 -2 -2 -2 -2 -2 -2 -2 -2 2 -2 2 2 2 2 2 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 2 -1 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
 0 0 2 -2 -2 -2 -2 -2 -2 -2 -2 -2 -2 -2 -2 -2 2 2 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 2 -1 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
 0 0 2 -2 -2 -2 -2 -2 -2 -2 -2 -2 -2 -2 -2 -2 -2 -2 -2 -2 -2 -2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 2 2 2 2 -1 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 0 0 0 
@@ -268,6 +268,11 @@ floor_side 1300 850 705
 floor_side 1100 850 706
 roof 1200 775 707
 roof_side 1200 825 709
+chains 575 1025 724
+floor_side 500 1150 726
+floor_side 600 1150 727
+floor_side 700 1150 728
+floor_side 800 1150 729
 
 characters: 
 standard 4200 4800 231 OnKill [SpawnThought] [Die_motherfucker,_die!]
@@ -297,6 +302,7 @@ standard 2425 3350 459 OnKill [Null] [Null]
 standard 2575 3550 460 OnKill [Null] [Null]
 standard 2375 4875 461 OnKill [Null] [Null]
 standard 1000 425 638 OnKill [Null] [Null]
+slave 575 1100 725 OnKill [Null] [Null]
 
 specials: 
 lever 4400 4400 164 OnUse [OpenDoor;ChangeOpenState] [163;163]
@@ -410,7 +416,6 @@ lava 700 900 624 OnEnter [Kill] [lava]
 health 200 300 626 OnEnter [AddHealth] [30]
 lever 2000 700 639 OnUse [OpenDoor;ChangeOpenState] [373;373]
 starting_position 350 750 644 OnEnter [MapStart] [Null]
-ending_position 500 1525 646 OnEnter [MapEnd] [Null]
 special_event 1200 725 717 OnEnter [RemoveDecoration;SpawnLava;Deactivate] [671;(1200,600);Null]
 special_event 1200 825 718 OnEnter [RemoveDecoration;SpawnLava;Deactivate] [659;(1200,700);Null]
 special_event 1200 925 719 OnEnter [RemoveDecoration;SpawnLava;Deactivate] [658;(1200,800);Null]
@@ -418,3 +423,7 @@ special_event 1200 1025 720 OnEnter [RemoveDecoration;SpawnLava;Deactivate] [657
 special_event 1200 1125 721 OnEnter [RemoveDecoration;SpawnLava;Deactivate] [656;(1200,1000);Null]
 special_event 1200 1225 722 OnEnter [RemoveDecoration;SpawnLava;Deactivate] [655;(1200,1100);Null]
 special_event 1200 1325 723 OnEnter [RemoveDecoration;SpawnLava;Deactivate] [654;(1200,1200);Null]
+lava 800 1200 730 OnEnter [Kill] [lava]
+lava 700 1200 731 OnEnter [Kill] [lava]
+lava 600 1200 732 OnEnter [Kill] [lava]
+lava 500 1200 733 OnEnter [Kill] [lava]

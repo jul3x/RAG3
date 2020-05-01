@@ -65,7 +65,7 @@ void Editor::draw(graphics::Graphics& graphics)
 
     for (auto& decoration : map_->getDecorationsTiles())
         if (decoration->getZIndex() <= max_z_index)
-            graphics.draw(*decoration);
+            graphics.drawSorted(*decoration);
 
     for (auto& decoration : map_->getDecorations())
         if (decoration->getZIndex() <= max_z_index)

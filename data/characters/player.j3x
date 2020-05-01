@@ -25,4 +25,6 @@ string default_activation=OnKill
 list[string] default_functions=[Null]
 list[string] default_datas=[Null]
 
+string ai_type=Standard
+
 int z_index=1

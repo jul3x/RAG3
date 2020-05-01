@@ -15,4 +15,4 @@ list[string] default_datas=[lava]
 
 bool is_drawable=1
 
-int z_index=-1
+int z_index=-2

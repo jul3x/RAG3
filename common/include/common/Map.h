@@ -92,6 +92,9 @@ public:
     Obstacle*
     getObstacleObject(int id);
 
+    Decoration*
+    getDecorationObject(int id);
+
     std::pair<sf::Vector2<size_t>, sf::Vector2f> getTileConstraints() const;
 
 private:

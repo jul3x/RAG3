@@ -222,6 +222,7 @@ void Game::updateMapObjects(float time_elapsed)
     auto& npcs = map_->getNPCs();
     auto& blockage = map_->getMapBlockage();
     auto& specials = map_->getSpecials();
+    auto& decorations = map_->getDecorations();
 
     for (auto it = obstacles_tiles.begin(); it != obstacles_tiles.end();)
     {
@@ -315,8 +316,22 @@ void Game::updateMapObjects(float time_elapsed)
         if (do_increment) ++it;
     }
 
-    for (auto& decoration : map_->getDecorations())
-        decoration->updateAnimation(time_elapsed);
+    for (auto it = decorations.begin(); it != decorations.end();)
+    {
+        bool do_increment = true;
+        (*it)->updateAnimation(time_elapsed);
+
+        if (!(*it)->isActive())
+        {
+            auto next_it = std::next(it);
+
+            decorations.erase(it);
+            it = next_it;
+            do_increment = false;
+        }
+
+        if (do_increment) ++it;
+    }
 
 }
 
@@ -343,13 +358,7 @@ void Game::killNPC(NPC* npc)
     {
         auto offset = sf::Vector2f(utils::num::getRandom(-ammo_offset, ammo_offset),
                                    utils::num::getRandom(-ammo_offset, ammo_offset));
-        auto ammo_ptr = map_->spawnSpecial(npc->getPosition() + offset, bullet_name + "_ammo");
-
-        ammo_ptr->setDatasStr(weapon);
-        engine_->registerHoveringObject(ammo_ptr);
-        ammo_ptr->bindFunction(special_functions_->bindFunction(ammo_ptr->getFunctions().at(0)),
-                               special_functions_->bindTextToUse(ammo_ptr->getFunctions().at(0)),
-                               special_functions_->isUsableByNPC(ammo_ptr->getFunctions().at(0)));
+        this->spawnSpecial(npc->getPosition() + offset, bullet_name + "_ammo");
     }
 
     this->spawnExplosionEvent(npc->getPosition(), 250.0f);
@@ -488,6 +497,16 @@ void Game::spawnAchievement(Achievements::Type type)
             achievements_->getAchievementText(type),
             achievements_->getAchievementTexture(type)
             );
+}
+
+void Game::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
+{
+    auto ptr = map_->spawnSpecial(pos, name);
+    engine_->registerHoveringObject(ptr);
+
+    ptr->bindFunction(special_functions_->bindFunction(ptr->getFunctions().at(0)),
+                      special_functions_->bindTextToUse(ptr->getFunctions().at(0)),
+                      special_functions_->isUsableByNPC(ptr->getFunctions().at(0)));
 }
 
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir)

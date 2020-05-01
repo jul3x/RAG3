@@ -25,6 +25,8 @@ SpecialFunctions::SpecialFunctions()
     functions_["ChangeOpenState"] = &changeOpenState;
     functions_["Teleport"] = &teleport;
     functions_["Kill"] = &kill;
+    functions_["RemoveDecoration"] = &removeDecoration;
+    functions_["SpawnLava"] = &spawnLava;
     functions_["Null"] = &nullFunc;
     functions_["Deactivate"] = &deactivate;
 
@@ -41,6 +43,8 @@ SpecialFunctions::SpecialFunctions()
     text_to_use_["ChangeOpenState"] = "[F] Use object";
     text_to_use_["Teleport"] = "[F] To enter";
     text_to_use_["Kill"] = "[F] To use";
+    text_to_use_["RemoveDecoration"] = "";
+    text_to_use_["SpawnLava"] = "";
     text_to_use_["Null"] = "";
     text_to_use_["Deactivate"] = "";
 
@@ -57,6 +61,8 @@ SpecialFunctions::SpecialFunctions()
     is_usable_by_npc_["ChangeOpenState"] = true;
     is_usable_by_npc_["Teleport"] = true;
     is_usable_by_npc_["Kill"] = true;
+    is_usable_by_npc_["RemoveDecoration"] = false;
+    is_usable_by_npc_["SpawnLava"] = false;
     is_usable_by_npc_["Null"] = true;
     is_usable_by_npc_["Deactivate"] = true;
 }
@@ -195,17 +201,13 @@ void SpecialFunctions::spawnThought(Functional* obj, const std::string& data, Ch
 void SpecialFunctions::teleport(Functional* obj, const std::string& data, Character* user)
 {
     std::cout << "[SpecialFunction] Teleport." << std::endl;
-    std::vector<std::string> data_str;
-
     auto player = dynamic_cast<Player*>(user);
 
     try
     {
-        auto str = data.substr(1, data.length() - 1);
+        auto pos = utils::j3x::convert<sf::Vector2f>(data);
 
-        utils::j3x::tokenize(str, ',', data_str);
-
-        user->setPosition(std::stof(data_str.at(0)), std::stof(data_str.at(1)));
+        user->setPosition(pos);
         user->setForcedVelocity({0.0f, 0.0f});
 
         if (player != nullptr)
@@ -218,6 +220,22 @@ void SpecialFunctions::teleport(Functional* obj, const std::string& data, Charac
     {
         throw std::invalid_argument("[SpecialFunctions] Bad format of position type in function data!");
     }
+}
+
+void SpecialFunctions::removeDecoration(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Remove decoration." << std::endl;
+    auto decoration_id = std::stoi(data);
+    auto decoration = Game::get().getMap().getDecorationObject(decoration_id);
+    decoration->deactivate();
+}
+
+void SpecialFunctions::spawnLava(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Spawn lava." << std::endl;
+    auto pos = utils::j3x::convert<sf::Vector2f>(data);
+    Game::get().spawnSpecial(pos, "lava");
+    Game::get().spawnExplosionEvent(pos, 250.0f);
 }
 
 void SpecialFunctions::kill(Functional* obj, const std::string& data, Character* user)

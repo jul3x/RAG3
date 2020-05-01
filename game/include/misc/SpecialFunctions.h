@@ -31,6 +31,8 @@ public:
     static void spawnThought(Functional* obj, const std::string& data, Character* user);
     static void teleport(Functional* obj, const std::string& data, Character* user);
     static void kill(Functional* obj, const std::string& data, Character* user);
+    static void removeDecoration(Functional* obj, const std::string& data, Character* user);
+    static void spawnLava(Functional* obj, const std::string& data, Character* user);
     static void nullFunc(Functional* obj, const std::string& data, Character* user);
     static void deactivate(Functional* obj, const std::string& data, Character* user);
 

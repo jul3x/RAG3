@@ -15,6 +15,13 @@ using namespace r3e;
 class Decoration : public AbstractDrawableObject, public Identifiable, public Unique {
 public:
     Decoration(const sf::Vector2f& position, const std::string& id, int u_id = -1);
+
+    bool isActive() const;
+
+    void deactivate();
+
+private:
+    bool is_active_;
 };
 
 #endif // RAG3_COMMON_DECORATION_H

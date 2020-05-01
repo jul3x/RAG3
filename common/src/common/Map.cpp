@@ -201,6 +201,11 @@ Obstacle* Map::getObstacleObject(int id)
     return getObject(id, obstacles_);
 }
 
+Decoration* Map::getDecorationObject(int id)
+{
+    return getObject(id, decorations_);
+}
+
 std::pair<sf::Vector2<size_t>, sf::Vector2f> Map::getTileConstraints() const
 {
     sf::Vector2f min = {std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity()};

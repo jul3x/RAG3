@@ -1,4 +1,5 @@
 float max_speed=500.0f
+float max_running_speed=800.0f
 
 float standby_speed=100.0f
 float side_step_speed=1000.0f

@@ -91,10 +91,6 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 
     blood_splash_.update(time_elapsed);
 
-//    std::stringstream fps_stream;
-//    fps_stream << std::fixed << std::setprecision(2) << Game::get().getFPS();
-//    fps_text_.setString("FPS: " + fps_stream.str());
-
     auto special_object = Game::get().getCurrentSpecialObject();
     if (special_object != nullptr)
     {
@@ -257,22 +253,30 @@ inline void UserInterface::handleKeys()
 {
     auto delta = sf::Vector2f(0.0f, 0.0f);
 
+    float max_speed;
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+        max_speed = utils::j3x::get<float>(RM.getObjectParams("characters", "player"), "max_running_speed");
+    else
+        max_speed = utils::j3x::get<float>(RM.getObjectParams("characters", "player"), "max_speed");
+
+
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-        delta.x -= utils::j3x::get<float>(RM.getObjectParams("characters", "player"), "max_speed");
+        delta.x -= max_speed;
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        delta.x += utils::j3x::get<float>(RM.getObjectParams("characters", "player"), "max_speed");
+        delta.x += max_speed;
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
-        delta.y -= utils::j3x::get<float>(RM.getObjectParams("characters", "player"), "max_speed");
+        delta.y -= max_speed;
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
-        delta.y += utils::j3x::get<float>(RM.getObjectParams("characters", "player"), "max_speed");
+        delta.y += max_speed;
     }
 
     if (player_->isAlive())

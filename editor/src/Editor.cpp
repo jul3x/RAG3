@@ -120,7 +120,7 @@ sf::Vector2f Editor::getMapCoordinates(const sf::Vector2f& pos) const
 
 void Editor::readItemInfo(const sf::Vector2f& pos)
 {
-    auto ret_special = map_->getSpecialObject(pos);
+    auto ret_special = map_->getSpecialObject(pos, ui_->getZIndex());
 
     if (ret_special != nullptr)
     {
@@ -128,7 +128,7 @@ void Editor::readItemInfo(const sf::Vector2f& pos)
         return;
     }
 
-    auto ret_npc = map_->getNPCObject(pos);
+    auto ret_npc = map_->getNPCObject(pos, ui_->getZIndex());
 
     if (ret_npc != nullptr)
     {
@@ -136,7 +136,7 @@ void Editor::readItemInfo(const sf::Vector2f& pos)
         return;
     }
 
-    auto ret = map_->getObjectInfo(pos);
+    auto ret = map_->getObjectInfo(pos, ui_->getZIndex());
 
     if (!(std::get<0>(ret).empty() && std::get<1>(ret).empty()))
         ui_->openUniqueObjectWindow(std::get<0>(ret), std::get<1>(ret), std::get<2>(ret));

@@ -24,3 +24,5 @@ list[string] default_datas=[Null]
 string ai_type=None
 
 int z_index=1
+
+list[string] weapons=[Null]

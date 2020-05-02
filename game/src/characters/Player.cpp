@@ -17,13 +17,6 @@ Player::Player(const sf::Vector2f& position) :
         is_alive_(true),
         side_stepping_freeze_time_(-1.0f)
 {
-    weapons_in_backpack_.push_back(std::make_shared<NoWeapon>());
-    weapons_in_backpack_.push_back(std::make_shared<NoWeapon>());
-    weapons_in_backpack_.push_back(std::make_shared<NoWeapon>());
-    weapons_in_backpack_.push_back(std::make_shared<NoWeapon>());
-
-    current_weapon_ = weapons_in_backpack_.begin();
-
     if (CFG.get<int>("no_clip_mode"))
     {
         this->changeCollisionArea(Collision::None());

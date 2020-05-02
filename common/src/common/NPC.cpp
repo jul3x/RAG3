@@ -30,10 +30,6 @@ NPC::NPC(const sf::Vector2f& position, const std::string& id,
          const std::vector<std::string>& datas, int u_id) :
         Character(position, id, activation, functions, datas, u_id)
 {
-    weapons_in_backpack_.push_back(std::make_shared<ShootingWeapon>("desert_eagle"));
-
-    current_weapon_ = weapons_in_backpack_.begin();
-
     this->setPosition(position);
 
     if (utils::j3x::get<std::string>(RM.getObjectParams("characters", id), "ai_type") == "Standard")

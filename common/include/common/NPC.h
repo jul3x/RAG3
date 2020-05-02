@@ -48,11 +48,9 @@ public:
 
     void registerMapBlockage(const ai::MapBlockage* map_blockage);
 
-    virtual bool update(float time_elapsed);
+    bool update(float time_elapsed) override;
 
     const sf::Vector2f& getStartPosition() const override;
-
-    void bindFunctionOnEnd(std::function<void(Special*, const std::string&)> func);
 
 protected:
     void handleEnemySelection();

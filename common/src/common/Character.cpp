@@ -50,6 +50,17 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
                                     utils::j3x::get<float>(RM.getObjectParams("characters", id), "size_y")) / 2.0f +
                        sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("characters", id), "map_offset_x"),
                                     utils::j3x::get<float>(RM.getObjectParams("characters", id), "map_offset_y")));
+
+    for (const auto& weapon :
+            utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("characters", id), "weapons"))
+    {
+        if (weapon == "Null")
+            weapons_in_backpack_.push_back(std::make_shared<NoWeapon>());
+        else
+            weapons_in_backpack_.push_back(std::make_shared<ShootingWeapon>(weapon));
+    }
+
+    current_weapon_ = weapons_in_backpack_.begin();
 }
 
 bool Character::shot()

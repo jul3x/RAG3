@@ -27,6 +27,7 @@ SpecialFunctions::SpecialFunctions()
     functions_["Kill"] = &kill;
     functions_["RemoveDecoration"] = &removeDecoration;
     functions_["SpawnLava"] = &spawnLava;
+    functions_["SpawnAmmo"] = &spawnAmmo;
     functions_["Null"] = &nullFunc;
     functions_["Deactivate"] = &deactivate;
 
@@ -45,6 +46,7 @@ SpecialFunctions::SpecialFunctions()
     text_to_use_["Kill"] = "[F] To use";
     text_to_use_["RemoveDecoration"] = "";
     text_to_use_["SpawnLava"] = "";
+    text_to_use_["SpawnAmmo"] = "";
     text_to_use_["Null"] = "";
     text_to_use_["Deactivate"] = "";
 
@@ -63,6 +65,7 @@ SpecialFunctions::SpecialFunctions()
     is_usable_by_npc_["Kill"] = true;
     is_usable_by_npc_["RemoveDecoration"] = false;
     is_usable_by_npc_["SpawnLava"] = false;
+    is_usable_by_npc_["SpawnAmmo"] = false;
     is_usable_by_npc_["Null"] = true;
     is_usable_by_npc_["Deactivate"] = true;
 }
@@ -236,6 +239,21 @@ void SpecialFunctions::spawnLava(Functional* obj, const std::string& data, Chara
     auto pos = utils::j3x::convert<sf::Vector2f>(data);
     Game::get().spawnSpecial(pos, "lava");
     Game::get().spawnExplosionEvent(pos, 250.0f);
+}
+
+void SpecialFunctions::spawnAmmo(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Spawn ammo." << std::endl;
+
+    auto npc = dynamic_cast<Character*>(obj);
+
+    auto ammo_offset = CFG.get<float>("characters/ammo_drop_offset");
+    for (size_t i = 0; i < CFG.get<int>("characters/ammo_dropped"); ++i)
+    {
+        auto offset = sf::Vector2f(utils::num::getRandom(-ammo_offset, ammo_offset),
+                                   utils::num::getRandom(-ammo_offset, ammo_offset));
+        Game::get().spawnSpecial(npc->getPosition() + offset, data + "_ammo");
+    }
 }
 
 void SpecialFunctions::kill(Functional* obj, const std::string& data, Character* user)

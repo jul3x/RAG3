@@ -20,8 +20,8 @@ int frames_number=4
 float frame_duration=0.07f
 
 string default_activation=OnKill
-list[string] default_functions=[Null]
-list[string] default_datas=[Null]
+list[string] default_functions=[SpawnAmmo]
+list[string] default_datas=[light]
 
 string ai_type=Standard
 

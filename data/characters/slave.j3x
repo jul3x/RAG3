@@ -1,6 +1,6 @@
 float max_speed=0.0f
 
-int max_health=10
+int max_health=3
 
 float size_x=65.0f
 float size_y=100.0f

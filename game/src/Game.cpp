@@ -349,18 +349,6 @@ void Game::killNPC(NPC* npc)
     auto dec_ptr = map_->spawnDecoration((npc)->getPosition(), "blood");
     journal_->eventDecorationSpawned(dec_ptr);
 
-    // spawn ammo
-    auto& weapon = npc->getWeapons().at(npc->getCurrentWeapon())->getName();
-    auto& bullet_name = utils::j3x::get<std::string>(RM.getObjectParams("weapons", weapon), "bullet_type");
-
-    auto ammo_offset = CFG.get<float>("characters/ammo_drop_offset");
-    for (size_t i = 0; i < CFG.get<int>("characters/ammo_dropped"); ++i)
-    {
-        auto offset = sf::Vector2f(utils::num::getRandom(-ammo_offset, ammo_offset),
-                                   utils::num::getRandom(-ammo_offset, ammo_offset));
-        this->spawnSpecial(npc->getPosition() + offset, bullet_name + "_ammo");
-    }
-
     this->spawnExplosionEvent(npc->getPosition(), 250.0f);
 
     this->deleteDynamicObject(npc);

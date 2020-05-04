@@ -28,6 +28,7 @@ SpecialFunctions::SpecialFunctions()
     functions_["SetOnFire"] = &setOnFire;
     functions_["RemoveDecoration"] = &removeDecoration;
     functions_["SpawnLava"] = &spawnLava;
+    functions_["SpawnFlame"] = &spawnFlame;
     functions_["SpawnAmmo"] = &spawnAmmo;
     functions_["Null"] = &nullFunc;
     functions_["Deactivate"] = &deactivate;
@@ -49,6 +50,7 @@ SpecialFunctions::SpecialFunctions()
     text_to_use_["RemoveDecoration"] = "";
     text_to_use_["SpawnLava"] = "";
     text_to_use_["SpawnAmmo"] = "";
+    text_to_use_["SpawnFlame"] = "";
     text_to_use_["Null"] = "";
     text_to_use_["Deactivate"] = "";
 
@@ -69,6 +71,7 @@ SpecialFunctions::SpecialFunctions()
     is_usable_by_npc_["RemoveDecoration"] = false;
     is_usable_by_npc_["SpawnLava"] = false;
     is_usable_by_npc_["SpawnAmmo"] = false;
+    is_usable_by_npc_["SpawnFlame"] = false;
     is_usable_by_npc_["Null"] = true;
     is_usable_by_npc_["Deactivate"] = true;
 }
@@ -264,6 +267,15 @@ void SpecialFunctions::spawnAmmo(Functional* obj, const std::string& data, Chara
         Game::get().spawnSpecial(npc->getPosition() + offset, data + "_ammo");
     }
 }
+
+void SpecialFunctions::spawnFlame(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Spawn flame." << std::endl;
+    auto pos = utils::j3x::convert<sf::Vector2f>(data);
+    Game::get().spawnSpecial(pos, "flame");
+    Game::get().spawnExplosionEvent(pos, 250.0f);
+}
+
 
 void SpecialFunctions::kill(Functional* obj, const std::string& data, Character* user)
 {

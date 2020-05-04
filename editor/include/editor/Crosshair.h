@@ -19,7 +19,9 @@ namespace editor {
         Crosshair();
         
         void setPosition(float x, float y) override;
-        void setPosition(const sf::Vector2f& override);
+        void setPosition(const sf::Vector2f& pos) override;
+
+        std::string getPositionStr() const;
 
     private:
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

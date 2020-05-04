@@ -142,7 +142,7 @@ fence 300 575 631
 fence 200 575 632
 fence 100 575 633
 
-decorations:
+decorations: 
 blood 3600 3000 209
 blood 4100 2800 210
 blood 5000 3600 211
@@ -275,12 +275,12 @@ crystal 3900 3575 294 OnEnter [PickCrystal] [Null]
 crystal 4600 4650 295 OnEnter [PickCrystal] [Null]
 crystal 7200 4050 296 OnEnter [PickCrystal] [Null]
 crystal 6075 2375 297 OnEnter [PickCrystal] [Null]
-crystal 2225 975 346 OnEnter [PickCrystal] [Null]
+crystal 2225 975 346 OnEnter [PickCrystal;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame] [Null;(2700,750);(2675,800);(2825,870);(2700,950);(2600,800);(2725,1000);(2900,1050);(2800,1025)]
 health 2225 800 347 OnEnter [AddHealth] [30]
 health 2225 1350 348 OnEnter [AddHealth] [30]
 more_speed 2225 1275 349 OnEnter [AddSpeed] [0.25f]
 more_speed 2225 875 350 OnEnter [AddSpeed] [0.25f]
-crystal 2225 1175 351 OnEnter [PickCrystal] [Null]
+crystal 2225 1175 351 OnEnter [PickCrystal;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame] [Null;(2725.0,1200.0);(2925.0,1225.0);(2725.0,1375.0);(2825.0,1300.0);(2975.0,1375.0);(2850.0,1450.0);(2700.0,1475.0);(2625.0,1400.0)]
 m4 2225 1075 352 OnEnter [AddWeapon;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor] [m4;320;321;322;324;325;326;314;315;316;317;318;319]
 note 2475 1075 375 OnUse [ReadNote] ["Brace_yourself!"]
 lever 7325 1625 377 OnUse [OpenDoor;ChangeOpenState] [376;376]

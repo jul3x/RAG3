@@ -143,8 +143,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 
     while (graphics.getWindow().pollEvent(event))
     {
-        if (gui_.handleEvent(event))
-            continue;
+        gui_.handleEvent(event);
 
         switch (event.type)
         {
@@ -189,6 +188,13 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 if (event.key.code == sf::Keyboard::E)
                 {
                     Editor::get().readItemInfo(crosshair_.getPosition());
+                }
+                else if (event.key.code == sf::Keyboard::F1)
+                {
+                    if (special_object_window_.isDataFocused())
+                    {
+                        special_object_window_.addToData(crosshair_.getPositionStr() + ";");
+                    }
                 }
                 else if (event.key.code == sf::Keyboard::Escape)
                 {

@@ -118,14 +118,14 @@ sf::Vector2f Editor::getMapCoordinates(const sf::Vector2f& pos) const
     return {pos.x - map_constraints.second.x, pos.y - map_constraints.second.y};
 }
 
-void Editor::readItemInfo(const sf::Vector2f& pos)
+int Editor::readItemInfo(const sf::Vector2f& pos, bool read_uid)
 {
     auto ret_special = map_->getSpecialObject(pos, ui_->getZIndex());
 
     if (ret_special != nullptr)
     {
         ui_->openSpecialObjectWindow("specials", ret_special);
-        return;
+        return read_uid ? ret_special->getUniqueId() : 0;
     }
 
     auto ret_npc = map_->getNPCObject(pos, ui_->getZIndex());
@@ -133,13 +133,18 @@ void Editor::readItemInfo(const sf::Vector2f& pos)
     if (ret_npc != nullptr)
     {
         ui_->openSpecialObjectWindow("characters", ret_npc);
-        return;
+        return read_uid ? ret_npc->getUniqueId() : 0;
     }
 
     auto ret = map_->getObjectInfo(pos, ui_->getZIndex());
 
     if (!(std::get<0>(ret).empty() && std::get<1>(ret).empty()))
+    {
         ui_->openUniqueObjectWindow(std::get<0>(ret), std::get<1>(ret), std::get<2>(ret));
+        return read_uid ? std::get<2>(ret): 0;
+    }
+
+    return -1;
 }
 
 void Editor::placeItem(const sf::Vector2f& pos)

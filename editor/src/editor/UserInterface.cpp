@@ -196,6 +196,16 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                         special_object_window_.addToData(crosshair_.getPositionStr() + ";");
                     }
                 }
+                else if (event.key.code == sf::Keyboard::F2)
+                {
+                    if (special_object_window_.isDataFocused())
+                    {
+                        auto id = Editor::get().readItemInfo(crosshair_.getPosition(), true);
+
+                        if (id != -1)
+                            special_object_window_.addToData(std::to_string(id) + ";");
+                    }
+                }
                 else if (event.key.code == sf::Keyboard::Escape)
                 {
                     gui_.get("save_window")->setVisible(false);

@@ -53,7 +53,7 @@ namespace editor {
 
         const std::pair<std::string, std::string>& getCurrentItem() const;
 
-        void readItemInfo(const sf::Vector2f& pos);
+        int readItemInfo(const sf::Vector2f& pos, bool read_uid = false);
 
         void placeItem(const sf::Vector2f& pos);
 

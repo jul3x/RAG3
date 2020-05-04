@@ -142,19 +142,7 @@ fence 300 575 631
 fence 200 575 632
 fence 100 575 633
 
-decorations: 
-flame 4100 3400 165
-flame 4200 3400 166
-flame 4300 3400 167
-flame 4400 3400 168
-flame 4400 3500 169
-flame 4300 3500 170
-flame 4200 3500 171
-flame 4100 3500 172
-flame 4200 3600 173
-flame 4300 3600 174
-flame 4200 3300 175
-flame 4300 3300 176
+decorations:
 blood 3600 3000 209
 blood 4100 2800 210
 blood 5000 3600 211
@@ -172,48 +160,16 @@ blood 6900 3700 225
 blood 6300 3400 226
 blood 5500 2400 227
 blood 7600 2500 228
-flame 6425 5775 277
-flame 6500 5825 278
-flame 6425 5875 279
-flame 6700 5775 280
-flame 6825 5900 281
-flame 6850 5800 282
-flame 6700 5850 283
-flame 6575 5925 284
-flame 6700 5925 286
-flame 6775 5825 287
 blood 6625 5875 288
-flame 6600 5800 289
-flame 6550 5850 290
-flame 6475 5925 291
-flame 6900 5875 292
-flame 6750 5925 293
-flame 4400 700 353
-flame 4400 1475 354
-flame 2300 675 355
-flame 2300 1475 356
 blood 4325 950 357
 blood 2700 1325 358
 blood 2600 750 359
 blood 3425 150 360
 blood 3775 1375 362
-flame 1900 4700 412
-flame 2500 4700 413
-flame 1800 4975 414
-flame 2600 4975 415
-flame 1800 3775 416
-flame 2600 3775 417
 blood 2350 4225 418
 blood 2050 4500 419
 blood 2200 3625 420
 blood 2475 3125 421
-flame 2200 3775 452
-flame 2175 3850 453
-flame 2225 3850 454
-flame 2175 3700 455
-flame 2225 3700 456
-flame 2150 3550 457
-flame 2250 3525 458
 floor_side 1500 550 532
 floor_side 1300 550 533
 floor_side 1400 550 535
@@ -224,9 +180,6 @@ floor_side 800 550 615
 floor_side 900 550 616
 floor_side 1000 550 617
 floor_side 700 650 618
-flame 1300 300 634
-flame 600 850 635
-flame 425 200 636
 destroyed_wall 1200 1200 654
 destroyed_wall 1200 1100 655
 destroyed_wall 1200 1000 656
@@ -235,15 +188,6 @@ destroyed_wall 1200 800 658
 destroyed_wall 1200 700 659
 floor_side 1200 550 669
 destroyed_wall 1200 600 671
-flame 600 500 672
-flame 625 475 673
-flame 500 450 674
-flame 575 325 675
-flame 575 400 676
-flame 550 500 677
-flame 650 425 678
-flame 525 400 679
-flame 600 450 680
 roof 2600 75 681
 roof 2700 75 682
 roof 2800 75 683
@@ -427,3 +371,59 @@ lava 800 1200 730 OnEnter [Kill] [lava]
 lava 700 1200 731 OnEnter [Kill] [lava]
 lava 600 1200 732 OnEnter [Kill] [lava]
 lava 500 1200 733 OnEnter [Kill] [lava]
+flame 4100 3400 165 OnEnter [Null] [Null]
+flame 4200 3400 166 OnEnter [Null] [Null]
+flame 4300 3400 167 OnEnter [Null] [Null]
+flame 4400 3400 168 OnEnter [Null] [Null]
+flame 4400 3500 169 OnEnter [Null] [Null]
+flame 4300 3500 170 OnEnter [Null] [Null]
+flame 4200 3500 171 OnEnter [Null] [Null]
+flame 4100 3500 172 OnEnter [Null] [Null]
+flame 4200 3600 173 OnEnter [Null] [Null]
+flame 4300 3600 174 OnEnter [Null] [Null]
+flame 4200 3300 175 OnEnter [Null] [Null]
+flame 4300 3300 176 OnEnter [Null] [Null]
+flame 6425 5775 277 OnEnter [Null] [Null]
+flame 6500 5825 278 OnEnter [Null] [Null]
+flame 6425 5875 279 OnEnter [Null] [Null]
+flame 6700 5775 280 OnEnter [Null] [Null]
+flame 6825 5900 281 OnEnter [Null] [Null]
+flame 6850 5800 282 OnEnter [Null] [Null]
+flame 6700 5850 283 OnEnter [Null] [Null]
+flame 6575 5925 284 OnEnter [Null] [Null]
+flame 6700 5925 286 OnEnter [Null] [Null]
+flame 6775 5825 287 OnEnter [Null] [Null]
+flame 6600 5800 289 OnEnter [Null] [Null]
+flame 6550 5850 290 OnEnter [Null] [Null]
+flame 6475 5925 291 OnEnter [Null] [Null]
+flame 6900 5875 292 OnEnter [Null] [Null]
+flame 6750 5925 293 OnEnter [Null] [Null]
+flame 4400 700 353 OnEnter [Null] [Null]
+flame 4400 1475 354 OnEnter [Null] [Null]
+flame 2300 675 355 OnEnter [Null] [Null]
+flame 2300 1475 356 OnEnter [Null] [Null]
+flame 1900 4700 412 OnEnter [Null] [Null]
+flame 2500 4700 413 OnEnter [Null] [Null]
+flame 1800 4975 414 OnEnter [Null] [Null]
+flame 2600 4975 415 OnEnter [Null] [Null]
+flame 1800 3775 416 OnEnter [Null] [Null]
+flame 2600 3775 417 OnEnter [Null] [Null]
+flame 2200 3775 452 OnEnter [Null] [Null]
+flame 2175 3850 453 OnEnter [Null] [Null]
+flame 2225 3850 454 OnEnter [Null] [Null]
+flame 2175 3700 455 OnEnter [Null] [Null]
+flame 2225 3700 456 OnEnter [Null] [Null]
+flame 2150 3550 457 OnEnter [Null] [Null]
+flame 2250 3525 458 OnEnter [Null] [Null]
+flame 1300 300 634 OnEnter [Null] [Null]
+flame 600 850 635 OnEnter [Null] [Null]
+flame 425 200 636 OnEnter [Null] [Null]
+flame 600 500 672 OnEnter [Null] [Null]
+flame 625 475 673 OnEnter [Null] [Null]
+flame 500 450 674 OnEnter [Null] [Null]
+flame 575 325 675 OnEnter [Null] [Null]
+flame 575 400 676 OnEnter [Null] [Null]
+flame 550 500 677 OnEnter [Null] [Null]
+flame 650 425 678 OnEnter [Null] [Null]
+flame 525 400 679 OnEnter [Null] [Null]
+flame 600 450 680 OnEnter [Null] [Null]

@@ -233,8 +233,6 @@ void Game::updateMapObjects(float time_elapsed)
             // draw on this place destruction
             auto dec_ptr = map_->spawnDecoration((*it)->getPosition(), "destroyed_wall");
             journal_->eventDecorationSpawned(dec_ptr);
-            dec_ptr = map_->spawnDecoration((*it)->getPosition(), "flame");
-            journal_->eventDecorationSpawned(dec_ptr);
 
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
 
@@ -260,9 +258,6 @@ void Game::updateMapObjects(float time_elapsed)
         if (!(*it)->update(time_elapsed))
         {
             journal_->eventObstacleDestroyed(it->get());
-            // draw on this place destruction
-            auto dec_ptr = map_->spawnDecoration((*it)->getPosition(), "flame");
-            journal_->eventDecorationSpawned(dec_ptr);
 
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
 

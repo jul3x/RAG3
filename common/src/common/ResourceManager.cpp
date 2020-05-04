@@ -302,13 +302,13 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
         row.resize(map_constraints.first.x, 0);
     }
 
-    for (const auto& obstacle : map.getObstaclesTiles())
+    for (const auto& obstacle : map.getList<ObstacleTile>())
     {
         matrix.at(static_cast<size_t>((obstacle->getPosition().y - map_constraints.second.y) / DecorationTile::SIZE_Y_)).
                at(static_cast<size_t>((obstacle->getPosition().x - map_constraints.second.x) / DecorationTile::SIZE_X_)) = std::stoi(obstacle->getId());
     }
 
-    for (const auto& decoration : map.getDecorationsTiles())
+    for (const auto& decoration : map.getList<DecorationTile>())
     {
         matrix.at(static_cast<size_t>((decoration->getPosition().y - map_constraints.second.y) / DecorationTile::SIZE_Y_)).
                at(static_cast<size_t>((decoration->getPosition().x - map_constraints.second.x) / DecorationTile::SIZE_X_)) = - std::stoi(decoration->getId());
@@ -351,10 +351,10 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
         }
     };
 
-    addObjToFile("obstacles", map.getObstacles());
-    addObjToFile("decorations", map.getDecorations());
-    addFunctionalObjToFile("characters", map.getNPCs());
-    addFunctionalObjToFile("specials", map.getSpecials());
+    addObjToFile("obstacles", map.getList<Obstacle>());
+    addObjToFile("decorations", map.getList<Decoration>());
+    addFunctionalObjToFile("characters", map.getList<NPC>());
+    addFunctionalObjToFile("specials", map.getList<Special>());
 
     std::cout << "[ResourceManager] Map file " << CFG.get<std::string>("paths/maps_dir") + "/" + name + ".j3x" << " is saved!" << std::endl;
 

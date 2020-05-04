@@ -91,7 +91,7 @@ void SpecialFunctions::openDoor(Functional* obj, const std::string& data, Charac
 {
     std::cout << "[SpecialFunction] Open door." << std::endl;
     auto door_id = std::stoi(data);
-    auto door = Game::get().getMap().getObstacleObject(door_id);
+    auto door = Game::get().getMap().getObjectById<Obstacle>(door_id);
     auto grid_pos = std::make_pair(static_cast<size_t>(door->getPosition().x / DecorationTile::SIZE_X_),
                                    static_cast<size_t>(door->getPosition().y / DecorationTile::SIZE_Y_));
 
@@ -117,8 +117,8 @@ void SpecialFunctions::changeOpenState(Functional* obj, const std::string& data,
 {
     std::cout << "[SpecialFunction] Changing open state." << std::endl;
     auto door_id = std::stoi(data);
-    auto door = Game::get().getMap().getObstacleObject(door_id);
-    auto special_obj = Game::get().getMap().getSpecialObject(obj->getUniqueId());
+    auto door = Game::get().getMap().getObjectById<Obstacle>(door_id);
+    auto special_obj = Game::get().getMap().getObjectById<Special>(obj->getUniqueId());
 
     if (door->getCollisionArea().getType() == Collision::Area::Type::None)
     {
@@ -241,7 +241,7 @@ void SpecialFunctions::removeDecoration(Functional* obj, const std::string& data
 {
     std::cout << "[SpecialFunction] Remove decoration." << std::endl;
     auto decoration_id = std::stoi(data);
-    auto decoration = Game::get().getMap().getDecorationObject(decoration_id);
+    auto decoration = Game::get().getMap().getObjectById<Decoration>(decoration_id);
     decoration->deactivate();
 }
 

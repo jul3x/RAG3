@@ -39,35 +39,19 @@ void Editor::update(float time_elapsed)
 {
     camera_->update(time_elapsed);
 
-    for (auto& decoration : map_->getDecorationsTiles())
-    {
-        decoration->updateAnimation(time_elapsed);
-    }
-    
-    for (auto& decoration : map_->getDecorations())
-    {
-        decoration->updateAnimation(time_elapsed);
-    }
+    auto update_animation = [&time_elapsed](auto& list) {
+        for (auto& obj : list)
+        {
+            obj->updateAnimation(time_elapsed);
+        }
+    };
 
-    for (auto& obstacle : map_->getObstaclesTiles())
-    {
-        obstacle->updateAnimation(time_elapsed);
-    }
-
-    for (auto& obstacle : map_->getObstacles())
-    {
-        obstacle->updateAnimation(time_elapsed);
-    }
-
-    for (auto& character : map_->getNPCs())
-    {
-        character->updateAnimation(time_elapsed);
-    }
-
-    for (auto& special : map_->getSpecials())
-    {
-        special->updateAnimation(time_elapsed);
-    }
+    update_animation(map_->getList<DecorationTile>());
+    update_animation(map_->getList<Decoration>());
+    update_animation(map_->getList<ObstacleTile>());
+    update_animation(map_->getList<Obstacle>());
+    update_animation(map_->getList<NPC>());
+    update_animation(map_->getList<Special>());
 }
 
 void Editor::draw(graphics::Graphics& graphics)
@@ -75,29 +59,18 @@ void Editor::draw(graphics::Graphics& graphics)
     grid_.draw(graphics);
     auto max_z_index = ui_->getZIndex();
 
-    for (auto& decoration : map_->getDecorationsTiles())
-        if (decoration->getZIndex() <= max_z_index)
-            graphics.drawSorted(*decoration);
+    auto draw = [&graphics, &max_z_index](auto& list) {
+        for (auto& obj : list)
+            if (obj->getZIndex() <= max_z_index)
+                graphics.drawSorted(*obj);
+    };
 
-    for (auto& decoration : map_->getDecorations())
-        if (decoration->getZIndex() <= max_z_index)
-            graphics.drawSorted(*decoration);
-
-    for (auto& obstacle : map_->getObstaclesTiles())
-        if (obstacle->getZIndex() <= max_z_index)
-            graphics.drawSorted(*obstacle);
-
-    for (auto& obstacle : map_->getObstacles())
-        if (obstacle->getZIndex() <= max_z_index)
-            graphics.drawSorted(*obstacle);
-
-    for (auto& character : map_->getNPCs())
-        if (character->getZIndex() <= max_z_index)
-            graphics.drawSorted(*character);
-
-    for (auto& special : map_->getSpecials())
-        if (special->getZIndex() <= max_z_index)
-            graphics.drawSorted(*special);
+    draw(map_->getList<DecorationTile>());
+    draw(map_->getList<Decoration>());
+    draw(map_->getList<ObstacleTile>());
+    draw(map_->getList<Obstacle>());
+    draw(map_->getList<NPC>());
+    draw(map_->getList<Special>());
 
     graphics.drawAlreadySorted();
 }
@@ -132,7 +105,7 @@ sf::Vector2f Editor::getMapCoordinates(const sf::Vector2f& pos) const
 
 int Editor::readItemInfo(const sf::Vector2f& pos, bool read_uid)
 {
-    auto ret_special = map_->getSpecialObject(pos, ui_->getZIndex());
+    auto ret_special = map_->getObjectByPos<Special>(pos, ui_->getZIndex());
 
     if (ret_special != nullptr)
     {
@@ -140,7 +113,7 @@ int Editor::readItemInfo(const sf::Vector2f& pos, bool read_uid)
         return read_uid ? ret_special->getUniqueId() : 0;
     }
 
-    auto ret_npc = map_->getNPCObject(pos, ui_->getZIndex());
+    auto ret_npc = map_->getObjectByPos<NPC>(pos, ui_->getZIndex());
 
     if (ret_npc != nullptr)
     {
@@ -163,17 +136,17 @@ void Editor::placeItem(const sf::Vector2f& pos)
 {
     auto max_z_index = ui_->getZIndex();
     if (current_item_.first == "decorations_tiles")
-        map_->spawnDecorationTile(pos, current_item_.second, true, max_z_index);
+        map_->spawn<DecorationTile>(pos, current_item_.second, true, max_z_index);
     else if (current_item_.first == "obstacles_tiles")
-        map_->spawnObstacleTile(pos, current_item_.second, true, max_z_index);
+        map_->spawn<ObstacleTile>(pos, current_item_.second, true, max_z_index);
     else if (current_item_.first == "characters")
-        map_->spawnCharacter(pos, current_item_.second, false, max_z_index);
+        map_->spawn<NPC>(pos, current_item_.second, false, max_z_index);
     else if (current_item_.first == "specials")
-        map_->spawnSpecial(pos, current_item_.second, false, max_z_index);
+        map_->spawn<Special>(pos, current_item_.second, false, max_z_index);
     else if (current_item_.first == "decorations")
-        map_->spawnDecoration(pos, current_item_.second, false, max_z_index);
+        map_->spawn<Decoration>(pos, current_item_.second, false, max_z_index);
     else if (current_item_.first == "obstacles")
-        map_->spawnObstacle(pos, current_item_.second, false, max_z_index);
+        map_->spawn<Obstacle>(pos, current_item_.second, false, max_z_index);
 }
 
 void Editor::removeItem(const sf::Vector2f& pos)
@@ -241,59 +214,30 @@ void Editor::saveConfig(const std::string& category, const std::string& id, cons
 
 void Editor::markCurrentItem(const sf::Vector2f& pos)
 {
-    for (auto& decoration : map_->getDecorations())
-    {
-        decoration->setColor(255, 255, 255, 255);
-    }
+    auto clean = [](auto& list) {
+        for (auto& obj : list)
+        {
+            obj->setColor(255, 255, 255, 255);
+        }
+    };
 
-    for (auto& obstacle : map_->getObstaclesTiles())
-    {
-        obstacle->setColor(255, 255, 255, 255);
-    }
+    auto mark = [](auto ptr) {
+        static auto mark_color = sf::Color(255, 0, 60, 180);
+        if (ptr != nullptr)
+        {
+            ptr->setColor(mark_color.r, mark_color.g, mark_color.b, mark_color.a);
+        }
+    };
 
-    for (auto& obstacle : map_->getObstacles())
-    {
-        obstacle->setColor(255, 255, 255, 255);
-    }
+    clean(map_->getList<ObstacleTile>());
+    clean(map_->getList<Obstacle>());
+    clean(map_->getList<Decoration>());
+    clean(map_->getList<Special>());
+    clean(map_->getList<NPC>());
 
-    for (auto& character : map_->getNPCs())
-    {
-        character->setColor(255, 255, 255, 255);
-    }
-
-    for (auto& special : map_->getSpecials())
-    {
-        special->setColor(255, 255, 255, 255);
-    }
-
-    static auto mark_color = sf::Color(255, 0, 60, 180);
-    auto ret_special = map_->getSpecialObject(pos, ui_->getZIndex());
-    if (ret_special != nullptr)
-    {
-        ret_special->setColor(mark_color.r, mark_color.g, mark_color.b, mark_color.a);
-    }
-
-    auto ret_npc = map_->getNPCObject(pos, ui_->getZIndex());
-    if (ret_npc != nullptr)
-    {
-        ret_npc->setColor(mark_color.r, mark_color.g, mark_color.b, mark_color.a);
-    }
-
-    auto ret_dec = map_->getDecorationObject(pos, ui_->getZIndex());
-    if (ret_dec != nullptr)
-    {
-        ret_dec->setColor(mark_color.r, mark_color.g, mark_color.b, mark_color.a);
-    }
-
-    auto ret_obs = map_->getObstacleObject(pos, ui_->getZIndex());
-    if (ret_obs != nullptr)
-    {
-        ret_obs->setColor(mark_color.r, mark_color.g, mark_color.b, mark_color.a);
-    }
-
-    auto ret_obst = map_->getObstacleTileObject(pos, ui_->getZIndex());
-    if (ret_obst != nullptr)
-    {
-        ret_obst->setColor(mark_color.r, mark_color.g, mark_color.b, mark_color.a);
-    }
+    mark(map_->getObjectByPos<ObstacleTile>(pos, ui_->getZIndex()));
+    mark(map_->getObjectByPos<Obstacle>(pos, ui_->getZIndex()));
+    mark(map_->getObjectByPos<Decoration>(pos, ui_->getZIndex()));
+    mark(map_->getObjectByPos<NPC>(pos, ui_->getZIndex()));
+    mark(map_->getObjectByPos<Special>(pos, ui_->getZIndex()));
 }

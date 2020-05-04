@@ -166,10 +166,6 @@ void Map::removeObject(const sf::Vector2f& pos, int max_z_index)
 
 std::tuple<std::string, std::string, int> Map::getObjectInfo(const sf::Vector2f& pos, int max_z_index)
 {
-    auto ch = getItemInfo(pos, characters_, max_z_index);
-    if (ch != nullptr)
-        return std::make_tuple("characters", ch->getId(), ch->getUniqueId());
-
     auto dec = getItemInfo(pos, decorations_, max_z_index);
     if (dec != nullptr)
         return std::make_tuple("decorations", dec->getId(), dec->getUniqueId());
@@ -189,6 +185,26 @@ Special* Map::getSpecialObject(const sf::Vector2f& pos, int max_z_index)
 NPC* Map::getNPCObject(const sf::Vector2f& pos, int max_z_index)
 {
     return getItemInfo(pos, characters_, max_z_index);
+}
+
+Decoration* Map::getDecorationObject(const sf::Vector2f& pos, int max_z_index)
+{
+    return getItemInfo(pos, decorations_, max_z_index);
+}
+
+Obstacle* Map::getObstacleObject(const sf::Vector2f& pos, int max_z_index)
+{
+    return getItemInfo(pos, obstacles_, max_z_index);
+}
+
+ObstacleTile* Map::getObstacleTileObject(const sf::Vector2f& pos, int max_z_index)
+{
+    return getItemInfo(pos, obstacles_tiles_, max_z_index);
+}
+
+DecorationTile* Map::getDecorationTileObject(const sf::Vector2f& pos, int max_z_index)
+{
+    return getItemInfo(pos, decorations_tiles_, max_z_index);
 }
 
 Special* Map::getSpecialObject(int id)
@@ -243,4 +259,3 @@ std::pair<sf::Vector2<size_t>, sf::Vector2f> Map::getTileConstraints() const
                                 static_cast<size_t>((max.y - min.y) / DecorationTile::SIZE_Y_) + 1),
             min};
 }
-

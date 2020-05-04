@@ -86,6 +86,18 @@ public:
     NPC*
     getNPCObject(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
 
+    Decoration*
+    getDecorationObject(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
+
+    Obstacle*
+    getObstacleObject(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
+
+    DecorationTile*
+    getDecorationTileObject(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
+
+    ObstacleTile*
+    getObstacleTileObject(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
+
     Special*
     getSpecialObject(int id);
 

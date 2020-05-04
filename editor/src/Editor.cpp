@@ -40,22 +40,34 @@ void Editor::update(float time_elapsed)
     camera_->update(time_elapsed);
 
     for (auto& decoration : map_->getDecorationsTiles())
+    {
         decoration->updateAnimation(time_elapsed);
+    }
     
     for (auto& decoration : map_->getDecorations())
+    {
         decoration->updateAnimation(time_elapsed);
+    }
 
     for (auto& obstacle : map_->getObstaclesTiles())
+    {
         obstacle->updateAnimation(time_elapsed);
+    }
 
     for (auto& obstacle : map_->getObstacles())
+    {
         obstacle->updateAnimation(time_elapsed);
+    }
 
     for (auto& character : map_->getNPCs())
+    {
         character->updateAnimation(time_elapsed);
+    }
 
     for (auto& special : map_->getSpecials())
+    {
         special->updateAnimation(time_elapsed);
+    }
 }
 
 void Editor::draw(graphics::Graphics& graphics)
@@ -224,5 +236,64 @@ void Editor::saveConfig(const std::string& category, const std::string& id, cons
     else
     {
         ui_->spawnError("Config file saving failed!");
+    }
+}
+
+void Editor::markCurrentItem(const sf::Vector2f& pos)
+{
+    for (auto& decoration : map_->getDecorations())
+    {
+        decoration->setColor(255, 255, 255, 255);
+    }
+
+    for (auto& obstacle : map_->getObstaclesTiles())
+    {
+        obstacle->setColor(255, 255, 255, 255);
+    }
+
+    for (auto& obstacle : map_->getObstacles())
+    {
+        obstacle->setColor(255, 255, 255, 255);
+    }
+
+    for (auto& character : map_->getNPCs())
+    {
+        character->setColor(255, 255, 255, 255);
+    }
+
+    for (auto& special : map_->getSpecials())
+    {
+        special->setColor(255, 255, 255, 255);
+    }
+
+    static auto mark_color = sf::Color(255, 0, 60, 180);
+    auto ret_special = map_->getSpecialObject(pos, ui_->getZIndex());
+    if (ret_special != nullptr)
+    {
+        ret_special->setColor(mark_color.r, mark_color.g, mark_color.b, mark_color.a);
+    }
+
+    auto ret_npc = map_->getNPCObject(pos, ui_->getZIndex());
+    if (ret_npc != nullptr)
+    {
+        ret_npc->setColor(mark_color.r, mark_color.g, mark_color.b, mark_color.a);
+    }
+
+    auto ret_dec = map_->getDecorationObject(pos, ui_->getZIndex());
+    if (ret_dec != nullptr)
+    {
+        ret_dec->setColor(mark_color.r, mark_color.g, mark_color.b, mark_color.a);
+    }
+
+    auto ret_obs = map_->getObstacleObject(pos, ui_->getZIndex());
+    if (ret_obs != nullptr)
+    {
+        ret_obs->setColor(mark_color.r, mark_color.g, mark_color.b, mark_color.a);
+    }
+
+    auto ret_obst = map_->getObstacleTileObject(pos, ui_->getZIndex());
+    if (ret_obst != nullptr)
+    {
+        ret_obst->setColor(mark_color.r, mark_color.g, mark_color.b, mark_color.a);
     }
 }

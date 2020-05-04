@@ -141,6 +141,8 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
     information_.setFillColor({information_.getFillColor().r, information_.getFillColor().g,
                                information_.getFillColor().b, static_cast<sf::Uint8>(information_a_)});
 
+    Editor::get().markCurrentItem(crosshair_.getPosition());
+
     while (graphics.getWindow().pollEvent(event))
     {
         gui_.handleEvent(event);
@@ -320,10 +322,14 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
         crosshair_.setPosition(DecorationTile::SIZE_X_ * std::round(mouse_world_pos.x / DecorationTile::SIZE_X_),
                                DecorationTile::SIZE_Y_ * std::round(mouse_world_pos.y / DecorationTile::SIZE_Y_));
     }
-    else
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
     {
         crosshair_.setPosition(DecorationTile::SIZE_X_ / 4.0f * std::round(mouse_world_pos.x / DecorationTile::SIZE_X_ * 4.0f),
                                DecorationTile::SIZE_Y_ / 4.0f * std::round(mouse_world_pos.y / DecorationTile::SIZE_Y_ * 4.0f));
+    }
+    else
+    {
+        crosshair_.setPosition(mouse_world_pos);
     }
 
     if (current_item.second.empty())

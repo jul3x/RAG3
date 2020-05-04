@@ -11,7 +11,6 @@
 #include <common/ShootingWeapon.h>
 
 
-
 Player::Player(const sf::Vector2f& position) :
         Character(position, "player"),
         is_alive_(true),
@@ -37,10 +36,11 @@ bool Player::sideStep(Player::SideStepDir dir)
 {
     if (side_stepping_freeze_time_ <= 0.0f)
     {
-        this->setForcedVelocity(
-                utils::geo::polarToCartesian(
-                        utils::j3x::get<float>(RM.getObjectParams("characters", "player"), "side_step_speed"),
-                        (this->getRotation() + static_cast<int>(dir) * 90.0f) * M_PI / 180.0f));
+        this->setForcedVelocity(this->getSpeedFactor() *
+                                utils::geo::polarToCartesian(
+                                        utils::j3x::get<float>(RM.getObjectParams("characters", "player"),
+                                                               "side_step_speed"),
+                                        (this->getRotation() + static_cast<int>(dir) * 90.0f) * M_PI / 180.0f));
 
         side_stepping_freeze_time_ = CFG.get<float>("side_stepping_freeze_time");
     }

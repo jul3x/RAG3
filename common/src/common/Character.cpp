@@ -184,6 +184,9 @@ bool Character::update(float time_elapsed)
     DynamicObject::update(time_elapsed);
     (*current_weapon_)->update(time_elapsed);
 
+    if (decorator_ != nullptr)
+        decorator_->updateAnimation(time_elapsed);
+
     auto vel = std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
     this->updateAnimation(time_elapsed,
                           vel / utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed"));
@@ -204,6 +207,9 @@ bool Character::update(float time_elapsed)
 void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(shape_, states);
+
+    if (decorator_ != nullptr)
+        target.draw(*decorator_, states);
 
     if (!weapons_in_backpack_.empty())
         target.draw(**current_weapon_, states);
@@ -286,24 +292,36 @@ void Character::setPosition(const sf::Vector2f& pos)
 {
     AbstractDrawableObject::setPosition(pos);
     (*current_weapon_)->setPosition(pos + sf::Vector2f{gun_offset_.x, gun_offset_.y});
+
+    if (decorator_ != nullptr)
+        decorator_->setPosition(pos);
 }
 
 void Character::setPosition(float x, float y)
 {
     AbstractDrawableObject::setPosition(x, y);
     (*current_weapon_)->setPosition(x + gun_offset_.x, y + gun_offset_.y);
+
+    if (decorator_ != nullptr)
+        decorator_->setPosition(x, y);
 }
 
 void Character::setPositionX(float x)
 {
     AbstractDrawableObject::setPositionX(x);
     (*current_weapon_)->setPositionX(x + gun_offset_.x);
+
+    if (decorator_ != nullptr)
+        decorator_->setPositionX(x);
 }
 
 void Character::setPositionY(float y)
 {
     AbstractDrawableObject::setPositionY(y);
     (*current_weapon_)->setPositionY(y + gun_offset_.y);
+
+    if (decorator_ != nullptr)
+        decorator_->setPositionY(y);
 }
 
 void Character::setWeaponPointing(const sf::Vector2f& point)
@@ -373,6 +391,10 @@ void Character::handleGlobalState(float time_elapsed)
 
         case GlobalState::OnFire:
             life_ -= time_elapsed * CFG.get<float>("on_fire_hurt_speed");
+            on_fire_time_ -= time_elapsed;
+
+            if (on_fire_time_ <= 0.0f)
+                setGlobalState(GlobalState::Normal);
             break;
     }
 }
@@ -389,5 +411,33 @@ Character::GlobalState Character::getGlobalState() const
 
 void Character::setGlobalState(Character::GlobalState state)
 {
-    global_state_ = state;
+    switch (global_state_)
+    {
+        case GlobalState::Normal:
+            switch (state)
+            {
+                case GlobalState::Normal:
+                    break;
+                case GlobalState::OnFire:
+                    decorator_ = std::make_unique<Decoration>(this->getPosition(), "character_on_flames");
+                    global_state_ = state;
+                    on_fire_time_ = CFG.get<float>("on_fire_time");
+                    break;
+            }
+
+            break;
+
+        case GlobalState::OnFire:
+            switch (state)
+            {
+                case GlobalState::Normal:
+                    decorator_.reset(nullptr);
+                    global_state_ = state;
+                    break;
+                case GlobalState::OnFire:
+                    on_fire_time_ = CFG.get<float>("on_fire_time");
+                    break;
+            }
+            break;
+    }
 }

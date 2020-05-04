@@ -16,6 +16,8 @@
 #include <common/AbstractWeapon.h>
 #include <common/Shootable.h>
 #include <common/Special.h>
+#include <common/Decoration.h>
+
 
 using namespace r3e;
 
@@ -108,6 +110,9 @@ protected:
     GlobalState global_state_;
 
     float max_life_;
+    float on_fire_time_;
+
+    std::unique_ptr<Decoration> decorator_;
 
 private:
     inline void handleLifeState();
@@ -122,11 +127,8 @@ private:
 
     sf::Vector2f gun_offset_;
     float rotate_to_;
-
     float speed_factor_;
-
     short int current_rotation_quarter_;
-
     Special* current_special_object_;
 
 };

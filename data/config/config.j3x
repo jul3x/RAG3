@@ -24,4 +24,6 @@ float side_stepping_freeze_time=0.5f
 
 float fade_in_out_duration=0.2f
 
-float on_fire_hurt_speed=20.0f
+float on_fire_hurt_speed=10.0f
+
+float on_fire_time=3.0f

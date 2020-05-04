@@ -74,6 +74,7 @@ namespace r3e {
 
         sf::RectangleShape shape_;
         bool is_visible_;
+        bool is_active_;
         int z_index_;
 
     private:

@@ -18,8 +18,8 @@ ObstacleTile::ObstacleTile(const sf::Vector2f& position, const std::string& id) 
                      &RM.getTexture("obstacles_tiles/" + id),
                      utils::j3x::get<int>(RM.getObjectParams("obstacles_tiles", id), "z_index"),
                      0, 0.0f),
-        Shootable(static_cast<int>(utils::j3x::get<float>(RM.getObjectParams("obstacles_tiles", id), "endurance")) *
-                  CFG.get<int>("obstacles_endurance_factor"))
+        Shootable(utils::j3x::get<float>(RM.getObjectParams("obstacles_tiles", id), "endurance") *
+                  CFG.get<float>("obstacles_endurance_factor"))
 {
     this->changeOrigin(sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("obstacles_tiles", id), "size_x"),
                                     utils::j3x::get<float>(RM.getObjectParams("obstacles_tiles", id), "size_y")) / 2.0f +

@@ -20,6 +20,10 @@ namespace editor {
 
         void setObjectContent(const std::string& category, Functional* special);
 
+        [[nodiscard]] bool isDataFocused() const;
+
+        void addToData(const std::string& str);
+
     private:
         Functional* functional_;
 

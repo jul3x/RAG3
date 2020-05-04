@@ -104,7 +104,9 @@ void Functional::deactivate()
 void Functional::bindFunction(std::function<void(Functional*, const std::string&, Character*)> func, const std::string& text, bool is_usable_by_npc)
 {
     funcs_.emplace_back(func);
-    text_to_use_ = &text;
+
+    if (!(text.empty() && text_to_use_ != nullptr))
+        text_to_use_ = &text;
 
     if (!is_usable_by_npc)
         is_usable_by_npc_ = false;

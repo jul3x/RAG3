@@ -1,4 +1,8 @@
-int obstacles_endurance_factor=3
+bool god_mode=0
+
+bool no_clip_mode=0
+
+float obstacles_endurance_factor=3
 
 float get_shot_factor=100.0f
 
@@ -19,3 +23,7 @@ float thought_duration=5.0f
 float side_stepping_freeze_time=0.5f
 
 float fade_in_out_duration=0.2f
+
+float on_fire_hurt_speed=10.0f
+
+float on_fire_time=3.0f

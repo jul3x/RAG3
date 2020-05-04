@@ -83,6 +83,8 @@ public:
 
     void spawnAchievement(Achievements::Type type);
 
+    void spawnSpecial(const sf::Vector2f& pos, const std::string& name);
+
     void initialize() override;
 
     void update(float time_elapsed) override;

@@ -51,9 +51,11 @@ namespace editor {
 
         void setCurrentItem(const std::string& category, const std::string& id);
 
-        const std::pair<std::string, std::string>& getCurrentItem() const;
+        [[nodiscard]] const std::pair<std::string, std::string>& getCurrentItem() const;
 
-        void readItemInfo(const sf::Vector2f& pos);
+        void markCurrentItem(const sf::Vector2f& pos);
+
+        int readItemInfo(const sf::Vector2f& pos, bool read_uid = false);
 
         void placeItem(const sf::Vector2f& pos);
 
@@ -61,9 +63,9 @@ namespace editor {
 
         void clearMap();
 
-        const std::string& getCurrentMapName() const;
+        [[nodiscard]] const std::string& getCurrentMapName() const;
         
-        sf::Vector2f getMapCoordinates(const sf::Vector2f& pos) const;
+        [[nodiscard]] sf::Vector2f getMapCoordinates(const sf::Vector2f& pos) const;
 
         void loadMap(const std::string& name);
 

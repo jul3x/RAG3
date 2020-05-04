@@ -30,11 +30,16 @@ NPC::NPC(const sf::Vector2f& position, const std::string& id,
          const std::vector<std::string>& datas, int u_id) :
         Character(position, id, activation, functions, datas, u_id)
 {
-    weapons_in_backpack_.push_back(std::make_shared<ShootingWeapon>("desert_eagle"));
-
-    current_weapon_ = weapons_in_backpack_.begin();
-
     this->setPosition(position);
+
+    if (utils::j3x::get<std::string>(RM.getObjectParams("characters", id), "ai_type") == "Standard")
+    {
+        ai_function_ = &NPC::standardAI;
+    }
+    else
+    {
+        ai_function_ = &NPC::noneAI;
+    }
 }
 
 void NPC::registerEnemy(const Character* enemy)
@@ -72,73 +77,8 @@ bool NPC::update(float time_elapsed)
 
     handleEnemySelection();
     handleVisibilityState();
-    handleActionState();
 
-    auto& enemy_position = current_enemy_->getPosition();
-    auto velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") * this->generateVelocityForPath();
-
-    switch (action_state_)
-    {
-        case ActionState::StandBy:
-        {
-            velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed") * this->getWanderingDirection(0.2f, 100.0f, 20);
-
-            this->setNoGoal();
-            this->setWeaponPointing(this->getPosition() + velocity);
-            break;
-        }
-        case ActionState::Follow:
-        {
-            this->setWeaponPointing(enemy_position);
-            this->setCurrentGoal(enemy_position);
-            this->setWeaponPointing(this->getPosition() + velocity);
-            break;
-        }
-        case ActionState::DestroyWall:
-        {
-            this->setWeaponPointing(enemy_position);
-            this->setNoGoal();
-
-            if (this->isAlreadyRotated())
-                this->shot();
-            break;
-        }
-        case ActionState::Shot:
-        {
-            this->setWeaponPointing(enemy_position);
-            this->setNoGoal();
-
-            if (this->isAlreadyRotated())
-                this->shot();
-
-            break;
-        }
-        case ActionState::ShotAndRun:
-        {
-            this->setWeaponPointing(enemy_position);
-            this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - enemy_position));
-
-            if (this->isAlreadyRotated())
-                this->shot();
-            break;
-        }
-        case ActionState::Run:
-        {
-            this->setWeaponPointing(this->getPosition() + velocity);
-            this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - enemy_position));
-            break;
-        }
-    }
-
-    if (utils::num::isNearlyEqual(velocity, {0.0f, 0.0f}) &&
-        action_state_ != ActionState::Shot && action_state_ != ActionState::DestroyWall)
-    {
-        velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed") *
-                   this->getWanderingDirection(0.2f, 100.0f, 20);
-        this->setWeaponPointing(this->getPosition() + velocity);
-    }
-
-    this->setVelocity(velocity);
+    ai_function_(this, time_elapsed);
 
     return is_alive;
 }
@@ -361,4 +301,80 @@ sf::Vector2f NPC::findNearestSafeSpot(const sf::Vector2f& direction) const
         return {rounded_x * map_blockage_->scale_x_, rounded_y * map_blockage_->scale_y_};
 
     return {ai::NO_GOAL, ai::NO_GOAL};
+}
+
+void NPC::standardAI(float time_elapsed)
+{
+    handleActionState();
+
+    auto& enemy_position = current_enemy_->getPosition();
+    auto velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") * this->generateVelocityForPath();
+
+    switch (action_state_)
+    {
+        case ActionState::StandBy:
+        {
+            velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed") * this->getWanderingDirection(0.2f, 100.0f, 20);
+
+            this->setNoGoal();
+            this->setWeaponPointing(this->getPosition() + velocity);
+            break;
+        }
+        case ActionState::Follow:
+        {
+            this->setWeaponPointing(enemy_position);
+            this->setCurrentGoal(enemy_position);
+            this->setWeaponPointing(this->getPosition() + velocity);
+            break;
+        }
+        case ActionState::DestroyWall:
+        {
+            this->setWeaponPointing(enemy_position);
+            this->setNoGoal();
+
+            if (this->isAlreadyRotated())
+                this->shot();
+            break;
+        }
+        case ActionState::Shot:
+        {
+            this->setWeaponPointing(enemy_position);
+            this->setNoGoal();
+
+            if (this->isAlreadyRotated())
+                this->shot();
+
+            break;
+        }
+        case ActionState::ShotAndRun:
+        {
+            this->setWeaponPointing(enemy_position);
+            this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - enemy_position));
+
+            if (this->isAlreadyRotated())
+                this->shot();
+            break;
+        }
+        case ActionState::Run:
+        {
+            this->setWeaponPointing(this->getPosition() + velocity);
+            this->setCurrentGoal(this->findNearestSafeSpot(this->getPosition() - enemy_position));
+            break;
+        }
+    }
+
+    if (utils::num::isNearlyEqual(velocity, {0.0f, 0.0f}) &&
+        action_state_ != ActionState::Shot && action_state_ != ActionState::DestroyWall)
+    {
+        velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed") *
+                   this->getWanderingDirection(0.2f, 100.0f, 20);
+        this->setWeaponPointing(this->getPosition() + velocity);
+    }
+
+    this->setVelocity(velocity);
+}
+
+void NPC::noneAI(float time_elapsed)
+{
+    // none
 }

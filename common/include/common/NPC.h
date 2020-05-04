@@ -48,11 +48,9 @@ public:
 
     void registerMapBlockage(const ai::MapBlockage* map_blockage);
 
-    virtual bool update(float time_elapsed);
+    bool update(float time_elapsed) override;
 
     const sf::Vector2f& getStartPosition() const override;
-
-    void bindFunctionOnEnd(std::function<void(Special*, const std::string&)> func);
 
 protected:
     void handleEnemySelection();
@@ -60,6 +58,10 @@ protected:
     void handleVisibilityState();
 
     void handleActionState();
+
+    void standardAI(float time_elapsed);
+
+    void noneAI(float time_elapsed);
 
     sf::Vector2f findNearestSafeSpot(const sf::Vector2f& direction) const;
 
@@ -74,6 +76,8 @@ protected:
 
     VisibilityState visibility_state_;
     ActionState action_state_;
+
+    std::function<void(NPC*, float)> ai_function_;
 
 };
 

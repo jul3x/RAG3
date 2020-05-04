@@ -110,3 +110,14 @@ void SpecialObjectWindow::setObjectContent(const std::string& category, Function
     });
 }
 
+bool SpecialObjectWindow::isDataFocused() const
+{
+    return data_box_->isFocused();
+}
+
+void SpecialObjectWindow::addToData(const std::string& str)
+{
+    data_box_->setText(data_box_->getText() + str);
+}
+
+

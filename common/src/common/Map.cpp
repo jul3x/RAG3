@@ -56,37 +56,44 @@ ai::MapBlockage& Map::getMapBlockage()
     return blocked_;
 }
 
-std::list<std::shared_ptr<DecorationTile>>& Map::getDecorationsTiles()
+template<>
+std::list<std::shared_ptr<DecorationTile>>& Map::getList()
 {
     return decorations_tiles_;
 }
 
-std::list<std::shared_ptr<ObstacleTile>>& Map::getObstaclesTiles()
+template<>
+std::list<std::shared_ptr<ObstacleTile>>& Map::getList()
 {
     return obstacles_tiles_;
 }
 
-std::list<std::shared_ptr<NPC>>& Map::getNPCs()
+template<>
+std::list<std::shared_ptr<NPC>>& Map::getList()
 {
     return characters_;
 }
 
-std::list<std::shared_ptr<Special>>& Map::getSpecials()
+template<>
+std::list<std::shared_ptr<Special>>& Map::getList()
 {
     return specials_;
 }
 
-std::list<std::shared_ptr<Decoration>>& Map::getDecorations()
+template<>
+std::list<std::shared_ptr<Decoration>>& Map::getList()
 {
     return decorations_;
 }
 
-std::list<std::shared_ptr<Obstacle>>& Map::getObstacles()
+template<>
+std::list<std::shared_ptr<Obstacle>>& Map::getList()
 {
     return obstacles_;
 }
 
-DecorationTile* Map::spawnDecorationTile(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
+template<>
+DecorationTile* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
 {
     if (!check || (!this->checkCollisions(pos, decorations_tiles_, false, max_z_index) && !this->checkCollisions(pos, obstacles_tiles_, false, max_z_index)))
     {
@@ -95,7 +102,8 @@ DecorationTile* Map::spawnDecorationTile(const sf::Vector2f& pos, const std::str
     }
 }
 
-ObstacleTile* Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
+template<>
+ObstacleTile* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
 {
     if (!check || (!this->checkCollisions(pos, decorations_tiles_, false, max_z_index) && !this->checkCollisions(pos, obstacles_tiles_, false, max_z_index)))
     {
@@ -111,7 +119,8 @@ ObstacleTile* Map::spawnObstacleTile(const sf::Vector2f& pos, const std::string&
     }
 }
 
-NPC* Map::spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
+template<>
+NPC* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
 {
     if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
     {
@@ -120,7 +129,8 @@ NPC* Map::spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool ch
     }
 }
 
-Special* Map::spawnSpecial(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
+template<>
+Special* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
 {
     if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
     {
@@ -129,7 +139,8 @@ Special* Map::spawnSpecial(const sf::Vector2f& pos, const std::string& id, bool 
     }
 }
 
-Decoration* Map::spawnDecoration(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
+template<>
+Decoration* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
 {
     if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
     {
@@ -138,7 +149,8 @@ Decoration* Map::spawnDecoration(const sf::Vector2f& pos, const std::string& id,
     }
 }
 
-Obstacle* Map::spawnObstacle(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
+template<>
+Obstacle* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
 {
     if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
     {
@@ -166,10 +178,6 @@ void Map::removeObject(const sf::Vector2f& pos, int max_z_index)
 
 std::tuple<std::string, std::string, int> Map::getObjectInfo(const sf::Vector2f& pos, int max_z_index)
 {
-    auto ch = getItemInfo(pos, characters_, max_z_index);
-    if (ch != nullptr)
-        return std::make_tuple("characters", ch->getId(), ch->getUniqueId());
-
     auto dec = getItemInfo(pos, decorations_, max_z_index);
     if (dec != nullptr)
         return std::make_tuple("decorations", dec->getId(), dec->getUniqueId());
@@ -181,24 +189,64 @@ std::tuple<std::string, std::string, int> Map::getObjectInfo(const sf::Vector2f&
     return std::make_tuple("", "", -1);
 }
 
-Special* Map::getSpecialObject(const sf::Vector2f& pos, int max_z_index)
+template<>
+Special* Map::getObjectByPos(const sf::Vector2f& pos, int max_z_index)
 {
     return getItemInfo(pos, specials_, max_z_index);
 }
 
-NPC* Map::getNPCObject(const sf::Vector2f& pos, int max_z_index)
+template<>
+NPC* Map::getObjectByPos(const sf::Vector2f& pos, int max_z_index)
 {
     return getItemInfo(pos, characters_, max_z_index);
 }
 
-Special* Map::getSpecialObject(int id)
+template<>
+Decoration* Map::getObjectByPos(const sf::Vector2f& pos, int max_z_index)
 {
-    return getObject(id, specials_);
+    return getItemInfo(pos, decorations_, max_z_index);
 }
 
-Obstacle* Map::getObstacleObject(int id)
+template<>
+Obstacle* Map::getObjectByPos(const sf::Vector2f& pos, int max_z_index)
+{
+    return getItemInfo(pos, obstacles_, max_z_index);
+}
+
+template<>
+ObstacleTile* Map::getObjectByPos(const sf::Vector2f& pos, int max_z_index)
+{
+    return getItemInfo(pos, obstacles_tiles_, max_z_index);
+}
+
+template<>
+DecorationTile* Map::getObjectByPos(const sf::Vector2f& pos, int max_z_index)
+{
+    return getItemInfo(pos, decorations_tiles_, max_z_index);
+}
+
+template<>
+Obstacle* Map::getObjectById(int id)
 {
     return getObject(id, obstacles_);
+}
+
+template<>
+Decoration* Map::getObjectById(int id)
+{
+    return getObject(id, decorations_);
+}
+
+template<>
+NPC* Map::getObjectById(int id)
+{
+    return getObject(id, characters_);
+}
+
+template<>
+Special* Map::getObjectById(int id)
+{
+    return getObject(id, specials_);
 }
 
 std::pair<sf::Vector2<size_t>, sf::Vector2f> Map::getTileConstraints() const
@@ -238,4 +286,3 @@ std::pair<sf::Vector2<size_t>, sf::Vector2f> Map::getTileConstraints() const
                                 static_cast<size_t>((max.y - min.y) / DecorationTile::SIZE_Y_) + 1),
             min};
 }
-

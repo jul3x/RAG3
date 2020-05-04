@@ -14,9 +14,9 @@ class Journal;
 
 class JournalEntry {
 public:
-    JournalEntry() = default;
+    JournalEntry();
 
-    JournalEntry(Journal* father);
+    explicit JournalEntry(Journal* father);
 
     virtual void executeEntryReversal() = 0;
 
@@ -27,7 +27,7 @@ protected:
 
 class TimeReversalEntry : public JournalEntry {
 public:
-    TimeReversalEntry(Journal* father);
+    explicit TimeReversalEntry(Journal* father);
 
     void executeEntryReversal() override;
 private:
@@ -48,7 +48,7 @@ protected:
     sf::Vector2f pos_;
 
     float rotation_;
-    int life_;
+    float life_;
     float ammo_state_;
 
 };

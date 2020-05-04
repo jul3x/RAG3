@@ -2,7 +2,7 @@ float max_speed=500.0f
 
 float standby_speed=100.0f
 
-int max_health=20
+float max_health=20
 
 float size_x=49.0f
 float size_y=129.0f
@@ -20,7 +20,11 @@ int frames_number=4
 float frame_duration=0.07f
 
 string default_activation=OnKill
-list[string] default_functions=[Null]
-list[string] default_datas=[Null]
+list[string] default_functions=[SpawnAmmo]
+list[string] default_datas=[light]
+
+string ai_type=Standard
 
 int z_index=1
+
+list[string] weapons=[desert_eagle]

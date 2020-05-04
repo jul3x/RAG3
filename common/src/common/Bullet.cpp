@@ -26,12 +26,12 @@ Bullet::Bullet(const sf::Vector2f& position,
         trail_time_elapsed_(0.0f),
         trail_time_step_(CFG.get<float>("graphics/full_trail_time") / TRAIL_COUNT_),
         life_(utils::j3x::get<float>(RM.getObjectParams("bullets", id), "life")),
-        deadly_factor_(utils::j3x::get<int>(RM.getObjectParams("bullets", id), "deadly_factor"))
+        deadly_factor_(utils::j3x::get<float>(RM.getObjectParams("bullets", id), "deadly_factor"))
 {
     this->setRotation(direction * 180.0f / static_cast<float>(M_PI));
 }
 
-int Bullet::getDeadlyFactor() const
+float Bullet::getDeadlyFactor() const
 {
     return deadly_factor_;
 }

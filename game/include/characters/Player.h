@@ -16,7 +16,7 @@ public:
         Right = 1
     };
 
-    Player(const sf::Vector2f& position);
+    explicit Player(const sf::Vector2f& position);
 
     void setDead();
 
@@ -27,6 +27,10 @@ public:
     bool sideStep(Player::SideStepDir dir);
 
     bool update(float time_elapsed) override;
+
+    void setHealth(float life) override;
+
+    void getShot(const Bullet& bullet) override;
 
 private:
     float side_stepping_freeze_time_;

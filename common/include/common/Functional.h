@@ -19,17 +19,17 @@ public:
     Functional(const std::string& activation, const std::vector<std::string>& functions,
                const std::vector<std::string>& datas, const std::string& id, int u_id = -1);
 
-    const std::string& getActivation() const;
+    [[nodiscard]] const std::string& getActivation() const;
 
-    const std::string& getFunctionsStr() const;
+    [[nodiscard]] const std::string& getFunctionsStr() const;
 
-    const std::string& getDatasStr() const;
+    [[nodiscard]] const std::string& getDatasStr() const;
 
-    const std::vector<std::string>& getFunctions() const;
+    [[nodiscard]] const std::vector<std::string>& getFunctions() const;
 
-    const std::vector<std::string>& getDatas() const;
+    [[nodiscard]] const std::vector<std::string>& getDatas() const;
 
-    const std::string& getTextToUse() const;
+    [[nodiscard]] const std::string& getTextToUse() const;
 
     void setActivation(const std::string& str);
 
@@ -40,13 +40,13 @@ public:
     void bindFunction(std::function<void(Functional*, const std::string&, Character*)> func, const std::string& text,
                       bool is_usable_by_npc);
 
-    bool isActive() const;
+    [[nodiscard]] virtual bool isActive() const;
 
-    void deactivate();
+    virtual void deactivate();
 
-    void use(Character* user);
+    virtual void use(Character* user);
 
-    bool isUsableByNPC() const;
+    [[nodiscard]] virtual bool isUsableByNPC() const;
 
 private:
     bool is_active_;

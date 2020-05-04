@@ -25,6 +25,11 @@ SpecialFunctions::SpecialFunctions()
     functions_["ChangeOpenState"] = &changeOpenState;
     functions_["Teleport"] = &teleport;
     functions_["Kill"] = &kill;
+    functions_["SetOnFire"] = &setOnFire;
+    functions_["RemoveDecoration"] = &removeDecoration;
+    functions_["SpawnLava"] = &spawnLava;
+    functions_["SpawnFlame"] = &spawnFlame;
+    functions_["SpawnAmmo"] = &spawnAmmo;
     functions_["Null"] = &nullFunc;
     functions_["Deactivate"] = &deactivate;
 
@@ -41,6 +46,11 @@ SpecialFunctions::SpecialFunctions()
     text_to_use_["ChangeOpenState"] = "[F] Use object";
     text_to_use_["Teleport"] = "[F] To enter";
     text_to_use_["Kill"] = "[F] To use";
+    text_to_use_["SetOnFire"] = "";
+    text_to_use_["RemoveDecoration"] = "";
+    text_to_use_["SpawnLava"] = "";
+    text_to_use_["SpawnAmmo"] = "";
+    text_to_use_["SpawnFlame"] = "";
     text_to_use_["Null"] = "";
     text_to_use_["Deactivate"] = "";
 
@@ -57,6 +67,11 @@ SpecialFunctions::SpecialFunctions()
     is_usable_by_npc_["ChangeOpenState"] = true;
     is_usable_by_npc_["Teleport"] = true;
     is_usable_by_npc_["Kill"] = true;
+    is_usable_by_npc_["SetOnFire"] = true;
+    is_usable_by_npc_["RemoveDecoration"] = false;
+    is_usable_by_npc_["SpawnLava"] = false;
+    is_usable_by_npc_["SpawnAmmo"] = false;
+    is_usable_by_npc_["SpawnFlame"] = false;
     is_usable_by_npc_["Null"] = true;
     is_usable_by_npc_["Deactivate"] = true;
 }
@@ -76,7 +91,7 @@ void SpecialFunctions::openDoor(Functional* obj, const std::string& data, Charac
 {
     std::cout << "[SpecialFunction] Open door." << std::endl;
     auto door_id = std::stoi(data);
-    auto door = Game::get().getMap().getObstacleObject(door_id);
+    auto door = Game::get().getMap().getObjectById<Obstacle>(door_id);
     auto grid_pos = std::make_pair(static_cast<size_t>(door->getPosition().x / DecorationTile::SIZE_X_),
                                    static_cast<size_t>(door->getPosition().y / DecorationTile::SIZE_Y_));
 
@@ -102,8 +117,8 @@ void SpecialFunctions::changeOpenState(Functional* obj, const std::string& data,
 {
     std::cout << "[SpecialFunction] Changing open state." << std::endl;
     auto door_id = std::stoi(data);
-    auto door = Game::get().getMap().getObstacleObject(door_id);
-    auto special_obj = Game::get().getMap().getSpecialObject(obj->getUniqueId());
+    auto door = Game::get().getMap().getObjectById<Obstacle>(door_id);
+    auto special_obj = Game::get().getMap().getObjectById<Special>(obj->getUniqueId());
 
     if (door->getCollisionArea().getType() == Collision::Area::Type::None)
     {
@@ -195,17 +210,13 @@ void SpecialFunctions::spawnThought(Functional* obj, const std::string& data, Ch
 void SpecialFunctions::teleport(Functional* obj, const std::string& data, Character* user)
 {
     std::cout << "[SpecialFunction] Teleport." << std::endl;
-    std::vector<std::string> data_str;
-
     auto player = dynamic_cast<Player*>(user);
 
     try
     {
-        auto str = data.substr(1, data.length() - 1);
+        auto pos = utils::j3x::convert<sf::Vector2f>(data);
 
-        utils::j3x::tokenize(str, ',', data_str);
-
-        user->setPosition(std::stof(data_str.at(0)), std::stof(data_str.at(1)));
+        user->setPosition(pos);
         user->setForcedVelocity({0.0f, 0.0f});
 
         if (player != nullptr)
@@ -219,6 +230,52 @@ void SpecialFunctions::teleport(Functional* obj, const std::string& data, Charac
         throw std::invalid_argument("[SpecialFunctions] Bad format of position type in function data!");
     }
 }
+
+void SpecialFunctions::setOnFire(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Setting on fire." << std::endl;
+    user->setGlobalState(Character::GlobalState::OnFire);
+}
+
+void SpecialFunctions::removeDecoration(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Remove decoration." << std::endl;
+    auto decoration_id = std::stoi(data);
+    auto decoration = Game::get().getMap().getObjectById<Decoration>(decoration_id);
+    decoration->deactivate();
+}
+
+void SpecialFunctions::spawnLava(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Spawn lava." << std::endl;
+    auto pos = utils::j3x::convert<sf::Vector2f>(data);
+    Game::get().spawnSpecial(pos, "lava");
+    Game::get().spawnExplosionEvent(pos, 250.0f);
+}
+
+void SpecialFunctions::spawnAmmo(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Spawn ammo." << std::endl;
+
+    auto npc = dynamic_cast<Character*>(obj);
+
+    auto ammo_offset = CFG.get<float>("characters/ammo_drop_offset");
+    for (size_t i = 0; i < CFG.get<int>("characters/ammo_dropped"); ++i)
+    {
+        auto offset = sf::Vector2f(utils::num::getRandom(-ammo_offset, ammo_offset),
+                                   utils::num::getRandom(-ammo_offset, ammo_offset));
+        Game::get().spawnSpecial(npc->getPosition() + offset, data + "_ammo");
+    }
+}
+
+void SpecialFunctions::spawnFlame(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Spawn flame." << std::endl;
+    auto pos = utils::j3x::convert<sf::Vector2f>(data);
+    Game::get().spawnSpecial(pos, "flame");
+    Game::get().spawnExplosionEvent(pos, 250.0f);
+}
+
 
 void SpecialFunctions::kill(Functional* obj, const std::string& data, Character* user)
 {

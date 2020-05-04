@@ -141,10 +141,11 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
     information_.setFillColor({information_.getFillColor().r, information_.getFillColor().g,
                                information_.getFillColor().b, static_cast<sf::Uint8>(information_a_)});
 
+    Editor::get().markCurrentItem(crosshair_.getPosition());
+
     while (graphics.getWindow().pollEvent(event))
     {
-        if (gui_.handleEvent(event))
-            continue;
+        gui_.handleEvent(event);
 
         switch (event.type)
         {
@@ -189,6 +190,23 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 if (event.key.code == sf::Keyboard::E)
                 {
                     Editor::get().readItemInfo(crosshair_.getPosition());
+                }
+                else if (event.key.code == sf::Keyboard::F1)
+                {
+                    if (special_object_window_.isDataFocused())
+                    {
+                        special_object_window_.addToData(crosshair_.getPositionStr() + ";");
+                    }
+                }
+                else if (event.key.code == sf::Keyboard::F2)
+                {
+                    if (special_object_window_.isDataFocused())
+                    {
+                        auto id = Editor::get().readItemInfo(crosshair_.getPosition(), true);
+
+                        if (id != -1)
+                            special_object_window_.addToData(std::to_string(id) + ";");
+                    }
                 }
                 else if (event.key.code == sf::Keyboard::Escape)
                 {
@@ -304,10 +322,14 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
         crosshair_.setPosition(DecorationTile::SIZE_X_ * std::round(mouse_world_pos.x / DecorationTile::SIZE_X_),
                                DecorationTile::SIZE_Y_ * std::round(mouse_world_pos.y / DecorationTile::SIZE_Y_));
     }
-    else
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
     {
         crosshair_.setPosition(DecorationTile::SIZE_X_ / 4.0f * std::round(mouse_world_pos.x / DecorationTile::SIZE_X_ * 4.0f),
                                DecorationTile::SIZE_Y_ / 4.0f * std::round(mouse_world_pos.y / DecorationTile::SIZE_Y_ * 4.0f));
+    }
+    else
+    {
+        crosshair_.setPosition(mouse_world_pos);
     }
 
     if (current_item.second.empty())

@@ -1,7 +1,7 @@
 float size_x=100.0f
 float size_y=100.0f
 
-float collision_size_x=20.0f
+float collision_size_x=15.0f
 
 float map_offset_x=0.0f
 float map_offset_y=-20.0f
@@ -15,4 +15,4 @@ list[string] default_datas=[lava]
 
 bool is_drawable=1
 
-int z_index=-1
+int z_index=-2

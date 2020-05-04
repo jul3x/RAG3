@@ -35,20 +35,33 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
                       utils::j3x::get<int>(RM.getObjectParams("characters", id), "frames_number"),
                       utils::j3x::get<float>(RM.getObjectParams("characters", id), "frame_duration"),
                       CFG.get<float>("characters/max_acceleration")),
-        max_life_(utils::j3x::get<int>(RM.getObjectParams("characters", id), "max_health")),
+        global_state_(GlobalState::Normal),
+        max_life_(utils::j3x::get<float>(RM.getObjectParams("characters", id), "max_health")),
         ammo_state_(AmmoState::High),
         life_state_(LifeState::High),
         gun_offset_({utils::j3x::get<float>(RM.getObjectParams("characters", id), "gun_offset_x"),
                      utils::j3x::get<float>(RM.getObjectParams("characters", id), "gun_offset_y")}),
         current_rotation_quarter_(1),
         speed_factor_(1.0f),
+        rotate_to_(0.0f),
         current_special_object_(nullptr),
-        Shootable(utils::j3x::get<int>(RM.getObjectParams("characters", id), "max_health"))
+        Shootable(utils::j3x::get<float>(RM.getObjectParams("characters", id), "max_health"))
 {
     this->changeOrigin(sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("characters", id), "size_x"),
                                     utils::j3x::get<float>(RM.getObjectParams("characters", id), "size_y")) / 2.0f +
                        sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("characters", id), "map_offset_x"),
                                     utils::j3x::get<float>(RM.getObjectParams("characters", id), "map_offset_y")));
+
+    for (const auto& weapon :
+            utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("characters", id), "weapons"))
+    {
+        if (weapon == "Null")
+            weapons_in_backpack_.push_back(std::make_shared<NoWeapon>());
+        else
+            weapons_in_backpack_.push_back(std::make_shared<ShootingWeapon>(weapon));
+    }
+
+    current_weapon_ = weapons_in_backpack_.begin();
 }
 
 bool Character::shot()
@@ -134,7 +147,12 @@ const std::vector<std::shared_ptr<AbstractWeapon>>& Character::getWeapons() cons
     return this->weapons_in_backpack_;
 }
 
-int Character::getMaxHealth() const
+void Character::setMaxHealth(float health)
+{
+    max_life_ = health;
+}
+
+float Character::getMaxHealth() const
 {
     return this->max_life_;
 }
@@ -162,8 +180,12 @@ void Character::switchWeapon(int relative_position_backpack)
 
 bool Character::update(float time_elapsed)
 {
+    bool is_alive = life_ > 0;
     DynamicObject::update(time_elapsed);
     (*current_weapon_)->update(time_elapsed);
+
+    if (decorator_ != nullptr)
+        decorator_->updateAnimation(time_elapsed);
 
     auto vel = std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
     this->updateAnimation(time_elapsed,
@@ -171,6 +193,7 @@ bool Character::update(float time_elapsed)
 
     handleAmmoState();
     handleLifeState();
+    handleGlobalState(time_elapsed);
 
     auto rotation_diff = utils::geo::getAngleBetweenDegree(this->getRotation(), rotate_to_);
     auto is_negative = std::signbit(rotation_diff);
@@ -178,12 +201,15 @@ bool Character::update(float time_elapsed)
     this->setRotation(this->getRotation() -
                       rotation_sqrt * CFG.get<float>("characters/mouse_reaction_speed") * speed_factor_ * time_elapsed);
 
-    return life_ > 0;
+    return is_alive;
 }
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(shape_, states);
+
+    if (decorator_ != nullptr)
+        target.draw(*decorator_, states);
 
     if (!weapons_in_backpack_.empty())
         target.draw(**current_weapon_, states);
@@ -266,24 +292,36 @@ void Character::setPosition(const sf::Vector2f& pos)
 {
     AbstractDrawableObject::setPosition(pos);
     (*current_weapon_)->setPosition(pos + sf::Vector2f{gun_offset_.x, gun_offset_.y});
+
+    if (decorator_ != nullptr)
+        decorator_->setPosition(pos);
 }
 
 void Character::setPosition(float x, float y)
 {
     AbstractDrawableObject::setPosition(x, y);
     (*current_weapon_)->setPosition(x + gun_offset_.x, y + gun_offset_.y);
+
+    if (decorator_ != nullptr)
+        decorator_->setPosition(x, y);
 }
 
 void Character::setPositionX(float x)
 {
     AbstractDrawableObject::setPositionX(x);
     (*current_weapon_)->setPositionX(x + gun_offset_.x);
+
+    if (decorator_ != nullptr)
+        decorator_->setPositionX(x);
 }
 
 void Character::setPositionY(float y)
 {
     AbstractDrawableObject::setPositionY(y);
     (*current_weapon_)->setPositionY(y + gun_offset_.y);
+
+    if (decorator_ != nullptr)
+        decorator_->setPositionY(y);
 }
 
 void Character::setWeaponPointing(const sf::Vector2f& point)
@@ -344,7 +382,62 @@ void Character::handleAmmoState()
         ammo_state_ = AmmoState::Zero;
 }
 
+void Character::handleGlobalState(float time_elapsed)
+{
+    switch (global_state_)
+    {
+        case GlobalState::Normal:
+            break;
+
+        case GlobalState::OnFire:
+            life_ -= time_elapsed * CFG.get<float>("on_fire_hurt_speed");
+            on_fire_time_ -= time_elapsed;
+
+            if (on_fire_time_ <= 0.0f)
+                setGlobalState(GlobalState::Normal);
+            break;
+    }
+}
+
 float Character::getRotation() const
 {
     return (*current_weapon_)->getRotation();
+}
+
+Character::GlobalState Character::getGlobalState() const
+{
+    return global_state_;
+}
+
+void Character::setGlobalState(Character::GlobalState state)
+{
+    switch (global_state_)
+    {
+        case GlobalState::Normal:
+            switch (state)
+            {
+                case GlobalState::Normal:
+                    break;
+                case GlobalState::OnFire:
+                    decorator_ = std::make_unique<Decoration>(this->getPosition(), "character_on_flames");
+                    global_state_ = state;
+                    on_fire_time_ = CFG.get<float>("on_fire_time");
+                    break;
+            }
+
+            break;
+
+        case GlobalState::OnFire:
+            switch (state)
+            {
+                case GlobalState::Normal:
+                    decorator_.reset(nullptr);
+                    global_state_ = state;
+                    break;
+                case GlobalState::OnFire:
+                    on_fire_time_ = CFG.get<float>("on_fire_time");
+                    break;
+            }
+            break;
+    }
 }

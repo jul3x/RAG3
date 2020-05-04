@@ -26,7 +26,7 @@ public:
 
     void setDead();
 
-    int getDeadlyFactor() const;
+    float getDeadlyFactor() const;
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -39,7 +39,7 @@ private:
     const float trail_time_step_;
     float trail_time_elapsed_;
     float life_;
-    int deadly_factor_;
+    float deadly_factor_;
 
 };
 

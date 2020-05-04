@@ -33,45 +33,16 @@ public:
 
     bool loadMap(const std::string& name);
 
-    const sf::Vector2f& getSize() const;
+    [[nodiscard]] const sf::Vector2f& getSize() const;
 
     ai::MapBlockage& getMapBlockage();
 
-    std::list<std::shared_ptr<DecorationTile>>& getDecorationsTiles();
+    template<class T>
+    std::list<std::shared_ptr<T>>& getList();
 
-    std::list<std::shared_ptr<ObstacleTile>>& getObstaclesTiles();
-
-    std::list<std::shared_ptr<NPC>>& getNPCs();
-
-    std::list<std::shared_ptr<Special>>& getSpecials();
-
-    std::list<std::shared_ptr<Decoration>>& getDecorations();
-
-    std::list<std::shared_ptr<Obstacle>>& getObstacles();
-
-    DecorationTile*
-    spawnDecorationTile(const sf::Vector2f& pos, const std::string& id, bool check = false,
-                        int max_z_index = std::numeric_limits<int>::infinity());
-
-    ObstacleTile*
-    spawnObstacleTile(const sf::Vector2f& pos, const std::string& id, bool check = false,
-                      int max_z_index = std::numeric_limits<int>::infinity());
-
-    NPC*
-    spawnCharacter(const sf::Vector2f& pos, const std::string& id, bool check = false,
-                   int max_z_index = std::numeric_limits<int>::infinity());
-
-    Special*
-    spawnSpecial(const sf::Vector2f& pos, const std::string& id, bool check = false,
-                 int max_z_index = std::numeric_limits<int>::infinity());
-
-    Decoration*
-    spawnDecoration(const sf::Vector2f& pos, const std::string& id, bool check = false,
-                    int max_z_index = std::numeric_limits<int>::infinity());
-
-    Obstacle*
-    spawnObstacle(const sf::Vector2f& pos, const std::string& id, bool check = false,
-                  int max_z_index = std::numeric_limits<int>::infinity());
+    template<class T>
+    T* spawn(const sf::Vector2f& pos, const std::string& id, bool check = false,
+             int max_z_index = std::numeric_limits<int>::infinity());
 
     void removeTile(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
 
@@ -80,19 +51,13 @@ public:
     std::tuple<std::string, std::string, int>
     getObjectInfo(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
 
-    Special*
-    getSpecialObject(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
+    template<class T>
+    T* getObjectByPos(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
 
-    NPC*
-    getNPCObject(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
+    template<class T>
+    T* getObjectById(int id);
 
-    Special*
-    getSpecialObject(int id);
-
-    Obstacle*
-    getObstacleObject(int id);
-
-    std::pair<sf::Vector2<size_t>, sf::Vector2f> getTileConstraints() const;
+    [[nodiscard]] std::pair<sf::Vector2<size_t>, sf::Vector2f> getTileConstraints() const;
 
 private:
     template<class T>

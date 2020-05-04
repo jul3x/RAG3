@@ -7,6 +7,9 @@
 #include <misc/Journal.h>
 #include <misc/JournalEntries.h>
 
+JournalEntry::JournalEntry() : father_(nullptr)
+{
+}
 
 JournalEntry::JournalEntry(Journal* father) : father_(father)
 {

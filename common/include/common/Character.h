@@ -16,6 +16,8 @@
 #include <common/AbstractWeapon.h>
 #include <common/Shootable.h>
 #include <common/Special.h>
+#include <common/Decoration.h>
+
 
 using namespace r3e;
 
@@ -32,6 +34,11 @@ public:
         High,
         Low,
         Zero
+    };
+
+    enum class GlobalState {
+        Normal,
+        OnFire
     };
 
     Character(const sf::Vector2f& position,
@@ -58,9 +65,15 @@ public:
 
     const std::vector<std::shared_ptr<AbstractWeapon>>& getWeapons() const;
 
-    int getMaxHealth() const;
+    void setMaxHealth(float health);
+
+    float getMaxHealth() const;
 
     LifeState getLifeState() const;
+
+    void setGlobalState(GlobalState state);
+
+    GlobalState getGlobalState() const;
 
     bool update(float time_elapsed) override;
 
@@ -94,13 +107,19 @@ protected:
 
     LifeState life_state_;
     AmmoState ammo_state_;
+    GlobalState global_state_;
 
-    int max_life_;
+    float max_life_;
+    float on_fire_time_;
+
+    std::unique_ptr<Decoration> decorator_;
 
 private:
     inline void handleLifeState();
 
     inline void handleAmmoState();
+
+    inline void handleGlobalState(float time_elapsed);
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
@@ -108,11 +127,8 @@ private:
 
     sf::Vector2f gun_offset_;
     float rotate_to_;
-
     float speed_factor_;
-
     short int current_rotation_quarter_;
-
     Special* current_special_object_;
 
 };

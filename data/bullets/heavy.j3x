@@ -1,6 +1,6 @@
 float speed=2000.0f
 float life=1.0f
-int deadly_factor=3
+float deadly_factor=3.0f
 float size_x=14.0f
 float size_y=6.0f
 float burst_size=150.0f

@@ -12,7 +12,7 @@ int z_index=1
 float collision_size_x=20.0f
 
 string default_activation=OnEnter
-list[string] default_functions=[Null]
+list[string] default_functions=[SetOnFire]
 list[string] default_datas=[Null]
 
 bool is_drawable=1

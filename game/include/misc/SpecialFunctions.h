@@ -20,20 +20,26 @@ public:
 
     static void mapStart(Functional* obj, const std::string& data, Character* user);
     static void mapEnd(Functional* obj, const std::string& data, Character* user);
+
     static void openDoor(Functional* obj, const std::string& data, Character* user);
     static void changeOpenState(Functional* obj, const std::string& data, Character* user);
+
     static void readNote(Functional* obj, const std::string& data, Character* user);
     static void addWeapon(Functional* obj, const std::string& dat, Character* user);
     static void addAmmo(Functional* obj, const std::string& data, Character* user);
     static void addHealth(Functional* obj, const std::string& data, Character* user);
     static void addSpeed(Functional* obj, const std::string& data, Character* user);
     static void pickCrystal(Functional* obj, const std::string& data, Character* user);
-    static void spawnThought(Functional* obj, const std::string& data, Character* user);
+
     static void teleport(Functional* obj, const std::string& data, Character* user);
     static void kill(Functional* obj, const std::string& data, Character* user);
+    static void setOnFire(Functional* obj, const std::string& data, Character* user);
+
     static void removeDecoration(Functional* obj, const std::string& data, Character* user);
+    static void spawnThought(Functional* obj, const std::string& data, Character* user);
     static void spawnLava(Functional* obj, const std::string& data, Character* user);
     static void spawnAmmo(Functional* obj, const std::string& data, Character* user);
+
     static void nullFunc(Functional* obj, const std::string& data, Character* user);
     static void deactivate(Functional* obj, const std::string& data, Character* user);
 

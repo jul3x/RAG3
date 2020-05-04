@@ -28,7 +28,7 @@ public:
 
     bool update(float time_elapsed) override;
 
-    void setHealth(int life) override;
+    void setHealth(float life) override;
 
     void getShot(const Bullet& bullet) override;
 

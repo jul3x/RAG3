@@ -12,7 +12,7 @@ class Shootable {
 public:
     Shootable() = delete;
 
-    explicit Shootable(int life) : life_(life) {}
+    explicit Shootable(float life) : life_(life) {}
 
     virtual void getShot(const Bullet& bullet)
     {
@@ -20,18 +20,18 @@ public:
         life_ = life_ < 0 ? 0 : life_;
     }
 
-    virtual int getHealth() const
+    [[nodiscard]] virtual float getHealth() const
     {
         return life_;
     }
 
-    virtual void setHealth(int life)
+    virtual void setHealth(float life)
     {
         life_ = life;
     }
 
 protected:
-    int life_;
+    float life_;
 };
 
 

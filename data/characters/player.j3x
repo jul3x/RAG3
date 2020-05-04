@@ -4,7 +4,7 @@ float max_running_speed=800.0f
 float standby_speed=100.0f
 float side_step_speed=1000.0f
 
-int max_health=160
+float max_health=160
 
 float size_x=49.0f
 float size_y=129.0f

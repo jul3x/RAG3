@@ -34,6 +34,11 @@ public:
         Zero
     };
 
+    enum class GlobalState {
+        Normal,
+        OnFire
+    };
+
     Character(const sf::Vector2f& position,
               const std::string& id,
               int u_id = -1);
@@ -58,11 +63,15 @@ public:
 
     const std::vector<std::shared_ptr<AbstractWeapon>>& getWeapons() const;
 
-    void setMaxHealth(int health);
+    void setMaxHealth(float health);
 
-    int getMaxHealth() const;
+    float getMaxHealth() const;
 
     LifeState getLifeState() const;
+
+    void setGlobalState(GlobalState state);
+
+    GlobalState getGlobalState() const;
 
     bool update(float time_elapsed) override;
 
@@ -96,13 +105,16 @@ protected:
 
     LifeState life_state_;
     AmmoState ammo_state_;
+    GlobalState global_state_;
 
-    int max_life_;
+    float max_life_;
 
 private:
     inline void handleLifeState();
 
     inline void handleAmmoState();
+
+    inline void handleGlobalState(float time_elapsed);
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 

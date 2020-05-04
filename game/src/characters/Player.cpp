@@ -49,10 +49,11 @@ bool Player::sideStep(Player::SideStepDir dir)
 bool Player::update(float time_elapsed)
 {
     side_stepping_freeze_time_ -= time_elapsed;
+
     return Character::update(time_elapsed);
 }
 
-void Player::setHealth(int life)
+void Player::setHealth(float life)
 {
     if (!CFG.get<int>("god_mode"))
     {

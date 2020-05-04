@@ -35,7 +35,8 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
                       utils::j3x::get<int>(RM.getObjectParams("characters", id), "frames_number"),
                       utils::j3x::get<float>(RM.getObjectParams("characters", id), "frame_duration"),
                       CFG.get<float>("characters/max_acceleration")),
-        max_life_(utils::j3x::get<int>(RM.getObjectParams("characters", id), "max_health")),
+        global_state_(GlobalState::Normal),
+        max_life_(utils::j3x::get<float>(RM.getObjectParams("characters", id), "max_health")),
         ammo_state_(AmmoState::High),
         life_state_(LifeState::High),
         gun_offset_({utils::j3x::get<float>(RM.getObjectParams("characters", id), "gun_offset_x"),
@@ -44,7 +45,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
         speed_factor_(1.0f),
         rotate_to_(0.0f),
         current_special_object_(nullptr),
-        Shootable(utils::j3x::get<int>(RM.getObjectParams("characters", id), "max_health"))
+        Shootable(utils::j3x::get<float>(RM.getObjectParams("characters", id), "max_health"))
 {
     this->changeOrigin(sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("characters", id), "size_x"),
                                     utils::j3x::get<float>(RM.getObjectParams("characters", id), "size_y")) / 2.0f +
@@ -146,12 +147,12 @@ const std::vector<std::shared_ptr<AbstractWeapon>>& Character::getWeapons() cons
     return this->weapons_in_backpack_;
 }
 
-void Character::setMaxHealth(int health)
+void Character::setMaxHealth(float health)
 {
     max_life_ = health;
 }
 
-int Character::getMaxHealth() const
+float Character::getMaxHealth() const
 {
     return this->max_life_;
 }
@@ -179,6 +180,7 @@ void Character::switchWeapon(int relative_position_backpack)
 
 bool Character::update(float time_elapsed)
 {
+    bool is_alive = life_ > 0;
     DynamicObject::update(time_elapsed);
     (*current_weapon_)->update(time_elapsed);
 
@@ -188,6 +190,7 @@ bool Character::update(float time_elapsed)
 
     handleAmmoState();
     handleLifeState();
+    handleGlobalState(time_elapsed);
 
     auto rotation_diff = utils::geo::getAngleBetweenDegree(this->getRotation(), rotate_to_);
     auto is_negative = std::signbit(rotation_diff);
@@ -195,7 +198,7 @@ bool Character::update(float time_elapsed)
     this->setRotation(this->getRotation() -
                       rotation_sqrt * CFG.get<float>("characters/mouse_reaction_speed") * speed_factor_ * time_elapsed);
 
-    return life_ > 0;
+    return is_alive;
 }
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -361,7 +364,30 @@ void Character::handleAmmoState()
         ammo_state_ = AmmoState::Zero;
 }
 
+void Character::handleGlobalState(float time_elapsed)
+{
+    switch (global_state_)
+    {
+        case GlobalState::Normal:
+            break;
+
+        case GlobalState::OnFire:
+            life_ -= time_elapsed * CFG.get<float>("on_fire_hurt_speed");
+            break;
+    }
+}
+
 float Character::getRotation() const
 {
     return (*current_weapon_)->getRotation();
+}
+
+Character::GlobalState Character::getGlobalState() const
+{
+    return global_state_;
+}
+
+void Character::setGlobalState(Character::GlobalState state)
+{
+    global_state_ = state;
 }

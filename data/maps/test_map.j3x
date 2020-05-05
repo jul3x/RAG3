@@ -71,77 +71,6 @@ tile_map:
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 -1 -1 1 1 1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 0 0 0 0 0 0 0 0 0 0 
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 0 
 
-obstacles: 
-fence 3800 3400 153
-fence 3700 3400 154
-fence 3600 3400 157
-fence 3500 3400 158
-fence 3400 3400 159
-fence 3300 3400 160
-fence 3200 3400 161
-door 4200 4500 162
-door 4300 4500 163
-fence 6400 6000 179
-fence 6500 6000 180
-fence 6600 6000 181
-fence 6700 6000 182
-fence 6800 6000 183
-fence 6900 6000 184
-door 6700 5300 185
-door 5300 4900 187
-fence 5800 3800 188
-fence 5900 3800 189
-fence 6000 3800 190
-fence 6100 3800 191
-fence 6200 3800 192
-fence 6300 3800 193
-fence 7300 3400 194
-fence 7200 3400 195
-fence 7100 3400 196
-fence 7000 3400 197
-fence 6900 3400 198
-fence 6800 3400 199
-fence_side 6950 5975 263
-fence_side 6950 5825 265
-fence 6900 5725 268
-fence 6800 5725 272
-fence 6700 5725 273
-fence 6600 5725 274
-fence 6500 5725 275
-fence 6400 5725 276
-door 3900 1650 314
-door 4000 1650 315
-door 3300 1650 316
-door 3400 1650 317
-door 2700 1650 318
-door 2800 1650 319
-door 2700 500 320
-door 2800 500 321
-door 3300 500 322
-door 3400 500 324
-door 3900 500 325
-door 4000 500 326
-fence 2925 1000 366
-fence_side 2975 1100 368
-fence_side 2875 1100 370
-fence 2925 1150 371
-door 1900 975 373
-door 5400 1225 376
-fence_side 2300 3750 435
-fence_side 2300 3600 436
-fence_side 2100 3900 441
-fence_side 2100 3750 443
-fence_side 2100 3600 444
-fence 2150 3925 447
-fence 2250 3925 450
-fence_side 2300 3900 451
-fence 100 425 627
-fence 200 425 629
-fence 300 425 630
-fence 300 575 631
-fence 200 575 632
-fence 100 575 633
-
 decorations: 
 blood 3600 3000 209
 blood 4100 2800 210
@@ -217,6 +146,77 @@ floor_side 500 1150 726
 floor_side 600 1150 727
 floor_side 700 1150 728
 floor_side 800 1150 729
+
+obstacles: 
+fence 3800 3400 153 OnKill [Null] [Null]
+fence 3700 3400 154 OnKill [Null] [Null]
+fence 3600 3400 157 OnKill [Null] [Null]
+fence 3500 3400 158 OnKill [Null] [Null]
+fence 3400 3400 159 OnKill [Null] [Null]
+fence 3300 3400 160 OnKill [Null] [Null]
+fence 3200 3400 161 OnKill [Null] [Null]
+door 4200 4500 162 OnKill [Null] [Null]
+door 4300 4500 163 OnKill [Null] [Null]
+fence 6400 6000 179 OnKill [Null] [Null]
+fence 6500 6000 180 OnKill [Null] [Null]
+fence 6600 6000 181 OnKill [Null] [Null]
+fence 6700 6000 182 OnKill [Null] [Null]
+fence 6800 6000 183 OnKill [Null] [Null]
+fence 6900 6000 184 OnKill [Null] [Null]
+door 6700 5300 185 OnKill [Null] [Null]
+door 5300 4900 187 OnKill [Null] [Null]
+fence 5800 3800 188 OnKill [Null] [Null]
+fence 5900 3800 189 OnKill [Null] [Null]
+fence 6000 3800 190 OnKill [Null] [Null]
+fence 6100 3800 191 OnKill [Null] [Null]
+fence 6200 3800 192 OnKill [Null] [Null]
+fence 6300 3800 193 OnKill [Null] [Null]
+fence 7300 3400 194 OnKill [Null] [Null]
+fence 7200 3400 195 OnKill [Null] [Null]
+fence 7100 3400 196 OnKill [Null] [Null]
+fence 7000 3400 197 OnKill [Null] [Null]
+fence 6900 3400 198 OnKill [Null] [Null]
+fence 6800 3400 199 OnKill [Null] [Null]
+fence_side 6950 5975 263 OnKill [Null] [Null]
+fence_side 6950 5825 265 OnKill [Null] [Null]
+fence 6900 5725 268 OnKill [Null] [Null]
+fence 6800 5725 272 OnKill [Null] [Null]
+fence 6700 5725 273 OnKill [Null] [Null]
+fence 6600 5725 274 OnKill [Null] [Null]
+fence 6500 5725 275 OnKill [Null] [Null]
+fence 6400 5725 276 OnKill [Null] [Null]
+door 3900 1650 314 OnKill [Null] [Null]
+door 4000 1650 315 OnKill [Null] [Null]
+door 3300 1650 316 OnKill [Null] [Null]
+door 3400 1650 317 OnKill [Null] [Null]
+door 2700 1650 318 OnKill [Null] [Null]
+door 2800 1650 319 OnKill [Null] [Null]
+door 2700 500 320 OnKill [Null] [Null]
+door 2800 500 321 OnKill [Null] [Null]
+door 3300 500 322 OnKill [Null] [Null]
+door 3400 500 324 OnKill [Null] [Null]
+door 3900 500 325 OnKill [Null] [Null]
+door 4000 500 326 OnKill [Null] [Null]
+fence 2925 1000 366 OnKill [Null] [Null]
+fence_side 2975 1100 368 OnKill [Null] [Null]
+fence_side 2875 1100 370 OnKill [Null] [Null]
+fence 2925 1150 371 OnKill [Null] [Null]
+door 1900 975 373 OnKill [Null] [Null]
+door 5400 1225 376 OnKill [Null] [Null]
+fence_side 2300 3750 435 OnKill [Null] [Null]
+fence_side 2300 3600 436 OnKill [Null] [Null]
+fence_side 2100 3900 441 OnKill [Null] [Null]
+fence_side 2100 3750 443 OnKill [Null] [Null]
+fence_side 2100 3600 444 OnKill [Null] [Null]
+fence 2150 3925 447 OnKill [Null] [Null]
+fence 2250 3925 450 OnKill [Null] [Null]
+fence_side 2300 3900 451 OnKill [Null] [Null]
+fence 100 425 627 OnKill [Null] [Null]
+fence 200 425 629 OnKill [Null] [Null]
+fence 300 425 630 OnKill [Null] [Null]
+fence 300 575 631 OnKill [Null] [Null]
+fence 200 575 632 OnKill [Null] [Null]
+fence 100 575 633 OnKill [Null] [Null]
 
 characters: 
 standard 4200 4800 231 OnKill [SpawnThought] [Die_motherfucker,_die!]

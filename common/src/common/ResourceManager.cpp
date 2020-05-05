@@ -129,7 +129,6 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         ++count;
                         break;
                     }
-                    case MapReading::Obstacles:
                     case MapReading::Decorations:
                     {
                         ++number;
@@ -154,6 +153,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         }
                         break;
                     }
+                    case MapReading::Obstacles:
                     case MapReading::Specials:
                     case MapReading::Characters:
                     {
@@ -229,7 +229,14 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                                                                             activation, functions, f_datas, u_id));
                             break;
                         case MapReading::Obstacles:
-                            obstacles.emplace_back(std::make_shared<Obstacle>(current_pos, current_id, u_id));
+                            if (functions.size() != f_datas.size())
+                            {
+                                throw std::logic_error("[ResourceManager] Wrong map special object data and function format!");
+                            }
+
+                            obstacles.emplace_back(std::make_shared<Obstacle>(current_pos, current_id,
+                                                                              activation, functions, f_datas, u_id));
+
                             blocked.at(static_cast<size_t>(current_pos.x / DecorationTile::SIZE_X_)).
                                     at(static_cast<size_t>(current_pos.y / DecorationTile::SIZE_Y_)) =
                                     utils::j3x::get<float>(RM.getObjectParams("obstacles", current_id), "endurance");
@@ -237,6 +244,8 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         case MapReading::Decorations:
                             decorations.emplace_back(std::make_shared<Decoration>(current_pos, current_id, u_id));
                             break;
+                        default:
+                            throw std::logic_error("[ResourceManager] Wrong map format!");
                     }
                 }
             }
@@ -351,8 +360,8 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
         }
     };
 
-    addObjToFile("obstacles", map.getList<Obstacle>());
     addObjToFile("decorations", map.getList<Decoration>());
+    addFunctionalObjToFile("obstacles", map.getList<Obstacle>());
     addFunctionalObjToFile("characters", map.getList<NPC>());
     addFunctionalObjToFile("specials", map.getList<Special>());
 

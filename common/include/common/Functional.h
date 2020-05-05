@@ -9,6 +9,9 @@
 #include <functional>
 #include <string>
 
+#include <R3E/objects/Identifiable.h>
+#include <R3E/objects/Unique.h>
+
 
 using namespace r3e;
 

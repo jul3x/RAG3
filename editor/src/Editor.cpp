@@ -109,7 +109,8 @@ int Editor::readItemInfo(const sf::Vector2f& pos, bool read_uid)
 
     if (ret_special != nullptr)
     {
-        ui_->openSpecialObjectWindow("specials", ret_special);
+        if (!read_uid)
+            ui_->openSpecialObjectWindow("specials", ret_special);
         return read_uid ? ret_special->getUniqueId() : 0;
     }
 
@@ -117,16 +118,27 @@ int Editor::readItemInfo(const sf::Vector2f& pos, bool read_uid)
 
     if (ret_npc != nullptr)
     {
-        ui_->openSpecialObjectWindow("characters", ret_npc);
+        if (!read_uid)
+            ui_->openSpecialObjectWindow("characters", ret_npc);
         return read_uid ? ret_npc->getUniqueId() : 0;
+    }
+
+    auto ret_obs = map_->getObjectByPos<Obstacle>(pos, ui_->getZIndex());
+
+    if (ret_obs != nullptr)
+    {
+        if (!read_uid)
+            ui_->openSpecialObjectWindow("obstacles", ret_obs);
+        return read_uid ? ret_obs->getUniqueId() : 0;
     }
 
     auto ret = map_->getObjectInfo(pos, ui_->getZIndex());
 
     if (!(std::get<0>(ret).empty() && std::get<1>(ret).empty()))
     {
-        ui_->openUniqueObjectWindow(std::get<0>(ret), std::get<1>(ret), std::get<2>(ret));
-        return read_uid ? std::get<2>(ret): 0;
+        if (!read_uid)
+            ui_->openUniqueObjectWindow(std::get<0>(ret), std::get<1>(ret), std::get<2>(ret));
+        return read_uid ? std::get<2>(ret) : 0;
     }
 
     return -1;

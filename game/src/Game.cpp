@@ -63,7 +63,16 @@ void Game::initialize()
         engine_->registerStaticObject(obstacle.get());
 
     for (auto& obstacle : map_->getList<Obstacle>())
+    {
         engine_->registerStaticObject(obstacle.get());
+
+        for (const auto& function : obstacle->getFunctions())
+        {
+            obstacle->bindFunction(special_functions_->bindFunction(function),
+                                   special_functions_->bindTextToUse(function),
+                                   special_functions_->isUsableByNPC(function));
+        }
+    }
 
     for (auto& character : map_->getList<NPC>())
     {
@@ -266,6 +275,11 @@ void Game::updateMapObjects(float time_elapsed)
 
             auto next_it = std::next(it);
             this->deleteStaticObject(it->get());
+
+            if ((*it)->getActivation() == "OnKill")
+            {
+                (*it)->use(player_.get());
+            }
 
             auto grid_pos = std::make_pair(static_cast<size_t>((*it)->getPosition().x / DecorationTile::SIZE_X_),
                                            static_cast<size_t>((*it)->getPosition().y / DecorationTile::SIZE_Y_));
@@ -699,6 +713,14 @@ Obstacle* Game::spawnNewObstacle(const std::string& id, const sf::Vector2f& pos)
 {
     auto new_ptr = map_->spawn<Obstacle>(pos, id);
     engine_->registerStaticObject(new_ptr);
+
+    for (const auto& function : new_ptr->getFunctions())
+    {
+        new_ptr->bindFunction(special_functions_->bindFunction(function),
+                              special_functions_->bindTextToUse(function),
+                              special_functions_->isUsableByNPC(function));
+    }
+
     return new_ptr;
 }
 

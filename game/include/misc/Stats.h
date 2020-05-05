@@ -18,14 +18,17 @@ public:
 
     void pickCrystal();
 
-    int getEnemiesKilled() const;
+    void explode();
 
-    int getCrystalsPicked() const;
+    [[nodiscard]] int getEnemiesKilled() const;
+
+    [[nodiscard]] int getCrystalsPicked() const;
 
 private:
     std::vector<Achievements::Type> achievements_;
     int enemies_killed_;
     int crystals_picked_;
+    int explosions_;
 
 };
 

@@ -243,6 +243,10 @@ void SpecialFunctions::setOnFire(Functional* obj, const std::string& data, Chara
 void SpecialFunctions::explode(Functional* obj, const std::string& data, Character* user)
 {
     std::cout << "[SpecialFunction] Explode." << std::endl;
+    auto obs = dynamic_cast<Obstacle*>(obj);
+    Game::get().spawnExplosionForce(obs->getPosition(), std::stof(data));
+
+    Game::get().getStats().explode();
 }
 
 void SpecialFunctions::removeDecoration(Functional* obj, const std::string& data, Character* user)

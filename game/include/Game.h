@@ -21,6 +21,7 @@
 #include <misc/Thought.h>
 #include <misc/Achievements.h>
 #include <misc/Stats.h>
+#include <misc/Explosion.h>
 #include <characters/Player.h>
 #include <characters/PlayerClone.h>
 
@@ -49,7 +50,7 @@ public:
         return instance;
     }
 
-    const sf::Vector2f& getPlayerPosition() const;
+    [[nodiscard]] const sf::Vector2f& getPlayerPosition() const;
 
     Map& getMap();
 
@@ -59,19 +60,21 @@ public:
 
     Stats& getStats();
 
-    const Journal& getJournal() const;
+    [[nodiscard]] const Journal& getJournal() const;
 
-    const std::list<std::unique_ptr<Bullet>>& getBullets() const;
+    [[nodiscard]] const std::list<std::unique_ptr<Bullet>>& getBullets() const;
 
-    const ai::MapBlockage& getMapBlockage() const;
+    [[nodiscard]] const ai::MapBlockage& getMapBlockage() const;
 
-    ai::AgentsManager& getAgentsManager() const;
+    void spawnExplosionForce(const sf::Vector2f& pos, float r);
+
+    void updateExplosions();
 
     void spawnBullet(const std::string& name, const sf::Vector2f& pos, float dir);
 
     void spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);
 
-    void spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir);
+    void spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir);
 
     void spawnExplosionEvent(const sf::Vector2f& pos, float r);
 
@@ -121,7 +124,7 @@ public:
 
     void findAndDeleteDecoration(Decoration* ptr);
 
-    Special* getCurrentSpecialObject() const;
+    [[nodiscard]] Special* getCurrentSpecialObject() const;
 
     void useSpecialObject();
 
@@ -129,15 +132,11 @@ public:
 
     void setNormalTime();
 
-    bool isJournalFreezed() const;
+    [[nodiscard]] bool isJournalFreezed() const;
 
     void setGameState(Game::GameState state);
 
-    Game::GameState getGameState() const;
-
-    float getCurrentTimeFactor() const;
-
-    float getFPS() const;
+    [[nodiscard]] Game::GameState getGameState() const;
 
     void start();
 
@@ -165,7 +164,9 @@ private:
     std::unique_ptr<Map> map_;
 
     std::list<std::unique_ptr<Bullet>> bullets_;
+    std::list<std::unique_ptr<Explosion>> explosions_;
     std::list<std::unique_ptr<Thought>> thoughts_;
+    std::list<std::pair<sf::Vector2f, float>> desired_explosions_;
 
     Game::GameState state_;
     float current_time_factor_;

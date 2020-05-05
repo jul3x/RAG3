@@ -13,7 +13,8 @@ class Achievements {
 public:
     enum class Type {
         FirstEnemyKill,
-        FirstCrystalPick
+        FirstCrystalPick,
+        FirstBarrelDestroyed
     };
 
     Achievements();

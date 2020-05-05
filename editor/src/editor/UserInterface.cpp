@@ -177,6 +177,9 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
             }
             case sf::Event::MouseWheelScrolled:
             {
+                if (mouse_on_widget_)
+                    break;
+
                 auto current_view = graphics.getCurrentView();
                 current_view.zoom(1.0f - (event.mouseWheelScroll.delta > 0 ? 0.1f : -0.1f));
                 graphics.modifyCurrentView(current_view);

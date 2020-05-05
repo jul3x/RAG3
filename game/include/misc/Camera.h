@@ -15,7 +15,7 @@ class Camera : public graphics::AbstractCamera {
 public:
     Camera();
 
-    void setShaking();
+    void setShaking(float factor = 1.0f);
     
     void setZoomInOut();
 
@@ -34,6 +34,8 @@ private:
     };
 
     Camera::State state_;
+    float factor_;
+
 };
 
 #endif // RAG3_GAME_MISC_CAMERA_H

@@ -14,6 +14,6 @@ float endurance=1.0f
 
 string default_activation=OnKill
 list[string] default_functions=[Explode]
-list[string] default_datas=[1000.0f]
+list[string] default_datas=[250.0f]
 
 int z_index=1

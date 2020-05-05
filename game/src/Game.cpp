@@ -131,6 +131,8 @@ void Game::update(float time_elapsed)
         }
         case GameState::Normal:
         {
+            updateExplosions();
+
             agents_manager_->update();
 
             updateMapObjects(time_elapsed);
@@ -202,6 +204,7 @@ void Game::update(float time_elapsed)
                     it = next_it;
                 }
             }
+
 
             journal_->update(time_elapsed);
             camera_->update(time_elapsed);
@@ -503,7 +506,7 @@ void Game::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
                       special_functions_->isUsableByNPC(ptr->getFunctions().at(0)));
 }
 
-void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir)
+void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir)
 {
     auto shot_event = std::make_shared<Event>(pos, "shot", dir * 180.0f / M_PI,
                                               utils::j3x::get<float>(RM.getObjectParams("bullets", name),
@@ -514,23 +517,45 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, cons
         engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
 }
 
-void Game::spawnBullet(const std::string& name, const sf::Vector2f& pos, const float dir)
+void Game::spawnBullet(const std::string& name, const sf::Vector2f& pos, float dir)
 {
     auto ptr = this->spawnNewBullet(name, pos, dir);
     journal_->eventBulletSpawned(ptr);
     this->spawnShotEvent(name, pos, dir);
 }
 
+void Game::spawnExplosionForce(const sf::Vector2f& pos, float r)
+{
+    desired_explosions_.emplace_back(pos, r);
+}
+
+void Game::updateExplosions()
+{
+    for (const auto& explosion : explosions_)
+    {
+        engine_->deleteHoveringObject(explosion.get());
+    }
+    explosions_.clear();
+
+    for (const auto& desired_explosion : desired_explosions_)
+    {
+        camera_->setShaking(2.0f);
+        explosions_.emplace_back(std::make_unique<Explosion>(desired_explosion.first, desired_explosion.second));
+        engine_->registerHoveringObject(explosions_.back().get());
+    }
+
+    desired_explosions_.clear();
+}
+
 void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
 {
     auto bullet = dynamic_cast<Bullet*>(h_obj);
+    auto explosion = dynamic_cast<Explosion*>(h_obj);
     auto obstacle = dynamic_cast<Obstacle*>(s_obj);
     auto obstacle_tile = dynamic_cast<ObstacleTile*>(s_obj);
 
     if (obstacle != nullptr && bullet != nullptr)
     {
-        journal_->eventObstacleShot(obstacle);
-
         obstacle->getShot(*bullet);
 
         spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
@@ -538,11 +563,11 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
                                  CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
         bullet->setDead();
+
+        journal_->eventObstacleShot(obstacle);
     }
     else if (obstacle_tile != nullptr && bullet != nullptr)
     {
-        journal_->eventObstacleTileShot(obstacle_tile);
-
         obstacle_tile->getShot(*bullet);
 
         spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
@@ -550,8 +575,21 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
                                  CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
         bullet->setDead();
-    }
 
+        journal_->eventObstacleTileShot(obstacle_tile);
+    }
+    else if (obstacle != nullptr && explosion != nullptr)
+    {
+        explosion->applyForce(obstacle);
+
+        journal_->eventObstacleShot(obstacle);
+    }
+    else if (obstacle_tile != nullptr && explosion != nullptr)
+    {
+        explosion->applyForce(obstacle_tile);
+
+        journal_->eventObstacleTileShot(obstacle_tile);
+    }
 }
 
 void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
@@ -590,6 +628,12 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         {
             character->setCurrentSpecialObject(special);
         }
+    }
+
+    auto explosion = dynamic_cast<Explosion*>(h_obj);
+    if (character != nullptr && explosion != nullptr)
+    {
+        explosion->applyForce(character);
     }
 }
 
@@ -754,11 +798,6 @@ void Game::findAndDeleteDecoration(Decoration* ptr)
     std::cerr << "[Game] Warning - decoration to delete not found!" << std::endl;
 }
 
-ai::AgentsManager& Game::getAgentsManager() const
-{
-    return *agents_manager_;
-}
-
 Special* Game::getCurrentSpecialObject() const
 {
     return player_->getCurrentSpecialObject();
@@ -832,14 +871,4 @@ Game::GameState Game::getGameState() const
 bool Game::isJournalFreezed() const
 {
     return journal_->getDurationSaved() < CFG.get<float>("journal_min_time");
-}
-
-float Game::getCurrentTimeFactor() const
-{
-    return current_time_factor_;
-}
-
-float Game::getFPS() const
-{
-    return engine_->getCurrentFPS();
 }

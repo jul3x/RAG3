@@ -1,6 +1,6 @@
 ![VERSION][version] [![Build Status](https://travis-ci.com/jul3x/RAG3.svg?branch=develop)](https://travis-ci.com/jul3x/RAG3)
 
-![Logo][/graphics_dev/rag3-artistic.png?raw=true "RAG3 Logo"]
+![Logo](/graphics_dev/rag3-artistic-small.png?raw=true "RAG3 Logo")
 
 # RAG3
 
@@ -40,11 +40,11 @@ Package uses **C++17** language, so you need a compatible compiler. Tested on **
 
 * **Windows**
     - Download **SFML 2.5** and **TGUI 0.8** from their homepages.
-    - Change lines below in `CMakeLists.txt file` to appropriate paths:
-    ```
-       set(SFML_ROOT "C:/SFML-2.5.1")
-       set(TGUI_ROOT "C:/TGUI-0.8")
-    ```
+    - Change lines below in `CMakeLists.txt`  file to appropriate paths:
+        ```
+        set(SFML_ROOT "C:/SFML-2.5.1")
+        set(TGUI_ROOT "C:/TGUI-0.8")
+        ```
     - Copy `*.dll` files for **SFML** and **TGUI** to build directory
     - Build package using **CMake 3.6** or higher.
     - To build tests, there is another `test/CMakeLists.txt` file where you need change `SFML_ROOT` as well. 

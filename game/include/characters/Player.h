@@ -32,6 +32,9 @@ public:
 
     void getShot(const Bullet& bullet) override;
 
+protected:
+    inline void handleGlobalState(float time_elapsed) override;
+
 private:
     float side_stepping_freeze_time_;
 

@@ -68,3 +68,23 @@ void Player::getShot(const Bullet& bullet)
         Character::getShot(bullet);
     }
 }
+
+void Player::handleGlobalState(float time_elapsed)
+{
+    switch (global_state_)
+    {
+        case GlobalState::Normal:
+            break;
+
+        case GlobalState::OnFire:
+            if (!CFG.get<int>("god_mode"))
+            {
+                life_ -= time_elapsed * CFG.get<float>("on_fire_hurt_speed");
+            }
+            on_fire_time_ -= time_elapsed;
+
+            if (on_fire_time_ <= 0.0f)
+                setGlobalState(GlobalState::Normal);
+            break;
+    }
+}

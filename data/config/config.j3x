@@ -1,4 +1,4 @@
-bool god_mode=0
+bool god_mode=1
 
 bool no_clip_mode=0
 
@@ -29,3 +29,5 @@ float on_fire_hurt_speed=10.0f
 float on_fire_time=3.0f
 
 float explosion_hurt_factor=30.0f
+
+float explosion_velocity_factor=1000.0f

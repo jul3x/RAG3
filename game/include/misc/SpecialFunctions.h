@@ -34,6 +34,7 @@ public:
     static void teleport(Functional* obj, const std::string& data, Character* user);
     static void kill(Functional* obj, const std::string& data, Character* user);
     static void setOnFire(Functional* obj, const std::string& data, Character* user);
+    static void explode(Functional* obj, const std::string& data, Character* user);
 
     static void removeDecoration(Functional* obj, const std::string& data, Character* user);
     static void spawnThought(Functional* obj, const std::string& data, Character* user);

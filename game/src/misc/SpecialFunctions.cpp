@@ -26,6 +26,7 @@ SpecialFunctions::SpecialFunctions()
     functions_["Teleport"] = &teleport;
     functions_["Kill"] = &kill;
     functions_["SetOnFire"] = &setOnFire;
+    functions_["Explode"] = &explode;
     functions_["RemoveDecoration"] = &removeDecoration;
     functions_["SpawnLava"] = &spawnLava;
     functions_["SpawnFlame"] = &spawnFlame;
@@ -46,6 +47,7 @@ SpecialFunctions::SpecialFunctions()
     text_to_use_["ChangeOpenState"] = "[F] Use object";
     text_to_use_["Teleport"] = "[F] To enter";
     text_to_use_["Kill"] = "[F] To use";
+    text_to_use_["Explode"] = "";
     text_to_use_["SetOnFire"] = "";
     text_to_use_["RemoveDecoration"] = "";
     text_to_use_["SpawnLava"] = "";
@@ -68,6 +70,7 @@ SpecialFunctions::SpecialFunctions()
     is_usable_by_npc_["Teleport"] = true;
     is_usable_by_npc_["Kill"] = true;
     is_usable_by_npc_["SetOnFire"] = true;
+    is_usable_by_npc_["Explode"] = false;
     is_usable_by_npc_["RemoveDecoration"] = false;
     is_usable_by_npc_["SpawnLava"] = false;
     is_usable_by_npc_["SpawnAmmo"] = false;
@@ -235,6 +238,11 @@ void SpecialFunctions::setOnFire(Functional* obj, const std::string& data, Chara
 {
     std::cout << "[SpecialFunction] Setting on fire." << std::endl;
     user->setGlobalState(Character::GlobalState::OnFire);
+}
+
+void SpecialFunctions::explode(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Explode." << std::endl;
 }
 
 void SpecialFunctions::removeDecoration(Functional* obj, const std::string& data, Character* user)

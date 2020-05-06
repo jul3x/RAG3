@@ -187,6 +187,11 @@ void Game::update(float time_elapsed)
             {
                 if (!(*it)->update(time_elapsed))
                 {
+                    if ((*it)->getActivation() == "OnKill")
+                    {
+                        (*it)->use(player_.get());
+                    }
+
                     journal_->eventBulletDestroyed(it->get());
                     deleteHoveringObject(it->get());
                     auto next_it = std::next(it);
@@ -667,6 +672,13 @@ Bullet* Game::spawnNewBullet(const std::string& id, const sf::Vector2f& pos, flo
     bullets_.emplace_back(std::make_unique<Bullet>(pos, id, dir));
 
     auto ptr = bullets_.back().get();
+
+    for (const auto& function : ptr->getFunctions())
+    {
+        ptr->bindFunction(special_functions_->bindFunction(function),
+                          special_functions_->bindTextToUse(function),
+                          special_functions_->isUsableByNPC(function));
+    }
 
     engine_->registerHoveringObject(ptr);
 

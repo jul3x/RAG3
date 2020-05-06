@@ -11,7 +11,10 @@
 Bullet::Bullet(const sf::Vector2f& position,
                const std::string& id,
                const float direction) :
-        Identifiable(id),
+        Functional(utils::j3x::get<std::string>(RM.getObjectParams("bullets", id), "default_activation"),
+                   utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("bullets", id), "default_functions"),
+                   utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("bullets", id), "default_datas"),
+                   id, -2),
         HoveringObject(position,
                        utils::j3x::get<float>(RM.getObjectParams("bullets", id), "speed") *
                                sf::Vector2f(std::cos(direction), std::sin(direction)),

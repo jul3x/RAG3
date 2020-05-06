@@ -29,6 +29,7 @@ SpecialFunctions::SpecialFunctions()
     functions_["Explode"] = &explode;
     functions_["RemoveDecoration"] = &removeDecoration;
     functions_["SpawnLava"] = &spawnLava;
+    functions_["SpawnExplosionEvent"] = &spawnExplosionEvent;
     functions_["SpawnFlame"] = &spawnFlame;
     functions_["SpawnAmmo"] = &spawnAmmo;
     functions_["Null"] = &nullFunc;
@@ -51,6 +52,7 @@ SpecialFunctions::SpecialFunctions()
     text_to_use_["SetOnFire"] = "";
     text_to_use_["RemoveDecoration"] = "";
     text_to_use_["SpawnLava"] = "";
+    text_to_use_["SpawnExplosionEvent"] = "";
     text_to_use_["SpawnAmmo"] = "";
     text_to_use_["SpawnFlame"] = "";
     text_to_use_["Null"] = "";
@@ -73,6 +75,7 @@ SpecialFunctions::SpecialFunctions()
     is_usable_by_npc_["Explode"] = false;
     is_usable_by_npc_["RemoveDecoration"] = false;
     is_usable_by_npc_["SpawnLava"] = false;
+    is_usable_by_npc_["SpawnExplosionEvent"] = false;
     is_usable_by_npc_["SpawnAmmo"] = false;
     is_usable_by_npc_["SpawnFlame"] = false;
     is_usable_by_npc_["Null"] = true;
@@ -243,7 +246,8 @@ void SpecialFunctions::setOnFire(Functional* obj, const std::string& data, Chara
 void SpecialFunctions::explode(Functional* obj, const std::string& data, Character* user)
 {
     std::cout << "[SpecialFunction] Explode." << std::endl;
-    auto obs = dynamic_cast<Obstacle*>(obj);
+    auto obs = dynamic_cast<AbstractPhysicalObject*>(obj);
+
     Game::get().spawnExplosionForce(obs->getPosition(), std::stof(data));
 
     Game::get().getStats().explode();
@@ -255,6 +259,13 @@ void SpecialFunctions::removeDecoration(Functional* obj, const std::string& data
     auto decoration_id = std::stoi(data);
     auto decoration = Game::get().getMap().getObjectById<Decoration>(decoration_id);
     decoration->deactivate();
+}
+
+void SpecialFunctions::spawnExplosionEvent(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Spawn explosion event." << std::endl;
+    auto obs = dynamic_cast<AbstractPhysicalObject*>(obj);
+    Game::get().spawnExplosionEvent(obs->getPosition(), std::stof(data));
 }
 
 void SpecialFunctions::spawnLava(Functional* obj, const std::string& data, Character* user)

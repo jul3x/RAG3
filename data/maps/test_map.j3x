@@ -117,35 +117,35 @@ destroyed_wall 1200 800 658
 destroyed_wall 1200 700 659
 floor_side 1200 550 669
 destroyed_wall 1200 600 671
-roof 2600 75 681
-roof 2700 75 682
-roof 2800 75 683
-roof 2900 75 684
-roof 2900 175 685
-roof 2800 175 686
-roof 2700 175 687
-roof 2600 175 688
-roof 2600 275 689
-roof 2700 275 690
-roof 2800 275 691
-roof 2900 275 692
-roof 2900 375 693
-roof 2800 375 694
-roof 2700 375 695
-roof 2600 375 696
-roof 2800 475 699
-roof 2700 475 700
-roof_side 2700 525 703
-roof_side 2800 525 704
 floor_side 1300 850 705
 floor_side 1100 850 706
-roof 1200 775 707
-roof_side 1200 825 709
 chains 575 1025 724
 floor_side 500 1150 726
 floor_side 600 1150 727
 floor_side 700 1150 728
 floor_side 800 1150 729
+roof_side 1200 775 750
+roof 1200 725 751
+roof 2600 25 767
+roof 2600 125 768
+roof 2600 225 769
+roof 2600 325 770
+roof 2700 325 771
+roof 2700 225 772
+roof 2700 125 773
+roof 2700 25 774
+roof 2800 25 775
+roof 2900 25 776
+roof 2900 125 777
+roof 2800 125 778
+roof 2800 225 779
+roof 2900 225 780
+roof 2900 325 781
+roof 2800 325 782
+roof 2700 425 783
+roof 2800 425 784
+roof_side 2700 475 785
+roof_side 2800 475 786
 
 obstacles: 
 fence 3800 3400 153 OnKill [Null] [Null]
@@ -242,8 +242,6 @@ standard 3300 1850 330 OnKill [SpawnAmmo] [heavy]
 standard 3400 2025 331 OnKill [SpawnAmmo] [heavy]
 standard 2725 1975 332 OnKill [SpawnAmmo] [heavy]
 standard 2825 1875 333 OnKill [SpawnAmmo] [heavy]
-standard 2625 275 334 OnKill [SpawnAmmo] [heavy]
-standard 2800 150 335 OnKill [OpenDoor] [373]
 standard 3250 150 336 OnKill [SpawnAmmo] [heavy]
 standard 3425 275 337 OnKill [SpawnAmmo] [heavy]
 standard 3875 300 338 OnKill [SpawnAmmo] [heavy]
@@ -254,6 +252,8 @@ standard 2575 3550 460 OnKill [SpawnAmmo] [heavy]
 standard 2375 4875 461 OnKill [SpawnAmmo] [heavy]
 standard 1000 425 638 OnKill [SpawnAmmo] [heavy]
 slave 575 1100 725 OnKill [Null] [Null]
+standard 2655.64 198.706 787 OnKill [SpawnAmmo] [light]
+standard 2862.33 138.633 788 OnKill [SpawnAmmo;OpenDoor] [light;373]
 
 specials: 
 lever 4400 4400 164 OnUse [OpenDoor;ChangeOpenState] [163;163]
@@ -293,7 +293,6 @@ note 2475 1075 375 OnUse [ReadNote] ["Brace_yourself!"]
 lever 7325 1625 377 OnUse [OpenDoor;ChangeOpenState] [376;376]
 special_event 4800 1100 382 OnEnter [OpenDoor;Deactivate] [376;Null]
 downstairs 8100 1800 383 OnEnter [Teleport] [(1800,3125)]
-stairs 1800 3000 384 OnEnter [Teleport] [(8100,1900)]
 health 2600 3000 385 OnEnter [AddHealth] [30]
 shotgun 2400 3000 387 OnEnter [AddWeapon] [shotgun]
 heavy_ammo 2500 3000 388 OnEnter [AddAmmo] [m4]
@@ -368,7 +367,6 @@ health 200 300 626 OnEnter [AddHealth] [30]
 lever 2000 700 639 OnUse [OpenDoor;ChangeOpenState] [373;373]
 starting_position 350 750 644 OnEnter [MapStart] [Null]
 special_event 1200 725 717 OnEnter [RemoveDecoration;SpawnLava;Deactivate] [671;(1200,600);Null]
-special_event 1200 825 718 OnEnter [RemoveDecoration;SpawnLava;Deactivate] [659;(1200,700);Null]
 special_event 1200 925 719 OnEnter [RemoveDecoration;SpawnLava;Deactivate] [658;(1200,800);Null]
 special_event 1200 1025 720 OnEnter [RemoveDecoration;SpawnLava;Deactivate] [657;(1200,900);Null]
 special_event 1200 1125 721 OnEnter [RemoveDecoration;SpawnLava;Deactivate] [656;(1200,1000);Null]
@@ -434,3 +432,5 @@ flame 550 500 677 OnEnter [SetOnFire] [Null]
 flame 650 425 678 OnEnter [SetOnFire] [Null]
 flame 525 400 679 OnEnter [SetOnFire] [Null]
 flame 600 450 680 OnEnter [SetOnFire] [Null]
+special_event 1200 825 749 OnEnter [RemoveDecoration;SpawnLava;Deactivate] [717;(1200.0,700.0);Null]
+stairs 1800 2950 790 OnEnter [Teleport] [(7981.1,1784.7)]

@@ -2,8 +2,8 @@
 // Created by jul3x on 24.03.2020.
 //
 
-#ifndef RAG3_GAME_MISC_JOURNAL_H
-#define RAG3_GAME_MISC_JOURNAL_H
+#ifndef RAG3_GAME_INCLUDE_MISC_JOURNAL_H
+#define RAG3_GAME_INCLUDE_MISC_JOURNAL_H
 
 #include <deque>
 #include <vector>
@@ -24,43 +24,27 @@ public:
     void clear();
 
     void eventTimeReversal();
-
     void eventCharacterDestroyed(Character* character);
-
     void eventBulletDestroyed(Bullet* bullet);
-
     void eventBulletSpawned(Bullet* bullet);
-
     void eventObstacleDestroyed(Obstacle* ptr);
-
     void eventObstacleShot(Obstacle* ptr);
-
     void eventObstacleTileDestroyed(ObstacleTile* ptr);
-
     void eventObstacleTileShot(ObstacleTile* ptr);
-
     void eventDecorationSpawned(Decoration* ptr);
 
-    float getDurationSaved() const;
-
     void update(float time_elapsed);
-
     bool executeTimeReversal(float time_elapsed);
 
+    float getDurationSaved() const;
     Character* getUpdatedPtr(Character* ptr);
-
-    void setUpdatedPtr(Character* ptr, Character* new_ptr);
-
     Bullet* getUpdatedPtr(Bullet* ptr);
-
-    void setUpdatedPtr(Bullet* ptr, Bullet* new_ptr);
-
     Obstacle* getUpdatedPtr(Obstacle* ptr);
-
-    void setUpdatedPtr(Obstacle* ptr, Obstacle* new_ptr);
-
     ObstacleTile* getUpdatedPtr(ObstacleTile* ptr);
 
+    void setUpdatedPtr(Character* ptr, Character* new_ptr);
+    void setUpdatedPtr(Bullet* ptr, Bullet* new_ptr);
+    void setUpdatedPtr(Obstacle* ptr, Obstacle* new_ptr);
     void setUpdatedPtr(ObstacleTile* ptr, ObstacleTile* new_ptr);
 
 private:
@@ -79,4 +63,4 @@ private:
 };
 
 
-#endif //RAG3_GAME_MISC_JOURNAL_H
+#endif //RAG3_GAME_INCLUDE_MISC_JOURNAL_H

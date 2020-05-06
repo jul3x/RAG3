@@ -3,8 +3,8 @@
 //
 
 
-#ifndef RAG3_GAME_MISC_EXPLOSION_H
-#define RAG3_GAME_MISC_EXPLOSION_H
+#ifndef RAG3_GAME_INCLUDE_MISC_EXPLOSION_H
+#define RAG3_GAME_INCLUDE_MISC_EXPLOSION_H
 
 #include <R3E/objects/AbstractPhysicalObject.h>
 
@@ -21,9 +21,7 @@ public:
     bool update(float time_elapsed) override;
 
     void applyForce(Character* obj) const;
-
     void applyForce(Obstacle* obj) const;
-
     void applyForce(ObstacleTile* obj) const;
 
 private:
@@ -31,4 +29,4 @@ private:
 
 };
 
-#endif // RAG3_GAME_MISC_EXPLOSION_H
+#endif //RAG3_GAME_INCLUDE_MISC_EXPLOSION_H

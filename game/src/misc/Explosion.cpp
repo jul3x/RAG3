@@ -11,7 +11,7 @@
 
 Explosion::Explosion(const sf::Vector2f& position, float r) :
         HoveringObject(position, {}, {2 * r, 2 * r},
-                       Collision::Circle(r), nullptr, 0, 1, 1, 0.0f),
+                       collision::Circle(r), nullptr, 0, 1, 1, 0.0f),
         r_(r)
 {
 

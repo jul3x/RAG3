@@ -2,8 +2,8 @@
 // Created by jul3x on 10.03.20.
 //
 
-#ifndef RAG3_EDITOR_CROSSHAIR_H
-#define RAG3_EDITOR_CROSSHAIR_H
+#ifndef RAG3_EDITOR_INCLUDE_EDITOR_CROSSHAIR_H
+#define RAG3_EDITOR_INCLUDE_EDITOR_CROSSHAIR_H
 
 
 #include <SFML/Graphics/Text.hpp>
@@ -33,4 +33,4 @@ namespace editor {
     };
 } // namespace editor
 
-#endif // RAG3_EDITOR_CROSSHAIR_H
+#endif //RAG3_EDITOR_INCLUDE_EDITOR_CROSSHAIR_H

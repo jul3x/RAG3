@@ -3,8 +3,8 @@
 //
 
 
-#ifndef RAG3_COMMON_SPECIAL_H
-#define RAG3_COMMON_SPECIAL_H
+#ifndef RAG3_COMMON_INCLUDE_COMMON_SPECIAL_H
+#define RAG3_COMMON_INCLUDE_COMMON_SPECIAL_H
 
 #include <functional>
 #include <string>
@@ -35,4 +35,4 @@ private:
 
 };
 
-#endif // RAG3_COMMON_SPECIAL_H
+#endif //RAG3_COMMON_INCLUDE_COMMON_SPECIAL_H

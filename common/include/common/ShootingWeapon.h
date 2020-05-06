@@ -3,8 +3,8 @@
 //
 
 
-#ifndef RAG3_COMMON_SHOOTINGWEAPON_H
-#define RAG3_COMMON_SHOOTINGWEAPON_H
+#ifndef RAG3_COMMON_INCLUDE_COMMON_SHOOTINGWEAPON_H
+#define RAG3_COMMON_INCLUDE_COMMON_SHOOTINGWEAPON_H
 
 #include <cmath>
 #include <string>
@@ -19,7 +19,6 @@ public:
     sf::Vector2f use() override;
 
     int getAmmunition() const;
-
     float getState() const override;
 
     void setState(float state) override;
@@ -37,4 +36,4 @@ private:
 };
 
 
-#endif // RAG3_COMMON_SHOOTINGWEAPON_H
+#endif //RAG3_COMMON_INCLUDE_COMMON_SHOOTINGWEAPON_H

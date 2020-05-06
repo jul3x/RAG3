@@ -2,8 +2,8 @@
 // Created by jul3x on 26.03.20.
 //
 
-#ifndef RAG3_GAME_UI_TIMEBAR_H
-#define RAG3_GAME_UI_TIMEBAR_H
+#ifndef RAG3_GAME_INCLUDE_UI_TIMEBAR_H
+#define RAG3_GAME_INCLUDE_UI_TIMEBAR_H
 
 
 #include <SFML/Graphics/ConvexShape.hpp>
@@ -40,4 +40,4 @@ private:
     sf::ConvexShape curr_time_shape_;
 };
 
-#endif // RAG3_GAME_UI_TIMEBAR_H
+#endif //RAG3_GAME_INCLUDE_UI_TIMEBAR_H

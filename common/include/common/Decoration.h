@@ -3,8 +3,8 @@
 //
 
 
-#ifndef RAG3_COMMON_DECORATION_H
-#define RAG3_COMMON_DECORATION_H
+#ifndef RAG3_COMMON_INCLUDE_COMMON_DECORATION_H
+#define RAG3_COMMON_INCLUDE_COMMON_DECORATION_H
 
 #include <R3E/objects/AbstractDrawableObject.h>
 #include <R3E/objects/Identifiable.h>
@@ -24,4 +24,4 @@ private:
     bool is_active_;
 };
 
-#endif // RAG3_COMMON_DECORATION_H
+#endif //RAG3_COMMON_INCLUDE_COMMON_DECORATION_H

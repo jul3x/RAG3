@@ -11,7 +11,7 @@ Thought::Thought(AbstractPhysicalObject* father, const std::string& text, float 
         father_(father),
         text_(text, RM.getFont(), TEXT_SIZE_),
         time_elapsed_(duration),
-        AbstractPhysicalObject(father->getPosition() + sf::Vector2f{GLOBAL_OFFSET_X_, GLOBAL_OFFSET_Y_}, {SIZE_X_, SIZE_Y_BOTTOM_}, Collision::None(), &RM.getTexture("thought_bottom")),
+        AbstractPhysicalObject(father->getPosition() + sf::Vector2f{GLOBAL_OFFSET_X_, GLOBAL_OFFSET_Y_}, {SIZE_X_, SIZE_Y_BOTTOM_}, collision::None(), &RM.getTexture("thought_bottom")),
         top_(father->getPosition() + sf::Vector2f{GLOBAL_OFFSET_X_, GLOBAL_OFFSET_Y_}, {SIZE_X_, SIZE_Y_TOP_}, &RM.getTexture("thought_top"))
 {
     this->changeOrigin({0.0f, SIZE_Y_BOTTOM_});

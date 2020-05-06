@@ -3,8 +3,8 @@
 //
 
 
-#ifndef RAG3_COMMON_BULLET_H
-#define RAG3_COMMON_BULLET_H
+#ifndef RAG3_COMMON_INCLUDE_COMMON_BULLET_H
+#define RAG3_COMMON_INCLUDE_COMMON_BULLET_H
 
 #include <deque>
 
@@ -32,15 +32,15 @@ private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     static constexpr size_t TRAIL_COUNT_ = 10;
+    static const float TRAIL_TIME_STEP_;
 
     std::deque<sf::Vector2f> trail_;
     sf::Color trail_color_;
 
-    const float trail_time_step_;
     float trail_time_elapsed_;
     float life_;
     float deadly_factor_;
 
 };
 
-#endif // RAG3_COMMON_BULLET_H
+#endif //RAG3_COMMON_INCLUDE_COMMON_BULLET_H

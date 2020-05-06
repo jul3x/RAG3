@@ -43,13 +43,13 @@ namespace r3e {
 
             switch (type_)
             {
-                case AnimationType::LINEAR:
+                case AnimationType::Linear:
                 {
                     animation_source_.left = frame_size_.x * current_frame;
                     animation_source_.top = 0;
                     break;
                 }
-                case AnimationType::QUADRATIC:
+                case AnimationType::Quadratic:
                 {
                     animation_source_.left = frame_size_.x *
                                              (current_frame % static_cast<short int>(std::sqrt(max_frames_count_)));

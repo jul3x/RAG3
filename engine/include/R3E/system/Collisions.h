@@ -2,8 +2,8 @@
 // Created by jul3x on 25.01.2020.
 //
 
-#ifndef RAG3_ENGINE_SYSTEM_COLLISIONS_H
-#define RAG3_ENGINE_SYSTEM_COLLISIONS_H
+#ifndef RAG3_ENGINE_INCLUDE_R3E_SYSTEM_COLLISIONS_H
+#define RAG3_ENGINE_INCLUDE_R3E_SYSTEM_COLLISIONS_H
 
 #include <list>
 #include <iostream>
@@ -88,22 +88,22 @@ namespace r3e {
             const auto& a = obj_1.getCollisionArea().getType();
             const auto& b = obj_2.getCollisionArea().getType();
 
-            if (a == Collision::Area::Type::None || b == Collision::Area::Type::None)
+            if (a == collision::Area::Type::None || b == collision::Area::Type::None)
                 return false;
 
-            if (a == Collision::Area::Type::Circle)
+            if (a == collision::Area::Type::Circle)
             {
-                if (b == Collision::Area::Type::Circle)
+                if (b == collision::Area::Type::Circle)
                     return Collisions::circleCircleResponse(obj_1, obj_2);
-                else if (b == Collision::Area::Type::Box)
+                else if (b == collision::Area::Type::Box)
                     return Collisions::circleABResponse(obj_1, obj_2);
             }
 
-            if (a == Collision::Area::Type::Box)
+            if (a == collision::Area::Type::Box)
             {
-                if (b == Collision::Area::Type::Circle)
+                if (b == collision::Area::Type::Circle)
                     return Collisions::ABCircleResponse(obj_1, obj_2);
-                else if (b == Collision::Area::Type::Box)
+                else if (b == collision::Area::Type::Box)
                     return Collisions::AABBResponse(obj_1, obj_2);
             }
 
@@ -116,22 +116,22 @@ namespace r3e {
             const auto& a = obj_1.getCollisionArea().getType();
             const auto& b = obj_2.getCollisionArea().getType();
 
-            if (a == Collision::Area::Type::None || b == Collision::Area::Type::None)
+            if (a == collision::Area::Type::None || b == collision::Area::Type::None)
                 return false;
 
-            if (a == Collision::Area::Type::Circle)
+            if (a == collision::Area::Type::Circle)
             {
-                if (b == Collision::Area::Type::Circle)
+                if (b == collision::Area::Type::Circle)
                     return Collisions::circleCircle(obj_1, obj_2);
-                else if (b == Collision::Area::Type::Box)
+                else if (b == collision::Area::Type::Box)
                     return static_cast<bool>(Collisions::ABCircle(obj_2, obj_1));
             }
 
-            if (a == Collision::Area::Type::Box)
+            if (a == collision::Area::Type::Box)
             {
-                if (b == Collision::Area::Type::Circle)
+                if (b == collision::Area::Type::Circle)
                     return static_cast<bool>(Collisions::ABCircle(obj_1, obj_2));
-                else if (b == Collision::Area::Type::Box)
+                else if (b == collision::Area::Type::Box)
                     return static_cast<bool>(Collisions::AABB(obj_1, obj_2));
             }
 
@@ -177,35 +177,26 @@ namespace r3e {
 
         // Detection
         inline static short int AABB(const StaticObject& a, const StaticObject& b);
-
         inline static bool circleCircle(const StaticObject &a, const StaticObject &b);
-
         inline static short int ABCircle(const StaticObject& a, const StaticObject& b);
-
 
         // Response
         inline static bool circleABResponse(DynamicObject &a, const StaticObject &b);
-
         inline static bool circleABResponse(DynamicObject &a, DynamicObject &b);
 
         inline static bool ABCircleResponse(DynamicObject& a, const StaticObject& b);
-
         inline static bool ABCircleResponse(DynamicObject& a, DynamicObject& b);
 
         inline static bool AABBResponse(DynamicObject& a, const StaticObject& b);
-
         inline static bool AABBResponse(DynamicObject& a, DynamicObject& b);
 
         inline static bool circleCircleResponse(DynamicObject &a, const StaticObject &b);
-
         inline static bool circleCircleResponse(DynamicObject &a, DynamicObject &b);
 
         inline static void blockNormalVelocity(DynamicObject& a, short int dir);
 
         inline static void setVerifiedPosition(StaticObject &a, const sf::Vector2f &pos);
-
         inline static void setVerifiedPositionX(StaticObject &a, float x);
-
         inline static void setVerifiedPositionY(StaticObject &a, float y);
 
         std::vector<std::vector<std::list<StaticObject*>>> s_grid_;
@@ -219,4 +210,4 @@ namespace r3e {
 
 } // namespace r3e
 
-#endif //RAG3_ENGINE_SYSTEM_COLLISIONS_H
+#endif //RAG3_ENGINE_INCLUDE_R3E_SYSTEM_COLLISIONS_H

@@ -18,7 +18,7 @@ Player::Player(const sf::Vector2f& position) :
 {
     if (CFG.get<int>("no_clip_mode"))
     {
-        this->changeCollisionArea(Collision::None());
+        this->changeCollisionArea(collision::None());
     }
 }
 

@@ -2,8 +2,8 @@
 // Created by jul3x on 13.06.19.
 //
 
-#ifndef RAG3_ENGINE_UTILS_NUMERIC_H
-#define RAG3_ENGINE_UTILS_NUMERIC_H
+#ifndef RAG3_ENGINE_INCLUDE_R3E_UTILS_NUMERIC_H
+#define RAG3_ENGINE_INCLUDE_R3E_UTILS_NUMERIC_H
 
 #include <random>
 #include <cmath>
@@ -48,4 +48,4 @@ namespace r3e::utils::num {
 
 } // namespace r3e::utils::num
 
-#endif // RAG3_ENGINE_UTILS_NUMERIC_H
+#endif //RAG3_ENGINE_INCLUDE_R3E_UTILS_NUMERIC_H

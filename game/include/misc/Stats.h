@@ -2,8 +2,8 @@
 // Created by jul3x on 08.04.20.
 //
 
-#ifndef RAG3_GAME_MISC_STATS_H
-#define RAG3_GAME_MISC_STATS_H
+#ifndef RAG3_GAME_INCLUDE_MISC_STATS_H
+#define RAG3_GAME_INCLUDE_MISC_STATS_H
 
 #include <vector>
 
@@ -32,4 +32,4 @@ private:
 
 };
 
-#endif //RAG3_GAME_MISC_STATS_H
+#endif //RAG3_GAME_INCLUDE_MISC_STATS_H

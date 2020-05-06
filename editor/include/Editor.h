@@ -2,8 +2,8 @@
 // Created by jul3x on 10.03.20.
 //
 
-#ifndef RAG3_EDITOR_H
-#define RAG3_EDITOR_H
+#ifndef RAG3_EDITOR_INCLUDE_EDITOR_H
+#define RAG3_EDITOR_INCLUDE_EDITOR_H
 
 #include <memory>
 
@@ -35,45 +35,31 @@ namespace editor {
             return instance;
         }
 
+        void start();
         void initialize() override;
-
         void update(float time_elapsed) override;
-
         void draw(graphics::Graphics& graphics) override;
 
         void alertCollision(HoveringObject* h_obj, StaticObject* s_obj) override {}
-
         void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) override {}
-
         void alertCollision(DynamicObject* d_obj, StaticObject* s_obj) override {}
-
         void alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2) override {}
 
         void setCurrentItem(const std::string& category, const std::string& id);
-
         [[nodiscard]] const std::pair<std::string, std::string>& getCurrentItem() const;
-
         void markCurrentItem(const sf::Vector2f& pos);
 
         int readItemInfo(const sf::Vector2f& pos, bool read_uid = false);
-
         void placeItem(const sf::Vector2f& pos);
-
         void removeItem(const sf::Vector2f& pos);
 
         void clearMap();
-
+        void loadMap(const std::string& name);
+        void saveMap(const std::string& name);
         [[nodiscard]] const std::string& getCurrentMapName() const;
-        
         [[nodiscard]] sf::Vector2f getMapCoordinates(const sf::Vector2f& pos) const;
 
-        void loadMap(const std::string& name);
-
-        void saveMap(const std::string& name);
-
         void saveConfig(const std::string& category, const std::string& id, const std::string& content);
-
-        void start();
 
     private:
         Editor();
@@ -94,4 +80,4 @@ namespace editor {
 } // namespace editor
 
 
-#endif // RAG3_EDITOR_H
+#endif //RAG3_EDITOR_INCLUDE_EDITOR_H

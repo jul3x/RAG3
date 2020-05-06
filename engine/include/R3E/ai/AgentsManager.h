@@ -2,8 +2,8 @@
 // Created by jul3x on 04.02.2020.
 //
 
-#ifndef RAG3_ENGINE_AI_AGENTSMANAGER_H
-#define RAG3_ENGINE_AI_AGENTSMANAGER_H
+#ifndef RAG3_ENGINE_INCLUDE_R3E_AI_AGENTSMANAGER_H
+#define RAG3_ENGINE_INCLUDE_R3E_AI_AGENTSMANAGER_H
 
 #include <chrono>
 #include <queue>
@@ -16,49 +16,43 @@
 #include <R3E/ai/DataTypes.h>
 
 
-namespace r3e {
-    namespace ai {
+namespace r3e::ai {
 
-        class AgentsManager {
-        public:
-            AgentsManager() = delete;
+    class AgentsManager {
+    public:
+        AgentsManager() = delete;
 
-            AgentsManager(const ai::MapBlockage& map_blockage, ai::NeighbourFunction func,
-                          float max_time_without_ms_ = 0.0f, float min_threshold_goal = 1.0f,
-                          size_t max_path_search_limit = 1e12);
+        AgentsManager(const ai::MapBlockage& map_blockage, ai::NeighbourFunction func,
+                      float max_time_without_ms = 0.0f, float min_threshold_goal = 1.0f,
+                      size_t max_path_search_limit = 1e12);
 
-            void update();
+        void update();
 
-            const ai::Path& getPath(const AbstractAgent* agent) const;
+        const ai::Path& getPath(const AbstractAgent* agent) const;
+        const Goal& getCurrentGoal(const AbstractAgent* agent) const;
 
-            void setCurrentGoal(AbstractAgent* agent, const ai::Goal& new_goal);
+        void setCurrentGoal(AbstractAgent* agent, const ai::Goal& new_goal);
+        void setNoGoal(AbstractAgent* agent);
 
-            void setNoGoal(AbstractAgent* agent);
+        void registerAgent(AbstractAgent* agent);
+        void deleteAgent(AbstractAgent* agent);
 
-            void registerAgent(AbstractAgent* agent);
 
-            void deleteAgent(AbstractAgent* agent);
+    private:
+        inline std::tuple<ai::Path, ai::Goal, ai::Timestamp>& getAgentData(AbstractAgent* agent);
+        inline const std::tuple<ai::Path, ai::Goal, ai::Timestamp>& getAgentData(AbstractAgent* agent) const;
+        static inline bool isGoalValid(const Goal& goal);
 
-            const Goal& getCurrentGoal(const AbstractAgent* agent) const;
+        float max_time_without_ms_, min_threshold_goal_;
+        size_t max_path_search_limit_;
+        const ai::MapBlockage& map_blockage_;
+        ai::NeighbourFunction neighbour_function_;
 
-        private:
-            inline std::tuple<ai::Path, ai::Goal, ai::Timestamp>& getAgentData(AbstractAgent* agent);
+        std::unordered_map<AbstractAgent*, std::tuple<ai::Path, ai::Goal, ai::Timestamp>> agents_map_;
 
-            inline const std::tuple<ai::Path, ai::Goal, ai::Timestamp>& getAgentData(AbstractAgent* agent) const;
+        std::queue<AbstractAgent*> agents_to_update_;
+        std::unordered_set<AbstractAgent*> agents_to_update_set_;
+    };
+} // namespace r3e::ai
 
-            static inline bool isGoalValid(const Goal& goal);
-
-            float max_time_without_ms_, min_threshold_goal_;
-            size_t max_path_search_limit_;
-            const ai::MapBlockage& map_blockage_;
-            ai::NeighbourFunction neighbour_function_;
-
-            std::unordered_map<AbstractAgent*, std::tuple<ai::Path, ai::Goal, ai::Timestamp>> agents_map_;
-
-            std::queue<AbstractAgent*> agents_to_update_;
-            std::unordered_set<AbstractAgent*> agents_to_update_set_;
-        };
-    } // namespace ai
-} // namespace r3e
-
-#endif //RAG3_ENGINE_AI_AGENTSMANAGER_H
+#endif //RAG3_ENGINE_INCLUDE_R3E_AI_AGENTSMANAGER_H

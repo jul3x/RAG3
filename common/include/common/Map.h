@@ -2,8 +2,8 @@
 // Created by jul3x on 10.03.20.
 //
 
-#ifndef RAG3_COMMON_MAP_H
-#define RAG3_COMMON_MAP_H
+#ifndef RAG3_COMMON_INCLUDE_COMMON_MAP_H
+#define RAG3_COMMON_INCLUDE_COMMON_MAP_H
 
 #include <list>
 
@@ -30,11 +30,9 @@ public:
     Map();
 
     bool clearMap();
-
     bool loadMap(const std::string& name);
 
     [[nodiscard]] const sf::Vector2f& getSize() const;
-
     ai::MapBlockage& getMapBlockage();
 
     template<class T>
@@ -45,7 +43,6 @@ public:
              int max_z_index = std::numeric_limits<int>::infinity());
 
     void removeTile(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
-
     void removeObject(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
 
     std::tuple<std::string, std::string, int>
@@ -144,4 +141,4 @@ private:
 
 };
 
-#endif // RAG3_COMMON_MAP_H
+#endif //RAG3_COMMON_INCLUDE_COMMON_MAP_H

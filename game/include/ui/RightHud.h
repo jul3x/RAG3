@@ -2,8 +2,8 @@
 // Created by jul3x on 25.03.20.
 //
 
-#ifndef RAG3_GAME_UI_RIGHTHUD_H
-#define RAG3_GAME_UI_RIGHTHUD_H
+#ifndef RAG3_GAME_INCLUDE_UI_RIGHTHUD_H
+#define RAG3_GAME_INCLUDE_UI_RIGHTHUD_H
 
 
 #include <R3E/objects/AbstractDrawableObject.h>
@@ -33,4 +33,4 @@ private:
 
 };
 
-#endif // RAG3_GAME_UI_RIGHTHUD_H
+#endif //RAG3_GAME_INCLUDE_UI_RIGHTHUD_H

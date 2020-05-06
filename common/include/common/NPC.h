@@ -3,8 +3,8 @@
 //
 
 
-#ifndef RAG3_COMMON_NPC_H
-#define RAG3_COMMON_NPC_H
+#ifndef RAG3_COMMON_INCLUDE_COMMON_NPC_H
+#define RAG3_COMMON_INCLUDE_COMMON_NPC_H
 
 #include <functional>
 
@@ -41,9 +41,7 @@ public:
         const std::vector<std::string>& datas, int u_id = -1);
 
     void registerEnemy(const Character* enemy);
-
     void removeEnemy(const Character* enemy);
-
     void clearEnemies();
 
     void registerMapBlockage(const ai::MapBlockage* map_blockage);
@@ -54,13 +52,10 @@ public:
 
 protected:
     void handleEnemySelection();
-
     void handleVisibilityState();
-
     void handleActionState();
 
     void standardAI(float time_elapsed);
-
     void noneAI(float time_elapsed);
 
     sf::Vector2f findNearestSafeSpot(const sf::Vector2f& direction) const;
@@ -81,4 +76,4 @@ protected:
 
 };
 
-#endif // RAG3_COMMON_NPC_H
+#endif //RAG3_COMMON_INCLUDE_COMMON_NPC_H

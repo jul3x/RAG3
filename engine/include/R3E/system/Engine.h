@@ -2,8 +2,8 @@
 // Created by jul3x on 27.02.19.
 //
 
-#ifndef RAG3_ENGINE_SYSTEM_ENGINE_H
-#define RAG3_ENGINE_SYSTEM_ENGINE_H
+#ifndef RAG3_ENGINE_INCLUDE_R3E_SYSTEM_ENGINE_H
+#define RAG3_ENGINE_INCLUDE_R3E_SYSTEM_ENGINE_H
 
 #include <memory>
 #include <unordered_set>
@@ -34,58 +34,41 @@ namespace r3e {
                                 const std::string& title,
                                 int style,
                                 const sf::Color& bg_color);
-
         void initializeSoundManager(float attenuation);
-
         void initializeCollisions(const sf::Vector2f& size, float grid);
 
         void turnOnCollisions();
-
         void turnOffCollisions();
 
         void registerUI(AbstractUserInterface* user_interface);
-
         void registerCamera(graphics::AbstractCamera* camera);
-
         void registerGame(AbstractGame* game);
-
         void registerStaticObject(StaticObject* obj);
-
         void registerDynamicObject(DynamicObject* obj);
-
         void registerHoveringObject(HoveringObject* obj);
 
         void deleteStaticObject(StaticObject* obj);
-
         void deleteDynamicObject(DynamicObject* obj);
-
         void deleteHoveringObject(HoveringObject* obj);
 
         void spawnAnimationEvent(const std::shared_ptr<graphics::AnimationEvent>& event);
-
         void spawnSoundEvent(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume = 100.0f);
-
         void spawnEffect(const std::shared_ptr<graphics::Effect>& effect);
 
-        float getCurrentFPS() const;
+        [[nodiscard]] float getCurrentFPS() const;
+        [[nodiscard]] static sf::Vector2i detectResolution();
 
         void setTimeScaleFactor(float factor);
-
         void start();
 
         void drawAnimationEvents();
-
         void drawSortedAnimationEvents();
-
         static void changeSoundListenerPosition(const sf::Vector2f& pos);
 
-        static sf::Vector2i detectResolution();
-
     private:
-        static constexpr int MINIMUM_FPS = 10;
+        static constexpr int MINIMUM_FPS_ = 10;
 
         void updateAnimationEvents(float time_elapsed);
-
         void updateEffects(float time_elapsed);
 
         void draw();
@@ -111,4 +94,4 @@ namespace r3e {
 } // namespace r3e
 
 
-#endif //RAG3_ENGINE_SYSTEM_ENGINE_H
+#endif //RAG3_ENGINE_INCLUDE_R3E_SYSTEM_ENGINE_H

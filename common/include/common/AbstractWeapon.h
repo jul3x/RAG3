@@ -3,8 +3,8 @@
 //
 
 
-#ifndef RAG3_GAME_WEAPONS_ABSTRACTWEAPON_H
-#define RAG3_GAME_WEAPONS_ABSTRACTWEAPON_H
+#ifndef RAG3_COMMON_INCLUDE_COMMON_ABSTRACTWEAPON_H
+#define RAG3_COMMON_INCLUDE_COMMON_ABSTRACTWEAPON_H
 
 #include <string>
 #include <functional>
@@ -23,13 +23,10 @@ public:
     void registerSpawningFunction(std::function<void(const std::string&, const sf::Vector2f&, float)> func);
 
     virtual sf::Vector2f use() = 0;
-
     virtual float getState() const = 0;
-
     virtual void setState(float state) = 0;
 
     const sf::Vector2f& getWeaponOffset() const;
-
     const std::string& getName() const;
 
     void update(float time_elapsed);
@@ -46,4 +43,4 @@ private:
 };
 
 
-#endif // RAG3_GAME_WEAPONS_ABSTRACTWEAPON_H
+#endif //RAG3_COMMON_INCLUDE_COMMON_ABSTRACTWEAPON_H

@@ -23,7 +23,7 @@ Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id, const st
         StaticObject(position,
                      {utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "size_x"),
                       utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "size_y")},
-                     Collision::Box(utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_size_x"),
+                     collision::Box(utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_size_x"),
                                     utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_size_y")),
                      &RM.getTexture("obstacles/" + id),
                      utils::j3x::get<int>(RM.getObjectParams("obstacles", id), "z_index"),

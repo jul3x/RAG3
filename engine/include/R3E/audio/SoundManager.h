@@ -2,8 +2,8 @@
 // Created by jul3x on 23.02.2020.
 //
 
-#ifndef RAG3_ENGINE_AUDIO_SOUNDMANAGER_H
-#define RAG3_ENGINE_AUDIO_SOUNDMANAGER_H
+#ifndef RAG3_ENGINE_INCLUDE_R3E_AUDIO_SOUNDMANAGER_H
+#define RAG3_ENGINE_INCLUDE_R3E_AUDIO_SOUNDMANAGER_H
 
 #include <list>
 
@@ -12,24 +12,22 @@
 #include <SFML/Audio/SoundBuffer.hpp>
 
 
-namespace r3e {
-    namespace audio {
-        class SoundManager {
-        public:
-            explicit SoundManager(float attenuation);
+namespace r3e::audio {
+    class SoundManager {
+    public:
+        explicit SoundManager(float attenuation);
 
-            void playSound(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume);
+        void playSound(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume);
 
-            void update(float time_elapsed);
+        void update(float time_elapsed);
 
-            void changePitch(float pitch);
+        void changePitch(float pitch);
 
-        private:
-            std::list<sf::Sound> played_sounds_;
+    private:
+        std::list<sf::Sound> played_sounds_;
 
-            float current_pitch_, attenuation_;
-        };
-    } // namespace audio
-} // namespace r3e
+        float current_pitch_, attenuation_;
+    };
+} // namespace r3e::audio
 
-#endif //RAG3_ENGINE_AUDIO_SOUNDMANAGER_H
+#endif //RAG3_ENGINE_INCLUDE_R3E_AUDIO_SOUNDMANAGER_H

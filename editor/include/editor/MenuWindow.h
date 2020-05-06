@@ -2,8 +2,8 @@
 // Created by jul3x on 16.03.20.
 //
 
-#ifndef RAG3_EDITOR_MENUWINDOW_H
-#define RAG3_EDITOR_MENUWINDOW_H
+#ifndef RAG3_EDITOR_INCLUDE_EDITOR_MENUWINDOW_H
+#define RAG3_EDITOR_INCLUDE_EDITOR_MENUWINDOW_H
 
 #include <editor/ChildWindow.h>
 
@@ -25,4 +25,4 @@ namespace editor {
 
 } // namespace editor
 
-#endif //RAG3_EDITOR_MENUWINDOW_H
+#endif //RAG3_EDITOR_INCLUDE_EDITOR_MENUWINDOW_H

@@ -88,7 +88,7 @@ namespace r3e {
 
         void AgentsManager::setNoGoal(AbstractAgent* agent)
         {
-            std::get<1>(this->getAgentData(agent)) = {ai::NO_GOAL, ai::NO_GOAL};
+            std::get<1>(this->getAgentData(agent)) = {ai::NO_GOAL_, ai::NO_GOAL_};
 
             auto& data = AgentsManager::getAgentData(agent);
             std::get<0>(data) = {};
@@ -135,7 +135,7 @@ namespace r3e {
 
         bool AgentsManager::isGoalValid(const ai::Goal& goal)
         {
-            return goal.x != ai::NO_GOAL && goal.y != ai::NO_GOAL;
+            return goal.x != ai::NO_GOAL_ && goal.y != ai::NO_GOAL_;
         }
 
     } // namespace ai

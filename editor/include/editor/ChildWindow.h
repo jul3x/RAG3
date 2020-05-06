@@ -2,8 +2,8 @@
 // Created by jul3x on 16.03.20.
 //
 
-#ifndef RAG3_EDITOR_CHILDWINDOW_H
-#define RAG3_EDITOR_CHILDWINDOW_H
+#ifndef RAG3_EDITOR_INCLUDE_EDITOR_CHILDWINDOW_H
+#define RAG3_EDITOR_INCLUDE_EDITOR_CHILDWINDOW_H
 
 #include <TGUI/TGUI.hpp>
 
@@ -34,4 +34,4 @@ namespace editor {
 
 } // namespace editor
 
-#endif //RAG3_EDITOR_CHILDWINDOW_H
+#endif //RAG3_EDITOR_INCLUDE_EDITOR_CHILDWINDOW_H

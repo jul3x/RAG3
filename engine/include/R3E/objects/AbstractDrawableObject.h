@@ -3,8 +3,8 @@
 //
 
 
-#ifndef RAG3_ENGINE_OBJECTS_ABSTRACTDRAWABLEOBJECT_H
-#define RAG3_ENGINE_OBJECTS_ABSTRACTDRAWABLEOBJECT_H
+#ifndef RAG3_ENGINE_INCLUDE_R3E_OBJECTS_ABSTRACTDRAWABLEOBJECT_H
+#define RAG3_ENGINE_INCLUDE_R3E_OBJECTS_ABSTRACTDRAWABLEOBJECT_H
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -24,44 +24,28 @@ namespace r3e {
                                float frame_duration = 0.0f);
 
         virtual const sf::Vector2f& getPosition() const;
-
         virtual const sf::Vector2f& getSize() const;
-
+        virtual short int getFramesNumber() const;
+        virtual short int getCurrentFrame() const;
         virtual float getRotation() const;
-
+        virtual int getZIndex() const;
         virtual bool isVisible() const;
 
         virtual void setPosition(const sf::Vector2f& position);
-
         virtual void setPosition(float x, float y);
-
         virtual void setPositionX(float x);
-
         virtual void setPositionY(float y);
-
         virtual void setRotation(float angle_deg);
-
         virtual void setSize(const sf::Vector2f& size);
-
         virtual void setVisibility(const sf::View& view);
-
         virtual void setColor(int r, int g, int b, int a);
+        virtual void setCurrentFrame(short int frame);
 
         virtual void changeTexture(sf::Texture* texture, bool reset = false);
-
         virtual void changeTextureRect(const sf::IntRect &rect);
-
         virtual void changeOrigin(const sf::Vector2f &origin);
 
         virtual bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f);
-
-        virtual int getZIndex() const;
-
-        virtual short int getFramesNumber() const;
-
-        virtual short int getCurrentFrame() const;
-
-        virtual void setCurrentFrame(short int frame);
 
     protected:
         float time_elapsed_;
@@ -94,4 +78,4 @@ namespace r3e {
 
 } // namespace r3e
 
-#endif // RAG3_ENGINE_OBJECTS_ABSTRACTDRAWABLEOBJECT_H
+#endif //RAG3_ENGINE_INCLUDE_R3E_OBJECTS_ABSTRACTDRAWABLEOBJECT_H

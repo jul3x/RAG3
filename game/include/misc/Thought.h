@@ -2,8 +2,8 @@
 // Created by jul3x on 01.04.20.
 //
 
-#ifndef RAG3_GAME_MISC_THOUGHT_H
-#define RAG3_GAME_MISC_THOUGHT_H
+#ifndef RAG3_GAME_INCLUDE_MISC_THOUGHT_H
+#define RAG3_GAME_INCLUDE_MISC_THOUGHT_H
 
 #include <list>
 
@@ -19,7 +19,10 @@ public:
     Thought(AbstractPhysicalObject* father, const std::string& text, float duration);
 
     bool update(float time_elapsed) override;
+
 private:
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
     static constexpr float SIZE_X_ = 200.0f;
     static constexpr float SIZE_Y_BOTTOM_ = 50.0f;
     static constexpr float SIZE_Y_CENTER_ = 25.0f;
@@ -28,8 +31,6 @@ private:
     static constexpr float GLOBAL_OFFSET_Y_ = -50.0f;
     static constexpr float TEXT_MARGIN_ = 10.0f;
     static constexpr int TEXT_SIZE_ = 16;
-
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     float time_elapsed_;
 
@@ -41,4 +42,4 @@ private:
 
 };
 
-#endif //RAG3_GAME_MISC_THOUGHT_H
+#endif //RAG3_GAME_INCLUDE_MISC_THOUGHT_H

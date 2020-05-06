@@ -2,8 +2,8 @@
 // Created by jul3x on 18.12.19.
 //
 
-#ifndef RAG3_GAME_GAME_H
-#define RAG3_GAME_GAME_H
+#ifndef RAG3_GAME_INCLUDE_GAME_H
+#define RAG3_GAME_INCLUDE_GAME_H
 
 #include <memory>
 
@@ -144,4 +144,4 @@ private:
 };
 
 
-#endif //RAG3_GAME_GAME_H
+#endif //RAG3_GAME_INCLUDE_GAME_H

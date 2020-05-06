@@ -2,10 +2,11 @@
 // Created by jul3x on 18.03.20.
 //
 
-#ifndef RAG3_ENGINE_OBJECTS_IDENTIFIABLE_H
-#define RAG3_ENGINE_OBJECTS_IDENTIFIABLE_H
+#ifndef RAG3_ENGINE_INCLUDE_R3E_OBJECTS_IDENTIFIABLE_H
+#define RAG3_ENGINE_INCLUDE_R3E_OBJECTS_IDENTIFIABLE_H
 
 #include <string>
+#include <utility>
 
 
 namespace r3e {
@@ -13,9 +14,9 @@ namespace r3e {
     public:
         Identifiable() : id_() {}
 
-        Identifiable(const std::string &id) : id_(id) {}
+        explicit Identifiable(std::string id) : id_(std::move(id)) {}
 
-        const std::string& getId() const
+        [[nodiscard]] const std::string& getId() const
         {
             return id_;
         }
@@ -26,4 +27,4 @@ namespace r3e {
     };
 } // namespace r3e
 
-#endif //RAG3_ENGINE_OBJECTS_IDENTIFIABLE_H
+#endif //RAG3_ENGINE_INCLUDE_R3E_OBJECTS_IDENTIFIABLE_H

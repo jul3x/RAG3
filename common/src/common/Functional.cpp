@@ -35,7 +35,7 @@ const std::string& Functional::getFunctionsStr() const
 
     for (auto& function : functions_)
     {
-        result += function + utils::j3x::Delimiter;
+        result += function + utils::j3x::DELIMITER_;
     }
 
     if (result.length() >= 1)
@@ -51,7 +51,7 @@ const std::string& Functional::getDatasStr() const
 
     for (auto& data : datas_)
     {
-        result += data + utils::j3x::Delimiter;
+        result += data + utils::j3x::DELIMITER_;
     }
 
     if (result.length() >= 1)
@@ -83,12 +83,12 @@ void Functional::setActivation(const std::string& str)
 void Functional::setFunctionsStr(const std::string& str)
 {
     // TODO Delimiter
-    utils::j3x::tokenize(str, utils::j3x::Delimiter, functions_);
+    utils::j3x::tokenize(str, utils::j3x::DELIMITER_, functions_);
 }
 
 void Functional::setDatasStr(const std::string& str)
 {
-    utils::j3x::tokenize(str, utils::j3x::Delimiter, datas_);
+    utils::j3x::tokenize(str, utils::j3x::DELIMITER_, datas_);
 }
 
 bool Functional::isActive() const

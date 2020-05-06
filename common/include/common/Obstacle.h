@@ -2,8 +2,8 @@
 // Created by jul3x on 23.03.20.
 //
 
-#ifndef RAG3_COMMON_OBSTACLE_H
-#define RAG3_COMMON_OBSTACLE_H
+#ifndef RAG3_COMMON_INCLUDE_COMMON_OBSTACLE_H
+#define RAG3_COMMON_INCLUDE_COMMON_OBSTACLE_H
 
 #include <R3E/objects/AbstractPhysicalObject.h>
 
@@ -25,4 +25,4 @@ public:
 
 };
 
-#endif // RAG3_COMMON_OBSTACLE_H
+#endif //RAG3_COMMON_INCLUDE_COMMON_OBSTACLE_H

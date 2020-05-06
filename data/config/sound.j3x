@@ -1,5 +1,3 @@
 bool sound_on=0
-
 float sound_attenuation=0.005f
-
 float bullet_time_music_factor=1.0f

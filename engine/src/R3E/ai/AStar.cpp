@@ -11,12 +11,12 @@ namespace r3e {
     namespace ai {
         bool operator==(const AStar::Node& a, const AStar::Node& b)
         {
-            return a.cord.first == b.cord.first && a.cord.second == b.cord.second;
+            return a.cord_.first == b.cord_.first && a.cord_.second == b.cord_.second;
         }
 
         float AStar::heuristic(const Node& start, const Node& goal)
         {
-            return std::hypot(start.cord.first - goal.cord.first, start.cord.second - goal.cord.second);
+            return std::hypot(start.cord_.first - goal.cord_.first, start.cord_.second - goal.cord_.second);
         }
 
         std::vector<AStar::Node>
@@ -36,28 +36,28 @@ namespace r3e {
         }
 
         ai::Path
-        AStar::getSmoothedPath(const MapBlockage& map_blockage_, const sf::Vector2f& start, const sf::Vector2f& goal,
+        AStar::getSmoothedPath(const MapBlockage& map_blockage, const sf::Vector2f& start, const sf::Vector2f& goal,
                                const NeighbourFunction& func, size_t limit)
         {
-            int start_x = std::round(start.x / map_blockage_.scale_x_);
-            int start_y = std::round(start.y / map_blockage_.scale_y_);
-            int goal_x = std::round(goal.x / map_blockage_.scale_x_);
-            int goal_y = std::round(goal.y / map_blockage_.scale_y_);
+            int start_x = std::round(start.x / map_blockage.scale_x_);
+            int start_y = std::round(start.y / map_blockage.scale_y_);
+            int goal_x = std::round(goal.x / map_blockage.scale_x_);
+            int goal_y = std::round(goal.y / map_blockage.scale_y_);
 
-            if (start_x < 0 || start_x >= map_blockage_.blockage_.size() || start_y < 0 ||
-                start_y >= map_blockage_.blockage_.at(0).size() ||
-                goal_x < 0 || goal_x >= map_blockage_.blockage_.size() || goal_y < 0 ||
-                goal_y >= map_blockage_.blockage_.at(0).size())
+            if (start_x < 0 || start_x >= map_blockage.blockage_.size() || start_y < 0 ||
+                start_y >= map_blockage.blockage_.at(0).size() ||
+                goal_x < 0 || goal_x >= map_blockage.blockage_.size() || goal_y < 0 ||
+                goal_y >= map_blockage.blockage_.at(0).size())
             {
                 return {};
             }
 
-            auto convert = [&map_blockage_](const Node& node) {
-                return sf::Vector2f(node.cord.first * map_blockage_.scale_x_,
-                                    node.cord.second * map_blockage_.scale_y_);
+            auto convert = [&map_blockage](const Node& node) {
+                return sf::Vector2f(node.cord_.first * map_blockage.scale_x_,
+                                    node.cord_.second * map_blockage.scale_y_);
             };
 
-            std::vector<ai::AStar::Node> path = ai::AStar::getPath(map_blockage_.blockage_,
+            std::vector<ai::AStar::Node> path = ai::AStar::getPath(map_blockage.blockage_,
                                                                    sf::Vector2<size_t>(start_x, start_y),
                                                                    sf::Vector2<size_t>(goal_x, goal_y),
                                                                    func, limit);
@@ -123,7 +123,7 @@ namespace r3e {
 
                 for (auto it = open_set.begin(); it != open_set.end(); ++it)
                 {
-                    if (it->f_score < x_it->f_score) x_it = it;
+                    if (it->f_score_ < x_it->f_score_) x_it = it;
                 }
 
                 Node x = *x_it;
@@ -136,7 +136,7 @@ namespace r3e {
 
                 closed_set.insert(x);
 
-                auto neighbours = func(grid, sf::Vector2<size_t>(x.cord.first, x.cord.second));
+                auto neighbours = func(grid, sf::Vector2<size_t>(x.cord_.first, x.cord_.second));
 
                 for (const auto& neigh : neighbours)
                 {
@@ -149,27 +149,27 @@ namespace r3e {
                         continue;
                     }
 
-                    float tentative_g_score = x.g_score +
-                                              (neigh.x != x.cord.first && neigh.y != x.cord.second) ? 1.1f : 1.0f;
+                    float tentative_g_score = x.g_score_ +
+                                              (neigh.x != x.cord_.first && neigh.y != x.cord_.second) ? 1.1f : 1.0f;
                     bool tentative_is_better = false;
 
                     auto y_it = open_set.find(y);
 
                     if (y_it == open_set.end())
                     {
-                        y.h_score = heuristic(y, goal_node);
-                        y.g_score = tentative_g_score;
-                        y.f_score = y.g_score + y.h_score;
+                        y.h_score_ = heuristic(y, goal_node);
+                        y.g_score_ = tentative_g_score;
+                        y.f_score_ = y.g_score_ + y.h_score_;
                         open_set.insert(y);
                         tentative_is_better = true;
                     }
-                    else if (tentative_g_score < y_it->g_score)
+                    else if (tentative_g_score < y_it->g_score_)
                     {
-                        Node new_y = Node({y_it->cord.first, y_it->cord.second}, y_it->f_score, y_it->g_score,
-                                          y_it->h_score);
+                        Node new_y = Node({y_it->cord_.first, y_it->cord_.second}, y_it->f_score_, y_it->g_score_,
+                                          y_it->h_score_);
                         open_set.erase(y_it);
-                        new_y.g_score = tentative_g_score;
-                        new_y.f_score = new_y.g_score + new_y.h_score;
+                        new_y.g_score_ = tentative_g_score;
+                        new_y.f_score_ = new_y.g_score_ + new_y.h_score_;
                         open_set.insert(new_y);
                         tentative_is_better = true;
                     }

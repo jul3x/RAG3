@@ -2,8 +2,8 @@
 // Created by jul3x on 21.02.20.
 //
 
-#ifndef RAG3_GAME_UI_BLOODSPLASH_H
-#define RAG3_GAME_UI_BLOODSPLASH_H
+#ifndef RAG3_GAME_INCLUDE_UI_BLOODSPLASH_H
+#define RAG3_GAME_INCLUDE_UI_BLOODSPLASH_H
 
 #include <R3E/objects/AbstractDrawableObject.h>
 
@@ -33,4 +33,4 @@ private:
     Player::LifeState player_life_state_;
 };
 
-#endif // RAG3_GAME_UI_BLOODSPLASH_H
+#endif //RAG3_GAME_INCLUDE_UI_BLOODSPLASH_H

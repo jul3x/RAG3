@@ -2,8 +2,8 @@
 // Created by jul3x on 14.03.20.
 //
 
-#ifndef RAG3_EDITOR_LISTWINDOW_H
-#define RAG3_EDITOR_LISTWINDOW_H
+#ifndef RAG3_EDITOR_INCLUDE_EDITOR_LISTWINDOW_H
+#define RAG3_EDITOR_INCLUDE_EDITOR_LISTWINDOW_H
 
 #include <unordered_map>
 
@@ -11,20 +11,22 @@
 
 #include <editor/ChildWindow.h>
 
+
 namespace editor {
 
     class UserInterface;
 
     class ListWindow : public ChildWindow {
     public:
-        ListWindow(UserInterface* ui, tgui::Gui *gui, tgui::Theme *theme, std::string title, const sf::Vector2f& pos, std::string id = "");
+        ListWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme, std::string title, const sf::Vector2f& pos,
+                   std::string id = "");
 
-        void initialize(const std::vector<std::string> &tabs, const std::vector<std::string> &paths_to_objects);
+        void initialize(const std::vector<std::string>& tabs, const std::vector<std::string>& paths_to_objects);
 
     private:
         void onTabSelected(tgui::Gui& gui, const std::string& selected_tab)
         {
-            for (const auto &tab : tab_names_)
+            for (const auto& tab : tab_names_)
                 gui.get(tab)->setVisible(false);
 
             gui.get(selected_tab)->setVisible(true);
@@ -43,4 +45,4 @@ namespace editor {
 
 } // namespace editor
 
-#endif //RAG3_EDITOR_LISTWINDOW_H
+#endif //RAG3_EDITOR_INCLUDE_EDITOR_LISTWINDOW_H

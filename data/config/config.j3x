@@ -1,29 +1,23 @@
 bool god_mode=0
-
 bool no_clip_mode=0
 
+float collision_grid_size=400.0f
+
 float obstacles_endurance_factor=3
-
 float get_shot_factor=100.0f
-
 float bullet_time_factor=0.3f
 
 float journal_sampling_rate=30.0f
-
 float journal_max_time=10.0f
-
 float journal_min_time=3.0f
-
 float time_reversal_speed_factor=5.0f
-
 float player_clone_time_factor=3.0f
 
 float thought_duration=5.0f
 
 float side_stepping_freeze_time=0.5f
-
-float fade_in_out_duration=0.2f
-
 float on_fire_hurt_speed=10.0f
-
 float on_fire_time=3.0f
+
+float explosion_hurt_factor=30.0f
+float explosion_velocity_factor=1000.0f

@@ -5,8 +5,18 @@
 #include <misc/Stats.h>
 #include <Game.h>
 
-Stats::Stats() : enemies_killed_(0), crystals_picked_(0)
+Stats::Stats() : enemies_killed_(0), crystals_picked_(0), explosions_(0)
 {
+}
+
+int Stats::getEnemiesKilled() const
+{
+    return enemies_killed_;
+}
+
+int Stats::getCrystalsPicked() const
+{
+    return crystals_picked_;
 }
 
 void Stats::killEnemy()
@@ -33,12 +43,14 @@ void Stats::pickCrystal()
     }
 }
 
-int Stats::getEnemiesKilled() const
+void Stats::explode()
 {
-    return enemies_killed_;
-}
+    ++explosions_;
 
-int Stats::getCrystalsPicked() const
-{
-    return crystals_picked_;
+    if (explosions_ == 1)
+    {
+        achievements_.emplace_back(Achievements::Type::FirstBarrelDestroyed);
+
+        Game::get().spawnAchievement(Achievements::Type::FirstBarrelDestroyed);
+    }
 }

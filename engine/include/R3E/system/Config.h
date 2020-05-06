@@ -2,8 +2,8 @@
 // Created by jul3x on 27.02.19.
 //
 
-#ifndef RAG3_ENGINE_SYSTEM_CONFIG_H
-#define RAG3_ENGINE_SYSTEM_CONFIG_H
+#ifndef RAG3_ENGINE_INCLUDE_R3E_SYSTEM_CONFIG_H
+#define RAG3_ENGINE_INCLUDE_R3E_SYSTEM_CONFIG_H
 
 #include <map>
 #include <iostream>
@@ -30,11 +30,11 @@ namespace r3e {
             params_ = utils::j3x::parse(filename);
         }
 
-        void appendConfig(const std::string& filename, std::string ns = "")
+        void appendConfig(const std::string& filename, const std::string& ns = "")
         {
             utils::j3x::Parameters new_params;
 
-            new_params = utils::j3x::parse(filename, std::move(ns));
+            new_params = utils::j3x::parse(filename, ns);
 
             utils::j3x::mergeParams(params_, new_params);
         }
@@ -61,4 +61,4 @@ namespace r3e {
 #define CFG Config::getInstance()
 } // namespace r3e
 
-#endif //RAG3_ENGINE_SYSTEM_CONFIG_H
+#endif //RAG3_ENGINE_INCLUDE_R3E_SYSTEM_CONFIG_H

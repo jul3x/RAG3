@@ -24,7 +24,7 @@ Event::Event(const sf::Vector2f& position, const std::string& id,
                        utils::j3x::get<float>(RM.getObjectParams("animations", id), "frame_duration"),
                        utils::j3x::get<int>(RM.getObjectParams("animations", id), "frames_number"),
                        utils::j3x::get<int>(RM.getObjectParams("animations", id), "animation_type_quadratic") ?
-                       AnimationType::QUADRATIC : AnimationType::LINEAR)
+                       AnimationType::Quadratic : AnimationType::Linear)
 {
     shape_.setRotation(direction);
 

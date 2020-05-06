@@ -2,8 +2,8 @@
 // Created by jul3x on 27.02.19.
 //
 
-#ifndef RAG3_GAME_UI_USERINTERFACE_H
-#define RAG3_GAME_UI_USERINTERFACE_H
+#ifndef RAG3_GAME_INCLUDE_UI_USERINTERFACE_H
+#define RAG3_GAME_INCLUDE_UI_USERINTERFACE_H
 
 #include <R3E/system/Config.h>
 #include <R3E/system/AbstractUserInterface.h>
@@ -34,11 +34,9 @@ public:
     UserInterface& operator=(const UserInterface&) = delete;
 
     void initialize(graphics::Graphics& graphics) override;
-
     void handleEvents(graphics::Graphics& graphics, float time_elapsed) override;
 
     void registerPlayer(Player* player);
-
     void registerCamera(Camera* camera);
 
     void spawnAchievement(const std::string& title, const std::string& text, const std::string& tex);
@@ -47,11 +45,8 @@ public:
 
 private:
     inline void handleScrolling(float delta);
-
     inline void handleKeys();
-
     inline void handleMouse(sf::RenderWindow& graphics_window);
-
     inline void updatePlayerStates(float time_elapsed);
 
     static constexpr float WEAPONS_BAR_OFF_Y_ = 70.0f;
@@ -90,4 +85,4 @@ private:
 };
 
 
-#endif //RAG3_GAME_UI_USERINTERFACE_H
+#endif //RAG3_GAME_INCLUDE_UI_USERINTERFACE_H

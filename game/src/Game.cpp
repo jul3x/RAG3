@@ -57,13 +57,22 @@ void Game::initialize()
 
     map_->loadMap("test_map");
 
-    engine_->initializeCollisions(map_->getSize(), COLLISION_GRID_SIZE_);
+    engine_->initializeCollisions(map_->getSize(), CFG.get<float>("collision_grid_size"));
 
     for (auto& obstacle : map_->getList<ObstacleTile>())
         engine_->registerStaticObject(obstacle.get());
 
     for (auto& obstacle : map_->getList<Obstacle>())
+    {
         engine_->registerStaticObject(obstacle.get());
+
+        for (const auto& function : obstacle->getFunctions())
+        {
+            obstacle->bindFunction(special_functions_->bindFunction(function),
+                                   special_functions_->bindTextToUse(function),
+                                   special_functions_->isUsableByNPC(function));
+        }
+    }
 
     for (auto& character : map_->getList<NPC>())
     {
@@ -122,77 +131,15 @@ void Game::update(float time_elapsed)
         }
         case GameState::Normal:
         {
+            updateExplosions();
+
             agents_manager_->update();
 
             updateMapObjects(time_elapsed);
-
-            if (player_clone_ != nullptr)
-            {
-                player_clone_->setCurrentSpecialObject(nullptr);
-                if (!player_clone_->update(time_elapsed))
-                {
-                    // draw on this place destruction
-                    auto dec_ptr = map_->spawn<Decoration>(player_clone_->getPosition(), "blood");
-                    journal_->eventDecorationSpawned(dec_ptr);
-
-                    this->spawnExplosionEvent(player_clone_->getPosition(), 250.0f);
-                    this->cleanPlayerClone();
-
-                    player_->setHealth(0); // player clone is dead - so do player
-                }
-
-                if (!player_clone_->isLifeTime())
-                {
-                    this->spawnTeleportationEvent(player_clone_->getPosition());
-
-                    const auto& player_clone_weapon = player_clone_->getWeapons().at(player_clone_->getCurrentWeapon());
-                    auto player_weapon = std::find_if(player_->getWeapons().begin(), player_->getWeapons().end(),
-                                                      [&player_clone_weapon](const auto& it) {
-                                                          return player_clone_weapon->getName() == it->getName();
-                                                      });
-
-                    if (player_weapon != player_->getWeapons().end())
-                        (*player_weapon)->setState(player_clone_weapon->getState());
-
-                    player_->setHealth(player_clone_->getHealth());
-
-                    camera_->setZoomInOut();
-
-                    this->cleanPlayerClone();
-                }
-            }
-
-            player_->setCurrentSpecialObject(nullptr);
-            if (player_->isAlive() && !player_->update(time_elapsed))
-            {
-                map_->spawn<Decoration>(player_->getPosition(), "blood");
-                spawnExplosionEvent(player_->getPosition(), 25.0f);
-                player_->setDead();
-                deleteDynamicObject(player_.get());
-                music_manager_->stop();
-            }
-
-            for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
-            {
-                if (!(*it)->update(time_elapsed))
-                {
-                    journal_->eventBulletDestroyed(it->get());
-                    deleteHoveringObject(it->get());
-                    auto next_it = std::next(it);
-                    bullets_.erase(it);
-                    it = next_it;
-                }
-            }
-
-            for (auto it = thoughts_.begin(); it != thoughts_.end(); ++it)
-            {
-                if (!(*it)->update(time_elapsed))
-                {
-                    auto next_it = std::next(it);
-                    thoughts_.erase(it);
-                    it = next_it;
-                }
-            }
+            updatePlayerClone(time_elapsed);
+            updatePlayer(time_elapsed);
+            updateBullets(time_elapsed);
+            updateThoughts(time_elapsed);
 
             journal_->update(time_elapsed);
             camera_->update(time_elapsed);
@@ -240,7 +187,7 @@ void Game::updateMapObjects(float time_elapsed)
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
 
             auto next_it = std::next(it);
-            this->deleteStaticObject(it->get());
+            engine_->deleteStaticObject(it->get());
 
             auto grid_pos = std::make_pair(static_cast<size_t>((*it)->getPosition().x / DecorationTile::SIZE_X_),
                                            static_cast<size_t>((*it)->getPosition().y / DecorationTile::SIZE_Y_));
@@ -265,7 +212,12 @@ void Game::updateMapObjects(float time_elapsed)
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
 
             auto next_it = std::next(it);
-            this->deleteStaticObject(it->get());
+            engine_->deleteStaticObject(it->get());
+
+            if ((*it)->getActivation() == "OnKill")
+            {
+                (*it)->use(player_.get());
+            }
 
             auto grid_pos = std::make_pair(static_cast<size_t>((*it)->getPosition().x / DecorationTile::SIZE_X_),
                                            static_cast<size_t>((*it)->getPosition().y / DecorationTile::SIZE_Y_));
@@ -304,7 +256,7 @@ void Game::updateMapObjects(float time_elapsed)
         if (!(*it)->isActive())
         {
             auto next_it = std::next(it);
-            this->deleteHoveringObject(it->get());
+            engine_->deleteHoveringObject(it->get());
 
             specials.erase(it);
             it = next_it;
@@ -349,7 +301,7 @@ void Game::killNPC(NPC* npc)
 
     this->spawnExplosionEvent(npc->getPosition(), 250.0f);
 
-    this->deleteDynamicObject(npc);
+    engine_->deleteDynamicObject(npc);
 
     if (npc->getActivation() == "OnKill")
     {
@@ -394,11 +346,6 @@ void Game::start()
     engine_->start();
 }
 
-const sf::Vector2f& Game::getPlayerPosition() const
-{
-    return player_->getPosition();
-}
-
 Map& Game::getMap()
 {
     return *map_;
@@ -429,11 +376,6 @@ const std::list<std::unique_ptr<Bullet>>& Game::getBullets() const
     return bullets_;
 }
 
-const ai::MapBlockage& Game::getMapBlockage() const
-{
-    return map_->getMapBlockage();
-}
-
 void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const float r)
 {
     engine_->spawnAnimationEvent(std::make_shared<Event>(pos, "sparks", dir, r));
@@ -461,7 +403,7 @@ void Game::spawnFadeInOut()
     engine_->spawnEffect(std::make_shared<graphics::FadeInOut>(
             sf::Vector2f{static_cast<float>(CFG.get<int>("graphics/window_width_px")),
                          static_cast<float>(CFG.get<int>("graphics/window_height_px"))}, sf::Color::Black,
-            CFG.get<float>("fade_in_out_duration")
+            CFG.get<float>("graphics/fade_in_out_duration")
     ));
 }
 
@@ -489,7 +431,7 @@ void Game::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
                       special_functions_->isUsableByNPC(ptr->getFunctions().at(0)));
 }
 
-void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, const float dir)
+void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir)
 {
     auto shot_event = std::make_shared<Event>(pos, "shot", dir * 180.0f / M_PI,
                                               utils::j3x::get<float>(RM.getObjectParams("bullets", name),
@@ -500,23 +442,45 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, cons
         engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
 }
 
-void Game::spawnBullet(const std::string& name, const sf::Vector2f& pos, const float dir)
+void Game::spawnBullet(const std::string& name, const sf::Vector2f& pos, float dir)
 {
     auto ptr = this->spawnNewBullet(name, pos, dir);
     journal_->eventBulletSpawned(ptr);
     this->spawnShotEvent(name, pos, dir);
 }
 
+void Game::spawnExplosionForce(const sf::Vector2f& pos, float r)
+{
+    desired_explosions_.emplace_back(pos, r);
+}
+
+void Game::updateExplosions()
+{
+    for (const auto& explosion : explosions_)
+    {
+        engine_->deleteHoveringObject(explosion.get());
+    }
+    explosions_.clear();
+
+    for (const auto& desired_explosion : desired_explosions_)
+    {
+        camera_->setShaking(2.0f);
+        explosions_.emplace_back(std::make_unique<Explosion>(desired_explosion.first, desired_explosion.second));
+        engine_->registerHoveringObject(explosions_.back().get());
+    }
+
+    desired_explosions_.clear();
+}
+
 void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
 {
     auto bullet = dynamic_cast<Bullet*>(h_obj);
+    auto explosion = dynamic_cast<Explosion*>(h_obj);
     auto obstacle = dynamic_cast<Obstacle*>(s_obj);
     auto obstacle_tile = dynamic_cast<ObstacleTile*>(s_obj);
 
     if (obstacle != nullptr && bullet != nullptr)
     {
-        journal_->eventObstacleShot(obstacle);
-
         obstacle->getShot(*bullet);
 
         spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
@@ -524,11 +488,11 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
                                  CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
         bullet->setDead();
+
+        journal_->eventObstacleShot(obstacle);
     }
     else if (obstacle_tile != nullptr && bullet != nullptr)
     {
-        journal_->eventObstacleTileShot(obstacle_tile);
-
         obstacle_tile->getShot(*bullet);
 
         spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
@@ -536,8 +500,21 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
                                  CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
         bullet->setDead();
-    }
 
+        journal_->eventObstacleTileShot(obstacle_tile);
+    }
+    else if (obstacle != nullptr && explosion != nullptr)
+    {
+        explosion->applyForce(obstacle);
+
+        journal_->eventObstacleShot(obstacle);
+    }
+    else if (obstacle_tile != nullptr && explosion != nullptr)
+    {
+        explosion->applyForce(obstacle_tile);
+
+        journal_->eventObstacleTileShot(obstacle_tile);
+    }
 }
 
 void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
@@ -577,6 +554,12 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             character->setCurrentSpecialObject(special);
         }
     }
+
+    auto explosion = dynamic_cast<Explosion*>(h_obj);
+    if (character != nullptr && explosion != nullptr)
+    {
+        explosion->applyForce(character);
+    }
 }
 
 void Game::alertCollision(DynamicObject* d_obj, StaticObject* s_obj)
@@ -589,26 +572,18 @@ void Game::alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2)
     // Nothing to do for now (maybe sounds?)
 }
 
-void Game::deleteStaticObject(StaticObject* s_obj)
-{
-    engine_->deleteStaticObject(s_obj);
-}
-
-void Game::deleteHoveringObject(HoveringObject* h_obj)
-{
-    engine_->deleteHoveringObject(h_obj);
-}
-
-void Game::deleteDynamicObject(DynamicObject* d_obj)
-{
-    engine_->deleteDynamicObject(d_obj);
-}
-
 Bullet* Game::spawnNewBullet(const std::string& id, const sf::Vector2f& pos, float dir)
 {
     bullets_.emplace_back(std::make_unique<Bullet>(pos, id, dir));
 
     auto ptr = bullets_.back().get();
+
+    for (const auto& function : ptr->getFunctions())
+    {
+        ptr->bindFunction(special_functions_->bindFunction(function),
+                          special_functions_->bindTextToUse(function),
+                          special_functions_->isUsableByNPC(function));
+    }
 
     engine_->registerHoveringObject(ptr);
 
@@ -652,7 +627,7 @@ NPC* Game::spawnNewPlayerClone()
         this->cleanPlayerClone();
     }
 
-    player_clone_ = std::make_unique<PlayerClone>(this->getPlayerPosition(), player_.get(),
+    player_clone_ = std::make_unique<PlayerClone>(this->player_->getPosition(), player_.get(),
                                                   journal_->getDurationSaved() *
                                                   CFG.get<float>("player_clone_time_factor"));
     engine_->registerDynamicObject(player_clone_.get());
@@ -684,7 +659,7 @@ void Game::cleanPlayerClone()
         enemy->removeEnemy(player_clone_.get());
     }
 
-    this->deleteDynamicObject(player_clone_.get());
+    engine_->deleteDynamicObject(player_clone_.get());
     player_clone_.reset();
 }
 
@@ -699,6 +674,14 @@ Obstacle* Game::spawnNewObstacle(const std::string& id, const sf::Vector2f& pos)
 {
     auto new_ptr = map_->spawn<Obstacle>(pos, id);
     engine_->registerStaticObject(new_ptr);
+
+    for (const auto& function : new_ptr->getFunctions())
+    {
+        new_ptr->bindFunction(special_functions_->bindFunction(function),
+                              special_functions_->bindTextToUse(function),
+                              special_functions_->isUsableByNPC(function));
+    }
+
     return new_ptr;
 }
 
@@ -708,7 +691,7 @@ void Game::findAndDeleteBullet(Bullet* ptr)
     {
         if (it->get() == ptr)
         {
-            deleteHoveringObject(ptr);
+            engine_->deleteHoveringObject(ptr);
             bullets_.erase((++it).base());
             return;
         }
@@ -730,11 +713,6 @@ void Game::findAndDeleteDecoration(Decoration* ptr)
     }
 
     std::cerr << "[Game] Warning - decoration to delete not found!" << std::endl;
-}
-
-ai::AgentsManager& Game::getAgentsManager() const
-{
-    return *agents_manager_;
 }
 
 Special* Game::getCurrentSpecialObject() const
@@ -812,12 +790,88 @@ bool Game::isJournalFreezed() const
     return journal_->getDurationSaved() < CFG.get<float>("journal_min_time");
 }
 
-float Game::getCurrentTimeFactor() const
+void Game::updatePlayerClone(float time_elapsed)
 {
-    return current_time_factor_;
+    if (player_clone_ != nullptr)
+    {
+        player_clone_->setCurrentSpecialObject(nullptr);
+        if (!player_clone_->update(time_elapsed))
+        {
+            // draw on this place destruction
+            auto dec_ptr = map_->spawn<Decoration>(player_clone_->getPosition(), "blood");
+            journal_->eventDecorationSpawned(dec_ptr);
+
+            this->spawnExplosionEvent(player_clone_->getPosition(), 250.0f);
+            this->cleanPlayerClone();
+
+            player_->setHealth(0); // player clone is dead - so do player
+        }
+    }
+
+    if (player_clone_ != nullptr && !player_clone_->isLifeTime())
+    {
+        this->spawnTeleportationEvent(player_clone_->getPosition());
+
+        const auto& player_clone_weapon = player_clone_->getWeapons().at(player_clone_->getCurrentWeapon());
+        auto player_weapon = std::find_if(player_->getWeapons().begin(), player_->getWeapons().end(),
+                                          [&player_clone_weapon](const auto& it) {
+                                              return player_clone_weapon->getName() == it->getName();
+                                          });
+
+        if (player_weapon != player_->getWeapons().end())
+            (*player_weapon)->setState(player_clone_weapon->getState());
+
+        player_->setHealth(player_clone_->getHealth());
+
+        camera_->setZoomInOut();
+
+        this->cleanPlayerClone();
+    }
 }
 
-float Game::getFPS() const
+void Game::updatePlayer(float time_elapsed)
 {
-    return engine_->getCurrentFPS();
+    player_->setCurrentSpecialObject(nullptr);
+    if (player_->isAlive() && !player_->update(time_elapsed))
+    {
+        map_->spawn<Decoration>(player_->getPosition(), "blood");
+        spawnExplosionEvent(player_->getPosition(), 25.0f);
+        player_->setDead();
+        engine_->deleteDynamicObject(player_.get());
+        music_manager_->stop();
+    }
 }
+
+void Game::updateBullets(float time_elapsed)
+{
+    for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
+    {
+        if (!(*it)->update(time_elapsed))
+        {
+            if ((*it)->getActivation() == "OnKill")
+            {
+                (*it)->use(player_.get());
+            }
+
+            journal_->eventBulletDestroyed(it->get());
+            engine_->deleteHoveringObject(it->get());
+            auto next_it = std::next(it);
+            bullets_.erase(it);
+            it = next_it;
+        }
+    }
+}
+
+void Game::updateThoughts(float time_elapsed)
+{
+    for (auto it = thoughts_.begin(); it != thoughts_.end(); ++it)
+    {
+        if (!(*it)->update(time_elapsed))
+        {
+            auto next_it = std::next(it);
+            thoughts_.erase(it);
+            it = next_it;
+        }
+    }
+}
+

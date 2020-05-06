@@ -2,8 +2,8 @@
 // Created by jul3x on 21.11.19.
 //
 
-#ifndef RAG3_GAME_UI_HEALTHBAR_H
-#define RAG3_GAME_UI_HEALTHBAR_H
+#ifndef RAG3_GAME_INCLUDE_UI_HEALTHBAR_H
+#define RAG3_GAME_INCLUDE_UI_HEALTHBAR_H
 
 
 #include <SFML/Graphics/ConvexShape.hpp>
@@ -38,4 +38,4 @@ private:
     sf::ConvexShape curr_health_shape_;
 };
 
-#endif // RAG3_GAME_UI_HEALTHBAR_H
+#endif //RAG3_GAME_INCLUDE_UI_HEALTHBAR_H

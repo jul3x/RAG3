@@ -9,12 +9,21 @@
 
 
 Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id, int u_id) :
-        Identifiable(id),
-        Unique(u_id),
+    Obstacle(position, id,
+             utils::j3x::get<std::string>(RM.getObjectParams("obstacles", id), "default_activation"),
+             utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("obstacles", id), "default_functions"),
+             utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("obstacles", id), "default_datas"), u_id)
+{
+
+}
+
+Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id, const std::string& activation,
+                   const std::vector<std::string>& functions, const std::vector<std::string>& datas, int u_id) :
+        Functional(activation, functions, datas, id, u_id),
         StaticObject(position,
                      {utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "size_x"),
                       utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "size_y")},
-                     Collision::Box(utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_size_x"),
+                     collision::Box(utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_size_x"),
                                     utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_size_y")),
                      &RM.getTexture("obstacles/" + id),
                      utils::j3x::get<int>(RM.getObjectParams("obstacles", id), "z_index"),

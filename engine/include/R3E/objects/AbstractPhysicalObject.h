@@ -3,8 +3,8 @@
 //
 
 
-#ifndef RAG3_ENGINE_OBJECTS_ABSTRACTPHYSICALOBJECT_H
-#define RAG3_ENGINE_OBJECTS_ABSTRACTPHYSICALOBJECT_H
+#ifndef RAG3_ENGINE_INCLUDE_R3E_OBJECTS_ABSTRACTPHYSICALOBJECT_H
+#define RAG3_ENGINE_INCLUDE_R3E_OBJECTS_ABSTRACTPHYSICALOBJECT_H
 
 #include <iostream>
 #include <cmath>
@@ -17,25 +17,24 @@ namespace r3e {
 
     class Collisions;
 
-
     class AbstractPhysicalObject : public AbstractDrawableObject {
     public:
         AbstractPhysicalObject(const sf::Vector2f& position,
                                const sf::Vector2f& size,
-                               const Collision::Area& c_area,
+                               const collision::Area& c_area,
                                sf::Texture* texture,
                                int z_index = 0,
                                short int frames_number = 1,
                                float frame_duration = 0.0f);
 
-        const Collision::Area& getCollisionArea() const;
+        const collision::Area& getCollisionArea() const;
 
-        void changeCollisionArea(const Collision::Area& area);
+        void changeCollisionArea(const collision::Area& area);
 
         virtual bool update(float time_elapsed) = 0;
 
     private:
-        Collision::Area c_area_;
+        collision::Area c_area_;
 
     };
 
@@ -43,7 +42,7 @@ namespace r3e {
     public:
         StaticObject(const sf::Vector2f& position,
                      const sf::Vector2f& size,
-                     const Collision::Area& c_area,
+                     const collision::Area& c_area,
                      sf::Texture* texture,
                      int z_index = 0,
                      short int frames_number = 1,
@@ -62,7 +61,7 @@ namespace r3e {
         DynamicObject(const sf::Vector2f& position,
                       const sf::Vector2f& velocity,
                       const sf::Vector2f& size,
-                      const Collision::Area& c_area,
+                      const collision::Area& c_area,
                       sf::Texture* texture,
                       int z_index,
                       short int frames_number,
@@ -70,16 +69,12 @@ namespace r3e {
                       float acceleration);
 
         const sf::Vector2f& getVelocity() const;
+        float getAcceleration() const;
 
         virtual void setVelocity(const sf::Vector2f& velocity);
-
         virtual void setVelocity(float x, float y);
-
         virtual void setForcedVelocity(const sf::Vector2f& velocity);
-
         virtual void setAcceleration(float acc);
-
-        float getAcceleration() const;
 
         bool update(float time_elapsed) override;
 
@@ -94,7 +89,7 @@ namespace r3e {
         HoveringObject(const sf::Vector2f& position,
                        const sf::Vector2f& velocity,
                        const sf::Vector2f& size,
-                       const Collision::Area& c_area,
+                       const collision::Area& c_area,
                        sf::Texture* texture,
                        int z_index,
                        short int frames_number,
@@ -105,4 +100,4 @@ namespace r3e {
 } // namespace r3e
 
 
-#endif // RAG3_ENGINE_OBJECTS_ABSTRACTPHYSICALOBJECT_H
+#endif //RAG3_ENGINE_INCLUDE_R3E_OBJECTS_ABSTRACTPHYSICALOBJECT_H

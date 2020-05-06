@@ -2,8 +2,8 @@
 // Created by jul3x on 10.04.20.
 //
 
-#ifndef RAG3_GAME_UI_ACHIEVEMENT_H
-#define RAG3_GAME_UI_ACHIEVEMENT_H
+#ifndef RAG3_GAME_INCLUDE_UI_ACHIEVEMENT_H
+#define RAG3_GAME_INCLUDE_UI_ACHIEVEMENT_H
 
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
@@ -54,4 +54,4 @@ private:
     float time_elapsed_;
 };
 
-#endif // RAG3_GAME_UI_ACHIEVEMENT_H
+#endif //RAG3_GAME_INCLUDE_UI_ACHIEVEMENT_H

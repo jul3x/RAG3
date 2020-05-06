@@ -1,0 +1,19 @@
+float size_x=64.0f
+float size_y=88.0f
+
+float collision_size_x=50.0f
+float collision_size_y=70.0f
+
+float map_offset_x=0.0f
+float map_offset_y=25.0f
+
+int frames_number=1
+float frame_duration=1.0f
+
+float endurance=1.0f
+
+string default_activation=OnKill
+list[string] default_functions=[Explode]
+list[string] default_datas=[250.0f]
+
+int z_index=1

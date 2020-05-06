@@ -98,7 +98,7 @@ namespace r3e {
                     std::chrono::system_clock::now() - time_start).count() / 1000000000.0f;
             time_start = std::chrono::system_clock::now();
 
-            if (frame_time_ > 1.0f / static_cast<float>(MINIMUM_FPS))
+            if (frame_time_ > 1.0f / static_cast<float>(MINIMUM_FPS_))
             {
                 std::cerr << "[Engine] Warning - minimum FPS limit exceeded" << std::endl;
                 continue;

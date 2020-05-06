@@ -2,8 +2,8 @@
 // Created by jul3x on 19.12.2019.
 //
 
-#ifndef RAG3_GAME_MISC_SHOOTABLE_H
-#define RAG3_GAME_MISC_SHOOTABLE_H
+#ifndef RAG3_COMMON_INCLUDE_COMMON_SHOOTABLE_H
+#define RAG3_COMMON_INCLUDE_COMMON_SHOOTABLE_H
 
 #include <common/Bullet.h>
 
@@ -35,4 +35,4 @@ protected:
 };
 
 
-#endif //RAG3_GAME_MISC_SHOOTABLE_H
+#endif //RAG3_COMMON_INCLUDE_COMMON_SHOOTABLE_H

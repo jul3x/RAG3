@@ -2,8 +2,8 @@
 // Created by jul3x on 08.04.2020.
 //
 
-#ifndef RAG3_ENGINE_OBJECTS_STATEWITHINERTIA_H
-#define RAG3_ENGINE_OBJECTS_STATEWITHINERTIA_H
+#ifndef RAG3_ENGINE_INCLUDE_R3E_OBJECTS_STATEWITHINERTIA_H
+#define RAG3_ENGINE_INCLUDE_R3E_OBJECTS_STATEWITHINERTIA_H
 
 namespace r3e {
 
@@ -14,17 +14,17 @@ namespace r3e {
 
         explicit StateWithInertia() : StateWithInertia(1.0f) {}
 
-        float getChangeSpeed() const
+        [[nodiscard]] float getChangeSpeed() const
         {
             return change_speed_;
         }
 
-        const T& getState() const
+        [[nodiscard]] const T& getState() const
         {
             return current_;
         }
 
-        const T& getSetState() const
+        [[nodiscard]] const T& getSetState() const
         {
             return set_;
         }
@@ -59,4 +59,4 @@ namespace r3e {
 
 } // namespace r3e
 
-#endif //RAG3_ENGINE_OBJECTS_STATEWITHINERTIA_H
+#endif //RAG3_ENGINE_INCLUDE_R3E_OBJECTS_STATEWITHINERTIA_H

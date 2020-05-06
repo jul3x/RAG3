@@ -3,8 +3,8 @@
 //
 
 
-#ifndef RAG3_EDITOR_CAMERA_H
-#define RAG3_EDITOR_CAMERA_H
+#ifndef RAG3_EDITOR_INCLUDE_EDITOR_CAMERA_H
+#define RAG3_EDITOR_INCLUDE_EDITOR_CAMERA_H
 
 #include <R3E/graphics/AbstractCamera.h>
 
@@ -21,4 +21,4 @@ namespace editor {
     };
 } // namespace editor
 
-#endif // RAG3_EDITOR_CAMERA_H
+#endif //RAG3_EDITOR_INCLUDE_EDITOR_CAMERA_H

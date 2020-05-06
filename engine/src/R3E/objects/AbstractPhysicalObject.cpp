@@ -14,7 +14,7 @@
 namespace r3e {
     AbstractPhysicalObject::AbstractPhysicalObject(const sf::Vector2f& position,
                                                    const sf::Vector2f& size,
-                                                   const Collision::Area& c_area,
+                                                   const collision::Area& c_area,
                                                    sf::Texture* texture,
                                                    int z_index,
                                                    short int frames_number,
@@ -22,12 +22,12 @@ namespace r3e {
             AbstractDrawableObject(position, size, texture, z_index, frames_number, frame_duration),
             c_area_(c_area) {}
 
-    const Collision::Area& AbstractPhysicalObject::getCollisionArea() const
+    const collision::Area& AbstractPhysicalObject::getCollisionArea() const
     {
         return c_area_;
     }
 
-    void AbstractPhysicalObject::changeCollisionArea(const Collision::Area& area)
+    void AbstractPhysicalObject::changeCollisionArea(const collision::Area& area)
     {
         c_area_ = area;
     }
@@ -38,7 +38,7 @@ namespace r3e {
 
     StaticObject::StaticObject(const sf::Vector2f& position,
                                const sf::Vector2f& size,
-                               const Collision::Area& c_area,
+                               const collision::Area& c_area,
                                sf::Texture* texture,
                                int z_index,
                                short int frames_number,
@@ -54,7 +54,7 @@ namespace r3e {
     DynamicObject::DynamicObject(const sf::Vector2f& position,
                                  const sf::Vector2f& velocity,
                                  const sf::Vector2f& size,
-                                 const Collision::Area& c_area,
+                                 const collision::Area& c_area,
                                  sf::Texture* texture,
                                  int z_index,
                                  short int frames_number,
@@ -112,7 +112,7 @@ namespace r3e {
     HoveringObject::HoveringObject(const sf::Vector2f& position,
                                    const sf::Vector2f& velocity,
                                    const sf::Vector2f& size,
-                                   const Collision::Area& c_area,
+                                   const collision::Area& c_area,
                                    sf::Texture* texture,
                                    int z_index,
                                    short int frames_number,

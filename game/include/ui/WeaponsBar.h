@@ -2,8 +2,8 @@
 // Created by jul3x on 03.11.19.
 //
 
-#ifndef RAG3_GAME_UI_WEAPONSBAR_H
-#define RAG3_GAME_UI_WEAPONSBAR_H
+#ifndef RAG3_GAME_INCLUDE_UI_WEAPONSBAR_H
+#define RAG3_GAME_INCLUDE_UI_WEAPONSBAR_H
 
 
 #include <list>
@@ -44,4 +44,4 @@ private:
 
 };
 
-#endif // RAG3_GAME_UI_WEAPONSBAR_H
+#endif //RAG3_GAME_INCLUDE_UI_WEAPONSBAR_H

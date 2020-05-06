@@ -3,8 +3,8 @@
 //
 
 
-#ifndef RAG3_GAME_WEAPONS_NOWEAPON_H
-#define RAG3_GAME_WEAPONS_NOWEAPON_H
+#ifndef RAG3_COMMON_INCLUDE_COMMON_NOWEAPON_H
+#define RAG3_COMMON_INCLUDE_COMMON_NOWEAPON_H
 
 #include <common/AbstractWeapon.h>
 
@@ -20,4 +20,4 @@ public:
     void setState(float state) override;
 };
 
-#endif // RAG3_GAME_WEAPONS_NOWEAPON_H
+#endif //RAG3_COMMON_INCLUDE_COMMON_NOWEAPON_H

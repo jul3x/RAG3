@@ -300,7 +300,7 @@ sf::Vector2f NPC::findNearestSafeSpot(const sf::Vector2f& direction) const
     if (checkIfPositionValid(rounded_x, rounded_y))
         return {rounded_x * map_blockage_->scale_x_, rounded_y * map_blockage_->scale_y_};
 
-    return {ai::NO_GOAL, ai::NO_GOAL};
+    return {ai::NO_GOAL_, ai::NO_GOAL_};
 }
 
 void NPC::standardAI(float time_elapsed)

@@ -2,8 +2,8 @@
 // Created by jul3x on 31.03.20.
 //
 
-#ifndef RAG3_ENGINE_OBJECTS_UNIQUE_H
-#define RAG3_ENGINE_OBJECTS_UNIQUE_H
+#ifndef RAG3_ENGINE_INCLUDE_R3E_OBJECTS_UNIQUE_H
+#define RAG3_ENGINE_INCLUDE_R3E_OBJECTS_UNIQUE_H
 
 
 namespace r3e {
@@ -20,7 +20,7 @@ namespace r3e {
                 current_max_id_ = id;
         }
 
-        int getUniqueId() const
+        [[nodiscard]] int getUniqueId() const
         {
             return u_id_;
         }
@@ -33,4 +33,4 @@ namespace r3e {
     };
 } // namespace r3e
 
-#endif //RAG3_ENGINE_OBJECTS_UNIQUE_H
+#endif //RAG3_ENGINE_INCLUDE_R3E_OBJECTS_UNIQUE_H

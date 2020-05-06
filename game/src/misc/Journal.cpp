@@ -127,7 +127,7 @@ bool Journal::executeTimeReversal(float time_elapsed)
     time_elapsed_ += time_elapsed;
 
     auto frames_elapsed = static_cast<short int>(time_elapsed_ / frame_time_);
-    time_elapsed_ -= frames_elapsed * frame_time_;
+    time_elapsed_ -= static_cast<float>(frames_elapsed) * frame_time_;
 
     while (frames_elapsed > 0)
     {

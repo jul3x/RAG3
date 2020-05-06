@@ -2,8 +2,8 @@
 // Created by jul3x on 27.06.19.
 //
 
-#ifndef RAG3_ENGINE_UTILS_GEOMETRY_H
-#define RAG3_ENGINE_UTILS_GEOMETRY_H
+#ifndef RAG3_ENGINE_INCLUDE_R3E_UTILS_GEOMETRY_H
+#define RAG3_ENGINE_INCLUDE_R3E_UTILS_GEOMETRY_H
 
 #include <numeric>
 #include <cmath>
@@ -56,4 +56,4 @@ namespace r3e::utils::geo {
 
 } // namespace r3e::utils::geo
 
-#endif // RAG3_ENGINE_UTILS_GEOMETRY_H
+#endif //RAG3_ENGINE_INCLUDE_R3E_UTILS_GEOMETRY_H

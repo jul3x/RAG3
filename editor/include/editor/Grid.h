@@ -2,8 +2,8 @@
 // Created by jul3x on 15.03.20.
 //
 
-#ifndef RAG3_EDITOR_GRID_H
-#define RAG3_EDITOR_GRID_H
+#ifndef RAG3_EDITOR_INCLUDE_EDITOR_GRID_H
+#define RAG3_EDITOR_INCLUDE_EDITOR_GRID_H
 
 #include <R3E/objects/AbstractDrawableObject.h>
 #include <R3E/graphics/Graphics.h>
@@ -29,4 +29,4 @@ namespace editor {
 
 }; // namespace editor
 
-#endif //RAG3_EDITOR_GRID_H
+#endif //RAG3_EDITOR_INCLUDE_EDITOR_GRID_H

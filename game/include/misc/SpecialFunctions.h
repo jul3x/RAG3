@@ -2,8 +2,8 @@
 // Created by jul3x on 31.03.20.
 //
 
-#ifndef RAG3_GAME_MISC_SPECIALFUNCTIONS_H
-#define RAG3_GAME_MISC_SPECIALFUNCTIONS_H
+#ifndef RAG3_GAME_INCLUDE_MISC_SPECIALFUNCTIONS_H
+#define RAG3_GAME_INCLUDE_MISC_SPECIALFUNCTIONS_H
 
 
 #include <unordered_map>
@@ -34,8 +34,10 @@ public:
     static void teleport(Functional* obj, const std::string& data, Character* user);
     static void kill(Functional* obj, const std::string& data, Character* user);
     static void setOnFire(Functional* obj, const std::string& data, Character* user);
+    static void explode(Functional* obj, const std::string& data, Character* user);
 
     static void removeDecoration(Functional* obj, const std::string& data, Character* user);
+    static void spawnExplosionEvent(Functional* obj, const std::string& data, Character* user);
     static void spawnThought(Functional* obj, const std::string& data, Character* user);
     static void spawnLava(Functional* obj, const std::string& data, Character* user);
     static void spawnAmmo(Functional* obj, const std::string& data, Character* user);
@@ -55,4 +57,4 @@ private:
 
 };
 
-#endif //RAG3_GAME_MISC_SPECIALFUNCTIONS_H
+#endif //RAG3_GAME_INCLUDE_MISC_SPECIALFUNCTIONS_H

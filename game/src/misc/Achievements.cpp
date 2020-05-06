@@ -9,12 +9,15 @@ Achievements::Achievements()
 {
     achievements_titles_[Achievements::Type::FirstEnemyKill] = "First enemy killed";
     achievements_titles_[Achievements::Type::FirstCrystalPick] = "Crystal acknowledgement";
+    achievements_titles_[Achievements::Type::FirstBarrelDestroyed] = "Master of destruction";
 
     achievements_texts_[Achievements::Type::FirstEnemyKill] = "First blood! Keep it going!";
     achievements_texts_[Achievements::Type::FirstCrystalPick] = "What a strange object...";
+    achievements_texts_[Achievements::Type::FirstBarrelDestroyed] = "First barrel destroyed!";
 
     achievements_textures_[Achievements::Type::FirstEnemyKill] = "achievements/blood";
     achievements_textures_[Achievements::Type::FirstCrystalPick] = "achievements/crystal";
+    achievements_textures_[Achievements::Type::FirstBarrelDestroyed] = "achievements/barrel";
 }
 
 const std::string& Achievements::getAchievementText(Achievements::Type type) const

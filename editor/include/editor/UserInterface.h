@@ -2,8 +2,8 @@
 // Created by jul3x on 10.03.20.
 //
 
-#ifndef RAG3_EDITOR_USERINTERFACE_H
-#define RAG3_EDITOR_USERINTERFACE_H
+#ifndef RAG3_EDITOR_INCLUDE_EDITOR_USERINTERFACE_H
+#define RAG3_EDITOR_INCLUDE_EDITOR_USERINTERFACE_H
 
 
 #include <TGUI/TGUI.hpp>
@@ -35,39 +35,31 @@ namespace editor {
         UserInterface& operator=(const UserInterface&) = delete;
 
         void initialize(graphics::Graphics& graphics) override;
+        void handleEvents(graphics::Graphics& graphics, float time_elapsed) override;
+        void draw(graphics::Graphics& graphics) override;
 
         void registerCamera(Camera* camera);
 
-        void handleEvents(graphics::Graphics& graphics, float time_elapsed) override;
-
-        void draw(graphics::Graphics& graphics) override;
-
         void spawnInfo(const std::string& msg);
-
         void spawnError(const std::string& msg);
 
         void resetMapList();
 
         void openConfigWindow(const std::string& category, const std::string& id);
-
         void openUniqueObjectWindow(const std::string& category, const std::string& name, int id);
-
         void openSpecialObjectWindow(const std::string& category, Functional* obj);
 
         void setZIndex(int value);
-
         int getZIndex() const;
 
     private:
         inline void generateMenuBar(sf::RenderWindow& window);
-
         inline void handleKeys();
-
         inline void handleMouse(sf::RenderWindow& graphics_window, float time_elapsed);
-
-        inline void handleCameraCenter(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos, float time_elapsed);
-
-        inline void handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos, float time_elapsed);
+        inline void
+        handleCameraCenter(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos, float time_elapsed);
+        inline void
+        handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos, float time_elapsed);
 
         static constexpr float LOGO_OFF_X_ = 240.0f;
         static constexpr float LOGO_OFF_Y_ = 120.0f;
@@ -103,4 +95,4 @@ namespace editor {
     };
 } // namespace editor
 
-#endif // RAG3_EDITOR_USERINTERFACE_H
+#endif //RAG3_EDITOR_INCLUDE_EDITOR_USERINTERFACE_H

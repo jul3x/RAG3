@@ -2,8 +2,8 @@
 // Created by jul3x on 08.04.20.
 //
 
-#ifndef RAG3_GAME_UI_STATSHUD_H
-#define RAG3_GAME_UI_STATSHUD_H
+#ifndef RAG3_GAME_INCLUDE_UI_STATSHUD_H
+#define RAG3_GAME_INCLUDE_UI_STATSHUD_H
 
 #include <SFML/Graphics/Text.hpp>
 
@@ -36,4 +36,4 @@ private:
 
 };
 
-#endif // RAG3_GAME_UI_STATSHUD_H
+#endif //RAG3_GAME_INCLUDE_UI_STATSHUD_H

@@ -2,8 +2,8 @@
 // Created by jul3x on 08.04.20.
 //
 
-#ifndef RAG3_GAME_MISC_ACHIEVEMENTS_H
-#define RAG3_GAME_MISC_ACHIEVEMENTS_H
+#ifndef RAG3_GAME_INCLUDE_MISC_ACHIEVEMENTS_H
+#define RAG3_GAME_INCLUDE_MISC_ACHIEVEMENTS_H
 
 #include <unordered_map>
 #include <string>
@@ -13,7 +13,8 @@ class Achievements {
 public:
     enum class Type {
         FirstEnemyKill,
-        FirstCrystalPick
+        FirstCrystalPick,
+        FirstBarrelDestroyed
     };
 
     Achievements();
@@ -29,4 +30,4 @@ private:
 
 };
 
-#endif //RAG3_GAME_MISC_ACHIEVEMENTS_H
+#endif //RAG3_GAME_INCLUDE_MISC_ACHIEVEMENTS_H

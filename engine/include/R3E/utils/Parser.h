@@ -2,8 +2,8 @@
 // Created by jul3x on 23.10.19.
 //
 
-#ifndef RAG3_ENGINE_UTILS_PARSER_H
-#define RAG3_ENGINE_UTILS_PARSER_H
+#ifndef RAG3_ENGINE_INCLUDE_R3E_UTILS_PARSER_H
+#define RAG3_ENGINE_INCLUDE_R3E_UTILS_PARSER_H
 
 #include <sstream>
 #include <fstream>
@@ -16,7 +16,7 @@
 
 
 namespace r3e::utils::j3x {
-    constexpr char Delimiter = ';';
+    constexpr char DELIMITER_ = ';';
 
     template<class T>
     using Params = std::unordered_map<std::string, T>;
@@ -155,4 +155,4 @@ namespace r3e::utils::j3x {
 
 } // namespace r3e::utils::j3x
 
-#endif // RAG3_ENGINE_UTILS_PARSER_H
+#endif //RAG3_ENGINE_INCLUDE_R3E_UTILS_PARSER_H

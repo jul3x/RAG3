@@ -2,8 +2,8 @@
 // Created by jul3x on 30.04.20.
 //
 
-#ifndef RAG3_GAME_EVENTS_EVENT_H
-#define RAG3_GAME_EVENTS_EVENT_H
+#ifndef RAG3_GAME_INCLUDE_EVENTS_EVENT_H
+#define RAG3_GAME_INCLUDE_EVENTS_EVENT_H
 
 #include <R3E/graphics/AnimationEvent.h>
 
@@ -24,4 +24,4 @@ public:
 };
 
 
-#endif // RAG3_GAME_EVENTS_EVENT_H
+#endif //RAG3_GAME_INCLUDE_EVENTS_EVENT_H

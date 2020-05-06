@@ -11,22 +11,25 @@
 Bullet::Bullet(const sf::Vector2f& position,
                const std::string& id,
                const float direction) :
-        Identifiable(id),
+        Functional(utils::j3x::get<std::string>(RM.getObjectParams("bullets", id), "default_activation"),
+                   utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("bullets", id), "default_functions"),
+                   utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("bullets", id), "default_datas"),
+                   id, -2),
         HoveringObject(position,
                        utils::j3x::get<float>(RM.getObjectParams("bullets", id), "speed") *
                                sf::Vector2f(std::cos(direction), std::sin(direction)),
                        {utils::j3x::get<float>(RM.getObjectParams("bullets", id), "size_x"),
                         utils::j3x::get<float>(RM.getObjectParams("bullets", id), "size_y")},
-                       Collision::Box(utils::j3x::get<float>(RM.getObjectParams("bullets", id), "size_x"),
+                       collision::Box(utils::j3x::get<float>(RM.getObjectParams("bullets", id), "size_x"),
                                       utils::j3x::get<float>(RM.getObjectParams("bullets", id), "size_y")),
                        &RM.getTexture("bullets/" + id),
                        utils::j3x::get<int>(RM.getObjectParams("bullets", id), "z_index"),
                        0, 0.0f, 0.0f),
         trail_color_(sf::Color(CFG.get<int>("graphics/trail_color"))),
         trail_time_elapsed_(0.0f),
-        trail_time_step_(CFG.get<float>("graphics/full_trail_time") / TRAIL_COUNT_),
         life_(utils::j3x::get<float>(RM.getObjectParams("bullets", id), "life")),
-        deadly_factor_(utils::j3x::get<float>(RM.getObjectParams("bullets", id), "deadly_factor"))
+        deadly_factor_(utils::j3x::get<float>(RM.getObjectParams("bullets", id), "deadly_factor")),
+        TRAIL_TIME_STEP_(CFG.get<float>("graphics/full_trail_time") / Bullet::TRAIL_COUNT_)
 {
     this->setRotation(direction * 180.0f / static_cast<float>(M_PI));
 }
@@ -47,9 +50,9 @@ bool Bullet::update(float time_elapsed)
 
     trail_time_elapsed_ += time_elapsed;
 
-    if (trail_time_elapsed_ > trail_time_step_)
+    if (trail_time_elapsed_ > TRAIL_TIME_STEP_)
     {
-        trail_time_elapsed_ -= trail_time_step_;
+        trail_time_elapsed_ -= TRAIL_TIME_STEP_;
 
         trail_.push_back(this->getPosition());
 

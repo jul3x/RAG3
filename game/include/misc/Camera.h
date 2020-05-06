@@ -3,8 +3,8 @@
 //
 
 
-#ifndef RAG3_GAME_MISC_CAMERA_H
-#define RAG3_GAME_MISC_CAMERA_H
+#ifndef RAG3_GAME_INCLUDE_MISC_CAMERA_H
+#define RAG3_GAME_INCLUDE_MISC_CAMERA_H
 
 #include <R3E/graphics/AbstractCamera.h>
 
@@ -15,12 +15,9 @@ class Camera : public graphics::AbstractCamera {
 public:
     Camera();
 
-    void setShaking();
-    
+    void setShaking(float factor = 1.0f);
     void setZoomInOut();
-
     void setNormal();
-
     void setReverse();
 
     void update(float time_elapsed) override;
@@ -34,6 +31,8 @@ private:
     };
 
     Camera::State state_;
+    float factor_;
+
 };
 
-#endif // RAG3_GAME_MISC_CAMERA_H
+#endif //RAG3_GAME_INCLUDE_MISC_CAMERA_H

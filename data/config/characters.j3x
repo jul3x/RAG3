@@ -1,7 +1,5 @@
 float max_acceleration=2000.0f
-
 float mouse_reaction_speed=100.0f
 
 int ammo_dropped=3
-
 float ammo_drop_offset=40.0f

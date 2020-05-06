@@ -50,104 +50,74 @@ public:
         return instance;
     }
 
-    [[nodiscard]] const sf::Vector2f& getPlayerPosition() const;
-
-    Map& getMap();
-
-    Player& getPlayer();
-
-    Camera& getCamera();
-
-    Stats& getStats();
-
-    [[nodiscard]] const Journal& getJournal() const;
-
-    [[nodiscard]] const std::list<std::unique_ptr<Bullet>>& getBullets() const;
-
-    [[nodiscard]] const ai::MapBlockage& getMapBlockage() const;
-
-    void spawnExplosionForce(const sf::Vector2f& pos, float r);
-
-    void updateExplosions();
-
-    void spawnBullet(const std::string& name, const sf::Vector2f& pos, float dir);
-
-    void spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);
-
-    void spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir);
-
-    void spawnExplosionEvent(const sf::Vector2f& pos, float r);
-
-    void spawnTeleportationEvent(const sf::Vector2f& pos);
-
-    void spawnFadeInOut();
-
-    void spawnThought(Character* user, const std::string& text);
-
-    void spawnAchievement(Achievements::Type type);
-
-    void spawnSpecial(const sf::Vector2f& pos, const std::string& name);
-
+    // Engine methods
+    void start();
     void initialize() override;
-
     void update(float time_elapsed) override;
-
     void draw(graphics::Graphics& graphics) override;
 
     void alertCollision(HoveringObject* h_obj, StaticObject* s_obj) override;
-
     void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) override;
-
     void alertCollision(DynamicObject* d_obj, StaticObject* s_obj) override;
-
     void alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2) override;
 
-    void deleteStaticObject(StaticObject* s_obj);
-
-    void deleteHoveringObject(HoveringObject* h_obj);
-
-    void deleteDynamicObject(DynamicObject* d_obj);
-
-    NPC* spawnNewNPC(const std::string &id);
-
-    NPC* spawnNewPlayerClone();
-
-    void cleanPlayerClone();
-
-    Bullet* spawnNewBullet(const std::string& id, const sf::Vector2f& pos, float dir);
-
-    Obstacle* spawnNewObstacle(const std::string& id, const sf::Vector2f& pos);
-
-    ObstacleTile* spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos);
-
-    void findAndDeleteBullet(Bullet* ptr);
-
-    void findAndDeleteDecoration(Decoration* ptr);
-
+    // Getters
+    Map& getMap();
+    Player& getPlayer();
+    Camera& getCamera();
+    Stats& getStats();
+    [[nodiscard]] const Journal& getJournal() const;
+    [[nodiscard]] const std::list<std::unique_ptr<Bullet>>& getBullets() const;
     [[nodiscard]] Special* getCurrentSpecialObject() const;
 
+    // Spawn events
+    void spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);
+    void spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir);
+    void spawnExplosionEvent(const sf::Vector2f& pos, float r);
+    void spawnTeleportationEvent(const sf::Vector2f& pos);
+    void spawnExplosionForce(const sf::Vector2f& pos, float r);
+    void spawnAchievement(Achievements::Type type);
+    void spawnThought(Character* user, const std::string& text);
+    void spawnFadeInOut();
+
+    // Spawn objects for journal
+    void spawnBullet(const std::string& name, const sf::Vector2f& pos, float dir);
+    void spawnSpecial(const sf::Vector2f& pos, const std::string& name);
+
+    // UI functions
     void useSpecialObject();
-
     void setBulletTime();
-
     void setNormalTime();
 
+    // Journal methods
     [[nodiscard]] bool isJournalFreezed() const;
 
+    void findAndDeleteBullet(Bullet* ptr);
+    void findAndDeleteDecoration(Decoration* ptr);
+
+    Bullet* spawnNewBullet(const std::string& id, const sf::Vector2f& pos, float dir);
+    Obstacle* spawnNewObstacle(const std::string& id, const sf::Vector2f& pos);
+    ObstacleTile* spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos);
+
+    NPC* spawnNewNPC(const std::string &id);
+    NPC* spawnNewPlayerClone();
+
+    // State methods
     void setGameState(Game::GameState state);
-
     [[nodiscard]] Game::GameState getGameState() const;
-
-    void start();
 
 private:
     Game();
 
     void updateMapObjects(float time_elapsed);
+    void updatePlayerClone(float time_elapsed);
+    void updatePlayer(float time_elapsed);
+    void updateBullets(float time_elapsed);
+    void updateThoughts(float time_elapsed);
+    void updateExplosions();
 
     void killNPC(NPC* npc);
-
-    static constexpr float COLLISION_GRID_SIZE_ = 400.0f;
+    void cleanPlayerClone();
 
     std::unique_ptr<Engine> engine_;
     std::unique_ptr<UserInterface> ui_;

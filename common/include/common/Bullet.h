@@ -32,7 +32,7 @@ private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     static constexpr size_t TRAIL_COUNT_ = 10;
-    static const float TRAIL_TIME_STEP_;
+    const float TRAIL_TIME_STEP_;
 
     std::deque<sf::Vector2f> trail_;
     sf::Color trail_color_;

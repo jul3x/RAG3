@@ -180,9 +180,6 @@ void Character::switchWeapon(int relative_position_backpack)
 
 bool Character::update(float time_elapsed)
 {
-    if (this->getId() == "slave")
-        std::cout << "EEELO : " << this->getPosition().x << " " << this->getPosition().y << std::endl;
-
     bool is_alive = life_ > 0;
     DynamicObject::update(time_elapsed);
     (*current_weapon_)->update(time_elapsed);

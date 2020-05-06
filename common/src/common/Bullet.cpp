@@ -7,7 +7,6 @@
 #include <common/Bullet.h>
 #include <common/ResourceManager.h>
 
-const float Bullet::TRAIL_TIME_STEP_ = CFG.get<float>("graphics/full_trail_time") / Bullet::TRAIL_COUNT_;
 
 Bullet::Bullet(const sf::Vector2f& position,
                const std::string& id,
@@ -29,7 +28,8 @@ Bullet::Bullet(const sf::Vector2f& position,
         trail_color_(sf::Color(CFG.get<int>("graphics/trail_color"))),
         trail_time_elapsed_(0.0f),
         life_(utils::j3x::get<float>(RM.getObjectParams("bullets", id), "life")),
-        deadly_factor_(utils::j3x::get<float>(RM.getObjectParams("bullets", id), "deadly_factor"))
+        deadly_factor_(utils::j3x::get<float>(RM.getObjectParams("bullets", id), "deadly_factor")),
+        TRAIL_TIME_STEP_(CFG.get<float>("graphics/full_trail_time") / Bullet::TRAIL_COUNT_)
 {
     this->setRotation(direction * 180.0f / static_cast<float>(M_PI));
 }

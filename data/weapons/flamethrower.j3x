@@ -1,17 +1,17 @@
-float recoil=300.0f
-int max_ammo=12
+float recoil=0.0f
+int max_ammo=2000
 int ammo_portion=2
 
+string spawn_func=fire
+float spawn_timeout=0.1f
+string spawn_type=heavy
+int spawn_quantity=3
+float spawn_angular_diff=15.0f
+
 float size_x=70.0f
-float size_y=16.0f
+float size_y=26.0f
 float offset_x=20.0f
 float offset_y=0.0f
-
-string spawn_func=bullet
-float spawn_timeout=0.7f
-string spawn_type=light
-int spawn_quantity=5
-float spawn_angular_diff=10.0f
 
 float map_offset_x=0.0f
 float map_offset_y=0.0f

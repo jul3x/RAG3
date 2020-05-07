@@ -10,20 +10,20 @@
 
 
 ShootingWeapon::ShootingWeapon(const std::string& id) :
-        bullet_timeout_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "bullet_timeout")),
+        spawn_timeout_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_timeout")),
         recoil_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "recoil")),
         ammunition_(utils::j3x::get<int>(RM.getObjectParams("weapons", id), "max_ammo")),
         max_ammunition_(utils::j3x::get<int>(RM.getObjectParams("weapons", id), "max_ammo")),
-        bullet_type_(utils::j3x::get<std::string>(RM.getObjectParams("weapons", id), "bullet_type")),
-        bullet_quantity_(utils::j3x::get<int>(RM.getObjectParams("weapons", id), "bullet_quantity")),
-        bullet_angular_diff_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "bullet_angular_diff")),
+        spawn_type_(utils::j3x::get<std::string>(RM.getObjectParams("weapons", id), "spawn_type")),
+        spawn_quantity_(utils::j3x::get<int>(RM.getObjectParams("weapons", id), "spawn_quantity")),
+        spawn_angular_diff_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_angular_diff")),
         AbstractWeapon({utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_x"),
                         utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_y")},
                        {utils::j3x::get<float>(RM.getObjectParams("weapons", id), "offset_x"),
                         utils::j3x::get<float>(RM.getObjectParams("weapons", id), "offset_y")},
                        id)
 {
-    if (max_ammunition_ <= 0 || bullet_timeout_ <= 0.0f)
+    if (max_ammunition_ <= 0 || spawn_timeout_ <= 0.0f)
         throw std::invalid_argument("[ShootingWeapon] Constructor parameters are invalid!");
 
     this->changeOrigin(sf::Vector2f(0.0f,
@@ -44,16 +44,16 @@ sf::Vector2f ShootingWeapon::use()
         offset_position.y += weapon_size.x * sine + weapon_size.y * cosine;
 
         auto primary_rotation = this->getRotation() -
-                                bullet_angular_diff_ * static_cast<float>(bullet_quantity_ - 1) / 2.0f;
+                                spawn_angular_diff_ * static_cast<float>(spawn_quantity_ - 1) / 2.0f;
 
-        for (int i = 0; i < bullet_quantity_; ++i)
+        for (int i = 0; i < spawn_quantity_; ++i)
         {
-            auto rotation = (primary_rotation + static_cast<float>(i) * bullet_angular_diff_) * M_PI / 180.0f;
+            auto rotation = (primary_rotation + static_cast<float>(i) * spawn_angular_diff_) * M_PI / 180.0f;
 
-            spawning_function_(bullet_type_, offset_position, rotation);
+            spawning_function_(spawn_type_, offset_position, rotation);
         }
 
-        time_elapsed_ = bullet_timeout_;
+        time_elapsed_ = spawn_timeout_;
 
         --ammunition_;
         return -recoil_ * sf::Vector2f{cosine, sine};

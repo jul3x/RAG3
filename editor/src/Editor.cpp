@@ -27,7 +27,7 @@ void Editor::initialize()
     camera_->setViewNormalSize({static_cast<float>(CFG.get<int>("window_width_px")), static_cast<float>(CFG.get<int>("window_height_px"))});
 
     engine_->initializeGraphics(
-            sf::Vector2i{CFG.get<int>("window_width_px"), CFG.get<int>("window_height_px")}, "Rag3 Editor",
+            sf::Vector2i{CFG.get<int>("window_width_px"), CFG.get<int>("window_height_px")}, "RAG3 Editor",
             CFG.get<int>("full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
             sf::Color(CFG.get<int>("background_color")));
 
@@ -226,6 +226,7 @@ void Editor::saveConfig(const std::string& category, const std::string& id, cons
 
 void Editor::markCurrentItem(const sf::Vector2f& pos)
 {
+    marked_item_ = nullptr;
     auto clean = [](auto& list) {
         for (auto& obj : list)
         {
@@ -233,11 +234,14 @@ void Editor::markCurrentItem(const sf::Vector2f& pos)
         }
     };
 
-    auto mark = [](auto ptr) {
+    auto mark = [this](auto ptr, bool add_to_marked_item = true) {
         static auto mark_color = sf::Color(255, 0, 60, 180);
         if (ptr != nullptr)
         {
             ptr->setColor(mark_color.r, mark_color.g, mark_color.b, mark_color.a);
+
+            if (add_to_marked_item)
+                this->marked_item_ = ptr;
         }
     };
 
@@ -247,9 +251,14 @@ void Editor::markCurrentItem(const sf::Vector2f& pos)
     clean(map_->getList<Special>());
     clean(map_->getList<NPC>());
 
-    mark(map_->getObjectByPos<ObstacleTile>(pos, ui_->getZIndex()));
+    mark(map_->getObjectByPos<ObstacleTile>(pos, ui_->getZIndex()), false);
     mark(map_->getObjectByPos<Obstacle>(pos, ui_->getZIndex()));
     mark(map_->getObjectByPos<Decoration>(pos, ui_->getZIndex()));
     mark(map_->getObjectByPos<NPC>(pos, ui_->getZIndex()));
     mark(map_->getObjectByPos<Special>(pos, ui_->getZIndex()));
+}
+
+AbstractDrawableObject* Editor::getMarkedItem()
+{
+    return marked_item_;
 }

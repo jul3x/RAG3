@@ -2,10 +2,13 @@
 // Created by jul3x on 24.03.2020.
 //
 
+#include <common/ResourceManager.h>
+
 #include <Game.h>
 
 #include <misc/Journal.h>
 #include <misc/JournalEntries.h>
+
 
 JournalEntry::JournalEntry() : father_(nullptr)
 {
@@ -26,8 +29,12 @@ void TimeReversalEntry::executeEntryReversal()
     auto new_ptr = Game::get().spawnNewPlayerClone();
     father_->setUpdatedPtr(&Game::get().getPlayer(), new_ptr);
     new_ptr->makeOnlyOneWeapon(picked_weapon_, 0.0f);
-    new_ptr->getWeapons().front()->registerSpawningFunction(
-            std::bind(&Game::spawnBullet, &Game::get(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    auto& new_weapon = new_ptr->getWeapons().front();
+
+    if (!new_weapon->getName().empty())
+        new_weapon->registerSpawningFunction(
+                Game::get().getSpawningFunction(utils::j3x::get<std::string>(
+                        RM.getObjectParams("weapons", new_weapon->getName()), "spawn_func")));
 }
 
 CharacterEntry::CharacterEntry(Journal* father, Character* ptr) : JournalEntry(father), ptr_(ptr)

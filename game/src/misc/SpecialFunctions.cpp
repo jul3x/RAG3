@@ -152,8 +152,12 @@ void SpecialFunctions::addWeapon(Functional* obj, const std::string& data, Chara
     std::replace(data_parsed.begin(), data_parsed.end(), ' ', '_');
 
     std::shared_ptr<AbstractWeapon> weapon = std::make_shared<ShootingWeapon>(data_parsed);
-    weapon->registerSpawningFunction(
-            std::bind(&Game::spawnBullet, &Game::get(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+    if (!weapon->getName().empty())
+        weapon->registerSpawningFunction(
+                Game::get().getSpawningFunction(utils::j3x::get<std::string>(
+                        RM.getObjectParams("weapons", weapon->getName()), "spawn_func")));
+
     user->addWeaponToBackpack(weapon);
 
     obj->deactivate();

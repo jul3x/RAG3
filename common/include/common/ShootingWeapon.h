@@ -26,10 +26,10 @@ public:
 private:
     static constexpr float BULLET_STARTING_OFFSET_ = 20.0f;
     // weapon parameters
-    std::string bullet_type_;
-    int bullet_quantity_;
-    float bullet_angular_diff_;
-    float bullet_timeout_;
+    std::string spawn_type_;
+    int spawn_quantity_;
+    float spawn_angular_diff_;
+    float spawn_timeout_;
     float recoil_;
     int ammunition_, max_ammunition_;
 

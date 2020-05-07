@@ -14,6 +14,7 @@
 
 #include <common/Map.h>
 #include <common/Bullet.h>
+#include <common/Fire.h>
 
 #include <misc/Camera.h>
 #include <misc/Journal.h>
@@ -33,6 +34,8 @@ using namespace r3e;
 class Game : public AbstractGame {
 
 public:
+    using SpawningFunction = std::function<void(const std::string&, const sf::Vector2f&, float)>;
+
     enum class GameState
     {
         Paused,
@@ -69,6 +72,7 @@ public:
     [[nodiscard]] const Journal& getJournal() const;
     [[nodiscard]] const std::list<std::unique_ptr<Bullet>>& getBullets() const;
     [[nodiscard]] Special* getCurrentSpecialObject() const;
+    [[nodiscard]] const SpawningFunction& getSpawningFunction(const std::string& name) const;
 
     // Spawn events
     void spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);
@@ -81,6 +85,7 @@ public:
     void spawnFadeInOut();
 
     // Spawn objects for journal
+    void spawnFire(const std::string& name, const sf::Vector2f& pos, float dir);
     void spawnBullet(const std::string& name, const sf::Vector2f& pos, float dir);
     void spawnSpecial(const sf::Vector2f& pos, const std::string& name);
 
@@ -95,6 +100,7 @@ public:
     void findAndDeleteBullet(Bullet* ptr);
     void findAndDeleteDecoration(Decoration* ptr);
 
+    Fire* spawnNewFire(const sf::Vector2f& pos, float dir);
     Bullet* spawnNewBullet(const std::string& id, const sf::Vector2f& pos, float dir);
     Obstacle* spawnNewObstacle(const std::string& id, const sf::Vector2f& pos);
     ObstacleTile* spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos);
@@ -113,6 +119,7 @@ private:
     void updatePlayerClone(float time_elapsed);
     void updatePlayer(float time_elapsed);
     void updateBullets(float time_elapsed);
+    void updateFire(float time_elapsed);
     void updateThoughts(float time_elapsed);
     void updateExplosions();
 
@@ -134,9 +141,12 @@ private:
     std::unique_ptr<Map> map_;
 
     std::list<std::unique_ptr<Bullet>> bullets_;
+    std::list<std::unique_ptr<Fire>> fire_;
     std::list<std::unique_ptr<Explosion>> explosions_;
     std::list<std::unique_ptr<Thought>> thoughts_;
     std::list<std::pair<sf::Vector2f, float>> desired_explosions_;
+
+    std::unordered_map<std::string, SpawningFunction> spawning_func_;
 
     Game::GameState state_;
     float current_time_factor_;

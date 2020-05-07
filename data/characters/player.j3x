@@ -29,4 +29,4 @@ string ai_type=Standard
 
 int z_index=1
 
-list[string] weapons=[rocket_launcher;Null;Null;Null]
+list[string] weapons=[flamethrower;Null;Null;Null]

@@ -21,6 +21,11 @@ Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal)
 
 void Game::initialize()
 {
+    spawning_func_["bullet"] = std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
+                                         std::placeholders::_3);
+    spawning_func_["fire"] = std::bind(&Game::spawnFire, this, std::placeholders::_1, std::placeholders::_2,
+                                       std::placeholders::_3);
+
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     ui_ = std::make_unique<UserInterface>();
     camera_ = std::make_unique<Camera>();
@@ -91,18 +96,20 @@ void Game::initialize()
 
         for (auto& weapon : character->getWeapons())
         {
-            weapon->registerSpawningFunction(
-                    std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
-                              std::placeholders::_3));
+            if (!weapon->getName().empty())
+                weapon->registerSpawningFunction(
+                        this->getSpawningFunction(utils::j3x::get<std::string>(RM.getObjectParams("weapons",
+                                weapon->getName()), "spawn_func")));
         }
     }
 
     engine_->registerDynamicObject(player_.get());
     for (auto& weapon : player_->getWeapons())
     {
-        weapon->registerSpawningFunction(
-                std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
-                          std::placeholders::_3));
+        if (!weapon->getName().empty())
+            weapon->registerSpawningFunction(
+                    this->getSpawningFunction(utils::j3x::get<std::string>(
+                            RM.getObjectParams("weapons", weapon->getName()), "spawn_func")));
     }
 
     for (auto& special : map_->getList<Special>())
@@ -139,6 +146,7 @@ void Game::update(float time_elapsed)
             updatePlayerClone(time_elapsed);
             updatePlayer(time_elapsed);
             updateBullets(time_elapsed);
+            updateFire(time_elapsed);
             updateThoughts(time_elapsed);
 
             journal_->update(time_elapsed);
@@ -322,6 +330,7 @@ void Game::draw(graphics::Graphics& graphics)
     draw(map_->getList<ObstacleTile>());
     draw(map_->getList<NPC>());
     draw(bullets_);
+    draw(fire_);
 
     for (auto& special : map_->getList<Special>())
         if (special->isDrawable())
@@ -475,45 +484,57 @@ void Game::updateExplosions()
 void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
 {
     auto bullet = dynamic_cast<Bullet*>(h_obj);
+    auto fire = dynamic_cast<Fire*>(h_obj);
     auto explosion = dynamic_cast<Explosion*>(h_obj);
     auto obstacle = dynamic_cast<Obstacle*>(s_obj);
     auto obstacle_tile = dynamic_cast<ObstacleTile*>(s_obj);
 
-    if (obstacle != nullptr && bullet != nullptr)
+    if (bullet != nullptr)
     {
-        obstacle->getShot(*bullet);
+        if (obstacle != nullptr)
+        {
+            obstacle->getShot(*bullet);
 
-        spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                         static_cast<float>(std::pow(
-                                 CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
+                             static_cast<float>(std::pow(
+                                     CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
-        bullet->setDead();
+            bullet->setDead();
 
-        journal_->eventObstacleShot(obstacle);
+            journal_->eventObstacleShot(obstacle);
+        }
+        else if (obstacle_tile != nullptr)
+        {
+            obstacle_tile->getShot(*bullet);
+
+            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
+                             static_cast<float>(std::pow(
+                                     CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+
+            bullet->setDead();
+
+            journal_->eventObstacleTileShot(obstacle_tile);
+        }
     }
-    else if (obstacle_tile != nullptr && bullet != nullptr)
+    else if (explosion != nullptr)
     {
-        obstacle_tile->getShot(*bullet);
+        if (obstacle != nullptr)
+        {
+            explosion->applyForce(obstacle);
 
-        spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                         static_cast<float>(std::pow(
-                                 CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+            journal_->eventObstacleShot(obstacle);
+        }
+        else if (obstacle_tile != nullptr)
+        {
+            explosion->applyForce(obstacle_tile);
 
-        bullet->setDead();
-
-        journal_->eventObstacleTileShot(obstacle_tile);
+            journal_->eventObstacleTileShot(obstacle_tile);
+        }
     }
-    else if (obstacle != nullptr && explosion != nullptr)
+    else if (fire != nullptr)
     {
-        explosion->applyForce(obstacle);
 
-        journal_->eventObstacleShot(obstacle);
-    }
-    else if (obstacle_tile != nullptr && explosion != nullptr)
-    {
-        explosion->applyForce(obstacle_tile);
-
-        journal_->eventObstacleTileShot(obstacle_tile);
+        fire->setDead();
     }
 }
 
@@ -556,9 +577,17 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     }
 
     auto explosion = dynamic_cast<Explosion*>(h_obj);
+
     if (character != nullptr && explosion != nullptr)
     {
         explosion->applyForce(character);
+    }
+
+    auto fire = dynamic_cast<Fire*>(h_obj);
+
+    if (character != nullptr && fire != nullptr)
+    {
+        character->setGlobalState(Character::GlobalState::OnFire);
     }
 }
 
@@ -605,9 +634,10 @@ NPC* Game::spawnNewNPC(const std::string& id)
 
     for (auto& weapon : ptr->getWeapons())
     {
-        weapon->registerSpawningFunction(
-                std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
-                          std::placeholders::_3));
+        if (!weapon->getName().empty())
+            weapon->registerSpawningFunction(
+                    this->getSpawningFunction(utils::j3x::get<std::string>(
+                            RM.getObjectParams("weapons", weapon->getName()), "spawn_func")));
     }
 
     for (const auto& function : ptr->getFunctions())
@@ -644,9 +674,10 @@ NPC* Game::spawnNewPlayerClone()
 
     for (auto& weapon : player_clone_->getWeapons())
     {
-        weapon->registerSpawningFunction(
-                std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
-                          std::placeholders::_3));
+        if (!weapon->getName().empty())
+            weapon->registerSpawningFunction(
+                    std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
+                              std::placeholders::_3));
     }
 
     return player_clone_.get();
@@ -875,3 +906,47 @@ void Game::updateThoughts(float time_elapsed)
     }
 }
 
+const Game::SpawningFunction& Game::getSpawningFunction(const std::string& name) const
+{
+    auto it = spawning_func_.find(name);
+
+    if (it == spawning_func_.end())
+    {
+        throw std::invalid_argument("[Game] SpawningFunction " + name + " is not handled!");
+    }
+
+    return it->second;
+}
+
+void Game::spawnFire(const std::string& name, const sf::Vector2f& pos, float dir)
+{
+    auto ptr = this->spawnNewFire(pos, dir);
+    //journal_->eventBulletSpawned(ptr);
+    //this->spawnShotEvent(name, pos, dir);
+}
+
+void Game::updateFire(float time_elapsed)
+{
+    for (auto it = fire_.begin(); it != fire_.end(); ++it)
+    {
+        if (!(*it)->update(time_elapsed))
+        {
+//            journal_->eventBulletDestroyed(it->get());
+            engine_->deleteHoveringObject(it->get());
+            auto next_it = std::next(it);
+            fire_.erase(it);
+            it = next_it;
+        }
+    }
+}
+
+Fire* Game::spawnNewFire(const sf::Vector2f& pos, float dir)
+{
+    fire_.emplace_back(std::make_unique<Fire>(pos, dir));
+
+    auto ptr = fire_.back().get();
+
+    engine_->registerHoveringObject(ptr);
+
+    return ptr;
+}

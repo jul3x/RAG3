@@ -30,7 +30,8 @@ UserInterface::UserInterface() :
         load_window_(&gui_, &gui_theme_),
         config_window_(&gui_, &gui_theme_),
         unique_object_window_(&gui_, &gui_theme_),
-        special_object_window_(&gui_, &gui_theme_)
+        special_object_window_(&gui_, &gui_theme_),
+        marked_item_(nullptr)
 {
     gui_.get("save_window")->setVisible(false);
     gui_.get("load_window")->setVisible(false);
@@ -88,7 +89,8 @@ void UserInterface::initialize(graphics::Graphics& graphics)
 {
     gui_.setTarget(graphics.getWindow());
     tiles_window_.initialize({"obstacles_tiles", "decorations_tiles"},
-                             {CFG.get<std::string>("paths/obstacles_tiles"), CFG.get<std::string>("paths/decorations_tiles")});
+                             {CFG.get<std::string>("paths/obstacles_tiles"),
+                              CFG.get<std::string>("paths/decorations_tiles")});
     objects_window_.initialize({"characters", "specials", "obstacles", "decorations"},
                                {CFG.get<std::string>("paths/characters"), CFG.get<std::string>("paths/specials"),
                                 CFG.get<std::string>("paths/obstacles"), CFG.get<std::string>("paths/decorations")});
@@ -192,7 +194,8 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
             {
                 if (event.key.code == sf::Keyboard::E)
                 {
-                    Editor::get().readItemInfo(crosshair_.getPosition());
+                    if (!mouse_on_widget_)
+                        Editor::get().readItemInfo(crosshair_.getPosition());
                 }
                 else if (event.key.code == sf::Keyboard::F1)
                 {
@@ -238,9 +241,20 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                     {
                         Editor::get().removeItem(crosshair_.getPosition());
                     }
+                    else if (event.mouseButton.button == sf::Mouse::Middle)
+                    {
+                        marked_item_ = Editor::get().getMarkedItem();
+                    }
                 }
 
                 break;
+            }
+            case sf::Event::MouseButtonReleased:
+            {
+                if (event.mouseButton.button == sf::Mouse::Middle)
+                {
+                    marked_item_ = nullptr;
+                }
             }
             default:
             {
@@ -291,12 +305,12 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window, float 
     for (auto& widget : gui_.getWidgets())
         if (widget->mouseOnWidget({static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y)}) &&
             widget->isVisible())
-                mouse_on_widget_ = true;
+            mouse_on_widget_ = true;
 
     if (!mouse_on_widget_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) &&
         Editor::get().getCurrentItem().first.find("tile") != std::string::npos)
     {
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) )
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {
             Editor::get().placeItem(crosshair_.getPosition());
         }
@@ -305,9 +319,15 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window, float 
             Editor::get().removeItem(crosshair_.getPosition());
         }
     }
+
+    if (marked_item_ != nullptr)
+    {
+        marked_item_->setPosition(crosshair_.getPosition());
+    }
 }
 
-inline void UserInterface::handleCameraCenter(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos, float time_elapsed)
+inline void UserInterface::handleCameraCenter(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos,
+                                              float time_elapsed)
 {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
@@ -316,7 +336,8 @@ inline void UserInterface::handleCameraCenter(sf::RenderWindow& graphics_window,
     }
 }
 
-inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos, float time_elapsed)
+inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos,
+                                           float time_elapsed)
 {
     const auto& current_item = Editor::get().getCurrentItem();
 
@@ -327,8 +348,9 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
     {
-        crosshair_.setPosition(DecorationTile::SIZE_X_ / 4.0f * std::round(mouse_world_pos.x / DecorationTile::SIZE_X_ * 4.0f),
-                               DecorationTile::SIZE_Y_ / 4.0f * std::round(mouse_world_pos.y / DecorationTile::SIZE_Y_ * 4.0f));
+        crosshair_.setPosition(
+                DecorationTile::SIZE_X_ / 4.0f * std::round(mouse_world_pos.x / DecorationTile::SIZE_X_ * 4.0f),
+                DecorationTile::SIZE_Y_ / 4.0f * std::round(mouse_world_pos.y / DecorationTile::SIZE_Y_ * 4.0f));
     }
     else
     {
@@ -347,16 +369,25 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
 
         if (utils::j3x::get<int>(RM.getObjectParams(current_item.first, current_item.second), "frames_number") > 1)
             crosshair_.changeTextureRect({{0, 0},
-                                          sf::Vector2i(utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
-                                                       utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y"))});
+                                          sf::Vector2i(utils::j3x::get<float>(
+                                                               RM.getObjectParams(current_item.first, current_item.second),
+                                                               "size_x"),
+                                                       utils::j3x::get<float>(RM.getObjectParams(current_item.first,
+                                                                                                 current_item.second),
+                                                                              "size_y"))});
 
         crosshair_.setSize(
-                sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
-                             utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")));
+                sf::Vector2f(
+                        utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
+                        utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")));
         crosshair_.changeOrigin(
-                sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
-                             utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")) / 2.0f +
-                        sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "map_offset_x"),
-                                     utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "map_offset_y")));
+                sf::Vector2f(
+                        utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
+                        utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")) /
+                2.0f +
+                sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
+                                                    "map_offset_x"),
+                             utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
+                                                    "map_offset_y")));
     }
 }

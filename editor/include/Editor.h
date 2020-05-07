@@ -47,6 +47,7 @@ namespace editor {
 
         void setCurrentItem(const std::string& category, const std::string& id);
         [[nodiscard]] const std::pair<std::string, std::string>& getCurrentItem() const;
+        [[nodiscard]] AbstractDrawableObject* getMarkedItem();
         void markCurrentItem(const sf::Vector2f& pos);
 
         int readItemInfo(const sf::Vector2f& pos, bool read_uid = false);
@@ -67,14 +68,15 @@ namespace editor {
         std::unique_ptr<Engine> engine_;
         std::unique_ptr<UserInterface> ui_;
         std::unique_ptr<Camera> camera_;
+        Grid grid_;
 
         std::unique_ptr<Map> map_;
 
         std::string current_map_name_;
 
         std::pair<std::string, std::string> current_item_;
+        AbstractDrawableObject* marked_item_;
 
-        Grid grid_;
 
     };
 } // namespace editor

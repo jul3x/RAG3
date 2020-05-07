@@ -89,6 +89,7 @@ namespace editor {
 
         bool mouse_on_widget_;
         sf::Vector2f previous_mouse_world_pos_;
+        AbstractDrawableObject* marked_item_;
 
         int max_z_index_;
 

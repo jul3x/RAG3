@@ -146,6 +146,7 @@ void Game::update(float time_elapsed)
             updatePlayerClone(time_elapsed);
             updatePlayer(time_elapsed);
             updateBullets(time_elapsed);
+            updateFire(time_elapsed);
             updateThoughts(time_elapsed);
 
             journal_->update(time_elapsed);
@@ -329,6 +330,7 @@ void Game::draw(graphics::Graphics& graphics)
     draw(map_->getList<ObstacleTile>());
     draw(map_->getList<NPC>());
     draw(bullets_);
+    draw(fire_);
 
     for (auto& special : map_->getList<Special>())
         if (special->isDrawable())
@@ -898,6 +900,33 @@ const Game::SpawningFunction& Game::getSpawningFunction(const std::string& name)
 
 void Game::spawnFire(const std::string& name, const sf::Vector2f& pos, float dir)
 {
-
+    auto ptr = this->spawnNewFire(pos, dir);
+    //journal_->eventBulletSpawned(ptr);
+    //this->spawnShotEvent(name, pos, dir);
 }
 
+void Game::updateFire(float time_elapsed)
+{
+    for (auto it = fire_.begin(); it != fire_.end(); ++it)
+    {
+        if (!(*it)->update(time_elapsed))
+        {
+//            journal_->eventBulletDestroyed(it->get());
+            engine_->deleteHoveringObject(it->get());
+            auto next_it = std::next(it);
+            fire_.erase(it);
+            it = next_it;
+        }
+    }
+}
+
+Fire* Game::spawnNewFire(const sf::Vector2f& pos, float dir)
+{
+    fire_.emplace_back(std::make_unique<Fire>(pos, dir));
+
+    auto ptr = fire_.back().get();
+
+    engine_->registerHoveringObject(ptr);
+
+    return ptr;
+}

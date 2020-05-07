@@ -14,6 +14,7 @@
 
 #include <common/Map.h>
 #include <common/Bullet.h>
+#include <common/Fire.h>
 
 #include <misc/Camera.h>
 #include <misc/Journal.h>
@@ -99,6 +100,7 @@ public:
     void findAndDeleteBullet(Bullet* ptr);
     void findAndDeleteDecoration(Decoration* ptr);
 
+    Fire* spawnNewFire(const sf::Vector2f& pos, float dir);
     Bullet* spawnNewBullet(const std::string& id, const sf::Vector2f& pos, float dir);
     Obstacle* spawnNewObstacle(const std::string& id, const sf::Vector2f& pos);
     ObstacleTile* spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos);
@@ -117,6 +119,7 @@ private:
     void updatePlayerClone(float time_elapsed);
     void updatePlayer(float time_elapsed);
     void updateBullets(float time_elapsed);
+    void updateFire(float time_elapsed);
     void updateThoughts(float time_elapsed);
     void updateExplosions();
 
@@ -138,6 +141,7 @@ private:
     std::unique_ptr<Map> map_;
 
     std::list<std::unique_ptr<Bullet>> bullets_;
+    std::list<std::unique_ptr<Fire>> fire_;
     std::list<std::unique_ptr<Explosion>> explosions_;
     std::list<std::unique_ptr<Thought>> thoughts_;
     std::list<std::pair<sf::Vector2f, float>> desired_explosions_;

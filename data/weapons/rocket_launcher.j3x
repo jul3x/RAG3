@@ -1,15 +1,17 @@
 float recoil=500.0f
 int max_ammo=5
 int ammo_portion=2
-float bullet_timeout=1.0f
 
 float size_x=140.0f
 float size_y=35.0f
 float offset_x=70.0f
 float offset_y=0.0f
-string bullet_type=rocket
-int bullet_quantity=1
-float bullet_angular_diff=0.0f
+
+string spawn_func=bullet
+float spawn_timeout=1.0f
+string spawn_type=rocket
+int spawn_quantity=1
+float spawn_angular_diff=0.0f
 
 float map_offset_x=0.0f
 float map_offset_y=0.0f

@@ -21,6 +21,11 @@ Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal)
 
 void Game::initialize()
 {
+    spawning_func_["bullet"] = std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
+                                         std::placeholders::_3);
+    spawning_func_["fire"] = std::bind(&Game::spawnFire, this, std::placeholders::_1, std::placeholders::_2,
+                                       std::placeholders::_3);
+
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     ui_ = std::make_unique<UserInterface>();
     camera_ = std::make_unique<Camera>();
@@ -91,18 +96,20 @@ void Game::initialize()
 
         for (auto& weapon : character->getWeapons())
         {
-            weapon->registerSpawningFunction(
-                    std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
-                              std::placeholders::_3));
+            if (!weapon->getName().empty())
+                weapon->registerSpawningFunction(
+                        this->getSpawningFunction(utils::j3x::get<std::string>(RM.getObjectParams("weapons",
+                                weapon->getName()), "spawn_func")));
         }
     }
 
     engine_->registerDynamicObject(player_.get());
     for (auto& weapon : player_->getWeapons())
     {
-        weapon->registerSpawningFunction(
-                std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
-                          std::placeholders::_3));
+        if (!weapon->getName().empty())
+            weapon->registerSpawningFunction(
+                    this->getSpawningFunction(utils::j3x::get<std::string>(
+                            RM.getObjectParams("weapons", weapon->getName()), "spawn_func")));
     }
 
     for (auto& special : map_->getList<Special>())
@@ -605,9 +612,10 @@ NPC* Game::spawnNewNPC(const std::string& id)
 
     for (auto& weapon : ptr->getWeapons())
     {
-        weapon->registerSpawningFunction(
-                std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
-                          std::placeholders::_3));
+        if (!weapon->getName().empty())
+            weapon->registerSpawningFunction(
+                    this->getSpawningFunction(utils::j3x::get<std::string>(
+                            RM.getObjectParams("weapons", weapon->getName()), "spawn_func")));
     }
 
     for (const auto& function : ptr->getFunctions())
@@ -644,9 +652,10 @@ NPC* Game::spawnNewPlayerClone()
 
     for (auto& weapon : player_clone_->getWeapons())
     {
-        weapon->registerSpawningFunction(
-                std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
-                          std::placeholders::_3));
+        if (!weapon->getName().empty())
+            weapon->registerSpawningFunction(
+                    std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
+                              std::placeholders::_3));
     }
 
     return player_clone_.get();
@@ -873,5 +882,22 @@ void Game::updateThoughts(float time_elapsed)
             it = next_it;
         }
     }
+}
+
+const Game::SpawningFunction& Game::getSpawningFunction(const std::string& name) const
+{
+    auto it = spawning_func_.find(name);
+
+    if (it == spawning_func_.end())
+    {
+        throw std::invalid_argument("[Game] SpawningFunction " + name + " is not handled!");
+    }
+
+    return it->second;
+}
+
+void Game::spawnFire(const std::string& name, const sf::Vector2f& pos, float dir)
+{
+
 }
 

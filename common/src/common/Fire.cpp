@@ -14,7 +14,9 @@ Fire::Fire(const sf::Vector2f& position,
            const float direction) :
         HoveringObject(position, CFG.get<float>("fire_speed") * sf::Vector2f(std::cos(direction), std::sin(direction)),
                        CFG.get<float>("graphics/fire_image_size") * sf::Vector2f{1.0f, 1.0f},
-                       collision::Circle(CFG.get<float>("fire_initial_radius")),
+                       collision::Circle(CFG.get<float>("fire_initial_radius") *
+                               CFG.get<float>("fire_collision_factor"),
+                                       {0.0F, CFG.get<float>("fire_collision_offset")}),
                        &RM.getTexture("fire"),
                        CFG.get<float>("fire_z_index"),
                        CFG.get<int>("graphics/fire_frames"),
@@ -51,7 +53,8 @@ bool Fire::update(float time_elapsed)
 
     this->setSize({r_ * 2.0f, r_ * 2.0f});
     this->setColor(color_.r, color_.g, color_.b, static_cast<sf::Uint8>(alpha_));
-    this->changeCollisionArea(collision::Circle(r_));
+    this->changeCollisionArea(collision::Circle(r_ * CFG.get<float>("fire_collision_factor"),
+                                                {0.0F, CFG.get<float>("fire_collision_offset")}));
 
     life_ -= time_elapsed;
 

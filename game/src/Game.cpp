@@ -484,45 +484,57 @@ void Game::updateExplosions()
 void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
 {
     auto bullet = dynamic_cast<Bullet*>(h_obj);
+    auto fire = dynamic_cast<Fire*>(h_obj);
     auto explosion = dynamic_cast<Explosion*>(h_obj);
     auto obstacle = dynamic_cast<Obstacle*>(s_obj);
     auto obstacle_tile = dynamic_cast<ObstacleTile*>(s_obj);
 
-    if (obstacle != nullptr && bullet != nullptr)
+    if (bullet != nullptr)
     {
-        obstacle->getShot(*bullet);
+        if (obstacle != nullptr)
+        {
+            obstacle->getShot(*bullet);
 
-        spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                         static_cast<float>(std::pow(
-                                 CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
+                             static_cast<float>(std::pow(
+                                     CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
-        bullet->setDead();
+            bullet->setDead();
 
-        journal_->eventObstacleShot(obstacle);
+            journal_->eventObstacleShot(obstacle);
+        }
+        else if (obstacle_tile != nullptr)
+        {
+            obstacle_tile->getShot(*bullet);
+
+            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
+                             static_cast<float>(std::pow(
+                                     CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+
+            bullet->setDead();
+
+            journal_->eventObstacleTileShot(obstacle_tile);
+        }
     }
-    else if (obstacle_tile != nullptr && bullet != nullptr)
+    else if (explosion != nullptr)
     {
-        obstacle_tile->getShot(*bullet);
+        if (obstacle != nullptr)
+        {
+            explosion->applyForce(obstacle);
 
-        spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                         static_cast<float>(std::pow(
-                                 CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+            journal_->eventObstacleShot(obstacle);
+        }
+        else if (obstacle_tile != nullptr)
+        {
+            explosion->applyForce(obstacle_tile);
 
-        bullet->setDead();
-
-        journal_->eventObstacleTileShot(obstacle_tile);
+            journal_->eventObstacleTileShot(obstacle_tile);
+        }
     }
-    else if (obstacle != nullptr && explosion != nullptr)
+    else if (fire != nullptr)
     {
-        explosion->applyForce(obstacle);
 
-        journal_->eventObstacleShot(obstacle);
-    }
-    else if (obstacle_tile != nullptr && explosion != nullptr)
-    {
-        explosion->applyForce(obstacle_tile);
-
-        journal_->eventObstacleTileShot(obstacle_tile);
+        fire->setDead();
     }
 }
 
@@ -565,9 +577,17 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     }
 
     auto explosion = dynamic_cast<Explosion*>(h_obj);
+
     if (character != nullptr && explosion != nullptr)
     {
         explosion->applyForce(character);
+    }
+
+    auto fire = dynamic_cast<Fire*>(h_obj);
+
+    if (character != nullptr && fire != nullptr)
+    {
+        character->setGlobalState(Character::GlobalState::OnFire);
     }
 }
 

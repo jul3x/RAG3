@@ -436,4 +436,6 @@ special_event 1200 825 749 OnEnter [RemoveDecoration;SpawnLava;Deactivate] [659;
 stairs 1800 2950 790 OnEnter [Teleport] [(7981.1,1784.7)]
 
 weapons: 
-flamethrower 849.479 384.215 0 805 Const 3
+flamethrower 1692.78 654.817 153.435 806 Const 0
+flamethrower 1760.08 260.598 35.9029 807 Const 0
+flamethrower 2479.23 168.6 3.57633 808 Const 0

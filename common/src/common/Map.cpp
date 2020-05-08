@@ -100,7 +100,7 @@ std::list<std::shared_ptr<PlacedWeapon>>& Map::getList()
 }
 
 template<>
-DecorationTile* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
+DecorationTile* Map::spawn(const sf::Vector2f& pos, float direction, const std::string& id, bool check, int max_z_index)
 {
     if (!check || (!this->checkCollisions(pos, decorations_tiles_, false, max_z_index) && !this->checkCollisions(pos, obstacles_tiles_, false, max_z_index)))
     {
@@ -112,7 +112,7 @@ DecorationTile* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool 
 }
 
 template<>
-ObstacleTile* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
+ObstacleTile* Map::spawn(const sf::Vector2f& pos, float direction, const std::string& id, bool check, int max_z_index)
 {
     if (!check || (!this->checkCollisions(pos, decorations_tiles_, false, max_z_index) && !this->checkCollisions(pos, obstacles_tiles_, false, max_z_index)))
     {
@@ -131,7 +131,7 @@ ObstacleTile* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool ch
 }
 
 template<>
-NPC* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
+NPC* Map::spawn(const sf::Vector2f& pos, float direction, const std::string& id, bool check, int max_z_index)
 {
     if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
     {
@@ -143,7 +143,7 @@ NPC* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, int 
 }
 
 template<>
-Special* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
+Special* Map::spawn(const sf::Vector2f& pos, float direction, const std::string& id, bool check, int max_z_index)
 {
     if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
     {
@@ -155,7 +155,7 @@ Special* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, 
 }
 
 template<>
-Decoration* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
+Decoration* Map::spawn(const sf::Vector2f& pos, float direction, const std::string& id, bool check, int max_z_index)
 {
     if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
     {
@@ -167,7 +167,7 @@ Decoration* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool chec
 }
 
 template<>
-Obstacle* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
+Obstacle* Map::spawn(const sf::Vector2f& pos, float direction, const std::string& id, bool check, int max_z_index)
 {
     if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
     {
@@ -186,11 +186,11 @@ Obstacle* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check,
 }
 
 template<>
-PlacedWeapon* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
+PlacedWeapon* Map::spawn(const sf::Vector2f& pos, float direction, const std::string& id, bool check, int max_z_index)
 {
     if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
     {
-        weapons_.emplace_back(std::make_shared<PlacedWeapon>(pos, 0.0f, id));
+        weapons_.emplace_back(std::make_shared<PlacedWeapon>(pos, direction, id));
         return weapons_.back().get();
     }
 

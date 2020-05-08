@@ -51,7 +51,7 @@ namespace editor {
         void markCurrentItem(const sf::Vector2f& pos);
 
         int readItemInfo(const sf::Vector2f& pos, bool read_uid = false);
-        void placeItem(const sf::Vector2f& pos);
+        void placeItem(const sf::Vector2f& pos, float direction = 0.0f);
         void removeItem(const sf::Vector2f& pos);
 
         void clearMap();

@@ -155,23 +155,23 @@ int Editor::readItemInfo(const sf::Vector2f& pos, bool read_uid)
     return -1;
 }
 
-void Editor::placeItem(const sf::Vector2f& pos)
+void Editor::placeItem(const sf::Vector2f& pos, float direction)
 {
     auto max_z_index = ui_->getZIndex();
     if (current_item_.first == "decorations_tiles")
-        map_->spawn<DecorationTile>(pos, current_item_.second, true, max_z_index);
+        map_->spawn<DecorationTile>(pos, direction, current_item_.second, true, max_z_index);
     else if (current_item_.first == "obstacles_tiles")
-        map_->spawn<ObstacleTile>(pos, current_item_.second, true, max_z_index);
+        map_->spawn<ObstacleTile>(pos, direction, current_item_.second, true, max_z_index);
     else if (current_item_.first == "characters")
-        map_->spawn<NPC>(pos, current_item_.second, false, max_z_index);
+        map_->spawn<NPC>(pos, direction, current_item_.second, false, max_z_index);
     else if (current_item_.first == "specials")
-        map_->spawn<Special>(pos, current_item_.second, false, max_z_index);
+        map_->spawn<Special>(pos, direction, current_item_.second, false, max_z_index);
     else if (current_item_.first == "decorations")
-        map_->spawn<Decoration>(pos, current_item_.second, false, max_z_index);
+        map_->spawn<Decoration>(pos, direction, current_item_.second, false, max_z_index);
     else if (current_item_.first == "obstacles")
-        map_->spawn<Obstacle>(pos, current_item_.second, false, max_z_index);
+        map_->spawn<Obstacle>(pos, direction, current_item_.second, false, max_z_index);
     else if (current_item_.first == "weapons")
-        map_->spawn<PlacedWeapon>(pos, current_item_.second, false, max_z_index);
+        map_->spawn<PlacedWeapon>(pos, direction, current_item_.second, false, max_z_index);
 }
 
 void Editor::removeItem(const sf::Vector2f& pos)

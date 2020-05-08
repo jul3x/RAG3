@@ -41,7 +41,7 @@ public:
     std::list<std::shared_ptr<T>>& getList();
 
     template<class T>
-    T* spawn(const sf::Vector2f& pos, const std::string& id, bool check = false,
+    T* spawn(const sf::Vector2f& pos, float direction, const std::string& id, bool check = false,
              int max_z_index = std::numeric_limits<int>::infinity());
 
     void removeTile(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());

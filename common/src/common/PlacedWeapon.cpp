@@ -22,6 +22,8 @@ PlacedWeapon::PlacedWeapon(const sf::Vector2f& position, float direction, const 
     data_(data),
     usage_str_(usage)
 {
+    // TODO Change origin?
+
     this->setPosition(position);
     this->setRotation(direction);
 
@@ -57,3 +59,14 @@ const std::string& PlacedWeapon::getUsageStr() const
 {
     return usage_str_;
 }
+
+void PlacedWeapon::setUsageStr(const std::string& usage)
+{
+    usage_str_ = usage;
+}
+
+void PlacedWeapon::setData(float data)
+{
+    data_ = data;
+}
+

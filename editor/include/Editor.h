@@ -62,6 +62,8 @@ namespace editor {
 
         void saveConfig(const std::string& category, const std::string& id, const std::string& content);
 
+        void spawnError(const std::string& err);
+
     private:
         Editor();
 

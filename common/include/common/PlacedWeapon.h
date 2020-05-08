@@ -24,6 +24,9 @@ public:
     float getData() const;
     const std::string& getUsageStr() const;
 
+    void setUsageStr(const std::string& str);
+    void setData(float data);
+
     void update(float time_elapsed) override;
 
 private:

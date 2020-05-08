@@ -138,9 +138,8 @@ int Editor::readItemInfo(const sf::Vector2f& pos, bool read_uid)
 
     if (ret_weapon != nullptr)
     {
-// TODO
-//        if (!read_uid)
-//            ui_->openWeaponWindow("weapons", ret_weapon);
+        if (!read_uid)
+            ui_->openWeaponWindow("weapons", ret_weapon);
         return read_uid ? ret_weapon->getUniqueId() : 0;
     }
 
@@ -278,4 +277,9 @@ void Editor::markCurrentItem(const sf::Vector2f& pos)
 AbstractDrawableObject* Editor::getMarkedItem()
 {
     return marked_item_;
+}
+
+void Editor::spawnError(const std::string& err)
+{
+    ui_->spawnError(err);
 }

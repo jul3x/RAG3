@@ -31,6 +31,7 @@ UserInterface::UserInterface() :
         config_window_(&gui_, &gui_theme_),
         unique_object_window_(&gui_, &gui_theme_),
         special_object_window_(&gui_, &gui_theme_),
+        weapon_window_(&gui_, &gui_theme_),
         marked_item_(nullptr)
 {
     gui_.get("save_window")->setVisible(false);
@@ -38,6 +39,7 @@ UserInterface::UserInterface() :
     gui_.get("config_window")->setVisible(false);
     gui_.get("unique_object_window")->setVisible(false);
     gui_.get("special_object_window")->setVisible(false);
+    gui_.get("weapon_window")->setVisible(false);
 
     information_.setPosition(CFG.get<float>("info_x"), CFG.get<float>("info_y"));
     information_.setFillColor(sf::Color(255, 255, 255, 0));
@@ -122,6 +124,12 @@ void UserInterface::openSpecialObjectWindow(const std::string& category, Functio
 {
     special_object_window_.setObjectContent(category, obj);
     gui_.get("special_object_window")->setVisible(true);
+}
+
+void UserInterface::openWeaponWindow(const std::string& category, PlacedWeapon* obj)
+{
+    weapon_window_.setObjectContent(category, obj);
+    gui_.get("weapon_window")->setVisible(true);
 }
 
 void UserInterface::setZIndex(int value)
@@ -223,6 +231,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                     gui_.get("config_window")->setVisible(false);
                     gui_.get("unique_object_window")->setVisible(false);
                     gui_.get("special_object_window")->setVisible(false);
+                    gui_.get("weapon_window")->setVisible(false);
                 }
             }
             case sf::Event::MouseButtonPressed:

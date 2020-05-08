@@ -30,7 +30,7 @@ namespace editor {
                 gui.get(tab)->setVisible(false);
 
             gui.get(selected_tab)->setVisible(true);
-            scroll_panel_->setHorizontalScrollbarValue(0);
+            scroll_panel_->setVerticalScrollbarValue(0);
         }
 
         UserInterface* ui_;

@@ -30,6 +30,7 @@ namespace editor {
                 gui.get(tab)->setVisible(false);
 
             gui.get(selected_tab)->setVisible(true);
+            scroll_panel_->setHorizontalScrollbarValue(0);
         }
 
         UserInterface* ui_;
@@ -38,6 +39,7 @@ namespace editor {
 
         std::unordered_map<std::string, tgui::Texture> button_textures_;
 
+        tgui::ScrollablePanel::Ptr scroll_panel_;
         tgui::Tabs::Ptr tabs_;
         std::vector<std::vector<tgui::Picture::Ptr>> clickables_;
         std::vector<std::string> tab_names_;

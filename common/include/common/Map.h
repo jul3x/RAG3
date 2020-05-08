@@ -16,6 +16,7 @@
 #include <common/Special.h>
 #include <common/Obstacle.h>
 #include <common/Decoration.h>
+#include <common/PlacedWeapon.h>
 
 
 using namespace r3e;
@@ -24,7 +25,8 @@ class Map {
 public:
     using Data = std::tuple<std::list<std::shared_ptr<ObstacleTile>>, std::list<std::shared_ptr<DecorationTile>>,
             std::list<std::shared_ptr<NPC>>, std::list<std::shared_ptr<Special>>,
-            std::list<std::shared_ptr<Obstacle>>, std::list<std::shared_ptr<Decoration>>>;
+            std::list<std::shared_ptr<Obstacle>>, std::list<std::shared_ptr<Decoration>>,
+            std::list<std::shared_ptr<PlacedWeapon>>>;
     using TileMap = std::tuple<sf::Vector2f, std::vector<std::vector<float>>>;
 
     Map();
@@ -124,7 +126,8 @@ private:
         return (!this->checkCollisions(pos, characters_, erase, max_z_index) &&
                 !this->checkCollisions(pos, specials_, erase, max_z_index) &&
                 !this->checkCollisions(pos, decorations_, erase, max_z_index) &&
-                !this->checkCollisions(pos, obstacles_, erase, max_z_index));
+                !this->checkCollisions(pos, obstacles_, erase, max_z_index) &&
+                !this->checkCollisions(pos, weapons_, erase, max_z_index));
     }
 
 
@@ -134,6 +137,7 @@ private:
     std::list<std::shared_ptr<Special>> specials_;
     std::list<std::shared_ptr<Decoration>> decorations_;
     std::list<std::shared_ptr<Obstacle>> obstacles_;
+    std::list<std::shared_ptr<PlacedWeapon>> weapons_;
 
     ai::MapBlockage blocked_;
 

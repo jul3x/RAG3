@@ -47,7 +47,7 @@ void WeaponsBar::update(const std::vector<std::shared_ptr<AbstractWeapon>>& weap
         {
             auto weapon_pos = base_position + weapons_positions_.at(i) * CFG.get<float>("graphics/user_interface_zoom");
             weapons_.emplace_back(weapon_pos, size * CFG.get<float>("graphics/user_interface_zoom"),
-                                  &RM.getTexture("specials/" + weapon_cast->getName()));
+                                  &RM.getTexture("specials/" + weapon_cast->getId()));
 
             ammo_quantity_.at(i).setState(weapon_cast->getAmmunition());
 

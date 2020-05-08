@@ -30,7 +30,8 @@ bool Map::loadMap(const std::string& name)
         std::forward_as_tuple(
                 std::tie(obstacles_tiles_, decorations_tiles_,
                          characters_, specials_,
-                         obstacles_, decorations_),
+                         obstacles_, decorations_,
+                         weapons_),
                 std::tie(size_, blocked_.blockage_)) = ResourceManager::getMap(name);
 
         blocked_.scale_x_ = DecorationTile::SIZE_X_;
@@ -93,6 +94,12 @@ std::list<std::shared_ptr<Obstacle>>& Map::getList()
 }
 
 template<>
+std::list<std::shared_ptr<PlacedWeapon>>& Map::getList()
+{
+    return weapons_;
+}
+
+template<>
 DecorationTile* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
 {
     if (!check || (!this->checkCollisions(pos, decorations_tiles_, false, max_z_index) && !this->checkCollisions(pos, obstacles_tiles_, false, max_z_index)))
@@ -100,6 +107,8 @@ DecorationTile* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool 
         decorations_tiles_.emplace_back(std::make_shared<DecorationTile>(pos, id));
         return decorations_tiles_.back().get();
     }
+
+    return nullptr;
 }
 
 template<>
@@ -117,6 +126,8 @@ ObstacleTile* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool ch
         obstacles_tiles_.emplace_back(std::make_shared<ObstacleTile>(pos, id));
         return obstacles_tiles_.back().get();
     }
+
+    return nullptr;
 }
 
 template<>
@@ -127,6 +138,8 @@ NPC* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, int 
         characters_.emplace_back(std::make_shared<NPC>(pos, id));
         return characters_.back().get();
     }
+
+    return nullptr;
 }
 
 template<>
@@ -137,6 +150,8 @@ Special* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, 
         specials_.emplace_back(std::make_shared<Special>(pos, id));
         return specials_.back().get();
     }
+
+    return nullptr;
 }
 
 template<>
@@ -147,6 +162,8 @@ Decoration* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool chec
         decorations_.emplace_back(std::make_shared<Decoration>(pos, id));
         return decorations_.back().get();
     }
+
+    return nullptr;
 }
 
 template<>
@@ -164,6 +181,20 @@ Obstacle* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check,
         obstacles_.emplace_back(std::make_shared<Obstacle>(pos, id));
         return obstacles_.back().get();
     }
+
+    return nullptr;
+}
+
+template<>
+PlacedWeapon* Map::spawn(const sf::Vector2f& pos, const std::string& id, bool check, int max_z_index)
+{
+    if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
+    {
+        weapons_.emplace_back(std::make_shared<PlacedWeapon>(pos, 0.0f, id));
+        return weapons_.back().get();
+    }
+
+    return nullptr;
 }
 
 void Map::removeTile(const sf::Vector2f& pos, int max_z_index)
@@ -226,6 +257,12 @@ DecorationTile* Map::getObjectByPos(const sf::Vector2f& pos, int max_z_index)
 }
 
 template<>
+PlacedWeapon* Map::getObjectByPos(const sf::Vector2f& pos, int max_z_index)
+{
+    return getItemInfo(pos, weapons_, max_z_index);
+}
+
+template<>
 Obstacle* Map::getObjectById(int id)
 {
     return getObject(id, obstacles_);
@@ -247,6 +284,12 @@ template<>
 Special* Map::getObjectById(int id)
 {
     return getObject(id, specials_);
+}
+
+template<>
+PlacedWeapon* Map::getObjectById(int id)
+{
+    return getObject(id, weapons_);
 }
 
 std::pair<sf::Vector2<size_t>, sf::Vector2f> Map::getTileConstraints() const

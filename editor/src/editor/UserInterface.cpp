@@ -91,9 +91,11 @@ void UserInterface::initialize(graphics::Graphics& graphics)
     tiles_window_.initialize({"obstacles_tiles", "decorations_tiles"},
                              {CFG.get<std::string>("paths/obstacles_tiles"),
                               CFG.get<std::string>("paths/decorations_tiles")});
-    objects_window_.initialize({"characters", "specials", "obstacles", "decorations"},
+    objects_window_.initialize({"characters", "specials", "obstacles", "decorations", "weapons"},
                                {CFG.get<std::string>("paths/characters"), CFG.get<std::string>("paths/specials"),
-                                CFG.get<std::string>("paths/obstacles"), CFG.get<std::string>("paths/decorations")});
+                                CFG.get<std::string>("paths/obstacles"), CFG.get<std::string>("paths/decorations"),
+                                CFG.get<std::string>("paths/weapons")});
+
 
     generateMenuBar(graphics.getWindow());
 }

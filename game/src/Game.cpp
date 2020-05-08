@@ -96,20 +96,20 @@ void Game::initialize()
 
         for (auto& weapon : character->getWeapons())
         {
-            if (!weapon->getName().empty())
+            if (!weapon->getId().empty())
                 weapon->registerSpawningFunction(
                         this->getSpawningFunction(utils::j3x::get<std::string>(RM.getObjectParams("weapons",
-                                weapon->getName()), "spawn_func")));
+                                weapon->getId()), "spawn_func")));
         }
     }
 
     engine_->registerDynamicObject(player_.get());
     for (auto& weapon : player_->getWeapons())
     {
-        if (!weapon->getName().empty())
+        if (!weapon->getId().empty())
             weapon->registerSpawningFunction(
                     this->getSpawningFunction(utils::j3x::get<std::string>(
-                            RM.getObjectParams("weapons", weapon->getName()), "spawn_func")));
+                            RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
     }
 
     for (auto& special : map_->getList<Special>())
@@ -634,10 +634,10 @@ NPC* Game::spawnNewNPC(const std::string& id)
 
     for (auto& weapon : ptr->getWeapons())
     {
-        if (!weapon->getName().empty())
+        if (!weapon->getId().empty())
             weapon->registerSpawningFunction(
                     this->getSpawningFunction(utils::j3x::get<std::string>(
-                            RM.getObjectParams("weapons", weapon->getName()), "spawn_func")));
+                            RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
     }
 
     for (const auto& function : ptr->getFunctions())
@@ -674,7 +674,7 @@ NPC* Game::spawnNewPlayerClone()
 
     for (auto& weapon : player_clone_->getWeapons())
     {
-        if (!weapon->getName().empty())
+        if (!weapon->getId().empty())
             weapon->registerSpawningFunction(
                     std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
                               std::placeholders::_3));
@@ -846,7 +846,7 @@ void Game::updatePlayerClone(float time_elapsed)
         const auto& player_clone_weapon = player_clone_->getWeapons().at(player_clone_->getCurrentWeapon());
         auto player_weapon = std::find_if(player_->getWeapons().begin(), player_->getWeapons().end(),
                                           [&player_clone_weapon](const auto& it) {
-                                              return player_clone_weapon->getName() == it->getName();
+                                              return player_clone_weapon->getId() == it->getId();
                                           });
 
         if (player_weapon != player_->getWeapons().end())

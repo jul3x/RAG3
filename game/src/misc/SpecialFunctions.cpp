@@ -153,10 +153,10 @@ void SpecialFunctions::addWeapon(Functional* obj, const std::string& data, Chara
 
     std::shared_ptr<AbstractWeapon> weapon = std::make_shared<ShootingWeapon>(data_parsed);
 
-    if (!weapon->getName().empty())
+    if (!weapon->getId().empty())
         weapon->registerSpawningFunction(
                 Game::get().getSpawningFunction(utils::j3x::get<std::string>(
-                        RM.getObjectParams("weapons", weapon->getName()), "spawn_func")));
+                        RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
 
     user->addWeaponToBackpack(weapon);
 

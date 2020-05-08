@@ -31,6 +31,7 @@ UserInterface::UserInterface() :
         config_window_(&gui_, &gui_theme_),
         unique_object_window_(&gui_, &gui_theme_),
         special_object_window_(&gui_, &gui_theme_),
+        weapon_window_(&gui_, &gui_theme_),
         marked_item_(nullptr)
 {
     gui_.get("save_window")->setVisible(false);
@@ -38,6 +39,7 @@ UserInterface::UserInterface() :
     gui_.get("config_window")->setVisible(false);
     gui_.get("unique_object_window")->setVisible(false);
     gui_.get("special_object_window")->setVisible(false);
+    gui_.get("weapon_window")->setVisible(false);
 
     information_.setPosition(CFG.get<float>("info_x"), CFG.get<float>("info_y"));
     information_.setFillColor(sf::Color(255, 255, 255, 0));
@@ -91,9 +93,11 @@ void UserInterface::initialize(graphics::Graphics& graphics)
     tiles_window_.initialize({"obstacles_tiles", "decorations_tiles"},
                              {CFG.get<std::string>("paths/obstacles_tiles"),
                               CFG.get<std::string>("paths/decorations_tiles")});
-    objects_window_.initialize({"characters", "specials", "obstacles", "decorations"},
+    objects_window_.initialize({"characters", "specials", "obstacles", "decorations", "weapons"},
                                {CFG.get<std::string>("paths/characters"), CFG.get<std::string>("paths/specials"),
-                                CFG.get<std::string>("paths/obstacles"), CFG.get<std::string>("paths/decorations")});
+                                CFG.get<std::string>("paths/obstacles"), CFG.get<std::string>("paths/decorations"),
+                                CFG.get<std::string>("paths/weapons")});
+
 
     generateMenuBar(graphics.getWindow());
 }
@@ -120,6 +124,12 @@ void UserInterface::openSpecialObjectWindow(const std::string& category, Functio
 {
     special_object_window_.setObjectContent(category, obj);
     gui_.get("special_object_window")->setVisible(true);
+}
+
+void UserInterface::openWeaponWindow(const std::string& category, PlacedWeapon* obj)
+{
+    weapon_window_.setObjectContent(category, obj);
+    gui_.get("weapon_window")->setVisible(true);
 }
 
 void UserInterface::setZIndex(int value)
@@ -221,20 +231,29 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                     gui_.get("config_window")->setVisible(false);
                     gui_.get("unique_object_window")->setVisible(false);
                     gui_.get("special_object_window")->setVisible(false);
+                    gui_.get("weapon_window")->setVisible(false);
                 }
             }
             case sf::Event::MouseButtonPressed:
             {
-                auto mouse_pos = sf::Mouse::getPosition(graphics.getWindow());
-                auto mouse_world_pos = graphics.getWindow().mapPixelToCoords(mouse_pos);
-                previous_mouse_world_pos_ = mouse_world_pos;
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+                {
+                    previous_mouse_world_pos_ = crosshair_.getPosition();
+                }
+                else
+                {
+                    auto mouse_pos = sf::Mouse::getPosition(graphics.getWindow());
+                    auto mouse_world_pos = graphics.getWindow().mapPixelToCoords(mouse_pos);
+                    previous_mouse_world_pos_ = mouse_world_pos;
+                }
 
                 if (!mouse_on_widget_)
                 {
                     if (event.mouseButton.button == sf::Mouse::Left &&
                         !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl))
                     {
-                        Editor::get().placeItem(crosshair_.getPosition());
+                        if (Editor::get().getCurrentItem().first != "weapons")
+                            Editor::get().placeItem(crosshair_.getPosition());
                     }
                     else if (event.mouseButton.button == sf::Mouse::Right &&
                              !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl))
@@ -254,6 +273,14 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 if (event.mouseButton.button == sf::Mouse::Middle)
                 {
                     marked_item_ = nullptr;
+                }
+                else if (event.mouseButton.button == sf::Mouse::Left &&
+                    !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && !mouse_on_widget_)
+                {
+                    if (Editor::get().getCurrentItem().first == "weapons")
+                        Editor::get().placeItem(previous_mouse_world_pos_,
+                                180.0f / M_PI * std::get<1>(utils::geo::cartesianToPolar(
+                                        crosshair_.getPosition() - previous_mouse_world_pos_)));
                 }
             }
             default:
@@ -389,5 +416,17 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
                                                     "map_offset_x"),
                              utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
                                                     "map_offset_y")));
+
+        if (current_item.first == "weapons" && sf::Mouse::isButtonPressed(sf::Mouse::Left) &&
+            !sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+        {
+            crosshair_.setRotation(180.0f / M_PI * std::get<1>(utils::geo::cartesianToPolar(crosshair_.getPosition() -
+                                                                     previous_mouse_world_pos_)));
+            crosshair_.setPosition(previous_mouse_world_pos_);
+        }
+        else
+        {
+            crosshair_.setRotation(0.0f);
+        }
     }
 }

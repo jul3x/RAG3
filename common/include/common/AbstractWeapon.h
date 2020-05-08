@@ -10,11 +10,12 @@
 #include <functional>
 
 #include <R3E/objects/AbstractDrawableObject.h>
+#include <R3E/objects/Identifiable.h>
 
 
 using namespace r3e;
 
-class AbstractWeapon : public AbstractDrawableObject {
+class AbstractWeapon : public AbstractDrawableObject, public Identifiable {
 public:
     AbstractWeapon(const sf::Vector2f& size,
                    const sf::Vector2f& weapon_offset,
@@ -27,18 +28,14 @@ public:
     virtual void setState(float state) = 0;
 
     const sf::Vector2f& getWeaponOffset() const;
-    const std::string& getName() const;
 
-    void update(float time_elapsed);
+    virtual void update(float time_elapsed);
 
 protected:
     sf::Vector2f weapon_offset_;
     float time_elapsed_;
 
     std::function<void(const std::string&, const sf::Vector2f&, float)> spawning_function_;
-
-private:
-    std::string name_;
 
 };
 

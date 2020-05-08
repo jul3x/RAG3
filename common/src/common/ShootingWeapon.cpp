@@ -58,6 +58,7 @@ sf::Vector2f ShootingWeapon::use()
         --ammunition_;
         return -recoil_ * sf::Vector2f{cosine, sine};
     }
+
     return {0.0f, 0.0f};
 }
 

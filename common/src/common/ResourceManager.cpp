@@ -31,7 +31,8 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
         Characters,
         Specials,
         Obstacles,
-        Decorations
+        Decorations,
+        Weapons
     };
     auto map_reading = MapReading::None;
 
@@ -42,6 +43,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
     std::list<std::shared_ptr<Special>> specials;
     std::list<std::shared_ptr<Obstacle>> obstacles;
     std::list<std::shared_ptr<Decoration>> decorations;
+    std::list<std::shared_ptr<PlacedWeapon>> weapons;
     sf::Vector2f map_size;
     std::vector<std::vector<float>> blocked;
 
@@ -64,11 +66,15 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
 
         std::string current_id = "";
         sf::Vector2f current_pos = {};
+        float direction = 0.0f;
         int u_id = -1;
 
         std::string activation = "";
         std::vector<std::string> functions;
         std::vector<std::string> f_datas;
+
+        std::string usage;
+        float usage_data;
 
         // type < 0 - decoration, type > 0 - obstacle
         while (file >> word)
@@ -97,6 +103,11 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
             {
                 number = 0;
                 map_reading = MapReading::Decorations;
+            }
+            else if (word == "weapons:")
+            {
+                number = 0;
+                map_reading = MapReading::Weapons;
             }
             else
             {
@@ -151,6 +162,43 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             u_id = std::stoi(word);
                             should_add_new_object = true;
                         }
+                        break;
+                    }
+                    case MapReading::Weapons:
+                    {
+                        ++number;
+                        should_add_new_object = false;
+
+                        if (number % 7 == 1)
+                        {
+                            current_id = word;
+                        }
+                        else if (number % 7 == 2)
+                        {
+                            current_pos.x = std::stof(word);
+                        }
+                        else if (number % 7 == 3)
+                        {
+                            current_pos.y = std::stof(word);
+                        }
+                        else if (number % 7 == 4)
+                        {
+                            direction = std::stof(word);
+                        }
+                        else if (number % 7 == 5)
+                        {
+                            u_id = std::stoi(word);
+                        }
+                        else if (number % 7 == 6)
+                        {
+                            usage = word;
+                        }
+                        else
+                        {
+                            usage_data = std::stof(word);
+                            should_add_new_object = true;
+                        }
+
                         break;
                     }
                     case MapReading::Obstacles:
@@ -244,6 +292,10 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         case MapReading::Decorations:
                             decorations.emplace_back(std::make_shared<Decoration>(current_pos, current_id, u_id));
                             break;
+                        case MapReading::Weapons:
+                            weapons.emplace_back(std::make_shared<PlacedWeapon>(current_pos, direction, current_id,
+                                    usage, usage_data, u_id));
+                            break;
                         default:
                             throw std::logic_error("[ResourceManager] Wrong map format!");
                     }
@@ -263,7 +315,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
 
     map_size = {DecorationTile::SIZE_X_ * blocked.size(), DecorationTile::SIZE_Y_ * blocked.at(0).size()};
 
-    auto setRandomInitialFrame = [](auto& objects)
+    auto set_random_initial_frame = [](auto& objects)
     {
         for (auto& object : objects)
         {
@@ -274,16 +326,17 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
         }
     };
 
-    setRandomInitialFrame(obstacles_tiles);
-    setRandomInitialFrame(decorations_tiles);
-    setRandomInitialFrame(characters);
-    setRandomInitialFrame(specials);
-    setRandomInitialFrame(obstacles);
-    setRandomInitialFrame(decorations);
+    set_random_initial_frame(obstacles_tiles);
+    set_random_initial_frame(decorations_tiles);
+    set_random_initial_frame(characters);
+    set_random_initial_frame(specials);
+    set_random_initial_frame(obstacles);
+    set_random_initial_frame(decorations);
+    set_random_initial_frame(weapons);
 
     std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
 
-    return {{obstacles_tiles, decorations_tiles, characters, specials, obstacles, decorations},
+    return {{obstacles_tiles, decorations_tiles, characters, specials, obstacles, decorations, weapons},
             {map_size, blocked}};
 }
 
@@ -332,7 +385,7 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
         file << std::endl;
     }
 
-    auto addObjToFile = [&file, &map_constraints](const std::string& category, auto& objects) {
+    auto add_obj_to_file = [&file, &map_constraints](const std::string& category, auto& objects) {
         file << std::endl << category << ": " << std::endl;
         for (const auto& obj : objects)
         {
@@ -343,7 +396,19 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
         }
     };
 
-    auto addFunctionalObjToFile = [&file, &map_constraints](const std::string& category, auto& objects) {
+    auto add_weapon_to_file = [&file, &map_constraints](const std::string& category, auto& objects) {
+        file << std::endl << category << ": " << std::endl;
+        for (const auto& obj : objects)
+        {
+            file << obj->getId() << " " <<
+                 obj->getPosition().x - map_constraints.second.x << " " <<
+                 obj->getPosition().y - map_constraints.second.y << " " <<
+                 obj->getRotation() << " " << obj->getUniqueId() << " " <<
+                 obj->getUsageStr() << " " << obj->getData() << std::endl;
+        }
+    };
+
+    auto add_functional_obj_to_file = [&file, &map_constraints](const std::string& category, auto& objects) {
         file << std::endl << category << ": " << std::endl;
         for (const auto& obj : objects)
         {
@@ -360,10 +425,11 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
         }
     };
 
-    addObjToFile("decorations", map.getList<Decoration>());
-    addFunctionalObjToFile("obstacles", map.getList<Obstacle>());
-    addFunctionalObjToFile("characters", map.getList<NPC>());
-    addFunctionalObjToFile("specials", map.getList<Special>());
+    add_obj_to_file("decorations", map.getList<Decoration>());
+    add_functional_obj_to_file("obstacles", map.getList<Obstacle>());
+    add_functional_obj_to_file("characters", map.getList<NPC>());
+    add_functional_obj_to_file("specials", map.getList<Special>());
+    add_weapon_to_file("weapons", map.getList<PlacedWeapon>());
 
     std::cout << "[ResourceManager] Map file " << CFG.get<std::string>("paths/maps_dir") + "/" + name + ".j3x" << " is saved!" << std::endl;
 

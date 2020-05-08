@@ -31,6 +31,7 @@ public:
     static void addSpeed(Functional* obj, const std::string& data, Character* user);
     static void pickCrystal(Functional* obj, const std::string& data, Character* user);
 
+    static void activateWeapon(Functional* obj, const std::string& data, Character* user);
     static void teleport(Functional* obj, const std::string& data, Character* user);
     static void kill(Functional* obj, const std::string& data, Character* user);
     static void setOnFire(Functional* obj, const std::string& data, Character* user);

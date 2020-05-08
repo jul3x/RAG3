@@ -29,7 +29,8 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
                        utils::j3x::get<float>(RM.getObjectParams("specials", id), "frame_duration"),
                        0.0f),
         Functional(activation, functions, datas, id, u_id),
-        is_drawable_(utils::j3x::get<int>(RM.getObjectParams("specials", id), "is_drawable"))
+        is_drawable_(utils::j3x::get<int>(RM.getObjectParams("specials", id), "is_drawable")),
+        additional_boolean_data_(false)
 {
     this->changeOrigin(sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("specials", id), "size_x"),
                                     utils::j3x::get<float>(RM.getObjectParams("specials", id), "size_y")) / 2.0f +
@@ -40,4 +41,14 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
 bool Special::isDrawable() const
 {
     return is_drawable_;
+}
+
+bool Special::getAdditionalBooleanData() const
+{
+    return additional_boolean_data_;
+}
+
+void Special::setAdditionalBooleanData(bool data)
+{
+    additional_boolean_data_ = data;
 }

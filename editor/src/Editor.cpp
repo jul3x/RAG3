@@ -52,6 +52,7 @@ void Editor::update(float time_elapsed)
     update_animation(map_->getList<Obstacle>());
     update_animation(map_->getList<NPC>());
     update_animation(map_->getList<Special>());
+    update_animation(map_->getList<PlacedWeapon>());
 }
 
 void Editor::draw(graphics::Graphics& graphics)
@@ -71,6 +72,7 @@ void Editor::draw(graphics::Graphics& graphics)
     draw(map_->getList<Obstacle>());
     draw(map_->getList<NPC>());
     draw(map_->getList<Special>());
+    draw(map_->getList<PlacedWeapon>());
 
     graphics.drawAlreadySorted();
 }
@@ -132,6 +134,15 @@ int Editor::readItemInfo(const sf::Vector2f& pos, bool read_uid)
         return read_uid ? ret_obs->getUniqueId() : 0;
     }
 
+    auto ret_weapon = map_->getObjectByPos<PlacedWeapon>(pos, ui_->getZIndex());
+
+    if (ret_weapon != nullptr)
+    {
+        if (!read_uid)
+            ui_->openWeaponWindow("weapons", ret_weapon);
+        return read_uid ? ret_weapon->getUniqueId() : 0;
+    }
+
     auto ret = map_->getObjectInfo(pos, ui_->getZIndex());
 
     if (!(std::get<0>(ret).empty() && std::get<1>(ret).empty()))
@@ -144,21 +155,23 @@ int Editor::readItemInfo(const sf::Vector2f& pos, bool read_uid)
     return -1;
 }
 
-void Editor::placeItem(const sf::Vector2f& pos)
+void Editor::placeItem(const sf::Vector2f& pos, float direction)
 {
     auto max_z_index = ui_->getZIndex();
     if (current_item_.first == "decorations_tiles")
-        map_->spawn<DecorationTile>(pos, current_item_.second, true, max_z_index);
+        map_->spawn<DecorationTile>(pos, direction, current_item_.second, true, max_z_index);
     else if (current_item_.first == "obstacles_tiles")
-        map_->spawn<ObstacleTile>(pos, current_item_.second, true, max_z_index);
+        map_->spawn<ObstacleTile>(pos, direction, current_item_.second, true, max_z_index);
     else if (current_item_.first == "characters")
-        map_->spawn<NPC>(pos, current_item_.second, false, max_z_index);
+        map_->spawn<NPC>(pos, direction, current_item_.second, false, max_z_index);
     else if (current_item_.first == "specials")
-        map_->spawn<Special>(pos, current_item_.second, false, max_z_index);
+        map_->spawn<Special>(pos, direction, current_item_.second, false, max_z_index);
     else if (current_item_.first == "decorations")
-        map_->spawn<Decoration>(pos, current_item_.second, false, max_z_index);
+        map_->spawn<Decoration>(pos, direction, current_item_.second, false, max_z_index);
     else if (current_item_.first == "obstacles")
-        map_->spawn<Obstacle>(pos, current_item_.second, false, max_z_index);
+        map_->spawn<Obstacle>(pos, direction, current_item_.second, false, max_z_index);
+    else if (current_item_.first == "weapons")
+        map_->spawn<PlacedWeapon>(pos, direction, current_item_.second, false, max_z_index);
 }
 
 void Editor::removeItem(const sf::Vector2f& pos)
@@ -167,7 +180,8 @@ void Editor::removeItem(const sf::Vector2f& pos)
     if (current_item_.first == "decorations_tiles" || current_item_.first == "obstacles_tiles")
         map_->removeTile(pos, max_z_index);
     else if (current_item_.first == "characters" || current_item_.first == "specials" || 
-             current_item_.first == "decorations" || current_item_.first == "obstacles")
+             current_item_.first == "decorations" || current_item_.first == "obstacles" ||
+             current_item_.first == "weapons")
         map_->removeObject(pos, max_z_index);
 }
 
@@ -250,15 +264,22 @@ void Editor::markCurrentItem(const sf::Vector2f& pos)
     clean(map_->getList<Decoration>());
     clean(map_->getList<Special>());
     clean(map_->getList<NPC>());
+    clean(map_->getList<PlacedWeapon>());
 
     mark(map_->getObjectByPos<ObstacleTile>(pos, ui_->getZIndex()), false);
     mark(map_->getObjectByPos<Obstacle>(pos, ui_->getZIndex()));
     mark(map_->getObjectByPos<Decoration>(pos, ui_->getZIndex()));
     mark(map_->getObjectByPos<NPC>(pos, ui_->getZIndex()));
     mark(map_->getObjectByPos<Special>(pos, ui_->getZIndex()));
+    mark(map_->getObjectByPos<PlacedWeapon>(pos, ui_->getZIndex()));
 }
 
 AbstractDrawableObject* Editor::getMarkedItem()
 {
     return marked_item_;
+}
+
+void Editor::spawnError(const std::string& err)
+{
+    ui_->spawnError(err);
 }

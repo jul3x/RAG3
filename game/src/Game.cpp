@@ -96,20 +96,27 @@ void Game::initialize()
 
         for (auto& weapon : character->getWeapons())
         {
-            if (!weapon->getName().empty())
+            if (!weapon->getId().empty())
                 weapon->registerSpawningFunction(
                         this->getSpawningFunction(utils::j3x::get<std::string>(RM.getObjectParams("weapons",
-                                weapon->getName()), "spawn_func")));
+                                weapon->getId()), "spawn_func")));
         }
     }
 
     engine_->registerDynamicObject(player_.get());
     for (auto& weapon : player_->getWeapons())
     {
-        if (!weapon->getName().empty())
+        if (!weapon->getId().empty())
             weapon->registerSpawningFunction(
                     this->getSpawningFunction(utils::j3x::get<std::string>(
-                            RM.getObjectParams("weapons", weapon->getName()), "spawn_func")));
+                            RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
+    }
+
+    for (auto& weapon : map_->getList<PlacedWeapon>())
+    {
+        weapon->registerSpawningFunction(
+                this->getSpawningFunction(utils::j3x::get<std::string>(RM.getObjectParams("weapons",
+                                                                                          weapon->getId()), "spawn_func")));
     }
 
     for (auto& special : map_->getList<Special>())
@@ -181,6 +188,7 @@ void Game::updateMapObjects(float time_elapsed)
     auto& npcs =  map_->getList<NPC>();;
     auto& specials = map_->getList<Special>();
     auto& decorations = map_->getList<Decoration>();
+    auto& weapons = map_->getList<PlacedWeapon>();
 
     for (auto it = obstacles_tiles.begin(); it != obstacles_tiles.end();)
     {
@@ -189,7 +197,7 @@ void Game::updateMapObjects(float time_elapsed)
         {
             journal_->eventObstacleTileDestroyed(it->get());
             // draw on this place destruction
-            auto dec_ptr = map_->spawn<Decoration>((*it)->getPosition(), "destroyed_wall");
+            auto dec_ptr = map_->spawn<Decoration>((*it)->getPosition(), 0.0f, "destroyed_wall");
             journal_->eventDecorationSpawned(dec_ptr);
 
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
@@ -291,6 +299,10 @@ void Game::updateMapObjects(float time_elapsed)
         if (do_increment) ++it;
     }
 
+    for (auto& weapon : weapons)
+    {
+        weapon->update(time_elapsed);
+    }
 }
 
 void Game::killNPC(NPC* npc)
@@ -304,7 +316,7 @@ void Game::killNPC(NPC* npc)
     }
 
     // draw on this place destruction
-    auto dec_ptr = map_->spawn<Decoration>((npc)->getPosition(), "blood");
+    auto dec_ptr = map_->spawn<Decoration>((npc)->getPosition(), 0.0f, "blood");
     journal_->eventDecorationSpawned(dec_ptr);
 
     this->spawnExplosionEvent(npc->getPosition(), 250.0f);
@@ -329,6 +341,7 @@ void Game::draw(graphics::Graphics& graphics)
     draw(map_->getList<Obstacle>());
     draw(map_->getList<ObstacleTile>());
     draw(map_->getList<NPC>());
+    draw(map_->getList<PlacedWeapon>());
     draw(bullets_);
     draw(fire_);
 
@@ -432,7 +445,7 @@ void Game::spawnAchievement(Achievements::Type type)
 
 void Game::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
 {
-    auto ptr = map_->spawn<Special>(pos, name);
+    auto ptr = map_->spawn<Special>(pos, 0.0f, name);
     engine_->registerHoveringObject(ptr);
 
     ptr->bindFunction(special_functions_->bindFunction(ptr->getFunctions().at(0)),
@@ -621,7 +634,7 @@ Bullet* Game::spawnNewBullet(const std::string& id, const sf::Vector2f& pos, flo
 
 NPC* Game::spawnNewNPC(const std::string& id)
 {
-    auto ptr = map_->spawn<NPC>({}, id);
+    auto ptr = map_->spawn<NPC>({}, 0.0f, id);
     engine_->registerDynamicObject(ptr);
 
     ptr->registerAgentsManager(agents_manager_.get());
@@ -634,10 +647,10 @@ NPC* Game::spawnNewNPC(const std::string& id)
 
     for (auto& weapon : ptr->getWeapons())
     {
-        if (!weapon->getName().empty())
+        if (!weapon->getId().empty())
             weapon->registerSpawningFunction(
                     this->getSpawningFunction(utils::j3x::get<std::string>(
-                            RM.getObjectParams("weapons", weapon->getName()), "spawn_func")));
+                            RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
     }
 
     for (const auto& function : ptr->getFunctions())
@@ -674,7 +687,7 @@ NPC* Game::spawnNewPlayerClone()
 
     for (auto& weapon : player_clone_->getWeapons())
     {
-        if (!weapon->getName().empty())
+        if (!weapon->getId().empty())
             weapon->registerSpawningFunction(
                     std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
                               std::placeholders::_3));
@@ -696,14 +709,14 @@ void Game::cleanPlayerClone()
 
 ObstacleTile* Game::spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos)
 {
-    auto new_ptr = map_->spawn<ObstacleTile>(pos, id);
+    auto new_ptr = map_->spawn<ObstacleTile>(pos, 0.0f, id);
     engine_->registerStaticObject(new_ptr);
     return new_ptr;
 }
 
 Obstacle* Game::spawnNewObstacle(const std::string& id, const sf::Vector2f& pos)
 {
-    auto new_ptr = map_->spawn<Obstacle>(pos, id);
+    auto new_ptr = map_->spawn<Obstacle>(pos, 0.0f, id);
     engine_->registerStaticObject(new_ptr);
 
     for (const auto& function : new_ptr->getFunctions())
@@ -829,7 +842,7 @@ void Game::updatePlayerClone(float time_elapsed)
         if (!player_clone_->update(time_elapsed))
         {
             // draw on this place destruction
-            auto dec_ptr = map_->spawn<Decoration>(player_clone_->getPosition(), "blood");
+            auto dec_ptr = map_->spawn<Decoration>(player_clone_->getPosition(), 0.0f, "blood");
             journal_->eventDecorationSpawned(dec_ptr);
 
             this->spawnExplosionEvent(player_clone_->getPosition(), 250.0f);
@@ -846,7 +859,7 @@ void Game::updatePlayerClone(float time_elapsed)
         const auto& player_clone_weapon = player_clone_->getWeapons().at(player_clone_->getCurrentWeapon());
         auto player_weapon = std::find_if(player_->getWeapons().begin(), player_->getWeapons().end(),
                                           [&player_clone_weapon](const auto& it) {
-                                              return player_clone_weapon->getName() == it->getName();
+                                              return player_clone_weapon->getId() == it->getId();
                                           });
 
         if (player_weapon != player_->getWeapons().end())
@@ -865,7 +878,7 @@ void Game::updatePlayer(float time_elapsed)
     player_->setCurrentSpecialObject(nullptr);
     if (player_->isAlive() && !player_->update(time_elapsed))
     {
-        map_->spawn<Decoration>(player_->getPosition(), "blood");
+        map_->spawn<Decoration>(player_->getPosition(), 0.0f, "blood");
         spawnExplosionEvent(player_->getPosition(), 25.0f);
         player_->setDead();
         engine_->deleteDynamicObject(player_.get());

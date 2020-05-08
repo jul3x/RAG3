@@ -107,7 +107,7 @@ void Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
     // If weapon exists
     for (auto& weapon : weapons_in_backpack_)
     {
-        if (weapon->getName() == ptr->getName())
+        if (weapon->getId() == ptr->getId())
         {
             weapon->setState(1.0f);
             return;
@@ -117,7 +117,7 @@ void Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
     // If there is less than 4 weapons in backpack
     for (auto &weapon : weapons_in_backpack_)
     {
-        if (weapon->getName().empty())
+        if (weapon->getId().empty())
         {
             weapon = ptr;
             return;
@@ -131,7 +131,7 @@ void Character::addAmmoToWeapon(const std::string& id)
 {
     for (auto& weapon : weapons_in_backpack_)
     {
-        if (weapon->getName() == id)
+        if (weapon->getId() == id)
         {
             weapon->setState(std::min(1.0f, weapon->getState() +
                                             static_cast<float>(utils::j3x::get<int>(RM.getObjectParams("weapons", id), "ammo_portion")) /

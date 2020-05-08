@@ -14,4 +14,4 @@ list[string] default_functions=[AddHealth]
 list[string] default_datas=[30]
 
 bool is_drawable=1
-int z_index=0
+int z_index=1

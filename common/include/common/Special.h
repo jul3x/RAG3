@@ -28,10 +28,15 @@ public:
             const std::string& activation, const std::vector<std::string>& functions,
             const std::vector<std::string>& datas, int u_id = -1);
 
-    bool isDrawable() const;
+    [[nodiscard]] bool isDrawable() const;
+    [[nodiscard]] bool getAdditionalBooleanData() const;
+
+    void setAdditionalBooleanData(bool data);
 
 private:
     bool is_drawable_;
+
+    bool additional_boolean_data_;
 
 };
 

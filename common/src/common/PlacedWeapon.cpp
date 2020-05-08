@@ -20,7 +20,9 @@ PlacedWeapon::PlacedWeapon(const sf::Vector2f& position, float direction, const 
     ShootingWeapon(id),
     Unique(u_id),
     data_(data),
-    usage_str_(usage)
+    usage_str_(usage),
+    active_(false),
+    time_elapsed_(0.0f)
 {
     // TODO Change origin?
 
@@ -29,7 +31,15 @@ PlacedWeapon::PlacedWeapon(const sf::Vector2f& position, float direction, const 
 
     if (usage == "Const")
     {
-        usage_func_ = std::bind(&PlacedWeapon::constantUse, this, std::placeholders::_1);
+        usage_func_ = std::bind(&PlacedWeapon::constUse, this, std::placeholders::_1);
+    }
+    else if (usage == "Single")
+    {
+        usage_func_ = std::bind(&PlacedWeapon::singleUse, this, std::placeholders::_1);
+    }
+    else if (usage == "Interrupted")
+    {
+        usage_func_ = std::bind(&PlacedWeapon::interruptedUse, this, std::placeholders::_1);
     }
     else
     {
@@ -42,12 +52,8 @@ void PlacedWeapon::update(float time_elapsed)
     this->setState(1.0f); // never ending ammo
     AbstractWeapon::update(time_elapsed);
 
-    usage_func_(time_elapsed);
-}
-
-void PlacedWeapon::constantUse(float time_elapsed)
-{
-    use();
+    if (active_)
+        usage_func_(time_elapsed);
 }
 
 float PlacedWeapon::getData() const
@@ -68,5 +74,44 @@ void PlacedWeapon::setUsageStr(const std::string& usage)
 void PlacedWeapon::setData(float data)
 {
     data_ = data;
+}
+
+void PlacedWeapon::setActive(bool active)
+{
+    active_ = active;
+}
+
+bool PlacedWeapon::getActive() const
+{
+    return active_;
+}
+
+void PlacedWeapon::constUse(float time_elapsed)
+{
+    use();
+}
+
+void PlacedWeapon::singleUse(float time_elapsed)
+{
+    time_elapsed_ += time_elapsed;
+
+    if (time_elapsed_ >= data_)
+        time_elapsed_ = data_;
+    else
+        use();
+}
+
+void PlacedWeapon::interruptedUse(float time_elapsed)
+{
+    time_elapsed_ += time_elapsed;
+
+    if (time_elapsed_ >= 2 * data_)
+        time_elapsed_ = 0.0f;
+    else if (time_elapsed_ >= data_)
+    {
+        // nothing
+    }
+    else
+        use();
 }
 

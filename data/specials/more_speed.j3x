@@ -15,4 +15,4 @@ list[string] default_datas=[0.25f]
 
 bool is_drawable=1
 
-int z_index=0
+int z_index=1

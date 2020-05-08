@@ -21,19 +21,25 @@ public:
     PlacedWeapon(const sf::Vector2f& position, float direction, const std::string& id, const std::string& usage,
                  float data, int u_id = -1);
 
-    float getData() const;
-    const std::string& getUsageStr() const;
+    [[nodiscard]] float getData() const;
+    [[nodiscard]] const std::string& getUsageStr() const;
+    [[nodiscard]] bool getActive() const;
 
     void setUsageStr(const std::string& str);
     void setData(float data);
+    void setActive(bool active);
 
     void update(float time_elapsed) override;
 
 private:
-    void constantUse(float time_elapsed);
+    void constUse(float time_elapsed);
+    void singleUse(float time_elapsed);
+    void interruptedUse(float time_elapsed);
 
     std::function<void(float)> usage_func_;
+    float time_elapsed_;
     float data_;
+    bool active_;
     std::string usage_str_;
 
 };

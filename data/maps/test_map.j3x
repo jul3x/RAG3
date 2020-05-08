@@ -434,7 +434,9 @@ flame 525 400 679 OnEnter [SetOnFire] [Null]
 flame 600 450 680 OnEnter [SetOnFire] [Null]
 special_event 1200 825 749 OnEnter [RemoveDecoration;SpawnLava;Deactivate] [659;(1200.0,700.0);Null]
 stairs 1800 2950 790 OnEnter [Teleport] [(7981.1,1784.7)]
+lever 400 1325 811 OnUse [ActivateWeapon;ChangeOpenState] [808;Null]
+special_event 1600 500 812 OnEnter [ActivateWeapon;Deactivate] [807;Null]
 
 weapons: 
-flamethrower 1760.08 260.598 35.9029 807 Const 0
-m4 446.356 1062.32 0 808 Const 0
+flamethrower 1760.08 260.598 35.9029 807 Interrupted 1
+m4 446.356 1062.32 0 808 Single 1

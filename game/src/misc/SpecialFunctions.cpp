@@ -25,6 +25,7 @@ SpecialFunctions::SpecialFunctions()
     functions_["ChangeOpenState"] = &changeOpenState;
     functions_["Teleport"] = &teleport;
     functions_["Kill"] = &kill;
+    functions_["ActivateWeapon"] = &activateWeapon;
     functions_["SetOnFire"] = &setOnFire;
     functions_["Explode"] = &explode;
     functions_["RemoveDecoration"] = &removeDecoration;
@@ -48,6 +49,7 @@ SpecialFunctions::SpecialFunctions()
     text_to_use_["ChangeOpenState"] = "[F] Use object";
     text_to_use_["Teleport"] = "[F] To enter";
     text_to_use_["Kill"] = "[F] To use";
+    text_to_use_["ActivateWeapon"] = "";
     text_to_use_["Explode"] = "";
     text_to_use_["SetOnFire"] = "";
     text_to_use_["RemoveDecoration"] = "";
@@ -71,6 +73,7 @@ SpecialFunctions::SpecialFunctions()
     is_usable_by_npc_["ChangeOpenState"] = true;
     is_usable_by_npc_["Teleport"] = true;
     is_usable_by_npc_["Kill"] = true;
+    is_usable_by_npc_["ActivateWeapon"] = false;
     is_usable_by_npc_["SetOnFire"] = true;
     is_usable_by_npc_["Explode"] = false;
     is_usable_by_npc_["RemoveDecoration"] = false;
@@ -80,6 +83,44 @@ SpecialFunctions::SpecialFunctions()
     is_usable_by_npc_["SpawnFlame"] = false;
     is_usable_by_npc_["Null"] = true;
     is_usable_by_npc_["Deactivate"] = true;
+}
+
+
+std::function<void(Functional*, const std::string&, Character*)>
+SpecialFunctions::bindFunction(const std::string& key) const
+{
+    auto it = functions_.find(key);
+
+    if (it == functions_.end())
+    {
+        throw std::invalid_argument("[SpecialFunctions] Function " + key + " is not handled!");
+    }
+
+    return it->second;
+}
+
+const std::string& SpecialFunctions::bindTextToUse(const std::string &key) const
+{
+    auto it = text_to_use_.find(key);
+
+    if (it == text_to_use_.end())
+    {
+        throw std::invalid_argument("[SpecialFunctions] Function " + key + " is not handled!");
+    }
+
+    return it->second;
+}
+
+bool SpecialFunctions::isUsableByNPC(const std::string& key) const
+{
+    auto it = is_usable_by_npc_.find(key);
+
+    if (it == is_usable_by_npc_.end())
+    {
+        throw std::invalid_argument("[SpecialFunctions] Function " + key + " is not handled!");
+    }
+
+    return it->second;
 }
 
 void SpecialFunctions::mapStart(Functional* obj, const std::string& data, Character* user)
@@ -122,17 +163,17 @@ void SpecialFunctions::openDoor(Functional* obj, const std::string& data, Charac
 void SpecialFunctions::changeOpenState(Functional* obj, const std::string& data, Character* user)
 {
     std::cout << "[SpecialFunction] Changing open state." << std::endl;
-    auto door_id = std::stoi(data);
-    auto door = Game::get().getMap().getObjectById<Obstacle>(door_id);
     auto special_obj = Game::get().getMap().getObjectById<Special>(obj->getUniqueId());
 
-    if (door->getCollisionArea().getType() == collision::Area::Type::None)
+    if (special_obj->getAdditionalBooleanData())
     {
         special_obj->changeTexture(&RM.getTexture("specials/" + obj->getId()));
+        special_obj->setAdditionalBooleanData(false);
     }
     else
     {
         special_obj->changeTexture(&RM.getTexture("specials/" + obj->getId() + "_open"));
+        special_obj->setAdditionalBooleanData(true);
     }
 }
 
@@ -323,39 +364,10 @@ void SpecialFunctions::deactivate(Functional *obj, const std::string &data, Char
     obj->deactivate();
 }
 
-std::function<void(Functional*, const std::string&, Character*)>
-SpecialFunctions::bindFunction(const std::string& key) const
+void SpecialFunctions::activateWeapon(Functional* obj, const std::string& data, Character* user)
 {
-    auto it = functions_.find(key);
-
-    if (it == functions_.end())
-    {
-        throw std::invalid_argument("[SpecialFunctions] Function " + key + " is not handled!");
-    }
-
-    return it->second;
-}
-
-const std::string& SpecialFunctions::bindTextToUse(const std::string &key) const
-{
-    auto it = text_to_use_.find(key);
-
-    if (it == text_to_use_.end())
-    {
-        throw std::invalid_argument("[SpecialFunctions] Function " + key + " is not handled!");
-    }
-
-    return it->second;
-}
-
-bool SpecialFunctions::isUsableByNPC(const std::string& key) const
-{
-    auto it = is_usable_by_npc_.find(key);
-
-    if (it == is_usable_by_npc_.end())
-    {
-        throw std::invalid_argument("[SpecialFunctions] Function " + key + " is not handled!");
-    }
-
-    return it->second;
+    std::cout << "[SpecialFunction] Activate weapon." << std::endl;
+    auto weapon_id = std::stoi(data);
+    auto weapon = Game::get().getMap().getObjectById<PlacedWeapon>(weapon_id);
+    weapon->setActive(!weapon->getActive());
 }

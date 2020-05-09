@@ -79,6 +79,7 @@ private:
 
     sf::Text fps_text_;
     sf::Text object_use_text_;
+    sf::Text npc_talk_text_;
 
     Player* player_;
     Camera* camera_;

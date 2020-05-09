@@ -30,3 +30,5 @@ string ai_type=Standard
 int z_index=1
 
 list[string] weapons=[flamethrower;Null;Null;Null]
+
+bool is_talkable=0

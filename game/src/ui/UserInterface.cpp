@@ -23,6 +23,7 @@ UserInterface::UserInterface() :
                    CFG.get<int>("graphics/window_height_px") - TIME_BAR_Y_ * CFG.get<float>("graphics/user_interface_zoom")}),
         fps_text_("FPS: ", RM.getFont(), 30),
         object_use_text_("[F] Use object", RM.getFont(), 24 * CFG.get<float>("graphics/user_interface_zoom")),
+        npc_talk_text_("[T] Talk to NPC", RM.getFont(), 24 * CFG.get<float>("graphics/user_interface_zoom")),
         left_hud_({0.0f, static_cast<float>(CFG.get<int>("graphics/window_height_px"))}),
         right_hud_({static_cast<float>(CFG.get<int>("graphics/window_width_px")),
                     static_cast<float>(CFG.get<int>("graphics/window_height_px"))}),
@@ -43,6 +44,7 @@ void UserInterface::initialize(graphics::Graphics& graphics)
     fps_text_.setPosition(FPS_X_, FPS_Y_);
 
     object_use_text_.setFillColor(sf::Color::White);
+    npc_talk_text_.setFillColor(sf::Color::White);
 
     graphics.getWindow().setMouseCursorVisible(false);
     graphics.getWindow().setKeyRepeatEnabled(false);
@@ -105,6 +107,21 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
     else
     {
         object_use_text_.setFillColor(sf::Color::Transparent);
+    }
+
+    auto npc_talk = Game::get().getCurrentTalkableCharacter();
+    if (npc_talk != nullptr)
+    {
+        auto npc_talk_text_rect = npc_talk_text_.getLocalBounds();
+        npc_talk_text_.setOrigin(npc_talk_text_rect.left + npc_talk_text_rect.width/2.0f,
+                                 npc_talk_text_rect.top  + npc_talk_text_rect.height/2.0f);
+
+        npc_talk_text_.setPosition(npc_talk->getPosition() - sf::Vector2f{0.0f, OBJECT_USE_TEXT_OFFSET_Y_});
+        npc_talk_text_.setFillColor(sf::Color::White);
+    }
+    else
+    {
+        npc_talk_text_.setFillColor(sf::Color::Transparent);
     }
 
     while (graphics.getWindow().pollEvent(event))
@@ -179,6 +196,11 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                         Game::get().useSpecialObject();
                         break;
                     }
+                    case sf::Keyboard::T:
+                    {
+                        Game::get().talk();
+                        break;
+                    }
                     case sf::Keyboard::Escape:
                     {
                         if (Game::get().getGameState() == Game::GameState::Paused)
@@ -221,6 +243,7 @@ void UserInterface::draw(graphics::Graphics& graphics)
 {
     graphics.setCurrentView();
     graphics.getWindow().draw(object_use_text_);
+    graphics.getWindow().draw(npc_talk_text_);
     graphics.setStaticView();
 
     graphics.draw(blood_splash_);

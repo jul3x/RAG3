@@ -101,6 +101,12 @@ void Game::initialize()
                         this->getSpawningFunction(utils::j3x::get<std::string>(RM.getObjectParams("weapons",
                                 weapon->getId()), "spawn_func")));
         }
+
+        auto talkable_area = character->getTalkableArea();
+        if (talkable_area != nullptr)
+        {
+            engine_->registerHoveringObject(talkable_area);
+        }
     }
 
     engine_->registerDynamicObject(player_.get());
@@ -251,6 +257,7 @@ void Game::updateMapObjects(float time_elapsed)
     {
         bool do_increment = true;
         (*it)->setCurrentSpecialObject(nullptr);
+        (*it)->setCurrentTalkableCharacter(nullptr);
         if (!(*it)->update(time_elapsed))
         {
             this->killNPC(it->get());
@@ -322,6 +329,11 @@ void Game::killNPC(NPC* npc)
     this->spawnExplosionEvent(npc->getPosition(), 250.0f);
 
     engine_->deleteDynamicObject(npc);
+    auto talkable_area = npc->getTalkableArea();
+    if (talkable_area != nullptr)
+    {
+        engine_->deleteHoveringObject(talkable_area);
+    }
 
     if (npc->getActivation() == "OnKill")
     {
@@ -546,7 +558,6 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
     }
     else if (fire != nullptr)
     {
-
         fire->setDead();
     }
 }
@@ -587,6 +598,13 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         {
             character->setCurrentSpecialObject(special);
         }
+    }
+
+    auto talkable_area = dynamic_cast<TalkableArea*>(h_obj);
+
+    if (talkable_area != nullptr && character != nullptr)
+    {
+        character->setCurrentTalkableCharacter(talkable_area->getFather());
     }
 
     auto explosion = dynamic_cast<Explosion*>(h_obj);
@@ -659,6 +677,10 @@ NPC* Game::spawnNewNPC(const std::string& id)
                           special_functions_->bindTextToUse(function),
                           special_functions_->isUsableByNPC(function));
     }
+
+    auto talkable_area = ptr->getTalkableArea();
+    if (talkable_area != nullptr)
+        engine_->registerHoveringObject(talkable_area);
 
     return ptr;
 }
@@ -764,12 +786,33 @@ Special* Game::getCurrentSpecialObject() const
     return player_->getCurrentSpecialObject();
 }
 
+Character* Game::getCurrentTalkableCharacter() const
+{
+    return player_->getCurrentTalkableCharacter();
+}
+
 void Game::useSpecialObject()
 {
     auto curr = player_->getCurrentSpecialObject();
     if (curr != nullptr)
     {
         curr->use(player_.get());
+    }
+}
+
+void Game::talk()
+{
+    auto curr = player_->getCurrentTalkableCharacter();
+    if (curr != nullptr)
+    {
+        auto still_talking = curr->talk(std::bind(&Game::spawnThought, this, std::placeholders::_1,
+                std::placeholders::_2),
+                player_.get());
+
+        if (!still_talking)
+        {
+            engine_->deleteHoveringObject(curr->getTalkableArea());
+        }
     }
 }
 
@@ -839,6 +882,7 @@ void Game::updatePlayerClone(float time_elapsed)
     if (player_clone_ != nullptr)
     {
         player_clone_->setCurrentSpecialObject(nullptr);
+        player_clone_->setCurrentTalkableCharacter(nullptr);
         if (!player_clone_->update(time_elapsed))
         {
             // draw on this place destruction
@@ -876,6 +920,7 @@ void Game::updatePlayerClone(float time_elapsed)
 void Game::updatePlayer(float time_elapsed)
 {
     player_->setCurrentSpecialObject(nullptr);
+    player_->setCurrentTalkableCharacter(nullptr);
     if (player_->isAlive() && !player_->update(time_elapsed))
     {
         map_->spawn<Decoration>(player_->getPosition(), 0.0f, "blood");

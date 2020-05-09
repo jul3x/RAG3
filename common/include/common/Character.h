@@ -17,6 +17,7 @@
 #include <common/Shootable.h>
 #include <common/Special.h>
 #include <common/Decoration.h>
+#include <common/TalkableArea.h>
 
 
 using namespace r3e;
@@ -65,7 +66,10 @@ public:
     float getRotation() const override;
     float getSpeedFactor() const;
     Special* getCurrentSpecialObject() const;
+    Character* getCurrentTalkableCharacter() const;
     bool isAlreadyRotated() const;
+    bool isTalkable() const;
+    TalkableArea* getTalkableArea() const;
 
     // Setters
     void setMaxHealth(float health);
@@ -78,9 +82,11 @@ public:
     void setWeaponPointing(const sf::Vector2f& point);
     void setSpeedFactor(float factor);
     void setCurrentSpecialObject(Special* obj);
+    void setCurrentTalkableCharacter(Character* obj);
 
     bool update(float time_elapsed) override;
     void getShot(const Bullet& bullet) override;
+    bool talk(const std::function<void(Character*, const std::string&)>& talking_func, Character* character);
 
 protected:
     void handleLifeState();
@@ -98,6 +104,10 @@ protected:
     float on_fire_time_;
 
     std::unique_ptr<Decoration> decorator_;
+    std::unique_ptr<TalkableArea> talkable_area_;
+    std::function<void(Character*, const std::string&)> talking_func_;
+    bool is_talkable_;
+    bool should_respond_;
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -109,6 +119,10 @@ private:
     float speed_factor_;
     short int current_rotation_quarter_;
     Special* current_special_object_;
+    Character* current_talkable_character_;
+    std::list<std::string> talk_scenario_;
+
+    float talking_time_elapsed_;
 
 };
 

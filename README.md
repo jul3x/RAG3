@@ -23,7 +23,7 @@ Due to an early phase of the game, steering can be changed in future. For now:
 - *WSAD* for movement. *LShift* changes moving to running.
 - *Mouse* used for aiming, *LeftButton* uses current weapon, *MouseWheel* changes weapon, *RightButton* triggers bullet time.
 - *Q* and *E* triggers dodging.
-- *F* triggers object activation if player is somewhere near.
+- *F* triggers object activation if player is somewhere near and *T* talks to the talkable NPC.
 - *R* triggers time reversal. 
 
 ## Configuration

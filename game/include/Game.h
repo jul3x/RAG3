@@ -72,6 +72,7 @@ public:
     [[nodiscard]] const Journal& getJournal() const;
     [[nodiscard]] const std::list<std::unique_ptr<Bullet>>& getBullets() const;
     [[nodiscard]] Special* getCurrentSpecialObject() const;
+    [[nodiscard]] Character* getCurrentTalkableCharacter() const;
     [[nodiscard]] const SpawningFunction& getSpawningFunction(const std::string& name) const;
 
     // Spawn events
@@ -90,6 +91,7 @@ public:
     void spawnSpecial(const sf::Vector2f& pos, const std::string& name);
 
     // UI functions
+    void talk();
     void useSpecialObject();
     void setBulletTime();
     void setNormalTime();

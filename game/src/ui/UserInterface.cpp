@@ -88,6 +88,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
     }
 
     updatePlayerStates(time_elapsed);
+    updateThoughts(time_elapsed);
     handleMouse(graphics.getWindow());
     handleKeys();
 
@@ -244,6 +245,12 @@ void UserInterface::draw(graphics::Graphics& graphics)
     graphics.setCurrentView();
     graphics.getWindow().draw(object_use_text_);
     graphics.getWindow().draw(npc_talk_text_);
+
+    for (auto& thought : thoughts_)
+    {
+        graphics.draw(thought);
+    }
+
     graphics.setStaticView();
 
     graphics.draw(blood_splash_);
@@ -352,4 +359,22 @@ inline void UserInterface::updatePlayerStates(float time_elapsed)
 
     auto& stats = Game::get().getStats();
     stats_hud_.update(stats.getEnemiesKilled(), stats.getCrystalsPicked(), time_elapsed);
+}
+
+inline void UserInterface::updateThoughts(float time_elapsed)
+{
+    for (auto it = thoughts_.begin(); it != thoughts_.end(); ++it)
+    {
+        if (!it->update(time_elapsed))
+        {
+            auto next_it = std::next(it);
+            thoughts_.erase(it);
+            it = next_it;
+        }
+    }
+}
+
+void UserInterface::spawnThought(Character* user, const std::string& text)
+{
+    thoughts_.emplace_back(user, text, CFG.get<float>("thought_duration"));
 }

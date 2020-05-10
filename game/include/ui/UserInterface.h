@@ -18,6 +18,7 @@
 #include <ui/StatsHud.h>
 #include <ui/Achievement.h>
 
+#include <misc/Thought.h>
 #include <characters/Player.h>
 #include <misc/Camera.h>
 
@@ -40,6 +41,7 @@ public:
     void registerCamera(Camera* camera);
 
     void spawnAchievement(const std::string& title, const std::string& text, const std::string& tex);
+    void spawnThought(Character* user, const std::string& text);
 
     void draw(graphics::Graphics& graphics) override;
 
@@ -48,6 +50,8 @@ private:
     inline void handleKeys();
     inline void handleMouse(sf::RenderWindow& graphics_window);
     inline void updatePlayerStates(float time_elapsed);
+
+    inline void updateThoughts(float time_elapsed);
 
     static constexpr float WEAPONS_BAR_OFF_Y_ = 70.0f;
 
@@ -76,6 +80,7 @@ private:
     StatsHud stats_hud_;
 
     std::list<Achievement> achievements_;
+    std::list<Thought> thoughts_;
 
     sf::Text fps_text_;
     sf::Text object_use_text_;

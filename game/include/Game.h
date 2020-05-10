@@ -122,7 +122,6 @@ private:
     void updatePlayer(float time_elapsed);
     void updateBullets(float time_elapsed);
     void updateFire(float time_elapsed);
-    void updateThoughts(float time_elapsed);
     void updateExplosions();
 
     void killNPC(NPC* npc);
@@ -145,7 +144,6 @@ private:
     std::list<std::unique_ptr<Bullet>> bullets_;
     std::list<std::unique_ptr<Fire>> fire_;
     std::list<std::unique_ptr<Explosion>> explosions_;
-    std::list<std::unique_ptr<Thought>> thoughts_;
     std::list<std::pair<sf::Vector2f, float>> desired_explosions_;
 
     std::unordered_map<std::string, SpawningFunction> spawning_func_;

@@ -160,7 +160,6 @@ void Game::update(float time_elapsed)
             updatePlayer(time_elapsed);
             updateBullets(time_elapsed);
             updateFire(time_elapsed);
-            updateThoughts(time_elapsed);
 
             journal_->update(time_elapsed);
             camera_->update(time_elapsed);
@@ -370,9 +369,6 @@ void Game::draw(graphics::Graphics& graphics)
     engine_->drawSortedAnimationEvents();
 
     graphics.drawAlreadySorted();
-
-    for (auto& thought : thoughts_)
-        graphics.draw(*thought);
 }
 
 void Game::start()
@@ -443,7 +439,7 @@ void Game::spawnFadeInOut()
 
 void Game::spawnThought(Character* user, const std::string& text)
 {
-    thoughts_.emplace_back(std::make_unique<Thought>(user, text, CFG.get<float>("thought_duration")));
+    ui_->spawnThought(user, text);
 }
 
 void Game::spawnAchievement(Achievements::Type type)
@@ -946,19 +942,6 @@ void Game::updateBullets(float time_elapsed)
             engine_->deleteHoveringObject(it->get());
             auto next_it = std::next(it);
             bullets_.erase(it);
-            it = next_it;
-        }
-    }
-}
-
-void Game::updateThoughts(float time_elapsed)
-{
-    for (auto it = thoughts_.begin(); it != thoughts_.end(); ++it)
-    {
-        if (!(*it)->update(time_elapsed))
-        {
-            auto next_it = std::next(it);
-            thoughts_.erase(it);
             it = next_it;
         }
     }

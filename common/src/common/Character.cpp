@@ -69,11 +69,6 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
     if (is_talkable_)
     {
         talkable_area_ = std::make_unique<TalkableArea>(this, CFG.get<float>("characters/talkable_distance"));
-
-        talk_scenario_.emplace_back("Why are you bounded?");
-        talk_scenario_.emplace_back("HELP ME!!");
-        talk_scenario_.emplace_back("I'm not going to ;)");
-        talk_scenario_.emplace_back("...");
     }
 }
 
@@ -502,13 +497,15 @@ TalkableArea* Character::getTalkableArea() const
 
 bool Character::talk(const std::function<void(Character*, const std::string&)> &talking_func, Character* character)
 {
-    talking_func(character, talk_scenario_.front());
-    talking_func_ = talking_func;
-    talk_scenario_.pop_front();
+    if (!should_respond_)
+    {
+        talking_func(character, talk_scenario_.front());
+        talking_func_ = talking_func;
+        talk_scenario_.pop_front();
 
-    should_respond_ = true;
-    talking_time_elapsed_ = CFG.get<float>("characters/talking_respond_time");
-
+        should_respond_ = true;
+        talking_time_elapsed_ = CFG.get<float>("characters/talking_respond_time");
+    }
     return talk_scenario_.size() > 1;
 }
 
@@ -531,4 +528,14 @@ const std::string& Character::getTalkScenarioStr() const
 void Character::setTalkScenarioStr(const std::string& str)
 {
     utils::j3x::tokenize(str, utils::j3x::DELIMITER_, talk_scenario_);
+}
+
+const std::list<std::string>& Character::getTalkScenario() const
+{
+    return talk_scenario_;
+}
+
+void Character::setTalkScenario(const std::list<std::string>& str)
+{
+    talk_scenario_ = str;
 }

@@ -72,6 +72,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
         std::string activation = "";
         std::vector<std::string> functions;
         std::vector<std::string> f_datas;
+        std::list<std::string> conversation;
 
         std::string usage;
         float usage_data;
@@ -203,7 +204,6 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                     }
                     case MapReading::Obstacles:
                     case MapReading::Specials:
-                    case MapReading::Characters:
                     {
                         ++number;
                         should_add_new_object = false;
@@ -248,6 +248,61 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
 
                         break;
                     }
+                    case MapReading::Characters:
+                    {
+                        ++number;
+                        should_add_new_object = false;
+
+                        if (number % 8 == 1)
+                        {
+                            current_id = word;
+                        }
+                        else if (number % 8 == 2)
+                        {
+                            current_pos.x = std::stof(word);
+                        }
+                        else if (number % 8 == 3)
+                        {
+                            current_pos.y = std::stof(word);
+                        }
+                        else if (number % 8 == 4)
+                        {
+                            u_id = std::stoi(word);
+                        }
+                        else if (number % 8 == 5)
+                        {
+                            activation = word;
+                        }
+                        else if (number % 8 == 6)
+                        {
+                            if (word.length() < 2)
+                                throw std::logic_error("[ResourceManager] Wrong map list object format!");
+
+                            utils::j3x::tokenize(word.substr(1, word.length() - 2), utils::j3x::DELIMITER_, functions);
+                        }
+                        else if (number % 8 == 7)
+                        {
+                            std::replace(word.begin(), word.end(), '_', ' ');
+
+                            if (word.length() < 2)
+                                throw std::logic_error("[ResourceManager] Wrong map list object format!");
+
+                            utils::j3x::tokenize(word.substr(1, word.length() - 2), utils::j3x::DELIMITER_, f_datas);
+                        }
+                        else
+                        {
+                            std::replace(word.begin(), word.end(), '_', ' ');
+
+                            if (word.length() < 2)
+                                throw std::logic_error("[ResourceManager] Wrong map list object format!");
+
+                            utils::j3x::tokenize(word.substr(1, word.length() - 2), utils::j3x::DELIMITER_,
+                                    conversation);
+                            should_add_new_object = true;
+                        }
+
+                        break;
+                    }
                     default:
                     {
                         throw std::logic_error("[ResourceManager] Wrong map format!");
@@ -266,6 +321,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
 
                             characters.emplace_back(std::make_shared<NPC>(current_pos, current_id,
                                                                           activation, functions, f_datas, u_id));
+                            characters.back()->setTalkScenario(conversation);
                             break;
                         case MapReading::Specials:
                             if (functions.size() != f_datas.size())
@@ -425,9 +481,30 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
         }
     };
 
+    auto add_character_obj_to_file = [&file, &map_constraints](const std::string& category, auto& objects) {
+        file << std::endl << category << ": " << std::endl;
+        for (const auto& obj : objects)
+        {
+            auto new_data = obj->getDatasStr();
+            std::replace(new_data.begin(), new_data.end(), ' ', '_');
+
+            auto new_conv = obj->getTalkScenarioStr();
+            std::replace(new_conv.begin(), new_conv.end(), ' ', '_');
+
+
+            file << obj->getId() << " " <<
+                 obj->getPosition().x - map_constraints.second.x << " " <<
+                 obj->getPosition().y - map_constraints.second.y << " " <<
+                 obj->getUniqueId() << " " <<
+                 obj->getActivation() << " " <<
+                 "[" << obj->getFunctionsStr() << "] [" << new_data << "]" <<
+                 " [" << new_conv << "]" << std::endl;
+        }
+    };
+
     add_obj_to_file("decorations", map.getList<Decoration>());
     add_functional_obj_to_file("obstacles", map.getList<Obstacle>());
-    add_functional_obj_to_file("characters", map.getList<NPC>());
+    add_character_obj_to_file("characters", map.getList<NPC>());
     add_functional_obj_to_file("specials", map.getList<Special>());
     add_weapon_to_file("weapons", map.getList<PlacedWeapon>());
 

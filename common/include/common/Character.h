@@ -72,6 +72,7 @@ public:
     bool isTalkable() const;
     TalkableArea* getTalkableArea() const;
     const std::string& getTalkScenarioStr() const;
+    const std::list<std::string>& getTalkScenario() const;
 
     // Setters
     void setMaxHealth(float health);
@@ -86,6 +87,7 @@ public:
     void setCurrentSpecialObject(Special* obj);
     void setCurrentTalkableCharacter(Character* obj);
     void setTalkScenarioStr(const std::string& str);
+    void setTalkScenario(const std::list<std::string>& str);
 
     bool update(float time_elapsed) override;
     void getShot(const Bullet& bullet) override;

@@ -7,6 +7,7 @@
 #define RAG3_COMMON_INCLUDE_COMMON_CHARACTER_H
 
 #include <memory>
+#include <list>
 
 #include <R3E/objects/AbstractPhysicalObject.h>
 #include <R3E/objects/Identifiable.h>
@@ -70,6 +71,7 @@ public:
     bool isAlreadyRotated() const;
     bool isTalkable() const;
     TalkableArea* getTalkableArea() const;
+    const std::string& getTalkScenarioStr() const;
 
     // Setters
     void setMaxHealth(float health);
@@ -83,6 +85,7 @@ public:
     void setSpeedFactor(float factor);
     void setCurrentSpecialObject(Special* obj);
     void setCurrentTalkableCharacter(Character* obj);
+    void setTalkScenarioStr(const std::string& str);
 
     bool update(float time_elapsed) override;
     void getShot(const Bullet& bullet) override;

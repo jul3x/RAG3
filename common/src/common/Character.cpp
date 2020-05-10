@@ -245,7 +245,7 @@ void Character::setRotation(float theta)
 {
     (*current_weapon_)->setRotation(theta);
 
-    auto getQuarter = [](float theta) {
+    auto get_quarter = [](float theta) {
         if (theta >= 0.0f && theta < 90.0f)
             return 1;
         else if (theta >= 90.0f && theta < 180.0f)
@@ -256,7 +256,7 @@ void Character::setRotation(float theta)
             return 4;
     };
 
-    short int new_quarter_ = getQuarter(theta);
+    short int new_quarter = get_quarter(theta);
 
     switch (current_rotation_quarter_)
     {
@@ -267,10 +267,10 @@ void Character::setRotation(float theta)
             gun_offset_.x = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
-            if (new_quarter_ == 2 && theta >= 90.0f + Character::ROTATING_HYSTERESIS_)
+            if (new_quarter == 2 && theta >= 90.0f + Character::ROTATING_HYSTERESIS_)
                 current_rotation_quarter_ = 2;
-            else if (new_quarter_ != 2)
-                current_rotation_quarter_ = new_quarter_;
+            else if (new_quarter != 2)
+                current_rotation_quarter_ = new_quarter;
             break;
         }
         case 2:
@@ -279,10 +279,10 @@ void Character::setRotation(float theta)
             gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
-            if (new_quarter_ == 1 && theta < 90.0f - Character::ROTATING_HYSTERESIS_)
+            if (new_quarter == 1 && theta < 90.0f - Character::ROTATING_HYSTERESIS_)
                 current_rotation_quarter_ = 1;
-            else if (new_quarter_ != 1)
-                current_rotation_quarter_ = new_quarter_;
+            else if (new_quarter != 1)
+                current_rotation_quarter_ = new_quarter;
             break;
         }
         case 3:
@@ -291,10 +291,10 @@ void Character::setRotation(float theta)
             gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
-            if (new_quarter_ == 4 && theta >= 270.0f + Character::ROTATING_HYSTERESIS_)
+            if (new_quarter == 4 && theta >= 270.0f + Character::ROTATING_HYSTERESIS_)
                 current_rotation_quarter_ = 4;
-            else if (new_quarter_ != 4)
-                current_rotation_quarter_ = new_quarter_;
+            else if (new_quarter != 4)
+                current_rotation_quarter_ = new_quarter;
             break;
         }
         case 4:
@@ -303,10 +303,10 @@ void Character::setRotation(float theta)
             gun_offset_.x = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
-            if (new_quarter_ == 3 && theta < 270.0f - Character::ROTATING_HYSTERESIS_)
+            if (new_quarter == 3 && theta < 270.0f - Character::ROTATING_HYSTERESIS_)
                 current_rotation_quarter_ = 3;
-            else if (new_quarter_ != 3)
-                current_rotation_quarter_ = new_quarter_;
+            else if (new_quarter != 3)
+                current_rotation_quarter_ = new_quarter;
             break;
         }
         default:
@@ -510,4 +510,25 @@ bool Character::talk(const std::function<void(Character*, const std::string&)> &
     talking_time_elapsed_ = CFG.get<float>("characters/talking_respond_time");
 
     return talk_scenario_.size() > 1;
+}
+
+const std::string& Character::getTalkScenarioStr() const
+{
+    static std::string result;
+    result.clear();
+
+    for (auto& msg : talk_scenario_)
+    {
+        result += msg + utils::j3x::DELIMITER_;
+    }
+
+    if (result.length() >= 1)
+        result.pop_back();
+
+    return result;
+}
+
+void Character::setTalkScenarioStr(const std::string& str)
+{
+    utils::j3x::tokenize(str, utils::j3x::DELIMITER_, talk_scenario_);
 }

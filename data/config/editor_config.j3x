@@ -30,6 +30,9 @@ float objects_window_y=760.0f
 float popup_window_size_x=600.0f
 float popup_window_size_y=400.0f
 
+float character_window_size_x=600.0f
+float character_window_size_y=800.0f
+
 float unique_object_window_size_x=400.0f
 float unique_object_window_size_y=100.0f
 

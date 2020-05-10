@@ -40,6 +40,7 @@ public:
     static void removeDecoration(Functional* obj, const std::string& data, Character* user);
     static void spawnExplosionEvent(Functional* obj, const std::string& data, Character* user);
     static void spawnThought(Functional* obj, const std::string& data, Character* user);
+    static void spawnPlayerThought(Functional* obj, const std::string& data, Character* user);
     static void spawnLava(Functional* obj, const std::string& data, Character* user);
     static void spawnAmmo(Functional* obj, const std::string& data, Character* user);
     static void spawnFlame(Functional* obj, const std::string& data, Character* user);

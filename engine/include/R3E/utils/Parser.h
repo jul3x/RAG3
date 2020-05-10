@@ -30,7 +30,20 @@ namespace r3e::utils::j3x {
 
     void mergeParams(Parameters& params, const Parameters& new_params);
 
-    void tokenize(const std::string& str, char delimiter, std::vector<std::string>& out);
+    template<class T>
+    void tokenize(const std::string &str, char delimiter, T& out)
+    {
+        out.clear();
+
+        size_t start;
+        size_t end = 0;
+
+        while ((start = str.find_first_not_of(delimiter, end)) != std::string::npos)
+        {
+            end = str.find(delimiter, start);
+            out.push_back(str.substr(start, end - start));
+        }
+    }
 
     template<class T>
     T convert(const std::string& str)

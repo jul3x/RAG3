@@ -121,7 +121,7 @@ int Editor::readItemInfo(const sf::Vector2f& pos, bool read_uid)
     if (ret_npc != nullptr)
     {
         if (!read_uid)
-            ui_->openSpecialObjectWindow("characters", ret_npc);
+            ui_->openCharacterObjectWindow("characters", ret_npc);
         return read_uid ? ret_npc->getUniqueId() : 0;
     }
 

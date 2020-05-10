@@ -82,7 +82,6 @@ void Functional::setActivation(const std::string& str)
 
 void Functional::setFunctionsStr(const std::string& str)
 {
-    // TODO Delimiter
     utils::j3x::tokenize(str, utils::j3x::DELIMITER_, functions_);
 }
 

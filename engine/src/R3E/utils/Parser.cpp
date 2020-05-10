@@ -145,20 +145,6 @@ namespace r3e {
                 std::get<5>(params).insert(std::get<5>(new_params).begin(), std::get<5>(new_params).end());
             }
 
-            void tokenize(const std::string &str, char delimiter, std::vector<std::string>& out)
-            {
-                out.clear();
-
-                size_t start;
-                size_t end = 0;
-
-                while ((start = str.find_first_not_of(delimiter, end)) != std::string::npos)
-                {
-                    end = str.find(delimiter, start);
-                    out.push_back(str.substr(start, end - start));
-                }
-            }
-
         } // namespace j3x
     } // namespace utils
 } // namespace r3e

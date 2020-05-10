@@ -72,6 +72,7 @@ public:
     [[nodiscard]] const Journal& getJournal() const;
     [[nodiscard]] const std::list<std::unique_ptr<Bullet>>& getBullets() const;
     [[nodiscard]] Special* getCurrentSpecialObject() const;
+    [[nodiscard]] Character* getCurrentTalkableCharacter() const;
     [[nodiscard]] const SpawningFunction& getSpawningFunction(const std::string& name) const;
 
     // Spawn events
@@ -90,6 +91,7 @@ public:
     void spawnSpecial(const sf::Vector2f& pos, const std::string& name);
 
     // UI functions
+    void talk();
     void useSpecialObject();
     void setBulletTime();
     void setNormalTime();
@@ -120,7 +122,6 @@ private:
     void updatePlayer(float time_elapsed);
     void updateBullets(float time_elapsed);
     void updateFire(float time_elapsed);
-    void updateThoughts(float time_elapsed);
     void updateExplosions();
 
     void killNPC(NPC* npc);
@@ -143,7 +144,6 @@ private:
     std::list<std::unique_ptr<Bullet>> bullets_;
     std::list<std::unique_ptr<Fire>> fire_;
     std::list<std::unique_ptr<Explosion>> explosions_;
-    std::list<std::unique_ptr<Thought>> thoughts_;
     std::list<std::pair<sf::Vector2f, float>> desired_explosions_;
 
     std::unordered_map<std::string, SpawningFunction> spawning_func_;

@@ -22,6 +22,7 @@ SpecialFunctions::SpecialFunctions()
     functions_["AddSpeed"] = &addSpeed;
     functions_["PickCrystal"] = &pickCrystal;
     functions_["SpawnThought"] = &spawnThought;
+    functions_["SpawnPlayerThought"] = &spawnPlayerThought;
     functions_["ChangeOpenState"] = &changeOpenState;
     functions_["Teleport"] = &teleport;
     functions_["Kill"] = &kill;
@@ -45,7 +46,8 @@ SpecialFunctions::SpecialFunctions()
     text_to_use_["AddHealth"] = "[F] Pick to heal yourself";
     text_to_use_["AddSpeed"] = "[F] Pick to inject";
     text_to_use_["PickCrystal"] = "[F] Pick crystal";
-    text_to_use_["SpawnThought"] = "[F] Talk";
+    text_to_use_["SpawnThought"] = "";
+    text_to_use_["SpawnPlayerThought"] = "";
     text_to_use_["ChangeOpenState"] = "[F] Use object";
     text_to_use_["Teleport"] = "[F] To enter";
     text_to_use_["Kill"] = "[F] To use";
@@ -69,6 +71,7 @@ SpecialFunctions::SpecialFunctions()
     is_usable_by_npc_["AddHealth"] = false;
     is_usable_by_npc_["AddSpeed"] = false;
     is_usable_by_npc_["PickCrystal"] = false;
+    is_usable_by_npc_["SpawnPlayerThought"] = true;
     is_usable_by_npc_["SpawnThought"] = true;
     is_usable_by_npc_["ChangeOpenState"] = true;
     is_usable_by_npc_["Teleport"] = true;
@@ -370,4 +373,12 @@ void SpecialFunctions::activateWeapon(Functional* obj, const std::string& data, 
     auto weapon_id = std::stoi(data);
     auto weapon = Game::get().getMap().getObjectById<PlacedWeapon>(weapon_id);
     weapon->setActive(!weapon->getActive());
+}
+
+void SpecialFunctions::spawnPlayerThought(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Spawning player thought." << std::endl;
+    auto str = data;
+    std::replace(str.begin(), str.end(), '$', '\n');
+    Game::get().spawnThought(&Game::get().getPlayer(), str);
 }

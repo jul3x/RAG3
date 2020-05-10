@@ -336,7 +336,7 @@ void Game::killNPC(NPC* npc)
 
     if (npc->getActivation() == "OnKill")
     {
-        npc->use(player_.get());
+        npc->use(npc);
     }
 }
 

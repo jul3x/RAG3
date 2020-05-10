@@ -226,8 +226,8 @@ barrel 2895.78 1509.29 747 OnKill [Explode] [200.0f]
 barrel 2605.82 1507.41 748 OnKill [Explode] [200.0f]
 
 characters: 
-standard 4200 4800 231 OnKill [SpawnThought] [Die_motherfucker,_die!] []
-standard 5700 6700 233 OnKill [SpawnAmmo] [heavy] []
+standard 4200 4800 231 OnKill [SpawnPlayerThought] [Die_motherfucker,_die!] []
+standard 5700 6700 233 OnKill [SpawnAmmo;SpawnThought] [heavy;Nooo....] []
 standard 5900 5900 234 OnKill [SpawnAmmo] [heavy] []
 standard 6900 4600 235 OnKill [SpawnAmmo] [heavy] []
 standard 5000 5400 236 OnKill [SpawnAmmo] [heavy] []

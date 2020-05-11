@@ -99,7 +99,7 @@ protected:
     virtual void handleGlobalState(float time_elapsed);
 
     std::vector<std::shared_ptr<AbstractWeapon>> weapons_in_backpack_;
-    std::vector<std::shared_ptr<AbstractWeapon>>::iterator current_weapon_;
+    size_t current_weapon_;
 
     LifeState life_state_;
     AmmoState ammo_state_;

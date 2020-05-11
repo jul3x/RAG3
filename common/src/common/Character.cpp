@@ -64,7 +64,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
             weapons_in_backpack_.push_back(std::make_shared<ShootingWeapon>(weapon));
     }
 
-    current_weapon_ = weapons_in_backpack_.begin();
+    current_weapon_ = 0;
 
     if (is_talkable_)
     {
@@ -74,7 +74,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
 
 bool Character::shot()
 {
-    auto new_velocity = (*current_weapon_)->use();
+    auto new_velocity = weapons_in_backpack_.at(current_weapon_)->use();
 
     if (!utils::num::isNearlyEqual(new_velocity, {0.0f, 0.0f}))
     {
@@ -97,17 +97,16 @@ void Character::getShot(const Bullet& bullet)
 
 int Character::getCurrentWeapon() const
 {
-    return static_cast<int>(std::distance<std::vector<std::shared_ptr<AbstractWeapon>>::const_iterator>(
-            this->weapons_in_backpack_.begin(), this->current_weapon_));
+    return current_weapon_;
 }
 
 void Character::makeOnlyOneWeapon(const std::string& id, float state)
 {
     weapons_in_backpack_.clear();
     weapons_in_backpack_.emplace_back(std::make_shared<ShootingWeapon>(id));
-    current_weapon_ = weapons_in_backpack_.begin();
+    current_weapon_ = 0;
 
-    (*current_weapon_)->setState(state);
+    weapons_in_backpack_.at(current_weapon_)->setState(state);
 }
 
 void Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
@@ -121,8 +120,7 @@ void Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
             return;
         }
     }
-
-    // If there is less than 4 weapons in backpack
+    // If there are less than 4 weapons in backpack
     for (auto &weapon : weapons_in_backpack_)
     {
         if (weapon->getId().empty())
@@ -173,24 +171,22 @@ Character::LifeState Character::getLifeState() const
 
 void Character::switchWeapon(int relative_position_backpack)
 {
-    current_weapon_ = current_weapon_ + relative_position_backpack;
+    auto new_weapon = static_cast<int>(current_weapon_ - relative_position_backpack);
 
-    if (current_weapon_ >= weapons_in_backpack_.end())
-    {
-        current_weapon_ = weapons_in_backpack_.begin();
-    }
+    if (new_weapon < 0)
+        new_weapon = weapons_in_backpack_.size() - 1;
 
-    if (current_weapon_ < weapons_in_backpack_.begin())
-    {
-        current_weapon_ = weapons_in_backpack_.end() - 1;
-    }
+    if (new_weapon >= weapons_in_backpack_.size())
+        new_weapon = 0;
+
+    current_weapon_ = new_weapon;
 }
 
 bool Character::update(float time_elapsed)
 {
     bool is_alive = life_ > 0;
     DynamicObject::update(time_elapsed);
-    (*current_weapon_)->update(time_elapsed);
+    weapons_in_backpack_.at(current_weapon_)->update(time_elapsed);
 
     if (decorator_ != nullptr)
         decorator_->updateAnimation(time_elapsed);
@@ -233,12 +229,12 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
         target.draw(*decorator_, states);
 
     if (!weapons_in_backpack_.empty())
-        target.draw(**current_weapon_, states);
+        target.draw(*weapons_in_backpack_.at(current_weapon_), states);
 }
 
 void Character::setRotation(float theta)
 {
-    (*current_weapon_)->setRotation(theta);
+    weapons_in_backpack_.at(current_weapon_)->setRotation(theta);
 
     auto get_quarter = [](float theta) {
         if (theta >= 0.0f && theta < 90.0f)
@@ -312,7 +308,7 @@ void Character::setRotation(float theta)
 void Character::setPosition(const sf::Vector2f& pos)
 {
     AbstractDrawableObject::setPosition(pos);
-    (*current_weapon_)->setPosition(pos + sf::Vector2f{gun_offset_.x, gun_offset_.y});
+    weapons_in_backpack_.at(current_weapon_)->setPosition(pos + sf::Vector2f{gun_offset_.x, gun_offset_.y});
 
     if (decorator_ != nullptr)
         decorator_->setPosition(pos);
@@ -324,7 +320,7 @@ void Character::setPosition(const sf::Vector2f& pos)
 void Character::setPosition(float x, float y)
 {
     AbstractDrawableObject::setPosition(x, y);
-    (*current_weapon_)->setPosition(x + gun_offset_.x, y + gun_offset_.y);
+    weapons_in_backpack_.at(current_weapon_)->setPosition(x + gun_offset_.x, y + gun_offset_.y);
 
     if (decorator_ != nullptr)
         decorator_->setPosition(x, y);
@@ -336,7 +332,7 @@ void Character::setPosition(float x, float y)
 void Character::setPositionX(float x)
 {
     AbstractDrawableObject::setPositionX(x);
-    (*current_weapon_)->setPositionX(x + gun_offset_.x);
+    weapons_in_backpack_.at(current_weapon_)->setPositionX(x + gun_offset_.x);
 
     if (decorator_ != nullptr)
         decorator_->setPositionX(x);
@@ -348,7 +344,7 @@ void Character::setPositionX(float x)
 void Character::setPositionY(float y)
 {
     AbstractDrawableObject::setPositionY(y);
-    (*current_weapon_)->setPositionY(y + gun_offset_.y);
+    weapons_in_backpack_.at(current_weapon_)->setPositionY(y + gun_offset_.y);
 
     if (decorator_ != nullptr)
         decorator_->setPositionY(y);
@@ -407,9 +403,9 @@ void Character::handleLifeState()
 
 void Character::handleAmmoState()
 {
-    if ((*current_weapon_)->getState() > 0.7)
+    if (weapons_in_backpack_.at(current_weapon_)->getState() > 0.7)
         ammo_state_ = AmmoState::High;
-    else if ((*current_weapon_)->getState() > 0.0)
+    else if (weapons_in_backpack_.at(current_weapon_)->getState() > 0.0)
         ammo_state_ = AmmoState::Low;
     else
         ammo_state_ = AmmoState::Zero;
@@ -434,7 +430,7 @@ void Character::handleGlobalState(float time_elapsed)
 
 float Character::getRotation() const
 {
-    return (*current_weapon_)->getRotation();
+    return weapons_in_backpack_.at(current_weapon_)->getRotation();
 }
 
 Character::GlobalState Character::getGlobalState() const
@@ -503,6 +499,7 @@ bool Character::talk(const std::function<void(Character*, const std::string&)> &
         talking_func_ = talking_func;
         talk_scenario_.pop_front();
 
+        should_respond_ = true;
         should_respond_ = true;
         talking_time_elapsed_ = CFG.get<float>("characters/talking_respond_time");
     }

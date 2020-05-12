@@ -25,6 +25,8 @@ void Game::initialize()
                                          std::placeholders::_3);
     spawning_func_["fire"] = std::bind(&Game::spawnFire, this, std::placeholders::_1, std::placeholders::_2,
                                        std::placeholders::_3);
+    spawning_func_["Null"] = std::bind(&Game::spawnNull, this, std::placeholders::_1, std::placeholders::_2,
+                                       std::placeholders::_3);
 
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     ui_ = std::make_unique<UserInterface>();
@@ -990,4 +992,9 @@ Fire* Game::spawnNewFire(const sf::Vector2f& pos, float dir)
     engine_->registerHoveringObject(ptr);
 
     return ptr;
+}
+
+void Game::spawnNull(const std::string& name, const sf::Vector2f& pos, float dir)
+{
+
 }

@@ -8,6 +8,7 @@
 
 #include <common/ResourceManager.h>
 
+#include <common/MeleeWeapon.h>
 #include <common/ShootingWeapon.h>
 #include <ui/WeaponsBar.h>
 
@@ -40,15 +41,19 @@ void WeaponsBar::update(const std::vector<std::shared_ptr<AbstractWeapon>>& weap
     {
         auto mod_i = (curr_weapon + i) % weapons.size();
         auto weapon_cast = dynamic_cast<ShootingWeapon*>(weapons.at(mod_i).get());
+        auto melee_cast = dynamic_cast<MeleeWeapon*>(weapons.at(mod_i).get());
         auto size = i == 0 ? sf::Vector2f(CHOSEN_WEAPON_SIZE_X_, CHOSEN_WEAPON_SIZE_Y_) :
                     sf::Vector2f(WEAPON_SIZE_X_, WEAPON_SIZE_Y_);
 
+        auto weapon_pos = base_position + weapons_positions_.at(i) * CFG.get<float>("graphics/user_interface_zoom");
+        if (weapon_cast != nullptr || melee_cast != nullptr)
+        {
+            weapons_.emplace_back(weapon_pos, size * CFG.get<float>("graphics/user_interface_zoom"),
+                                  &RM.getTexture("specials/" + weapons.at(mod_i)->getId()));
+        }
+
         if (weapon_cast != nullptr)
         {
-            auto weapon_pos = base_position + weapons_positions_.at(i) * CFG.get<float>("graphics/user_interface_zoom");
-            weapons_.emplace_back(weapon_pos, size * CFG.get<float>("graphics/user_interface_zoom"),
-                                  &RM.getTexture("specials/" + weapon_cast->getId()));
-
             ammo_quantity_.at(i).setState(weapon_cast->getAmmunition());
 
             ammo_.at(i).setString(std::to_string(static_cast<int>(std::round(ammo_quantity_.at(i).getState()))));

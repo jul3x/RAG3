@@ -40,6 +40,8 @@ namespace r3e {
         virtual void setVisibility(const sf::View& view);
         virtual void setColor(int r, int g, int b, int a);
         virtual void setCurrentFrame(short int frame);
+        virtual void setFlipX(bool flip);
+        virtual void setFlipY(bool flip);
 
         virtual void changeTexture(sf::Texture* texture, bool reset = false);
         virtual void changeTextureRect(const sf::IntRect &rect);
@@ -59,6 +61,8 @@ namespace r3e {
         sf::RectangleShape shape_;
         bool is_visible_;
         bool is_active_;
+        bool is_flipped_x_;
+        bool is_flipped_y_;
         int z_index_;
 
     private:

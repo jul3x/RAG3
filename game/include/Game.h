@@ -86,6 +86,7 @@ public:
     void spawnFadeInOut();
 
     // Spawn objects for journal
+    void spawnNull(const std::string& name, const sf::Vector2f& pos, float dir);
     void spawnFire(const std::string& name, const sf::Vector2f& pos, float dir);
     void spawnBullet(const std::string& name, const sf::Vector2f& pos, float dir);
     void spawnSpecial(const sf::Vector2f& pos, const std::string& name);

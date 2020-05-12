@@ -10,6 +10,7 @@
 #include <common/Character.h>
 #include <common/NoWeapon.h>
 #include <common/ShootingWeapon.h>
+#include <common/MeleeWeapon.h>
 
 
 Character::Character(const sf::Vector2f& position, const std::string& id, int u_id) :
@@ -60,6 +61,8 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
     {
         if (weapon == "Null")
             weapons_in_backpack_.push_back(std::make_shared<NoWeapon>());
+        else if (weapon.length() >= 5 && weapon.substr(0, 5) == "melee")
+            weapons_in_backpack_.push_back(std::make_shared<MeleeWeapon>(weapon));
         else
             weapons_in_backpack_.push_back(std::make_shared<ShootingWeapon>(weapon));
     }
@@ -258,6 +261,8 @@ void Character::setRotation(float theta)
             gun_offset_.x = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
+            weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
+
             if (new_quarter == 2 && theta >= 90.0f + Character::ROTATING_HYSTERESIS_)
                 current_rotation_quarter_ = 2;
             else if (new_quarter != 2)
@@ -270,6 +275,8 @@ void Character::setRotation(float theta)
             gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
+            weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
+
             if (new_quarter == 1 && theta < 90.0f - Character::ROTATING_HYSTERESIS_)
                 current_rotation_quarter_ = 1;
             else if (new_quarter != 1)
@@ -278,9 +285,12 @@ void Character::setRotation(float theta)
         }
         case 3:
         {
+
             shape_.setTexture(&RM.getTexture("characters/" + this->getId() + "_3"));
             gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
+
+            weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
 
             if (new_quarter == 4 && theta >= 270.0f + Character::ROTATING_HYSTERESIS_)
                 current_rotation_quarter_ = 4;
@@ -293,6 +303,8 @@ void Character::setRotation(float theta)
             shape_.setTexture(&RM.getTexture("characters/" + this->getId() + "_4"));
             gun_offset_.x = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
+
+            weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
 
             if (new_quarter == 3 && theta < 270.0f - Character::ROTATING_HYSTERESIS_)
                 current_rotation_quarter_ = 3;

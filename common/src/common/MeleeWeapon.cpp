@@ -3,6 +3,8 @@
 // Created by jul3x on 12.05.20.
 //
 
+#include <R3E/system/Config.h>
+
 #include <common/ResourceManager.h>
 #include <common/MeleeWeapon.h>
 
@@ -21,6 +23,8 @@ MeleeWeapon::MeleeWeapon(const std::string& id) :
                                     utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_y")) / 2.0f +
                        sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "offset_x"),
                                     utils::j3x::get<float>(RM.getObjectParams("weapons", id), "offset_y")));
+
+    area_ = std::make_unique<MeleeWeaponArea>(this, CFG.get<float>("melee_weapon_range"));
 }
 
 sf::Vector2f MeleeWeapon::use()
@@ -48,4 +52,44 @@ float MeleeWeapon::getState() const
 
 void MeleeWeapon::setState(float state)
 {
+}
+
+MeleeWeaponArea* MeleeWeapon::getMeleeWeaponArea() const
+{
+    return area_.get();
+}
+
+void MeleeWeapon::setPosition(const sf::Vector2f& position)
+{
+    AbstractDrawableObject::setPosition(position);
+    auto radians = this->getRotation() * M_PI / 180.0f;
+    area_->setPosition(position +
+        CFG.get<float>("melee_weapon_offset_x") * sf::Vector2f{static_cast<float>(std::cos(radians)),
+                                                               static_cast<float>(std::sin(radians))});
+}
+
+void MeleeWeapon::setPosition(float x, float y)
+{
+    this->setPosition({x, y});
+}
+
+void MeleeWeapon::setPositionX(float x)
+{
+    this->setPosition({x, this->getPosition().y});
+}
+
+void MeleeWeapon::setPositionY(float y)
+{
+    this->setPosition({this->getPosition().x, y});
+}
+
+void MeleeWeapon::setRotation(float angle)
+{
+    AbstractDrawableObject::setRotation(angle);
+}
+
+void MeleeWeapon::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+    target.draw(shape_, states);
+    target.draw(*area_, states);
 }

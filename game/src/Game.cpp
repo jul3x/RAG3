@@ -7,10 +7,12 @@
 #include <R3E/utils/Geometry.h>
 
 #include <common/ResourceManager.h>
+#include <common/MeleeWeapon.h>
 
 #include <events/Event.h>
 
 #include <Game.h>
+
 
 
 Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal)
@@ -99,9 +101,18 @@ void Game::initialize()
         for (auto& weapon : character->getWeapons())
         {
             if (!weapon->getId().empty())
+            {
                 weapon->registerSpawningFunction(
-                        this->getSpawningFunction(utils::j3x::get<std::string>(RM.getObjectParams("weapons",
-                                weapon->getId()), "spawn_func")));
+                        this->getSpawningFunction(utils::j3x::get<std::string>(
+                                RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
+
+                auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+
+                if (melee_weapon != nullptr)
+                {
+                    engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
+                }
+            }
         }
 
         auto talkable_area = character->getTalkableArea();
@@ -118,6 +129,13 @@ void Game::initialize()
             weapon->registerSpawningFunction(
                     this->getSpawningFunction(utils::j3x::get<std::string>(
                             RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
+
+        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+
+        if (melee_weapon != nullptr)
+        {
+            engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
+        }
     }
 
     for (auto& weapon : map_->getList<PlacedWeapon>())
@@ -334,6 +352,16 @@ void Game::killNPC(NPC* npc)
     if (talkable_area != nullptr)
     {
         engine_->deleteHoveringObject(talkable_area);
+    }
+
+    for (auto& weapon : npc->getWeapons())
+    {
+        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+
+        if (melee_weapon != nullptr)
+        {
+            engine_->deleteHoveringObject(melee_weapon->getMeleeWeaponArea());
+        }
     }
 
     if (npc->getActivation() == "OnKill")
@@ -618,6 +646,14 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     {
         character->setGlobalState(Character::GlobalState::OnFire);
     }
+
+    auto melee_weapon_area = dynamic_cast<MeleeWeaponArea*>(h_obj);
+
+    if (character != nullptr && melee_weapon_area != nullptr)
+    {
+        //character->setGlobalState(Character::GlobalState::OnFire);
+        spawnSparksEvent(character->getPosition(), 0.0f, 100.0f);
+    }
 }
 
 void Game::alertCollision(DynamicObject* d_obj, StaticObject* s_obj)
@@ -667,6 +703,13 @@ NPC* Game::spawnNewNPC(const std::string& id)
             weapon->registerSpawningFunction(
                     this->getSpawningFunction(utils::j3x::get<std::string>(
                             RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
+
+        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+
+        if (melee_weapon != nullptr)
+        {
+            engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
+        }
     }
 
     for (const auto& function : ptr->getFunctions())
@@ -711,6 +754,13 @@ NPC* Game::spawnNewPlayerClone()
             weapon->registerSpawningFunction(
                     std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
                               std::placeholders::_3));
+
+        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+
+        if (melee_weapon != nullptr)
+        {
+            engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
+        }
     }
 
     return player_clone_.get();
@@ -721,6 +771,17 @@ void Game::cleanPlayerClone()
     for (auto& enemy : map_->getList<NPC>())
     {
         enemy->removeEnemy(player_clone_.get());
+    }
+
+
+    for (auto& weapon : player_clone_->getWeapons())
+    {
+        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+
+        if (melee_weapon != nullptr)
+        {
+            engine_->deleteHoveringObject(melee_weapon->getMeleeWeaponArea());
+        }
     }
 
     engine_->deleteDynamicObject(player_clone_.get());

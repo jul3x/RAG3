@@ -92,7 +92,7 @@ public:
 
     bool update(float time_elapsed) override;
     void getShot(const Bullet& bullet) override;
-    void getCut(const MeleeWeapon& weapon);
+    virtual void getCut(const MeleeWeapon& weapon);
     bool talk(const std::function<void(Character*, const std::string&)>& talking_func, Character* character);
 
 protected:

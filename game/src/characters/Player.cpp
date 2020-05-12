@@ -88,3 +88,11 @@ void Player::handleGlobalState(float time_elapsed)
             break;
     }
 }
+
+void Player::getCut(const MeleeWeapon& weapon)
+{
+    if (!CFG.get<int>("god_mode"))
+    {
+        Character::getCut(weapon);
+    }
+}

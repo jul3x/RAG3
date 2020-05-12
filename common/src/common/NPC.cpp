@@ -14,6 +14,7 @@
 
 #include <common/NoWeapon.h>
 #include <common/ShootingWeapon.h>
+#include <R3E/system/Config.h>
 
 
 NPC::NPC(const sf::Vector2f& position, const std::string& id, int u_id) :
@@ -35,6 +36,10 @@ NPC::NPC(const sf::Vector2f& position, const std::string& id,
     if (utils::j3x::get<std::string>(RM.getObjectParams("characters", id), "ai_type") == "Standard")
     {
         ai_function_ = &NPC::standardAI;
+    }
+    else if (utils::j3x::get<std::string>(RM.getObjectParams("characters", id), "ai_type") == "MeleeAttack")
+    {
+        ai_function_ = &NPC::meleeAttackAI;
     }
     else
     {
@@ -377,4 +382,79 @@ void NPC::standardAI(float time_elapsed)
 void NPC::noneAI(float time_elapsed)
 {
     // none
+}
+
+void NPC::meleeAttackAI(float time_elapsed)
+{
+    handleActionMeleeState();
+
+    auto& enemy_position = current_enemy_->getPosition();
+    auto velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") * this->generateVelocityForPath();
+
+    switch (action_state_)
+    {
+        case ActionState::StandBy:
+        {
+            velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed") * this->getWanderingDirection(0.2f, 100.0f, 20);
+
+            this->setNoGoal();
+            this->setWeaponPointing(this->getPosition() + velocity);
+            break;
+        }
+        case ActionState::Follow:
+
+        {
+            this->setWeaponPointing(enemy_position);
+            this->setCurrentGoal(enemy_position);
+            this->setWeaponPointing(this->getPosition() + velocity);
+            break;
+        }
+        case ActionState::Shot:
+        {
+            this->setWeaponPointing(enemy_position);
+            this->setNoGoal();
+            std::cout << "DAWAJ GO KUIRWA" << std::endl;
+            if (this->isAlreadyRotated())
+                this->shot();
+
+            break;
+        }
+    }
+
+    if (utils::num::isNearlyEqual(velocity, {0.0f, 0.0f}) &&
+        action_state_ != ActionState::Shot && action_state_ != ActionState::DestroyWall)
+    {
+        velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed") *
+                   this->getWanderingDirection(0.2f, 100.0f, 20);
+        this->setWeaponPointing(this->getPosition() + velocity);
+    }
+
+    this->setVelocity(velocity);
+}
+
+void NPC::handleActionMeleeState()
+{
+    switch (visibility_state_)
+    {
+        case VisibilityState::Close:
+        {
+            if (utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition()) <
+                    CFG.get<float>("characters/min_melee_distance_ai"))
+                action_state_ = ActionState::Shot;
+            else
+                action_state_ = ActionState::Follow;
+            break;
+        }
+        case VisibilityState::Far:
+        case VisibilityState::TooFar:
+        {
+            action_state_ = ActionState::Follow;
+            break;
+        }
+        case VisibilityState::OutOfRange:
+        {
+            action_state_ = ActionState::StandBy;
+            break;
+        }
+    }
 }

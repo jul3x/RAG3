@@ -54,9 +54,11 @@ protected:
     void handleEnemySelection();
     void handleVisibilityState();
     void handleActionState();
+    void handleActionMeleeState();
 
     void standardAI(float time_elapsed);
     void noneAI(float time_elapsed);
+    void meleeAttackAI(float time_elapsed);
 
     sf::Vector2f findNearestSafeSpot(const sf::Vector2f& direction) const;
 

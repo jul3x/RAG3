@@ -30,4 +30,4 @@ float sparks_size_factor=30000.0f
 float inertial_states_change_speed=4.0f
 
 float achievement_show_speed=4.0f
-float achievement_show_time=20.0f
+float achievement_show_time=10.0f

@@ -6,3 +6,5 @@ float ammo_drop_offset=40.0f
 
 float talkable_distance=200.0f
 float talking_respond_time=1.5f
+
+float min_melee_distance_ai=150.0f

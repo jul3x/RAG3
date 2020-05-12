@@ -34,7 +34,7 @@ using namespace r3e;
 class Game : public AbstractGame {
 
 public:
-    using SpawningFunction = std::function<void(const std::string&, const sf::Vector2f&, float)>;
+    using SpawningFunction = std::function<void(Character*, const std::string&, const sf::Vector2f&, float)>;
 
     enum class GameState
     {
@@ -86,8 +86,9 @@ public:
     void spawnFadeInOut();
 
     // Spawn objects for journal
-    void spawnFire(const std::string& name, const sf::Vector2f& pos, float dir);
-    void spawnBullet(const std::string& name, const sf::Vector2f& pos, float dir);
+    void spawnNull(Character* user, const std::string& name, const sf::Vector2f& pos, float dir);
+    void spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir);
+    void spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir);
     void spawnSpecial(const sf::Vector2f& pos, const std::string& name);
 
     // UI functions
@@ -102,8 +103,8 @@ public:
     void findAndDeleteBullet(Bullet* ptr);
     void findAndDeleteDecoration(Decoration* ptr);
 
-    Fire* spawnNewFire(const sf::Vector2f& pos, float dir);
-    Bullet* spawnNewBullet(const std::string& id, const sf::Vector2f& pos, float dir);
+    Fire* spawnNewFire(Character* user, const sf::Vector2f& pos, float dir);
+    Bullet* spawnNewBullet(Character* user, const std::string& id, const sf::Vector2f& pos, float dir);
     Obstacle* spawnNewObstacle(const std::string& id, const sf::Vector2f& pos);
     ObstacleTile* spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos);
 

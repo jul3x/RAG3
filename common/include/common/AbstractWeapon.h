@@ -15,27 +15,33 @@
 
 using namespace r3e;
 
+class Character;
+
 class AbstractWeapon : public AbstractDrawableObject, public Identifiable {
 public:
-    AbstractWeapon(const sf::Vector2f& size,
+    AbstractWeapon(Character* user,
+                   const sf::Vector2f& size,
                    const sf::Vector2f& weapon_offset,
                    const std::string& name);
 
-    void registerSpawningFunction(std::function<void(const std::string&, const sf::Vector2f&, float)> func);
+    void
+    registerSpawningFunction(std::function<void(Character*, const std::string&, const sf::Vector2f&, float)> func);
 
     virtual sf::Vector2f use() = 0;
     virtual float getState() const = 0;
     virtual void setState(float state) = 0;
 
     const sf::Vector2f& getWeaponOffset() const;
-
+    Character* getUser() const;
     virtual void update(float time_elapsed);
 
 protected:
+    Character* user_;
+
     sf::Vector2f weapon_offset_;
     float time_elapsed_;
 
-    std::function<void(const std::string&, const sf::Vector2f&, float)> spawning_function_;
+    std::function<void(Character*, const std::string&, const sf::Vector2f&, float)> spawning_function_;
 
 };
 

@@ -23,6 +23,7 @@ public:
 
     bool isAlive() const;
     void getShot(const Bullet& bullet) override;
+    void getCut(const MeleeWeapon& weapon) override;
     float getMaxTimeManipulation() const;
 
     bool sideStep(Player::SideStepDir dir);

@@ -1,10 +1,8 @@
-float max_speed=500.0f
-float max_running_speed=800.0f
+float max_speed=200.0f
 
 float standby_speed=100.0f
-float side_step_speed=1000.0f
 
-float max_health=160
+float max_health=20
 
 float size_x=49.0f
 float size_y=129.0f
@@ -19,16 +17,16 @@ float gun_offset_x=20.0f
 float gun_offset_y=-25.0f
 
 int frames_number=4
-float frame_duration=0.05f
+float frame_duration=0.07f
 
 string default_activation=OnKill
 list[string] default_functions=[Null]
 list[string] default_datas=[Null]
 
-string ai_type=Standard
+string ai_type=MeleeAttack
 
 int z_index=1
 
-list[string] weapons=[flamethrower;melee_axe;Null;Null]
+list[string] weapons=[melee_claw]
 
 bool is_talkable=0

@@ -8,12 +8,14 @@
 #include <utility>
 
 
-AbstractWeapon::AbstractWeapon(const sf::Vector2f& size,
+AbstractWeapon::AbstractWeapon(Character* user,
+                               const sf::Vector2f& size,
                                const sf::Vector2f& weapon_offset,
                                const std::string& name) :
         weapon_offset_(weapon_offset),
         time_elapsed_(0.0f),
         Identifiable(name),
+        user_(user),
         AbstractDrawableObject({}, size,
                                name.empty() ? nullptr : &RM.getTexture("weapons/" + name),
                                name.empty() ? 0 : utils::j3x::get<int>(RM.getObjectParams("weapons", name), "z_index"),
@@ -23,7 +25,8 @@ AbstractWeapon::AbstractWeapon(const sf::Vector2f& size,
 }
 
 
-void AbstractWeapon::registerSpawningFunction(std::function<void(const std::string&, const sf::Vector2f&, float)> func)
+void AbstractWeapon::registerSpawningFunction(
+        std::function<void(Character*, const std::string&, const sf::Vector2f&, float)> func)
 {
     spawning_function_ = std::move(func);
 }
@@ -36,4 +39,9 @@ const sf::Vector2f& AbstractWeapon::getWeaponOffset() const
 void AbstractWeapon::update(float time_elapsed)
 {
     time_elapsed_ -= time_elapsed;
+}
+
+Character* AbstractWeapon::getUser() const
+{
+    return user_;
 }

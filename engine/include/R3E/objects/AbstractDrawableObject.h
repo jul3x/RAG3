@@ -40,6 +40,8 @@ namespace r3e {
         virtual void setVisibility(const sf::View& view);
         virtual void setColor(int r, int g, int b, int a);
         virtual void setCurrentFrame(short int frame);
+        virtual void setFlipX(bool flip);
+        virtual void setFlipY(bool flip);
 
         virtual void changeTexture(sf::Texture* texture, bool reset = false);
         virtual void changeTextureRect(const sf::IntRect &rect);
@@ -48,6 +50,16 @@ namespace r3e {
         virtual bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f);
 
     protected:
+        sf::RectangleShape shape_;
+        bool is_visible_;
+        bool is_active_;
+        bool is_flipped_x_;
+        bool is_flipped_y_;
+        int z_index_;
+
+    private:
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
         float time_elapsed_;
         short int current_frame_;
         sf::Vector2i frame_size_;
@@ -55,14 +67,6 @@ namespace r3e {
 
         short int frames_number_;
         float frame_duration_;
-
-        sf::RectangleShape shape_;
-        bool is_visible_;
-        bool is_active_;
-        int z_index_;
-
-    private:
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     };
 

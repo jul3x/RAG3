@@ -92,6 +92,7 @@ private:
 
     std::string id_;
     float direction_;
+    Character* user_;
 
 };
 

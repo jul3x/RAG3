@@ -7,10 +7,12 @@
 #include <R3E/utils/Geometry.h>
 
 #include <common/ResourceManager.h>
+#include <common/MeleeWeapon.h>
 
 #include <events/Event.h>
 
 #include <Game.h>
+
 
 
 Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal)
@@ -22,9 +24,11 @@ Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal)
 void Game::initialize()
 {
     spawning_func_["bullet"] = std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
-                                         std::placeholders::_3);
+            std::placeholders::_3, std::placeholders::_4);
     spawning_func_["fire"] = std::bind(&Game::spawnFire, this, std::placeholders::_1, std::placeholders::_2,
-                                       std::placeholders::_3);
+                                       std::placeholders::_3, std::placeholders::_4);
+    spawning_func_["Null"] = std::bind(&Game::spawnNull, this, std::placeholders::_1, std::placeholders::_2,
+                                       std::placeholders::_3, std::placeholders::_4);
 
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     ui_ = std::make_unique<UserInterface>();
@@ -97,9 +101,18 @@ void Game::initialize()
         for (auto& weapon : character->getWeapons())
         {
             if (!weapon->getId().empty())
+            {
                 weapon->registerSpawningFunction(
-                        this->getSpawningFunction(utils::j3x::get<std::string>(RM.getObjectParams("weapons",
-                                weapon->getId()), "spawn_func")));
+                        this->getSpawningFunction(utils::j3x::get<std::string>(
+                                RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
+
+                auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+
+                if (melee_weapon != nullptr)
+                {
+                    engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
+                }
+            }
         }
 
         auto talkable_area = character->getTalkableArea();
@@ -116,6 +129,13 @@ void Game::initialize()
             weapon->registerSpawningFunction(
                     this->getSpawningFunction(utils::j3x::get<std::string>(
                             RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
+
+        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+
+        if (melee_weapon != nullptr)
+        {
+            engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
+        }
     }
 
     for (auto& weapon : map_->getList<PlacedWeapon>())
@@ -334,6 +354,16 @@ void Game::killNPC(NPC* npc)
         engine_->deleteHoveringObject(talkable_area);
     }
 
+    for (auto& weapon : npc->getWeapons())
+    {
+        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+
+        if (melee_weapon != nullptr)
+        {
+            engine_->deleteHoveringObject(melee_weapon->getMeleeWeaponArea());
+        }
+    }
+
     if (npc->getActivation() == "OnKill")
     {
         npc->use(npc);
@@ -472,9 +502,9 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, floa
         engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
 }
 
-void Game::spawnBullet(const std::string& name, const sf::Vector2f& pos, float dir)
+void Game::spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
-    auto ptr = this->spawnNewBullet(name, pos, dir);
+    auto ptr = this->spawnNewBullet(user, name, pos, dir);
     journal_->eventBulletSpawned(ptr);
     this->spawnShotEvent(name, pos, dir);
 }
@@ -563,14 +593,17 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     auto bullet = dynamic_cast<Bullet*>(h_obj);
     auto character = dynamic_cast<Character*>(d_obj);
 
-    if (bullet != nullptr)
+    if (bullet != nullptr && character != nullptr)
     {
-        character->getShot(*bullet);
-        spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                         static_cast<float>(std::pow(
-                                 CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+        if (bullet->getUser() != character)
+        {
+            character->getShot(*bullet);
+            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
+                             static_cast<float>(std::pow(
+                                     CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
-        bullet->setDead();
+            bullet->setDead();
+        }
         return;
     }
 
@@ -614,7 +647,21 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
 
     if (character != nullptr && fire != nullptr)
     {
-        character->setGlobalState(Character::GlobalState::OnFire);
+        if (fire->getUser() != character)
+            character->setGlobalState(Character::GlobalState::OnFire);
+    }
+
+    auto melee_weapon_area = dynamic_cast<MeleeWeaponArea*>(h_obj);
+
+    if (character != nullptr && melee_weapon_area != nullptr)
+    {
+        //character->setGlobalState(Character::GlobalState::OnFire);
+        if (character != melee_weapon_area->getFather()->getUser())
+        {
+            spawnSparksEvent(character->getPosition(), 0.0f, 100.0f);
+            melee_weapon_area->setActive(false);
+            character->getCut(*melee_weapon_area->getFather());
+        }
     }
 }
 
@@ -628,9 +675,9 @@ void Game::alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2)
     // Nothing to do for now (maybe sounds?)
 }
 
-Bullet* Game::spawnNewBullet(const std::string& id, const sf::Vector2f& pos, float dir)
+Bullet* Game::spawnNewBullet(Character* user, const std::string& id, const sf::Vector2f& pos, float dir)
 {
-    bullets_.emplace_back(std::make_unique<Bullet>(pos, id, dir));
+    bullets_.emplace_back(std::make_unique<Bullet>(user, pos, id, dir));
 
     auto ptr = bullets_.back().get();
 
@@ -665,6 +712,13 @@ NPC* Game::spawnNewNPC(const std::string& id)
             weapon->registerSpawningFunction(
                     this->getSpawningFunction(utils::j3x::get<std::string>(
                             RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
+
+        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+
+        if (melee_weapon != nullptr)
+        {
+            engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
+        }
     }
 
     for (const auto& function : ptr->getFunctions())
@@ -707,8 +761,15 @@ NPC* Game::spawnNewPlayerClone()
     {
         if (!weapon->getId().empty())
             weapon->registerSpawningFunction(
-                    std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
-                              std::placeholders::_3));
+                    this->getSpawningFunction(utils::j3x::get<std::string>(
+                            RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
+
+        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+
+        if (melee_weapon != nullptr)
+        {
+            engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
+        }
     }
 
     return player_clone_.get();
@@ -719,6 +780,16 @@ void Game::cleanPlayerClone()
     for (auto& enemy : map_->getList<NPC>())
     {
         enemy->removeEnemy(player_clone_.get());
+    }
+
+    for (auto& weapon : player_clone_->getWeapons())
+    {
+        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+
+        if (melee_weapon != nullptr)
+        {
+            engine_->deleteHoveringObject(melee_weapon->getMeleeWeaponArea());
+        }
     }
 
     engine_->deleteDynamicObject(player_clone_.get());
@@ -959,9 +1030,9 @@ const Game::SpawningFunction& Game::getSpawningFunction(const std::string& name)
     return it->second;
 }
 
-void Game::spawnFire(const std::string& name, const sf::Vector2f& pos, float dir)
+void Game::spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
-    auto ptr = this->spawnNewFire(pos, dir);
+    auto ptr = this->spawnNewFire(user, pos, dir);
     //journal_->eventBulletSpawned(ptr);
     //this->spawnShotEvent(name, pos, dir);
 }
@@ -981,13 +1052,18 @@ void Game::updateFire(float time_elapsed)
     }
 }
 
-Fire* Game::spawnNewFire(const sf::Vector2f& pos, float dir)
+Fire* Game::spawnNewFire(Character* user, const sf::Vector2f& pos, float dir)
 {
-    fire_.emplace_back(std::make_unique<Fire>(pos, dir));
+    fire_.emplace_back(std::make_unique<Fire>(user, pos, dir));
 
     auto ptr = fire_.back().get();
 
     engine_->registerHoveringObject(ptr);
 
     return ptr;
+}
+
+void Game::spawnNull(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
+{
+
 }

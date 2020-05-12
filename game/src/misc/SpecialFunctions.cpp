@@ -195,7 +195,7 @@ void SpecialFunctions::addWeapon(Functional* obj, const std::string& data, Chara
     auto data_parsed = data;
     std::replace(data_parsed.begin(), data_parsed.end(), ' ', '_');
 
-    std::shared_ptr<AbstractWeapon> weapon = std::make_shared<ShootingWeapon>(data_parsed);
+    std::shared_ptr<AbstractWeapon> weapon = std::make_shared<ShootingWeapon>(user, data_parsed);
 
     if (!weapon->getId().empty())
         weapon->registerSpawningFunction(

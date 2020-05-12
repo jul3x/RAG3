@@ -15,10 +15,12 @@
 
 using namespace r3e;
 
+class Character;
 
 class Bullet : public HoveringObject, public Functional {
 public:
-    Bullet(const sf::Vector2f& position,
+    Bullet(Character* user,
+           const sf::Vector2f& position,
            const std::string& id,
            float direction);
 
@@ -28,6 +30,8 @@ public:
 
     float getDeadlyFactor() const;
 
+    Character* getUser() const;
+
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
@@ -36,6 +40,8 @@ private:
 
     std::deque<sf::Vector2f> trail_;
     sf::Color trail_color_;
+
+    Character* user_;
 
     float trail_time_elapsed_;
     float life_;

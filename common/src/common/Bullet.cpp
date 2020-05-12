@@ -8,7 +8,8 @@
 #include <common/ResourceManager.h>
 
 
-Bullet::Bullet(const sf::Vector2f& position,
+Bullet::Bullet(Character* user,
+               const sf::Vector2f& position,
                const std::string& id,
                const float direction) :
         Functional(utils::j3x::get<std::string>(RM.getObjectParams("bullets", id), "default_activation"),
@@ -25,6 +26,7 @@ Bullet::Bullet(const sf::Vector2f& position,
                        &RM.getTexture("bullets/" + id),
                        utils::j3x::get<int>(RM.getObjectParams("bullets", id), "z_index"),
                        0, 0.0f, 0.0f),
+        user_(user),
         trail_color_(sf::Color(CFG.get<int>("graphics/trail_color"))),
         trail_time_elapsed_(0.0f),
         life_(utils::j3x::get<float>(RM.getObjectParams("bullets", id), "life")),
@@ -99,4 +101,9 @@ void Bullet::draw(sf::RenderTarget& target, sf::RenderStates states) const
     }
 
     target.draw(shape_, states);
+}
+
+Character* Bullet::getUser() const
+{
+    return user_;
 }

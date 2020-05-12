@@ -29,3 +29,6 @@ float fire_collision_offset=50.0f
 
 float explosion_hurt_factor=30.0f
 float explosion_velocity_factor=1000.0f
+
+float melee_weapon_range=40.0f
+float melee_weapon_offset_x=30.0f

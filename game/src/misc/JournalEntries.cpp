@@ -76,7 +76,8 @@ void BulletEntry::executeEntryReversal()
     new_ptr->setPosition(pos_);
 }
 
-DestroyBulletEntry::DestroyBulletEntry(Journal* father, Bullet* bullet) : JournalEntry(father), ptr_(bullet)
+DestroyBulletEntry::DestroyBulletEntry(Journal* father, Bullet* bullet) :
+        JournalEntry(father), ptr_(bullet), user_(bullet->getUser())
 {
     id_ = bullet->getId();
     direction_ = bullet->getRotation();
@@ -84,7 +85,8 @@ DestroyBulletEntry::DestroyBulletEntry(Journal* father, Bullet* bullet) : Journa
 
 void DestroyBulletEntry::executeEntryReversal()
 {
-    auto new_ptr = Game::get().spawnNewBullet(id_, {}, direction_);
+    auto new_user = father_->getUpdatedPtr(user_);
+    auto new_ptr = Game::get().spawnNewBullet(new_user, id_, {}, direction_);
     new_ptr->setRotation(direction_);
     father_->setUpdatedPtr(ptr_, new_ptr);
 }

@@ -19,6 +19,7 @@
 #include <common/Special.h>
 #include <common/Decoration.h>
 #include <common/TalkableArea.h>
+#include <common/MeleeWeapon.h>
 
 
 using namespace r3e;
@@ -91,6 +92,7 @@ public:
 
     bool update(float time_elapsed) override;
     void getShot(const Bullet& bullet) override;
+    virtual void getCut(const MeleeWeapon& weapon);
     bool talk(const std::function<void(Character*, const std::string&)>& talking_func, Character* character);
 
 protected:

@@ -28,7 +28,9 @@ namespace r3e {
             current_frame_(0),
             time_elapsed_(0.0f),
             animation_source_({0, 0}, frame_size_),
-            is_visible_(true)
+            is_visible_(true),
+            is_flipped_x_(false),
+            is_flipped_y_(false)
     {
         shape_.setPosition(position);
         shape_.setSize(size);
@@ -140,8 +142,8 @@ namespace r3e {
             current_frame_ -= frames_number_;
         }
 
-        animation_source_.left = frame_size_.x * current_frame_;
-        animation_source_.top = 0;
+        animation_source_.left = (is_flipped_x_ ? -1 : 1) * frame_size_.x * current_frame_;
+        animation_source_.top = (is_flipped_y_ ? frame_size_.y : 0);
 
         shape_.setTextureRect(animation_source_);
 
@@ -171,6 +173,28 @@ namespace r3e {
         }
 
         current_frame_ = frame;
+    }
+
+    void AbstractDrawableObject::setFlipX(bool flip)
+    {
+        is_flipped_x_ = flip;
+
+        animation_source_.left = (is_flipped_x_ ? -1 : 1) * frame_size_.x * current_frame_;
+        animation_source_.top = (is_flipped_y_ ? frame_size_.y : 0);
+        animation_source_.width = (is_flipped_x_ ? -frame_size_.x : frame_size_.x);
+        animation_source_.height = (is_flipped_y_ ? -frame_size_.y : frame_size_.y);
+        shape_.setTextureRect(animation_source_);
+    }
+
+    void AbstractDrawableObject::setFlipY(bool flip)
+    {
+        is_flipped_y_ = flip;
+
+        animation_source_.left = (is_flipped_x_ ? -1 : 1) * frame_size_.x * current_frame_;
+        animation_source_.top = (is_flipped_y_ ? frame_size_.y : 0);
+        animation_source_.width = (is_flipped_x_ ? -frame_size_.x : frame_size_.x);
+        animation_source_.height = (is_flipped_y_ ? -frame_size_.y : frame_size_.y);
+        shape_.setTextureRect(animation_source_);
     }
 
 } // namespace r3e

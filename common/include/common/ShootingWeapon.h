@@ -14,7 +14,7 @@
 
 class ShootingWeapon : public AbstractWeapon {
 public:
-    explicit ShootingWeapon(const std::string& id);
+    explicit ShootingWeapon(Character* user, const std::string& id);
 
     sf::Vector2f use() override;
 

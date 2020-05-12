@@ -17,7 +17,7 @@ PlacedWeapon::PlacedWeapon(const sf::Vector2f& position, float direction, const 
 
 PlacedWeapon::PlacedWeapon(const sf::Vector2f& position, float direction, const std::string& id,
                            const std::string& usage, float data, int u_id) :
-    ShootingWeapon(id),
+    ShootingWeapon(nullptr, id),
     Unique(u_id),
     data_(data),
     usage_str_(usage),

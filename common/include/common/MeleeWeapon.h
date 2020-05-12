@@ -37,6 +37,7 @@ public:
 private:
     std::unique_ptr<MeleeWeaponArea> area_;
 
+    float use_elapsed_;
     float use_timeout_;
     float reversed_recoil_;
     float deadly_factor_;

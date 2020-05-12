@@ -18,7 +18,8 @@ MeleeWeapon::MeleeWeapon(Character* user, const std::string& id) :
                        id),
         reversed_recoil_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "recoil")),
         use_timeout_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_timeout")),
-        deadly_factor_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "deadly_factor"))
+        deadly_factor_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "deadly_factor")),
+        use_elapsed_(0.0f)
 {
     this->changeOrigin(sf::Vector2f(0.0f,
                                     utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_y")) / 2.0f +
@@ -40,6 +41,7 @@ sf::Vector2f MeleeWeapon::use()
 
         area_->setActive(true);
 
+        use_elapsed_ = utils::j3x::get<float>(RM.getObjectParams("weapons", this->getId()), "use_time");
         time_elapsed_ = use_timeout_;
 
         return reversed_recoil_ * sf::Vector2f{cosine, sine};
@@ -95,12 +97,14 @@ void MeleeWeapon::update(float time_elapsed)
 {
     AbstractWeapon::update(time_elapsed);
 
-    if (time_elapsed_ > 0.0f)
+    use_elapsed_ -= time_elapsed;
+    if (use_elapsed_ >= 0.0f)
         updateAnimation(time_elapsed);
 
-    if (time_elapsed_ < 0 && time_elapsed_ > -10.0f)
+    if (use_elapsed_ < 0 && use_elapsed_ > -10.0f)
     {
-        time_elapsed_ = -100.0f;
+        setCurrentFrame(0);
+        use_elapsed_ = -100.0f;
         area_->setActive(false);
     }
 }

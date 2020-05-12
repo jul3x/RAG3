@@ -50,14 +50,6 @@ namespace r3e {
         virtual bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f);
 
     protected:
-        float time_elapsed_;
-        short int current_frame_;
-        sf::Vector2i frame_size_;
-        sf::IntRect animation_source_;
-
-        short int frames_number_;
-        float frame_duration_;
-
         sf::RectangleShape shape_;
         bool is_visible_;
         bool is_active_;
@@ -67,6 +59,14 @@ namespace r3e {
 
     private:
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+        float time_elapsed_;
+        short int current_frame_;
+        sf::Vector2i frame_size_;
+        sf::IntRect animation_source_;
+
+        short int frames_number_;
+        float frame_duration_;
 
     };
 

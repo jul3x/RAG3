@@ -14,7 +14,7 @@
 
 class MeleeWeapon : public AbstractWeapon {
 public:
-    explicit MeleeWeapon(const std::string& id);
+    explicit MeleeWeapon(Character* user, const std::string& id);
 
     sf::Vector2f use() override;
 
@@ -23,6 +23,7 @@ public:
     void setState(float state) override;
 
     MeleeWeaponArea* getMeleeWeaponArea() const;
+    float getDeadlyFactor() const;
 
     void setPosition(const sf::Vector2f& position) override;
     void setPosition(float x, float y) override;
@@ -31,14 +32,14 @@ public:
 
     void setRotation(float angle) override;
 
-private:
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    void update(float time_elapsed) override;
 
+private:
     std::unique_ptr<MeleeWeaponArea> area_;
 
-    float enabled_time_;
     float use_timeout_;
     float reversed_recoil_;
+    float deadly_factor_;
 
 };
 

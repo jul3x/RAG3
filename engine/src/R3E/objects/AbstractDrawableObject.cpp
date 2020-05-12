@@ -179,7 +179,7 @@ namespace r3e {
     {
         is_flipped_x_ = flip;
 
-        animation_source_.left = (is_flipped_x_ ? frame_size_.x : 0);
+        animation_source_.left = (is_flipped_x_ ? -1 : 1) * frame_size_.x * current_frame_;
         animation_source_.top = (is_flipped_y_ ? frame_size_.y : 0);
         animation_source_.width = (is_flipped_x_ ? -frame_size_.x : frame_size_.x);
         animation_source_.height = (is_flipped_y_ ? -frame_size_.y : frame_size_.y);
@@ -190,7 +190,7 @@ namespace r3e {
     {
         is_flipped_y_ = flip;
 
-        animation_source_.left = (is_flipped_x_ ? frame_size_.x : 0);
+        animation_source_.left = (is_flipped_x_ ? -1 : 1) * frame_size_.x * current_frame_;
         animation_source_.top = (is_flipped_y_ ? frame_size_.y : 0);
         animation_source_.width = (is_flipped_x_ ? -frame_size_.x : frame_size_.x);
         animation_source_.height = (is_flipped_y_ ? -frame_size_.y : frame_size_.y);

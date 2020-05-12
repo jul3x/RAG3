@@ -37,13 +37,4 @@ void MeleeWeaponArea::setActive(bool active)
 
 void MeleeWeaponArea::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    static sf::CircleShape circle_shape;
-    circle_shape.setFillColor(sf::Color::Red);
-
-    circle_shape.setOrigin(this->getCollisionArea().getA(), this->getCollisionArea().getA());
-    circle_shape.setRadius(this->getCollisionArea().getA());
-
-    circle_shape.setPosition(this->getPosition());
-
-    target.draw(circle_shape);
 }

@@ -62,9 +62,9 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
         if (weapon == "Null")
             weapons_in_backpack_.push_back(std::make_shared<NoWeapon>());
         else if (weapon.length() >= 5 && weapon.substr(0, 5) == "melee")
-            weapons_in_backpack_.push_back(std::make_shared<MeleeWeapon>(weapon));
+            weapons_in_backpack_.push_back(std::make_shared<MeleeWeapon>(this, weapon));
         else
-            weapons_in_backpack_.push_back(std::make_shared<ShootingWeapon>(weapon));
+            weapons_in_backpack_.push_back(std::make_shared<ShootingWeapon>(this, weapon));
     }
 
     current_weapon_ = 0;
@@ -98,6 +98,13 @@ void Character::getShot(const Bullet& bullet)
                             CFG.get<float>("get_shot_factor"));
 }
 
+void Character::getCut(const MeleeWeapon& weapon)
+{
+    //Engine::spawnBloodAnimation();
+    life_ -= weapon.getDeadlyFactor();
+    life_ = life_ < 0 ? 0 : life_;
+}
+
 int Character::getCurrentWeapon() const
 {
     return current_weapon_;
@@ -106,7 +113,7 @@ int Character::getCurrentWeapon() const
 void Character::makeOnlyOneWeapon(const std::string& id, float state)
 {
     weapons_in_backpack_.clear();
-    weapons_in_backpack_.emplace_back(std::make_shared<ShootingWeapon>(id));
+    weapons_in_backpack_.emplace_back(std::make_shared<ShootingWeapon>(this, id));
     current_weapon_ = 0;
 
     weapons_in_backpack_.at(current_weapon_)->setState(state);

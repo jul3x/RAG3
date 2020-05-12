@@ -13,16 +13,23 @@
 
 using namespace r3e;
 
+class Character;
+
 class Fire : public HoveringObject {
 public:
-    Fire(const sf::Vector2f& position,
+    Fire(Character* user,
+         const sf::Vector2f& position,
          float direction);
 
     bool update(float time_elapsed) override;
 
+    Character* getUser() const;
+
     void setDead();
 
 private:
+    Character* user_;
+
     sf::Color color_;
     float alpha_;
 

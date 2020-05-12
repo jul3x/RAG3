@@ -9,7 +9,7 @@
 #include <common/ShootingWeapon.h>
 
 
-ShootingWeapon::ShootingWeapon(const std::string& id) :
+ShootingWeapon::ShootingWeapon(Character* user, const std::string& id) :
         spawn_timeout_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_timeout")),
         recoil_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "recoil")),
         ammunition_(utils::j3x::get<int>(RM.getObjectParams("weapons", id), "max_ammo")),
@@ -17,7 +17,8 @@ ShootingWeapon::ShootingWeapon(const std::string& id) :
         spawn_type_(utils::j3x::get<std::string>(RM.getObjectParams("weapons", id), "spawn_type")),
         spawn_quantity_(utils::j3x::get<int>(RM.getObjectParams("weapons", id), "spawn_quantity")),
         spawn_angular_diff_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_angular_diff")),
-        AbstractWeapon({utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_x"),
+        AbstractWeapon(user,
+                       {utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_x"),
                         utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_y")},
                        {utils::j3x::get<float>(RM.getObjectParams("weapons", id), "offset_x"),
                         utils::j3x::get<float>(RM.getObjectParams("weapons", id), "offset_y")},
@@ -50,7 +51,7 @@ sf::Vector2f ShootingWeapon::use()
         {
             auto rotation = (primary_rotation + static_cast<float>(i) * spawn_angular_diff_) * M_PI / 180.0f;
 
-            spawning_function_(spawn_type_, offset_position, rotation);
+            spawning_function_(user_, spawn_type_, offset_position, rotation);
         }
 
         time_elapsed_ = spawn_timeout_;

@@ -9,15 +9,16 @@
 #include <common/MeleeWeapon.h>
 
 
-MeleeWeapon::MeleeWeapon(const std::string& id) :
-        AbstractWeapon({utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_x"),
+MeleeWeapon::MeleeWeapon(Character* user, const std::string& id) :
+        AbstractWeapon(user,
+                       {utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_x"),
                         utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_y")},
                        {utils::j3x::get<float>(RM.getObjectParams("weapons", id), "offset_x"),
                         utils::j3x::get<float>(RM.getObjectParams("weapons", id), "offset_y")},
                        id),
-        enabled_time_(0.0f),
         reversed_recoil_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "recoil")),
-        use_timeout_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_timeout"))
+        use_timeout_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_timeout")),
+        deadly_factor_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "deadly_factor"))
 {
     this->changeOrigin(sf::Vector2f(0.0f,
                                     utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_y")) / 2.0f +
@@ -35,7 +36,9 @@ sf::Vector2f MeleeWeapon::use()
         auto cosine = static_cast<float>(std::cos(this->getRotation() * M_PI / 180.0f));
         auto offset_position = this->getPosition();
 
-        spawning_function_("", offset_position, this->getRotation());
+        spawning_function_(user_, "", offset_position, this->getRotation());
+
+        area_->setActive(true);
 
         time_elapsed_ = use_timeout_;
 
@@ -88,8 +91,21 @@ void MeleeWeapon::setRotation(float angle)
     AbstractDrawableObject::setRotation(angle);
 }
 
-void MeleeWeapon::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void MeleeWeapon::update(float time_elapsed)
 {
-    target.draw(shape_, states);
-    target.draw(*area_, states);
+    AbstractWeapon::update(time_elapsed);
+
+    if (time_elapsed_ > 0.0f)
+        updateAnimation(time_elapsed);
+
+    if (time_elapsed_ < 0 && time_elapsed_ > -10.0f)
+    {
+        time_elapsed_ = -100.0f;
+        area_->setActive(false);
+    }
+}
+
+float MeleeWeapon::getDeadlyFactor() const
+{
+    return deadly_factor_;
 }

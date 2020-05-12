@@ -10,7 +10,8 @@
 
 
 
-Fire::Fire(const sf::Vector2f& position,
+Fire::Fire(Character* user,
+           const sf::Vector2f& position,
            const float direction) :
         HoveringObject(position, CFG.get<float>("fire_speed") * sf::Vector2f(std::cos(direction), std::sin(direction)),
                        CFG.get<float>("graphics/fire_image_size") * sf::Vector2f{1.0f, 1.0f},
@@ -21,6 +22,7 @@ Fire::Fire(const sf::Vector2f& position,
                        CFG.get<float>("fire_z_index"),
                        CFG.get<int>("graphics/fire_frames"),
                        CFG.get<float>("fire_life") / CFG.get<int>("graphics/fire_frames"), 0.0f),
+        user_(user),
         direction_(direction),
         color_(sf::Color(CFG.get<int>("graphics/fire_color"))),
         alpha_(255.0f),
@@ -59,4 +61,9 @@ bool Fire::update(float time_elapsed)
     life_ -= time_elapsed;
 
     return life_ > 0.0f;
+}
+
+Character* Fire::getUser() const
+{
+    return user_;
 }

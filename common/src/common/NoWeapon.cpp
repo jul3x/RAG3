@@ -6,7 +6,7 @@
 #include <common/NoWeapon.h>
 
 
-NoWeapon::NoWeapon() : AbstractWeapon({}, {}, "") {}
+NoWeapon::NoWeapon() : AbstractWeapon(nullptr, {}, {}, "") {}
 
 sf::Vector2f NoWeapon::use()
 {

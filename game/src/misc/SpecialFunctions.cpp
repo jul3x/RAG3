@@ -161,6 +161,8 @@ void SpecialFunctions::openDoor(Functional* obj, const std::string& data, Charac
 
         Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
     }
+
+    Game::get().getJournal().event<DoorOpen>(door);
 }
 
 void SpecialFunctions::changeOpenState(Functional* obj, const std::string& data, Character* user)
@@ -178,6 +180,8 @@ void SpecialFunctions::changeOpenState(Functional* obj, const std::string& data,
         special_obj->changeTexture(&RM.getTexture("specials/" + obj->getId() + "_open"));
         special_obj->setAdditionalBooleanData(true);
     }
+
+    Game::get().getJournal().event<ChangeOpenState>(special_obj);
 }
 
 void SpecialFunctions::readNote(Functional* obj, const std::string& data, Character* user)
@@ -373,6 +377,8 @@ void SpecialFunctions::activateWeapon(Functional* obj, const std::string& data, 
     auto weapon_id = std::stoi(data);
     auto weapon = Game::get().getMap().getObjectById<PlacedWeapon>(weapon_id);
     weapon->setActive(!weapon->getActive());
+
+    Game::get().getJournal().event<WeaponActivation>(weapon);
 }
 
 void SpecialFunctions::spawnPlayerThought(Functional* obj, const std::string& data, Character* user)

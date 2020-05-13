@@ -10,6 +10,7 @@
 #include <common/MeleeWeapon.h>
 
 #include <events/Event.h>
+#include <misc/JournalEntries.h>
 
 #include <Game.h>
 
@@ -220,7 +221,7 @@ void Game::updateMapObjects(float time_elapsed)
         bool do_increment = true;
         if (!(*it)->update(time_elapsed))
         {
-            journal_->eventObstacleTileDestroyed(it->get());
+            journal_->event<DestroyObstacleTile>(it->get());
             // draw on this place destruction
             spawnDecoration((*it)->getPosition(), "destroyed_wall");
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
@@ -246,7 +247,7 @@ void Game::updateMapObjects(float time_elapsed)
         (*it)->updateAnimation(time_elapsed);
         if (!(*it)->update(time_elapsed))
         {
-            journal_->eventObstacleDestroyed(it->get());
+            journal_->event<DestroyObstacle>(it->get());
 
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
 
@@ -313,7 +314,7 @@ void Game::updateMapObjects(float time_elapsed)
 
         if (!(*it)->isActive())
         {
-            journal_->eventDecorationDestroyed(it->get());
+            journal_->event<DestroyDecoration>(it->get());
             auto next_it = std::next(it);
 
             decorations.erase(it);
@@ -332,7 +333,7 @@ void Game::updateMapObjects(float time_elapsed)
 
 void Game::killNPC(NPC* npc)
 {
-    journal_->eventCharacterDestroyed(npc);
+    journal_->event<DestroyCharacter>(npc);
     stats_->killEnemy();
 
     if (player_clone_ != nullptr)
@@ -424,7 +425,7 @@ Stats& Game::getStats()
     return *stats_;
 }
 
-const Journal& Game::getJournal() const
+Journal& Game::getJournal() const
 {
     return *journal_;
 }
@@ -503,7 +504,7 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, floa
 void Game::spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
     auto ptr = this->spawnNewBullet(user, name, pos, dir);
-    journal_->eventBulletSpawned(ptr);
+    journal_->event<SpawnBullet>(ptr);
     this->spawnShotEvent(name, pos, dir);
 }
 
@@ -542,7 +543,7 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
     {
         if (obstacle != nullptr)
         {
-            journal_->eventObstacleShot(obstacle);
+            journal_->event<ShotObstacle>(obstacle);
             obstacle->getShot(*bullet);
 
             spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
@@ -553,7 +554,7 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
         }
         else if (obstacle_tile != nullptr)
         {
-            journal_->eventObstacleTileShot(obstacle_tile);
+            journal_->event<ShotObstacleTile>(obstacle_tile);
             obstacle_tile->getShot(*bullet);
 
             spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
@@ -567,12 +568,12 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
     {
         if (obstacle != nullptr)
         {
-            journal_->eventObstacleShot(obstacle);
+            journal_->event<ShotObstacle>(obstacle);
             explosion->applyForce(obstacle);
         }
         else if (obstacle_tile != nullptr)
         {
-            journal_->eventObstacleTileShot(obstacle_tile);
+            journal_->event<ShotObstacleTile>(obstacle_tile);
             explosion->applyForce(obstacle_tile);
         }
     }
@@ -690,7 +691,7 @@ Bullet* Game::spawnNewBullet(Character* user, const std::string& id, const sf::V
 void Game::spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
     auto ptr = this->spawnNewFire(user, pos, dir);
-    journal_->eventFireSpawned(ptr);
+    journal_->event<SpawnFire>(ptr);
 }
 
 void Game::updateFire(float time_elapsed)
@@ -700,7 +701,7 @@ void Game::updateFire(float time_elapsed)
         if (!(*it)->update(time_elapsed))
         {
             engine_->deleteHoveringObject(it->get());
-            journal_->eventFireDestroyed(it->get());
+            journal_->event<DestroyFire>(it->get());
             auto next_it = std::next(it);
             fire_.erase(it);
             it = next_it;
@@ -978,7 +979,7 @@ void Game::setGameState(Game::GameState state)
 
             camera_->setReverse();
             engine_->turnOffCollisions();
-            journal_->eventTimeReversal();
+            journal_->event<TimeReversal, void*>();
             break;
         case GameState::Paused:
             break;
@@ -1061,7 +1062,7 @@ void Game::updateBullets(float time_elapsed)
                 (*it)->use(player_.get());
             }
 
-            journal_->eventBulletDestroyed(it->get());
+            journal_->event<DestroyBullet>(it->get());
             engine_->deleteHoveringObject(it->get());
             auto next_it = std::next(it);
             bullets_.erase(it);
@@ -1100,5 +1101,5 @@ Decoration* Game::spawnNewDecoration(const std::string& id, const sf::Vector2f& 
 void Game::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
 {
     auto ptr = this->spawnNewDecoration(name, pos);
-    journal_->eventDecorationSpawned(ptr);
+    journal_->event<SpawnDecoration>(ptr);
 }

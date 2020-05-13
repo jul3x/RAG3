@@ -69,7 +69,7 @@ public:
     Player& getPlayer();
     Camera& getCamera();
     Stats& getStats();
-    [[nodiscard]] const Journal& getJournal() const;
+    [[nodiscard]] Journal& getJournal() const;
     [[nodiscard]] const std::list<std::unique_ptr<Bullet>>& getBullets() const;
     [[nodiscard]] const std::list<std::unique_ptr<Fire>>& getFires() const;
     [[nodiscard]] Special* getCurrentSpecialObject() const;

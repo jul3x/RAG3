@@ -6,6 +6,7 @@
 #define RAG3_GAME_INCLUDE_MISC_JOURNALENTRIES_H
 
 #include <common/Map.h>
+#include <common/Fire.h>
 
 
 using namespace r3e;
@@ -25,9 +26,9 @@ protected:
 
 };
 
-class TimeReversalEntry : public JournalEntry {
+class TimeReversal : public JournalEntry {
 public:
-    explicit TimeReversalEntry(Journal* father);
+    explicit TimeReversal(Journal* father, void* placeholder);
 
     void executeEntryReversal() override;
 private:
@@ -56,9 +57,9 @@ protected:
 };
 
 
-class DestroyCharacterEntry : public JournalEntry {
+class DestroyCharacter : public JournalEntry {
 public:
-    DestroyCharacterEntry(Journal* father, Character* ptr);
+    DestroyCharacter(Journal* father, Character* ptr);
 
     void executeEntryReversal() override;
 
@@ -88,9 +89,9 @@ private:
 
 };
 
-class DestroyBulletEntry : public JournalEntry {
+class DestroyBullet : public JournalEntry {
 public:
-    DestroyBulletEntry(Journal* father, Bullet* bullet);
+    DestroyBullet(Journal* father, Bullet* bullet);
 
     void executeEntryReversal() override;
 
@@ -104,9 +105,9 @@ private:
 
 };
 
-class SpawnBulletEntry : public JournalEntry {
+class SpawnBullet : public JournalEntry {
 public:
-    SpawnBulletEntry(Journal* father, Bullet* bullet);
+    SpawnBullet(Journal* father, Bullet* bullet);
 
     void executeEntryReversal() override;
 
@@ -130,9 +131,9 @@ private:
 
 };
 
-class DestroyFireEntry : public JournalEntry {
+class DestroyFire : public JournalEntry {
 public:
-    DestroyFireEntry(Journal* father, Fire* fire);
+    DestroyFire(Journal* father, Fire* fire);
 
     void executeEntryReversal() override;
 
@@ -145,9 +146,9 @@ private:
 
 };
 
-class SpawnFireEntry : public JournalEntry {
+class SpawnFire : public JournalEntry {
 public:
-    SpawnFireEntry(Journal* father, Fire* fire);
+    SpawnFire(Journal* father, Fire* fire);
 
     void executeEntryReversal() override;
 
@@ -156,9 +157,9 @@ private:
 
 };
 
-class DestroyObstacleEntry : public JournalEntry {
+class DestroyObstacle : public JournalEntry {
 public:
-    DestroyObstacleEntry(Journal* father, Obstacle* ptr);
+    DestroyObstacle(Journal* father, Obstacle* ptr);
 
     void executeEntryReversal() override;
 
@@ -173,9 +174,9 @@ private:
 
 };
 
-class ShotObstacleEntry : public JournalEntry {
+class ShotObstacle : public JournalEntry {
 public:
-    ShotObstacleEntry(Journal* father, Obstacle* obstacle);
+    ShotObstacle(Journal* father, Obstacle* obstacle);
 
     void executeEntryReversal() override;
 
@@ -186,9 +187,9 @@ private:
 
 };
 
-class DestroyObstacleTileEntry : public JournalEntry {
+class DestroyObstacleTile : public JournalEntry {
 public:
-    DestroyObstacleTileEntry(Journal* father, ObstacleTile* ptr);
+    DestroyObstacleTile(Journal* father, ObstacleTile* ptr);
 
     void executeEntryReversal() override;
 
@@ -200,9 +201,9 @@ private:
 
 };
 
-class ShotObstacleTileEntry : public JournalEntry {
+class ShotObstacleTile : public JournalEntry {
 public:
-    ShotObstacleTileEntry(Journal* father, ObstacleTile* obstacle);
+    ShotObstacleTile(Journal* father, ObstacleTile* obstacle);
 
     void executeEntryReversal() override;
 
@@ -214,9 +215,9 @@ private:
 };
 
 
-class SpawnDecorationEntry : public JournalEntry {
+class SpawnDecoration : public JournalEntry {
 public:
-    SpawnDecorationEntry(Journal* father, Decoration* ptr);
+    SpawnDecoration(Journal* father, Decoration* ptr);
 
     void executeEntryReversal() override;
 
@@ -225,9 +226,9 @@ private:
 
 };
 
-class DestroyDecorationEntry : public JournalEntry {
+class DestroyDecoration : public JournalEntry {
 public:
-    DestroyDecorationEntry(Journal* father, Decoration* ptr);
+    DestroyDecoration(Journal* father, Decoration* ptr);
 
     void executeEntryReversal() override;
 
@@ -236,6 +237,43 @@ private:
 
     std::string id_;
     sf::Vector2f pos_;
+
+};
+
+class WeaponActivation : public JournalEntry {
+public:
+    WeaponActivation(Journal* father, PlacedWeapon* ptr);
+
+    void executeEntryReversal() override;
+
+private:
+    PlacedWeapon* ptr_;
+
+    bool activate_;
+
+};
+
+class ChangeOpenState : public JournalEntry {
+public:
+    ChangeOpenState(Journal* father, Special* ptr);
+
+    void executeEntryReversal() override;
+
+private:
+    Special* ptr_;
+
+    bool open_state_;
+
+};
+
+class DoorOpen : public JournalEntry {
+public:
+    DoorOpen(Journal* father, Obstacle* ptr);
+
+    void executeEntryReversal() override;
+
+private:
+    Obstacle* ptr_;
 
 };
 

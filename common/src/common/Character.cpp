@@ -113,7 +113,7 @@ int Character::getCurrentWeapon() const
 void Character::makeOnlyOneWeapon(const std::string& id, float state)
 {
     weapons_in_backpack_.clear();
-    if (id == "Null")
+    if (id == "Null" || id.empty())
         weapons_in_backpack_.push_back(std::make_shared<NoWeapon>());
     else if (id.length() >= 5 && id.substr(0, 5) == "melee")
         weapons_in_backpack_.push_back(std::make_shared<MeleeWeapon>(this, id));

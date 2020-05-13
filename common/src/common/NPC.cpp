@@ -413,7 +413,7 @@ void NPC::meleeAttackAI(float time_elapsed)
         {
             this->setWeaponPointing(enemy_position);
             this->setNoGoal();
-            std::cout << "DAWAJ GO KUIRWA" << std::endl;
+
             if (this->isAlreadyRotated())
                 this->shot();
 

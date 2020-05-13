@@ -95,6 +95,46 @@ void SpawnBulletEntry::executeEntryReversal()
     Game::get().findAndDeleteBullet(new_ptr);
 }
 
+FireEntry::FireEntry(Journal* father, Fire* fire) : JournalEntry(father), ptr_(fire)
+{
+    pos_ = fire->getPosition();
+    alpha_ = fire->getAlpha();
+    r_ = fire->getR();
+}
+
+void FireEntry::executeEntryReversal()
+{
+    auto new_ptr = father_->getUpdatedPtr(ptr_);
+    new_ptr->setPosition(pos_);
+    new_ptr->setR(r_);
+    new_ptr->setAlpha(alpha_);
+}
+
+DestroyFireEntry::DestroyFireEntry(Journal* father, Fire* fire) :
+        JournalEntry(father), ptr_(fire), user_(fire->getUser()), pos_(fire->getPosition())
+{
+    direction_ = fire->getRotation() ;
+}
+
+void DestroyFireEntry::executeEntryReversal()
+{
+    auto new_user = father_->getUpdatedPtr(user_);
+    auto new_ptr = Game::get().spawnNewFire(new_user, pos_, direction_* M_PI / 180.0f);
+
+    new_ptr->setRotation(direction_);
+    father_->setUpdatedPtr(ptr_, new_ptr);
+}
+
+SpawnFireEntry::SpawnFireEntry(Journal* father, Fire* fire) : JournalEntry(father), ptr_(fire)
+{
+}
+
+void SpawnFireEntry::executeEntryReversal()
+{
+    auto new_ptr = father_->getUpdatedPtr(ptr_);
+    Game::get().findAndDeleteFire(new_ptr);
+}
+
 DestroyObstacleEntry::DestroyObstacleEntry(Journal* father, Obstacle* ptr) : JournalEntry(father), ptr_(ptr)
 {
     id_ = ptr->getId();

@@ -108,6 +108,47 @@ private:
 
 };
 
+class FireEntry : public JournalEntry {
+public:
+    FireEntry(Journal* father, Fire* fire);
+
+    void executeEntryReversal() override;
+
+private:
+    Fire* ptr_;
+
+    sf::Vector2f pos_;
+    float r_;
+    float alpha_;
+
+};
+
+class DestroyFireEntry : public JournalEntry {
+public:
+    DestroyFireEntry(Journal* father, Fire* fire);
+
+    void executeEntryReversal() override;
+
+private:
+    Fire* ptr_;
+
+    sf::Vector2f pos_;
+    float direction_;
+    Character* user_;
+
+};
+
+class SpawnFireEntry : public JournalEntry {
+public:
+    SpawnFireEntry(Journal* father, Fire* fire);
+
+    void executeEntryReversal() override;
+
+private:
+    Fire* ptr_;
+
+};
+
 class DestroyObstacleEntry : public JournalEntry {
 public:
     DestroyObstacleEntry(Journal* father, Obstacle* ptr);

@@ -71,6 +71,7 @@ public:
     Stats& getStats();
     [[nodiscard]] const Journal& getJournal() const;
     [[nodiscard]] const std::list<std::unique_ptr<Bullet>>& getBullets() const;
+    [[nodiscard]] const std::list<std::unique_ptr<Fire>>& getFires() const;
     [[nodiscard]] Special* getCurrentSpecialObject() const;
     [[nodiscard]] Character* getCurrentTalkableCharacter() const;
     [[nodiscard]] const SpawningFunction& getSpawningFunction(const std::string& name) const;
@@ -101,6 +102,7 @@ public:
     [[nodiscard]] bool isJournalFreezed() const;
 
     void findAndDeleteBullet(Bullet* ptr);
+    void findAndDeleteFire(Fire* ptr);
     void findAndDeleteDecoration(Decoration* ptr);
 
     Fire* spawnNewFire(Character* user, const sf::Vector2f& pos, float dir);

@@ -27,6 +27,8 @@ public:
     void eventCharacterDestroyed(Character* character);
     void eventBulletDestroyed(Bullet* bullet);
     void eventBulletSpawned(Bullet* bullet);
+    void eventFireDestroyed(Fire* fire);
+    void eventFireSpawned(Fire* fire);
     void eventObstacleDestroyed(Obstacle* ptr);
     void eventObstacleShot(Obstacle* ptr);
     void eventObstacleTileDestroyed(ObstacleTile* ptr);
@@ -39,6 +41,7 @@ public:
     float getDurationSaved() const;
     Character* getUpdatedPtr(Character* ptr);
     Bullet* getUpdatedPtr(Bullet* ptr);
+    Fire* getUpdatedPtr(Fire* ptr);
     Obstacle* getUpdatedPtr(Obstacle* ptr);
     ObstacleTile* getUpdatedPtr(ObstacleTile* ptr);
 
@@ -46,6 +49,7 @@ public:
     void setUpdatedPtr(Bullet* ptr, Bullet* new_ptr);
     void setUpdatedPtr(Obstacle* ptr, Obstacle* new_ptr);
     void setUpdatedPtr(ObstacleTile* ptr, ObstacleTile* new_ptr);
+    void setUpdatedPtr(Fire* ptr, Fire* new_ptr);
 
 private:
     static constexpr size_t MIN_JOURNAL_SIZE_ = 10;
@@ -55,6 +59,7 @@ private:
 
     std::unordered_map<Character*, Character*> character_ptr_map_;
     std::unordered_map<Bullet*, Bullet*> bullet_ptr_map_;
+    std::unordered_map<Fire*, Fire*> fire_ptr_map_;
     std::unordered_map<ObstacleTile*, ObstacleTile*> obstacle_tile_ptr_map_;
     std::unordered_map<Obstacle*, Obstacle*> obstacle_ptr_map_;
 

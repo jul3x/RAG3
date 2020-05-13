@@ -67,3 +67,25 @@ Character* Fire::getUser() const
 {
     return user_;
 }
+
+float Fire::getAlpha() const
+{
+    return alpha_;
+}
+
+float Fire::getR() const
+{
+    return r_;
+}
+
+void Fire::setAlpha(float alpha)
+{
+    alpha_ = alpha;
+    this->setColor(color_.r, color_.g, color_.b, static_cast<sf::Uint8>(alpha_));
+}
+
+void Fire::setR(float r)
+{
+    r_ = r;
+    this->setSize({r_ * 2.0f, r_ * 2.0f});
+}

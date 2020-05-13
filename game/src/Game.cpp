@@ -689,6 +689,39 @@ Bullet* Game::spawnNewBullet(Character* user, const std::string& id, const sf::V
     return ptr;
 }
 
+void Game::spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
+{
+    auto ptr = this->spawnNewFire(user, pos, dir);
+    journal_->eventFireSpawned(ptr);
+}
+
+void Game::updateFire(float time_elapsed)
+{
+    for (auto it = fire_.begin(); it != fire_.end(); ++it)
+    {
+        if (!(*it)->update(time_elapsed))
+        {
+            engine_->deleteHoveringObject(it->get());
+            journal_->eventFireDestroyed(it->get());
+            auto next_it = std::next(it);
+            fire_.erase(it);
+            it = next_it;
+        }
+    }
+}
+
+Fire* Game::spawnNewFire(Character* user, const sf::Vector2f& pos, float dir)
+{
+    fire_.emplace_back(std::make_unique<Fire>(user, pos, dir));
+
+    auto ptr = fire_.back().get();
+
+    engine_->registerHoveringObject(ptr);
+
+    return ptr;
+}
+
+
 NPC* Game::spawnNewNPC(const std::string& id)
 {
     auto ptr = map_->spawn<NPC>({}, 0.0f, id);
@@ -829,6 +862,23 @@ void Game::findAndDeleteBullet(Bullet* ptr)
     }
 
     std::cerr << "[Game] Warning - bullet to delete not found!" << std::endl;
+}
+
+
+void Game::findAndDeleteFire(Fire* ptr)
+{
+    for (auto it = fire_.rbegin(); it != fire_.rend(); ++it)
+    {
+        std::cerr << it->get() << std::endl;
+        if (it->get() == ptr)
+        {
+            engine_->deleteHoveringObject(ptr);
+            fire_.erase((++it).base());
+            return;
+        }
+    }
+
+    std::cerr << "[Game] Warning - fire to delete not found!" << std::endl;
 }
 
 void Game::findAndDeleteDecoration(Decoration* ptr)
@@ -1028,40 +1078,14 @@ const Game::SpawningFunction& Game::getSpawningFunction(const std::string& name)
     return it->second;
 }
 
-void Game::spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
-{
-    auto ptr = this->spawnNewFire(user, pos, dir);
-    //journal_->eventBulletSpawned(ptr);
-    //this->spawnShotEvent(name, pos, dir);
-}
 
-void Game::updateFire(float time_elapsed)
-{
-    for (auto it = fire_.begin(); it != fire_.end(); ++it)
-    {
-        if (!(*it)->update(time_elapsed))
-        {
-//            journal_->eventBulletDestroyed(it->get());
-            engine_->deleteHoveringObject(it->get());
-            auto next_it = std::next(it);
-            fire_.erase(it);
-            it = next_it;
-        }
-    }
-}
-
-Fire* Game::spawnNewFire(Character* user, const sf::Vector2f& pos, float dir)
-{
-    fire_.emplace_back(std::make_unique<Fire>(user, pos, dir));
-
-    auto ptr = fire_.back().get();
-
-    engine_->registerHoveringObject(ptr);
-
-    return ptr;
-}
 
 void Game::spawnNull(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
 
+}
+
+const std::list<std::unique_ptr<Fire>>& Game::getFires() const
+{
+    return fire_;
 }

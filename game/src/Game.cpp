@@ -544,6 +544,7 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
     {
         if (obstacle != nullptr)
         {
+            journal_->eventObstacleShot(obstacle);
             obstacle->getShot(*bullet);
 
             spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
@@ -551,11 +552,10 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
                                      CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
             bullet->setDead();
-
-            journal_->eventObstacleShot(obstacle);
         }
         else if (obstacle_tile != nullptr)
         {
+            journal_->eventObstacleTileShot(obstacle_tile);
             obstacle_tile->getShot(*bullet);
 
             spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
@@ -563,23 +563,19 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
                                      CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
             bullet->setDead();
-
-            journal_->eventObstacleTileShot(obstacle_tile);
         }
     }
     else if (explosion != nullptr)
     {
         if (obstacle != nullptr)
         {
-            explosion->applyForce(obstacle);
-
             journal_->eventObstacleShot(obstacle);
+            explosion->applyForce(obstacle);
         }
         else if (obstacle_tile != nullptr)
         {
-            explosion->applyForce(obstacle_tile);
-
             journal_->eventObstacleTileShot(obstacle_tile);
+            explosion->applyForce(obstacle_tile);
         }
     }
     else if (fire != nullptr)

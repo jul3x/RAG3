@@ -91,6 +91,7 @@ private:
     Bullet* ptr_;
 
     std::string id_;
+    sf::Vector2f pos_;
     float direction_;
     Character* user_;
 

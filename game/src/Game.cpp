@@ -222,9 +222,7 @@ void Game::updateMapObjects(float time_elapsed)
         {
             journal_->eventObstacleTileDestroyed(it->get());
             // draw on this place destruction
-            auto dec_ptr = map_->spawn<Decoration>((*it)->getPosition(), 0.0f, "destroyed_wall");
-            journal_->eventDecorationSpawned(dec_ptr);
-
+            spawnDecoration((*it)->getPosition(), "destroyed_wall");
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
 
             auto next_it = std::next(it);
@@ -315,6 +313,7 @@ void Game::updateMapObjects(float time_elapsed)
 
         if (!(*it)->isActive())
         {
+            journal_->eventDecorationDestroyed(it->get());
             auto next_it = std::next(it);
 
             decorations.erase(it);
@@ -342,8 +341,7 @@ void Game::killNPC(NPC* npc)
     }
 
     // draw on this place destruction
-    auto dec_ptr = map_->spawn<Decoration>((npc)->getPosition(), 0.0f, "blood");
-    journal_->eventDecorationSpawned(dec_ptr);
+    spawnDecoration(npc->getPosition(), "blood");
 
     this->spawnExplosionEvent(npc->getPosition(), 250.0f);
 
@@ -872,7 +870,6 @@ void Game::findAndDeleteBullet(Bullet* ptr)
     std::cerr << "[Game] Warning - bullet to delete not found!" << std::endl;
 }
 
-
 void Game::findAndDeleteFire(Fire* ptr)
 {
     for (auto it = fire_.rbegin(); it != fire_.rend(); ++it)
@@ -1009,8 +1006,7 @@ void Game::updatePlayerClone(float time_elapsed)
         if (!player_clone_->update(time_elapsed))
         {
             // draw on this place destruction
-            auto dec_ptr = map_->spawn<Decoration>(player_clone_->getPosition(), 0.0f, "blood");
-            journal_->eventDecorationSpawned(dec_ptr);
+            spawnDecoration(player_clone_->getPosition(), "blood");
 
             this->spawnExplosionEvent(player_clone_->getPosition(), 250.0f);
             this->cleanPlayerClone();
@@ -1046,7 +1042,7 @@ void Game::updatePlayer(float time_elapsed)
     player_->setCurrentTalkableCharacter(nullptr);
     if (player_->isAlive() && !player_->update(time_elapsed))
     {
-        map_->spawn<Decoration>(player_->getPosition(), 0.0f, "blood");
+        spawnDecoration(player_->getPosition(), "blood");
         spawnExplosionEvent(player_->getPosition(), 25.0f);
         player_->setDead();
         engine_->deleteDynamicObject(player_.get());
@@ -1086,8 +1082,6 @@ const Game::SpawningFunction& Game::getSpawningFunction(const std::string& name)
     return it->second;
 }
 
-
-
 void Game::spawnNull(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
 
@@ -1096,4 +1090,15 @@ void Game::spawnNull(Character* user, const std::string& name, const sf::Vector2
 const std::list<std::unique_ptr<Fire>>& Game::getFires() const
 {
     return fire_;
+}
+
+Decoration* Game::spawnNewDecoration(const std::string& id, const sf::Vector2f& pos)
+{
+    return map_->spawn<Decoration>(pos, 0.0f, id);
+}
+
+void Game::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
+{
+    auto ptr = this->spawnNewDecoration(name, pos);
+    journal_->eventDecorationSpawned(ptr);
 }

@@ -51,6 +51,8 @@ protected:
     float life_;
     float ammo_state_;
 
+    Character::GlobalState state_;
+
 };
 
 
@@ -220,6 +222,20 @@ public:
 
 private:
     Decoration* ptr_;
+
+};
+
+class DestroyDecorationEntry : public JournalEntry {
+public:
+    DestroyDecorationEntry(Journal* father, Decoration* ptr);
+
+    void executeEntryReversal() override;
+
+private:
+    Decoration* ptr_;
+
+    std::string id_;
+    sf::Vector2f pos_;
 
 };
 

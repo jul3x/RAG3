@@ -36,6 +36,7 @@ CharacterEntry::CharacterEntry(Journal* father, Character* ptr) : JournalEntry(f
     rotation_ = ptr->getRotation();
     life_ = ptr->getHealth();
     ammo_state_ = ptr->getWeapons().at(ptr->getCurrentWeapon())->getState();
+    state_ = ptr->getGlobalState();
 }
 
 void CharacterEntry::executeEntryReversal()
@@ -45,6 +46,7 @@ void CharacterEntry::executeEntryReversal()
     new_ptr->setRotation(rotation_);
     new_ptr->setHealth(life_);
     new_ptr->getWeapons().at(new_ptr->getCurrentWeapon())->setState(ammo_state_);
+    new_ptr->setGlobalState(state_);
 }
 
 DestroyCharacterEntry::DestroyCharacterEntry(Journal* father, Character* ptr) : JournalEntry(father), ptr_(ptr)
@@ -197,5 +199,19 @@ SpawnDecorationEntry::SpawnDecorationEntry(Journal* father, Decoration* ptr) : J
 
 void SpawnDecorationEntry::executeEntryReversal()
 {
+    auto new_ptr = father_->getUpdatedPtr(ptr_);
     Game::get().findAndDeleteDecoration(ptr_);
+}
+
+DestroyDecorationEntry::DestroyDecorationEntry(Journal* father, Decoration* ptr) : JournalEntry(father), ptr_(ptr)
+{
+    id_ = ptr->getId();
+    pos_ = ptr->getPosition();
+}
+
+void DestroyDecorationEntry::executeEntryReversal()
+{
+    auto new_ptr = Game::get().spawnNewDecoration(id_, pos_);
+
+    father_->setUpdatedPtr(ptr_, new_ptr);
 }

@@ -91,6 +91,7 @@ public:
     void spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir);
     void spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir);
     void spawnSpecial(const sf::Vector2f& pos, const std::string& name);
+    void spawnDecoration(const sf::Vector2f& pos, const std::string& name);
 
     // UI functions
     void talk();
@@ -110,6 +111,7 @@ public:
     Obstacle* spawnNewObstacle(const std::string& id, const sf::Vector2f& pos, const std::string& activation,
                                const std::vector<std::string>& funcs, const std::vector<std::string>& datas);
     ObstacleTile* spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos);
+    Decoration* spawnNewDecoration(const std::string& id, const sf::Vector2f& pos);
 
     NPC* spawnNewNPC(const std::string &id, const std::string& activation,
                      const std::vector<std::string>& funcs, const std::vector<std::string>& datas);

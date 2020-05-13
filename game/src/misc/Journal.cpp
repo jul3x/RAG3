@@ -22,6 +22,7 @@ void Journal::clear()
     character_ptr_map_.clear();
     fire_ptr_map_.clear();
     bullet_ptr_map_.clear();
+    decoration_ptr_map_.clear();
     obstacle_tile_ptr_map_.clear();
     obstacle_ptr_map_.clear();
     journal_.emplace_back();
@@ -87,6 +88,12 @@ void Journal::eventDecorationSpawned(Decoration* ptr)
 {
     journal_.back().emplace_back(
             std::make_unique<SpawnDecorationEntry>(this, ptr));
+}
+
+void Journal::eventDecorationDestroyed(Decoration* ptr)
+{
+    journal_.back().emplace_back(
+            std::make_unique<DestroyDecorationEntry>(this, ptr));
 }
 
 float Journal::getDurationSaved() const
@@ -227,3 +234,16 @@ void Journal::setUpdatedPtr(Fire* ptr, Fire* new_ptr)
 {
     fire_ptr_map_[ptr] = new_ptr;
 }
+
+Decoration* Journal::getUpdatedPtr(Decoration* ptr)
+{
+    auto it = decoration_ptr_map_.find(ptr);
+
+    return it != decoration_ptr_map_.end() ? it->second : ptr;
+}
+
+void Journal::setUpdatedPtr(Decoration* ptr, Decoration* new_ptr)
+{
+    decoration_ptr_map_[ptr] = new_ptr;
+}
+

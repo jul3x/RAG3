@@ -25,6 +25,11 @@ namespace r3e {
             return u_id_;
         }
 
+        void setUniqueId(int u_id)
+        {
+            u_id_ = u_id;
+        }
+
     private:
         inline static int current_max_id_ = 0;
 

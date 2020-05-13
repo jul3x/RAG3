@@ -66,6 +66,7 @@ public:
 private:
     Character* ptr_;
 
+    int u_id_;
     std::string id_;
     std::string activation_;
     std::vector<std::string> funcs_;
@@ -166,6 +167,7 @@ public:
 private:
     Obstacle* ptr_;
 
+    int u_id_;
     std::string id_;
     sf::Vector2f pos_;
     std::string activation_;
@@ -235,8 +237,38 @@ public:
 private:
     Decoration* ptr_;
 
+    int u_id_;
     std::string id_;
     sf::Vector2f pos_;
+
+};
+
+class SpawnSpecial : public JournalEntry {
+public:
+    SpawnSpecial(Journal* father, Special* ptr);
+
+    void executeEntryReversal() override;
+
+private:
+    Special* ptr_;
+
+};
+
+class DestroySpecial : public JournalEntry {
+public:
+    DestroySpecial(Journal* father, Special* ptr);
+
+    void executeEntryReversal() override;
+
+private:
+    Special* ptr_;
+
+    int u_id_;
+    std::string id_;
+    sf::Vector2f pos_;
+    std::string activation_;
+    std::vector<std::string> funcs_;
+    std::vector<std::string> datas_;
 
 };
 

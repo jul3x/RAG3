@@ -296,6 +296,7 @@ void Game::updateMapObjects(float time_elapsed)
 
         if (!(*it)->isActive())
         {
+            journal_->event<DestroySpecial>(it->get());
             auto next_it = std::next(it);
             engine_->deleteHoveringObject(it->get());
 
@@ -482,12 +483,8 @@ void Game::spawnAchievement(Achievements::Type type)
 
 void Game::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
 {
-    auto ptr = map_->spawn<Special>(pos, 0.0f, name);
-    engine_->registerHoveringObject(ptr);
-
-    ptr->bindFunction(special_functions_->bindFunction(ptr->getFunctions().at(0)),
-                      special_functions_->bindTextToUse(ptr->getFunctions().at(0)),
-                      special_functions_->isUsableByNPC(ptr->getFunctions().at(0)));
+    auto ptr = this->spawnNewSpecial(name, -1, pos, "", {}, {});
+    journal_->event<SpawnSpecial>(ptr);
 }
 
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir)
@@ -721,10 +718,16 @@ Fire* Game::spawnNewFire(Character* user, const sf::Vector2f& pos, float dir)
 }
 
 
-NPC* Game::spawnNewNPC(const std::string& id, const std::string& activation,
+NPC* Game::spawnNewNPC(const std::string& id, int u_id, const std::string& activation,
                        const std::vector<std::string>& funcs, const std::vector<std::string>& datas)
 {
     auto ptr = map_->spawn<NPC>({}, 0.0f, id);
+
+    if (u_id != -1)
+    {
+        ptr->setUniqueId(u_id);
+    }
+
     ptr->setActivation(activation);
     ptr->setFunctions(funcs);
     ptr->setDatas(datas);
@@ -837,13 +840,24 @@ ObstacleTile* Game::spawnNewObstacleTile(const std::string& id, const sf::Vector
     return new_ptr;
 }
 
-Obstacle* Game::spawnNewObstacle(const std::string& id, const sf::Vector2f& pos, const std::string& activation,
+Obstacle* Game::spawnNewObstacle(const std::string& id, int u_id, const sf::Vector2f& pos,
+                                 const std::string& activation,
                                  const std::vector<std::string>& funcs, const std::vector<std::string>& datas)
 {
     auto new_ptr = map_->spawn<Obstacle>(pos, 0.0f, id);
-    new_ptr->setActivation(activation);
-    new_ptr->setFunctions(funcs);
-    new_ptr->setDatas(datas);
+
+    if (u_id != -1)
+    {
+        new_ptr->setUniqueId(u_id);
+    }
+
+    if (!activation.empty())
+    {
+        new_ptr->setActivation(activation);
+        new_ptr->setFunctions(funcs);
+        new_ptr->setDatas(datas);
+    }
+
     engine_->registerStaticObject(new_ptr);
 
     for (const auto& function : new_ptr->getFunctions())
@@ -1093,13 +1107,65 @@ const std::list<std::unique_ptr<Fire>>& Game::getFires() const
     return fire_;
 }
 
-Decoration* Game::spawnNewDecoration(const std::string& id, const sf::Vector2f& pos)
+Decoration* Game::spawnNewDecoration(const std::string& id, int u_id, const sf::Vector2f& pos)
 {
-    return map_->spawn<Decoration>(pos, 0.0f, id);
+    auto ptr = map_->spawn<Decoration>(pos, 0.0f, id);
+    if (u_id != -1)
+    {
+        ptr->setUniqueId(u_id);
+    }
+    return ptr;
+
+
 }
 
 void Game::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
 {
-    auto ptr = this->spawnNewDecoration(name, pos);
+    auto ptr = this->spawnNewDecoration(name, -1, pos);
     journal_->event<SpawnDecoration>(ptr);
+}
+
+Special* Game::spawnNewSpecial(const std::string& id, int u_id,
+                               const sf::Vector2f& pos, const std::string& activation,
+                               const std::vector<std::string>& funcs, const std::vector<std::string>& datas)
+{
+    auto ptr = map_->spawn<Special>(pos, 0.0f, id);
+    engine_->registerHoveringObject(ptr);
+
+    if (u_id != -1)
+    {
+        ptr->setUniqueId(u_id);
+    }
+
+    if (!activation.empty())
+    {
+        ptr->setActivation(activation);
+        ptr->setFunctions(funcs);
+        ptr->setDatas(datas);
+    }
+
+    for (const auto& function : ptr->getFunctions())
+    {
+        ptr->bindFunction(special_functions_->bindFunction(function),
+                          special_functions_->bindTextToUse(function),
+                          special_functions_->isUsableByNPC(function));
+    }
+
+    return ptr;
+}
+
+void Game::findAndDeleteSpecial(Special* ptr)
+{
+    auto& specials = map_->getList<Special>();
+    for (auto it = specials.rbegin(); it != specials.rend(); ++it)
+    {
+        if (it->get() == ptr)
+        {
+            engine_->deleteHoveringObject(ptr);
+            specials.erase((++it).base());
+            return;
+        }
+    }
+
+    std::cerr << "[Game] Warning - special to delete not found!" << std::endl;
 }

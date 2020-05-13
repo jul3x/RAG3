@@ -51,6 +51,7 @@ void CharacterEntry::executeEntryReversal()
 
 DestroyCharacter::DestroyCharacter(Journal* father, Character* ptr) : JournalEntry(father), ptr_(ptr)
 {
+    u_id_ = ptr->getUniqueId();
     id_ = ptr->getId();
     activation_ = ptr->getActivation();
     funcs_ = ptr->getFunctions();
@@ -60,7 +61,7 @@ DestroyCharacter::DestroyCharacter(Journal* father, Character* ptr) : JournalEnt
 
 void DestroyCharacter::executeEntryReversal()
 {
-    auto new_ptr = Game::get().spawnNewNPC(id_, activation_, funcs_, datas_);
+    auto new_ptr = Game::get().spawnNewNPC(id_, u_id_, activation_, funcs_, datas_);
     father_->setUpdatedPtr(ptr_, new_ptr);
 
     new_ptr->setTalkScenario(talk_scenario_);
@@ -146,6 +147,7 @@ void SpawnFire::executeEntryReversal()
 DestroyObstacle::DestroyObstacle(Journal* father, Obstacle* ptr) : JournalEntry(father), ptr_(ptr)
 {
     id_ = ptr->getId();
+    u_id_ = ptr->getUniqueId();
     pos_ = ptr->getPosition();
     activation_ = ptr->getActivation();
     funcs_ = ptr->getFunctions();
@@ -154,7 +156,7 @@ DestroyObstacle::DestroyObstacle(Journal* father, Obstacle* ptr) : JournalEntry(
 
 void DestroyObstacle::executeEntryReversal()
 {
-    auto new_ptr = Game::get().spawnNewObstacle(id_, pos_, activation_, funcs_, datas_);
+    auto new_ptr = Game::get().spawnNewObstacle(id_, u_id_, pos_, activation_, funcs_, datas_);
     father_->setUpdatedPtr(ptr_, new_ptr);
 }
 
@@ -200,19 +202,46 @@ SpawnDecoration::SpawnDecoration(Journal* father, Decoration* ptr) : JournalEntr
 void SpawnDecoration::executeEntryReversal()
 {
     auto new_ptr = father_->getUpdatedPtr(ptr_);
-    Game::get().findAndDeleteDecoration(ptr_);
+    Game::get().findAndDeleteDecoration(new_ptr);
 }
 
 DestroyDecoration::DestroyDecoration(Journal* father, Decoration* ptr) : JournalEntry(father), ptr_(ptr)
 {
+    u_id_ = ptr->getUniqueId();
     id_ = ptr->getId();
     pos_ = ptr->getPosition();
 }
 
 void DestroyDecoration::executeEntryReversal()
 {
-    auto new_ptr = Game::get().spawnNewDecoration(id_, pos_);
+    auto new_ptr = Game::get().spawnNewDecoration(id_, u_id_, pos_);
+    father_->setUpdatedPtr(ptr_, new_ptr);
+}
 
+SpawnSpecial::SpawnSpecial(Journal* father, Special* ptr) : JournalEntry(father), ptr_(ptr)
+{
+
+}
+
+void SpawnSpecial::executeEntryReversal()
+{
+    auto new_ptr = father_->getUpdatedPtr(ptr_);
+    Game::get().findAndDeleteSpecial(new_ptr);
+}
+
+DestroySpecial::DestroySpecial(Journal* father, Special* ptr) : JournalEntry(father), ptr_(ptr)
+{
+    u_id_ = ptr->getUniqueId();
+    id_ = ptr->getId();
+    pos_ = ptr->getPosition();
+    activation_ = ptr->getActivation();
+    funcs_ = ptr->getFunctions();
+    datas_ = ptr->getDatas();
+}
+
+void DestroySpecial::executeEntryReversal()
+{
+    auto new_ptr = Game::get().spawnNewSpecial(id_, u_id_, pos_, activation_, funcs_, datas_);
     father_->setUpdatedPtr(ptr_, new_ptr);
 }
 

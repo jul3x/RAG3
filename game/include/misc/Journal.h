@@ -23,15 +23,11 @@ public:
 
     void clear();
 
-    void eventTimeReversal();
-    void eventCharacterDestroyed(Character* character);
-    void eventBulletDestroyed(Bullet* bullet);
-    void eventBulletSpawned(Bullet* bullet);
-    void eventObstacleDestroyed(Obstacle* ptr);
-    void eventObstacleShot(Obstacle* ptr);
-    void eventObstacleTileDestroyed(ObstacleTile* ptr);
-    void eventObstacleTileShot(ObstacleTile* ptr);
-    void eventDecorationSpawned(Decoration* ptr);
+    template<class T, class K>
+    void event(K* ptr = nullptr)
+    {
+        journal_.back().emplace_back(std::make_unique<T>(this, ptr));
+    }
 
     void update(float time_elapsed);
     bool executeTimeReversal(float time_elapsed);
@@ -39,13 +35,19 @@ public:
     float getDurationSaved() const;
     Character* getUpdatedPtr(Character* ptr);
     Bullet* getUpdatedPtr(Bullet* ptr);
+    Fire* getUpdatedPtr(Fire* ptr);
+    Decoration* getUpdatedPtr(Decoration* ptr);
     Obstacle* getUpdatedPtr(Obstacle* ptr);
     ObstacleTile* getUpdatedPtr(ObstacleTile* ptr);
+    Special* getUpdatedPtr(Special* ptr);
 
     void setUpdatedPtr(Character* ptr, Character* new_ptr);
     void setUpdatedPtr(Bullet* ptr, Bullet* new_ptr);
     void setUpdatedPtr(Obstacle* ptr, Obstacle* new_ptr);
     void setUpdatedPtr(ObstacleTile* ptr, ObstacleTile* new_ptr);
+    void setUpdatedPtr(Fire* ptr, Fire* new_ptr);
+    void setUpdatedPtr(Decoration* ptr, Decoration* new_ptr);
+    void setUpdatedPtr(Special* ptr, Special* new_ptr);
 
 private:
     static constexpr size_t MIN_JOURNAL_SIZE_ = 10;
@@ -55,8 +57,11 @@ private:
 
     std::unordered_map<Character*, Character*> character_ptr_map_;
     std::unordered_map<Bullet*, Bullet*> bullet_ptr_map_;
+    std::unordered_map<Fire*, Fire*> fire_ptr_map_;
     std::unordered_map<ObstacleTile*, ObstacleTile*> obstacle_tile_ptr_map_;
     std::unordered_map<Obstacle*, Obstacle*> obstacle_ptr_map_;
+    std::unordered_map<Decoration*, Decoration*> decoration_ptr_map_;
+    std::unordered_map<Special*, Special*> special_ptr_map_;
 
     float time_elapsed_;
     float frame_time_;

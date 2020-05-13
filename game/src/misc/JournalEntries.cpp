@@ -18,23 +18,16 @@ JournalEntry::JournalEntry(Journal* father) : father_(father)
 {
 }
 
-TimeReversalEntry::TimeReversalEntry(Journal* father) : JournalEntry(father)
+TimeReversal::TimeReversal(Journal* father, void* placeholder) : JournalEntry(father)
 {
     auto& player = Game::get().getPlayer();
     picked_weapon_ = player.getWeapons().at(player.getCurrentWeapon())->getId();
 }
 
-void TimeReversalEntry::executeEntryReversal()
+void TimeReversal::executeEntryReversal()
 {
-    auto new_ptr = Game::get().spawnNewPlayerClone();
+    auto new_ptr = Game::get().spawnNewPlayerClone(picked_weapon_);
     father_->setUpdatedPtr(&Game::get().getPlayer(), new_ptr);
-    new_ptr->makeOnlyOneWeapon(picked_weapon_, 0.0f);
-    auto& new_weapon = new_ptr->getWeapons().front();
-
-    if (!new_weapon->getId().empty())
-        new_weapon->registerSpawningFunction(
-                Game::get().getSpawningFunction(utils::j3x::get<std::string>(
-                        RM.getObjectParams("weapons", new_weapon->getId()), "spawn_func")));
 }
 
 CharacterEntry::CharacterEntry(Journal* father, Character* ptr) : JournalEntry(father), ptr_(ptr)
@@ -43,6 +36,7 @@ CharacterEntry::CharacterEntry(Journal* father, Character* ptr) : JournalEntry(f
     rotation_ = ptr->getRotation();
     life_ = ptr->getHealth();
     ammo_state_ = ptr->getWeapons().at(ptr->getCurrentWeapon())->getState();
+    state_ = ptr->getGlobalState();
 }
 
 void CharacterEntry::executeEntryReversal()
@@ -52,17 +46,25 @@ void CharacterEntry::executeEntryReversal()
     new_ptr->setRotation(rotation_);
     new_ptr->setHealth(life_);
     new_ptr->getWeapons().at(new_ptr->getCurrentWeapon())->setState(ammo_state_);
+    new_ptr->setGlobalState(state_);
 }
 
-DestroyCharacterEntry::DestroyCharacterEntry(Journal* father, Character* ptr) : JournalEntry(father), ptr_(ptr)
+DestroyCharacter::DestroyCharacter(Journal* father, Character* ptr) : JournalEntry(father), ptr_(ptr)
 {
+    u_id_ = ptr->getUniqueId();
     id_ = ptr->getId();
+    activation_ = ptr->getActivation();
+    funcs_ = ptr->getFunctions();
+    datas_ = ptr->getDatas();
+    talk_scenario_ = ptr->getTalkScenario();
 }
 
-void DestroyCharacterEntry::executeEntryReversal()
+void DestroyCharacter::executeEntryReversal()
 {
-    auto new_ptr = Game::get().spawnNewNPC(id_);
+    auto new_ptr = Game::get().spawnNewNPC(id_, u_id_, activation_, funcs_, datas_);
     father_->setUpdatedPtr(ptr_, new_ptr);
+
+    new_ptr->setTalkScenario(talk_scenario_);
 }
 
 BulletEntry::BulletEntry(Journal* father, Bullet* bullet) : JournalEntry(father), ptr_(bullet)
@@ -76,85 +78,228 @@ void BulletEntry::executeEntryReversal()
     new_ptr->setPosition(pos_);
 }
 
-DestroyBulletEntry::DestroyBulletEntry(Journal* father, Bullet* bullet) :
-        JournalEntry(father), ptr_(bullet), user_(bullet->getUser())
+DestroyBullet::DestroyBullet(Journal* father, Bullet* bullet) :
+        JournalEntry(father), ptr_(bullet), user_(bullet->getUser()), pos_(bullet->getPosition())
 {
     id_ = bullet->getId();
-    direction_ = bullet->getRotation();
+    direction_ = bullet->getRotation() ;
 }
 
-void DestroyBulletEntry::executeEntryReversal()
+void DestroyBullet::executeEntryReversal()
 {
     auto new_user = father_->getUpdatedPtr(user_);
-    auto new_ptr = Game::get().spawnNewBullet(new_user, id_, {}, direction_);
+    auto new_ptr = Game::get().spawnNewBullet(new_user, id_, pos_, direction_* M_PI / 180.0f);
+
     new_ptr->setRotation(direction_);
     father_->setUpdatedPtr(ptr_, new_ptr);
 }
 
-SpawnBulletEntry::SpawnBulletEntry(Journal* father, Bullet* bullet) : JournalEntry(father), ptr_(bullet)
+SpawnBullet::SpawnBullet(Journal* father, Bullet* bullet) : JournalEntry(father), ptr_(bullet)
 {
 }
 
-void SpawnBulletEntry::executeEntryReversal()
+void SpawnBullet::executeEntryReversal()
 {
     auto new_ptr = father_->getUpdatedPtr(ptr_);
     Game::get().findAndDeleteBullet(new_ptr);
 }
 
-DestroyObstacleEntry::DestroyObstacleEntry(Journal* father, Obstacle* ptr) : JournalEntry(father), ptr_(ptr)
+FireEntry::FireEntry(Journal* father, Fire* fire) : JournalEntry(father), ptr_(fire)
 {
-    id_ = ptr->getId();
-    pos_ = ptr->getPosition();
+    pos_ = fire->getPosition();
+    alpha_ = fire->getAlpha();
+    r_ = fire->getR();
 }
 
-void DestroyObstacleEntry::executeEntryReversal()
+void FireEntry::executeEntryReversal()
 {
-    auto new_ptr = Game::get().spawnNewObstacle(id_, pos_);
+    auto new_ptr = father_->getUpdatedPtr(ptr_);
+    new_ptr->setPosition(pos_);
+    new_ptr->setR(r_);
+    new_ptr->setAlpha(alpha_);
+}
 
+DestroyFire::DestroyFire(Journal* father, Fire* fire) :
+        JournalEntry(father), ptr_(fire), user_(fire->getUser()), pos_(fire->getPosition())
+{
+    direction_ = fire->getRotation() ;
+}
+
+void DestroyFire::executeEntryReversal()
+{
+    auto new_user = father_->getUpdatedPtr(user_);
+    auto new_ptr = Game::get().spawnNewFire(new_user, pos_, direction_* M_PI / 180.0f);
+
+    new_ptr->setRotation(direction_);
     father_->setUpdatedPtr(ptr_, new_ptr);
 }
 
-ShotObstacleEntry::ShotObstacleEntry(Journal* father, Obstacle* obstacle) : JournalEntry(father), ptr_(obstacle)
+SpawnFire::SpawnFire(Journal* father, Fire* fire) : JournalEntry(father), ptr_(fire)
+{
+}
+
+void SpawnFire::executeEntryReversal()
+{
+    auto new_ptr = father_->getUpdatedPtr(ptr_);
+    Game::get().findAndDeleteFire(new_ptr);
+}
+
+DestroyObstacle::DestroyObstacle(Journal* father, Obstacle* ptr) : JournalEntry(father), ptr_(ptr)
+{
+    id_ = ptr->getId();
+    u_id_ = ptr->getUniqueId();
+    pos_ = ptr->getPosition();
+    activation_ = ptr->getActivation();
+    funcs_ = ptr->getFunctions();
+    datas_ = ptr->getDatas();
+}
+
+void DestroyObstacle::executeEntryReversal()
+{
+    auto new_ptr = Game::get().spawnNewObstacle(id_, u_id_, pos_, activation_, funcs_, datas_);
+    father_->setUpdatedPtr(ptr_, new_ptr);
+}
+
+ShotObstacle::ShotObstacle(Journal* father, Obstacle* obstacle) : JournalEntry(father), ptr_(obstacle)
 {
     life_ = obstacle->getHealth();
 }
 
-void ShotObstacleEntry::executeEntryReversal()
+void ShotObstacle::executeEntryReversal()
 {
     auto new_ptr = father_->getUpdatedPtr(ptr_);
     new_ptr->setHealth(life_);
 }
 
-
-DestroyObstacleTileEntry::DestroyObstacleTileEntry(Journal* father, ObstacleTile* ptr) : JournalEntry(father), ptr_(ptr)
+DestroyObstacleTile::DestroyObstacleTile(Journal* father, ObstacleTile* ptr) : JournalEntry(father), ptr_(ptr)
 {
     id_ = ptr->getId();
     pos_ = ptr->getPosition();
 }
 
-void DestroyObstacleTileEntry::executeEntryReversal()
+void DestroyObstacleTile::executeEntryReversal()
 {
     auto new_ptr = Game::get().spawnNewObstacleTile(id_, pos_);
 
     father_->setUpdatedPtr(ptr_, new_ptr);
 }
 
-ShotObstacleTileEntry::ShotObstacleTileEntry(Journal* father, ObstacleTile* obstacle) : JournalEntry(father), ptr_(obstacle)
+ShotObstacleTile::ShotObstacleTile(Journal* father, ObstacleTile* obstacle) : JournalEntry(father), ptr_(obstacle)
 {
     life_ = obstacle->getHealth();
 }
 
-void ShotObstacleTileEntry::executeEntryReversal()
+void ShotObstacleTile::executeEntryReversal()
 {
     auto new_ptr = father_->getUpdatedPtr(ptr_);
     new_ptr->setHealth(life_);
 }
 
-SpawnDecorationEntry::SpawnDecorationEntry(Journal* father, Decoration* ptr) : JournalEntry(father), ptr_(ptr)
+SpawnDecoration::SpawnDecoration(Journal* father, Decoration* ptr) : JournalEntry(father), ptr_(ptr)
 {
 }
 
-void SpawnDecorationEntry::executeEntryReversal()
+void SpawnDecoration::executeEntryReversal()
 {
-    Game::get().findAndDeleteDecoration(ptr_);
+    auto new_ptr = father_->getUpdatedPtr(ptr_);
+    Game::get().findAndDeleteDecoration(new_ptr);
+}
+
+DestroyDecoration::DestroyDecoration(Journal* father, Decoration* ptr) : JournalEntry(father), ptr_(ptr)
+{
+    u_id_ = ptr->getUniqueId();
+    id_ = ptr->getId();
+    pos_ = ptr->getPosition();
+}
+
+void DestroyDecoration::executeEntryReversal()
+{
+    auto new_ptr = Game::get().spawnNewDecoration(id_, u_id_, pos_);
+    father_->setUpdatedPtr(ptr_, new_ptr);
+}
+
+SpawnSpecial::SpawnSpecial(Journal* father, Special* ptr) : JournalEntry(father), ptr_(ptr)
+{
+
+}
+
+void SpawnSpecial::executeEntryReversal()
+{
+    auto new_ptr = father_->getUpdatedPtr(ptr_);
+    Game::get().findAndDeleteSpecial(new_ptr);
+}
+
+DestroySpecial::DestroySpecial(Journal* father, Special* ptr) : JournalEntry(father), ptr_(ptr)
+{
+    u_id_ = ptr->getUniqueId();
+    id_ = ptr->getId();
+    pos_ = ptr->getPosition();
+    activation_ = ptr->getActivation();
+    funcs_ = ptr->getFunctions();
+    datas_ = ptr->getDatas();
+}
+
+void DestroySpecial::executeEntryReversal()
+{
+    auto new_ptr = Game::get().spawnNewSpecial(id_, u_id_, pos_, activation_, funcs_, datas_);
+    father_->setUpdatedPtr(ptr_, new_ptr);
+}
+
+WeaponActivation::WeaponActivation(Journal* father, PlacedWeapon* ptr) : JournalEntry(father), ptr_(ptr)
+{
+    activate_ = ptr->getActive();
+}
+
+void WeaponActivation::executeEntryReversal()
+{
+    ptr_->setActive(!activate_);
+}
+
+ChangeOpenState::ChangeOpenState(Journal* father, Special* ptr) : JournalEntry(father), ptr_(ptr)
+{
+    open_state_ = ptr->getAdditionalBooleanData();
+}
+
+void ChangeOpenState::executeEntryReversal()
+{
+    auto new_ptr = father_->getUpdatedPtr(ptr_);
+
+    if (open_state_)
+    {
+        new_ptr->changeTexture(&RM.getTexture("specials/" + new_ptr->getId()));
+        new_ptr->setAdditionalBooleanData(false);
+    }
+    else
+    {
+        new_ptr->changeTexture(&RM.getTexture("specials/" + new_ptr->getId() + "_open"));
+        new_ptr->setAdditionalBooleanData(true);
+    }
+}
+
+DoorOpen::DoorOpen(Journal* father, Obstacle* ptr) : JournalEntry(father), ptr_(ptr)
+{
+}
+
+void DoorOpen::executeEntryReversal()
+{
+    auto new_ptr = father_->getUpdatedPtr(ptr_);
+    auto grid_pos = std::make_pair(static_cast<size_t>(new_ptr->getPosition().x / DecorationTile::SIZE_X_),
+                                   static_cast<size_t>(new_ptr->getPosition().y / DecorationTile::SIZE_Y_));
+    if (new_ptr->getCollisionArea().getType() == collision::Area::Type::None)
+    {
+        new_ptr->changeTexture(&RM.getTexture("obstacles/" + new_ptr->getId()));
+        new_ptr->changeCollisionArea(collision::Box(utils::j3x::get<float>(RM.getObjectParams("obstacles", new_ptr->getId()), "collision_size_x"),
+                                                    utils::j3x::get<float>(RM.getObjectParams("obstacles", new_ptr->getId
+                                                  ()), "collision_size_y")));
+
+        Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) =
+                utils::j3x::get<float>(RM.getObjectParams("obstacles", new_ptr->getId()), "endurance");
+    }
+    else
+    {
+        new_ptr->changeTexture(&RM.getTexture("obstacles/" + new_ptr->getId() + "_open"));
+        new_ptr->changeCollisionArea(collision::None());
+
+        Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
+    }
 }

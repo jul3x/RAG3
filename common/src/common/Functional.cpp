@@ -80,6 +80,16 @@ void Functional::setActivation(const std::string& str)
     activation_ = str;
 }
 
+void Functional::setFunctions(const std::vector<std::string>& func)
+{
+    functions_ = func;
+}
+
+void Functional::setDatas(const std::vector<std::string>& data)
+{
+    datas_ = data;
+}
+
 void Functional::setFunctionsStr(const std::string& str)
 {
     utils::j3x::tokenize(str, utils::j3x::DELIMITER_, functions_);

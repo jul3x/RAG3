@@ -10,6 +10,7 @@
 #include <common/MeleeWeapon.h>
 
 #include <events/Event.h>
+#include <misc/JournalEntries.h>
 
 #include <Game.h>
 
@@ -220,11 +221,9 @@ void Game::updateMapObjects(float time_elapsed)
         bool do_increment = true;
         if (!(*it)->update(time_elapsed))
         {
-            journal_->eventObstacleTileDestroyed(it->get());
+            journal_->event<DestroyObstacleTile>(it->get());
             // draw on this place destruction
-            auto dec_ptr = map_->spawn<Decoration>((*it)->getPosition(), 0.0f, "destroyed_wall");
-            journal_->eventDecorationSpawned(dec_ptr);
-
+            spawnDecoration((*it)->getPosition(), "destroyed_wall");
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
 
             auto next_it = std::next(it);
@@ -248,7 +247,7 @@ void Game::updateMapObjects(float time_elapsed)
         (*it)->updateAnimation(time_elapsed);
         if (!(*it)->update(time_elapsed))
         {
-            journal_->eventObstacleDestroyed(it->get());
+            journal_->event<DestroyObstacle>(it->get());
 
             this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
 
@@ -297,6 +296,7 @@ void Game::updateMapObjects(float time_elapsed)
 
         if (!(*it)->isActive())
         {
+            journal_->event<DestroySpecial>(it->get());
             auto next_it = std::next(it);
             engine_->deleteHoveringObject(it->get());
 
@@ -315,6 +315,7 @@ void Game::updateMapObjects(float time_elapsed)
 
         if (!(*it)->isActive())
         {
+            journal_->event<DestroyDecoration>(it->get());
             auto next_it = std::next(it);
 
             decorations.erase(it);
@@ -333,7 +334,7 @@ void Game::updateMapObjects(float time_elapsed)
 
 void Game::killNPC(NPC* npc)
 {
-    journal_->eventCharacterDestroyed(npc);
+    journal_->event<DestroyCharacter>(npc);
     stats_->killEnemy();
 
     if (player_clone_ != nullptr)
@@ -342,8 +343,7 @@ void Game::killNPC(NPC* npc)
     }
 
     // draw on this place destruction
-    auto dec_ptr = map_->spawn<Decoration>((npc)->getPosition(), 0.0f, "blood");
-    journal_->eventDecorationSpawned(dec_ptr);
+    spawnDecoration(npc->getPosition(), "blood");
 
     this->spawnExplosionEvent(npc->getPosition(), 250.0f);
 
@@ -426,7 +426,7 @@ Stats& Game::getStats()
     return *stats_;
 }
 
-const Journal& Game::getJournal() const
+Journal& Game::getJournal() const
 {
     return *journal_;
 }
@@ -483,12 +483,8 @@ void Game::spawnAchievement(Achievements::Type type)
 
 void Game::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
 {
-    auto ptr = map_->spawn<Special>(pos, 0.0f, name);
-    engine_->registerHoveringObject(ptr);
-
-    ptr->bindFunction(special_functions_->bindFunction(ptr->getFunctions().at(0)),
-                      special_functions_->bindTextToUse(ptr->getFunctions().at(0)),
-                      special_functions_->isUsableByNPC(ptr->getFunctions().at(0)));
+    auto ptr = this->spawnNewSpecial(name, -1, pos, "", {}, {});
+    journal_->event<SpawnSpecial>(ptr);
 }
 
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir)
@@ -505,7 +501,7 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, floa
 void Game::spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
     auto ptr = this->spawnNewBullet(user, name, pos, dir);
-    journal_->eventBulletSpawned(ptr);
+    journal_->event<SpawnBullet>(ptr);
     this->spawnShotEvent(name, pos, dir);
 }
 
@@ -544,6 +540,7 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
     {
         if (obstacle != nullptr)
         {
+            journal_->event<ShotObstacle>(obstacle);
             obstacle->getShot(*bullet);
 
             spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
@@ -551,11 +548,10 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
                                      CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
             bullet->setDead();
-
-            journal_->eventObstacleShot(obstacle);
         }
         else if (obstacle_tile != nullptr)
         {
+            journal_->event<ShotObstacleTile>(obstacle_tile);
             obstacle_tile->getShot(*bullet);
 
             spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
@@ -563,23 +559,19 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
                                      CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
 
             bullet->setDead();
-
-            journal_->eventObstacleTileShot(obstacle_tile);
         }
     }
     else if (explosion != nullptr)
     {
         if (obstacle != nullptr)
         {
+            journal_->event<ShotObstacle>(obstacle);
             explosion->applyForce(obstacle);
-
-            journal_->eventObstacleShot(obstacle);
         }
         else if (obstacle_tile != nullptr)
         {
+            journal_->event<ShotObstacleTile>(obstacle_tile);
             explosion->applyForce(obstacle_tile);
-
-            journal_->eventObstacleTileShot(obstacle_tile);
         }
     }
     else if (fire != nullptr)
@@ -693,9 +685,52 @@ Bullet* Game::spawnNewBullet(Character* user, const std::string& id, const sf::V
     return ptr;
 }
 
-NPC* Game::spawnNewNPC(const std::string& id)
+void Game::spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
+{
+    auto ptr = this->spawnNewFire(user, pos, dir);
+    journal_->event<SpawnFire>(ptr);
+}
+
+void Game::updateFire(float time_elapsed)
+{
+    for (auto it = fire_.begin(); it != fire_.end(); ++it)
+    {
+        if (!(*it)->update(time_elapsed))
+        {
+            engine_->deleteHoveringObject(it->get());
+            journal_->event<DestroyFire>(it->get());
+            auto next_it = std::next(it);
+            fire_.erase(it);
+            it = next_it;
+        }
+    }
+}
+
+Fire* Game::spawnNewFire(Character* user, const sf::Vector2f& pos, float dir)
+{
+    fire_.emplace_back(std::make_unique<Fire>(user, pos, dir));
+
+    auto ptr = fire_.back().get();
+
+    engine_->registerHoveringObject(ptr);
+
+    return ptr;
+}
+
+
+NPC* Game::spawnNewNPC(const std::string& id, int u_id, const std::string& activation,
+                       const std::vector<std::string>& funcs, const std::vector<std::string>& datas)
 {
     auto ptr = map_->spawn<NPC>({}, 0.0f, id);
+
+    if (u_id != -1)
+    {
+        ptr->setUniqueId(u_id);
+    }
+
+    ptr->setActivation(activation);
+    ptr->setFunctions(funcs);
+    ptr->setDatas(datas);
     engine_->registerDynamicObject(ptr);
 
     ptr->registerAgentsManager(agents_manager_.get());
@@ -735,7 +770,7 @@ NPC* Game::spawnNewNPC(const std::string& id)
     return ptr;
 }
 
-NPC* Game::spawnNewPlayerClone()
+NPC* Game::spawnNewPlayerClone(const std::string& weapon_id)
 {
     if (player_clone_ != nullptr)
     {
@@ -756,6 +791,8 @@ NPC* Game::spawnNewPlayerClone()
 
         enemy->registerEnemy(player_clone_.get());
     }
+
+    player_clone_->makeOnlyOneWeapon(weapon_id, 0.0f);
 
     for (auto& weapon : player_clone_->getWeapons())
     {
@@ -803,9 +840,24 @@ ObstacleTile* Game::spawnNewObstacleTile(const std::string& id, const sf::Vector
     return new_ptr;
 }
 
-Obstacle* Game::spawnNewObstacle(const std::string& id, const sf::Vector2f& pos)
+Obstacle* Game::spawnNewObstacle(const std::string& id, int u_id, const sf::Vector2f& pos,
+                                 const std::string& activation,
+                                 const std::vector<std::string>& funcs, const std::vector<std::string>& datas)
 {
     auto new_ptr = map_->spawn<Obstacle>(pos, 0.0f, id);
+
+    if (u_id != -1)
+    {
+        new_ptr->setUniqueId(u_id);
+    }
+
+    if (!activation.empty())
+    {
+        new_ptr->setActivation(activation);
+        new_ptr->setFunctions(funcs);
+        new_ptr->setDatas(datas);
+    }
+
     engine_->registerStaticObject(new_ptr);
 
     for (const auto& function : new_ptr->getFunctions())
@@ -831,6 +883,22 @@ void Game::findAndDeleteBullet(Bullet* ptr)
     }
 
     std::cerr << "[Game] Warning - bullet to delete not found!" << std::endl;
+}
+
+void Game::findAndDeleteFire(Fire* ptr)
+{
+    for (auto it = fire_.rbegin(); it != fire_.rend(); ++it)
+    {
+        std::cerr << it->get() << std::endl;
+        if (it->get() == ptr)
+        {
+            engine_->deleteHoveringObject(ptr);
+            fire_.erase((++it).base());
+            return;
+        }
+    }
+
+    std::cerr << "[Game] Warning - fire to delete not found!" << std::endl;
 }
 
 void Game::findAndDeleteDecoration(Decoration* ptr)
@@ -925,7 +993,7 @@ void Game::setGameState(Game::GameState state)
 
             camera_->setReverse();
             engine_->turnOffCollisions();
-            journal_->eventTimeReversal();
+            journal_->event<TimeReversal, void*>();
             break;
         case GameState::Paused:
             break;
@@ -953,8 +1021,7 @@ void Game::updatePlayerClone(float time_elapsed)
         if (!player_clone_->update(time_elapsed))
         {
             // draw on this place destruction
-            auto dec_ptr = map_->spawn<Decoration>(player_clone_->getPosition(), 0.0f, "blood");
-            journal_->eventDecorationSpawned(dec_ptr);
+            spawnDecoration(player_clone_->getPosition(), "blood");
 
             this->spawnExplosionEvent(player_clone_->getPosition(), 250.0f);
             this->cleanPlayerClone();
@@ -990,7 +1057,7 @@ void Game::updatePlayer(float time_elapsed)
     player_->setCurrentTalkableCharacter(nullptr);
     if (player_->isAlive() && !player_->update(time_elapsed))
     {
-        map_->spawn<Decoration>(player_->getPosition(), 0.0f, "blood");
+        spawnDecoration(player_->getPosition(), "blood");
         spawnExplosionEvent(player_->getPosition(), 25.0f);
         player_->setDead();
         engine_->deleteDynamicObject(player_.get());
@@ -1009,7 +1076,7 @@ void Game::updateBullets(float time_elapsed)
                 (*it)->use(player_.get());
             }
 
-            journal_->eventBulletDestroyed(it->get());
+            journal_->event<DestroyBullet>(it->get());
             engine_->deleteHoveringObject(it->get());
             auto next_it = std::next(it);
             bullets_.erase(it);
@@ -1030,40 +1097,75 @@ const Game::SpawningFunction& Game::getSpawningFunction(const std::string& name)
     return it->second;
 }
 
-void Game::spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
+void Game::spawnNull(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
-    auto ptr = this->spawnNewFire(user, pos, dir);
-    //journal_->eventBulletSpawned(ptr);
-    //this->spawnShotEvent(name, pos, dir);
+
 }
 
-void Game::updateFire(float time_elapsed)
+const std::list<std::unique_ptr<Fire>>& Game::getFires() const
 {
-    for (auto it = fire_.begin(); it != fire_.end(); ++it)
+    return fire_;
+}
+
+Decoration* Game::spawnNewDecoration(const std::string& id, int u_id, const sf::Vector2f& pos)
+{
+    auto ptr = map_->spawn<Decoration>(pos, 0.0f, id);
+    if (u_id != -1)
     {
-        if (!(*it)->update(time_elapsed))
-        {
-//            journal_->eventBulletDestroyed(it->get());
-            engine_->deleteHoveringObject(it->get());
-            auto next_it = std::next(it);
-            fire_.erase(it);
-            it = next_it;
-        }
+        ptr->setUniqueId(u_id);
     }
+    return ptr;
+
+
 }
 
-Fire* Game::spawnNewFire(Character* user, const sf::Vector2f& pos, float dir)
+void Game::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
 {
-    fire_.emplace_back(std::make_unique<Fire>(user, pos, dir));
+    auto ptr = this->spawnNewDecoration(name, -1, pos);
+    journal_->event<SpawnDecoration>(ptr);
+}
 
-    auto ptr = fire_.back().get();
-
+Special* Game::spawnNewSpecial(const std::string& id, int u_id,
+                               const sf::Vector2f& pos, const std::string& activation,
+                               const std::vector<std::string>& funcs, const std::vector<std::string>& datas)
+{
+    auto ptr = map_->spawn<Special>(pos, 0.0f, id);
     engine_->registerHoveringObject(ptr);
+
+    if (u_id != -1)
+    {
+        ptr->setUniqueId(u_id);
+    }
+
+    if (!activation.empty())
+    {
+        ptr->setActivation(activation);
+        ptr->setFunctions(funcs);
+        ptr->setDatas(datas);
+    }
+
+    for (const auto& function : ptr->getFunctions())
+    {
+        ptr->bindFunction(special_functions_->bindFunction(function),
+                          special_functions_->bindTextToUse(function),
+                          special_functions_->isUsableByNPC(function));
+    }
 
     return ptr;
 }
 
-void Game::spawnNull(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
+void Game::findAndDeleteSpecial(Special* ptr)
 {
+    auto& specials = map_->getList<Special>();
+    for (auto it = specials.rbegin(); it != specials.rend(); ++it)
+    {
+        if (it->get() == ptr)
+        {
+            engine_->deleteHoveringObject(ptr);
+            specials.erase((++it).base());
+            return;
+        }
+    }
 
+    std::cerr << "[Game] Warning - special to delete not found!" << std::endl;
 }

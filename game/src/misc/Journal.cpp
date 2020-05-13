@@ -20,62 +20,15 @@ void Journal::clear()
 {
     journal_.clear();
     character_ptr_map_.clear();
+    fire_ptr_map_.clear();
     bullet_ptr_map_.clear();
+    decoration_ptr_map_.clear();
+    special_ptr_map_.clear();
     obstacle_tile_ptr_map_.clear();
     obstacle_ptr_map_.clear();
     journal_.emplace_back();
 
     time_elapsed_ = 0.0f;
-}
-
-void Journal::eventTimeReversal()
-{
-    journal_.back().emplace_back(std::make_unique<TimeReversalEntry>(this));
-}
-
-void Journal::eventCharacterDestroyed(Character* ptr)
-{
-    journal_.back().emplace_back(std::make_unique<DestroyCharacterEntry>(this, ptr));
-}
-
-void Journal::eventBulletDestroyed(Bullet* bullet)
-{
-    journal_.back().emplace_back(std::make_unique<DestroyBulletEntry>(this, bullet));
-}
-
-void Journal::eventBulletSpawned(Bullet* bullet)
-{
-    journal_.back().emplace_back(std::make_unique<SpawnBulletEntry>(this, bullet));
-}
-
-void Journal::eventObstacleDestroyed(Obstacle* ptr)
-{
-    journal_.back().emplace_back(
-            std::make_unique<DestroyObstacleEntry>(this, ptr));
-}
-
-void Journal::eventObstacleShot(Obstacle* ptr)
-{
-    journal_.back().emplace_back(
-            std::make_unique<ShotObstacleEntry>(this, ptr));
-}
-
-void Journal::eventObstacleTileDestroyed(ObstacleTile* ptr)
-{
-    journal_.back().emplace_back(
-            std::make_unique<DestroyObstacleTileEntry>(this, ptr));
-}
-
-void Journal::eventObstacleTileShot(ObstacleTile* ptr)
-{
-    journal_.back().emplace_back(
-            std::make_unique<ShotObstacleTileEntry>(this, ptr));
-}
-
-void Journal::eventDecorationSpawned(Decoration* ptr)
-{
-    journal_.back().emplace_back(
-            std::make_unique<SpawnDecorationEntry>(this, ptr));
 }
 
 float Journal::getDurationSaved() const
@@ -99,6 +52,7 @@ void Journal::update(float time_elapsed)
 
         auto& enemies = Game::get().getMap().getList<NPC>();
         auto& bullets = Game::get().getBullets();
+        auto& fires = Game::get().getFires();
 
         auto& journal_back = journal_.back();
         for (const auto& enemy : enemies)
@@ -109,6 +63,11 @@ void Journal::update(float time_elapsed)
         for (const auto& bullet : bullets)
         {
             journal_back.emplace_back(std::make_unique<BulletEntry>(this, bullet.get()));
+        }
+
+        for (const auto& fire : fires)
+        {
+            journal_back.emplace_back(std::make_unique<FireEntry>(this, fire.get()));
         }
 
         // player clone
@@ -198,3 +157,40 @@ void Journal::setUpdatedPtr(ObstacleTile* ptr, ObstacleTile* new_ptr)
 {
     obstacle_tile_ptr_map_[ptr] = new_ptr;
 }
+
+Fire* Journal::getUpdatedPtr(Fire* ptr)
+{
+    auto it = fire_ptr_map_.find(ptr);
+
+    return it != fire_ptr_map_.end() ? it->second : ptr;
+}
+
+void Journal::setUpdatedPtr(Fire* ptr, Fire* new_ptr)
+{
+    fire_ptr_map_[ptr] = new_ptr;
+}
+
+Decoration* Journal::getUpdatedPtr(Decoration* ptr)
+{
+    auto it = decoration_ptr_map_.find(ptr);
+
+    return it != decoration_ptr_map_.end() ? it->second : ptr;
+}
+
+void Journal::setUpdatedPtr(Decoration* ptr, Decoration* new_ptr)
+{
+    decoration_ptr_map_[ptr] = new_ptr;
+}
+
+Special* Journal::getUpdatedPtr(Special* ptr)
+{
+    auto it = special_ptr_map_.find(ptr);
+
+    return it != special_ptr_map_.end() ? it->second : ptr;
+}
+
+void Journal::setUpdatedPtr(Special* ptr, Special* new_ptr)
+{
+    special_ptr_map_[ptr] = new_ptr;
+}
+

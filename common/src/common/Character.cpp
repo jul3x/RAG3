@@ -113,7 +113,12 @@ int Character::getCurrentWeapon() const
 void Character::makeOnlyOneWeapon(const std::string& id, float state)
 {
     weapons_in_backpack_.clear();
-    weapons_in_backpack_.emplace_back(std::make_shared<ShootingWeapon>(this, id));
+    if (id == "Null" || id.empty())
+        weapons_in_backpack_.push_back(std::make_shared<NoWeapon>());
+    else if (id.length() >= 5 && id.substr(0, 5) == "melee")
+        weapons_in_backpack_.push_back(std::make_shared<MeleeWeapon>(this, id));
+    else
+        weapons_in_backpack_.push_back(std::make_shared<ShootingWeapon>(this, id));
     current_weapon_ = 0;
 
     weapons_in_backpack_.at(current_weapon_)->setState(state);
@@ -514,13 +519,21 @@ bool Character::talk(const std::function<void(Character*, const std::string&)> &
 {
     if (!should_respond_)
     {
-        talking_func(character, talk_scenario_.front());
-        talking_func_ = talking_func;
-        talk_scenario_.pop_front();
+        if (talk_scenario_.size() % 2 != 0)
+        {
+            talk_scenario_.pop_front();
+        }
 
-        should_respond_ = true;
-        should_respond_ = true;
-        talking_time_elapsed_ = CFG.get<float>("characters/talking_respond_time");
+        if (!talk_scenario_.empty())
+        {
+            talking_func(character, talk_scenario_.front());
+            talking_func_ = talking_func;
+            talk_scenario_.pop_front();
+
+            should_respond_ = true;
+            should_respond_ = true;
+            talking_time_elapsed_ = CFG.get<float>("characters/talking_respond_time");
+        }
     }
     return talk_scenario_.size() > 1;
 }

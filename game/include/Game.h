@@ -69,8 +69,9 @@ public:
     Player& getPlayer();
     Camera& getCamera();
     Stats& getStats();
-    [[nodiscard]] const Journal& getJournal() const;
+    [[nodiscard]] Journal& getJournal() const;
     [[nodiscard]] const std::list<std::unique_ptr<Bullet>>& getBullets() const;
+    [[nodiscard]] const std::list<std::unique_ptr<Fire>>& getFires() const;
     [[nodiscard]] Special* getCurrentSpecialObject() const;
     [[nodiscard]] Character* getCurrentTalkableCharacter() const;
     [[nodiscard]] const SpawningFunction& getSpawningFunction(const std::string& name) const;
@@ -90,6 +91,7 @@ public:
     void spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir);
     void spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir);
     void spawnSpecial(const sf::Vector2f& pos, const std::string& name);
+    void spawnDecoration(const sf::Vector2f& pos, const std::string& name);
 
     // UI functions
     void talk();
@@ -101,15 +103,22 @@ public:
     [[nodiscard]] bool isJournalFreezed() const;
 
     void findAndDeleteBullet(Bullet* ptr);
+    void findAndDeleteFire(Fire* ptr);
     void findAndDeleteDecoration(Decoration* ptr);
+    void findAndDeleteSpecial(Special* ptr);
 
+    Special* spawnNewSpecial(const std::string& id, int u_id_, const sf::Vector2f& pos, const std::string& activation,
+                             const std::vector<std::string>& funcs, const std::vector<std::string>& datas);
     Fire* spawnNewFire(Character* user, const sf::Vector2f& pos, float dir);
     Bullet* spawnNewBullet(Character* user, const std::string& id, const sf::Vector2f& pos, float dir);
-    Obstacle* spawnNewObstacle(const std::string& id, const sf::Vector2f& pos);
+    Obstacle* spawnNewObstacle(const std::string& id, int u_id_, const sf::Vector2f& pos, const std::string& activation,
+                               const std::vector<std::string>& funcs, const std::vector<std::string>& datas);
     ObstacleTile* spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos);
+    Decoration* spawnNewDecoration(const std::string& id, int u_id_, const sf::Vector2f& pos);
 
-    NPC* spawnNewNPC(const std::string &id);
-    NPC* spawnNewPlayerClone();
+    NPC* spawnNewNPC(const std::string &id, int u_id, const std::string& activation,
+                     const std::vector<std::string>& funcs, const std::vector<std::string>& datas);
+    NPC* spawnNewPlayerClone(const std::string &weapon_id);
 
     // State methods
     void setGameState(Game::GameState state);

@@ -24,8 +24,12 @@ public:
     bool update(float time_elapsed) override;
 
     Character* getUser() const;
+    float getAlpha() const;
+    float getR() const;
 
     void setDead();
+    void setAlpha(float alpha);
+    void setR(float r);
 
 private:
     Character* user_;

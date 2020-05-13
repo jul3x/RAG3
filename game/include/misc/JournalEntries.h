@@ -6,6 +6,7 @@
 #define RAG3_GAME_INCLUDE_MISC_JOURNALENTRIES_H
 
 #include <common/Map.h>
+#include <common/Fire.h>
 
 
 using namespace r3e;
@@ -25,9 +26,9 @@ protected:
 
 };
 
-class TimeReversalEntry : public JournalEntry {
+class TimeReversal : public JournalEntry {
 public:
-    explicit TimeReversalEntry(Journal* father);
+    explicit TimeReversal(Journal* father, void* placeholder);
 
     void executeEntryReversal() override;
 private:
@@ -51,19 +52,27 @@ protected:
     float life_;
     float ammo_state_;
 
+    Character::GlobalState state_;
+
 };
 
 
-class DestroyCharacterEntry : public JournalEntry {
+class DestroyCharacter : public JournalEntry {
 public:
-    DestroyCharacterEntry(Journal* father, Character* ptr);
+    DestroyCharacter(Journal* father, Character* ptr);
 
     void executeEntryReversal() override;
 
 private:
     Character* ptr_;
 
+    int u_id_;
     std::string id_;
+    std::string activation_;
+    std::vector<std::string> funcs_;
+    std::vector<std::string> datas_;
+
+    std::list<std::string> talk_scenario_;
 
 };
 
@@ -81,9 +90,9 @@ private:
 
 };
 
-class DestroyBulletEntry : public JournalEntry {
+class DestroyBullet : public JournalEntry {
 public:
-    DestroyBulletEntry(Journal* father, Bullet* bullet);
+    DestroyBullet(Journal* father, Bullet* bullet);
 
     void executeEntryReversal() override;
 
@@ -91,14 +100,15 @@ private:
     Bullet* ptr_;
 
     std::string id_;
+    sf::Vector2f pos_;
     float direction_;
     Character* user_;
 
 };
 
-class SpawnBulletEntry : public JournalEntry {
+class SpawnBullet : public JournalEntry {
 public:
-    SpawnBulletEntry(Journal* father, Bullet* bullet);
+    SpawnBullet(Journal* father, Bullet* bullet);
 
     void executeEntryReversal() override;
 
@@ -107,23 +117,68 @@ private:
 
 };
 
-class DestroyObstacleEntry : public JournalEntry {
+class FireEntry : public JournalEntry {
 public:
-    DestroyObstacleEntry(Journal* father, Obstacle* ptr);
+    FireEntry(Journal* father, Fire* fire);
+
+    void executeEntryReversal() override;
+
+private:
+    Fire* ptr_;
+
+    sf::Vector2f pos_;
+    float r_;
+    float alpha_;
+
+};
+
+class DestroyFire : public JournalEntry {
+public:
+    DestroyFire(Journal* father, Fire* fire);
+
+    void executeEntryReversal() override;
+
+private:
+    Fire* ptr_;
+
+    sf::Vector2f pos_;
+    float direction_;
+    Character* user_;
+
+};
+
+class SpawnFire : public JournalEntry {
+public:
+    SpawnFire(Journal* father, Fire* fire);
+
+    void executeEntryReversal() override;
+
+private:
+    Fire* ptr_;
+
+};
+
+class DestroyObstacle : public JournalEntry {
+public:
+    DestroyObstacle(Journal* father, Obstacle* ptr);
 
     void executeEntryReversal() override;
 
 private:
     Obstacle* ptr_;
 
+    int u_id_;
     std::string id_;
     sf::Vector2f pos_;
+    std::string activation_;
+    std::vector<std::string> funcs_;
+    std::vector<std::string> datas_;
 
 };
 
-class ShotObstacleEntry : public JournalEntry {
+class ShotObstacle : public JournalEntry {
 public:
-    ShotObstacleEntry(Journal* father, Obstacle* obstacle);
+    ShotObstacle(Journal* father, Obstacle* obstacle);
 
     void executeEntryReversal() override;
 
@@ -134,9 +189,9 @@ private:
 
 };
 
-class DestroyObstacleTileEntry : public JournalEntry {
+class DestroyObstacleTile : public JournalEntry {
 public:
-    DestroyObstacleTileEntry(Journal* father, ObstacleTile* ptr);
+    DestroyObstacleTile(Journal* father, ObstacleTile* ptr);
 
     void executeEntryReversal() override;
 
@@ -148,9 +203,9 @@ private:
 
 };
 
-class ShotObstacleTileEntry : public JournalEntry {
+class ShotObstacleTile : public JournalEntry {
 public:
-    ShotObstacleTileEntry(Journal* father, ObstacleTile* obstacle);
+    ShotObstacleTile(Journal* father, ObstacleTile* obstacle);
 
     void executeEntryReversal() override;
 
@@ -162,14 +217,95 @@ private:
 };
 
 
-class SpawnDecorationEntry : public JournalEntry {
+class SpawnDecoration : public JournalEntry {
 public:
-    SpawnDecorationEntry(Journal* father, Decoration* ptr);
+    SpawnDecoration(Journal* father, Decoration* ptr);
 
     void executeEntryReversal() override;
 
 private:
     Decoration* ptr_;
+
+};
+
+class DestroyDecoration : public JournalEntry {
+public:
+    DestroyDecoration(Journal* father, Decoration* ptr);
+
+    void executeEntryReversal() override;
+
+private:
+    Decoration* ptr_;
+
+    int u_id_;
+    std::string id_;
+    sf::Vector2f pos_;
+
+};
+
+class SpawnSpecial : public JournalEntry {
+public:
+    SpawnSpecial(Journal* father, Special* ptr);
+
+    void executeEntryReversal() override;
+
+private:
+    Special* ptr_;
+
+};
+
+class DestroySpecial : public JournalEntry {
+public:
+    DestroySpecial(Journal* father, Special* ptr);
+
+    void executeEntryReversal() override;
+
+private:
+    Special* ptr_;
+
+    int u_id_;
+    std::string id_;
+    sf::Vector2f pos_;
+    std::string activation_;
+    std::vector<std::string> funcs_;
+    std::vector<std::string> datas_;
+
+};
+
+class WeaponActivation : public JournalEntry {
+public:
+    WeaponActivation(Journal* father, PlacedWeapon* ptr);
+
+    void executeEntryReversal() override;
+
+private:
+    PlacedWeapon* ptr_;
+
+    bool activate_;
+
+};
+
+class ChangeOpenState : public JournalEntry {
+public:
+    ChangeOpenState(Journal* father, Special* ptr);
+
+    void executeEntryReversal() override;
+
+private:
+    Special* ptr_;
+
+    bool open_state_;
+
+};
+
+class DoorOpen : public JournalEntry {
+public:
+    DoorOpen(Journal* father, Obstacle* ptr);
+
+    void executeEntryReversal() override;
+
+private:
+    Obstacle* ptr_;
 
 };
 

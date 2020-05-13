@@ -735,7 +735,7 @@ NPC* Game::spawnNewNPC(const std::string& id)
     return ptr;
 }
 
-NPC* Game::spawnNewPlayerClone()
+NPC* Game::spawnNewPlayerClone(const std::string& weapon_id)
 {
     if (player_clone_ != nullptr)
     {
@@ -756,6 +756,8 @@ NPC* Game::spawnNewPlayerClone()
 
         enemy->registerEnemy(player_clone_.get());
     }
+
+    player_clone_->makeOnlyOneWeapon(weapon_id, 0.0f);
 
     for (auto& weapon : player_clone_->getWeapons())
     {

@@ -109,7 +109,7 @@ public:
     ObstacleTile* spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos);
 
     NPC* spawnNewNPC(const std::string &id);
-    NPC* spawnNewPlayerClone();
+    NPC* spawnNewPlayerClone(const std::string &weapon_id);
 
     // State methods
     void setGameState(Game::GameState state);

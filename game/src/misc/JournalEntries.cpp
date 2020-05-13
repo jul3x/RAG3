@@ -26,15 +26,8 @@ TimeReversalEntry::TimeReversalEntry(Journal* father) : JournalEntry(father)
 
 void TimeReversalEntry::executeEntryReversal()
 {
-    auto new_ptr = Game::get().spawnNewPlayerClone();
+    auto new_ptr = Game::get().spawnNewPlayerClone(picked_weapon_);
     father_->setUpdatedPtr(&Game::get().getPlayer(), new_ptr);
-    new_ptr->makeOnlyOneWeapon(picked_weapon_, 0.0f);
-    auto& new_weapon = new_ptr->getWeapons().front();
-
-    if (!new_weapon->getId().empty())
-        new_weapon->registerSpawningFunction(
-                Game::get().getSpawningFunction(utils::j3x::get<std::string>(
-                        RM.getObjectParams("weapons", new_weapon->getId()), "spawn_func")));
 }
 
 CharacterEntry::CharacterEntry(Journal* father, Character* ptr) : JournalEntry(father), ptr_(ptr)
@@ -124,7 +117,6 @@ void ShotObstacleEntry::executeEntryReversal()
     auto new_ptr = father_->getUpdatedPtr(ptr_);
     new_ptr->setHealth(life_);
 }
-
 
 DestroyObstacleTileEntry::DestroyObstacleTileEntry(Journal* father, ObstacleTile* ptr) : JournalEntry(father), ptr_(ptr)
 {

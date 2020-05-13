@@ -50,12 +50,18 @@ void CharacterEntry::executeEntryReversal()
 DestroyCharacterEntry::DestroyCharacterEntry(Journal* father, Character* ptr) : JournalEntry(father), ptr_(ptr)
 {
     id_ = ptr->getId();
+    activation_ = ptr->getActivation();
+    funcs_ = ptr->getFunctions();
+    datas_ = ptr->getDatas();
+    talk_scenario_ = ptr->getTalkScenario();
 }
 
 void DestroyCharacterEntry::executeEntryReversal()
 {
-    auto new_ptr = Game::get().spawnNewNPC(id_);
+    auto new_ptr = Game::get().spawnNewNPC(id_, activation_, funcs_, datas_);
     father_->setUpdatedPtr(ptr_, new_ptr);
+
+    new_ptr->setTalkScenario(talk_scenario_);
 }
 
 BulletEntry::BulletEntry(Journal* father, Bullet* bullet) : JournalEntry(father), ptr_(bullet)
@@ -139,12 +145,14 @@ DestroyObstacleEntry::DestroyObstacleEntry(Journal* father, Obstacle* ptr) : Jou
 {
     id_ = ptr->getId();
     pos_ = ptr->getPosition();
+    activation_ = ptr->getActivation();
+    funcs_ = ptr->getFunctions();
+    datas_ = ptr->getDatas();
 }
 
 void DestroyObstacleEntry::executeEntryReversal()
 {
-    auto new_ptr = Game::get().spawnNewObstacle(id_, pos_);
-
+    auto new_ptr = Game::get().spawnNewObstacle(id_, pos_, activation_, funcs_, datas_);
     father_->setUpdatedPtr(ptr_, new_ptr);
 }
 

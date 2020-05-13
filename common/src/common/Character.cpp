@@ -519,13 +519,21 @@ bool Character::talk(const std::function<void(Character*, const std::string&)> &
 {
     if (!should_respond_)
     {
-        talking_func(character, talk_scenario_.front());
-        talking_func_ = talking_func;
-        talk_scenario_.pop_front();
+        if (talk_scenario_.size() % 2 != 0)
+        {
+            talk_scenario_.pop_front();
+        }
 
-        should_respond_ = true;
-        should_respond_ = true;
-        talking_time_elapsed_ = CFG.get<float>("characters/talking_respond_time");
+        if (!talk_scenario_.empty())
+        {
+            talking_func(character, talk_scenario_.front());
+            talking_func_ = talking_func;
+            talk_scenario_.pop_front();
+
+            should_respond_ = true;
+            should_respond_ = true;
+            talking_time_elapsed_ = CFG.get<float>("characters/talking_respond_time");
+        }
     }
     return talk_scenario_.size() > 1;
 }

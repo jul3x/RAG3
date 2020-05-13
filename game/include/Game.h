@@ -107,10 +107,12 @@ public:
 
     Fire* spawnNewFire(Character* user, const sf::Vector2f& pos, float dir);
     Bullet* spawnNewBullet(Character* user, const std::string& id, const sf::Vector2f& pos, float dir);
-    Obstacle* spawnNewObstacle(const std::string& id, const sf::Vector2f& pos);
+    Obstacle* spawnNewObstacle(const std::string& id, const sf::Vector2f& pos, const std::string& activation,
+                               const std::vector<std::string>& funcs, const std::vector<std::string>& datas);
     ObstacleTile* spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos);
 
-    NPC* spawnNewNPC(const std::string &id);
+    NPC* spawnNewNPC(const std::string &id, const std::string& activation,
+                     const std::vector<std::string>& funcs, const std::vector<std::string>& datas);
     NPC* spawnNewPlayerClone(const std::string &weapon_id);
 
     // State methods

@@ -64,6 +64,11 @@ private:
     Character* ptr_;
 
     std::string id_;
+    std::string activation_;
+    std::vector<std::string> funcs_;
+    std::vector<std::string> datas_;
+
+    std::list<std::string> talk_scenario_;
 
 };
 
@@ -160,6 +165,9 @@ private:
 
     std::string id_;
     sf::Vector2f pos_;
+    std::string activation_;
+    std::vector<std::string> funcs_;
+    std::vector<std::string> datas_;
 
 };
 

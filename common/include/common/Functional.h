@@ -29,6 +29,8 @@ public:
     [[nodiscard]] const std::vector<std::string>& getDatas() const;
     [[nodiscard]] const std::string& getTextToUse() const;
 
+    void setFunctions(const std::vector<std::string>& func);
+    void setDatas(const std::vector<std::string>& data);
     void setActivation(const std::string& str);
     void setFunctionsStr(const std::string& str);
     void setDatasStr(const std::string& str);

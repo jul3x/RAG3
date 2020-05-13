@@ -722,9 +722,13 @@ Fire* Game::spawnNewFire(Character* user, const sf::Vector2f& pos, float dir)
 }
 
 
-NPC* Game::spawnNewNPC(const std::string& id)
+NPC* Game::spawnNewNPC(const std::string& id, const std::string& activation,
+                       const std::vector<std::string>& funcs, const std::vector<std::string>& datas)
 {
     auto ptr = map_->spawn<NPC>({}, 0.0f, id);
+    ptr->setActivation(activation);
+    ptr->setFunctions(funcs);
+    ptr->setDatas(datas);
     engine_->registerDynamicObject(ptr);
 
     ptr->registerAgentsManager(agents_manager_.get());
@@ -834,9 +838,13 @@ ObstacleTile* Game::spawnNewObstacleTile(const std::string& id, const sf::Vector
     return new_ptr;
 }
 
-Obstacle* Game::spawnNewObstacle(const std::string& id, const sf::Vector2f& pos)
+Obstacle* Game::spawnNewObstacle(const std::string& id, const sf::Vector2f& pos, const std::string& activation,
+                                 const std::vector<std::string>& funcs, const std::vector<std::string>& datas)
 {
     auto new_ptr = map_->spawn<Obstacle>(pos, 0.0f, id);
+    new_ptr->setActivation(activation);
+    new_ptr->setFunctions(funcs);
+    new_ptr->setDatas(datas);
     engine_->registerStaticObject(new_ptr);
 
     for (const auto& function : new_ptr->getFunctions())

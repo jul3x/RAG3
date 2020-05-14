@@ -37,7 +37,10 @@ public:
 
     [[nodiscard]] virtual bool isUsableByNPC() const;
     [[nodiscard]] virtual bool isActive() const;
+    [[nodiscard]] virtual bool isDestroyed() const;
+    virtual void activate();
     virtual void deactivate();
+    virtual void destroy();
 
     void bindFunction(std::function<void(Functional*, const std::string&, Character*)> func, const std::string& text,
                       bool is_usable_by_npc);
@@ -45,6 +48,7 @@ public:
 
 private:
     bool is_active_;
+    bool is_destroyed_;
 
     std::string activation_;
     std::vector<std::string> functions_, datas_;

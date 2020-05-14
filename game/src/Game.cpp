@@ -294,7 +294,7 @@ void Game::updateMapObjects(float time_elapsed)
         bool do_increment = true;
         (*it)->updateAnimation(time_elapsed);
 
-        if (!(*it)->isActive())
+        if ((*it)->isDestroyed())
         {
             journal_->event<DestroySpecial>(it->get());
             auto next_it = std::next(it);
@@ -364,7 +364,7 @@ void Game::killNPC(NPC* npc)
         }
     }
 
-    if (npc->getActivation() == "OnKill")
+    if (npc->getActivation() == "OnKill" && npc->isActive())
     {
         npc->use(npc);
     }
@@ -889,7 +889,6 @@ void Game::findAndDeleteFire(Fire* ptr)
 {
     for (auto it = fire_.rbegin(); it != fire_.rend(); ++it)
     {
-        std::cerr << it->get() << std::endl;
         if (it->get() == ptr)
         {
             engine_->deleteHoveringObject(ptr);
@@ -947,6 +946,8 @@ void Game::talk()
         if (!still_talking)
         {
             engine_->deleteHoveringObject(curr->getTalkableArea());
+            curr->use(curr);
+            curr->deactivate();
         }
     }
 }

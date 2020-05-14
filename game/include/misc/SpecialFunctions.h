@@ -38,15 +38,19 @@ public:
     static void explode(Functional* obj, const std::string& data, Character* user);
 
     static void removeDecoration(Functional* obj, const std::string& data, Character* user);
+    static void removeSpecial(Functional* obj, const std::string& data, Character* user);
     static void spawnExplosionEvent(Functional* obj, const std::string& data, Character* user);
+    static void spawnExplosionEventByPos(Functional* obj, const std::string& data, Character* user);
     static void spawnThought(Functional* obj, const std::string& data, Character* user);
     static void spawnPlayerThought(Functional* obj, const std::string& data, Character* user);
     static void spawnLava(Functional* obj, const std::string& data, Character* user);
+    static void spawnMiniLava(Functional* obj, const std::string& data, Character* user);
     static void spawnAmmo(Functional* obj, const std::string& data, Character* user);
     static void spawnFlame(Functional* obj, const std::string& data, Character* user);
 
     static void nullFunc(Functional* obj, const std::string& data, Character* user);
     static void deactivate(Functional* obj, const std::string& data, Character* user);
+    static void destroy(Functional* obj, const std::string& data, Character* user);
 
     std::function<void(Functional*, const std::string&, Character*)> bindFunction(const std::string& key) const;
     const std::string& bindTextToUse(const std::string& key) const;

@@ -285,6 +285,17 @@ private:
 
 };
 
+class ObjectDeactivated : public JournalEntry {
+public:
+    ObjectDeactivated(Journal* father, Special* ptr);
+
+    void executeEntryReversal() override;
+
+private:
+    Special* ptr_;
+
+};
+
 class ChangeOpenState : public JournalEntry {
 public:
     ChangeOpenState(Journal* father, Special* ptr);

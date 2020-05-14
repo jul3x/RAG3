@@ -10,8 +10,8 @@ int frames_number=1
 float frame_duration=0.0f
 
 string default_activation=OnEnter
-list[string] default_functions=[AddWeapon]
-list[string] default_datas=[desert_eagle]
+list[string] default_functions=[AddWeapon;Destroy]
+list[string] default_datas=[desert_eagle;Null]
 
 bool is_drawable=1
 

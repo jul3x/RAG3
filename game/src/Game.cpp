@@ -1170,3 +1170,8 @@ void Game::findAndDeleteSpecial(Special* ptr)
 
     std::cerr << "[Game] Warning - special to delete not found!" << std::endl;
 }
+
+void Game::registerHoveringObject(HoveringObject* obj)
+{
+    engine_->registerHoveringObject(obj);
+}

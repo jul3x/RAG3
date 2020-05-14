@@ -58,6 +58,7 @@ public:
     void initialize() override;
     void update(float time_elapsed) override;
     void draw(graphics::Graphics& graphics) override;
+    void registerHoveringObject(HoveringObject* obj);
 
     void alertCollision(HoveringObject* h_obj, StaticObject* s_obj) override;
     void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) override;

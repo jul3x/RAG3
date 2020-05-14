@@ -1,8 +1,8 @@
-float max_speed=200.0f
+float max_speed=100.0f
 
-float standby_speed=100.0f
+float standby_speed=50.0f
 
-float max_health=20
+float max_health=4
 
 float size_x=49.0f
 float size_y=129.0f

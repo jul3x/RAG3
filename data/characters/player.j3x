@@ -29,6 +29,6 @@ string ai_type=Standard
 
 int z_index=1
 
-list[string] weapons=[flamethrower;melee_axe;m4;Null]
+list[string] weapons=[Null;Null;Null;Null]
 
 bool is_talkable=0

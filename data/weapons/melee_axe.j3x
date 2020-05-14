@@ -1,6 +1,6 @@
 float recoil=1500.0f
 
-float deadly_factor=3.0f
+float deadly_factor=6.0f
 
 string spawn_func=Null
 float use_time=0.30f

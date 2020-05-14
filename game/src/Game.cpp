@@ -48,7 +48,7 @@ void Game::initialize()
     music_manager_ = std::make_unique<audio::MusicManager>();
     music_manager_->addDirectoryToQueue(CFG.get<std::string>("paths/music_dir"));
 
-    music_manager_->setVolume(50.0f);
+    music_manager_->setVolume(CFG.get<float>("sound/music_volume"));
     music_manager_->play();
 
     ui_->registerCamera(camera_.get());

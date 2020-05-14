@@ -197,4 +197,9 @@ namespace r3e {
         shape_.setTextureRect(animation_source_);
     }
 
+    void AbstractDrawableObject::setZIndex(int z_index)
+    {
+        z_index_ = z_index;
+    }
+
 } // namespace r3e

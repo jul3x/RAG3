@@ -150,6 +150,7 @@ void SpecialFunctions::openDoor(Functional* obj, const std::string& data, Charac
         door->changeTexture(&RM.getTexture("obstacles/" + door->getId()));
         door->changeCollisionArea(collision::Box(utils::j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_size_x"),
                                                  utils::j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_size_y")));
+        door->setZIndex(utils::j3x::get<int>(RM.getObjectParams("obstacles", door->getId()), "z_index"));
 
         Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) =
                 utils::j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "endurance");
@@ -158,6 +159,7 @@ void SpecialFunctions::openDoor(Functional* obj, const std::string& data, Charac
     {
         door->changeTexture(&RM.getTexture("obstacles/" + door->getId() + "_open"));
         door->changeCollisionArea(collision::None());
+        door->setZIndex(utils::j3x::get<int>(RM.getObjectParams("obstacles", door->getId() + "_open"), "z_index"));
 
         Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
     }

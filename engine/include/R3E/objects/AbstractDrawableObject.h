@@ -42,6 +42,7 @@ namespace r3e {
         virtual void setCurrentFrame(short int frame);
         virtual void setFlipX(bool flip);
         virtual void setFlipY(bool flip);
+        virtual void setZIndex(int z_index);
 
         virtual void changeTexture(sf::Texture* texture, bool reset = false);
         virtual void changeTextureRect(const sf::IntRect &rect);

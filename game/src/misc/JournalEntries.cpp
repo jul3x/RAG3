@@ -290,7 +290,8 @@ void DoorOpen::executeEntryReversal()
         new_ptr->changeTexture(&RM.getTexture("obstacles/" + new_ptr->getId()));
         new_ptr->changeCollisionArea(collision::Box(utils::j3x::get<float>(RM.getObjectParams("obstacles", new_ptr->getId()), "collision_size_x"),
                                                     utils::j3x::get<float>(RM.getObjectParams("obstacles", new_ptr->getId
-                                                  ()), "collision_size_y")));
+                                                            ()), "collision_size_y")));
+        new_ptr->setZIndex(utils::j3x::get<int>(RM.getObjectParams("obstacles", new_ptr->getId()), "z_index"));
 
         Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) =
                 utils::j3x::get<float>(RM.getObjectParams("obstacles", new_ptr->getId()), "endurance");
@@ -299,6 +300,8 @@ void DoorOpen::executeEntryReversal()
     {
         new_ptr->changeTexture(&RM.getTexture("obstacles/" + new_ptr->getId() + "_open"));
         new_ptr->changeCollisionArea(collision::None());
+        new_ptr->setZIndex(utils::j3x::get<int>(RM.getObjectParams("obstacles", new_ptr->getId() + "_open"),
+                "z_index"));
 
         Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
     }

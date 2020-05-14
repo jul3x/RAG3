@@ -443,15 +443,15 @@ special_event 1200 825 749 OnEnter [RemoveDecoration;SpawnLava;SpawnExplosionEve
 stairs 1800 2950 790 OnEnter [Teleport] [(7981.1,1784.7)]
 lever 400 1325 811 OnUse [ActivateWeapon;ChangeOpenState] [808;Null]
 special_event 1600 500 812 OnEnter [ActivateWeapon;Destroy] [807;Null]
-lava 1900 2300 818 OnEnter [Kill] [lava]
 lava 1900 2500 822 OnEnter [Kill] [lava]
 lava 1800 2500 823 OnEnter [Kill] [lava]
 lava 1800 2600 826 OnEnter [Kill] [lava]
 lava 1800 2700 827 OnEnter [Kill] [lava]
 lava 1700 2600 828 OnEnter [Kill] [lava]
 lava 1700 2700 829 OnEnter [Kill] [lava]
-lever 2000 2225 833 OnUse [OpenDoor;ChangeOpenState;Deactivate] [816;Null;Null]
-lava 1900 2400 834 OnEnter [Kill] [lava]
+lever 2000 2225 833 OnUse [OpenDoor;ChangeOpenState;RemoveSpecial;RemoveSpecial;SpawnMiniLava;Deactivate] [816;Null;836;835;(1900.0,2450.0);Null]
+lava 1900 2400 835 OnEnter [Kill] [lava]
+lava 1900 2300 836 OnEnter [Kill] [lava]
 
 weapons: 
 flamethrower 1760.08 260.598 35.9029 807 Interrupted 1

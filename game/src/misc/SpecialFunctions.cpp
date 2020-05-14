@@ -30,6 +30,7 @@ SpecialFunctions::SpecialFunctions()
     functions_["SetOnFire"] = &setOnFire;
     functions_["Explode"] = &explode;
     functions_["RemoveDecoration"] = &removeDecoration;
+    functions_["RemoveSpecial"] = &removeSpecial;
     functions_["SpawnLava"] = &spawnLava;
     functions_["SpawnExplosionEvent"] = &spawnExplosionEvent;
     functions_["SpawnExplosionEventByPos"] = &spawnExplosionEventByPos;
@@ -58,6 +59,7 @@ SpecialFunctions::SpecialFunctions()
     text_to_use_["Explode"] = "";
     text_to_use_["SetOnFire"] = "";
     text_to_use_["RemoveDecoration"] = "";
+    text_to_use_["RemoveSpecial"] = "";
     text_to_use_["SpawnLava"] = "";
     text_to_use_["SpawnExplosionEvent"] = "";
     text_to_use_["SpawnExplosionEventByPos"] = "";
@@ -86,6 +88,7 @@ SpecialFunctions::SpecialFunctions()
     is_usable_by_npc_["SetOnFire"] = true;
     is_usable_by_npc_["Explode"] = false;
     is_usable_by_npc_["RemoveDecoration"] = false;
+    is_usable_by_npc_["RemoveSpecial"] = false;
     is_usable_by_npc_["SpawnLava"] = false;
     is_usable_by_npc_["SpawnExplosionEventByPos"] = true;
     is_usable_by_npc_["SpawnMiniLava"] = false;
@@ -407,4 +410,12 @@ void SpecialFunctions::spawnPlayerThought(Functional* obj, const std::string& da
     auto str = data;
     std::replace(str.begin(), str.end(), '$', '\n');
     Game::get().spawnThought(&Game::get().getPlayer(), str);
+}
+
+void SpecialFunctions::removeSpecial(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Remove special." << std::endl;
+    auto special_id = std::stoi(data);
+    auto special = Game::get().getMap().getObjectById<Special>(special_id);
+    special->destroy();
 }

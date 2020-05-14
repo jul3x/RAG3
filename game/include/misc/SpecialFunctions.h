@@ -38,6 +38,7 @@ public:
     static void explode(Functional* obj, const std::string& data, Character* user);
 
     static void removeDecoration(Functional* obj, const std::string& data, Character* user);
+    static void removeSpecial(Functional* obj, const std::string& data, Character* user);
     static void spawnExplosionEvent(Functional* obj, const std::string& data, Character* user);
     static void spawnExplosionEventByPos(Functional* obj, const std::string& data, Character* user);
     static void spawnThought(Functional* obj, const std::string& data, Character* user);

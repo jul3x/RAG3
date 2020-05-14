@@ -1,4 +1,4 @@
-bool god_mode=0
+bool god_mode=1
 bool no_clip_mode=0
 
 float collision_grid_size=400.0f

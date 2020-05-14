@@ -263,17 +263,7 @@ ChangeOpenState::ChangeOpenState(Journal* father, Special* ptr) : JournalEntry(f
 void ChangeOpenState::executeEntryReversal()
 {
     auto new_ptr = father_->getUpdatedPtr(ptr_);
-
-    if (open_state_)
-    {
-        new_ptr->changeTexture(&RM.getTexture("specials/" + new_ptr->getId()));
-        new_ptr->setAdditionalBooleanData(false);
-    }
-    else
-    {
-        new_ptr->changeTexture(&RM.getTexture("specials/" + new_ptr->getId() + "_open"));
-        new_ptr->setAdditionalBooleanData(true);
-    }
+    SpecialFunctions::changeOpenState(new_ptr, "", nullptr);
 }
 
 DoorOpen::DoorOpen(Journal* father, Obstacle* ptr) : JournalEntry(father), ptr_(ptr)
@@ -283,28 +273,7 @@ DoorOpen::DoorOpen(Journal* father, Obstacle* ptr) : JournalEntry(father), ptr_(
 void DoorOpen::executeEntryReversal()
 {
     auto new_ptr = father_->getUpdatedPtr(ptr_);
-    auto grid_pos = std::make_pair(static_cast<size_t>(new_ptr->getPosition().x / DecorationTile::SIZE_X_),
-                                   static_cast<size_t>(new_ptr->getPosition().y / DecorationTile::SIZE_Y_));
-    if (new_ptr->getCollisionArea().getType() == collision::Area::Type::None)
-    {
-        new_ptr->changeTexture(&RM.getTexture("obstacles/" + new_ptr->getId()));
-        new_ptr->changeCollisionArea(collision::Box(utils::j3x::get<float>(RM.getObjectParams("obstacles", new_ptr->getId()), "collision_size_x"),
-                                                    utils::j3x::get<float>(RM.getObjectParams("obstacles", new_ptr->getId
-                                                            ()), "collision_size_y")));
-        new_ptr->setZIndex(utils::j3x::get<int>(RM.getObjectParams("obstacles", new_ptr->getId()), "z_index"));
-
-        Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) =
-                utils::j3x::get<float>(RM.getObjectParams("obstacles", new_ptr->getId()), "endurance");
-    }
-    else
-    {
-        new_ptr->changeTexture(&RM.getTexture("obstacles/" + new_ptr->getId() + "_open"));
-        new_ptr->changeCollisionArea(collision::None());
-        new_ptr->setZIndex(utils::j3x::get<int>(RM.getObjectParams("obstacles", new_ptr->getId() + "_open"),
-                "z_index"));
-
-        Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
-    }
+    SpecialFunctions::openDoor(nullptr, std::to_string(new_ptr->getUniqueId()), nullptr);
 }
 
 ObjectDeactivated::ObjectDeactivated(Journal* father, Special* ptr) : JournalEntry(father), ptr_(ptr)

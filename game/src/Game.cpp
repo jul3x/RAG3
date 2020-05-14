@@ -294,7 +294,7 @@ void Game::updateMapObjects(float time_elapsed)
         bool do_increment = true;
         (*it)->updateAnimation(time_elapsed);
 
-        if (!(*it)->isActive())
+        if ((*it)->isDestroyed())
         {
             journal_->event<DestroySpecial>(it->get());
             auto next_it = std::next(it);

@@ -10,8 +10,8 @@ int frames_number=1
 float frame_duration=0.0f
 
 string default_activation=OnEnter
-list[string] default_functions=[AddAmmo]
-list[string] default_datas=[rocket_launcher]
+list[string] default_functions=[AddAmmo;Destroy]
+list[string] default_datas=[rocket_launcher;Null]
 
 bool is_drawable=1
 

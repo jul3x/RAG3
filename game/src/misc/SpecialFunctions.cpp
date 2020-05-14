@@ -32,10 +32,13 @@ SpecialFunctions::SpecialFunctions()
     functions_["RemoveDecoration"] = &removeDecoration;
     functions_["SpawnLava"] = &spawnLava;
     functions_["SpawnExplosionEvent"] = &spawnExplosionEvent;
+    functions_["SpawnExplosionEventByPos"] = &spawnExplosionEventByPos;
+    functions_["SpawnMiniLava"] = &spawnMiniLava;
     functions_["SpawnFlame"] = &spawnFlame;
     functions_["SpawnAmmo"] = &spawnAmmo;
     functions_["Null"] = &nullFunc;
     functions_["Deactivate"] = &deactivate;
+    functions_["Destroy"] = &destroy;
 
     text_to_use_["MapStart"] = "[F] Start new map";
     text_to_use_["MapEnd"] = "[F] End this map";
@@ -57,10 +60,13 @@ SpecialFunctions::SpecialFunctions()
     text_to_use_["RemoveDecoration"] = "";
     text_to_use_["SpawnLava"] = "";
     text_to_use_["SpawnExplosionEvent"] = "";
+    text_to_use_["SpawnExplosionEventByPos"] = "";
+    text_to_use_["SpawnMiniLava"] = "";
     text_to_use_["SpawnAmmo"] = "";
     text_to_use_["SpawnFlame"] = "";
     text_to_use_["Null"] = "";
     text_to_use_["Deactivate"] = "";
+    text_to_use_["Destroy"] = "";
 
     is_usable_by_npc_["MapStart"] = false;
     is_usable_by_npc_["MapEnd"]= false;
@@ -81,11 +87,14 @@ SpecialFunctions::SpecialFunctions()
     is_usable_by_npc_["Explode"] = false;
     is_usable_by_npc_["RemoveDecoration"] = false;
     is_usable_by_npc_["SpawnLava"] = false;
+    is_usable_by_npc_["SpawnExplosionEventByPos"] = true;
+    is_usable_by_npc_["SpawnMiniLava"] = false;
     is_usable_by_npc_["SpawnExplosionEvent"] = false;
     is_usable_by_npc_["SpawnAmmo"] = false;
     is_usable_by_npc_["SpawnFlame"] = false;
     is_usable_by_npc_["Null"] = true;
     is_usable_by_npc_["Deactivate"] = true;
+    is_usable_by_npc_["Destroy"] = true;
 }
 
 
@@ -209,8 +218,6 @@ void SpecialFunctions::addWeapon(Functional* obj, const std::string& data, Chara
                         RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
 
     user->addWeaponToBackpack(weapon);
-
-    obj->deactivate();
 }
 
 void SpecialFunctions::addAmmo(Functional* obj, const std::string& data, Character* user)
@@ -220,8 +227,6 @@ void SpecialFunctions::addAmmo(Functional* obj, const std::string& data, Charact
     std::replace(data_parsed.begin(), data_parsed.end(), ' ', '_');
 
     user->addAmmoToWeapon(data_parsed);
-
-    obj->deactivate();
 }
 
 void SpecialFunctions::addHealth(Functional* obj, const std::string& data, Character* user)
@@ -232,8 +237,6 @@ void SpecialFunctions::addHealth(Functional* obj, const std::string& data, Chara
     user->setHealth(std::min(user->getHealth() + data_parsed, user->getMaxHealth()));
 
     Game::get().spawnThought(user, "Uff!\nThat's what I needed...");
-
-    obj->deactivate();
 }
 
 void SpecialFunctions::addSpeed(Functional* obj, const std::string& data, Character* user)
@@ -244,8 +247,6 @@ void SpecialFunctions::addSpeed(Functional* obj, const std::string& data, Charac
     user->setSpeedFactor(user->getSpeedFactor() + data_parsed);
 
     Game::get().spawnThought(user, "Woah!\nI feel... faster...");
-
-    obj->deactivate();
 }
 
 void SpecialFunctions::pickCrystal(Functional* obj, const std::string& data, Character* user)
@@ -255,8 +256,6 @@ void SpecialFunctions::pickCrystal(Functional* obj, const std::string& data, Cha
     Game::get().getStats().pickCrystal();
 
     Game::get().spawnThought(user, "I need more of them!");
-
-    obj->deactivate();
 }
 
 void SpecialFunctions::spawnThought(Functional* obj, const std::string& data, Character* user)
@@ -322,12 +321,25 @@ void SpecialFunctions::spawnExplosionEvent(Functional* obj, const std::string& d
     Game::get().spawnExplosionEvent(obs->getPosition(), std::stof(data));
 }
 
+void SpecialFunctions::spawnExplosionEventByPos(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Spawn explosion event by pos." << std::endl;
+    auto pos = utils::j3x::convert<sf::Vector2f>(data);
+    Game::get().spawnExplosionEvent(pos, 250.0f);
+}
+
 void SpecialFunctions::spawnLava(Functional* obj, const std::string& data, Character* user)
 {
     std::cout << "[SpecialFunction] Spawn lava." << std::endl;
     auto pos = utils::j3x::convert<sf::Vector2f>(data);
     Game::get().spawnSpecial(pos, "lava");
-    Game::get().spawnExplosionEvent(pos, 250.0f);
+}
+
+void SpecialFunctions::spawnMiniLava(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Spawn mini lava." << std::endl;
+    auto pos = utils::j3x::convert<sf::Vector2f>(data);
+    Game::get().spawnSpecial(pos, "mini_lava");
 }
 
 void SpecialFunctions::spawnAmmo(Functional* obj, const std::string& data, Character* user)
@@ -353,7 +365,6 @@ void SpecialFunctions::spawnFlame(Functional* obj, const std::string& data, Char
     Game::get().spawnExplosionEvent(pos, 250.0f);
 }
 
-
 void SpecialFunctions::kill(Functional* obj, const std::string& data, Character* user)
 {
     std::cout << "[SpecialFunction] Kill." << std::endl;
@@ -371,6 +382,13 @@ void SpecialFunctions::deactivate(Functional *obj, const std::string &data, Char
 {
     std::cout << "[SpecialFunction] Deactivating." << std::endl;
     obj->deactivate();
+    Game::get().getJournal().event<ObjectDeactivated>(dynamic_cast<Special*>(obj));
+}
+
+void SpecialFunctions::destroy(Functional *obj, const std::string &data, Character* user)
+{
+    std::cout << "[SpecialFunction] Destroying." << std::endl;
+    obj->destroy();
 }
 
 void SpecialFunctions::activateWeapon(Functional* obj, const std::string& data, Character* user)

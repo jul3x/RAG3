@@ -306,3 +306,13 @@ void DoorOpen::executeEntryReversal()
         Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
     }
 }
+
+ObjectDeactivated::ObjectDeactivated(Journal* father, Special* ptr) : JournalEntry(father), ptr_(ptr)
+{
+}
+
+void ObjectDeactivated::executeEntryReversal()
+{
+    auto new_ptr = father_->getUpdatedPtr(ptr_);
+    new_ptr->activate();
+}

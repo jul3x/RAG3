@@ -17,6 +17,7 @@ Functional::Functional(const std::string& activation, const std::vector<std::str
         functions_(functions),
         datas_(datas),
         is_active_(true),
+        is_destroyed_(false),
         text_to_use_(nullptr),
         is_usable_by_npc_(true)
 {
@@ -105,9 +106,19 @@ bool Functional::isActive() const
     return is_active_;
 }
 
+bool Functional::isDestroyed() const
+{
+    return is_destroyed_;
+}
+
 void Functional::deactivate()
 {
     is_active_ = false;
+}
+
+void Functional::activate()
+{
+    is_active_ = true;
 }
 
 void Functional::bindFunction(std::function<void(Functional*, const std::string&, Character*)> func, const std::string& text, bool is_usable_by_npc)
@@ -130,4 +141,9 @@ void Functional::use(Character* user)
 bool Functional::isUsableByNPC() const
 {
     return is_usable_by_npc_;
+}
+
+void Functional::destroy()
+{
+    is_destroyed_ = true;
 }

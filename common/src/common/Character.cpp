@@ -219,8 +219,15 @@ bool Character::update(float time_elapsed)
     auto rotation_diff = utils::geo::getAngleBetweenDegree(this->getRotation(), rotate_to_);
     auto is_negative = std::signbit(rotation_diff);
     auto rotation_sqrt = std::sqrt(std::abs(rotation_diff)) * (is_negative ? -1.0f : 1.0f);
-    this->setRotation(this->getRotation() -
-                      rotation_sqrt * CFG.get<float>("characters/mouse_reaction_speed") * speed_factor_ * time_elapsed);
+    auto new_rotation = this->getRotation() -
+                        rotation_sqrt * CFG.get<float>("characters/mouse_reaction_speed") * speed_factor_ * time_elapsed;
+
+    auto new_rotation_diff = utils::geo::getAngleBetweenDegree(new_rotation, rotate_to_);
+
+    if (is_negative != std::signbit(new_rotation_diff))
+        this->setRotation(rotate_to_);
+    else
+        this->setRotation(new_rotation);
 
     if (should_respond_)
     {

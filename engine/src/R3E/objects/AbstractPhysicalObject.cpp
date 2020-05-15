@@ -96,8 +96,18 @@ namespace r3e {
 
     bool DynamicObject::update(float time_elapsed)
     {
-        auto steering = utils::geo::vectorLengthLimit(acceleration_ * (set_v_ - curr_v_) * time_elapsed, acceleration_);
-        curr_v_ = curr_v_ + steering;
+        auto steering = utils::geo::vectorLengthLimit(set_v_ - curr_v_, 1.0f) * acceleration_;
+
+        if (utils::num::isNearlyEqual(set_v_, {}, 20.0f) && utils::num::isNearlyEqual(curr_v_, {}, 20.0f) &&
+            steering_forces_.empty())
+        {
+            curr_v_ = {};
+        }
+        else
+        {
+            curr_v_ = curr_v_ + steering * time_elapsed;
+        }
+
 
         for (auto it = steering_forces_.begin(); it != steering_forces_.end();)
         {

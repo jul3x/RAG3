@@ -1,4 +1,4 @@
-float recoil=600.0f
+float recoil=10000.0f
 
 float deadly_factor=3.0f
 

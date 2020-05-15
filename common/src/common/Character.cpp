@@ -79,11 +79,11 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
 
 bool Character::shot()
 {
-    auto new_velocity = weapons_in_backpack_.at(current_weapon_)->use();
+    auto force = weapons_in_backpack_.at(current_weapon_)->use();
 
-    if (!utils::num::isNearlyEqual(new_velocity, {0.0f, 0.0f}))
+    if (!utils::num::isNearlyEqual(force, {0.0f, 0.0f}))
     {
-        this->setForcedVelocity(new_velocity);
+        this->addSteeringForce(force, CFG.get<float>("shot_force_duration"));
         return true;
     }
 
@@ -94,10 +94,10 @@ void Character::getShot(const Bullet& bullet)
 {
     Shootable::getShot(bullet);
     //Engine::spawnBloodAnimation();
-    this->setForcedVelocity(this->getVelocity() +
-                            utils::geo::getNormalized(bullet.getVelocity()) *
-                            static_cast<float>(bullet.getDeadlyFactor()) *
-                            CFG.get<float>("get_shot_factor"));
+    this->addSteeringForce(utils::geo::getNormalized(bullet.getVelocity()) *
+                           static_cast<float>(bullet.getDeadlyFactor()) *
+                           CFG.get<float>("get_shot_factor"), CFG.get<float>("shot_force_duration"));
+
 }
 
 void Character::getCut(const MeleeWeapon& weapon)

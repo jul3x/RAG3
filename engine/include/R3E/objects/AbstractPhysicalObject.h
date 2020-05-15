@@ -8,9 +8,10 @@
 
 #include <iostream>
 #include <cmath>
+#include <list>
 
-#include "AbstractDrawableObject.h"
-#include "CollisionArea.h"
+#include <R3E/objects/AbstractDrawableObject.h>
+#include <R3E/objects/CollisionArea.h>
 
 
 namespace r3e {
@@ -76,10 +77,13 @@ namespace r3e {
         virtual void setForcedVelocity(const sf::Vector2f& velocity);
         virtual void setAcceleration(float acc);
 
+        virtual void addSteeringForce(const sf::Vector2f& force, float time);
+
         bool update(float time_elapsed) override;
 
     private:
         float acceleration_;
+        std::list<std::pair<sf::Vector2f, float>> steering_forces_;
 
         sf::Vector2f curr_v_, set_v_;
     };

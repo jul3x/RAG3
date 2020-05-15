@@ -4,7 +4,6 @@
 
 #include <R3E/utils/Geometry.h>
 #include <R3E/utils/Numeric.h>
-#include <R3E/system/Config.h>
 #include <R3E/objects/AbstractPhysicalObject.h>
 
 //
@@ -97,12 +96,38 @@ namespace r3e {
 
     bool DynamicObject::update(float time_elapsed)
     {
-        auto steering = utils::geo::vectorLengthLimit(set_v_ - curr_v_, acceleration_ * time_elapsed);
+        auto steering = utils::geo::vectorLengthLimit(acceleration_ * (set_v_ - curr_v_) * time_elapsed, acceleration_);
         curr_v_ = curr_v_ + steering;
+
+        for (auto it = steering_forces_.begin(); it != steering_forces_.end();)
+        {
+            bool do_increment = true;
+
+            it->second -= time_elapsed;
+
+            if (it->second < 0.0f)
+            {
+                auto next_it = std::next(it);
+
+                steering_forces_.erase(it);
+                it = next_it;
+                do_increment = false;
+            }
+
+
+            curr_v_ = curr_v_ + it->first * time_elapsed;
+
+            if (do_increment) ++it;
+        }
 
         this->setPosition(this->getPosition() + curr_v_ * time_elapsed);
 
         return true;
+    }
+
+    void DynamicObject::addSteeringForce(const sf::Vector2f& force, float time)
+    {
+        steering_forces_.emplace_back(force, time);
     }
 
 //

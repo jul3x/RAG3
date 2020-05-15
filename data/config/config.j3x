@@ -4,7 +4,7 @@ bool no_clip_mode=0
 float collision_grid_size=400.0f
 
 float obstacles_endurance_factor=3
-float get_shot_factor=100.0f
+float get_shot_factor=2000.0f
 float bullet_time_factor=0.3f
 
 float journal_sampling_rate=30.0f
@@ -28,7 +28,11 @@ float fire_collision_factor=0.5f
 float fire_collision_offset=50.0f
 
 float explosion_hurt_factor=30.0f
-float explosion_velocity_factor=1000.0f
+float explosion_velocity_factor=4000.0f
+float explosion_force_duration=0.2f
 
 float melee_weapon_range=40.0f
 float melee_weapon_offset_x=30.0f
+
+float shot_force_duration=0.1f
+float side_step_force_duration=0.1f

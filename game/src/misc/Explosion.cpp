@@ -29,8 +29,8 @@ void Explosion::applyForce(Character* obj) const
     auto& theta = std::get<1>(vector);
     obj->setHealth(obj->getHealth() - CFG.get<float>("explosion_hurt_factor") * factor);
 
-    obj->setForcedVelocity(
-            CFG.get<float>("explosion_velocity_factor") * factor * sf::Vector2f{std::cos(theta), std::sin(theta)});
+    obj->addSteeringForce(CFG.get<float>("explosion_velocity_factor") * factor *
+                          sf::Vector2f{std::cos(theta), std::sin(theta)}, CFG.get<float>("explosion_force_duration"));
 }
 
 void Explosion::applyForce(Obstacle* obj) const

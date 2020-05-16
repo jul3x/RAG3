@@ -47,7 +47,7 @@ bool Fire::update(float time_elapsed)
     difference_ = CFG.get<float>("fire_spread_distance") *
             std::cos(offset_ + life_ / CFG.get<float>("fire_life") * 4 * M_PI);
     this->setForcedVelocity(this->getVelocity() +
-                      difference_ * sf::Vector2f{static_cast<float>(std::cos(direction_ + M_PI_2)),
+                      difference_ * time_elapsed * sf::Vector2f{static_cast<float>(std::cos(direction_ + M_PI_2)),
                                                  static_cast<float>(std::sin(direction_ + M_PI_2))});
 
     r_ += time_elapsed * CFG.get<float>("fire_spread_speed");

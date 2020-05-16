@@ -2,7 +2,7 @@ float max_speed=500.0f
 float max_running_speed=800.0f
 
 float standby_speed=100.0f
-float side_step_speed=1000.0f
+float side_step_speed=14000.0f
 
 float max_health=160
 
@@ -29,6 +29,6 @@ string ai_type=Standard
 
 int z_index=1
 
-list[string] weapons=[Null;Null;Null;Null]
+list[string] weapons=[flamethrower;Null;Null;Null]
 
 bool is_talkable=0

@@ -79,11 +79,11 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
 
 bool Character::shot()
 {
-    auto new_velocity = weapons_in_backpack_.at(current_weapon_)->use();
+    auto force = weapons_in_backpack_.at(current_weapon_)->use();
 
-    if (!utils::num::isNearlyEqual(new_velocity, {0.0f, 0.0f}))
+    if (!utils::num::isNearlyEqual(force, {0.0f, 0.0f}))
     {
-        this->setForcedVelocity(new_velocity);
+        this->addSteeringForce(force, CFG.get<float>("shot_force_duration"));
         return true;
     }
 
@@ -94,10 +94,10 @@ void Character::getShot(const Bullet& bullet)
 {
     Shootable::getShot(bullet);
     //Engine::spawnBloodAnimation();
-    this->setForcedVelocity(this->getVelocity() +
-                            utils::geo::getNormalized(bullet.getVelocity()) *
-                            static_cast<float>(bullet.getDeadlyFactor()) *
-                            CFG.get<float>("get_shot_factor"));
+    this->addSteeringForce(utils::geo::getNormalized(bullet.getVelocity()) *
+                           static_cast<float>(bullet.getDeadlyFactor()) *
+                           CFG.get<float>("get_shot_factor"), CFG.get<float>("shot_force_duration"));
+
 }
 
 void Character::getCut(const MeleeWeapon& weapon)
@@ -219,8 +219,15 @@ bool Character::update(float time_elapsed)
     auto rotation_diff = utils::geo::getAngleBetweenDegree(this->getRotation(), rotate_to_);
     auto is_negative = std::signbit(rotation_diff);
     auto rotation_sqrt = std::sqrt(std::abs(rotation_diff)) * (is_negative ? -1.0f : 1.0f);
-    this->setRotation(this->getRotation() -
-                      rotation_sqrt * CFG.get<float>("characters/mouse_reaction_speed") * speed_factor_ * time_elapsed);
+    auto new_rotation = this->getRotation() -
+                        rotation_sqrt * CFG.get<float>("characters/mouse_reaction_speed") * speed_factor_ * time_elapsed;
+
+    auto new_rotation_diff = utils::geo::getAngleBetweenDegree(new_rotation, rotate_to_);
+
+    if (is_negative != std::signbit(new_rotation_diff))
+        this->setRotation(rotate_to_);
+    else
+        this->setRotation(new_rotation);
 
     if (should_respond_)
     {

@@ -57,9 +57,9 @@ void Camera::update(float time_elapsed)
     {
         center_.z = factor_ * CFG.get<float>("graphics/camera_rotation_recoil") *
                     std::sin(factor_ * time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
-        center_.x += factor_ * time_elapsed_ * CFG.get<float>("graphics/camera_position_recoil") *
+        center_.x += factor_ * time_elapsed * CFG.get<float>("graphics/camera_position_recoil") *
                      std::sin(factor_ * time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
-        center_.y += factor_ * time_elapsed_ * CFG.get<float>("graphics/camera_position_recoil") *
+        center_.y += factor_ * time_elapsed * CFG.get<float>("graphics/camera_position_recoil") *
                      std::sin(factor_ * time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
         time_elapsed_ -= time_elapsed;
     }
@@ -67,9 +67,9 @@ void Camera::update(float time_elapsed)
     {
         center_.z = CFG.get<float>("graphics/camera_rotation_recoil") *
                     std::sin(time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
-        center_.x += time_elapsed_ * CFG.get<float>("graphics/camera_position_recoil") *
+        center_.x += time_elapsed * CFG.get<float>("graphics/camera_position_recoil") *
                      std::sin(time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
-        center_.y += time_elapsed_ * CFG.get<float>("graphics/camera_position_recoil") *
+        center_.y += time_elapsed * CFG.get<float>("graphics/camera_position_recoil") *
                      std::sin(time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
 
         auto normalized_size = utils::geo::getNormalized(view_size_);

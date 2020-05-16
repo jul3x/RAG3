@@ -57,6 +57,7 @@ namespace r3e {
 
         [[nodiscard]] float getCurrentFPS() const;
         [[nodiscard]] static sf::Vector2i detectResolution();
+        float setFPSLimit(int fps);
 
         void setTimeScaleFactor(float factor);
         void start();

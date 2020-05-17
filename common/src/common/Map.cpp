@@ -116,8 +116,8 @@ ObstacleTile* Map::spawn(const sf::Vector2f& pos, float direction, const std::st
 {
     if (!check || (!this->checkCollisions(pos, decorations_tiles_, false, max_z_index) && !this->checkCollisions(pos, obstacles_tiles_, false, max_z_index)))
     {
-        auto grid_pos = std::make_pair(static_cast<size_t>(pos.x / DecorationTile::SIZE_X_),
-                                       static_cast<size_t>(pos.y / DecorationTile::SIZE_Y_));
+        auto grid_pos = std::make_pair(std::round(pos.x / DecorationTile::SIZE_X_),
+                                       std::round(pos.y / DecorationTile::SIZE_Y_));
 
         if (blocked_.blockage_.size() > grid_pos.first && blocked_.blockage_.at(0).size() > grid_pos.second)
             blocked_.blockage_.at(grid_pos.first).at(grid_pos.second) =
@@ -171,8 +171,8 @@ Obstacle* Map::spawn(const sf::Vector2f& pos, float direction, const std::string
 {
     if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
     {
-        auto grid_pos = std::make_pair(static_cast<size_t>(pos.x / DecorationTile::SIZE_X_),
-                                       static_cast<size_t>(pos.y / DecorationTile::SIZE_Y_));
+        auto grid_pos = std::make_pair(std::round(pos.x / DecorationTile::SIZE_X_),
+                                       std::round(pos.y / DecorationTile::SIZE_Y_));
 
         if (blocked_.blockage_.size() > grid_pos.first && blocked_.blockage_.at(0).size() > grid_pos.second)
             blocked_.blockage_.at(grid_pos.first).at(grid_pos.second) =

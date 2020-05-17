@@ -154,8 +154,8 @@ void SpecialFunctions::openDoor(Functional* obj, const std::string& data, Charac
     std::cout << "[SpecialFunction] Open door." << std::endl;
     auto door_id = std::stoi(data);
     auto door = Game::get().getMap().getObjectById<Obstacle>(door_id);
-    auto grid_pos = std::make_pair(static_cast<size_t>(door->getPosition().x / DecorationTile::SIZE_X_),
-                                   static_cast<size_t>(door->getPosition().y / DecorationTile::SIZE_Y_));
+    auto grid_pos = std::make_pair(std::round(door->getPosition().x / DecorationTile::SIZE_X_),
+                                   std::round(door->getPosition().y / DecorationTile::SIZE_Y_));
 
     if (door->getCollisionArea().getType() == collision::Area::Type::None)
     {

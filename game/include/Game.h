@@ -22,6 +22,7 @@
 #include <misc/Thought.h>
 #include <misc/Achievements.h>
 #include <misc/Stats.h>
+#include <misc/DebugMapBlockage.h>
 #include <misc/Explosion.h>
 #include <characters/Player.h>
 #include <characters/PlayerClone.h>
@@ -151,6 +152,7 @@ private:
     std::unique_ptr<Player> player_;
     std::unique_ptr<PlayerClone> player_clone_;
     std::unique_ptr<Map> map_;
+    std::unique_ptr<DebugMapBlockage> debug_map_blockage_;
 
     std::list<std::unique_ptr<Bullet>> bullets_;
     std::list<std::unique_ptr<Fire>> fire_;

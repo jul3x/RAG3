@@ -306,7 +306,6 @@ void Character::setRotation(float theta)
         }
         case 3:
         {
-
             shape_.setTexture(&RM.getTexture("characters/" + this->getId() + "_3"));
             gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");

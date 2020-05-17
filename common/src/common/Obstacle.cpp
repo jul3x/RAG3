@@ -44,3 +44,4 @@ bool Obstacle::update(float time_elapsed)
 {
     return life_ > 0;
 }
+

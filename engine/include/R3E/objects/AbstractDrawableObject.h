@@ -53,7 +53,6 @@ namespace r3e {
     protected:
         sf::RectangleShape shape_;
         bool is_visible_;
-        bool is_active_;
         bool is_flipped_x_;
         bool is_flipped_y_;
         int z_index_;

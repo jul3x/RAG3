@@ -68,6 +68,8 @@ void Game::initialize()
 
     map_->loadMap("test_map");
 
+//    debug_map_blockage_ = std::make_unique<DebugMapBlockage>(&map_->getMapBlockage());
+
     engine_->initializeCollisions(map_->getSize(), CFG.get<float>("collision_grid_size"));
 
     for (auto& obstacle : map_->getList<ObstacleTile>())
@@ -230,8 +232,8 @@ void Game::updateMapObjects(float time_elapsed)
             auto next_it = std::next(it);
             engine_->deleteStaticObject(it->get());
 
-            auto grid_pos = std::make_pair(static_cast<size_t>((*it)->getPosition().x / DecorationTile::SIZE_X_),
-                                           static_cast<size_t>((*it)->getPosition().y / DecorationTile::SIZE_Y_));
+            auto grid_pos = std::make_pair(std::round((*it)->getPosition().x / DecorationTile::SIZE_X_),
+                                           std::round((*it)->getPosition().y / DecorationTile::SIZE_Y_));
             blockage.blockage_.at(grid_pos.first).at(grid_pos.second) = false;
 
             obstacles_tiles.erase(it);
@@ -260,8 +262,8 @@ void Game::updateMapObjects(float time_elapsed)
                 (*it)->use(player_.get());
             }
 
-            auto grid_pos = std::make_pair(static_cast<size_t>((*it)->getPosition().x / DecorationTile::SIZE_X_),
-                                           static_cast<size_t>((*it)->getPosition().y / DecorationTile::SIZE_Y_));
+            auto grid_pos = std::make_pair(std::round((*it)->getPosition().x / DecorationTile::SIZE_X_),
+                                           std::round((*it)->getPosition().y / DecorationTile::SIZE_Y_));
             blockage.blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
 
             obstacles.erase(it);
@@ -378,6 +380,7 @@ void Game::draw(graphics::Graphics& graphics)
             graphics.drawSorted(*obj);
     };
 
+//    debug_map_blockage_->draw(graphics);
     draw(map_->getList<DecorationTile>());
     draw(map_->getList<Decoration>());
     draw(map_->getList<Obstacle>());

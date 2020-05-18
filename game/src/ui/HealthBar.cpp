@@ -20,6 +20,8 @@ HealthBar::HealthBar(const sf::Vector2f& position) :
     curr_health_shape_.setPosition(position);
     curr_health_shape_.setPoint(0, {0.0f, 0.0f});
     curr_health_shape_.setPoint(3, {HEALTH_SIZE_X_ / 2.0f, -HEALTH_SIZE_Y_ / 2.0f});
+    curr_health_shape_.setScale(CFG.get<float>("graphics/user_interface_zoom"),
+                                CFG.get<float>("graphics/user_interface_zoom"));
     curr_health_shape_.setTexture(&RM.getTexture("current_health_bar"));
 }
 

@@ -20,6 +20,8 @@ TimeBar::TimeBar(const sf::Vector2f& position) :
     curr_time_shape_.setPosition(position);
     curr_time_shape_.setPoint(0, {0.0f, 0.0f});
     curr_time_shape_.setPoint(3, {-TIME_SIZE_X_ / 2.0f, -TIME_SIZE_Y_ / 2.0f});
+    curr_time_shape_.setScale(CFG.get<float>("graphics/user_interface_zoom"),
+            CFG.get<float>("graphics/user_interface_zoom"));
     curr_time_shape_.setTexture(&RM.getTexture("current_time_bar"));
 }
 

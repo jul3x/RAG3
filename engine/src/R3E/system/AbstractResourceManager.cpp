@@ -19,7 +19,12 @@ namespace r3e {
               sounds_directory_{std::move(sounds_dir)},
               music_directory_{std::move(music_dir)}
     {
+        textures_smooth_allowed_ = false;
+    }
 
+    void AbstractResourceManager::setTexturesSmoothAllowed(bool allowed)
+    {
+        textures_smooth_allowed_ = allowed;
     }
 
     utils::j3x::Parameters& AbstractResourceManager::getParameters(const std::string& key)
@@ -75,6 +80,9 @@ namespace r3e {
         {
             throw std::runtime_error("[AbstractResourceManager] " + key + " texture file not successfully loaded.");
         }
+
+        if (!textures_smooth_allowed_)
+            textures_[key].setSmooth(false);
 
         std::cout << "[AbstractResourceManager] Texture " << key << " is loaded!" << std::endl;
     }

@@ -11,15 +11,17 @@
 
 
 
-Camera::Camera() : state_(State::Normal) { center_ = {}; }
+Camera::Camera() : state_(State::Normal) {
+    center_ = {};
+    shaking_factor_ = 0.0f;
+}
 
 void Camera::setShaking(float factor)
 {
-    if (state_ == State::Normal || state_ == State::Shooting)
+    if (state_ == State::Normal)
     {
-        state_ = State::Shooting;
         time_elapsed_ = CFG.get<float>("graphics/camera_shaking_time");
-        factor_ = factor;
+        shaking_factor_ = std::max(factor, shaking_factor_);
     }
 }
 
@@ -31,6 +33,7 @@ void Camera::setZoomInOut()
 
 void Camera::setNormal()
 {
+    shaking_factor_ = 0.0f;
     time_elapsed_ = -1.0f;
     state_ = State::Normal;
 }
@@ -53,14 +56,14 @@ void Camera::update(float time_elapsed)
     view_size_.x += zoom_diff.x * time_elapsed * CFG.get<float>("graphics/camera_zoom_speed");
     view_size_.y += zoom_diff.y * time_elapsed * CFG.get<float>("graphics/camera_zoom_speed");
 
-    if (state_ == State::Shooting)
+    if (!utils::num::isNearlyEqual(shaking_factor_, 0.0f))
     {
-        center_.z = factor_ * CFG.get<float>("graphics/camera_rotation_recoil") *
-                    std::sin(factor_ * time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
-        center_.x += factor_ * time_elapsed * CFG.get<float>("graphics/camera_position_recoil") *
-                     std::sin(factor_ * time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
-        center_.y += factor_ * time_elapsed * CFG.get<float>("graphics/camera_position_recoil") *
-                     std::sin(factor_ * time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
+        center_.z = shaking_factor_ * CFG.get<float>("graphics/camera_rotation_recoil") *
+                    std::sin(shaking_factor_ * time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
+        center_.x += shaking_factor_ * time_elapsed * CFG.get<float>("graphics/camera_position_recoil") *
+                     std::cos(shaking_factor_ * time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
+        center_.y -= shaking_factor_ * time_elapsed * CFG.get<float>("graphics/camera_position_recoil") *
+                     std::cos(shaking_factor_ * time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
         time_elapsed_ -= time_elapsed;
     }
     else if (state_ == State::ZoomInOut)

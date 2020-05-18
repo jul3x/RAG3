@@ -28,6 +28,8 @@ namespace r3e {
         AbstractResourceManager(std::string j3x_dir, std::string textures_dir, std::string fonts_dir,
                                 std::string sounds_dir, std::string music_dir);
 
+        void setTexturesSmoothAllowed(bool allowed);
+
         sf::Texture& getTexture(const std::string& key);
         sf::SoundBuffer& getSound(const std::string& key);
         sf::Music& getMusic(const std::string& key);
@@ -81,6 +83,9 @@ namespace r3e {
         std::string fonts_directory_;
         std::string sounds_directory_;
         std::string music_directory_;
+
+        bool textures_smooth_allowed_;
+
     };
 
 } // namespace r3e

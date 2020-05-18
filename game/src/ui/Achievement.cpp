@@ -19,8 +19,8 @@ Achievement::Achievement(const sf::Vector2f& position,
                                 IMG_SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom")},
                                tex),
         position_(CFG.get<float>("graphics/achievement_show_speed")),
-        title_text_(title, RM.getFont(), 20 * CFG.get<float>("graphics/user_interface_zoom")),
-        text_text_(text, RM.getFont(), 16 * CFG.get<float>("graphics/user_interface_zoom")),
+        title_text_(title, RM.getFont(), static_cast<int>(20 * CFG.get<float>("graphics/user_interface_zoom"))),
+        text_text_(text, RM.getFont(), static_cast<int>(16 * CFG.get<float>("graphics/user_interface_zoom"))),
         bg_(sf::Quads, 4),
         time_elapsed_(CFG.get<float>("graphics/achievement_show_time"))
 {
@@ -61,7 +61,10 @@ bool Achievement::update(float time_elapsed)
     bg_[3].position.y = -SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom") + curr_pos.y;
 
     title_text_.setPosition(curr_pos + sf::Vector2f{TITLE_X_ * CFG.get<float>("graphics/user_interface_zoom") - title_bounds_.width / 2.0f, TITLE_Y_ * CFG.get<float>("graphics/user_interface_zoom")});
-    text_text_.setPosition(curr_pos + sf::Vector2f{TEXT_X_, TEXT_Y_} * CFG.get<float>("graphics/user_interface_zoom"));
+
+    sf::Vector2i new_text_text_pos = {static_cast<int>(curr_pos.x + TEXT_X_ * CFG.get<float>("graphics/user_interface_zoom")),
+                                      static_cast<int>(curr_pos.y + TEXT_Y_ * CFG.get<float>("graphics/user_interface_zoom"))};
+    text_text_.setPosition(new_text_text_pos.x, new_text_text_pos.y);
     shape_.setPosition(curr_pos + sf::Vector2f{IMG_X_, IMG_Y_} * CFG.get<float>("graphics/user_interface_zoom"));
 
     if (time_elapsed_ < 0.0f)

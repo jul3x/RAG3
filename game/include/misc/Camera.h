@@ -25,13 +25,12 @@ public:
 private:
     enum class State {
         Normal,
-        Shooting,
         ZoomInOut,
         Reverse
     };
 
+    float shaking_factor_;
     Camera::State state_;
-    float factor_;
 
 };
 

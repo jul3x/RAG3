@@ -80,11 +80,24 @@ void Game::initialize()
     {
         engine_->registerStaticObject(obstacle.get());
 
+        if (obstacle->getLightPoint() != nullptr)
+        {
+            obstacle->getLightPoint()->registerGraphics(engine_->getGraphics());
+        }
+
         for (const auto& function : obstacle->getFunctions())
         {
             obstacle->bindFunction(special_functions_->bindFunction(function),
                                    special_functions_->bindTextToUse(function),
                                    special_functions_->isUsableByNPC(function));
+        }
+    }
+
+    for (auto& decoration : map_->getList<Decoration>())
+    {
+        if (decoration->getLightPoint() != nullptr)
+        {
+            decoration->getLightPoint()->registerGraphics(engine_->getGraphics());
         }
     }
 
@@ -160,6 +173,11 @@ void Game::initialize()
     {
         if (special->getId() == "starting_position")
             player_->setPosition(special->getPosition());
+
+        if (special->getLightPoint() != nullptr)
+        {
+            special->getLightPoint()->registerGraphics(engine_->getGraphics());
+        }
 
         engine_->registerHoveringObject(special.get());
 
@@ -255,6 +273,11 @@ void Game::updateMapObjects(float time_elapsed)
     {
         bool do_increment = true;
         (*it)->updateAnimation(time_elapsed);
+
+        auto light = (*it)->getLightPoint();
+
+        if (light != nullptr)
+            light->setPosition((*it)->getPosition());
         if (!(*it)->update(time_elapsed))
         {
             journal_->event<DestroyObstacle>(it->get());
@@ -304,6 +327,10 @@ void Game::updateMapObjects(float time_elapsed)
         bool do_increment = true;
         (*it)->updateAnimation(time_elapsed);
 
+        auto light = (*it)->getLightPoint();
+
+        if (light != nullptr)
+            light->setPosition((*it)->getPosition());
         if ((*it)->isDestroyed())
         {
             journal_->event<DestroySpecial>(it->get());
@@ -323,6 +350,10 @@ void Game::updateMapObjects(float time_elapsed)
         bool do_increment = true;
         (*it)->updateAnimation(time_elapsed);
 
+        auto light = (*it)->getLightPoint();
+
+        if (light != nullptr)
+            light->setPosition((*it)->getPosition());
         if (!(*it)->isActive())
         {
             journal_->event<DestroyDecoration>(it->get());
@@ -387,6 +418,14 @@ void Game::draw(graphics::Graphics& graphics)
             graphics.drawSorted(*obj);
     };
 
+    auto draw_light = [&graphics, this](auto& list) {
+        for (const auto& obj : list)
+        {
+            if (obj->getLightPoint() != nullptr)
+                this->lightning_->add(*obj->getLightPoint());
+        }
+    };
+
 //    debug_map_blockage_->draw(graphics);
     draw(map_->getList<DecorationTile>());
     draw(map_->getList<Decoration>());
@@ -413,16 +452,14 @@ void Game::draw(graphics::Graphics& graphics)
 
     lightning_->clear();
 
-    for (const auto& character : map_->getList<NPC>())
-    {
-        if (character->getLightPoint() != nullptr)
-        {
-            lightning_->add(*character->getLightPoint());
-        }
-    }
+    draw_light(map_->getList<NPC>());
+    draw_light(map_->getList<Obstacle>());
+    draw_light(map_->getList<Decoration>());
+    draw_light(map_->getList<Special>());
 
     lightning_->add(*player_->getLightPoint());
-
+    if (player_clone_ != nullptr)
+        lightning_->add(*player_clone_->getLightPoint());
     graphics.setStaticView();
     graphics.draw(*lightning_);
 }
@@ -894,6 +931,11 @@ Obstacle* Game::spawnNewObstacle(const std::string& id, int u_id, const sf::Vect
         new_ptr->setDatas(datas);
     }
 
+    if (new_ptr->getLightPoint() != nullptr)
+    {
+        new_ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
+    }
+
     engine_->registerStaticObject(new_ptr);
 
     for (const auto& function : new_ptr->getFunctions())
@@ -1151,9 +1193,13 @@ Decoration* Game::spawnNewDecoration(const std::string& id, int u_id, const sf::
     {
         ptr->setUniqueId(u_id);
     }
+
+    if (ptr->getLightPoint() != nullptr)
+    {
+        ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
+    }
+
     return ptr;
-
-
 }
 
 void Game::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
@@ -1179,6 +1225,11 @@ Special* Game::spawnNewSpecial(const std::string& id, int u_id,
         ptr->setActivation(activation);
         ptr->setFunctions(funcs);
         ptr->setDatas(datas);
+    }
+
+    if (ptr->getLightPoint() != nullptr)
+    {
+        ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
     }
 
     for (const auto& function : ptr->getFunctions())

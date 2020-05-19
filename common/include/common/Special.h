@@ -30,10 +30,12 @@ public:
 
     [[nodiscard]] bool isDrawable() const;
     [[nodiscard]] bool getAdditionalBooleanData() const;
+    graphics::LightPoint* getLightPoint() const;
 
     void setAdditionalBooleanData(bool data);
 
 private:
+    std::unique_ptr<graphics::LightPoint> light_;
     bool is_drawable_;
 
     bool additional_boolean_data_;

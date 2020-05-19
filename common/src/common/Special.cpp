@@ -38,6 +38,14 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
                                     utils::j3x::get<float>(RM.getObjectParams("specials", id), "size_y")) / 2.0f +
                        sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("specials", id), "map_offset_x"),
                                     utils::j3x::get<float>(RM.getObjectParams("specials", id), "map_offset_y")));
+
+    if (utils::j3x::get<int>(RM.getObjectParams("specials", id), "light_point"))
+    {
+        light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
+                                                        sf::Vector2f{CFG.get<float>("graphics/specials_light_point_size"),
+                                                                     CFG.get<float>("graphics/specials_light_point_size")},
+                                                        &RM.getTexture("lightpoint"));
+    }
 }
 
 bool Special::isDrawable() const
@@ -53,4 +61,9 @@ bool Special::getAdditionalBooleanData() const
 void Special::setAdditionalBooleanData(bool data)
 {
     additional_boolean_data_ = data;
+}
+
+graphics::LightPoint* Special::getLightPoint() const
+{
+    return light_.get();
 }

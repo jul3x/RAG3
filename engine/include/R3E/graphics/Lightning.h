@@ -10,7 +10,7 @@
 
 #include <R3E/objects/AbstractDrawableObject.h>
 #include <R3E/graphics/LightPoint.h>
-
+#include <R3E/utils/Geometry.h>
 
 
 namespace r3e::graphics {
@@ -31,7 +31,9 @@ namespace r3e::graphics {
 
         void add(const LightPoint& light)
         {
-            render_texture_.draw(light, sf::BlendAdd);
+            if (utils::geo::isPointInRectangle(light.getPosition(), -light.getSize() / 2.0f,
+                    static_cast<sf::Vector2f>(render_texture_.getSize()) + light.getSize()))
+                render_texture_.draw(light, sf::BlendAdd);
         }
 
     private:

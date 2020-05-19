@@ -2,8 +2,6 @@
 // Created by jul3x on 27.02.19.
 //
 
-#include <chrono>
-
 #include <R3E/utils/Geometry.h>
 
 #include <common/ResourceManager.h>
@@ -38,6 +36,9 @@ void Game::initialize()
     special_functions_ = std::make_unique<SpecialFunctions>();
     stats_ = std::make_unique<Stats>();
     achievements_ = std::make_unique<Achievements>();
+    lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CFG.get<int>("graphics/window_width_px")),
+                                                                    static_cast<float>(CFG.get<int>("graphics/window_height_px"))},
+                                                                            sf::Color(CFG.get<int>("graphics/lightning_color")));
 
     map_ = std::make_unique<Map>();
     agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
@@ -91,6 +92,11 @@ void Game::initialize()
     {
         engine_->registerDynamicObject(character.get());
 
+        if (character->getLightPoint() != nullptr)
+        {
+            character->getLightPoint()->registerGraphics(engine_->getGraphics());
+        }
+
         character->registerAgentsManager(agents_manager_.get());
         character->registerEnemy(player_.get());
         character->registerMapBlockage(&map_->getMapBlockage());
@@ -127,6 +133,7 @@ void Game::initialize()
     }
 
     engine_->registerDynamicObject(player_.get());
+    player_->getLightPoint()->registerGraphics(engine_->getGraphics());
     for (auto& weapon : player_->getWeapons())
     {
         if (!weapon->getId().empty())
@@ -403,6 +410,21 @@ void Game::draw(graphics::Graphics& graphics)
     engine_->drawSortedAnimationEvents();
 
     graphics.drawAlreadySorted();
+
+    lightning_->clear();
+
+    for (const auto& character : map_->getList<NPC>())
+    {
+        if (character->getLightPoint() != nullptr)
+        {
+            lightning_->add(*character->getLightPoint());
+        }
+    }
+
+    lightning_->add(*player_->getLightPoint());
+
+    graphics.setStaticView();
+    graphics.draw(*lightning_);
 }
 
 void Game::start()
@@ -737,6 +759,11 @@ NPC* Game::spawnNewNPC(const std::string& id, int u_id, const std::string& activ
     ptr->setDatas(datas);
     engine_->registerDynamicObject(ptr);
 
+    if (ptr->getLightPoint() != nullptr)
+    {
+        ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
+    }
+
     ptr->registerAgentsManager(agents_manager_.get());
     ptr->registerEnemy(player_.get());
 
@@ -785,6 +812,11 @@ NPC* Game::spawnNewPlayerClone(const std::string& weapon_id)
                                                   journal_->getDurationSaved() *
                                                   CFG.get<float>("player_clone_time_factor"));
     engine_->registerDynamicObject(player_clone_.get());
+
+    if (player_clone_->getLightPoint() != nullptr)
+    {
+        player_clone_->getLightPoint()->registerGraphics(engine_->getGraphics());
+    }
 
     player_clone_->registerAgentsManager(agents_manager_.get());
     player_clone_->registerMapBlockage(&map_->getMapBlockage());

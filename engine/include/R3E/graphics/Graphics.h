@@ -35,9 +35,9 @@ namespace r3e::graphics {
         void modifyStaticView(const sf::View& view);
 
         void clear();
-        void draw(AbstractDrawableObject& object);
+        void draw(AbstractDrawableObject& object, sf::RenderStates states = sf::RenderStates::Default);
         void drawSorted(AbstractDrawableObject& object);
-        void drawAlreadySorted();
+        void drawAlreadySorted(sf::RenderStates states = sf::RenderStates::Default);
         void display();
 
     private:

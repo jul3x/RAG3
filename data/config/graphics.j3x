@@ -1,5 +1,5 @@
 bool auto_resolution=1
-bool full_screen=1
+bool full_screen=0
 int window_width_px=1280
 int window_height_px=720
 float user_interface_zoom=0.5f
@@ -31,3 +31,6 @@ float inertial_states_change_speed=4.0f
 
 float achievement_show_speed=4.0f
 float achievement_show_time=10.0f
+
+float characters_light_point_size=600.0f
+int32 lightning_color=0x000000FF

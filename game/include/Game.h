@@ -11,6 +11,7 @@
 #include <R3E/system/Engine.h>
 #include <R3E/ai/AgentsManager.h>
 #include <R3E/audio/MusicManager.h>
+#include <R3E/graphics/Lightning.h>
 
 #include <common/Map.h>
 #include <common/Bullet.h>
@@ -144,6 +145,7 @@ private:
     std::unique_ptr<Camera> camera_;
     std::unique_ptr<ai::AgentsManager> agents_manager_;
     std::unique_ptr<audio::MusicManager> music_manager_;
+    std::unique_ptr<graphics::Lightning> lightning_;
 
     std::unique_ptr<SpecialFunctions> special_functions_;
     std::unique_ptr<Achievements> achievements_;

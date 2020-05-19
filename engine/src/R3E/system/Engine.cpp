@@ -242,9 +242,14 @@ namespace r3e {
         }
     }
 
-    float Engine::setFPSLimit(int fps)
+    void Engine::setFPSLimit(int fps)
     {
         graphics_->getWindow().setFramerateLimit(fps);
+    }
+
+    graphics::Graphics& Engine::getGraphics() const
+    {
+        return *graphics_;
     }
 
 } // namespace r3e

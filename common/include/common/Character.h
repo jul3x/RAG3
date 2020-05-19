@@ -12,6 +12,7 @@
 #include <R3E/objects/AbstractPhysicalObject.h>
 #include <R3E/objects/Identifiable.h>
 #include <R3E/objects/Unique.h>
+#include <R3E/graphics/LightPoint.h>
 
 #include <common/Functional.h>
 #include <common/AbstractWeapon.h>
@@ -74,6 +75,7 @@ public:
     TalkableArea* getTalkableArea() const;
     const std::string& getTalkScenarioStr() const;
     const std::list<std::string>& getTalkScenario() const;
+    graphics::LightPoint* getLightPoint() const;
 
     // Setters
     void setMaxHealth(float health);
@@ -110,6 +112,7 @@ protected:
     float max_life_;
     float on_fire_time_;
 
+    std::unique_ptr<graphics::LightPoint> light_;
     std::unique_ptr<Decoration> decorator_;
     std::unique_ptr<TalkableArea> talkable_area_;
     std::function<void(Character*, const std::string&)> talking_func_;

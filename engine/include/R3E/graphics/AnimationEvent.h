@@ -8,8 +8,8 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
-#include "R3E/objects/AbstractDrawableObject.h"
-
+#include <R3E/objects/AbstractDrawableObject.h>
+#include <R3E/graphics/LightPoint.h>
 
 namespace r3e::graphics {
 
@@ -32,6 +32,8 @@ namespace r3e::graphics {
 
         bool update(float time_elapsed);
 
+        graphics::LightPoint* getLightPoint() const;
+
     protected:
         short int max_frames_count_;
         float duration_s_;
@@ -43,6 +45,8 @@ namespace r3e::graphics {
         AnimationType type_;
 
         float time_elapsed_;
+
+        std::unique_ptr<graphics::LightPoint> light_;
 
     };
 

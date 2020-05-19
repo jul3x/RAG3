@@ -6,8 +6,8 @@
 #ifndef RAG3_COMMON_INCLUDE_COMMON_FIRE_H
 #define RAG3_COMMON_INCLUDE_COMMON_FIRE_H
 
-#include <deque>
 
+#include <R3E/graphics/LightPoint.h>
 #include <R3E/objects/AbstractPhysicalObject.h>
 
 
@@ -26,12 +26,15 @@ public:
     Character* getUser() const;
     float getAlpha() const;
     float getR() const;
+    graphics::LightPoint* getLightPoint() const;
 
     void setDead();
     void setAlpha(float alpha);
     void setR(float r);
 
 private:
+    std::unique_ptr<graphics::LightPoint> light_;
+
     Character* user_;
 
     sf::Color color_;

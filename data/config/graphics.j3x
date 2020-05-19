@@ -36,4 +36,6 @@ float characters_light_point_size=600.0f
 float obstacles_light_point_size=300.0f
 float specials_light_point_size=300.0f
 float decorations_light_point_size=300.0f
+float fire_light_point_size=200.0f
+float animations_light_point_size=200.0f
 int32 lightning_color=0x777777FF

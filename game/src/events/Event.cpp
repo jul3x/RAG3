@@ -35,4 +35,12 @@ Event::Event(const sf::Vector2f& position, const std::string& id,
                                     utils::j3x::get<float>(RM.getObjectParams("animations", id), "size_y")) / 2.0f +
                        sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("animations", id), "map_offset_x"),
                                     utils::j3x::get<float>(RM.getObjectParams("animations", id), "map_offset_y")));
+
+    if (utils::j3x::get<int>(RM.getObjectParams("animations", id), "light_point"))
+    {
+        light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
+                                                        sf::Vector2f{CFG.get<float>("graphics/animations_light_point_size"),
+                                                                     CFG.get<float>("graphics/animations_light_point_size")},
+                                                        &RM.getTexture("lightpoint"));
+    }
 }

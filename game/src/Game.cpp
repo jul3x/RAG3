@@ -456,10 +456,13 @@ void Game::draw(graphics::Graphics& graphics)
     draw_light(map_->getList<Obstacle>());
     draw_light(map_->getList<Decoration>());
     draw_light(map_->getList<Special>());
+    draw_light(fire_);
+    draw_light(engine_->getAnimationEvents());
 
     lightning_->add(*player_->getLightPoint());
     if (player_clone_ != nullptr)
         lightning_->add(*player_clone_->getLightPoint());
+
     graphics.setStaticView();
     graphics.draw(*lightning_);
 }
@@ -501,13 +504,21 @@ const std::list<std::unique_ptr<Bullet>>& Game::getBullets() const
 
 void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const float r)
 {
-    engine_->spawnAnimationEvent(std::make_shared<Event>(pos, "sparks", dir, r));
+    auto event = std::make_shared<Event>(pos, "sparks", dir, r);
+    engine_->spawnAnimationEvent(event);
+
+    if (event->getLightPoint() != nullptr)
+        event->getLightPoint()->registerGraphics(engine_->getGraphics());
 }
 
 void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
 {
     auto number = std::to_string(utils::num::getRandom(1, 3));
-    engine_->spawnAnimationEvent(std::make_shared<Event>(pos, "explosion_" + number, 0.0f, r));
+    auto event = std::make_shared<Event>(pos, "explosion_" + number, 0.0f, r);
+
+    engine_->spawnAnimationEvent(event);
+    if (event->getLightPoint() != nullptr)
+        event->getLightPoint()->registerGraphics(engine_->getGraphics());
 
     if (CFG.get<int>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
@@ -515,7 +526,11 @@ void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
 
 void Game::spawnTeleportationEvent(const sf::Vector2f& pos)
 {
+    auto event = std::make_shared<Event>(pos + sf::Vector2f{0.0f, 10.0f}, "teleportation");
     engine_->spawnAnimationEvent(std::make_shared<Event>(pos + sf::Vector2f{0.0f, 10.0f}, "teleportation"));
+
+    if (event->getLightPoint() != nullptr)
+        event->getLightPoint()->registerGraphics(engine_->getGraphics());
 
     if (CFG.get<int>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("teleportation"), pos);
@@ -556,6 +571,9 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, floa
                                               utils::j3x::get<float>(RM.getObjectParams("bullets", name),
                                                                      "burst_size"));
     engine_->spawnAnimationEvent(shot_event);
+
+    if (shot_event->getLightPoint() != nullptr)
+        shot_event->getLightPoint()->registerGraphics(engine_->getGraphics());
 
     if (CFG.get<int>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
@@ -775,6 +793,7 @@ Fire* Game::spawnNewFire(Character* user, const sf::Vector2f& pos, float dir)
 
     auto ptr = fire_.back().get();
 
+    ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
     engine_->registerHoveringObject(ptr);
 
     return ptr;

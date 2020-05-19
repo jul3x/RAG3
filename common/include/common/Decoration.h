@@ -6,9 +6,13 @@
 #ifndef RAG3_COMMON_INCLUDE_COMMON_DECORATION_H
 #define RAG3_COMMON_INCLUDE_COMMON_DECORATION_H
 
+#include <memory>
+
 #include <R3E/objects/AbstractDrawableObject.h>
 #include <R3E/objects/Identifiable.h>
 #include <R3E/objects/Unique.h>
+#include <R3E/graphics/LightPoint.h>
+
 
 using namespace r3e;
 
@@ -20,7 +24,10 @@ public:
 
     void deactivate();
 
+    graphics::LightPoint* getLightPoint() const;
+
 private:
+    std::unique_ptr<graphics::LightPoint> light_;
     bool is_active_;
 };
 

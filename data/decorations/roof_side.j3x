@@ -8,3 +8,5 @@ int frames_number=1
 float frame_duration=0.0f
 
 int z_index=2
+
+bool light_point=0

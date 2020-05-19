@@ -22,6 +22,14 @@ Decoration::Decoration(const sf::Vector2f& position, const std::string& id, int 
                                     utils::j3x::get<float>(RM.getObjectParams("decorations", id), "size_y")) / 2.0f +
                        sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("decorations", id), "map_offset_x"),
                                     utils::j3x::get<float>(RM.getObjectParams("decorations", id), "map_offset_y")));
+
+    if (utils::j3x::get<int>(RM.getObjectParams("decorations", id), "light_point"))
+    {
+        light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
+                                                        sf::Vector2f{CFG.get<float>("graphics/decorations_light_point_size"),
+                                                                     CFG.get<float>("graphics/decorations_light_point_size")},
+                                                        &RM.getTexture("lightpoint"));
+    }
 }
 
 bool Decoration::isActive() const
@@ -32,4 +40,9 @@ bool Decoration::isActive() const
 void Decoration::deactivate()
 {
     is_active_ = false;
+}
+
+graphics::LightPoint* Decoration::getLightPoint() const
+{
+    return light_.get();
 }

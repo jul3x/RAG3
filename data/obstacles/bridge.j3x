@@ -19,3 +19,5 @@ list[string] default_functions=[Null]
 list[string] default_datas=[Null]
 
 int z_index=1
+
+bool light_point=0

@@ -5,7 +5,10 @@
 #ifndef RAG3_GAME_INCLUDE_EVENTS_EVENT_H
 #define RAG3_GAME_INCLUDE_EVENTS_EVENT_H
 
+#include <memory>
+
 #include <R3E/graphics/AnimationEvent.h>
+#include <R3E/graphics/LightPoint.h>
 
 
 using namespace r3e;

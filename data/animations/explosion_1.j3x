@@ -11,3 +11,5 @@ int z_index=1
 
 bool animation_type_quadratic=1
 bool scale=1
+
+bool light_point=1

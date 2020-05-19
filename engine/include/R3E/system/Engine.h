@@ -57,9 +57,11 @@ namespace r3e {
 
         [[nodiscard]] float getCurrentFPS() const;
         [[nodiscard]] static sf::Vector2i detectResolution();
-        float setFPSLimit(int fps);
+        [[nodiscard]] graphics::Graphics& getGraphics() const;
+        [[nodiscard]] std::list<std::shared_ptr<graphics::AnimationEvent>>& getAnimationEvents();
 
         void setTimeScaleFactor(float factor);
+        void setFPSLimit(int fps);
         void start();
 
         void drawAnimationEvents();

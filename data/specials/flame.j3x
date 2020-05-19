@@ -16,3 +16,5 @@ list[string] default_functions=[SetOnFire]
 list[string] default_datas=[Null]
 
 bool is_drawable=1
+
+bool light_point=1

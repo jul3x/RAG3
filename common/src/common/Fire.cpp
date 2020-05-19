@@ -32,6 +32,11 @@ Fire::Fire(Character* user,
 {
     this->setRotation(direction * 180.0f / static_cast<float>(M_PI));
     this->changeOrigin({r_/2.0f, r_});
+
+    light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
+                                                    sf::Vector2f{CFG.get<float>("graphics/fire_light_point_size"),
+                                                                 CFG.get<float>("graphics/fire_light_point_size")},
+                                                    &RM.getTexture("lightpoint"));
 }
 
 void Fire::setDead()
@@ -43,6 +48,9 @@ bool Fire::update(float time_elapsed)
 {
     this->updateAnimation(time_elapsed);
     DynamicObject::update(time_elapsed);
+
+    light_->setPosition(this->getPosition());
+    light_->setColor(255, 255, 255, 255 * life_ / CFG.get<float>("fire_life"));
 
     difference_ = CFG.get<float>("fire_spread_distance") *
             std::cos(offset_ + life_ / CFG.get<float>("fire_life") * 4 * M_PI);
@@ -88,4 +96,9 @@ void Fire::setR(float r)
 {
     r_ = r;
     this->setSize({r_ * 2.0f, r_ * 2.0f});
+}
+
+graphics::LightPoint* Fire::getLightPoint() const
+{
+    return light_.get();
 }

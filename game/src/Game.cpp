@@ -2,8 +2,6 @@
 // Created by jul3x on 27.02.19.
 //
 
-#include <chrono>
-
 #include <R3E/utils/Geometry.h>
 
 #include <common/ResourceManager.h>
@@ -38,6 +36,9 @@ void Game::initialize()
     special_functions_ = std::make_unique<SpecialFunctions>();
     stats_ = std::make_unique<Stats>();
     achievements_ = std::make_unique<Achievements>();
+    lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CFG.get<int>("graphics/window_width_px")),
+                                                                    static_cast<float>(CFG.get<int>("graphics/window_height_px"))},
+                                                                            sf::Color(CFG.get<int>("graphics/lightning_color")));
 
     map_ = std::make_unique<Map>();
     agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
@@ -79,6 +80,11 @@ void Game::initialize()
     {
         engine_->registerStaticObject(obstacle.get());
 
+        if (obstacle->getLightPoint() != nullptr)
+        {
+            obstacle->getLightPoint()->registerGraphics(engine_->getGraphics());
+        }
+
         for (const auto& function : obstacle->getFunctions())
         {
             obstacle->bindFunction(special_functions_->bindFunction(function),
@@ -87,9 +93,22 @@ void Game::initialize()
         }
     }
 
+    for (auto& decoration : map_->getList<Decoration>())
+    {
+        if (decoration->getLightPoint() != nullptr)
+        {
+            decoration->getLightPoint()->registerGraphics(engine_->getGraphics());
+        }
+    }
+
     for (auto& character : map_->getList<NPC>())
     {
         engine_->registerDynamicObject(character.get());
+
+        if (character->getLightPoint() != nullptr)
+        {
+            character->getLightPoint()->registerGraphics(engine_->getGraphics());
+        }
 
         character->registerAgentsManager(agents_manager_.get());
         character->registerEnemy(player_.get());
@@ -127,6 +146,7 @@ void Game::initialize()
     }
 
     engine_->registerDynamicObject(player_.get());
+    player_->getLightPoint()->registerGraphics(engine_->getGraphics());
     for (auto& weapon : player_->getWeapons())
     {
         if (!weapon->getId().empty())
@@ -153,6 +173,11 @@ void Game::initialize()
     {
         if (special->getId() == "starting_position")
             player_->setPosition(special->getPosition());
+
+        if (special->getLightPoint() != nullptr)
+        {
+            special->getLightPoint()->registerGraphics(engine_->getGraphics());
+        }
 
         engine_->registerHoveringObject(special.get());
 
@@ -248,6 +273,11 @@ void Game::updateMapObjects(float time_elapsed)
     {
         bool do_increment = true;
         (*it)->updateAnimation(time_elapsed);
+
+        auto light = (*it)->getLightPoint();
+
+        if (light != nullptr)
+            light->setPosition((*it)->getPosition());
         if (!(*it)->update(time_elapsed))
         {
             journal_->event<DestroyObstacle>(it->get());
@@ -297,6 +327,10 @@ void Game::updateMapObjects(float time_elapsed)
         bool do_increment = true;
         (*it)->updateAnimation(time_elapsed);
 
+        auto light = (*it)->getLightPoint();
+
+        if (light != nullptr)
+            light->setPosition((*it)->getPosition());
         if ((*it)->isDestroyed())
         {
             journal_->event<DestroySpecial>(it->get());
@@ -316,6 +350,10 @@ void Game::updateMapObjects(float time_elapsed)
         bool do_increment = true;
         (*it)->updateAnimation(time_elapsed);
 
+        auto light = (*it)->getLightPoint();
+
+        if (light != nullptr)
+            light->setPosition((*it)->getPosition());
         if (!(*it)->isActive())
         {
             journal_->event<DestroyDecoration>(it->get());
@@ -380,6 +418,14 @@ void Game::draw(graphics::Graphics& graphics)
             graphics.drawSorted(*obj);
     };
 
+    auto draw_light = [&graphics, this](auto& list) {
+        for (const auto& obj : list)
+        {
+            if (obj->getLightPoint() != nullptr)
+                this->lightning_->add(*obj->getLightPoint());
+        }
+    };
+
 //    debug_map_blockage_->draw(graphics);
     draw(map_->getList<DecorationTile>());
     draw(map_->getList<Decoration>());
@@ -403,6 +449,22 @@ void Game::draw(graphics::Graphics& graphics)
     engine_->drawSortedAnimationEvents();
 
     graphics.drawAlreadySorted();
+
+    lightning_->clear();
+
+    draw_light(map_->getList<NPC>());
+    draw_light(map_->getList<Obstacle>());
+    draw_light(map_->getList<Decoration>());
+    draw_light(map_->getList<Special>());
+    draw_light(fire_);
+    draw_light(engine_->getAnimationEvents());
+
+    lightning_->add(*player_->getLightPoint());
+    if (player_clone_ != nullptr)
+        lightning_->add(*player_clone_->getLightPoint());
+
+    graphics.setStaticView();
+    graphics.draw(*lightning_);
 }
 
 void Game::start()
@@ -442,13 +504,21 @@ const std::list<std::unique_ptr<Bullet>>& Game::getBullets() const
 
 void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const float r)
 {
-    engine_->spawnAnimationEvent(std::make_shared<Event>(pos, "sparks", dir, r));
+    auto event = std::make_shared<Event>(pos, "sparks", dir, r);
+    engine_->spawnAnimationEvent(event);
+
+    if (event->getLightPoint() != nullptr)
+        event->getLightPoint()->registerGraphics(engine_->getGraphics());
 }
 
 void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
 {
     auto number = std::to_string(utils::num::getRandom(1, 3));
-    engine_->spawnAnimationEvent(std::make_shared<Event>(pos, "explosion_" + number, 0.0f, r));
+    auto event = std::make_shared<Event>(pos, "explosion_" + number, 0.0f, r);
+
+    engine_->spawnAnimationEvent(event);
+    if (event->getLightPoint() != nullptr)
+        event->getLightPoint()->registerGraphics(engine_->getGraphics());
 
     if (CFG.get<int>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
@@ -456,7 +526,11 @@ void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
 
 void Game::spawnTeleportationEvent(const sf::Vector2f& pos)
 {
+    auto event = std::make_shared<Event>(pos + sf::Vector2f{0.0f, 10.0f}, "teleportation");
     engine_->spawnAnimationEvent(std::make_shared<Event>(pos + sf::Vector2f{0.0f, 10.0f}, "teleportation"));
+
+    if (event->getLightPoint() != nullptr)
+        event->getLightPoint()->registerGraphics(engine_->getGraphics());
 
     if (CFG.get<int>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("teleportation"), pos);
@@ -497,6 +571,9 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, floa
                                               utils::j3x::get<float>(RM.getObjectParams("bullets", name),
                                                                      "burst_size"));
     engine_->spawnAnimationEvent(shot_event);
+
+    if (shot_event->getLightPoint() != nullptr)
+        shot_event->getLightPoint()->registerGraphics(engine_->getGraphics());
 
     if (CFG.get<int>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
@@ -716,6 +793,7 @@ Fire* Game::spawnNewFire(Character* user, const sf::Vector2f& pos, float dir)
 
     auto ptr = fire_.back().get();
 
+    ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
     engine_->registerHoveringObject(ptr);
 
     return ptr;
@@ -736,6 +814,11 @@ NPC* Game::spawnNewNPC(const std::string& id, int u_id, const std::string& activ
     ptr->setFunctions(funcs);
     ptr->setDatas(datas);
     engine_->registerDynamicObject(ptr);
+
+    if (ptr->getLightPoint() != nullptr)
+    {
+        ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
+    }
 
     ptr->registerAgentsManager(agents_manager_.get());
     ptr->registerEnemy(player_.get());
@@ -785,6 +868,11 @@ NPC* Game::spawnNewPlayerClone(const std::string& weapon_id)
                                                   journal_->getDurationSaved() *
                                                   CFG.get<float>("player_clone_time_factor"));
     engine_->registerDynamicObject(player_clone_.get());
+
+    if (player_clone_->getLightPoint() != nullptr)
+    {
+        player_clone_->getLightPoint()->registerGraphics(engine_->getGraphics());
+    }
 
     player_clone_->registerAgentsManager(agents_manager_.get());
     player_clone_->registerMapBlockage(&map_->getMapBlockage());
@@ -860,6 +948,11 @@ Obstacle* Game::spawnNewObstacle(const std::string& id, int u_id, const sf::Vect
         new_ptr->setActivation(activation);
         new_ptr->setFunctions(funcs);
         new_ptr->setDatas(datas);
+    }
+
+    if (new_ptr->getLightPoint() != nullptr)
+    {
+        new_ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
     }
 
     engine_->registerStaticObject(new_ptr);
@@ -1119,9 +1212,13 @@ Decoration* Game::spawnNewDecoration(const std::string& id, int u_id, const sf::
     {
         ptr->setUniqueId(u_id);
     }
+
+    if (ptr->getLightPoint() != nullptr)
+    {
+        ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
+    }
+
     return ptr;
-
-
 }
 
 void Game::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
@@ -1147,6 +1244,11 @@ Special* Game::spawnNewSpecial(const std::string& id, int u_id,
         ptr->setActivation(activation);
         ptr->setFunctions(funcs);
         ptr->setDatas(datas);
+    }
+
+    if (ptr->getLightPoint() != nullptr)
+    {
+        ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
     }
 
     for (const auto& function : ptr->getFunctions())

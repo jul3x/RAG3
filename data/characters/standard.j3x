@@ -30,3 +30,4 @@ int z_index=1
 list[string] weapons=[desert_eagle]
 
 bool is_talkable=0
+bool light_point=0

@@ -5,7 +5,10 @@
 #ifndef RAG3_COMMON_INCLUDE_COMMON_OBSTACLE_H
 #define RAG3_COMMON_INCLUDE_COMMON_OBSTACLE_H
 
+#include <memory>
+
 #include <R3E/objects/AbstractPhysicalObject.h>
+#include <R3E/graphics/LightPoint.h>
 
 #include <common/Functional.h>
 #include <common/Shootable.h>
@@ -21,7 +24,12 @@ public:
              const std::string& activation, const std::vector<std::string>& functions,
              const std::vector<std::string>& datas, int u_id = -1);
 
+    graphics::LightPoint* getLightPoint() const;
+
     bool update(float time_elapsed) override;
+
+private:
+    std::unique_ptr<graphics::LightPoint> light_;
 
 };
 

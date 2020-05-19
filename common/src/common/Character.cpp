@@ -75,6 +75,13 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
     {
         talkable_area_ = std::make_unique<TalkableArea>(this, CFG.get<float>("characters/talkable_distance"));
     }
+
+    if (utils::j3x::get<int>(RM.getObjectParams("characters", id), "light_point"))
+    {
+        light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
+                sf::Vector2f{CFG.get<float>("graphics/characters_light_point_size"), CFG.get<float>("graphics/characters_light_point_size")},
+                &RM.getTexture("lightpoint"));
+    }
 }
 
 bool Character::shot()
@@ -208,6 +215,9 @@ bool Character::update(float time_elapsed)
     if (decorator_ != nullptr)
         decorator_->updateAnimation(time_elapsed);
 
+    if (light_ != nullptr)
+        light_->setPosition(this->getPosition());
+
     auto vel = std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
     this->updateAnimation(time_elapsed,
                           vel / utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed"));
@@ -254,6 +264,11 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
     if (!weapons_in_backpack_.empty())
         target.draw(*weapons_in_backpack_.at(current_weapon_), states);
+}
+
+graphics::LightPoint* Character::getLightPoint() const
+{
+    return light_.get();
 }
 
 void Character::setRotation(float theta)

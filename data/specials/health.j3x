@@ -15,3 +15,5 @@ list[string] default_datas=[30;Null]
 
 bool is_drawable=1
 int z_index=1
+
+bool light_point=0

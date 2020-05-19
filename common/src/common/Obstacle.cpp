@@ -38,10 +38,23 @@ Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id, const st
                                     utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "size_y")) / 2.0f +
                        sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "map_offset_x"),
                                     utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "map_offset_y")));
+
+    if (utils::j3x::get<int>(RM.getObjectParams("obstacles", id), "light_point"))
+    {
+        light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
+                                                        sf::Vector2f{CFG.get<float>("graphics/obstacles_light_point_size"),
+                                                                     CFG.get<float>("graphics/obstacles_light_point_size")},
+                                                        &RM.getTexture("lightpoint"));
+    }
 }
 
 bool Obstacle::update(float time_elapsed)
 {
     return life_ > 0;
+}
+
+graphics::LightPoint* Obstacle::getLightPoint() const
+{
+    return light_.get();
 }
 

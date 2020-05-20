@@ -27,17 +27,23 @@ namespace r3e::graphics {
 
         void setPosition(float x, float y) override
         {
-            auto mapped_pos = graphics_->getWindow().mapCoordsToPixel({x, y}, graphics_->getCurrentView());
-            auto mapped_pos_2 = graphics_->getWindow().mapPixelToCoords(mapped_pos, graphics_->getStaticView());
+            if (graphics_ != nullptr)
+            {
+                auto mapped_pos = graphics_->getWindow().mapCoordsToPixel({x, y}, graphics_->getCurrentView());
+                auto mapped_pos_2 = graphics_->getWindow().mapPixelToCoords(mapped_pos, graphics_->getStaticView());
 
-            AbstractDrawableObject::setPosition(mapped_pos_2);
+                AbstractDrawableObject::setPosition(mapped_pos_2);
+            }
         }
 
         void setPosition(const sf::Vector2f& pos) override
         {
-            auto mapped_pos = graphics_->getWindow().mapCoordsToPixel(pos, graphics_->getCurrentView());
-            auto mapped_pos_2 = graphics_->getWindow().mapPixelToCoords(mapped_pos, graphics_->getStaticView());
-            AbstractDrawableObject::setPosition(mapped_pos_2.x, graphics_->getStaticView().getSize().y - mapped_pos_2.y);
+            if (graphics_ != nullptr)
+            {
+                auto mapped_pos = graphics_->getWindow().mapCoordsToPixel(pos, graphics_->getCurrentView());
+                auto mapped_pos_2 = graphics_->getWindow().mapPixelToCoords(mapped_pos, graphics_->getStaticView());
+                AbstractDrawableObject::setPosition(mapped_pos_2.x, graphics_->getStaticView().getSize().y - mapped_pos_2.y);
+            }
         }
 
     private:

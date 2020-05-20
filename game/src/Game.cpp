@@ -227,6 +227,34 @@ void Game::update(float time_elapsed)
                 this->setGameState(GameState::Normal);
             }
 
+            auto update_lights = [](auto& list) {
+                for (auto& obj : list)
+                {
+                    auto light = obj->getLightPoint();
+
+                    if (light != nullptr)
+                        light->setPosition(obj->getPosition());
+                }
+            };
+
+            update_lights(map_->getList<Obstacle>());
+            update_lights(map_->getList<NPC>());
+            update_lights(map_->getList<Special>());
+            update_lights(map_->getList<Decoration>());
+            update_lights(fire_);
+
+            auto player_light = player_->getLightPoint();
+            if (player_light != nullptr)
+                player_light->setPosition(player_->getPosition());
+
+            if (player_clone_ != nullptr)
+            {
+                auto clone_light = player_clone_->getLightPoint();
+
+                if (clone_light != nullptr)
+                    clone_light->setPosition(player_clone_->getPosition());
+            }
+
             camera_->update(time_elapsed);
             break;
         }
@@ -527,7 +555,7 @@ void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
 void Game::spawnTeleportationEvent(const sf::Vector2f& pos)
 {
     auto event = std::make_shared<Event>(pos + sf::Vector2f{0.0f, 10.0f}, "teleportation");
-    engine_->spawnAnimationEvent(std::make_shared<Event>(pos + sf::Vector2f{0.0f, 10.0f}, "teleportation"));
+    engine_->spawnAnimationEvent(event);
 
     if (event->getLightPoint() != nullptr)
         event->getLightPoint()->registerGraphics(engine_->getGraphics());

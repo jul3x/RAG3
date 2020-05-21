@@ -11,7 +11,7 @@
 
 using namespace editor;
 
-Editor::Editor() : grid_(CFG.get<int>("window_width_px"), CFG.get<int>("window_height_px"))
+Editor::Editor() : grid_(CFG.get<int>("window_width_px"), CFG.get<int>("window_height_px")), is_lightning_on_(true)
 {
     engine_ = std::make_unique<Engine>();
     engine_->registerGame(this);
@@ -102,13 +102,16 @@ void Editor::draw(graphics::Graphics& graphics)
 
     graphics.drawAlreadySorted();
 
-    lightning_->clear();
-    draw_light(map_->getList<NPC>());
-    draw_light(map_->getList<Obstacle>());
-    draw_light(map_->getList<Decoration>());
-    draw_light(map_->getList<Special>());
-    graphics.setStaticView();
-    graphics.draw(*lightning_);
+    if (is_lightning_on_)
+    {
+        lightning_->clear();
+        draw_light(map_->getList<NPC>());
+        draw_light(map_->getList<Obstacle>());
+        draw_light(map_->getList<Decoration>());
+        draw_light(map_->getList<Special>());
+        graphics.setStaticView();
+        graphics.draw(*lightning_);
+    }
 }
 
 void Editor::start()
@@ -345,4 +348,9 @@ AbstractDrawableObject* Editor::getMarkedItem()
 void Editor::spawnError(const std::string& err)
 {
     ui_->spawnError(err);
+}
+
+void Editor::setLightning(bool on)
+{
+    is_lightning_on_ = on;
 }

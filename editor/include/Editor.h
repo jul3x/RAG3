@@ -46,6 +46,7 @@ namespace editor {
         void alertCollision(DynamicObject* d_obj, StaticObject* s_obj) override {}
         void alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2) override {}
 
+        void setLightning(bool on);
         void setCurrentItem(const std::string& category, const std::string& id);
         [[nodiscard]] const std::pair<std::string, std::string>& getCurrentItem() const;
         [[nodiscard]] AbstractDrawableObject* getMarkedItem();
@@ -80,6 +81,8 @@ namespace editor {
 
         std::pair<std::string, std::string> current_item_;
         AbstractDrawableObject* marked_item_;
+
+        bool is_lightning_on_;
 
 
     };

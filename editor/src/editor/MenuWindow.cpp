@@ -6,6 +6,7 @@
 
 #include <editor/MenuWindow.h>
 #include <editor/UserInterface.h>
+#include <Editor.h>
 
 
 using namespace editor;
@@ -84,5 +85,24 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
         int value = this->z_index_slider_->getValue();
         this->z_index_label_->setText("Visible z-index: " + std::to_string(value));
         this->ui_->setZIndex(value);
+    });
+
+    auto label = tgui::Label::create();
+    label->setRenderer(theme_->getRenderer("Label"));
+    label->setText("Lightning");
+    label->setTextSize(14);
+    grid_->addWidget(label, 4, 0);
+
+    auto checkbox = tgui::CheckBox::create();
+    checkbox->setRenderer(theme_->getRenderer("CheckBox"));
+    checkbox->setSize(15, 15);
+    checkbox->setChecked(true);
+    grid_->addWidget(checkbox, 4, 1);
+
+    checkbox->connect("Checked", [&]() {
+        Editor::get().setLightning(true);
+    });
+    checkbox->connect("Unchecked", [&]() {
+        Editor::get().setLightning(false);
     });
 }

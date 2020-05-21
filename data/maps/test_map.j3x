@@ -486,7 +486,7 @@ flame 412.19 697.178 679 1 OnEnter [SetOnFire] [Null]
 flame 378.19 665.178 680 1 OnEnter [SetOnFire] [Null]
 special_event 1200 825 749 1 OnEnter [RemoveDecoration;SpawnLava;SpawnExplosionEventByPos;Destroy] [659;(1200.0,700.0);(1200,700);Null]
 stairs 1800 2950 790 1 OnEnter [Teleport] [(7981.1,1784.7)]
-lever 400 1325 811 1 OnUse [ActivateWeapon;ChangeOpenState] [808;Null]
+lever 400 1325 811 0 OnUse [ActivateWeapon;ChangeOpenState] [808;Null]
 lava 1900 2500 822 1 OnEnter [Kill] [lava]
 lava 1800 2500 823 1 OnEnter [Kill] [lava]
 lava 1800 2600 826 1 OnEnter [Kill] [lava]
@@ -515,6 +515,7 @@ flame 7041.77 4513.51 904 1 OnEnter [SetOnFire] [Null]
 flame 7082.57 4532.54 905 1 OnEnter [SetOnFire] [Null]
 flame 7101.6 4453.68 906 1 OnEnter [SetOnFire] [Null]
 special_event 6700 5250 920 1 OnEnter [ActivateWeapon;Destroy] [901;Null]
+lever 800 1325 933 1 OnUse [ActivateSpecial;ChangeOpenState,Deactivate] [811;Null;Null]
 
 weapons: 
 flamethrower 1760.08 260.598 35.9029 807 Interrupted 1

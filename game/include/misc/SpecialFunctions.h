@@ -16,6 +16,7 @@
 class SpecialFunctions
 {
 public:
+    using SpecialFunction = std::function<void(Functional*, const std::string&, Character*)>;
     SpecialFunctions();
 
     static void mapStart(Functional* obj, const std::string& data, Character* user);
@@ -31,6 +32,7 @@ public:
     static void addSpeed(Functional* obj, const std::string& data, Character* user);
     static void pickCrystal(Functional* obj, const std::string& data, Character* user);
 
+    static void activateSpecial(Functional* obj, const std::string& data, Character* user);
     static void activateWeapon(Functional* obj, const std::string& data, Character* user);
     static void teleport(Functional* obj, const std::string& data, Character* user);
     static void kill(Functional* obj, const std::string& data, Character* user);
@@ -52,14 +54,12 @@ public:
     static void deactivate(Functional* obj, const std::string& data, Character* user);
     static void destroy(Functional* obj, const std::string& data, Character* user);
 
-    std::function<void(Functional*, const std::string&, Character*)> bindFunction(const std::string& key) const;
+    const SpecialFunction& bindFunction(const std::string& key) const;
     const std::string& bindTextToUse(const std::string& key) const;
     bool isUsableByNPC(const std::string& key) const;
 
 private:
-    std::unordered_map<std::string, std::function<void(Functional*, const std::string&, Character*)>> functions_;
-    std::unordered_map<std::string, std::string> text_to_use_;
-    std::unordered_map<std::string, bool> is_usable_by_npc_;
+    std::unordered_map<std::string, std::tuple<SpecialFunction, std::string, bool>> functions_;
 
 };
 

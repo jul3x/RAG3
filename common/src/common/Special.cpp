@@ -10,7 +10,8 @@ Special::Special(const sf::Vector2f& position, const std::string& id, int u_id) 
         Special(position, id,
                 utils::j3x::get<std::string>(RM.getObjectParams("specials", id), "default_activation"),
                 utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("specials", id), "default_functions"),
-                utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("specials", id), "default_datas"), u_id)
+                utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("specials", id), "default_datas"),
+                utils::j3x::get<int>(RM.getObjectParams("specials", id), "default_active"), u_id)
 {
 
 }
@@ -18,7 +19,7 @@ Special::Special(const sf::Vector2f& position, const std::string& id, int u_id) 
 
 Special::Special(const sf::Vector2f& position, const std::string& id,
                  const std::string& activation, const std::vector<std::string>& functions,
-                 const std::vector<std::string>& datas, int u_id) :
+                 const std::vector<std::string>& datas, bool is_active, int u_id) :
         HoveringObject(position, {},
                        {utils::j3x::get<float>(RM.getObjectParams("specials", id), "size_x"),
                         utils::j3x::get<float>(RM.getObjectParams("specials", id), "size_y")},
@@ -38,6 +39,11 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
                                     utils::j3x::get<float>(RM.getObjectParams("specials", id), "size_y")) / 2.0f +
                        sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("specials", id), "map_offset_x"),
                                     utils::j3x::get<float>(RM.getObjectParams("specials", id), "map_offset_y")));
+
+    if (is_active)
+        this->activate();
+    else
+        this->deactivate();
 
     if (utils::j3x::get<int>(RM.getObjectParams("specials", id), "light_point"))
     {

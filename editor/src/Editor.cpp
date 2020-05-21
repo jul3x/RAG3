@@ -167,7 +167,7 @@ int Editor::readItemInfo(const sf::Vector2f& pos, bool read_uid)
     if (ret_obs != nullptr)
     {
         if (!read_uid)
-            ui_->openSpecialObjectWindow("obstacles", ret_obs);
+            ui_->openObstacleWindow("obstacles", ret_obs);
         return read_uid ? ret_obs->getUniqueId() : 0;
     }
 

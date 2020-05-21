@@ -33,6 +33,7 @@ UserInterface::UserInterface() :
         special_object_window_(&gui_, &gui_theme_),
         character_object_window_(&gui_, &gui_theme_),
         weapon_window_(&gui_, &gui_theme_),
+        obstacle_object_window_(&gui_, &gui_theme_),
         marked_item_(nullptr)
 {
     gui_.get("save_window")->setVisible(false);
@@ -42,6 +43,7 @@ UserInterface::UserInterface() :
     gui_.get("special_object_window")->setVisible(false);
     gui_.get("weapon_window")->setVisible(false);
     gui_.get("character_object_window")->setVisible(false);
+    gui_.get("obstacle_object_window")->setVisible(false);
 
     information_.setPosition(CFG.get<float>("info_x"), CFG.get<float>("info_y"));
     information_.setFillColor(sf::Color(255, 255, 255, 0));
@@ -122,7 +124,7 @@ void UserInterface::openUniqueObjectWindow(const std::string& category, const st
     gui_.get("unique_object_window")->setVisible(true);
 }
 
-void UserInterface::openSpecialObjectWindow(const std::string& category, Functional* obj)
+void UserInterface::openSpecialObjectWindow(const std::string& category, Special* obj)
 {
     special_object_window_.setObjectContent(category, obj);
     gui_.get("special_object_window")->setVisible(true);
@@ -138,6 +140,12 @@ void UserInterface::openWeaponWindow(const std::string& category, PlacedWeapon* 
 {
     weapon_window_.setObjectContent(category, obj);
     gui_.get("weapon_window")->setVisible(true);
+}
+
+void UserInterface::openObstacleWindow(const std::string& category, Obstacle* obj)
+{
+    obstacle_object_window_.setObjectContent(category, obj);
+    gui_.get("obstacle_object_window")->setVisible(true);
 }
 
 void UserInterface::setZIndex(int value)
@@ -221,15 +229,25 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                     {
                         special_object_window_.addToData(crosshair_.getPositionStr() + ";");
                     }
+                    else if (obstacle_object_window_.isDataFocused())
+                    {
+                        obstacle_object_window_.addToData(crosshair_.getPositionStr() + ";");
+                    }
                 }
                 else if (event.key.code == sf::Keyboard::F2)
                 {
-                    if (special_object_window_.isDataFocused())
-                    {
-                        auto id = Editor::get().readItemInfo(crosshair_.getPosition(), true);
+                    auto id = Editor::get().readItemInfo(crosshair_.getPosition(), true);
 
-                        if (id != -1)
+                    if (id != -1)
+                    {
+                        if (special_object_window_.isDataFocused())
+                        {
                             special_object_window_.addToData(std::to_string(id) + ";");
+                        }
+                        else if (obstacle_object_window_.isDataFocused())
+                        {
+                            obstacle_object_window_.addToData(std::to_string(id) + ";");
+                        }
                     }
                 }
                 else if (event.key.code == sf::Keyboard::Escape)
@@ -241,6 +259,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                     gui_.get("special_object_window")->setVisible(false);
                     gui_.get("weapon_window")->setVisible(false);
                     gui_.get("character_object_window")->setVisible(false);
+                    gui_.get("obstacle_object_window")->setVisible(false);
                 }
             }
             case sf::Event::MouseButtonPressed:
@@ -439,3 +458,4 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
         }
     }
 }
+

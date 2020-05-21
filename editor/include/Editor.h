@@ -11,6 +11,7 @@
 #include <R3E/system/Engine.h>
 #include <R3E/ai/AgentsManager.h>
 #include <R3E/audio/MusicManager.h>
+#include <R3E/graphics/Lightning.h>
 
 #include <common/Map.h>
 
@@ -70,6 +71,7 @@ namespace editor {
         std::unique_ptr<Engine> engine_;
         std::unique_ptr<UserInterface> ui_;
         std::unique_ptr<Camera> camera_;
+        std::unique_ptr<graphics::Lightning> lightning_;
         Grid grid_;
 
         std::unique_ptr<Map> map_;

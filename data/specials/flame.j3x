@@ -18,3 +18,4 @@ list[string] default_datas=[Null]
 bool is_drawable=1
 
 bool light_point=1
+bool default_active=1

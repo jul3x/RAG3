@@ -22,6 +22,7 @@
 #include <editor/SpecialObjectWindow.h>
 #include <editor/WeaponWindow.h>
 #include <editor/CharacterObjectWindow.h>
+#include <editor/ObstacleObjectWindow.h>
 
 
 using namespace r3e;
@@ -49,9 +50,10 @@ namespace editor {
 
         void openConfigWindow(const std::string& category, const std::string& id);
         void openUniqueObjectWindow(const std::string& category, const std::string& name, int id);
-        void openSpecialObjectWindow(const std::string& category, Functional* obj);
+        void openSpecialObjectWindow(const std::string& category, Special* obj);
         void openCharacterObjectWindow(const std::string& category, Character* obj);
         void openWeaponWindow(const std::string& category, PlacedWeapon* obj);
+        void openObstacleWindow(const std::string& category, Obstacle* obj);
 
         void setZIndex(int value);
         int getZIndex() const;
@@ -87,6 +89,7 @@ namespace editor {
         ConfigWindow config_window_;
         UniqueObjectWindow unique_object_window_;
         SpecialObjectWindow special_object_window_;
+        ObstacleObjectWindow obstacle_object_window_;
         WeaponWindow weapon_window_;
         CharacterObjectWindow character_object_window_;
 

@@ -3,12 +3,14 @@
 //
 
 #include <R3E/system/Config.h>
+#include <R3E/utils/Utils.h>
 
 #include <common/ResourceManager.h>
 #include <common/NoWeapon.h>
 
 #include <characters/Player.h>
 #include <common/ShootingWeapon.h>
+
 
 
 Player::Player(const sf::Vector2f& position) :
@@ -50,8 +52,9 @@ bool Player::sideStep(Player::SideStepDir dir)
 bool Player::update(float time_elapsed)
 {
     side_stepping_freeze_time_ -= time_elapsed;
+    bool alive = Character::update(time_elapsed);
 
-    return Character::update(time_elapsed);
+    return alive;
 }
 
 void Player::setHealth(float life)

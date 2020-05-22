@@ -29,7 +29,6 @@ namespace r3e::graphics {
         {
             auto mapped_pos = graphics_->getWindow().mapCoordsToPixel({x, y}, graphics_->getCurrentView());
             auto mapped_pos_2 = graphics_->getWindow().mapPixelToCoords(mapped_pos, graphics_->getStaticView());
-
             AbstractDrawableObject::setPosition(mapped_pos_2);
         }
 

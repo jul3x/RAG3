@@ -56,7 +56,7 @@ void Camera::update(float time_elapsed)
     view_size_.x += zoom_diff.x * time_elapsed * CFG.get<float>("graphics/camera_zoom_speed");
     view_size_.y += zoom_diff.y * time_elapsed * CFG.get<float>("graphics/camera_zoom_speed");
 
-    if (!utils::num::isNearlyEqual(shaking_factor_, 0.0f))
+    if (!utils::num::isNearlyEqual(shaking_factor_, 0.0f) && state_ == State::Normal)
     {
         center_.z = shaking_factor_ * CFG.get<float>("graphics/camera_rotation_recoil") *
                     std::sin(shaking_factor_ * time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);

@@ -111,6 +111,7 @@ protected:
 
     float max_life_;
     float on_fire_time_;
+    short int current_rotation_quarter_;
 
     std::unique_ptr<graphics::LightPoint> light_;
     std::unique_ptr<Decoration> decorator_;
@@ -127,7 +128,7 @@ private:
     sf::Vector2f gun_offset_;
     float rotate_to_;
     float speed_factor_;
-    short int current_rotation_quarter_;
+
     Special* current_special_object_;
     Character* current_talkable_character_;
     std::list<std::string> talk_scenario_;

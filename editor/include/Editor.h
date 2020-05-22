@@ -11,6 +11,7 @@
 #include <R3E/system/Engine.h>
 #include <R3E/ai/AgentsManager.h>
 #include <R3E/audio/MusicManager.h>
+#include <R3E/graphics/Lightning.h>
 
 #include <common/Map.h>
 
@@ -45,6 +46,7 @@ namespace editor {
         void alertCollision(DynamicObject* d_obj, StaticObject* s_obj) override {}
         void alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2) override {}
 
+        void setLightning(bool on);
         void setCurrentItem(const std::string& category, const std::string& id);
         [[nodiscard]] const std::pair<std::string, std::string>& getCurrentItem() const;
         [[nodiscard]] AbstractDrawableObject* getMarkedItem();
@@ -70,6 +72,7 @@ namespace editor {
         std::unique_ptr<Engine> engine_;
         std::unique_ptr<UserInterface> ui_;
         std::unique_ptr<Camera> camera_;
+        std::unique_ptr<graphics::Lightning> lightning_;
         Grid grid_;
 
         std::unique_ptr<Map> map_;
@@ -78,6 +81,8 @@ namespace editor {
 
         std::pair<std::string, std::string> current_item_;
         AbstractDrawableObject* marked_item_;
+
+        bool is_lightning_on_;
 
 
     };

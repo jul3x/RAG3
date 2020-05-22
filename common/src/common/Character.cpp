@@ -82,6 +82,8 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
                 sf::Vector2f{CFG.get<float>("graphics/characters_light_point_size"), CFG.get<float>("graphics/characters_light_point_size")},
                 &RM.getTexture("lightpoint"));
     }
+
+    shape_.setScale(2.0f, 2.0f);
 }
 
 bool Character::shot()
@@ -288,11 +290,19 @@ void Character::setRotation(float theta)
 
     short int new_quarter = get_quarter(theta);
 
+    std::string added_name = "";
+    if (utils::num::isNearlyEqual(this->getVelocity(), {},
+            utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") / 6.0f))
+    {
+        added_name = "_standing";
+        shape_.setTextureRect(sf::IntRect(sf::Vector2i{0, 0}, static_cast<sf::Vector2i>(this->getSize())));
+    }
+
     switch (current_rotation_quarter_)
     {
         case 1:
         {
-            shape_.setTexture(&RM.getTexture("characters/" + this->getId()));
+            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + added_name));
 
             gun_offset_.x = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
@@ -307,7 +317,7 @@ void Character::setRotation(float theta)
         }
         case 2:
         {
-            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + "_2"));
+            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + added_name + "_2"));
             gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
@@ -321,7 +331,7 @@ void Character::setRotation(float theta)
         }
         case 3:
         {
-            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + "_3"));
+            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + added_name + "_3"));
             gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
@@ -335,7 +345,7 @@ void Character::setRotation(float theta)
         }
         case 4:
         {
-            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + "_4"));
+            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + added_name + "_4"));
             gun_offset_.x = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 

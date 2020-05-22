@@ -12,97 +12,39 @@
 
 SpecialFunctions::SpecialFunctions()
 {
-    functions_["MapStart"] = &mapStart;
-    functions_["MapEnd"]= &mapEnd;
-    functions_["OpenDoor"] = &openDoor;
-    functions_["ReadNote"] = &readNote;
-    functions_["AddWeapon"] = &addWeapon;
-    functions_["AddAmmo"] = &addAmmo;
-    functions_["AddHealth"] = &addHealth;
-    functions_["AddSpeed"] = &addSpeed;
-    functions_["PickCrystal"] = &pickCrystal;
-    functions_["SpawnThought"] = &spawnThought;
-    functions_["SpawnPlayerThought"] = &spawnPlayerThought;
-    functions_["ChangeOpenState"] = &changeOpenState;
-    functions_["Teleport"] = &teleport;
-    functions_["Kill"] = &kill;
-    functions_["ActivateWeapon"] = &activateWeapon;
-    functions_["SetOnFire"] = &setOnFire;
-    functions_["Explode"] = &explode;
-    functions_["RemoveDecoration"] = &removeDecoration;
-    functions_["RemoveSpecial"] = &removeSpecial;
-    functions_["SpawnLava"] = &spawnLava;
-    functions_["SpawnExplosionEvent"] = &spawnExplosionEvent;
-    functions_["SpawnExplosionEventByPos"] = &spawnExplosionEventByPos;
-    functions_["SpawnMiniLava"] = &spawnMiniLava;
-    functions_["SpawnFlame"] = &spawnFlame;
-    functions_["SpawnAmmo"] = &spawnAmmo;
-    functions_["Null"] = &nullFunc;
-    functions_["Deactivate"] = &deactivate;
-    functions_["Destroy"] = &destroy;
-
-    text_to_use_["MapStart"] = "[F] Start new map";
-    text_to_use_["MapEnd"] = "[F] End this map";
-    text_to_use_["OpenDoor"] = "[F] Use object";
-    text_to_use_["ReadNote"] = "[F] Read note";
-    text_to_use_["AddWeapon"] = "[F} Pick weapon";
-    text_to_use_["AddAmmo"] = "[F] Pick ammunition";
-    text_to_use_["AddHealth"] = "[F] Pick to heal yourself";
-    text_to_use_["AddSpeed"] = "[F] Pick to inject";
-    text_to_use_["PickCrystal"] = "[F] Pick crystal";
-    text_to_use_["SpawnThought"] = "";
-    text_to_use_["SpawnPlayerThought"] = "";
-    text_to_use_["ChangeOpenState"] = "[F] Use object";
-    text_to_use_["Teleport"] = "[F] To enter";
-    text_to_use_["Kill"] = "[F] To use";
-    text_to_use_["ActivateWeapon"] = "";
-    text_to_use_["Explode"] = "";
-    text_to_use_["SetOnFire"] = "";
-    text_to_use_["RemoveDecoration"] = "";
-    text_to_use_["RemoveSpecial"] = "";
-    text_to_use_["SpawnLava"] = "";
-    text_to_use_["SpawnExplosionEvent"] = "";
-    text_to_use_["SpawnExplosionEventByPos"] = "";
-    text_to_use_["SpawnMiniLava"] = "";
-    text_to_use_["SpawnAmmo"] = "";
-    text_to_use_["SpawnFlame"] = "";
-    text_to_use_["Null"] = "";
-    text_to_use_["Deactivate"] = "";
-    text_to_use_["Destroy"] = "";
-
-    is_usable_by_npc_["MapStart"] = false;
-    is_usable_by_npc_["MapEnd"]= false;
-    is_usable_by_npc_["OpenDoor"] = true;
-    is_usable_by_npc_["ReadNote"] = true;
-    is_usable_by_npc_["AddWeapon"] = false;
-    is_usable_by_npc_["AddAmmo"] = false;
-    is_usable_by_npc_["AddHealth"] = false;
-    is_usable_by_npc_["AddSpeed"] = false;
-    is_usable_by_npc_["PickCrystal"] = false;
-    is_usable_by_npc_["SpawnPlayerThought"] = true;
-    is_usable_by_npc_["SpawnThought"] = true;
-    is_usable_by_npc_["ChangeOpenState"] = true;
-    is_usable_by_npc_["Teleport"] = true;
-    is_usable_by_npc_["Kill"] = true;
-    is_usable_by_npc_["ActivateWeapon"] = false;
-    is_usable_by_npc_["SetOnFire"] = true;
-    is_usable_by_npc_["Explode"] = false;
-    is_usable_by_npc_["RemoveDecoration"] = false;
-    is_usable_by_npc_["RemoveSpecial"] = false;
-    is_usable_by_npc_["SpawnLava"] = false;
-    is_usable_by_npc_["SpawnExplosionEventByPos"] = true;
-    is_usable_by_npc_["SpawnMiniLava"] = false;
-    is_usable_by_npc_["SpawnExplosionEvent"] = false;
-    is_usable_by_npc_["SpawnAmmo"] = false;
-    is_usable_by_npc_["SpawnFlame"] = false;
-    is_usable_by_npc_["Null"] = true;
-    is_usable_by_npc_["Deactivate"] = true;
-    is_usable_by_npc_["Destroy"] = true;
+    functions_["MapStart"] = std::make_tuple(&mapStart, "[F] Start new map", false);
+    functions_["MapEnd"]= std::make_tuple(&mapEnd, "[F] End this map", false);
+    functions_["OpenDoor"] = std::make_tuple(&openDoor, "", true);
+    functions_["ReadNote"] = std::make_tuple(&readNote, "[F] Read note", true);
+    functions_["AddWeapon"] = std::make_tuple(&addWeapon, "[F} Pick weapon", false);
+    functions_["AddAmmo"] = std::make_tuple(&addAmmo, "[F] Pick ammunition", false);
+    functions_["AddHealth"] = std::make_tuple(&addHealth, "[F] Pick to heal yourself", false);
+    functions_["AddSpeed"] = std::make_tuple(&addSpeed, "[F] Pick to inject", false);
+    functions_["PickCrystal"] = std::make_tuple(&pickCrystal, "[F] Pick crystal", false);
+    functions_["SpawnThought"] = std::make_tuple(&spawnThought, "", true);
+    functions_["SpawnPlayerThought"] = std::make_tuple(&spawnPlayerThought, "", true);
+    functions_["ChangeOpenState"] = std::make_tuple(&changeOpenState, "[F] Pull the trigger", true);
+    functions_["Teleport"] = std::make_tuple(&teleport, "", true);
+    functions_["Kill"] = std::make_tuple(&kill, "", true);
+    functions_["ActivateWeapon"] = std::make_tuple(&activateWeapon, "", false);
+    functions_["SetOnFire"] = std::make_tuple(&setOnFire, "", true);
+    functions_["Explode"] = std::make_tuple(&explode, "", false);
+    functions_["RemoveDecoration"] = std::make_tuple(&removeDecoration, "", false);
+    functions_["RemoveSpecial"] = std::make_tuple(&removeSpecial, "", false);
+    functions_["SpawnLava"] = std::make_tuple(&spawnLava, "", false);
+    functions_["SpawnExplosionEvent"] = std::make_tuple(&spawnExplosionEvent, "", false);
+    functions_["SpawnExplosionEventByPos"] = std::make_tuple(&spawnExplosionEventByPos, "", true);
+    functions_["SpawnMiniLava"] = std::make_tuple(&spawnMiniLava, "", false);
+    functions_["SpawnFlame"] = std::make_tuple(&spawnFlame, "", false);
+    functions_["SpawnAmmo"] = std::make_tuple(&spawnAmmo, "", false);
+    functions_["Null"] = std::make_tuple(&nullFunc, "", true);
+    functions_["Deactivate"] = std::make_tuple(&deactivate, "", true);
+    functions_["Destroy"] = std::make_tuple(&destroy, "", true);
+    functions_["ActivateSpecial"] = std::make_tuple(&activateSpecial, "", true);
 }
 
 
-std::function<void(Functional*, const std::string&, Character*)>
-SpecialFunctions::bindFunction(const std::string& key) const
+const SpecialFunctions::SpecialFunction& SpecialFunctions::bindFunction(const std::string& key) const
 {
     auto it = functions_.find(key);
 
@@ -111,31 +53,31 @@ SpecialFunctions::bindFunction(const std::string& key) const
         throw std::invalid_argument("[SpecialFunctions] Function " + key + " is not handled!");
     }
 
-    return it->second;
+    return std::get<0>(it->second);
 }
 
 const std::string& SpecialFunctions::bindTextToUse(const std::string &key) const
 {
-    auto it = text_to_use_.find(key);
+    auto it = functions_.find(key);
 
-    if (it == text_to_use_.end())
+    if (it == functions_.end())
     {
         throw std::invalid_argument("[SpecialFunctions] Function " + key + " is not handled!");
     }
 
-    return it->second;
+    return std::get<1>(it->second);
 }
 
 bool SpecialFunctions::isUsableByNPC(const std::string& key) const
 {
-    auto it = is_usable_by_npc_.find(key);
+    auto it = functions_.find(key);
 
-    if (it == is_usable_by_npc_.end())
+    if (it == functions_.end())
     {
         throw std::invalid_argument("[SpecialFunctions] Function " + key + " is not handled!");
     }
 
-    return it->second;
+    return std::get<2>(it->second);
 }
 
 void SpecialFunctions::mapStart(Functional* obj, const std::string& data, Character* user)
@@ -429,4 +371,12 @@ void SpecialFunctions::removeSpecial(Functional* obj, const std::string& data, C
     auto special_id = std::stoi(data);
     auto special = Game::get().getMap().getObjectById<Special>(special_id);
     special->destroy();
+}
+
+void SpecialFunctions::activateSpecial(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Activate special." << std::endl;
+    auto special_id = std::stoi(data);
+    auto special = Game::get().getMap().getObjectById<Special>(special_id);
+    special->activate();
 }

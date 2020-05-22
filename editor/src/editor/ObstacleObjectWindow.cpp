@@ -4,23 +4,22 @@
 
 #include <R3E/system/Config.h>
 
-#include <editor/SpecialObjectWindow.h>
+#include <editor/ObstacleObjectWindow.h>
 
 
 using namespace editor;
 
-SpecialObjectWindow::SpecialObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
+ObstacleObjectWindow::ObstacleObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
         ChildWindow(gui, theme, "Special editor",
                     sf::Vector2f(CFG.get<int>("window_width_px") - CFG.get<float>("popup_window_size_x"),
                                  CFG.get<int>("window_height_px") - CFG.get<float>("popup_window_size_y")) / 2.0f,
                     {CFG.get<float>("popup_window_size_x"), CFG.get<float>("popup_window_size_y")},
-                    "special_object_window"),
-        special_(nullptr)
+                    "obstacle_object_window"),
+        obstacle_(nullptr)
 {
     grid_ = tgui::Grid::create();
-    grid_->setPosition("50% - width/2", "20");
-    grid_->setSize("90%", "80%");
-    grid_->setAutoSize(true);
+    grid_->setPosition("50% - width/2", "40% - height/2");
+    grid_->setSize("90%", "50%");
     child_->add(grid_);
 
     auto label = tgui::Label::create();
@@ -59,7 +58,7 @@ SpecialObjectWindow::SpecialObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
 
     fun_box_ = tgui::TextBox::create();
     fun_box_->setRenderer(theme_->getRenderer("TextBox"));
-    fun_box_->setSize("35%", "35%");
+    fun_box_->setSize("35%", "45%");
     fun_box_->setTextSize(14);
     grid_->addWidget(fun_box_, 3, 0);
 
@@ -72,21 +71,9 @@ SpecialObjectWindow::SpecialObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
 
     data_box_ = tgui::TextBox::create();
     data_box_->setRenderer(theme_->getRenderer("TextBox"));
-    data_box_->setSize("35%", "35%");
+    data_box_->setSize("35%", "45%");
     data_box_->setTextSize(14);
     grid_->addWidget(data_box_, 3, 1);
-
-    label = tgui::Label::create();
-    label->setRenderer(theme_->getRenderer("Label"));
-    label->setText("Already active:");
-    label->setTextSize(14);
-    grid_->addWidget(label, 4, 0);
-
-    already_active_ = tgui::EditBox::create();
-    already_active_->setRenderer(theme_->getRenderer("EditBox"));
-    already_active_->setSize("35%", 20);
-    already_active_->setTextSize(14);
-    grid_->addWidget(already_active_, 5, 0);
 
     button_ = tgui::Button::create();
     button_->setRenderer(theme_->getRenderer("Button"));
@@ -96,52 +83,39 @@ SpecialObjectWindow::SpecialObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
 
     child_->add(button_);
 
-//    grid_->setWidgetPadding(0, 0, {CFG.get<float>("items_padding") / 2.0f, CFG.get<float>("items_padding") / 2.0f});
+    grid_->setWidgetPadding(0, 0, {CFG.get<float>("items_padding"), CFG.get<float>("items_padding")});
     grid_->setWidgetPadding(1, 0, {CFG.get<float>("items_padding"), CFG.get<float>("items_padding")});
-//    grid_->setWidgetPadding(0, 1, {CFG.get<float>("items_padding") / 2.0f, CFG.get<float>("items_padding") / 2.0f});
+    grid_->setWidgetPadding(0, 1, {CFG.get<float>("items_padding"), CFG.get<float>("items_padding")});
     grid_->setWidgetPadding(1, 1, {CFG.get<float>("items_padding"), CFG.get<float>("items_padding")});
-//    grid_->setWidgetPadding(2, 0, {CFG.get<float>("items_padding") / 2.0f, CFG.get<float>("items_padding") / 2.0f});
+    grid_->setWidgetPadding(2, 0, {CFG.get<float>("items_padding"), CFG.get<float>("items_padding")});
     grid_->setWidgetPadding(3, 0, {CFG.get<float>("items_padding"), CFG.get<float>("items_padding")});
-//    grid_->setWidgetPadding(2, 1, {CFG.get<float>("items_padding") / 2.0f, CFG.get<float>("items_padding") / 2.0f});
+    grid_->setWidgetPadding(2, 1, {CFG.get<float>("items_padding"), CFG.get<float>("items_padding")});
     grid_->setWidgetPadding(3, 1, {CFG.get<float>("items_padding"), CFG.get<float>("items_padding")});
-//    grid_->setWidgetPadding(4, 0, {CFG.get<float>("items_padding") / 2.0f, CFG.get<float>("items_padding") / 2.0f});
-    grid_->setWidgetPadding(5, 0, {CFG.get<float>("items_padding"), CFG.get<float>("items_padding")});
 }
 
-void SpecialObjectWindow::setObjectContent(const std::string& category, Special* obj)
+void ObstacleObjectWindow::setObjectContent(const std::string& category, Obstacle* obj)
 {
-    special_ = obj;
-    child_->setTitle(category + "/" + special_->getId());
-    id_box_->setText(std::to_string(special_->getUniqueId()));
-    act_box_->setText(special_->getActivation());
-    fun_box_->setText(special_->getFunctionsStr());
-    data_box_->setText(special_->getDatasStr());
-    already_active_->setText(std::to_string(special_->isActive()));
+    obstacle_ = obj;
+    child_->setTitle(category + "/" + obstacle_->getId());
+    id_box_->setText(std::to_string(obstacle_->getUniqueId()));
+    act_box_->setText(obstacle_->getActivation());
+    fun_box_->setText(obstacle_->getFunctionsStr());
+    data_box_->setText(obstacle_->getDatasStr());
 
     button_->connect("pressed", [this]() {
-        this->special_->setActivation(this->act_box_->getText());
-        this->special_->setFunctionsStr(this->fun_box_->getText());
-        this->special_->setDatasStr(this->data_box_->getText());
-
-        if (already_active_->getText() == "1")
-        {
-            this->special_->activate();
-        }
-        else
-        {
-            this->special_->deactivate();
-        }
-
+        this->obstacle_->setActivation(this->act_box_->getText());
+        this->obstacle_->setFunctionsStr(this->fun_box_->getText());
+        this->obstacle_->setDatasStr(this->data_box_->getText());
         child_->close();
     });
 }
 
-bool SpecialObjectWindow::isDataFocused() const
+bool ObstacleObjectWindow::isDataFocused() const
 {
     return data_box_->isFocused();
 }
 
-void SpecialObjectWindow::addToData(const std::string& str)
+void ObstacleObjectWindow::addToData(const std::string& str)
 {
     data_box_->setText(data_box_->getText() + str);
 }

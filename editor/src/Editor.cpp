@@ -11,7 +11,7 @@
 
 using namespace editor;
 
-Editor::Editor() : grid_(CFG.get<int>("window_width_px"), CFG.get<int>("window_height_px"))
+Editor::Editor() : grid_(CFG.get<int>("window_width_px"), CFG.get<int>("window_height_px")), is_lightning_on_(true)
 {
     engine_ = std::make_unique<Engine>();
     engine_->registerGame(this);
@@ -33,26 +33,45 @@ void Editor::initialize()
 
     engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
+
+    lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CFG.get<int>("window_width_px")),
+                                                                    static_cast<float>(CFG.get<int>("window_height_px"))},
+                                                       sf::Color(CFG.get<int>("graphics/lightning_color")));
+
 }
 
 void Editor::update(float time_elapsed)
 {
     camera_->update(time_elapsed);
 
-    auto update_animation = [&time_elapsed](auto& list) {
+    auto update_obj = [&time_elapsed](auto& list) {
         for (auto& obj : list)
         {
             obj->updateAnimation(time_elapsed);
         }
     };
 
-    update_animation(map_->getList<DecorationTile>());
-    update_animation(map_->getList<Decoration>());
-    update_animation(map_->getList<ObstacleTile>());
-    update_animation(map_->getList<Obstacle>());
-    update_animation(map_->getList<NPC>());
-    update_animation(map_->getList<Special>());
-    update_animation(map_->getList<PlacedWeapon>());
+    auto update_light = [](auto& list) {
+        for (auto& obj : list)
+        {
+            auto light = obj->getLightPoint();
+
+            if (light != nullptr)
+                light->setPosition(obj->getPosition());
+        }
+    };
+
+    update_obj(map_->getList<DecorationTile>());
+    update_obj(map_->getList<Decoration>());
+    update_obj(map_->getList<ObstacleTile>());
+    update_obj(map_->getList<Obstacle>());
+    update_obj(map_->getList<NPC>());
+    update_obj(map_->getList<Special>());
+    update_obj(map_->getList<PlacedWeapon>());
+    update_light(map_->getList<Decoration>());
+    update_light(map_->getList<Obstacle>());
+    update_light(map_->getList<NPC>());
+    update_light(map_->getList<Special>());
 }
 
 void Editor::draw(graphics::Graphics& graphics)
@@ -66,6 +85,13 @@ void Editor::draw(graphics::Graphics& graphics)
                 graphics.drawSorted(*obj);
     };
 
+    auto draw_light = [&graphics, &max_z_index, this](auto& list) {
+        for (auto& obj : list)
+            if (obj->getZIndex() <= max_z_index)
+                if (obj->getLightPoint() != nullptr)
+                    this->lightning_->add(*obj->getLightPoint());
+    };
+
     draw(map_->getList<DecorationTile>());
     draw(map_->getList<Decoration>());
     draw(map_->getList<ObstacleTile>());
@@ -75,6 +101,17 @@ void Editor::draw(graphics::Graphics& graphics)
     draw(map_->getList<PlacedWeapon>());
 
     graphics.drawAlreadySorted();
+
+    if (is_lightning_on_)
+    {
+        lightning_->clear();
+        draw_light(map_->getList<NPC>());
+        draw_light(map_->getList<Obstacle>());
+        draw_light(map_->getList<Decoration>());
+        draw_light(map_->getList<Special>());
+        graphics.setStaticView();
+        graphics.draw(*lightning_);
+    }
 }
 
 void Editor::start()
@@ -130,7 +167,7 @@ int Editor::readItemInfo(const sf::Vector2f& pos, bool read_uid)
     if (ret_obs != nullptr)
     {
         if (!read_uid)
-            ui_->openSpecialObjectWindow("obstacles", ret_obs);
+            ui_->openObstacleWindow("obstacles", ret_obs);
         return read_uid ? ret_obs->getUniqueId() : 0;
     }
 
@@ -159,19 +196,37 @@ void Editor::placeItem(const sf::Vector2f& pos, float direction)
 {
     auto max_z_index = ui_->getZIndex();
     if (current_item_.first == "decorations_tiles")
-        map_->spawn<DecorationTile>(pos, direction, current_item_.second, true, max_z_index);
+        auto ptr = map_->spawn<DecorationTile>(pos, direction, current_item_.second, true, max_z_index);
     else if (current_item_.first == "obstacles_tiles")
-        map_->spawn<ObstacleTile>(pos, direction, current_item_.second, true, max_z_index);
+        auto ptr = map_->spawn<ObstacleTile>(pos, direction, current_item_.second, true, max_z_index);
     else if (current_item_.first == "characters")
-        map_->spawn<NPC>(pos, direction, current_item_.second, false, max_z_index);
+    {
+        auto ptr = map_->spawn<NPC>(pos, direction, current_item_.second, false, max_z_index);
+        if (ptr->getLightPoint() != nullptr)
+            ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
+    }
     else if (current_item_.first == "specials")
-        map_->spawn<Special>(pos, direction, current_item_.second, false, max_z_index);
+    {
+        auto ptr = map_->spawn<Special>(pos, direction, current_item_.second, false, max_z_index);
+        if (ptr->getLightPoint() != nullptr)
+            ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
+    }
+
     else if (current_item_.first == "decorations")
-        map_->spawn<Decoration>(pos, direction, current_item_.second, false, max_z_index);
+    {
+        auto ptr = map_->spawn<Decoration>(pos, direction, current_item_.second, false, max_z_index);
+        if (ptr->getLightPoint() != nullptr)
+            ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
+    }
+
     else if (current_item_.first == "obstacles")
-        map_->spawn<Obstacle>(pos, direction, current_item_.second, false, max_z_index);
+    {
+        auto ptr = map_->spawn<Obstacle>(pos, direction, current_item_.second, false, max_z_index);
+        if (ptr->getLightPoint() != nullptr)
+            ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
+    }
     else if (current_item_.first == "weapons")
-        map_->spawn<PlacedWeapon>(pos, direction, current_item_.second, false, max_z_index);
+        auto ptr = map_->spawn<PlacedWeapon>(pos, direction, current_item_.second, false, max_z_index);
 }
 
 void Editor::removeItem(const sf::Vector2f& pos)
@@ -206,6 +261,17 @@ void Editor::loadMap(const std::string& name)
         camera_->setPointingTo({});
         ui_->spawnInfo("Map " + name + " succesfully loaded!");
         current_map_name_ = name;
+
+        auto init_light = [this](auto& list) {
+            for (auto& obj : list)
+                if (obj->getLightPoint() != nullptr)
+                    obj->getLightPoint()->registerGraphics(engine_->getGraphics());
+        };
+
+        init_light(map_->getList<NPC>());
+        init_light(map_->getList<Obstacle>());
+        init_light(map_->getList<Decoration>());
+        init_light(map_->getList<Special>());
     }
     else
     {
@@ -282,4 +348,9 @@ AbstractDrawableObject* Editor::getMarkedItem()
 void Editor::spawnError(const std::string& err)
 {
     ui_->spawnError(err);
+}
+
+void Editor::setLightning(bool on)
+{
+    is_lightning_on_ = on;
 }

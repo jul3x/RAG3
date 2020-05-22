@@ -2,8 +2,8 @@ float max_speed=0.0f
 
 float max_health=3
 
-float size_x=65.0f
-float size_y=100.0f
+float size_x=33.0f
+float size_y=50.0f
 
 float collision_size_x=55.0f
 float collision_size_y=60.0f

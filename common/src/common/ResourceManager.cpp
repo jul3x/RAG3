@@ -68,6 +68,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
         sf::Vector2f current_pos = {};
         float direction = 0.0f;
         int u_id = -1;
+        bool is_active = true;
 
         std::string activation = "";
         std::vector<std::string> functions;
@@ -203,7 +204,6 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         break;
                     }
                     case MapReading::Obstacles:
-                    case MapReading::Specials:
                     {
                         ++number;
                         should_add_new_object = false;
@@ -229,6 +229,55 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             activation = word;
                         }
                         else if (number % 7 == 6)
+                        {
+                            if (word.length() < 2)
+                                throw std::logic_error("[ResourceManager] Wrong map list object format!");
+
+                            utils::j3x::tokenize(word.substr(1, word.length() - 2), utils::j3x::DELIMITER_, functions);
+                        }
+                        else
+                        {
+                            std::replace(word.begin(), word.end(), '_', ' ');
+
+                            if (word.length() < 2)
+                                throw std::logic_error("[ResourceManager] Wrong map list object format!");
+
+                            utils::j3x::tokenize(word.substr(1, word.length() - 2), utils::j3x::DELIMITER_, f_datas);
+                            should_add_new_object = true;
+                        }
+
+                        break;
+                    }
+                    case MapReading::Specials:
+                    {
+                        ++number;
+                        should_add_new_object = false;
+
+                        if (number % 8 == 1)
+                        {
+                            current_id = word;
+                        }
+                        else if (number % 8 == 2)
+                        {
+                            current_pos.x = std::stof(word);
+                        }
+                        else if (number % 8 == 3)
+                        {
+                            current_pos.y = std::stof(word);
+                        }
+                        else if (number % 8 == 4)
+                        {
+                            u_id = std::stoi(word);
+                        }
+                        else if (number % 8 == 5)
+                        {
+                            is_active = std::stoi(word);
+                        }
+                        else if (number % 8 == 6)
+                        {
+                            activation = word;
+                        }
+                        else if (number % 8 == 7)
                         {
                             if (word.length() < 2)
                                 throw std::logic_error("[ResourceManager] Wrong map list object format!");
@@ -330,7 +379,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             }
 
                             specials.emplace_back(std::make_shared<Special>(current_pos, current_id,
-                                                                            activation, functions, f_datas, u_id));
+                                                                            activation, functions, f_datas, is_active, u_id));
                             break;
                         case MapReading::Obstacles:
                             if (functions.size() != f_datas.size())
@@ -464,7 +513,7 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
         }
     };
 
-    auto add_functional_obj_to_file = [&file, &map_constraints](const std::string& category, auto& objects) {
+    auto add_obstacle_obj_to_file = [&file, &map_constraints](const std::string& category, auto& objects) {
         file << std::endl << category << ": " << std::endl;
         for (const auto& obj : objects)
         {
@@ -475,6 +524,24 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
                  obj->getPosition().x - map_constraints.second.x << " " <<
                  obj->getPosition().y - map_constraints.second.y << " " <<
                  obj->getUniqueId() << " " <<
+                 obj->getActivation() << " " <<
+                 "[" << obj->getFunctionsStr() << "] [" <<
+                 new_data << "]" << std::endl;
+        }
+    };
+
+    auto add_special_obj_to_file = [&file, &map_constraints](const std::string& category, auto& objects) {
+        file << std::endl << category << ": " << std::endl;
+        for (const auto& obj : objects)
+        {
+            auto new_data = obj->getDatasStr();
+            std::replace(new_data.begin(), new_data.end(), ' ', '_');
+
+            file << obj->getId() << " " <<
+                 obj->getPosition().x - map_constraints.second.x << " " <<
+                 obj->getPosition().y - map_constraints.second.y << " " <<
+                 obj->getUniqueId() << " " <<
+                 obj->isActive() << " " <<
                  obj->getActivation() << " " <<
                  "[" << obj->getFunctionsStr() << "] [" <<
                  new_data << "]" << std::endl;
@@ -503,9 +570,9 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
     };
 
     add_obj_to_file("decorations", map.getList<Decoration>());
-    add_functional_obj_to_file("obstacles", map.getList<Obstacle>());
+    add_obstacle_obj_to_file("obstacles", map.getList<Obstacle>());
     add_character_obj_to_file("characters", map.getList<NPC>());
-    add_functional_obj_to_file("specials", map.getList<Special>());
+    add_special_obj_to_file("specials", map.getList<Special>());
     add_weapon_to_file("weapons", map.getList<PlacedWeapon>());
 
     std::cout << "[ResourceManager] Map file " << CFG.get<std::string>("paths/maps_dir") + "/" + name + ".j3x" << " is saved!" << std::endl;

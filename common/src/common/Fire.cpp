@@ -25,7 +25,7 @@ Fire::Fire(Character* user,
         user_(user),
         direction_(direction),
         color_(sf::Color(CFG.get<int>("graphics/fire_color"))),
-        alpha_(255.0f),
+        alpha_(0.0f),
         life_(CFG.get<float>("fire_life")),
         r_(CFG.get<float>("fire_initial_radius")),
         offset_(utils::num::getRandom(0.0, 2 * M_PI))
@@ -49,8 +49,7 @@ bool Fire::update(float time_elapsed)
     this->updateAnimation(time_elapsed);
     DynamicObject::update(time_elapsed);
 
-    light_->setPosition(this->getPosition());
-    light_->setColor(255, 255, 255, 255 * life_ / CFG.get<float>("fire_life"));
+
 
     difference_ = CFG.get<float>("fire_spread_distance") *
             std::cos(offset_ + life_ / CFG.get<float>("fire_life") * 4 * M_PI);
@@ -59,7 +58,11 @@ bool Fire::update(float time_elapsed)
                                                  static_cast<float>(std::sin(direction_ + M_PI_2))});
 
     r_ += time_elapsed * CFG.get<float>("fire_spread_speed");
-    alpha_ = std::sqrt(life_) * 255.0f / std::sqrt(CFG.get<float>("fire_life"));
+    alpha_ = - life_ * life_ * 4 * 255.0f / (CFG.get<float>("fire_life") * CFG.get<float>("fire_life")) +
+            4 * 255.0f / CFG.get<float>("fire_life") * life_; // ax^2 + bx + c
+
+    light_->setPosition(this->getPosition());
+    light_->setColor(255, 255, 255, alpha_);
 
     this->setSize({r_ * 2.0f, r_ * 2.0f});
     this->setColor(color_.r, color_.g, color_.b, static_cast<sf::Uint8>(alpha_));

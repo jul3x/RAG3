@@ -515,7 +515,7 @@ flame 7041.77 4513.51 904 1 OnEnter [SetOnFire] [Null]
 flame 7082.57 4532.54 905 1 OnEnter [SetOnFire] [Null]
 flame 7101.6 4453.68 906 1 OnEnter [SetOnFire] [Null]
 special_event 6700 5250 920 1 OnEnter [ActivateWeapon;Destroy] [901;Null]
-lever 800 1325 933 1 OnUse [ActivateSpecial;ChangeOpenState,Deactivate] [811;Null;Null]
+lever 800 1325 933 1 OnUse [ActivateSpecial;ChangeOpenState;Deactivate] [811;Null;Null]
 
 weapons: 
 flamethrower 1760.08 260.598 35.9029 807 Interrupted 1

@@ -486,7 +486,9 @@ void Game::draw(graphics::Graphics& graphics)
 
     engine_->drawSortedAnimationEvents();
 
+    draw_shadow(map_->getList<ObstacleTile>());
     draw_shadow(map_->getList<NPC>());
+    draw_shadow(map_->getList<Obstacle>());
     graphics.drawSorted(*player_->getShadow());
     if (player_clone_ != nullptr)
         graphics.drawSorted(*player_clone_->getShadow());

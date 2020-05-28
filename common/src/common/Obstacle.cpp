@@ -46,6 +46,20 @@ Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id, const st
                                                                      CFG.get<float>("graphics/obstacles_light_point_size")},
                                                         &RM.getTexture("lightpoint"));
     }
+
+    auto shadow_pos = this->getPosition() -
+                      sf::Vector2f{utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "map_offset_x"),
+                                   utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "map_offset_y")};
+    static_shadow_ = std::make_unique<graphics::StaticShadow>(
+            shadow_pos, this->getSize(), CFG.get<float>("graphics/shadow_direction"),
+            CFG.get<float>("graphics/shadow_length_factor"),
+            &RM.getTexture("obstacles/" + id), sf::Color(CFG.get<int>("graphics/shadow_color")),
+            z_index_ - 1,
+            utils::j3x::get<int>(RM.getObjectParams("obstacles", id), "frames_number"),
+            utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "frame_duration"));
+//    static_shadow_->setScale(2.0f);
+//
+//    shape_.setScale(2.0f, 2.0f);
 }
 
 bool Obstacle::update(float time_elapsed)
@@ -56,5 +70,29 @@ bool Obstacle::update(float time_elapsed)
 graphics::LightPoint* Obstacle::getLightPoint() const
 {
     return light_.get();
+}
+
+graphics::StaticShadow* Obstacle::getShadow() const
+{
+    return static_shadow_.get();
+}
+
+
+bool Obstacle::updateAnimation(float time_elapsed, float animation_speed_factor)
+{
+    static_shadow_->updateAnimation(time_elapsed, animation_speed_factor);
+    return AbstractDrawableObject::updateAnimation(time_elapsed, animation_speed_factor);
+}
+
+void Obstacle::setCurrentFrame(short int frame)
+{
+    AbstractDrawableObject::setCurrentFrame(frame);
+    static_shadow_->setCurrentFrame(frame);
+}
+
+void Obstacle::changeTexture(sf::Texture* texture, bool reset)
+{
+    AbstractDrawableObject::changeTexture(texture, reset);
+    static_shadow_->changeTexture(texture);
 }
 

@@ -83,9 +83,13 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
                                                         &RM.getTexture("lightpoint"));
     }
 
+    auto shadow_pos = this->getPosition() +
+            sf::Vector2f{utils::j3x::get<float>(RM.getObjectParams("characters", id), "map_offset_x"),
+                         utils::j3x::get<float>(RM.getObjectParams("characters", id), "map_offset_y")};
     static_shadow_ = std::make_unique<graphics::StaticShadow>(
-            this->getPosition(), this->getSize(), CFG.get<float>("graphics/shadow_direction"),
-           &RM.getTexture("characters/" + id), sf::Color(CFG.get<int>("graphics/shadow_color")),
+            shadow_pos, this->getSize(), CFG.get<float>("graphics/shadow_direction"),
+            CFG.get<float>("graphics/shadow_length_factor"),
+            &RM.getTexture("characters/" + id), sf::Color(CFG.get<int>("graphics/shadow_color")),
             utils::j3x::get<int>(RM.getObjectParams("characters", id), "frames_number"),
             utils::j3x::get<float>(RM.getObjectParams("characters", id), "frame_duration"));
     static_shadow_->setScale(2.0f);
@@ -227,7 +231,9 @@ bool Character::update(float time_elapsed)
     if (light_ != nullptr)
         light_->setPosition(this->getPosition());
 
-    static_shadow_->setPosition(this->getPosition());
+    static_shadow_->setPosition(this->getPosition() -
+        sf::Vector2f{utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_x"),
+                     utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_y") * 2.0f});
 
     auto vel = std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
     this->updateAnimation(time_elapsed,
@@ -269,13 +275,13 @@ bool Character::update(float time_elapsed)
 void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(*static_shadow_, states);
-//    target.draw(shape_, states);
-//
-//    if (decorator_ != nullptr)
-//        target.draw(*decorator_, states);
-//
-//    if (!weapons_in_backpack_.empty())
-//        target.draw(*weapons_in_backpack_.at(current_weapon_), states);
+    target.draw(shape_, states);
+
+    if (decorator_ != nullptr)
+        target.draw(*decorator_, states);
+
+    if (!weapons_in_backpack_.empty())
+        target.draw(*weapons_in_backpack_.at(current_weapon_), states);
 }
 
 graphics::LightPoint* Character::getLightPoint() const
@@ -305,14 +311,14 @@ void Character::setRotation(float theta)
             utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") / 6.0f))
     {
         added_name = "_standing";
-        shape_.setTextureRect(sf::IntRect(sf::Vector2i{0, 0}, static_cast<sf::Vector2i>(this->getSize())));
+        this->setCurrentFrame(0);
     }
 
     switch (current_rotation_quarter_)
     {
         case 1:
         {
-            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + added_name));
+            this->changeTexture(&RM.getTexture("characters/" + this->getId() + added_name));
 
             gun_offset_.x = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
@@ -327,7 +333,7 @@ void Character::setRotation(float theta)
         }
         case 2:
         {
-            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + added_name + "_2"));
+            this->changeTexture(&RM.getTexture("characters/" + this->getId() + added_name + "_2"));
             gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
@@ -341,7 +347,7 @@ void Character::setRotation(float theta)
         }
         case 3:
         {
-            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + added_name + "_3"));
+            this->changeTexture(&RM.getTexture("characters/" + this->getId() + added_name + "_3"));
             gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
@@ -355,7 +361,7 @@ void Character::setRotation(float theta)
         }
         case 4:
         {
-            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + added_name + "_4"));
+            this->changeTexture(&RM.getTexture("characters/" + this->getId() + added_name + "_4"));
             gun_offset_.x = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
@@ -610,4 +616,22 @@ const std::list<std::string>& Character::getTalkScenario() const
 void Character::setTalkScenario(const std::list<std::string>& str)
 {
     talk_scenario_ = str;
+}
+
+bool Character::updateAnimation(float time_elapsed, float animation_speed_factor)
+{
+    static_shadow_->updateAnimation(time_elapsed, animation_speed_factor);
+    return AbstractDrawableObject::updateAnimation(time_elapsed, animation_speed_factor);
+}
+
+void Character::setCurrentFrame(short int frame)
+{
+    AbstractDrawableObject::setCurrentFrame(frame);
+    static_shadow_->setCurrentFrame(frame);
+}
+
+void Character::changeTexture(sf::Texture* texture, bool reset)
+{
+    AbstractDrawableObject::changeTexture(texture, reset);
+    static_shadow_->changeTexture(texture);
 }

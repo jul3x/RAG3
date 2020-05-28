@@ -17,6 +17,7 @@ namespace r3e::graphics {
         StaticShadow(const sf::Vector2f& position,
                      const sf::Vector2f& size,
                      float shadow_direction,
+                     float shadow_length_factor,
                      sf::Texture* texture_name,
                      const sf::Color& shadow_color,
                      short int frames_number = 1,
@@ -36,9 +37,7 @@ namespace r3e::graphics {
         virtual void setCurrentFrame(short int frame);
         virtual void setVisibility(const sf::View& view);
 
-        virtual void changeTexture(sf::Texture* texture, bool reset = false);
-        virtual void changeTextureRect(const sf::IntRect &rect);
-        virtual void changeOrigin(const sf::Vector2f &origin);
+        virtual void changeTexture(sf::Texture* texture);
 
         virtual bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f);
 
@@ -46,6 +45,7 @@ namespace r3e::graphics {
         sf::Vector2f position_;
         sf::VertexArray shape_;
         float shadow_direction_;
+        float shadow_length_factor_;
         bool is_visible_;
         sf::RenderStates states_;
         float scale_;

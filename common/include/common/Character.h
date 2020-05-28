@@ -89,10 +89,13 @@ public:
     void setWeaponPointing(const sf::Vector2f& point);
     void setSpeedFactor(float factor);
     void setCurrentSpecialObject(Special* obj);
+    void setCurrentFrame(short int frame) override;
     void setCurrentTalkableCharacter(Character* obj);
     void setTalkScenarioStr(const std::string& str);
     void setTalkScenario(const std::list<std::string>& str);
+    void changeTexture(sf::Texture* texture, bool reset = false) override;
 
+    bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f) override;
     bool update(float time_elapsed) override;
     void getShot(const Bullet& bullet) override;
     virtual void getCut(const MeleeWeapon& weapon);

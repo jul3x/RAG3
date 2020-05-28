@@ -492,7 +492,7 @@ void Game::draw(graphics::Graphics& graphics)
         lightning_->add(*player_clone_->getLightPoint());
 
     graphics.setStaticView();
-  //  graphics.draw(*lightning_);
+    graphics.draw(*lightning_);
 }
 
 void Game::start()

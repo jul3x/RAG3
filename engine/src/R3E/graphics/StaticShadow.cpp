@@ -9,7 +9,8 @@
 
 
 namespace r3e::graphics {
-    StaticShadow::StaticShadow(const sf::Vector2f& position, const sf::Vector2f& size, float shadow_direction,
+    StaticShadow::StaticShadow(const sf::Vector2f& position, const sf::Vector2f& size,
+                               float shadow_direction, float shadow_length_factor,
                                sf::Texture* texture_name, const sf::Color& shadow_color, short frames_number, float frame_duration) :
             frames_number_(frames_number),
             frame_duration_(frame_duration),
@@ -22,13 +23,14 @@ namespace r3e::graphics {
     {
         position_ = position;
         shadow_direction_ = shadow_direction;
+        shadow_length_factor_ = shadow_length_factor;
 
         shape_[0].position = position + sf::Vector2f{-size.x / 2.0f, size.y / 2.0f};
         shape_[1].position = position + sf::Vector2f{size.x / 2.0f, size.y / 2.0f};
-        shape_[2].position = position + sf::Vector2f{size.x / 2.0f + std::sin(shadow_direction) * size.y,
-                                                     size.y / 2.0f - std::cos(shadow_direction) * size.y};
-        shape_[3].position = position + sf::Vector2f{-size.x / 2.0f + std::sin(shadow_direction) * size.y,
-                                                     size.y / 2.0f - std::cos(shadow_direction) * size.y};
+        shape_[2].position = position + sf::Vector2f{size.x / 2.0f + std::sin(shadow_direction) * size.y * shadow_length_factor_,
+                                                     size.y / 2.0f - std::cos(shadow_direction) * size.y * shadow_length_factor_};
+        shape_[3].position = position + sf::Vector2f{-size.x / 2.0f + std::sin(shadow_direction) * size.y * shadow_length_factor_,
+                                                     size.y / 2.0f - std::cos(shadow_direction) * size.y * shadow_length_factor_};
 
         shape_[0].texCoords = {0.0f, size.y};
         shape_[1].texCoords = {size.x, size.y};
@@ -42,10 +44,6 @@ namespace r3e::graphics {
         if (texture_name != nullptr)
         {
             states_.texture = texture_name;
-//            if (frames_number > 1)
-//                shape_.setTextureRect(animation_source_);
-
-//            shape_.setTexture(texture_name);
         }
     }
 
@@ -74,10 +72,10 @@ namespace r3e::graphics {
         position_ = position;
         shape_[0].position = position + scale_ * sf::Vector2f{-frame_size_.x / 2.0f, frame_size_.y / 2.0f};
         shape_[1].position = position + scale_ * sf::Vector2f{frame_size_.x / 2.0f, frame_size_.y / 2.0f};
-        shape_[2].position = position + scale_ * sf::Vector2f{frame_size_.x / 2.0f + std::sin(shadow_direction_) * frame_size_.y,
-                                                     frame_size_.y / 2.0f - std::cos(shadow_direction_) * frame_size_.y};
-        shape_[3].position = position + scale_ * sf::Vector2f{-frame_size_.x / 2.0f + std::sin(shadow_direction_) * frame_size_.y,
-                                                     frame_size_.y / 2.0f - std::cos(shadow_direction_) * frame_size_.y};
+        shape_[2].position = position + scale_ * sf::Vector2f{frame_size_.x / 2.0f + std::sin(shadow_direction_) * frame_size_.y * shadow_length_factor_,
+                                                     frame_size_.y / 2.0f - std::cos(shadow_direction_) * frame_size_.y* shadow_length_factor_};
+        shape_[3].position = position + scale_ * sf::Vector2f{-frame_size_.x / 2.0f + std::sin(shadow_direction_) * frame_size_.y* shadow_length_factor_,
+                                                     frame_size_.y / 2.0f - std::cos(shadow_direction_) * frame_size_.y* shadow_length_factor_};
 
     }
 
@@ -117,20 +115,11 @@ namespace r3e::graphics {
         current_frame_ = frame;
     }
 
-    void StaticShadow::changeTexture(sf::Texture* texture, bool reset)
+    void StaticShadow::changeTexture(sf::Texture* texture)
     {
-  //      shape_.setTexture(texture, reset);
+        states_.texture = texture;
     }
 
-    void StaticShadow::changeTextureRect(const sf::IntRect& rect)
-    {
-  //      shape_.setTextureRect(rect);
-    }
-
-    void StaticShadow::changeOrigin(const sf::Vector2f& origin)
-    {
-   //     shape_.setOrigin(origin);
-    }
 
     bool StaticShadow::updateAnimation(float time_elapsed, float animation_speed_factor)
     {
@@ -151,7 +140,10 @@ namespace r3e::graphics {
         animation_source_.left = frame_size_.x * current_frame_;
         animation_source_.top = 0;
 
-     //   shape_.setTextureRect(animation_source_);
+        shape_[0].texCoords = {static_cast<float>(animation_source_.left), static_cast<float>(frame_size_.y)};
+        shape_[1].texCoords = {static_cast<float>(animation_source_.left) + frame_size_.x, static_cast<float>(frame_size_.y)};
+        shape_[2].texCoords = {static_cast<float>(animation_source_.left) + frame_size_.x, 0.0f};
+        shape_[3].texCoords = {static_cast<float>(animation_source_.left), 0.0f};
 
         return true;
     }

@@ -79,9 +79,16 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
     if (utils::j3x::get<int>(RM.getObjectParams("characters", id), "light_point"))
     {
         light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
-                sf::Vector2f{CFG.get<float>("graphics/characters_light_point_size"), CFG.get<float>("graphics/characters_light_point_size")},
-                &RM.getTexture("lightpoint"));
+                                                        sf::Vector2f{CFG.get<float>("graphics/characters_light_point_size"), CFG.get<float>("graphics/characters_light_point_size")},
+                                                        &RM.getTexture("lightpoint"));
     }
+
+    static_shadow_ = std::make_unique<graphics::StaticShadow>(
+            this->getPosition(), this->getSize(), CFG.get<float>("graphics/shadow_direction"),
+           &RM.getTexture("characters/" + id), sf::Color(CFG.get<int>("graphics/shadow_color")),
+            utils::j3x::get<int>(RM.getObjectParams("characters", id), "frames_number"),
+            utils::j3x::get<float>(RM.getObjectParams("characters", id), "frame_duration"));
+    static_shadow_->setScale(2.0f);
 
     shape_.setScale(2.0f, 2.0f);
 }
@@ -220,6 +227,8 @@ bool Character::update(float time_elapsed)
     if (light_ != nullptr)
         light_->setPosition(this->getPosition());
 
+    static_shadow_->setPosition(this->getPosition());
+
     auto vel = std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
     this->updateAnimation(time_elapsed,
                           vel / utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed"));
@@ -259,13 +268,14 @@ bool Character::update(float time_elapsed)
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    target.draw(shape_, states);
-
-    if (decorator_ != nullptr)
-        target.draw(*decorator_, states);
-
-    if (!weapons_in_backpack_.empty())
-        target.draw(*weapons_in_backpack_.at(current_weapon_), states);
+    target.draw(*static_shadow_, states);
+//    target.draw(shape_, states);
+//
+//    if (decorator_ != nullptr)
+//        target.draw(*decorator_, states);
+//
+//    if (!weapons_in_backpack_.empty())
+//        target.draw(*weapons_in_backpack_.at(current_weapon_), states);
 }
 
 graphics::LightPoint* Character::getLightPoint() const

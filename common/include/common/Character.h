@@ -13,6 +13,7 @@
 #include <R3E/objects/Identifiable.h>
 #include <R3E/objects/Unique.h>
 #include <R3E/graphics/LightPoint.h>
+#include <R3E/graphics/StaticShadow.h>
 
 #include <common/Functional.h>
 #include <common/AbstractWeapon.h>
@@ -114,6 +115,7 @@ protected:
     short int current_rotation_quarter_;
 
     std::unique_ptr<graphics::LightPoint> light_;
+    std::unique_ptr<graphics::StaticShadow> static_shadow_;
     std::unique_ptr<Decoration> decorator_;
     std::unique_ptr<TalkableArea> talkable_area_;
     std::function<void(Character*, const std::string&)> talking_func_;

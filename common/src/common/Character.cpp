@@ -90,6 +90,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
             shadow_pos, this->getSize(), CFG.get<float>("graphics/shadow_direction"),
             CFG.get<float>("graphics/shadow_length_factor"),
             &RM.getTexture("characters/" + id), sf::Color(CFG.get<int>("graphics/shadow_color")),
+            z_index_ - 1,
             utils::j3x::get<int>(RM.getObjectParams("characters", id), "frames_number"),
             utils::j3x::get<float>(RM.getObjectParams("characters", id), "frame_duration"));
     static_shadow_->setScale(2.0f);
@@ -274,7 +275,6 @@ bool Character::update(float time_elapsed)
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    target.draw(*static_shadow_, states);
     target.draw(shape_, states);
 
     if (decorator_ != nullptr)
@@ -634,4 +634,9 @@ void Character::changeTexture(sf::Texture* texture, bool reset)
 {
     AbstractDrawableObject::changeTexture(texture, reset);
     static_shadow_->changeTexture(texture);
+}
+
+graphics::StaticShadow* Character::getShadow() const
+{
+    return static_shadow_.get();
 }

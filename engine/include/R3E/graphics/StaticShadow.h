@@ -12,7 +12,7 @@
 
 namespace r3e::graphics {
 
-    class StaticShadow : public sf::Drawable {
+    class StaticShadow : public AbstractDrawableObject {
     public:
         StaticShadow(const sf::Vector2f& position,
                      const sf::Vector2f& size,
@@ -20,46 +20,34 @@ namespace r3e::graphics {
                      float shadow_length_factor,
                      sf::Texture* texture_name,
                      const sf::Color& shadow_color,
+                     int z_index = 0,
                      short int frames_number = 1,
                      float frame_duration = 0.0f);
 
-        [[nodiscard]] virtual const sf::Vector2f& getPosition() const;
-        [[nodiscard]] virtual const sf::Vector2i& getSize() const;
-        [[nodiscard]] virtual short int getFramesNumber() const;
-        [[nodiscard]] virtual short int getCurrentFrame() const;
-        [[nodiscard]] virtual bool isVisible() const;
+        [[nodiscard]] const sf::Vector2f& getPosition() const override;
 
-        virtual void setPosition(const sf::Vector2f& position);
-        virtual void setPosition(float x, float y);
-        virtual void setPositionX(float x);
-        virtual void setPositionY(float y);
+        void setPosition(const sf::Vector2f& position) override;
+        void setPosition(float x, float y) override;
+        void setPositionX(float x) override;
+        void setPositionY(float y) override;
         virtual void setScale(float scale);
-        virtual void setCurrentFrame(short int frame);
-        virtual void setVisibility(const sf::View& view);
+        void setVisibility(const sf::View& view) override;
 
-        virtual void changeTexture(sf::Texture* texture);
+        void changeTexture(sf::Texture* texture, bool reset = false) override;
 
-        virtual bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f);
+        bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f) override;
 
     protected:
         sf::Vector2f position_;
         sf::VertexArray shape_;
         float shadow_direction_;
         float shadow_length_factor_;
-        bool is_visible_;
         sf::RenderStates states_;
         float scale_;
 
     private:
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-        float time_elapsed_;
-        short int current_frame_;
-        sf::Vector2i frame_size_;
-        sf::IntRect animation_source_;
-
-        short int frames_number_;
-        float frame_duration_;
     };
 } // namespace r3e::graphics
 

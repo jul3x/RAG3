@@ -449,8 +449,18 @@ void Game::draw(graphics::Graphics& graphics)
     auto draw_light = [&graphics, this](auto& list) {
         for (const auto& obj : list)
         {
-            if (obj->getLightPoint() != nullptr)
-                this->lightning_->add(*obj->getLightPoint());
+            auto light = obj->getLightPoint();
+            if (light != nullptr)
+                this->lightning_->add(*light);
+        }
+    };
+
+    auto draw_shadow = [&graphics](auto& list) {
+        for (const auto& obj : list)
+        {
+            auto shadow = obj->getShadow();
+            if (shadow != nullptr)
+                graphics.drawSorted(*shadow);
         }
     };
 
@@ -475,6 +485,11 @@ void Game::draw(graphics::Graphics& graphics)
         graphics.drawSorted(*player_clone_);
 
     engine_->drawSortedAnimationEvents();
+
+    draw_shadow(map_->getList<NPC>());
+    graphics.drawSorted(*player_->getShadow());
+    if (player_clone_ != nullptr)
+        graphics.drawSorted(*player_clone_->getShadow());
 
     graphics.drawAlreadySorted();
 

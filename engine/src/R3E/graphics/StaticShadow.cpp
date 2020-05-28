@@ -11,15 +11,11 @@
 namespace r3e::graphics {
     StaticShadow::StaticShadow(const sf::Vector2f& position, const sf::Vector2f& size,
                                float shadow_direction, float shadow_length_factor,
-                               sf::Texture* texture_name, const sf::Color& shadow_color, short frames_number, float frame_duration) :
-            frames_number_(frames_number),
-            frame_duration_(frame_duration),
-            frame_size_(sf::Vector2i(size.x, size.y)),
-            current_frame_(0),
-            time_elapsed_(0.0f),
-            animation_source_({0, 0}, frame_size_),
-            is_visible_(true),
-            shape_(sf::Quads, 4)
+                               sf::Texture* texture_name, const sf::Color& shadow_color,
+                               int z_index, short frames_number, float frame_duration) :
+            AbstractDrawableObject(position, size, texture_name, z_index, frames_number, frame_duration),
+            shape_(sf::Quads, 4),
+            scale_(1.0f)
     {
         position_ = position;
         shadow_direction_ = shadow_direction;
@@ -50,21 +46,6 @@ namespace r3e::graphics {
     const sf::Vector2f& StaticShadow::getPosition() const
     {
         return position_;
-    }
-
-    const sf::Vector2i& StaticShadow::getSize() const
-    {
-        return frame_size_;
-    }
-
-    short int StaticShadow::getFramesNumber() const
-    {
-        return frames_number_;
-    }
-
-    short int StaticShadow::getCurrentFrame() const
-    {
-        return current_frame_;
     }
 
     void StaticShadow::setPosition(const sf::Vector2f& position)
@@ -105,21 +86,10 @@ namespace r3e::graphics {
                                        this->getPosition(), static_cast<sf::Vector2f>(frame_size_)) > 0;
     }
 
-    void StaticShadow::setCurrentFrame(short int frame)
-    {
-        if (frame >= frames_number_)
-        {
-            throw std::invalid_argument("[AbstractDrawableObject] Frame to set should be less then frames_number_");
-        }
-
-        current_frame_ = frame;
-    }
-
-    void StaticShadow::changeTexture(sf::Texture* texture)
+    void StaticShadow::changeTexture(sf::Texture* texture, bool reset)
     {
         states_.texture = texture;
     }
-
 
     bool StaticShadow::updateAnimation(float time_elapsed, float animation_speed_factor)
     {
@@ -152,11 +122,5 @@ namespace r3e::graphics {
     {
         target.draw(shape_, states_);
     }
-
-    bool StaticShadow::isVisible() const
-    {
-        return is_visible_;
-    }
-
 
 } // namespace r3e::graphics

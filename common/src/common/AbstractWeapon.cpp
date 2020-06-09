@@ -22,6 +22,7 @@ AbstractWeapon::AbstractWeapon(Character* user,
                                name.empty() ? 1 : utils::j3x::get<int>(RM.getObjectParams("weapons", name), "frames_number"),
                                name.empty() ? 0.0f : utils::j3x::get<float>(RM.getObjectParams("weapons", name), "frame_duration"))
 {
+    shape_.setScale(2.0f, 2.0f);
 }
 
 

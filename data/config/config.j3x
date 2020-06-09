@@ -1,4 +1,4 @@
-bool god_mode=0
+bool god_mode=1
 bool no_clip_mode=0
 
 float collision_grid_size=400.0f
@@ -20,7 +20,7 @@ float on_fire_hurt_speed=10.0f
 float on_fire_time=3.0f
 float fire_life=1.0f
 float fire_speed=500.0f
-float fire_initial_radius=50.0f
+float fire_initial_radius=35.0f
 float fire_z_index=1
 float fire_spread_speed=50.0f
 float fire_spread_distance=1000.0f

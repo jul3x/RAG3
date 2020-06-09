@@ -9,8 +9,9 @@ int32 trail_color=0xFFFFFF30
 float full_trail_time=0.2f
 int32 font_color=0xFFFFFFAA
 int32 fire_color=0xFFFFFFFF
-int fire_frames=8
-float fire_image_size=200.0f
+float fire_frame_times=2.5
+int fire_frames=4
+float fire_image_size=66.0f
 
 float fade_in_out_duration=0.2f
 float camera_speed=4.0f

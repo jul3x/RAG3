@@ -18,8 +18,8 @@ public:
     DecorationTile(const sf::Vector2f& position,
                    const std::string& id);
 
-    static constexpr float SIZE_X_ = 100.0f;
-    static constexpr float SIZE_Y_ = 100.0f;
+    static constexpr float SIZE_X_ = 32.0f;
+    static constexpr float SIZE_Y_ = 32.0f;
 
 };
 

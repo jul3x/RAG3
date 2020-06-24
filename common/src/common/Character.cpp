@@ -93,9 +93,6 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
             z_index_ - 1,
             utils::j3x::get<int>(RM.getObjectParams("characters", id), "frames_number"),
             utils::j3x::get<float>(RM.getObjectParams("characters", id), "frame_duration"));
-    static_shadow_->setScale(2.0f);
-
-    shape_.setScale(2.0f, 2.0f);
 }
 
 bool Character::shot()

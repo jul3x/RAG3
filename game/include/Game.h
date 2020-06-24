@@ -82,6 +82,7 @@ public:
     // Spawn events
     void spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);
     void spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir);
+    void spawnBloodEvent(const sf::Vector2f& pos, float dir);
     void spawnExplosionEvent(const sf::Vector2f& pos, float r);
     void spawnTeleportationEvent(const sf::Vector2f& pos);
     void spawnExplosionForce(const sf::Vector2f& pos, float r);

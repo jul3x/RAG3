@@ -21,10 +21,10 @@ float camera_zoom_inout_speed=4000.0f
 float camera_reverse_rotation=400.0f
 float camera_reverse_return_rotation=3.0f
 float camera_rotation_recoil=8.0f
-float camera_position_recoil=500.0f
+float camera_position_recoil=150.0f
 float camera_shaking_time=0.4f
 float camera_zoom_inout_time=0.7f
-float camera_right_click_distance_factor=300.0f
+float camera_right_click_distance_factor=100.0f
 float camera_right_click_zoom_factor=0.6f
 
 float blood_pulsating_time=5.0f
@@ -34,7 +34,7 @@ float inertial_states_change_speed=4.0f
 float achievement_show_speed=4.0f
 float achievement_show_time=10.0f
 
-float characters_light_point_size=256.0f
+float characters_light_point_size=300.0f
 float obstacles_light_point_size=192.0f
 float specials_light_point_size=192.0f
 float decorations_light_point_size=192.0f

@@ -5,11 +5,11 @@ float max_health=3
 float size_x=33.0f
 float size_y=50.0f
 
-float collision_size_x=55.0f
-float collision_size_y=60.0f
+float collision_size_x=33.0f
+float collision_size_y=25.0f
 
 float map_offset_x=0.0f
-float map_offset_y=25.0f
+float map_offset_y=8.0f
 
 float gun_offset_x=0.0f
 float gun_offset_y=0.0f

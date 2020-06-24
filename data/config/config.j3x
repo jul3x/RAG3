@@ -19,13 +19,13 @@ float side_stepping_freeze_time=0.5f
 float on_fire_hurt_speed=10.0f
 float on_fire_time=3.0f
 float fire_life=1.0f
-float fire_speed=500.0f
-float fire_initial_radius=35.0f
+float fire_speed=200.0f
+float fire_initial_radius=20.0f
 float fire_z_index=1
-float fire_spread_speed=50.0f
+float fire_spread_speed=16.0f
 float fire_spread_distance=1000.0f
 float fire_collision_factor=0.5f
-float fire_collision_offset=50.0f
+float fire_collision_offset=16.0f
 
 float explosion_hurt_factor=30.0f
 float explosion_velocity_factor=4000.0f

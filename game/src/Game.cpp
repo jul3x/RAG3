@@ -624,6 +624,15 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, floa
         engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
 }
 
+void Game::spawnBloodEvent(const sf::Vector2f& pos, float dir)
+{
+    auto event = std::make_shared<Event>(pos, "blood", dir, 0.0f);
+    engine_->spawnAnimationEvent(event);
+
+    if (event->getLightPoint() != nullptr)
+        event->getLightPoint()->registerGraphics(engine_->getGraphics());
+}
+
 void Game::spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
     auto ptr = this->spawnNewBullet(user, name, pos, dir);
@@ -716,9 +725,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         if (bullet->getUser() != character)
         {
             character->getShot(*bullet);
-            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                             static_cast<float>(std::pow(
-                                     CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+            spawnBloodEvent(character->getPosition() - sf::Vector2f(0.0f, 10.0f), bullet->getRotation() + 180.0f);
 
             bullet->setDead();
         }
@@ -776,7 +783,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         //character->setGlobalState(Character::GlobalState::OnFire);
         if (character != melee_weapon_area->getFather()->getUser())
         {
-            spawnSparksEvent(character->getPosition(), 0.0f, 100.0f);
+            spawnBloodEvent(character->getPosition(), character->getRotation());
             melee_weapon_area->setActive(false);
             character->getCut(*melee_weapon_area->getFather());
         }

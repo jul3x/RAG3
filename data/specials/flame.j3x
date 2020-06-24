@@ -1,11 +1,11 @@
-float size_x=64.0f
-float size_y=64.0f
+float size_x=34.0f
+float size_y=42.0f
 
 float map_offset_x=0.0f
 float map_offset_y=0.0f
 
-int frames_number=8
-float frame_duration=0.1f
+int frames_number=6
+float frame_duration=0.085f
 
 int z_index=1
 

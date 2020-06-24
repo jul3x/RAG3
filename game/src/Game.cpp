@@ -558,7 +558,7 @@ void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const floa
 
 void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
 {
-    auto number = std::to_string(utils::num::getRandom(1, 3));
+    auto number = std::to_string(utils::num::getRandom(1, 1));
     auto event = std::make_shared<Event>(pos, "explosion_" + number, 0.0f, r);
 
     engine_->spawnAnimationEvent(event);

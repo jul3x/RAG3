@@ -2,9 +2,9 @@ float recoil=6000.0f
 int max_ammo=12
 int ammo_portion=2
 
-float size_x=70.0f
-float size_y=16.0f
-float offset_x=20.0f
+float size_x=36.0f
+float size_y=32.0f
+float offset_x=0.0f
 float offset_y=0.0f
 
 string spawn_func=bullet

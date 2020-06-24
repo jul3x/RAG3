@@ -60,7 +60,7 @@ void Game::initialize()
             "Codename: Rag3",
             CFG.get<int>("graphics/full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
             sf::Color(CFG.get<int>("graphics/background_color")));
-    engine_->setFPSLimit(0);
+    engine_->setFPSLimit(60);
 
     engine_->initializeSoundManager(CFG.get<float>("sound/sound_attenuation"));
 

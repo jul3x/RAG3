@@ -84,14 +84,12 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
                                                         &RM.getTexture("lightpoint"));
     }
 
-    auto shadow_pos = this->getPosition() +
-            sf::Vector2f{utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_x"),
-                         utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_y") * 2.0f};
+    auto shadow_pos = this->getPosition();
     static_shadow_ = std::make_unique<graphics::StaticShadow>(
             shadow_pos, this->getSize(), CFG.get<float>("graphics/shadow_direction"),
             CFG.get<float>("graphics/shadow_length_factor"),
             &RM.getTexture("characters/" + id), sf::Color(CFG.get<int>("graphics/shadow_color")),
-            z_index_ - 1,
+            z_index_,
             utils::j3x::get<int>(RM.getObjectParams("characters", id), "frames_number"),
             utils::j3x::get<float>(RM.getObjectParams("characters", id), "frame_duration"));
 }
@@ -247,7 +245,7 @@ bool Character::update(float time_elapsed)
 
     static_shadow_->setPosition(this->getPosition() -
         sf::Vector2f{utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_x"),
-                     utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_y") * 2.0f});
+                     utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_y")});
 
     handleAmmoState();
     handleLifeState();

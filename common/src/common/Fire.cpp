@@ -37,6 +37,10 @@ Fire::Fire(Character* user,
                                                     sf::Vector2f{CFG.get<float>("graphics/fire_light_point_size"),
                                                                  CFG.get<float>("graphics/fire_light_point_size")},
                                                     &RM.getTexture("lightpoint"));
+    light_->setColor(255, 255, 255, alpha_);
+
+    this->setSize({r_ * 2.0f, r_ * 2.0f});
+    this->setColor(color_.r, color_.g, color_.b, static_cast<sf::Uint8>(alpha_));
 }
 
 void Fire::setDead()
@@ -48,8 +52,6 @@ bool Fire::update(float time_elapsed)
 {
     this->updateAnimation(time_elapsed, CFG.get<float>("graphics/fire_frame_times"));
     DynamicObject::update(time_elapsed);
-
-
 
     difference_ = CFG.get<float>("fire_spread_distance") *
             std::cos(offset_ + life_ / CFG.get<float>("fire_life") * 4 * M_PI);

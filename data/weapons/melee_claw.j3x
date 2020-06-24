@@ -9,8 +9,8 @@ string spawn_type=heavy
 int spawn_quantity=1
 float spawn_angular_diff=0.0f
 
-float size_x=30.0f
-float size_y=80.0f
+float size_x=9.0f
+float size_y=24.0f
 
 float offset_x=15.0f
 float offset_y=0.0f

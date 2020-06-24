@@ -50,6 +50,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
         current_special_object_(nullptr),
         current_talkable_character_(nullptr),
         should_respond_(false),
+        is_moving_(false),
         is_talkable_(utils::j3x::get<int>(RM.getObjectParams("characters", id), "is_talkable")),
         Shootable(utils::j3x::get<float>(RM.getObjectParams("characters", id), "max_health"))
 {
@@ -221,6 +222,21 @@ bool Character::update(float time_elapsed)
 {
     bool is_alive = life_ > 0;
     DynamicObject::update(time_elapsed);
+    auto vel = std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
+    if (!utils::num::isNearlyEqual(vel, 0.0f, utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") / 6.0f))
+    {
+        is_moving_ = true;
+    }
+    else
+    {
+        vel = 0.0f;
+        is_moving_ = false;
+    }
+
+    this->updateAnimation(time_elapsed,
+                          vel /
+                          utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed"));
+
     weapons_in_backpack_.at(current_weapon_)->update(time_elapsed);
 
     if (decorator_ != nullptr)
@@ -232,10 +248,6 @@ bool Character::update(float time_elapsed)
     static_shadow_->setPosition(this->getPosition() -
         sf::Vector2f{utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_x"),
                      utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_y") * 2.0f});
-
-    auto vel = std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
-    this->updateAnimation(time_elapsed,
-                          vel / utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed"));
 
     handleAmmoState();
     handleLifeState();
@@ -253,6 +265,7 @@ bool Character::update(float time_elapsed)
         this->setRotation(rotate_to_);
     else
         this->setRotation(new_rotation);
+
 
     if (should_respond_)
     {
@@ -304,8 +317,7 @@ void Character::setRotation(float theta)
     short int new_quarter = get_quarter(theta);
 
     std::string added_name = "";
-    if (utils::num::isNearlyEqual(this->getVelocity(), {},
-            utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") / 6.0f))
+    if (!is_moving_)
     {
         added_name = "_standing";
         this->setCurrentFrame(0);

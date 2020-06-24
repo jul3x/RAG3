@@ -124,6 +124,7 @@ protected:
     std::unique_ptr<TalkableArea> talkable_area_;
     std::function<void(Character*, const std::string&)> talking_func_;
     bool is_talkable_;
+    bool is_moving_;
     bool should_respond_;
 
 private:

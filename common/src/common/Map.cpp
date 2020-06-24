@@ -178,9 +178,13 @@ Obstacle* Map::spawn(const sf::Vector2f& pos, float direction, const std::string
         auto grid_pos = std::make_pair(std::round(pos.x / DecorationTile::SIZE_X_),
                                        std::round(pos.y / DecorationTile::SIZE_Y_));
 
-        if (blocked_.blockage_.size() > grid_pos.first && blocked_.blockage_.at(0).size() > grid_pos.second)
-            blocked_.blockage_.at(grid_pos.first).at(grid_pos.second) =
-                    utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "endurance");
+        if (!blocked_.blockage_.empty())
+        {
+            if ((blocked_.blockage_.size() > grid_pos.first && blocked_.blockage_.at(0).size() > grid_pos.second) &&
+                grid_pos.first >= 0 && grid_pos.second >= 0)
+                blocked_.blockage_.at(grid_pos.first).at(grid_pos.second) =
+                        utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "endurance");
+        }
 
         obstacles_.emplace_back(std::make_shared<Obstacle>(pos, id));
         return obstacles_.back().get();

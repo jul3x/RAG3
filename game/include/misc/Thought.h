@@ -27,8 +27,8 @@ private:
     static constexpr float SIZE_Y_BOTTOM_ = 16.0f;
     static constexpr float SIZE_Y_CENTER_ = 8.0f;
     static constexpr float SIZE_Y_TOP_ = 8.0f;
-    static constexpr float GLOBAL_OFFSET_X_ = 8.0f;
-    static constexpr float GLOBAL_OFFSET_Y_ = -16.0f;
+    static constexpr float GLOBAL_OFFSET_X_ = 16.0f;
+    static constexpr float GLOBAL_OFFSET_Y_ = -32.0f;
     static constexpr float TEXT_MARGIN_ = 4.0f;
     static constexpr int TEXT_SIZE_ = 8;
 

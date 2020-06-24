@@ -147,7 +147,7 @@ chains 191.989 334.435 794
 floor_side 608 720 824
 floor_side 544 816 830
 floor_side 576 784 831
-chains 1358.41 793.894 844
+chains 1359.02 782.317 844
 roof 832 552 878
 roof 832 584 880
 roof 832 616 881
@@ -305,11 +305,11 @@ standard 760 1560 461 OnKill [SpawnAmmo] [heavy] []
 standard 320 136 638 OnKill [SpawnAmmo] [heavy] []
 standard 849.805 63.5859 787 OnKill [SpawnAmmo] [light] []
 standard 915.946 44.3626 788 OnKill [SpawnAmmo;OpenDoor] [light;373] []
-slave 191.802 346.045 793 OnKill [OpenDoor] [837] [Why_are_you_bounded_asshole?;HELP_ME!;I'm_not_gonna_:);Please...]
+slave 191.125 354.041 793 OnKill [OpenDoor] [837] [Why_are_you_bounded_asshole?;HELP_ME!;I'm_not_gonna_:);Please...]
 zombie 551.373 132.509 813 OnKill [Null] [Null] []
 zombie 647.251 150.592 814 OnKill [Null] [Null] []
 zombie 610.464 189.952 815 OnKill [Null] [Null] []
-slave 1358.94 805.971 843 OnKill [Null] [Null] [Whera_are_we?;Go_ahead_and_look_:);How?!;Read_the_notes...;Any_further_advices?;Use_your_crystal...]
+slave 1359.76 804.647 843 OnKill [Null] [Null] [Whera_are_we?;Go_ahead_and_look_:);How?!;Read_the_notes...;Any_further_advices?;Use_your_crystal...]
 zombie 1129.69 1146.57 859 OnKill [Null] [Null] []
 
 specials: 

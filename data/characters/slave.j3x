@@ -2,11 +2,11 @@ float max_speed=0.0f
 
 float max_health=3
 
-float size_x=33.0f
+float size_x=32.0f
 float size_y=50.0f
 
-float collision_size_x=33.0f
-float collision_size_y=25.0f
+float collision_size_x=30.0f
+float collision_size_y=12.0f
 
 float map_offset_x=0.0f
 float map_offset_y=8.0f

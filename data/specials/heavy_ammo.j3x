@@ -1,5 +1,5 @@
-float size_x=30.0f
-float size_y=30.0f
+float size_x=24.0f
+float size_y=24.0f
 
 float collision_size_x=15.0f
 

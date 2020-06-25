@@ -23,13 +23,18 @@ public:
 
     void setState(float state) override;
 
+    void setFlipY(bool flip) override;
+
+
 private:
-    static constexpr float BULLET_STARTING_OFFSET_ = 20.0f;
+    static constexpr float BULLET_STARTING_OFFSET_ = 10.0f;
     // weapon parameters
     std::string spawn_type_;
     int spawn_quantity_;
+    short int spawn_offset_factor_;
     float spawn_angular_diff_;
     float spawn_timeout_;
+    float spawn_offset_;
     float recoil_;
     int ammunition_, max_ammunition_;
 

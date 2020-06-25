@@ -8,6 +8,7 @@ float spawn_timeout=1.0f
 string spawn_type=heavy
 int spawn_quantity=1
 float spawn_angular_diff=0.0f
+float spawn_offset=0.0f
 
 float size_x=32.0f
 float size_y=60.0f

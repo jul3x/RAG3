@@ -125,7 +125,7 @@ namespace r3e {
             sf::Vector2f unit = utils::geo::getNormalized(distance);
 
             Collisions::setVerifiedPosition(a, p - a.getCollisionArea().getOffset() +
-                                               unit * (a.getCollisionArea().getA() + 1));
+                                               unit * (a.getCollisionArea().getA() + 0.1f));
 
             a.setForcedVelocity(a.getVelocity() - utils::geo::dotProduct(a.getVelocity(), unit) * unit);
         };
@@ -133,16 +133,16 @@ namespace r3e {
         switch (direction)
         {
             case 1:
-                Collisions::setVerifiedPositionX(a, std::get<0>(b_bounds).x - offset.x - a_r - 1.0f);
+                Collisions::setVerifiedPositionX(a, std::get<0>(b_bounds).x - offset.x - a_r - 0.1f);
                 break;
             case 2:
-                Collisions::setVerifiedPositionY(a, std::get<0>(b_bounds).y - offset.y - a_r - 1.0f);
+                Collisions::setVerifiedPositionY(a, std::get<0>(b_bounds).y - offset.y - a_r - 0.1f);
                 break;
             case 3:
-                Collisions::setVerifiedPositionX(a, std::get<1>(b_bounds).x - offset.x + a_r + 1.0f);
+                Collisions::setVerifiedPositionX(a, std::get<1>(b_bounds).x - offset.x + a_r + 0.1f);
                 break;
             case 4:
-                Collisions::setVerifiedPositionY(a, std::get<1>(b_bounds).y - offset.y + a_r + 1.0f);
+                Collisions::setVerifiedPositionY(a, std::get<1>(b_bounds).y - offset.y + a_r + 0.1f);
                 break;
             case 6:
                 CircleCircleResponse_(a, std::get<0>(b_bounds));
@@ -186,10 +186,10 @@ namespace r3e {
             sf::Vector2f unit = utils::geo::getNormalized(distance);
 
             Collisions::setVerifiedPosition(a, p - a.getCollisionArea().getOffset() +
-                                               unit * (a.getCollisionArea().getA() + 1));
+                                               unit * (a.getCollisionArea().getA() + 0.1f));
             Collisions::setVerifiedPosition(b, a.getPosition() + a.getCollisionArea().getOffset() -
                                                b.getCollisionArea().getOffset() -
-                                               unit * (a.getCollisionArea().getA() + 1) + b_size / 2.0f);
+                                               unit * (a.getCollisionArea().getA() + 0.1f) + b_size / 2.0f);
             a.setForcedVelocity(a.getVelocity() - utils::geo::dotProduct(a.getVelocity(), unit) * unit);
             b.setForcedVelocity(b.getVelocity() - utils::geo::dotProduct(b.getVelocity(), unit) * unit);
         };
@@ -198,23 +198,23 @@ namespace r3e {
         {
             case 1:
                 Collisions::setVerifiedPositionX(b, a_pos.x + a_offset.x - b_offset.x + a_r +
-                                                    std::get<2>(b_bounds).x / 2.0f + 1.0f);
-                Collisions::setVerifiedPositionX(a, std::get<0>(b_bounds).x - a_offset.x - a_r - 1.0f);
+                                                    std::get<2>(b_bounds).x / 2.0f + 0.1f);
+                Collisions::setVerifiedPositionX(a, std::get<0>(b_bounds).x - a_offset.x - a_r - 0.1f);
                 break;
             case 2:
                 Collisions::setVerifiedPositionY(b, a_pos.y + a_offset.y - b_offset.y + a_r +
-                                                    std::get<2>(b_bounds).y / 2.0f + 1.0f);
-                Collisions::setVerifiedPositionY(a, std::get<0>(b_bounds).y - a_offset.y - a_r - 1.0f);
+                                                    std::get<2>(b_bounds).y / 2.0f + 0.1f);
+                Collisions::setVerifiedPositionY(a, std::get<0>(b_bounds).y - a_offset.y - a_r - 0.1f);
                 break;
             case 3:
                 Collisions::setVerifiedPositionX(b, a_pos.x + a_offset.x - b_offset.x - a_r -
-                                                    std::get<2>(b_bounds).x / 2.0f - 1.0f);
-                Collisions::setVerifiedPositionX(a, std::get<1>(b_bounds).x - a_offset.x + a_r + 1.0f);
+                                                    std::get<2>(b_bounds).x / 2.0f - 0.1f);
+                Collisions::setVerifiedPositionX(a, std::get<1>(b_bounds).x - a_offset.x + a_r + 0.1f);
                 break;
             case 4:
                 Collisions::setVerifiedPositionY(b, a_pos.y + a_offset.y - b_offset.y - a_r -
-                                                    std::get<2>(b_bounds).y / 2.0f - 1.0f);
-                Collisions::setVerifiedPositionY(a, std::get<1>(b_bounds).y - a_offset.y + a_r + 1.0f);
+                                                    std::get<2>(b_bounds).y / 2.0f - 0.1f);
+                Collisions::setVerifiedPositionY(a, std::get<1>(b_bounds).y - a_offset.y + a_r + 0.1f);
                 break;
             case 6:
                 CircleCircleResponse_(a, b, std::get<2>(b_bounds), std::get<0>(b_bounds));
@@ -260,7 +260,7 @@ namespace r3e {
 
             Collisions::setVerifiedPosition(a, b.getPosition() + b.getCollisionArea().getOffset() -
                                                a.getCollisionArea().getOffset() -
-                                               unit * (b.getCollisionArea().getA() + 1) + a_size / 2.0f);
+                                               unit * (b.getCollisionArea().getA() + 0.1f) + a_size / 2.0f);
             a.setForcedVelocity(a.getVelocity() - utils::geo::dotProduct(a.getVelocity(), unit) * unit);
         };
 
@@ -331,10 +331,10 @@ namespace r3e {
 
             Collisions::setVerifiedPosition(a, b.getPosition() + b.getCollisionArea().getOffset() -
                                                a.getCollisionArea().getOffset() -
-                                               unit * (b.getCollisionArea().getA() + 1) + a_size / 2.0f);
+                                               unit * (b.getCollisionArea().getA() + 0.1f) + a_size / 2.0f);
             Collisions::setVerifiedPosition(b, a.getPosition() + a.getCollisionArea().getOffset() -
                                                b.getCollisionArea().getOffset() -
-                                               unit * (b.getCollisionArea().getA() + 1) + b_size / 2.0f);
+                                               unit * (b.getCollisionArea().getA() + 0.1f) + b_size / 2.0f);
 
             a.setForcedVelocity(a.getVelocity() - utils::geo::dotProduct(a.getVelocity(), unit) * unit);
             b.setForcedVelocity(b.getVelocity() - utils::geo::dotProduct(b.getVelocity(), unit) * unit);
@@ -344,23 +344,23 @@ namespace r3e {
         {
             case 1:
                 Collisions::setVerifiedPositionX(a, b_pos.x + b_offset.x - a_offset.x + b_r +
-                                                    std::get<2>(a_bounds).x / 2.0f + 1.0f);
-                Collisions::setVerifiedPositionX(b, std::get<0>(a_bounds).x - b_offset.x - b_r - 1.0f);
+                                                    std::get<2>(a_bounds).x / 2.0f + 0.1f);
+                Collisions::setVerifiedPositionX(b, std::get<0>(a_bounds).x - b_offset.x - b_r - 0.1f);
                 break;
             case 2:
                 Collisions::setVerifiedPositionY(a, b_pos.y + b_offset.y - a_offset.y + b_r +
-                                                    std::get<2>(a_bounds).y / 2.0f + 1.0f);
-                Collisions::setVerifiedPositionY(b, std::get<0>(a_bounds).y - b_offset.y - b_r - 1.0f);
+                                                    std::get<2>(a_bounds).y / 2.0f + 0.1f);
+                Collisions::setVerifiedPositionY(b, std::get<0>(a_bounds).y - b_offset.y - b_r - 0.1f);
                 break;
             case 3:
                 Collisions::setVerifiedPositionX(a, b_pos.x + b_offset.x - a_offset.x - b_r -
-                                                    std::get<2>(a_bounds).x / 2.0f - 1.0f);
-                Collisions::setVerifiedPositionX(b, std::get<1>(a_bounds).x - b_offset.x + b_r + 1.0f);
+                                                    std::get<2>(a_bounds).x / 2.0f - 0.1f);
+                Collisions::setVerifiedPositionX(b, std::get<1>(a_bounds).x - b_offset.x + b_r + 0.1f);
                 break;
             case 4:
                 Collisions::setVerifiedPositionY(a, b_pos.y + b_offset.y - a_offset.y - b_r -
-                                                    std::get<2>(a_bounds).y / 2.0f - 1.0f);
-                Collisions::setVerifiedPositionY(b, std::get<1>(a_bounds).y - b_offset.y + b_r + 1.0f);
+                                                    std::get<2>(a_bounds).y / 2.0f - 0.1f);
+                Collisions::setVerifiedPositionY(b, std::get<1>(a_bounds).y - b_offset.y + b_r + 0.1f);
                 break;
             case 6:
                 CircleCircleResponse_(a, b, std::get<2>(a_bounds), std::get<2>(a_bounds), std::get<0>(a_bounds));
@@ -403,22 +403,22 @@ namespace r3e {
             case 1:
                 Collisions::setVerifiedPositionX(a,
                                                  std::get<0>(b_bounds).x - a_offset.x - std::get<2>(a_bounds).x / 2.0f -
-                                                 1.0f);
+                                                 0.1f);
                 break;
             case 2:
                 Collisions::setVerifiedPositionY(a,
                                                  std::get<0>(b_bounds).y - a_offset.y - std::get<2>(a_bounds).y / 2.0f -
-                                                 1.0f);
+                                                 0.1f);
                 break;
             case 3:
                 Collisions::setVerifiedPositionX(a,
                                                  std::get<1>(b_bounds).x - a_offset.x + std::get<2>(a_bounds).x / 2.0f +
-                                                 1.0f);
+                                                 0.1f);
                 break;
             case 4:
                 Collisions::setVerifiedPositionY(a,
                                                  std::get<1>(b_bounds).y - a_offset.y + std::get<2>(a_bounds).y / 2.0f +
-                                                 1.0f);
+                                                 0.1f);
                 break;
             default:
                 return false;
@@ -447,34 +447,34 @@ namespace r3e {
             case 1:
                 Collisions::setVerifiedPositionX(a,
                                                  std::get<0>(b_bounds).x - a_offset.x - std::get<2>(a_bounds).x / 2.0f -
-                                                 1.0f);
+                                                 0.1f);
                 Collisions::setVerifiedPositionX(b,
                                                  std::get<1>(a_bounds).x - b_offset.x + std::get<2>(b_bounds).x / 2.0f +
-                                                 1.0f);
+                                                 0.1f);
                 break;
             case 2:
                 Collisions::setVerifiedPositionY(a,
                                                  std::get<0>(b_bounds).y - a_offset.y - std::get<2>(a_bounds).y / 2.0f -
-                                                 1.0f);
+                                                 0.1f);
                 Collisions::setVerifiedPositionY(b,
                                                  std::get<1>(a_bounds).y - b_offset.y + std::get<2>(b_bounds).y / 2.0f +
-                                                 1.0f);
+                                                 0.1f);
                 break;
             case 3:
                 Collisions::setVerifiedPositionX(a,
                                                  std::get<1>(b_bounds).x - a_offset.x + std::get<2>(a_bounds).x / 2.0f +
-                                                 1.0f);
+                                                 0.1f);
                 Collisions::setVerifiedPositionX(b,
                                                  std::get<0>(a_bounds).x - b_offset.x - std::get<2>(b_bounds).x / 2.0f -
-                                                 1.0f);
+                                                 0.1f);
                 break;
             case 4:
                 Collisions::setVerifiedPositionY(a,
                                                  std::get<1>(b_bounds).y - a_offset.y + std::get<2>(a_bounds).y / 2.0f +
-                                                 1.0f);
+                                                 0.1f);
                 Collisions::setVerifiedPositionY(b,
                                                  std::get<0>(a_bounds).y - b_offset.y - std::get<2>(b_bounds).y / 2.0f -
-                                                 1.0f);
+                                                 0.1f);
                 break;
             default:
                 return false;
@@ -499,7 +499,7 @@ namespace r3e {
 
             Collisions::setVerifiedPosition(a, b.getPosition() + b.getCollisionArea().getOffset() -
                                                a.getCollisionArea().getOffset() +
-                                               unit * (a.getCollisionArea().getA() + b.getCollisionArea().getA() + 1));
+                                               unit * (a.getCollisionArea().getA() + b.getCollisionArea().getA() + 0.1f));
             a.setForcedVelocity(a.getVelocity() - utils::geo::dotProduct(a.getVelocity(), unit) * unit);
             return true;
         }
@@ -520,10 +520,10 @@ namespace r3e {
 
             Collisions::setVerifiedPosition(a, b.getPosition() + b.getCollisionArea().getOffset() -
                                                a.getCollisionArea().getOffset() +
-                                               unit * (a.getCollisionArea().getA() + b.getCollisionArea().getA() + 1));
+                                               unit * (a.getCollisionArea().getA() + b.getCollisionArea().getA() + 0.1f));
             Collisions::setVerifiedPosition(b, a.getPosition() + a.getCollisionArea().getOffset() -
                                                b.getCollisionArea().getOffset() -
-                                               unit * (a.getCollisionArea().getA() + b.getCollisionArea().getA() + 1));
+                                               unit * (a.getCollisionArea().getA() + b.getCollisionArea().getA() + 0.1f));
 
             a.setForcedVelocity(a.getVelocity() - utils::geo::dotProduct(a.getVelocity(), unit) * unit);
             b.setForcedVelocity(b.getVelocity() - utils::geo::dotProduct(b.getVelocity(), unit) * unit);

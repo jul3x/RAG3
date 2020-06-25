@@ -11,4 +11,4 @@ int z_index=1
 
 string default_activation=OnKill
 list[string] default_functions=[Explode;SpawnExplosionEvent]
-list[string] default_datas=[250.0f;512.0f]
+list[string] default_datas=[64.0f;512.0f]

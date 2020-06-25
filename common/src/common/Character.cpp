@@ -221,7 +221,7 @@ bool Character::update(float time_elapsed)
     bool is_alive = life_ > 0;
     DynamicObject::update(time_elapsed);
     auto vel = std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
-    if (!utils::num::isNearlyEqual(vel, 0.0f, utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") / 6.0f))
+    if (!utils::num::isNearlyEqual(vel, 0.0f, utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") / 3.0f))
     {
         is_moving_ = true;
     }
@@ -239,13 +239,6 @@ bool Character::update(float time_elapsed)
 
     if (decorator_ != nullptr)
         decorator_->updateAnimation(time_elapsed);
-
-    if (light_ != nullptr)
-        light_->setPosition(this->getPosition());
-
-    static_shadow_->setPosition(this->getPosition() -
-        sf::Vector2f{utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_x"),
-                     utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_y")});
 
     handleAmmoState();
     handleLifeState();
@@ -458,18 +451,18 @@ void Character::setPosition(const sf::Vector2f& pos)
 
     if (talkable_area_ != nullptr)
         talkable_area_->setPosition(pos);
+
+    if (light_ != nullptr)
+        light_->setPosition(pos);
+
+    static_shadow_->setPosition(pos -
+                                sf::Vector2f{utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_x"),
+                                             utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_y")});
 }
 
 void Character::setPosition(float x, float y)
 {
-    AbstractDrawableObject::setPosition(x, y);
-    weapons_in_backpack_.at(current_weapon_)->setPosition(x + gun_offset_.x, y + gun_offset_.y);
-
-    if (decorator_ != nullptr)
-        decorator_->setPosition(x, y);
-
-    if (talkable_area_ != nullptr)
-        talkable_area_->setPosition(x, y);
+    this->setPosition({x, y});
 }
 
 void Character::setPositionX(float x)
@@ -482,6 +475,11 @@ void Character::setPositionX(float x)
 
     if (talkable_area_ != nullptr)
         talkable_area_->setPositionX(x);
+
+    if (light_ != nullptr)
+        light_->setPositionX(x);
+
+    static_shadow_->setPositionX(x - utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_x"));
 }
 
 void Character::setPositionY(float y)
@@ -494,6 +492,11 @@ void Character::setPositionY(float y)
 
     if (talkable_area_ != nullptr)
         talkable_area_->setPositionY(y);
+
+    if (light_ != nullptr)
+        light_->setPositionY(y);
+
+    static_shadow_->setPositionY(y - utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_y"));
 }
 
 void Character::setWeaponPointing(const sf::Vector2f& point)

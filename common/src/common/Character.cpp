@@ -283,25 +283,25 @@ bool Character::update(float time_elapsed)
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    if (current_rotation_quarter_ == 1 || current_rotation_quarter_ == 2)
+    if (current_rotation_quarter_ == 3 || current_rotation_quarter_ == 4)
     {
+        if (!weapons_in_backpack_.empty())
+            target.draw(*weapons_in_backpack_.at(current_weapon_), states);
+
         target.draw(shape_, states);
 
         if (decorator_ != nullptr)
             target.draw(*decorator_, states);
-
-        if (!weapons_in_backpack_.empty())
-            target.draw(*weapons_in_backpack_.at(current_weapon_), states);
     }
     else
     {
-        if (!weapons_in_backpack_.empty())
-            target.draw(*weapons_in_backpack_.at(current_weapon_), states);
-
         target.draw(shape_, states);
 
         if (decorator_ != nullptr)
             target.draw(*decorator_, states);
+
+        if (!weapons_in_backpack_.empty())
+            target.draw(*weapons_in_backpack_.at(current_weapon_), states);
     }
 }
 
@@ -315,10 +315,14 @@ void Character::setRotation(float theta)
     weapons_in_backpack_.at(current_weapon_)->setRotation(theta);
 
     auto get_quarter = [](float theta) {
-        if (theta >= 0.0f && theta < 90.0f)
+        if (theta >= 0.0f && theta < 45.0f)
             return 1;
-        else if (theta >= 90.0f && theta < 180.0f)
+        else if (theta >= 45.0f && theta < 90.0f)
+            return 11;
+        else if (theta >= 90.0f && theta < 135.0f)
             return 2;
+        else if (theta >= 135.0f && theta < 180.0f)
+            return 21;
         else if (theta >= 180.0f && theta < 270.0f)
             return 3;
         else
@@ -345,9 +349,24 @@ void Character::setRotation(float theta)
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
 
-            if (new_quarter == 2 && theta >= 90.0f + Character::ROTATING_HYSTERESIS_)
-                current_rotation_quarter_ = 2;
-            else if (new_quarter != 2)
+            if (new_quarter == 11 && theta >= 45.0f + Character::ROTATING_HYSTERESIS_)
+                current_rotation_quarter_ = 11;
+            else if (new_quarter != 11)
+                current_rotation_quarter_ = new_quarter;
+            break;
+        }
+        case 11:
+        {
+            this->changeTexture(&RM.getTexture("characters/" + this->getId() + added_name));
+
+            gun_offset_.x = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
+            gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
+
+            weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
+
+            if (new_quarter == 3 && theta >= 90.0f + Character::ROTATING_HYSTERESIS_)
+                current_rotation_quarter_ = 3;
+            else if (new_quarter != 3)
                 current_rotation_quarter_ = new_quarter;
             break;
         }
@@ -357,11 +376,25 @@ void Character::setRotation(float theta)
             gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
+            weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
+
+            if (new_quarter == 11 && theta < 90.0f - Character::ROTATING_HYSTERESIS_)
+                current_rotation_quarter_ = 1;
+            else if (new_quarter != 11)
+                current_rotation_quarter_ = new_quarter;
+            break;
+        }
+        case 21:
+        {
+            this->changeTexture(&RM.getTexture("characters/" + this->getId() + added_name + "_2"));
+            gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
+            gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
+
             weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
 
-            if (new_quarter == 1 && theta < 90.0f - Character::ROTATING_HYSTERESIS_)
-                current_rotation_quarter_ = 1;
-            else if (new_quarter != 1)
+            if (new_quarter == 2 && theta < 135.0f - Character::ROTATING_HYSTERESIS_)
+                current_rotation_quarter_ = 2;
+            else if (new_quarter != 2)
                 current_rotation_quarter_ = new_quarter;
             break;
         }

@@ -11,7 +11,8 @@
 
 using namespace editor;
 
-Editor::Editor() : grid_(CFG.get<int>("window_width_px"), CFG.get<int>("window_height_px")), is_lightning_on_(true)
+Editor::Editor() : grid_(CFG.get<int>("window_width_px"), CFG.get<int>("window_height_px")),
+                   is_lightning_on_(true), randomizing_value_(0), marked_item_(nullptr)
 {
     engine_ = std::make_unique<Engine>();
     engine_->registerGame(this);
@@ -195,38 +196,52 @@ int Editor::readItemInfo(const sf::Vector2f& pos, bool read_uid)
 void Editor::placeItem(const sf::Vector2f& pos, float direction)
 {
     auto max_z_index = ui_->getZIndex();
-    if (current_item_.first == "decorations_tiles")
-        auto ptr = map_->spawn<DecorationTile>(pos, direction, current_item_.second, true, max_z_index);
-    else if (current_item_.first == "obstacles_tiles")
-        auto ptr = map_->spawn<ObstacleTile>(pos, direction, current_item_.second, true, max_z_index);
-    else if (current_item_.first == "characters")
-    {
-        auto ptr = map_->spawn<NPC>(pos, direction, current_item_.second, false, max_z_index);
-        if (ptr->getLightPoint() != nullptr)
-            ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
-    }
-    else if (current_item_.first == "specials")
-    {
-        auto ptr = map_->spawn<Special>(pos, direction, current_item_.second, false, max_z_index);
-        if (ptr->getLightPoint() != nullptr)
-            ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
-    }
 
-    else if (current_item_.first == "decorations")
+    try
     {
-        auto ptr = map_->spawn<Decoration>(pos, direction, current_item_.second, false, max_z_index);
-        if (ptr->getLightPoint() != nullptr)
-            ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
-    }
+        if (current_item_.first == "decorations_tiles")
+        {
+            auto number = std::stoi(current_item_.second) + utils::num::getRandom(0, randomizing_value_);
+            auto ptr = map_->spawn<DecorationTile>(pos, direction, std::to_string(number), true, max_z_index);
+        }
+        else if (current_item_.first == "obstacles_tiles")
+        {
+            auto number = std::stoi(current_item_.second) + utils::num::getRandom(0, randomizing_value_);
+            auto ptr = map_->spawn<ObstacleTile>(pos, direction, std::to_string(number), true, max_z_index);
+        }
+        else if (current_item_.first == "characters")
+        {
+            auto ptr = map_->spawn<NPC>(pos, direction, current_item_.second, false, max_z_index);
+            if (ptr->getLightPoint() != nullptr)
+                ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
+        }
+        else if (current_item_.first == "specials")
+        {
+            auto ptr = map_->spawn<Special>(pos, direction, current_item_.second, false, max_z_index);
+            if (ptr->getLightPoint() != nullptr)
+                ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
+        }
 
-    else if (current_item_.first == "obstacles")
-    {
-        auto ptr = map_->spawn<Obstacle>(pos, direction, current_item_.second, false, max_z_index);
-        if (ptr->getLightPoint() != nullptr)
-            ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
+        else if (current_item_.first == "decorations")
+        {
+            auto ptr = map_->spawn<Decoration>(pos, direction, current_item_.second, false, max_z_index);
+            if (ptr->getLightPoint() != nullptr)
+                ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
+        }
+
+        else if (current_item_.first == "obstacles")
+        {
+            auto ptr = map_->spawn<Obstacle>(pos, direction, current_item_.second, false, max_z_index);
+            if (ptr->getLightPoint() != nullptr)
+                ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
+        }
+        else if (current_item_.first == "weapons")
+            auto ptr = map_->spawn<PlacedWeapon>(pos, direction, current_item_.second, false, max_z_index);
     }
-    else if (current_item_.first == "weapons")
-        auto ptr = map_->spawn<PlacedWeapon>(pos, direction, current_item_.second, false, max_z_index);
+    catch (const std::logic_error& err)
+    {
+        spawnError("Object to place not found!");
+    }
 }
 
 void Editor::removeItem(const sf::Vector2f& pos)
@@ -353,4 +368,9 @@ void Editor::spawnError(const std::string& err)
 void Editor::setLightning(bool on)
 {
     is_lightning_on_ = on;
+}
+
+void Editor::setRandomizing(int n)
+{
+    randomizing_value_ = n;
 }

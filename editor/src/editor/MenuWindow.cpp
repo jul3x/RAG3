@@ -87,17 +87,39 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
         this->ui_->setZIndex(value);
     });
 
+    random_label_ = tgui::Label::create();
+    random_label_->setRenderer(theme_->getRenderer("Label"));
+    random_label_->setText("Randomizing tiles: 0");
+    random_label_->setTextSize(14);
+    grid_->addWidget(random_label_, 4, 0);
+
+    random_slider_ = tgui::Slider::create();
+    random_slider_->setRenderer(theme_->getRenderer("Slider"));
+    random_slider_->setSize(80, 10);
+    random_slider_->setValue(0);
+    random_slider_->setMinimum(0);
+    random_slider_->setMaximum(9);
+    grid_->addWidget(random_slider_, 4, 1);
+
+    Editor::get().setRandomizing(0);
+
+    random_slider_->connect("ValueChanged", [this]() {
+        int value = this->random_slider_->getValue();
+        this->random_label_->setText("Randomizing tiles: " + std::to_string(value));
+        Editor::get().setRandomizing(value);
+    });
+
     auto label = tgui::Label::create();
     label->setRenderer(theme_->getRenderer("Label"));
     label->setText("Lightning");
     label->setTextSize(14);
-    grid_->addWidget(label, 4, 0);
+    grid_->addWidget(label, 5, 0);
 
     auto checkbox = tgui::CheckBox::create();
     checkbox->setRenderer(theme_->getRenderer("CheckBox"));
     checkbox->setSize(15, 15);
     checkbox->setChecked(true);
-    grid_->addWidget(checkbox, 4, 1);
+    grid_->addWidget(checkbox, 5, 1);
 
     checkbox->connect("Checked", [&]() {
         Editor::get().setLightning(true);

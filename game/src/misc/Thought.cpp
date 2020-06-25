@@ -56,3 +56,8 @@ void Thought::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(top_, states);
     target.draw(text_, states);
 }
+
+AbstractPhysicalObject* Thought::getFather() const
+{
+    return father_;
+}

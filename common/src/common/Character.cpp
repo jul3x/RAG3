@@ -283,13 +283,26 @@ bool Character::update(float time_elapsed)
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    target.draw(shape_, states);
+    if (current_rotation_quarter_ == 1 || current_rotation_quarter_ == 2)
+    {
+        target.draw(shape_, states);
 
-    if (decorator_ != nullptr)
-        target.draw(*decorator_, states);
+        if (decorator_ != nullptr)
+            target.draw(*decorator_, states);
 
-    if (!weapons_in_backpack_.empty())
-        target.draw(*weapons_in_backpack_.at(current_weapon_), states);
+        if (!weapons_in_backpack_.empty())
+            target.draw(*weapons_in_backpack_.at(current_weapon_), states);
+    }
+    else
+    {
+        if (!weapons_in_backpack_.empty())
+            target.draw(*weapons_in_backpack_.at(current_weapon_), states);
+
+        target.draw(shape_, states);
+
+        if (decorator_ != nullptr)
+            target.draw(*decorator_, states);
+    }
 }
 
 graphics::LightPoint* Character::getLightPoint() const

@@ -20,6 +20,8 @@ public:
 
     bool update(float time_elapsed) override;
 
+    AbstractPhysicalObject* getFather() const;
+
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 

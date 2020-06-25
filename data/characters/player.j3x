@@ -29,7 +29,7 @@ string ai_type=Standard
 
 int z_index=1
 
-list[string] weapons=[flamethrower;Null;Null;Null]
+list[string] weapons=[flamethrower;m4;desert_eagle;shotgun;melee_axe;rocket_launcher]
 
 bool is_talkable=0
 bool light_point=1

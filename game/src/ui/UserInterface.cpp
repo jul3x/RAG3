@@ -378,5 +378,14 @@ inline void UserInterface::updateThoughts(float time_elapsed)
 
 void UserInterface::spawnThought(Character* user, const std::string& text)
 {
+    for (auto it = thoughts_.begin(); it != thoughts_.end(); ++it)
+    {
+        if (it->getFather() == user)
+        {
+            thoughts_.erase(it);
+            break;
+        }
+    }
+
     thoughts_.emplace_back(user, text, CFG.get<float>("thought_duration"));
 }

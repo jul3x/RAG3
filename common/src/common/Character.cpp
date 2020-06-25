@@ -331,19 +331,25 @@ void Character::setRotation(float theta)
 
     short int new_quarter = get_quarter(theta);
 
-    std::string added_name = "";
+    static std::string added_name;
     if (!is_moving_)
     {
         added_name = "_standing";
         this->setCurrentFrame(0);
     }
+    else
+    {
+        added_name = "";
+    }
+
+    static std::string weapon_added_name;
+    weapon_added_name = "";
 
     switch (current_rotation_quarter_)
     {
         case 1:
         {
-            this->changeTexture(&RM.getTexture("characters/" + this->getId() + added_name));
-
+            weapon_added_name = "_back";
             gun_offset_.x = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
@@ -357,8 +363,7 @@ void Character::setRotation(float theta)
         }
         case 11:
         {
-            this->changeTexture(&RM.getTexture("characters/" + this->getId() + added_name));
-
+            weapon_added_name = "_back";
             gun_offset_.x = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
@@ -372,7 +377,8 @@ void Character::setRotation(float theta)
         }
         case 2:
         {
-            this->changeTexture(&RM.getTexture("characters/" + this->getId() + added_name + "_2"));
+            added_name += "_2";
+            weapon_added_name = "_back";
             gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
@@ -386,7 +392,8 @@ void Character::setRotation(float theta)
         }
         case 21:
         {
-            this->changeTexture(&RM.getTexture("characters/" + this->getId() + added_name + "_2"));
+            added_name += "_2";
+            weapon_added_name = "_back";
             gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
@@ -400,7 +407,8 @@ void Character::setRotation(float theta)
         }
         case 3:
         {
-            this->changeTexture(&RM.getTexture("characters/" + this->getId() + added_name + "_3"));
+            added_name += "_3";
+
             gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
@@ -414,7 +422,8 @@ void Character::setRotation(float theta)
         }
         case 4:
         {
-            this->changeTexture(&RM.getTexture("characters/" + this->getId() + added_name + "_4"));
+            added_name += "_4";
+
             gun_offset_.x = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
             gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
 
@@ -429,6 +438,14 @@ void Character::setRotation(float theta)
         default:
             throw std::runtime_error("[Character] Invalid rotation quarter!");
     }
+
+    this->changeTexture(&RM.getTexture("characters/" + this->getId() + added_name));
+
+    auto& weapon_id = weapons_in_backpack_.at(current_weapon_)->getId();
+
+    if (!weapon_id.empty())
+        weapons_in_backpack_.at(current_weapon_)->changeTexture(
+                &RM.getTexture("weapons/" + weapon_id + weapon_added_name));
 }
 
 void Character::setPosition(const sf::Vector2f& pos)

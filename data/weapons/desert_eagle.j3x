@@ -1,4 +1,4 @@
-float recoil=6000.0f
+float recoil=1920.0f
 int max_ammo=20
 int ammo_portion=2
 

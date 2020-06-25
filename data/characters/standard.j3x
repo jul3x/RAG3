@@ -1,6 +1,6 @@
-float max_speed=500.0f
+float max_speed=200.0f
 
-float standby_speed=150.0f
+float standby_speed=70.0f
 
 float max_health=12
 
@@ -17,7 +17,7 @@ float gun_offset_x=9.0f
 float gun_offset_y=-8.0f
 
 int frames_number=4
-float frame_duration=0.05f
+float frame_duration=0.1f
 
 string default_activation=OnKill
 list[string] default_functions=[SpawnAmmo]
@@ -27,7 +27,7 @@ string ai_type=Standard
 
 int z_index=1
 
-list[string] weapons=[desert_eagle]
+list[string] weapons=[enemy_pistol]
 
 bool is_talkable=0
 bool light_point=0

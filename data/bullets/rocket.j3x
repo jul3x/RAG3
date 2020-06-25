@@ -1,4 +1,4 @@
-float speed=1000.0f
+float speed=500.0f
 float life=2.0f
 float deadly_factor=5.0f
 float size_x=30.0f

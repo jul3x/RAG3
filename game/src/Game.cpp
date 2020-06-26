@@ -67,7 +67,7 @@ void Game::initialize()
     engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
 
-    map_->loadMap("test_map");
+    map_->loadMap("map");
 
 //    debug_map_blockage_ = std::make_unique<DebugMapBlockage>(&map_->getMapBlockage());
 

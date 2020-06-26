@@ -1,8 +1,8 @@
 float speed=900.0f
 float life=1.0f
 float deadly_factor=1.0f
-float size_x=10.0f
-float size_y=4.0f
+float size_x=5.0f
+float size_y=2.0f
 float burst_size=140.0f
 float map_offset_x=0.0f
 float map_offset_y=0.0f

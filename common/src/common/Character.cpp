@@ -42,8 +42,8 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
         max_life_(utils::j3x::get<float>(RM.getObjectParams("characters", id), "max_health")),
         ammo_state_(AmmoState::High),
         life_state_(LifeState::High),
-        gun_offset_({utils::j3x::get<float>(RM.getObjectParams("characters", id), "gun_offset_x"),
-                     utils::j3x::get<float>(RM.getObjectParams("characters", id), "gun_offset_y")}),
+        gun_offset_({utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", id), "gun_offset_x").front(),
+                     utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", id), "gun_offset_y").front()}),
         current_rotation_quarter_(1),
         speed_factor_(1.0f),
         rotate_to_(0.0f),
@@ -344,8 +344,8 @@ void Character::setRotation(float theta)
         case 1:
         {
             weapon_added_name = "_back";
-            gun_offset_.x = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
-            gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
+            gun_offset_.x = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
+            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
 
@@ -358,8 +358,8 @@ void Character::setRotation(float theta)
         case 11:
         {
             weapon_added_name = "_back";
-            gun_offset_.x = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
-            gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
+            gun_offset_.x = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
+            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
 
@@ -373,8 +373,8 @@ void Character::setRotation(float theta)
         {
             added_name += "_2";
             weapon_added_name = "_back";
-            gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
-            gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
+            gun_offset_.x = -utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
+            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
 
@@ -388,8 +388,8 @@ void Character::setRotation(float theta)
         {
             added_name += "_2";
             weapon_added_name = "_back";
-            gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
-            gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
+            gun_offset_.x = -utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
+            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
 
@@ -403,8 +403,8 @@ void Character::setRotation(float theta)
         {
             added_name += "_3";
 
-            gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
-            gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
+            gun_offset_.x = -utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
+            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
 
@@ -418,8 +418,8 @@ void Character::setRotation(float theta)
         {
             added_name += "_4";
 
-            gun_offset_.x = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
-            gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
+            gun_offset_.x = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
+            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
 

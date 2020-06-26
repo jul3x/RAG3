@@ -1,7 +1,7 @@
 float max_speed=200.0f
 float max_running_speed=300.0f
 
-float standby_speed=32.0f
+float standby_speed=100.0f
 float side_step_speed=4480.0f
 
 float max_health=160

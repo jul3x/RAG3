@@ -143,7 +143,7 @@ void Character::makeOnlyOneWeapon(const std::string& id, float state)
     weapons_in_backpack_.at(current_weapon_)->setState(state);
 }
 
-void Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
+bool Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
 {
     // If weapon exists
     for (auto& weapon : weapons_in_backpack_)
@@ -151,7 +151,7 @@ void Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
         if (weapon->getId() == ptr->getId())
         {
             weapon->setState(1.0f);
-            return;
+            return false;
         }
     }
     // If there are less than 4 weapons in backpack
@@ -160,11 +160,12 @@ void Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
         if (weapon->getId().empty())
         {
             weapon = ptr;
-            return;
+            return true;
         }
     }
 
     weapons_in_backpack_.emplace_back(ptr);
+    return true;
 }
 
 void Character::addAmmoToWeapon(const std::string& id)

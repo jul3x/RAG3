@@ -59,7 +59,7 @@ public:
     void switchWeapon(int relative_position_backpack);
     int getCurrentWeapon() const;
     void makeOnlyOneWeapon(const std::string& id, float state);
-    void addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr);
+    bool addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr);
     void addAmmoToWeapon(const std::string& id);
 
     // Getters

@@ -160,20 +160,27 @@ void SpecialFunctions::addWeapon(Functional* obj, const std::string& data, Chara
     if (data_parsed.length() > 5 && data_parsed.substr(0, 5) == "melee")
     {
         weapon = std::make_shared<MeleeWeapon>(user, data_parsed);
-        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
-        Game::get().registerHoveringObject(melee_weapon->getMeleeWeaponArea());
     }
     else
     {
         weapon = std::make_shared<ShootingWeapon>(user, data_parsed);
     }
 
-    if (!weapon->getId().empty())
-        weapon->registerSpawningFunction(
-                Game::get().getSpawningFunction(utils::j3x::get<std::string>(
-                        RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
 
-    user->addWeaponToBackpack(weapon);
+
+    if (user->addWeaponToBackpack(weapon))
+    {
+        if (!weapon->getId().empty())
+            weapon->registerSpawningFunction(
+                    Game::get().getSpawningFunction(utils::j3x::get<std::string>(
+                            RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
+
+        if (data_parsed.substr(0, 5) == "melee")
+        {
+            auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+            Game::get().registerHoveringObject(melee_weapon->getMeleeWeaponArea());
+        }
+    }
 }
 
 void SpecialFunctions::addAmmo(Functional* obj, const std::string& data, Character* user)
@@ -343,7 +350,7 @@ void SpecialFunctions::deactivate(Functional *obj, const std::string &data, Char
 
 void SpecialFunctions::destroy(Functional *obj, const std::string &data, Character* user)
 {
-    std::cout << "[SpecialFunction] Destroying." << std::endl;
+    std::cout << "[SpecialFunction] Destroying " + std::to_string(obj->getUniqueId()) + "." << std::endl;
     obj->destroy();
 }
 

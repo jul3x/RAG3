@@ -107,7 +107,8 @@ namespace r3e {
                     return Collisions::AABBResponse(obj_1, obj_2);
             }
 
-            throw std::invalid_argument("[Collisions] This collision types is not handled yet!");
+            throw std::invalid_argument("[Collisions - Response] This collision type (" +
+                    std::to_string(static_cast<int>(a)) + "," + std::to_string(static_cast<int>(b)) + ") is not handled yet!");
         }
 
         template<class T, class K>
@@ -135,7 +136,8 @@ namespace r3e {
                     return static_cast<bool>(Collisions::AABB(obj_1, obj_2));
             }
 
-            throw std::invalid_argument("[Collisions] This collision type is not handled yet!");
+            throw std::invalid_argument("[Collisions] This collision type (" +
+                    std::to_string(static_cast<int>(a)) + "," + std::to_string(static_cast<int>(b)) + ") is not handled yet!");
         }
 
         template <class T, class K>

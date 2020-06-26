@@ -31,8 +31,6 @@ NPC::NPC(const sf::Vector2f& position, const std::string& id,
          const std::vector<std::string>& datas, int u_id) :
         Character(position, id, activation, functions, datas, u_id)
 {
-    this->setPosition(position);
-
     if (utils::j3x::get<std::string>(RM.getObjectParams("characters", id), "ai_type") == "Standard")
     {
         ai_function_ = &NPC::standardAI;
@@ -45,6 +43,8 @@ NPC::NPC(const sf::Vector2f& position, const std::string& id,
     {
         ai_function_ = &NPC::noneAI;
     }
+
+    AbstractPhysicalObject::setPosition(position);
 }
 
 void NPC::registerEnemy(const Character* enemy)

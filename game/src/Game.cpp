@@ -67,7 +67,7 @@ void Game::initialize()
     engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
 
-    map_->loadMap("map");
+    map_->loadMap("test_map");
 
 //    debug_map_blockage_ = std::make_unique<DebugMapBlockage>(&map_->getMapBlockage());
 
@@ -285,8 +285,10 @@ void Game::updateMapObjects(float time_elapsed)
             auto next_it = std::next(it);
             engine_->deleteStaticObject(it->get());
 
-            auto grid_pos = std::make_pair(std::round((*it)->getPosition().x / DecorationTile::SIZE_X_),
-                                           std::round((*it)->getPosition().y / DecorationTile::SIZE_Y_));
+
+
+            auto grid_pos = std::make_pair(std::round(((*it)->getPosition().x) / DecorationTile::SIZE_X_),
+                                           std::round(((*it)->getPosition().y) / DecorationTile::SIZE_Y_));
             blockage.blockage_.at(grid_pos.first).at(grid_pos.second) = false;
 
             obstacles_tiles.erase(it);
@@ -320,8 +322,8 @@ void Game::updateMapObjects(float time_elapsed)
                 (*it)->use(player_.get());
             }
 
-            auto grid_pos = std::make_pair(std::round((*it)->getPosition().x / DecorationTile::SIZE_X_),
-                                           std::round((*it)->getPosition().y / DecorationTile::SIZE_Y_));
+            auto grid_pos = std::make_pair(std::round(((*it)->getPosition().x + utils::j3x::get<float>(RM.getObjectParams("obstacles", (*it)->getId()), "collision_offset_x")) / DecorationTile::SIZE_X_),
+                                           std::round(((*it)->getPosition().y + utils::j3x::get<float>(RM.getObjectParams("obstacles", (*it)->getId()), "collision_offset_y")) / DecorationTile::SIZE_Y_));
             blockage.blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
 
             obstacles.erase(it);

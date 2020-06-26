@@ -111,8 +111,8 @@ void NPC::handleEnemySelection()
 
 void NPC::handleVisibilityState()
 {
-    float start_x = std::round(this->getPosition().x / map_blockage_->scale_x_);
-    float start_y = std::round(this->getPosition().y / map_blockage_->scale_y_);
+    float start_x = std::round((this->getPosition().x) / map_blockage_->scale_x_);
+    float start_y = std::round((this->getPosition().y) / map_blockage_->scale_y_);
     float goal_x = std::round(current_enemy_->getPosition().x / map_blockage_->scale_x_);
     float goal_y = std::round(current_enemy_->getPosition().y / map_blockage_->scale_y_);
 
@@ -276,10 +276,11 @@ void NPC::handleActionState()
 sf::Vector2f NPC::findNearestSafeSpot(const sf::Vector2f& direction) const
 {
     auto dir = utils::geo::getNormalized(direction);
-    auto current = sf::Vector2f{std::round(this->getPosition().x / map_blockage_->scale_x_),
-                                std::round(this->getPosition().y / map_blockage_->scale_y_)};
 
-    auto checkIfPositionValid = [this](int a, int b) {
+    auto current = sf::Vector2f{std::round((this->getPosition().x) / map_blockage_->scale_x_),
+                                std::round((this->getPosition().y) / map_blockage_->scale_y_)};
+
+    auto check_if_position_valid = [this](int a, int b) {
         return a < this->map_blockage_->blockage_.size() && a >= 0 &&
                 b < this->map_blockage_->blockage_.at(0).size() && b >= 0 &&
                !this->map_blockage_->blockage_.at(a).at(b);
@@ -287,22 +288,22 @@ sf::Vector2f NPC::findNearestSafeSpot(const sf::Vector2f& direction) const
 
     int rounded_x = static_cast<int>(std::round(current.x + dir.x));
     int rounded_y = static_cast<int>(std::round(current.y + dir.y));
-    if (checkIfPositionValid(rounded_x, rounded_y))
+    if (check_if_position_valid(rounded_x, rounded_y))
         return {rounded_x * map_blockage_->scale_x_, rounded_y * map_blockage_->scale_y_};
 
     rounded_x = static_cast<int>(std::round(current.x - dir.y));
     rounded_y = static_cast<int>(std::round(current.y + dir.x));
-    if (checkIfPositionValid(rounded_x, rounded_y))
+    if (check_if_position_valid(rounded_x, rounded_y))
         return {rounded_x * map_blockage_->scale_x_, rounded_y * map_blockage_->scale_y_};
 
     rounded_x = static_cast<int>(std::round(current.x + dir.y));
     rounded_y = static_cast<int>(std::round(current.y - dir.x));
-    if (checkIfPositionValid(rounded_x, rounded_y))
+    if (check_if_position_valid(rounded_x, rounded_y))
         return {rounded_x * map_blockage_->scale_x_, rounded_y * map_blockage_->scale_y_};
 
     rounded_x = static_cast<int>(std::round(current.x - dir.x));
     rounded_y = static_cast<int>(std::round(current.y - dir.y));
-    if (checkIfPositionValid(rounded_x, rounded_y))
+    if (check_if_position_valid(rounded_x, rounded_y))
         return {rounded_x * map_blockage_->scale_x_, rounded_y * map_blockage_->scale_y_};
 
     return {ai::NO_GOAL_, ai::NO_GOAL_};

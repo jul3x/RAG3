@@ -387,8 +387,8 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             obstacles.emplace_back(std::make_shared<Obstacle>(current_pos, current_id,
                                                                               activation, functions, f_datas, u_id));
 
-                            blocked.at(std::round(current_pos.x / DecorationTile::SIZE_X_)).
-                                    at(std::round(current_pos.y / DecorationTile::SIZE_Y_)) =
+                            blocked.at(std::round((current_pos.x + utils::j3x::get<float>(RM.getObjectParams("obstacles", current_id), "collision_offset_x")) / DecorationTile::SIZE_X_)).
+                                    at(std::round((current_pos.y + utils::j3x::get<float>(RM.getObjectParams("obstacles", current_id), "collision_offset_y")) / DecorationTile::SIZE_Y_)) =
                                     utils::j3x::get<float>(RM.getObjectParams("obstacles", current_id), "endurance");
                             break;
                         case MapReading::Decorations:

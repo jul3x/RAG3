@@ -45,6 +45,22 @@ roof 736 200 171
 roof 704 200 172
 roof_left 672 200 173
 roof_right 864 200 174
+flesh 163.675 491.829 177
+painting 783.753 41.9716 183
+flesh2 544 488 184
+lamp 240 456 187
+lamp 432 456 188
+lamp 80 456 189
+lamp 608 456 190
+lamp 712 224 195
+lamp 832 224 197
+lamp 608 32 198
+lamp 960 32 199
+lamp 544 192 200
+painting 335.326 481.751 210
+flesh 912 48 211
+flesh2 1008 80 212
+chains 672 56 213
 
 obstacles: 
 door 784 264 85 OnKill [Null] [Null]

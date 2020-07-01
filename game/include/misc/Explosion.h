@@ -22,7 +22,6 @@ public:
 
     void applyForce(Character* obj) const;
     void applyForce(Obstacle* obj) const;
-    void applyForce(ObstacleTile* obj) const;
 
 private:
     float r_;

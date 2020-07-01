@@ -16,11 +16,10 @@
 
 using namespace r3e;
 
-class ObstacleTile : public StaticObject, public Shootable, public Identifiable {
+class ObstacleTile : public StaticObject, public Identifiable {
 public:
     ObstacleTile(const sf::Vector2f& position, const std::string& id);
 
-    bool update(float time_elapsed) override;
     graphics::StaticShadow* getShadow() const;
 
 private:

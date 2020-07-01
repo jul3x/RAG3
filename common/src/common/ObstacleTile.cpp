@@ -20,9 +20,7 @@ ObstacleTile::ObstacleTile(const sf::Vector2f& position, const std::string& id) 
                               utils::j3x::get<float>(RM.getObjectParams("obstacles_tiles", id), "collision_offset_y")}),
                      &RM.getTexture("obstacles_tiles/" + id),
                      utils::j3x::get<int>(RM.getObjectParams("obstacles_tiles", id), "z_index"),
-                     0, 0.0f),
-        Shootable(utils::j3x::get<float>(RM.getObjectParams("obstacles_tiles", id), "endurance") *
-                  CFG.get<float>("obstacles_endurance_factor"))
+                     0, 0.0f)
 {
     this->changeOrigin(sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("obstacles_tiles", id), "size_x"),
                                     utils::j3x::get<float>(RM.getObjectParams("obstacles_tiles", id), "size_y")) / 2.0f +
@@ -37,11 +35,6 @@ ObstacleTile::ObstacleTile(const sf::Vector2f& position, const std::string& id) 
             CFG.get<float>("graphics/shadow_length_factor"),
             &RM.getTexture("obstacles_tiles/" + id), sf::Color(CFG.get<int>("graphics/shadow_color")),
             z_index_ - 1);
-}
-
-bool ObstacleTile::update(float time_elapsed)
-{
-    return life_ > 0;
 }
 
 graphics::StaticShadow* ObstacleTile::getShadow() const

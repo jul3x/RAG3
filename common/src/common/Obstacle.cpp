@@ -41,9 +41,9 @@ Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id, const st
 
     if (utils::j3x::get<int>(RM.getObjectParams("obstacles", id), "light_point"))
     {
+        float light_size = CFG.get<float>("graphics/obstacles_light_point_size") * CFG.get<float>("graphics/global_zoom");
         light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
-                                                        sf::Vector2f{CFG.get<float>("graphics/obstacles_light_point_size"),
-                                                                     CFG.get<float>("graphics/obstacles_light_point_size")},
+                                                        sf::Vector2f{light_size, light_size},
                                                         &RM.getTexture("lightpoint"));
     }
 

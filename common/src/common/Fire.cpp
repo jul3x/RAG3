@@ -33,9 +33,9 @@ Fire::Fire(Character* user,
     this->setRotation(direction * 180.0f / static_cast<float>(M_PI) + 90.0f);
     this->changeOrigin({r_, r_/2.0f});
 
+    float light_size = CFG.get<float>("graphics/fire_light_point_size") * CFG.get<float>("graphics/global_zoom");
     light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
-                                                    sf::Vector2f{CFG.get<float>("graphics/fire_light_point_size"),
-                                                                 CFG.get<float>("graphics/fire_light_point_size")},
+                                                    sf::Vector2f{light_size, light_size},
                                                     &RM.getTexture("lightpoint"));
     light_->setColor(255, 255, 255, alpha_);
 

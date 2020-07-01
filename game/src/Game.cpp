@@ -265,39 +265,11 @@ void Game::updateMapObjects(float time_elapsed)
 {
     auto& blockage = map_->getMapBlockage();
 
-    auto& obstacles_tiles = map_->getList<ObstacleTile>();
     auto& obstacles =  map_->getList<Obstacle>();;
     auto& npcs =  map_->getList<NPC>();;
     auto& specials = map_->getList<Special>();
     auto& decorations = map_->getList<Decoration>();
     auto& weapons = map_->getList<PlacedWeapon>();
-
-    for (auto it = obstacles_tiles.begin(); it != obstacles_tiles.end();)
-    {
-        bool do_increment = true;
-        if (!(*it)->update(time_elapsed))
-        {
-            journal_->event<DestroyObstacleTile>(it->get());
-            // draw on this place destruction
-            spawnDecoration((*it)->getPosition(), "destroyed_wall");
-            this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
-
-            auto next_it = std::next(it);
-            engine_->deleteStaticObject(it->get());
-
-
-
-            auto grid_pos = std::make_pair(std::round(((*it)->getPosition().x) / DecorationTile::SIZE_X_),
-                                           std::round(((*it)->getPosition().y) / DecorationTile::SIZE_Y_));
-            blockage.blockage_.at(grid_pos.first).at(grid_pos.second) = false;
-
-            obstacles_tiles.erase(it);
-            it = next_it;
-            do_increment = false;
-        }
-
-        if (do_increment) ++it;
-    }
 
     for (auto it = obstacles.begin(); it != obstacles.end();)
     {
@@ -688,9 +660,6 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
         }
         else if (obstacle_tile != nullptr)
         {
-            journal_->event<ShotObstacleTile>(obstacle_tile);
-            obstacle_tile->getShot(*bullet);
-
             spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
                              static_cast<float>(std::pow(
                                      CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
@@ -704,11 +673,6 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
         {
             journal_->event<ShotObstacle>(obstacle);
             explosion->applyForce(obstacle);
-        }
-        else if (obstacle_tile != nullptr)
-        {
-            journal_->event<ShotObstacleTile>(obstacle_tile);
-            explosion->applyForce(obstacle_tile);
         }
     }
     else if (fire != nullptr)

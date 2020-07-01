@@ -171,30 +171,6 @@ void ShotObstacle::executeEntryReversal()
     new_ptr->setHealth(life_);
 }
 
-DestroyObstacleTile::DestroyObstacleTile(Journal* father, ObstacleTile* ptr) : JournalEntry(father), ptr_(ptr)
-{
-    id_ = ptr->getId();
-    pos_ = ptr->getPosition();
-}
-
-void DestroyObstacleTile::executeEntryReversal()
-{
-    auto new_ptr = Game::get().spawnNewObstacleTile(id_, pos_);
-
-    father_->setUpdatedPtr(ptr_, new_ptr);
-}
-
-ShotObstacleTile::ShotObstacleTile(Journal* father, ObstacleTile* obstacle) : JournalEntry(father), ptr_(obstacle)
-{
-    life_ = obstacle->getHealth();
-}
-
-void ShotObstacleTile::executeEntryReversal()
-{
-    auto new_ptr = father_->getUpdatedPtr(ptr_);
-    new_ptr->setHealth(life_);
-}
-
 SpawnDecoration::SpawnDecoration(Journal* father, Decoration* ptr) : JournalEntry(father), ptr_(ptr)
 {
 }

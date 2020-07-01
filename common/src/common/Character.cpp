@@ -89,7 +89,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
             shadow_pos, this->getSize(), CFG.get<float>("graphics/shadow_direction"),
             CFG.get<float>("graphics/shadow_length_factor"),
             &RM.getTexture("characters/" + id), sf::Color(CFG.get<int>("graphics/shadow_color")),
-            z_index_,
+            z_index_ - 1,
             utils::j3x::get<int>(RM.getObjectParams("characters", id), "frames_number"),
             utils::j3x::get<float>(RM.getObjectParams("characters", id), "frame_duration"));
 }

@@ -22,9 +22,9 @@ UserInterface::UserInterface() :
               &RM.getTexture("rag3_logo")),
         gui_theme_("../data/config/gui_theme.txt"),
         tiles_window_(this, &gui_, &gui_theme_, "Tiles",
-                      {CFG.get<float>("tiles_window_x"), CFG.get<float>("tiles_window_y")}, "tiles_window"),
+                      {CFG.get<float>("tiles_window_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("tiles_window_y") * CFG.get<float>("user_interface_zoom")}, "tiles_window"),
         objects_window_(this, &gui_, &gui_theme_, "Objects",
-                        {CFG.get<float>("objects_window_x"), CFG.get<float>("objects_window_y")}, "objects_window"),
+                        {CFG.get<float>("objects_window_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("objects_window_y") * CFG.get<float>("user_interface_zoom")}, "objects_window"),
         menu_window_(this, &gui_, &gui_theme_),
         save_window_(&gui_, &gui_theme_),
         load_window_(&gui_, &gui_theme_),
@@ -45,11 +45,11 @@ UserInterface::UserInterface() :
     gui_.get("character_object_window")->setVisible(false);
     gui_.get("obstacle_object_window")->setVisible(false);
 
-    information_.setPosition(CFG.get<float>("info_x"), CFG.get<float>("info_y"));
+    information_.setPosition(CFG.get<float>("info_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("info_y") * CFG.get<float>("user_interface_zoom"));
     information_.setFillColor(sf::Color(255, 255, 255, 0));
     information_.setFont(RM.getFont("editor"));
     information_.setString("");
-    information_.setCharacterSize(20);
+    information_.setCharacterSize(20 * CFG.get<float>("user_interface_zoom"));
     information_a_ = 0.0f;
 
     gui_.setFont(RM.getFont("editor"));
@@ -59,7 +59,8 @@ void UserInterface::generateMenuBar(sf::RenderWindow& window)
 {
     auto list_menu = tgui::MenuBar::create();
     list_menu->setRenderer(gui_theme_.getRenderer("MenuBar"));
-    list_menu->setSize("100%", 35);
+    list_menu->setSize("100%", 35 * CFG.get<float>("user_interface_zoom"));
+    list_menu->setTextSize(list_menu->getTextSize() * CFG.get<float>("user_interface_zoom"));
     list_menu->addMenu("File");
     list_menu->addMenuItem("File", "Clear existing map");
     list_menu->connectMenuItem("File", "Clear existing map", [&]() { Editor::get().clearMap(); });

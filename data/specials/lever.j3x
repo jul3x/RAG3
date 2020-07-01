@@ -6,6 +6,9 @@ float map_offset_y=0.0f
 
 float collision_size_x=32.0f
 
+float collision_offset_x=0.0f
+float collision_offset_y=0.0f
+
 int frames_number=1
 float frame_duration=0.0f
 

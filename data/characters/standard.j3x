@@ -10,6 +10,9 @@ float size_y=64.0f
 float collision_size_x=28.0f
 float collision_size_y=36.0f
 
+float collision_offset_x=0.0f
+float collision_offset_y=0.0f
+
 float map_offset_x=0.0f
 float map_offset_y=8.0f
 

@@ -11,6 +11,9 @@ int z_index=1
 
 float collision_size_x=20.0f
 
+float collision_offset_x=0.0f
+float collision_offset_y=0.0f
+
 string default_activation=OnEnter
 list[string] default_functions=[SetOnFire]
 list[string] default_datas=[Null]

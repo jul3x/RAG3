@@ -4,6 +4,9 @@ float size_y=96.0f
 float collision_size_x=0.0f
 float collision_size_y=0.0f
 
+float collision_offset_x=0.0f
+float collision_offset_y=0.0f
+
 float map_offset_x=0.0f
 float map_offset_y=16.0f
 

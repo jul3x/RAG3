@@ -396,11 +396,13 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
                                            float time_elapsed)
 {
     const auto& current_item = Editor::get().getCurrentItem();
+    auto is_tile = false;
 
     if (current_item.first.find("tile") != std::string::npos)
     {
         crosshair_.setPosition(DecorationTile::SIZE_X_ * std::round(mouse_world_pos.x / DecorationTile::SIZE_X_),
                                DecorationTile::SIZE_Y_ * std::round(mouse_world_pos.y / DecorationTile::SIZE_Y_));
+        is_tile = true;
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
     {
@@ -431,20 +433,28 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
                                                        utils::j3x::get<float>(RM.getObjectParams(current_item.first,
                                                                                                  current_item.second),
                                                                               "size_y"))});
+        if (is_tile)
+        {
+            crosshair_.setSize({DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_});
+            crosshair_.changeOrigin({DecorationTile::SIZE_X_ / 2.0f, DecorationTile::SIZE_Y_ / 2.0f});
+        }
+        else
+        {
+            crosshair_.setSize(
+                    sf::Vector2f(
+                            utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
+                            utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")));
+            crosshair_.changeOrigin(
+                    sf::Vector2f(
+                            utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
+                            utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")) /
+                    2.0f +
+                    sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
+                                                        "map_offset_x"),
+                                 utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
+                                                        "map_offset_y")));
 
-        crosshair_.setSize(
-                sf::Vector2f(
-                        utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
-                        utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")));
-        crosshair_.changeOrigin(
-                sf::Vector2f(
-                        utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
-                        utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")) /
-                2.0f +
-                sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
-                                                    "map_offset_x"),
-                             utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
-                                                    "map_offset_y")));
+        }
 
         if (current_item.first == "weapons" && sf::Mouse::isButtonPressed(sf::Mouse::Left) &&
             !sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))

@@ -121,8 +121,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                         type = std::stoi(word);
                         if (type > 0)
                         {
-                            blocked.at(count % w).at(count / w) =
-                                    utils::j3x::get<float>(RM.getObjectParams("obstacles_tiles", std::to_string(type)), "endurance");
+                            blocked.at(count % w).at(count / w) = 9999999.0f;
                             obstacles_tiles.emplace_back(std::make_shared<ObstacleTile>(
                                     sf::Vector2f((count % w) * DecorationTile::SIZE_X_,
                                                  (count / w) * DecorationTile::SIZE_Y_),

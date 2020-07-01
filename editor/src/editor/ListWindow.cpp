@@ -67,6 +67,12 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
             auto size = sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams(tab_name, item), "size_x"),
                                      utils::j3x::get<float>(RM.getObjectParams(tab_name, item), "size_y"));
 
+            if (utils::num::isNearlyEqual(size, {}))
+            {
+                size.x = DecorationTile::SIZE_X_;
+                size.y = DecorationTile::SIZE_Y_;
+            }
+
             auto full_name = tab_name + "/" + item;
 
             if (utils::j3x::get<int>(RM.getObjectParams(tab_name, item), "frames_number") == 1)

@@ -425,14 +425,6 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
 
         crosshair_.changeTexture(&RM.getTexture(current_item.first + "/" + current_item.second), true);
 
-        if (utils::j3x::get<int>(RM.getObjectParams(current_item.first, current_item.second), "frames_number") > 1)
-            crosshair_.changeTextureRect({{0, 0},
-                                          sf::Vector2i(utils::j3x::get<float>(
-                                                               RM.getObjectParams(current_item.first, current_item.second),
-                                                               "size_x"),
-                                                       utils::j3x::get<float>(RM.getObjectParams(current_item.first,
-                                                                                                 current_item.second),
-                                                                              "size_y"))});
         if (is_tile)
         {
             crosshair_.setSize({DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_});
@@ -453,6 +445,16 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
                                                         "map_offset_x"),
                                  utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
                                                         "map_offset_y")));
+
+
+            if (utils::j3x::get<int>(RM.getObjectParams(current_item.first, current_item.second), "frames_number") > 1)
+                crosshair_.changeTextureRect({{0, 0},
+                                              sf::Vector2i(utils::j3x::get<float>(
+                                                                   RM.getObjectParams(current_item.first, current_item.second),
+                                                                   "size_x"),
+                                                           utils::j3x::get<float>(RM.getObjectParams(current_item.first,
+                                                                                                     current_item.second),
+                                                                                  "size_y"))});
 
         }
 

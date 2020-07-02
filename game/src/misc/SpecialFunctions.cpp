@@ -37,6 +37,7 @@ SpecialFunctions::SpecialFunctions()
     functions_["SpawnMiniLava"] = std::make_tuple(&spawnMiniLava, "", false);
     functions_["SpawnFlame"] = std::make_tuple(&spawnFlame, "", false);
     functions_["SpawnAmmo"] = std::make_tuple(&spawnAmmo, "", false);
+    functions_["SpawnDestruction"] = std::make_tuple(&spawnDestruction, "", true);
     functions_["Null"] = std::make_tuple(&nullFunc, "", true);
     functions_["Deactivate"] = std::make_tuple(&deactivate, "", true);
     functions_["Destroy"] = std::make_tuple(&destroy, "", true);
@@ -387,4 +388,11 @@ void SpecialFunctions::activateSpecial(Functional* obj, const std::string& data,
     auto special_id = std::stoi(data);
     auto special = Game::get().getMap().getObjectById<Special>(special_id);
     special->activate();
+}
+
+void SpecialFunctions::spawnDestruction(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Spawn destruction." << std::endl;
+    auto object = dynamic_cast<AbstractPhysicalObject*>(obj);
+    Game::get().spawnDecoration(object->getPosition(), "destroyed_wall_" + std::to_string(utils::num::getRandom(1, 3)));
 }

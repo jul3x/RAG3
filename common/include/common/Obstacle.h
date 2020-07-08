@@ -34,8 +34,10 @@ public:
     bool update(float time_elapsed) override;
 
 private:
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
     std::unique_ptr<graphics::LightPoint> light_;
-    std::unique_ptr<graphics::StaticShadow> static_shadow_;
+    std::unique_ptr<graphics::StaticTextureShadow> static_shadow_;
 
 };
 

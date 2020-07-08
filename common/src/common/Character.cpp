@@ -86,11 +86,11 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
     }
 
     auto shadow_pos = this->getPosition();
-    static_shadow_ = std::make_unique<graphics::StaticShadow>(
+    static_shadow_ = std::make_unique<graphics::StaticTextureShadow>(
             shadow_pos, this->getSize(), CFG.get<float>("graphics/shadow_direction"),
             CFG.get<float>("graphics/shadow_length_factor"),
             &RM.getTexture("characters/" + id), sf::Color(CFG.get<int>("graphics/shadow_color")),
-            z_index_ - 1,
+            z_index_,
             utils::j3x::get<int>(RM.getObjectParams("characters", id), "frames_number"),
             utils::j3x::get<float>(RM.getObjectParams("characters", id), "frame_duration"));
 }
@@ -278,6 +278,7 @@ bool Character::update(float time_elapsed)
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
+    target.draw(*static_shadow_, states);
     if (current_rotation_quarter_ == 3 || current_rotation_quarter_ == 4)
     {
         if (!weapons_in_backpack_.empty())

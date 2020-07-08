@@ -22,3 +22,4 @@ bool is_drawable=1
 
 bool light_point=1
 bool default_active=1
+bool shadow=0

@@ -20,11 +20,6 @@ class ObstacleTile : public StaticObject, public Identifiable {
 public:
     ObstacleTile(const sf::Vector2f& position, const std::string& id);
 
-    graphics::StaticShadow* getShadow() const;
-
-private:
-    std::unique_ptr<graphics::StaticShadow> static_shadow_;
-
 };
 
 #endif //RAG3_COMMON_INCLUDE_COMMON_OBSTACLETILE_H

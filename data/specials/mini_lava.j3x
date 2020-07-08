@@ -21,4 +21,5 @@ bool is_drawable=1
 int z_index=-2
 
 bool light_point=0
+bool shadow=0
 bool default_active=1

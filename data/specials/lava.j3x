@@ -22,3 +22,4 @@ int z_index=-2
 
 bool light_point=1
 bool default_active=1
+bool shadow=0

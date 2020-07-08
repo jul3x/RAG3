@@ -22,3 +22,4 @@ list[string] default_datas=[Null]
 int z_index=1
 
 bool light_point=0
+bool shadow=0

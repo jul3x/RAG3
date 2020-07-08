@@ -31,11 +31,19 @@ public:
     [[nodiscard]] bool isDrawable() const;
     [[nodiscard]] bool getAdditionalBooleanData() const;
     graphics::LightPoint* getLightPoint() const;
+    graphics::StaticShadow* getShadow() const;
+
+    bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f) override;
+    void setCurrentFrame(short int frame) override;
+    void changeTexture(sf::Texture* texture, bool reset = false) override;
 
     void setAdditionalBooleanData(bool data);
 
 private:
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
     std::unique_ptr<graphics::LightPoint> light_;
+    std::unique_ptr<graphics::StaticTextureShadow> static_shadow_;
     bool is_drawable_;
 
     bool additional_boolean_data_;

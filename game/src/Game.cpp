@@ -429,15 +429,6 @@ void Game::draw(graphics::Graphics& graphics)
         }
     };
 
-    auto draw_shadow = [&graphics](auto& list) {
-        for (const auto& obj : list)
-        {
-            auto shadow = obj->getShadow();
-            if (shadow != nullptr)
-                graphics.drawSorted(*shadow);
-        }
-    };
-
 //    debug_map_blockage_->draw(graphics);
     draw(map_->getList<DecorationTile>());
     draw(map_->getList<Decoration>());
@@ -459,13 +450,6 @@ void Game::draw(graphics::Graphics& graphics)
         graphics.drawSorted(*player_clone_);
 
     engine_->drawSortedAnimationEvents();
-
-    draw_shadow(map_->getList<ObstacleTile>());
-    draw_shadow(map_->getList<NPC>());
-    draw_shadow(map_->getList<Obstacle>());
-    graphics.drawSorted(*player_->getShadow());
-    if (player_clone_ != nullptr)
-        graphics.drawSorted(*player_clone_->getShadow());
 
     graphics.drawAlreadySorted();
 

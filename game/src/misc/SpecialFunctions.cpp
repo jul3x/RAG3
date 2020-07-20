@@ -37,6 +37,7 @@ SpecialFunctions::SpecialFunctions()
     functions_["SpawnMiniLava"] = std::make_tuple(&spawnMiniLava, "", false);
     functions_["SpawnFlame"] = std::make_tuple(&spawnFlame, "", false);
     functions_["SpawnAmmo"] = std::make_tuple(&spawnAmmo, "", false);
+    functions_["SpawnDestruction"] = std::make_tuple(&spawnDestruction, "", true);
     functions_["Null"] = std::make_tuple(&nullFunc, "", true);
     functions_["Deactivate"] = std::make_tuple(&deactivate, "", true);
     functions_["Destroy"] = std::make_tuple(&destroy, "", true);
@@ -96,8 +97,9 @@ void SpecialFunctions::openDoor(Functional* obj, const std::string& data, Charac
     std::cout << "[SpecialFunction] Open door." << std::endl;
     auto door_id = std::stoi(data);
     auto door = Game::get().getMap().getObjectById<Obstacle>(door_id);
-    auto grid_pos = std::make_pair(std::round(door->getPosition().x / DecorationTile::SIZE_X_),
-                                   std::round(door->getPosition().y / DecorationTile::SIZE_Y_));
+
+    auto grid_pos = std::make_pair(std::round((door->getPosition().x + utils::j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_offset_x")) / DecorationTile::SIZE_X_),
+                                   std::round((door->getPosition().y + utils::j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_offset_y")) / DecorationTile::SIZE_Y_));
 
     if (door->getCollisionArea().getType() == collision::Area::Type::None)
     {
@@ -160,20 +162,27 @@ void SpecialFunctions::addWeapon(Functional* obj, const std::string& data, Chara
     if (data_parsed.length() > 5 && data_parsed.substr(0, 5) == "melee")
     {
         weapon = std::make_shared<MeleeWeapon>(user, data_parsed);
-        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
-        Game::get().registerHoveringObject(melee_weapon->getMeleeWeaponArea());
     }
     else
     {
         weapon = std::make_shared<ShootingWeapon>(user, data_parsed);
     }
 
-    if (!weapon->getId().empty())
-        weapon->registerSpawningFunction(
-                Game::get().getSpawningFunction(utils::j3x::get<std::string>(
-                        RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
 
-    user->addWeaponToBackpack(weapon);
+
+    if (user->addWeaponToBackpack(weapon))
+    {
+        if (!weapon->getId().empty())
+            weapon->registerSpawningFunction(
+                    Game::get().getSpawningFunction(utils::j3x::get<std::string>(
+                            RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
+
+        if (data_parsed.substr(0, 5) == "melee")
+        {
+            auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+            Game::get().registerHoveringObject(melee_weapon->getMeleeWeaponArea());
+        }
+    }
 }
 
 void SpecialFunctions::addAmmo(Functional* obj, const std::string& data, Character* user)
@@ -343,7 +352,7 @@ void SpecialFunctions::deactivate(Functional *obj, const std::string &data, Char
 
 void SpecialFunctions::destroy(Functional *obj, const std::string &data, Character* user)
 {
-    std::cout << "[SpecialFunction] Destroying." << std::endl;
+    std::cout << "[SpecialFunction] Destroying " + std::to_string(obj->getUniqueId()) + "." << std::endl;
     obj->destroy();
 }
 
@@ -379,4 +388,11 @@ void SpecialFunctions::activateSpecial(Functional* obj, const std::string& data,
     auto special_id = std::stoi(data);
     auto special = Game::get().getMap().getObjectById<Special>(special_id);
     special->activate();
+}
+
+void SpecialFunctions::spawnDestruction(Functional* obj, const std::string& data, Character* user)
+{
+    std::cout << "[SpecialFunction] Spawn destruction." << std::endl;
+    auto object = dynamic_cast<AbstractPhysicalObject*>(obj);
+    Game::get().spawnDecoration(object->getPosition(), "destroyed_wall_" + std::to_string(utils::num::getRandom(1, 3)));
 }

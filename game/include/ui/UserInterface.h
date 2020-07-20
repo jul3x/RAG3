@@ -68,7 +68,7 @@ private:
     static constexpr float FPS_X_ = 150.0f;
     static constexpr float FPS_Y_ = 300.0f;
 
-    static constexpr float OBJECT_USE_TEXT_OFFSET_Y_ = 100.0f;
+    static constexpr float OBJECT_USE_TEXT_OFFSET_Y_ = 32.0f;
 
     WeaponsBar weapons_bar_;
     Crosshair crosshair_;

@@ -25,11 +25,19 @@ public:
              const std::vector<std::string>& datas, int u_id = -1);
 
     graphics::LightPoint* getLightPoint() const;
+    graphics::StaticShadow* getShadow() const;
+
+    bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f) override;
+    void setCurrentFrame(short int frame) override;
+    void changeTexture(sf::Texture* texture, bool reset = false) override;
 
     bool update(float time_elapsed) override;
 
 private:
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
     std::unique_ptr<graphics::LightPoint> light_;
+    std::unique_ptr<graphics::StaticShadow> static_shadow_;
 
 };
 

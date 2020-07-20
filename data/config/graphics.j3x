@@ -1,16 +1,18 @@
 bool auto_resolution=1
-bool full_screen=0
+bool full_screen=1
 int window_width_px=1280
 int window_height_px=720
-float user_interface_zoom=1.0f
+float user_interface_zoom=2.0f
+float global_zoom=4.0f
 
 int32 background_color=0x11111100
 int32 trail_color=0xFFFFFF30
 float full_trail_time=0.2f
 int32 font_color=0xFFFFFFAA
 int32 fire_color=0xFFFFFFFF
-int fire_frames=8
-float fire_image_size=200.0f
+float fire_frame_times=2.5
+int fire_frames=4
+float fire_image_size=66.0f
 
 float fade_in_out_duration=0.2f
 float camera_speed=4.0f
@@ -19,10 +21,10 @@ float camera_zoom_inout_speed=4000.0f
 float camera_reverse_rotation=400.0f
 float camera_reverse_return_rotation=3.0f
 float camera_rotation_recoil=8.0f
-float camera_position_recoil=500.0f
+float camera_position_recoil=150.0f
 float camera_shaking_time=0.4f
 float camera_zoom_inout_time=0.7f
-float camera_right_click_distance_factor=300.0f
+float camera_right_click_distance_factor=100.0f
 float camera_right_click_zoom_factor=0.6f
 
 float blood_pulsating_time=5.0f
@@ -32,10 +34,13 @@ float inertial_states_change_speed=4.0f
 float achievement_show_speed=4.0f
 float achievement_show_time=10.0f
 
-float characters_light_point_size=600.0f
-float obstacles_light_point_size=300.0f
-float specials_light_point_size=300.0f
-float decorations_light_point_size=300.0f
-float fire_light_point_size=200.0f
-float animations_light_point_size=200.0f
-int32 lightning_color=0x888888FF
+float characters_light_point_size=150.0f
+float obstacles_light_point_size=96.0f
+float specials_light_point_size=96.0f
+float decorations_light_point_size=96.0f
+float fire_light_point_size=64.0f
+float animations_light_point_size=128.0f
+int32 lightning_color=0x777777FF
+float shadow_direction=0.4f
+float shadow_length_factor=0.8f
+int32 shadow_color=0x000000AA

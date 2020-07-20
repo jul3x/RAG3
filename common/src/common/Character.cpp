@@ -42,14 +42,15 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
         max_life_(utils::j3x::get<float>(RM.getObjectParams("characters", id), "max_health")),
         ammo_state_(AmmoState::High),
         life_state_(LifeState::High),
-        gun_offset_({utils::j3x::get<float>(RM.getObjectParams("characters", id), "gun_offset_x"),
-                     utils::j3x::get<float>(RM.getObjectParams("characters", id), "gun_offset_y")}),
+        gun_offset_({utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", id), "gun_offset_x").front(),
+                     utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", id), "gun_offset_y").front()}),
         current_rotation_quarter_(1),
         speed_factor_(1.0f),
         rotate_to_(0.0f),
         current_special_object_(nullptr),
         current_talkable_character_(nullptr),
         should_respond_(false),
+        is_moving_(false),
         is_talkable_(utils::j3x::get<int>(RM.getObjectParams("characters", id), "is_talkable")),
         Shootable(utils::j3x::get<float>(RM.getObjectParams("characters", id), "max_health"))
 {
@@ -78,12 +79,20 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
 
     if (utils::j3x::get<int>(RM.getObjectParams("characters", id), "light_point"))
     {
+        float light_size = CFG.get<float>("graphics/characters_light_point_size") * CFG.get<float>("graphics/global_zoom");
         light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
-                sf::Vector2f{CFG.get<float>("graphics/characters_light_point_size"), CFG.get<float>("graphics/characters_light_point_size")},
-                &RM.getTexture("lightpoint"));
+                                                        sf::Vector2f{light_size, light_size},
+                                                        &RM.getTexture("lightpoint"));
     }
 
-    shape_.setScale(2.0f, 2.0f);
+    auto shadow_pos = this->getPosition();
+    static_shadow_ = std::make_unique<graphics::TransformedTextureShadow>(
+            shadow_pos, this->getSize(), CFG.get<float>("graphics/shadow_direction"),
+            CFG.get<float>("graphics/shadow_length_factor"),
+            &RM.getTexture("characters/" + id), sf::Color(CFG.get<int>("graphics/shadow_color")),
+            z_index_,
+            utils::j3x::get<int>(RM.getObjectParams("characters", id), "frames_number"),
+            utils::j3x::get<float>(RM.getObjectParams("characters", id), "frame_duration"));
 }
 
 bool Character::shot()
@@ -135,7 +144,7 @@ void Character::makeOnlyOneWeapon(const std::string& id, float state)
     weapons_in_backpack_.at(current_weapon_)->setState(state);
 }
 
-void Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
+bool Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
 {
     // If weapon exists
     for (auto& weapon : weapons_in_backpack_)
@@ -143,7 +152,7 @@ void Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
         if (weapon->getId() == ptr->getId())
         {
             weapon->setState(1.0f);
-            return;
+            return false;
         }
     }
     // If there are less than 4 weapons in backpack
@@ -152,11 +161,12 @@ void Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
         if (weapon->getId().empty())
         {
             weapon = ptr;
-            return;
+            return true;
         }
     }
 
     weapons_in_backpack_.emplace_back(ptr);
+    return true;
 }
 
 void Character::addAmmoToWeapon(const std::string& id)
@@ -212,17 +222,25 @@ bool Character::update(float time_elapsed)
 {
     bool is_alive = life_ > 0;
     DynamicObject::update(time_elapsed);
+    auto vel = std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
+    if (!utils::num::isNearlyEqual(vel, 0.0f, utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") / 3.0f))
+    {
+        is_moving_ = true;
+    }
+    else
+    {
+        vel = 0.0f;
+        is_moving_ = false;
+    }
+
+    this->updateAnimation(time_elapsed,
+                          vel /
+                          utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed"));
+
     weapons_in_backpack_.at(current_weapon_)->update(time_elapsed);
 
     if (decorator_ != nullptr)
         decorator_->updateAnimation(time_elapsed);
-
-    if (light_ != nullptr)
-        light_->setPosition(this->getPosition());
-
-    auto vel = std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
-    this->updateAnimation(time_elapsed,
-                          vel / utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed"));
 
     handleAmmoState();
     handleLifeState();
@@ -240,6 +258,7 @@ bool Character::update(float time_elapsed)
         this->setRotation(rotate_to_);
     else
         this->setRotation(new_rotation);
+
 
     if (should_respond_)
     {
@@ -259,13 +278,27 @@ bool Character::update(float time_elapsed)
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    target.draw(shape_, states);
+    target.draw(*static_shadow_, states);
+    if (current_rotation_quarter_ == 3 || current_rotation_quarter_ == 4)
+    {
+        if (!weapons_in_backpack_.empty())
+            target.draw(*weapons_in_backpack_.at(current_weapon_), states);
 
-    if (decorator_ != nullptr)
-        target.draw(*decorator_, states);
+        target.draw(shape_, states);
 
-    if (!weapons_in_backpack_.empty())
-        target.draw(*weapons_in_backpack_.at(current_weapon_), states);
+        if (decorator_ != nullptr)
+            target.draw(*decorator_, states);
+    }
+    else
+    {
+        target.draw(shape_, states);
+
+        if (decorator_ != nullptr)
+            target.draw(*decorator_, states);
+
+        if (!weapons_in_backpack_.empty())
+            target.draw(*weapons_in_backpack_.at(current_weapon_), states);
+    }
 }
 
 graphics::LightPoint* Character::getLightPoint() const
@@ -278,10 +311,14 @@ void Character::setRotation(float theta)
     weapons_in_backpack_.at(current_weapon_)->setRotation(theta);
 
     auto get_quarter = [](float theta) {
-        if (theta >= 0.0f && theta < 90.0f)
+        if (theta >= 0.0f && theta < 45.0f)
             return 1;
-        else if (theta >= 90.0f && theta < 180.0f)
+        else if (theta >= 45.0f && theta < 90.0f)
+            return 11;
+        else if (theta >= 90.0f && theta < 135.0f)
             return 2;
+        else if (theta >= 135.0f && theta < 180.0f)
+            return 21;
         else if (theta >= 180.0f && theta < 270.0f)
             return 3;
         else
@@ -290,50 +327,86 @@ void Character::setRotation(float theta)
 
     short int new_quarter = get_quarter(theta);
 
-    std::string added_name = "";
-    if (utils::num::isNearlyEqual(this->getVelocity(), {},
-            utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") / 6.0f))
+    static std::string added_name;
+    if (!is_moving_)
     {
         added_name = "_standing";
-        shape_.setTextureRect(sf::IntRect(sf::Vector2i{0, 0}, static_cast<sf::Vector2i>(this->getSize())));
+        this->setCurrentFrame(0);
     }
+    else
+    {
+        added_name = "";
+    }
+
+    static std::string weapon_added_name;
+    weapon_added_name = "";
 
     switch (current_rotation_quarter_)
     {
         case 1:
         {
-            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + added_name));
-
-            gun_offset_.x = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
-            gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
+            weapon_added_name = "_back";
+            gun_offset_.x = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
+            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
 
-            if (new_quarter == 2 && theta >= 90.0f + Character::ROTATING_HYSTERESIS_)
-                current_rotation_quarter_ = 2;
-            else if (new_quarter != 2)
+            if (new_quarter == 11 && theta >= 45.0f + Character::ROTATING_HYSTERESIS_)
+                current_rotation_quarter_ = 11;
+            else if (new_quarter != 11)
+                current_rotation_quarter_ = new_quarter;
+            break;
+        }
+        case 11:
+        {
+            weapon_added_name = "_back";
+            gun_offset_.x = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
+            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
+
+            weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
+
+            if (new_quarter == 3 && theta >= 90.0f + Character::ROTATING_HYSTERESIS_)
+                current_rotation_quarter_ = 3;
+            else if (new_quarter != 3)
                 current_rotation_quarter_ = new_quarter;
             break;
         }
         case 2:
         {
-            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + added_name + "_2"));
-            gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
-            gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
+            added_name += "_2";
+            weapon_added_name = "_back";
+            gun_offset_.x = -utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
+            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
+
+            weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
+
+            if (new_quarter == 11 && theta < 90.0f - Character::ROTATING_HYSTERESIS_)
+                current_rotation_quarter_ = 1;
+            else if (new_quarter != 11)
+                current_rotation_quarter_ = new_quarter;
+            break;
+        }
+        case 21:
+        {
+            added_name += "_2";
+            weapon_added_name = "_back";
+            gun_offset_.x = -utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
+            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
 
-            if (new_quarter == 1 && theta < 90.0f - Character::ROTATING_HYSTERESIS_)
-                current_rotation_quarter_ = 1;
-            else if (new_quarter != 1)
+            if (new_quarter == 2 && theta < 135.0f - Character::ROTATING_HYSTERESIS_)
+                current_rotation_quarter_ = 2;
+            else if (new_quarter != 2)
                 current_rotation_quarter_ = new_quarter;
             break;
         }
         case 3:
         {
-            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + added_name + "_3"));
-            gun_offset_.x = -utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
-            gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
+            added_name += "_3";
+
+            gun_offset_.x = -utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
+            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
 
@@ -345,9 +418,10 @@ void Character::setRotation(float theta)
         }
         case 4:
         {
-            shape_.setTexture(&RM.getTexture("characters/" + this->getId() + added_name + "_4"));
-            gun_offset_.x = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_x");
-            gun_offset_.y = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "gun_offset_y");
+            added_name += "_4";
+
+            gun_offset_.x = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
+            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
 
@@ -360,6 +434,14 @@ void Character::setRotation(float theta)
         default:
             throw std::runtime_error("[Character] Invalid rotation quarter!");
     }
+
+    this->changeTexture(&RM.getTexture("characters/" + this->getId() + added_name));
+
+    auto& weapon_id = weapons_in_backpack_.at(current_weapon_)->getId();
+
+    if (!weapon_id.empty())
+        weapons_in_backpack_.at(current_weapon_)->changeTexture(
+                &RM.getTexture("weapons/" + weapon_id + weapon_added_name));
 }
 
 void Character::setPosition(const sf::Vector2f& pos)
@@ -372,18 +454,18 @@ void Character::setPosition(const sf::Vector2f& pos)
 
     if (talkable_area_ != nullptr)
         talkable_area_->setPosition(pos);
+
+    if (light_ != nullptr)
+        light_->setPosition(pos);
+
+    static_shadow_->setPosition(pos -
+                                sf::Vector2f{utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_x"),
+                                             utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_y")});
 }
 
 void Character::setPosition(float x, float y)
 {
-    AbstractDrawableObject::setPosition(x, y);
-    weapons_in_backpack_.at(current_weapon_)->setPosition(x + gun_offset_.x, y + gun_offset_.y);
-
-    if (decorator_ != nullptr)
-        decorator_->setPosition(x, y);
-
-    if (talkable_area_ != nullptr)
-        talkable_area_->setPosition(x, y);
+    this->setPosition({x, y});
 }
 
 void Character::setPositionX(float x)
@@ -396,6 +478,11 @@ void Character::setPositionX(float x)
 
     if (talkable_area_ != nullptr)
         talkable_area_->setPositionX(x);
+
+    if (light_ != nullptr)
+        light_->setPositionX(x);
+
+    static_shadow_->setPositionX(x - utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_x"));
 }
 
 void Character::setPositionY(float y)
@@ -408,6 +495,11 @@ void Character::setPositionY(float y)
 
     if (talkable_area_ != nullptr)
         talkable_area_->setPositionY(y);
+
+    if (light_ != nullptr)
+        light_->setPositionY(y);
+
+    static_shadow_->setPositionY(y - utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_y"));
 }
 
 void Character::setWeaponPointing(const sf::Vector2f& point)
@@ -600,4 +692,27 @@ const std::list<std::string>& Character::getTalkScenario() const
 void Character::setTalkScenario(const std::list<std::string>& str)
 {
     talk_scenario_ = str;
+}
+
+bool Character::updateAnimation(float time_elapsed, float animation_speed_factor)
+{
+    static_shadow_->updateAnimation(time_elapsed, animation_speed_factor);
+    return AbstractDrawableObject::updateAnimation(time_elapsed, animation_speed_factor);
+}
+
+void Character::setCurrentFrame(short int frame)
+{
+    AbstractDrawableObject::setCurrentFrame(frame);
+    static_shadow_->setCurrentFrame(frame);
+}
+
+void Character::changeTexture(sf::Texture* texture, bool reset)
+{
+    AbstractDrawableObject::changeTexture(texture, reset);
+    static_shadow_->changeTexture(texture);
+}
+
+graphics::StaticShadow* Character::getShadow() const
+{
+    return static_shadow_.get();
 }

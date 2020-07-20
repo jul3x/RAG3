@@ -22,28 +22,28 @@ tile_map:
 0 0 2 -2 -2 -2 -2 -2 -2 -2 -2 -2 2 2 2 -2 -2 -2 -2 -2 -2 -2 -2 -2 2 2 -1 -1 -1 -1 2 2 -1 -1 -1 -1 2 2 -1 -1 -1 -1 2 0 0 0 0 0 2 -1 -1 -1 -1 1 1 1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 2 -1 -1 -1 -1 1 1 1 -1 -1 -1 -1 2 
 0 0 0 2 -2 -2 -2 -2 -2 -2 -2 2 2 -2 2 2 -2 -2 -2 -2 -2 -2 -2 2 2 2 -1 -1 -1 -1 2 2 -1 -1 -1 -1 2 2 -1 -1 -1 -1 2 0 0 0 0 0 2 -1 -1 -1 1 1 1 1 1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 2 -1 -1 -1 1 1 1 1 1 -1 -1 -1 2 
 0 0 0 0 2 2 2 2 2 2 2 -2 -2 -2 -2 2 2 2 2 2 2 -2 2 2 0 2 -1 -1 -1 -1 2 2 -1 -1 -1 -1 2 2 -1 -1 -1 -1 2 0 0 0 0 0 2 -1 -1 -1 -1 1 1 1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 2 -1 -1 -1 -1 1 1 1 -1 -1 -1 -1 2 
-0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 -2 -2 -2 -2 2 2 -2 -2 2 0 0 0 2 2 2 2 0 0 2 2 2 2 0 0 2 2 2 2 0 0 0 0 0 0 2 -1 -1 -1 -1 -1 1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 2 -1 -1 -1 -1 -1 1 -1 -1 -1 -1 -1 2 
-0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 -2 -2 -2 -2 -2 0 -2 -2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 
-0 0 0 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 -2 0 -2 -2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 
-0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 0 0 -2 -2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 -1 -1 -1 -1 2 2 2 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 0 -2 -2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 0 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 -1 -1 -1 -1 -1 2 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 0 2 2 2 2 0 0 0 0 0 0 0 0 0 0 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 -1 -1 -1 2 -1 -1 -1 -1 2 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 1 -1 -1 -1 -1 -1 -1 -1 2 2 -1 0 2 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 2 2 2 -2 -2 -2 2 0 0 0 0 0 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 -1 -1 -1 -1 -1 1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 2 2 2 -2 -2 -2 2 0 0 0 0 0 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 -1 -1 -1 -1 -1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 2 2 2 -2 -2 -2 2 0 0 0 0 0 2 -1 -1 -1 -1 -1 -1 -1 1 1 1 1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 -1 -1 -1 -1 1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 2 2 2 -2 -2 -2 2 0 0 0 0 2 -1 -1 -1 -1 -1 -1 -1 1 1 -2 -2 1 1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 -1 -1 -1 1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 2 2 2 -2 -2 -2 2 0 0 0 0 2 -1 -1 -1 -1 -1 -1 1 1 -2 -2 -2 -2 1 1 -1 -1 -1 -1 -1 -1 2 2 2 2 -1 -1 -1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 2 2 2 -2 -2 -2 2 0 0 0 0 2 -1 -1 -1 -1 -1 -1 1 1 -2 -2 -2 -2 1 1 -1 -1 -1 -1 -1 -1 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 -2 -2 -2 -2 -2 -2 2 0 0 0 0 2 -1 -1 -1 -1 -1 -1 -1 1 1 -2 -2 1 1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 -2 -2 -2 -2 -2 -2 2 0 0 0 0 0 2 -1 -1 -1 -1 -1 -1 -1 1 1 1 1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 -2 -2 -2 -2 -2 -2 2 0 0 0 0 0 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 -2 -2 -2 -2 -2 -2 -2 2 2 0 0 0 0 0 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 3 -2 -2 -2 2 0 0 0 0 0 0 0 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 -2 -2 3 -2 -2 2 2 0 0 0 0 0 0 0 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 1 1 1 1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 3 -2 -2 2 0 0 0 0 0 0 0 0 0 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 2 2 2 -1 -1 -1 -1 1 1 1 1 1 1 1 1 1 -1 2 0 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 3 -2 -2 2 0 0 0 0 0 0 0 0 0 0 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 2 2 2 2 -1 -1 -1 -1 -1 1 1 1 1 1 1 1 1 1 1 2 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 -2 -2 -2 -2 2 2 -2 -2 2 0 0 0 2 2 2 2 0 0 2 2 2 2 0 0 2 2 -26 -27 -27 -26 -26 -27 -26 -27 -28 -1 -1 -1 -1 -1 1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 2 -1 -1 -1 -1 -1 1 -1 -1 -1 -1 -1 2 
+0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 -2 -2 -2 -2 -2 0 -2 -2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -27 -26 -26 -27 -22 -22 -21 -22 -28 -26 -27 -28 -27 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 
+0 0 0 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 -2 0 -2 -2 2 0 0 0 0 0 0 0 0 0 0 0 0 -28 -28 -28 -22 -20 -22 2 2 2 2 -24 -20 -23 -26 -28 -27 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 2 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 
+0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 0 0 -2 -2 2 0 0 0 0 0 0 0 0 0 0 0 -28 -26 -22 -25 2 2 2 -1 -1 -1 -1 2 2 2 -22 -23 -27 -27 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 0 -2 -2 2 0 0 0 0 0 0 0 0 0 0 0 -26 -22 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 -20 -27 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 2 2 2 2 0 0 0 0 0 0 0 0 0 0 -27 -28 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 -27 -28 -27 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 2 -1 -1 -1 -1 -1 2 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 0 2 2 2 2 0 0 0 0 0 0 0 0 0 -26 -24 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -25 -27 -26 -27 -1 -1 -1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 -1 -1 -1 2 -1 -1 -1 -1 2 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 -27 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 -26 -27 -28 -27 -1 -1 -1 -1 -1 -1 -1 1 -1 -1 -1 -1 -1 -1 -1 2 2 -1 0 2 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 2 2 2 -2 -2 -2 2 0 0 0 0 -27 -26 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -26 -26 -27 -26 -26 -1 -1 -1 -1 -1 1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 2 2 2 -2 -2 -2 2 0 0 0 0 -27 -23 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -23 -27 -28 -27 -28 -1 -1 -1 -1 -1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 2 2 2 -2 -2 -2 2 0 0 0 0 -28 2 -1 -1 -1 -1 -1 -1 -1 1 1 1 1 -1 -1 -1 -1 -1 -1 -1 1 -26 -27 -28 -27 -1 -1 -1 -1 1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 2 2 2 -2 -2 -2 2 0 0 0 0 -27 -1 -1 -1 -1 -1 -1 -1 1 1 -2 -2 1 1 -1 -1 -1 -1 -1 -1 -1 -27 -28 -27 -28 -1 -1 -1 1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 2 2 2 -2 -2 -2 2 0 0 0 0 -27 -1 -1 -1 -1 -1 -1 1 1 -2 -2 -2 -2 1 1 -1 -1 -1 -1 -1 -1 -27 -28 -26 -27 -1 -1 -1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 2 2 2 -2 -2 -2 2 0 0 0 0 -27 -1 -1 -1 -1 -1 -1 1 1 -2 -2 -2 -2 1 1 -1 -1 -1 -1 -1 -1 -27 -27 -28 -27 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 -2 -2 -2 -2 -2 -2 2 0 0 0 0 -28 -1 -1 -1 -1 -1 -1 -1 1 1 -2 -2 1 1 -1 -1 -1 -1 -1 -1 -1 -28 -26 -27 -28 -28 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 -2 -2 -2 -2 -2 -2 2 0 0 0 0 -26 -26 -26 -1 -1 -1 -1 -1 -1 1 1 1 1 -1 -1 -1 -1 -1 -1 -1 -28 -28 -28 -28 -28 -26 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 -2 -2 -2 -2 -2 -2 2 0 0 0 0 -23 -25 -26 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -27 -26 -27 -27 -27 -26 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 -2 -2 -2 -2 -2 -2 -2 2 2 0 0 0 0 2 2 -28 -27 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -28 -27 -26 -26 -26 -27 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 -2 3 -2 -2 -2 2 0 0 0 0 0 0 0 -21 -27 -28 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -26 -26 -26 -28 -26 -26 -27 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 -2 -2 3 -2 -2 2 2 0 0 0 0 0 0 0 2 -21 -27 -27 -28 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -27 -26 -27 -27 -27 -26 -21 -1 -1 -1 -1 -1 -1 -1 1 1 1 1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 3 -2 -2 2 0 0 0 0 0 0 0 0 0 2 -21 -21 -28 -28 -27 -1 -1 -1 -1 -28 -27 -28 -26 -27 -27 -26 -27 -28 -27 -23 -23 2 -1 -1 -1 -1 1 1 1 1 1 1 1 1 1 -1 2 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 3 -2 -2 2 0 0 0 0 0 0 0 0 0 0 2 2 -23 -24 -23 -5 -1 -1 -1 -20 -22 -24 -24 -25 -20 -22 -20 -20 -21 2 2 -1 -1 -1 -1 -1 1 1 1 1 1 1 1 1 1 1 2 0 0 0 0 0 0 0 0 0 0 
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 3 -2 -2 2 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 -1 -1 -1 -1 2 2 2 2 2 2 2 2 2 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 1 1 1 2 0 0 0 0 0 0 0 0 0 0 
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -2 -2 3 -2 -2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -1 -1 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 0 
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 -2 -2 3 -2 -2 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -1 -1 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 1 1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 2 0 0 0 0 0 0 0 0 0 0 
@@ -72,452 +72,452 @@ tile_map:
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 0 0 
 
 decorations: 
-blood 3600 3000 209
-blood 4100 2800 210
-blood 5000 3600 211
-blood 3900 4000 212
-blood 4200 5500 213
-blood 5100 5800 214
-blood 5600 6600 215
-blood 6700 6600 216
-blood 5900 5700 217
-blood 6000 4300 221
-blood 5200 4600 222
-blood 5600 5200 224
-blood 6900 3700 225
-blood 6300 3400 226
-blood 5500 2400 227
-blood 7600 2500 228
-blood 6625 5875 288
-blood 4325 950 357
-blood 2700 1325 358
-blood 2600 750 359
-blood 3425 150 360
-blood 3775 1375 362
-blood 2350 4225 418
-blood 2050 4500 419
-blood 2200 3625 420
-blood 2475 3125 421
-floor_side 1500 550 532
-floor_side 1400 550 535
-floor_side 1700 750 537
-floor_side 1600 650 538
-floor_side 1100 550 613
-floor_side 800 550 615
-floor_side 900 550 616
-floor_side 1000 550 617
-floor_side 700 650 618
-destroyed_wall 1200 1200 654
-destroyed_wall 1200 1100 655
-destroyed_wall 1200 1000 656
-destroyed_wall 1200 900 657
-destroyed_wall 1200 800 658
-destroyed_wall 1200 700 659
-floor_side 1200 550 669
-destroyed_wall 1200 600 671
-floor_side 1300 850 705
-floor_side 1100 850 706
-floor_side 500 1150 726
-floor_side 600 1150 727
-floor_side 700 1150 728
-floor_side 800 1150 729
-roof_side 1200 775 750
-roof 1200 725 751
-roof 2600 25 767
-roof 2600 125 768
-roof 2600 225 769
-roof 2600 325 770
-roof 2700 325 771
-roof 2700 225 772
-roof 2700 125 773
-roof 2700 25 774
-roof 2800 25 775
-roof 2900 25 776
-roof 2900 125 777
-roof 2800 125 778
-roof 2800 225 779
-roof 2900 225 780
-roof 2900 325 781
-roof 2800 325 782
-roof 2700 425 783
-roof 2800 425 784
-roof_side 2700 475 785
-roof_side 2800 475 786
-chains 599.967 1045.11 794
-floor_side 1900 2250 824
-floor_side 1700 2550 830
-floor_side 1800 2450 831
-chains 4245.02 2480.92 844
-roof 2600 1725 878
-roof 2600 1825 880
-roof 2600 1925 881
-roof 2600 2025 882
-roof 2700 2025 883
-roof 2700 1925 884
-roof 2700 1825 886
-roof 2700 1725 887
-roof 2700 1625 888
-roof 2800 1625 889
-roof 2800 1725 890
-roof 2900 1725 891
-roof 2900 1825 892
-roof 2800 1825 893
-roof 2800 1925 894
-roof 2900 1925 895
-roof 2900 2025 896
-roof 2800 2025 897
-floor_side 1300 550 916
-blood 6521.71 4967.66 923
-blood 6521.71 4967.66 924
-blood 7046.82 4698.33 925
+blood 1152 960 209
+blood 1312 896 210
+blood 1600 1152 211
+blood 1248 1280 212
+blood 1344 1760 213
+blood 1632 1856 214
+blood 1792 2112 215
+blood 2144 2112 216
+blood 1888 1824 217
+blood 1920 1376 221
+blood 1664 1472 222
+blood 1792 1664 224
+blood 2208 1184 225
+blood 2016 1088 226
+blood 1760 768 227
+blood 2432 800 228
+blood 2120 1880 288
+blood 1384 304 357
+blood 864 424 358
+blood 832 240 359
+blood 1096 48 360
+blood 1208 440 362
+blood 752 1352 418
+blood 656 1440 419
+blood 704 1160 420
+blood 792 1000 421
+floor_side 480 176 532
+floor_side 448 176 535
+floor_side 544 240 537
+floor_side 512 208 538
+floor_side 352 176 613
+floor_side 256 176 615
+floor_side 288 176 616
+floor_side 320 176 617
+floor_side 224 208 618
+destroyed_wall 384 384 654
+destroyed_wall 384 352 655
+destroyed_wall 384 320 656
+destroyed_wall 384 288 657
+destroyed_wall 384 256 658
+destroyed_wall 384 224 659
+floor_side 384 176 669
+destroyed_wall 384 192 671
+floor_side 416 272 705
+floor_side 352 272 706
+floor_side 160 368 726
+floor_side 192 368 727
+floor_side 224 368 728
+floor_side 256 368 729
+roof_side 384 248 750
+roof 384 232 751
+roof 832 8 767
+roof 832 40 768
+roof 832 72 769
+roof 832 104 770
+roof 864 104 771
+roof 864 72 772
+roof 864 40 773
+roof 864 8 774
+roof 896 8 775
+roof 928 8 776
+roof 928 40 777
+roof 896 40 778
+roof 896 72 779
+roof 928 72 780
+roof 928 104 781
+roof 896 104 782
+roof 864 136 783
+roof 896 136 784
+roof_side 864 152 785
+roof_side 896 152 786
+chains 191.989 334.435 794
+floor_side 608 720 824
+floor_side 544 816 830
+floor_side 576 784 831
+chains 1359.02 782.317 844
+roof 832 552 878
+roof 832 584 880
+roof 832 616 881
+roof 832 648 882
+roof 864 648 883
+roof 864 616 884
+roof 864 584 886
+roof 864 552 887
+roof 864 520 888
+roof 896 520 889
+roof 896 552 890
+roof 928 552 891
+roof 928 584 892
+roof 896 584 893
+roof 896 616 894
+roof 928 616 895
+roof 928 648 896
+roof 896 648 897
+floor_side 416 176 916
+blood 2086.95 1589.65 923
+blood 2086.95 1589.65 924
+blood 2254.98 1503.47 925
 
 obstacles: 
-fence 3800 3400 153 OnKill [Null] [Null]
-fence 3700 3400 154 OnKill [Null] [Null]
-fence 3600 3400 157 OnKill [Null] [Null]
-fence 3500 3400 158 OnKill [Null] [Null]
-fence 3400 3400 159 OnKill [Null] [Null]
-fence 3300 3400 160 OnKill [Null] [Null]
-door 4200 4500 162 OnKill [Null] [Null]
-door 4300 4500 163 OnKill [Null] [Null]
-fence 6400 6000 179 OnKill [Null] [Null]
-fence 6500 6000 180 OnKill [Null] [Null]
-fence 6600 6000 181 OnKill [Null] [Null]
-fence 6700 6000 182 OnKill [Null] [Null]
-fence 6800 6000 183 OnKill [Null] [Null]
-fence 6900 6000 184 OnKill [Null] [Null]
-door 6700 5300 185 OnKill [Null] [Null]
-door 5300 4900 187 OnKill [Null] [Null]
-fence 5800 3800 188 OnKill [Null] [Null]
-fence 5900 3800 189 OnKill [Null] [Null]
-fence 6000 3800 190 OnKill [Null] [Null]
-fence 6100 3800 191 OnKill [Null] [Null]
-fence 6200 3800 192 OnKill [Null] [Null]
-fence 6300 3800 193 OnKill [Null] [Null]
-fence 7300 3400 194 OnKill [Null] [Null]
-fence 7200 3400 195 OnKill [Null] [Null]
-fence 7100 3400 196 OnKill [Null] [Null]
-fence 7000 3400 197 OnKill [Null] [Null]
-fence 6900 3400 198 OnKill [Null] [Null]
-fence 6800 3400 199 OnKill [Null] [Null]
-fence_side 6950 5975 263 OnKill [Null] [Null]
-fence_side 6950 5825 265 OnKill [Null] [Null]
-fence 6900 5725 268 OnKill [Null] [Null]
-fence 6800 5725 272 OnKill [Null] [Null]
-fence 6700 5725 273 OnKill [Null] [Null]
-fence 6600 5725 274 OnKill [Null] [Null]
-fence 6500 5725 275 OnKill [Null] [Null]
-fence 6400 5725 276 OnKill [Null] [Null]
-door 3900 1650 314 OnKill [Null] [Null]
-door 4000 1650 315 OnKill [Null] [Null]
-door 3300 1650 316 OnKill [Null] [Null]
-door 3400 1650 317 OnKill [Null] [Null]
-door 2700 1650 318 OnKill [Null] [Null]
-door 2800 1650 319 OnKill [Null] [Null]
-door 2700 500 320 OnKill [Null] [Null]
-door 2800 500 321 OnKill [Null] [Null]
-door 3300 500 322 OnKill [Null] [Null]
-door 3400 500 324 OnKill [Null] [Null]
-door 3900 500 325 OnKill [Null] [Null]
-door 4000 500 326 OnKill [Null] [Null]
-fence 2925 1000 366 OnKill [Null] [Null]
-fence_side 2975 1100 368 OnKill [Null] [Null]
-fence_side 2875 1100 370 OnKill [Null] [Null]
-fence 2925 1150 371 OnKill [Null] [Null]
-door 1900 975 373 OnKill [Null] [Null]
-door 5400 1225 376 OnKill [Null] [Null]
-fence_side 2100 3900 441 OnKill [Null] [Null]
-fence 2150 3925 447 OnKill [Null] [Null]
-fence 2250 3925 450 OnKill [Null] [Null]
-fence_side 2300 3900 451 OnKill [Null] [Null]
-fence 100 425 627 OnKill [Null] [Null]
-fence 200 425 629 OnKill [Null] [Null]
-fence 300 425 630 OnKill [Null] [Null]
-fence 300 575 631 OnKill [Null] [Null]
-fence 200 575 632 OnKill [Null] [Null]
-fence 100 575 633 OnKill [Null] [Null]
-barrel 800 200 739 OnKill [Explode] [200.0f]
-barrel 725 200 743 OnKill [Explode] [200.0f]
-barrel 650 200 744 OnKill [Explode] [200.0f]
-barrel 2596.54 697.831 745 OnKill [Explode] [200.0f]
-barrel 2894.54 695.83 746 OnKill [Explode] [200.0f]
-barrel 2895.78 1509.29 747 OnKill [Explode] [200.0f]
-barrel 2605.82 1507.41 748 OnKill [Explode] [200.0f]
-bridge 1900 2350 816 OnKill [Null] [Null]
-door 2100 2075 837 OnKill [Null] [Null]
-fence 4400 2600 845 OnKill [Null] [Null]
-fence 4300 2600 847 OnKill [Null] [Null]
-fence 4200 2600 848 OnKill [Null] [Null]
-fence 4100 2600 849 OnKill [Null] [Null]
-fence_side 4450 2575 850 OnKill [Null] [Null]
-fence_side 4050 2575 851 OnKill [Null] [Null]
-barrel 5175 5700 863 OnKill [Explode] [250.0f]
-barrel 5075 5700 864 OnKill [Explode] [250.0f]
-barrel 4975 5700 865 OnKill [Explode] [250.0f]
-barrel 6025 5400 866 OnKill [Explode] [250.0f]
-barrel 6200 5300 867 OnKill [Explode] [250.0f]
-barrel 6300 3100 868 OnKill [Explode] [250.0f]
-barrel 6200 3300 869 OnKill [Explode] [250.0f]
-barrel 5500 2175 870 OnKill [Explode] [250.0f]
-fence 800 525 907 OnKill [Null] [Null]
-fence 900 525 908 OnKill [Null] [Null]
-fence 1000 525 909 OnKill [Null] [Null]
-fence 1100 525 910 OnKill [Null] [Null]
-fence 1300 525 912 OnKill [Null] [Null]
-fence 1400 525 913 OnKill [Null] [Null]
-fence 1500 525 914 OnKill [Null] [Null]
-fence 700 625 915 OnKill [Null] [Null]
-fence_side 750 600 917 OnKill [Null] [Null]
-fence_side 650 700 918 OnKill [Null] [Null]
-fence_side 650 825 919 OnKill [Null] [Null]
-fence_side 2300 3800 927 OnKill [Null] [Null]
-fence_side 2300 3700 928 OnKill [Null] [Null]
-fence_side 2300 3600 929 OnKill [Null] [Null]
-fence_side 2100 3800 930 OnKill [Null] [Null]
-fence_side 2100 3700 931 OnKill [Null] [Null]
-fence_side 2100 3600 932 OnKill [Null] [Null]
+fence 1216 1088 153 OnKill [Null] [Null]
+fence 1184 1088 154 OnKill [Null] [Null]
+fence 1152 1088 157 OnKill [Null] [Null]
+fence 1120 1088 158 OnKill [Null] [Null]
+fence 1088 1088 159 OnKill [Null] [Null]
+fence 1056 1088 160 OnKill [Null] [Null]
+door 1360 1432 162 OnKill [Null] [Null]
+door 1392 1432 163 OnKill [Null] [Null]
+fence 2048 1920 179 OnKill [Null] [Null]
+fence 2080 1920 180 OnKill [Null] [Null]
+fence 2112 1920 181 OnKill [Null] [Null]
+fence 2144 1920 182 OnKill [Null] [Null]
+fence 2176 1920 183 OnKill [Null] [Null]
+fence 2208 1920 184 OnKill [Null] [Null]
+door 2160 1688 185 OnKill [Null] [Null]
+door 1712 1560 187 OnKill [Null] [Null]
+fence 1856 1216 188 OnKill [Null] [Null]
+fence 1888 1216 189 OnKill [Null] [Null]
+fence 1920 1216 190 OnKill [Null] [Null]
+fence 1952 1216 191 OnKill [Null] [Null]
+fence 1984 1216 192 OnKill [Null] [Null]
+fence 2016 1216 193 OnKill [Null] [Null]
+fence 2336 1088 194 OnKill [Null] [Null]
+fence 2304 1088 195 OnKill [Null] [Null]
+fence 2272 1088 196 OnKill [Null] [Null]
+fence 2240 1088 197 OnKill [Null] [Null]
+fence 2208 1088 198 OnKill [Null] [Null]
+fence 2176 1088 199 OnKill [Null] [Null]
+fence_side 2224 1912 263 OnKill [Null] [Null]
+fence_side 2224 1864 265 OnKill [Null] [Null]
+fence 2208 1832 268 OnKill [Null] [Null]
+fence 2176 1832 272 OnKill [Null] [Null]
+fence 2144 1832 273 OnKill [Null] [Null]
+fence 2112 1832 274 OnKill [Null] [Null]
+fence 2080 1832 275 OnKill [Null] [Null]
+fence 2048 1832 276 OnKill [Null] [Null]
+door 1264 528 314 OnKill [Null] [Null]
+door 1296 528 315 OnKill [Null] [Null]
+door 1072 528 316 OnKill [Null] [Null]
+door 1104 528 317 OnKill [Null] [Null]
+door 880 528 318 OnKill [Null] [Null]
+door 912 528 319 OnKill [Null] [Null]
+door 880 160 320 OnKill [Null] [Null]
+door 912 160 321 OnKill [Null] [Null]
+door 1072 160 322 OnKill [Null] [Null]
+door 1104 160 324 OnKill [Null] [Null]
+door 1264 160 325 OnKill [Null] [Null]
+door 1296 160 326 OnKill [Null] [Null]
+fence 936 320 366 OnKill [Null] [Null]
+fence_side 952 352 368 OnKill [Null] [Null]
+fence_side 920 352 370 OnKill [Null] [Null]
+fence 936 368 371 OnKill [Null] [Null]
+door 624 280 373 OnKill [Null] [Null]
+door 1744 392 376 OnKill [Null] [Null]
+fence_side 672 1248 441 OnKill [Null] [Null]
+fence 688 1256 447 OnKill [Null] [Null]
+fence 720 1256 450 OnKill [Null] [Null]
+fence_side 736 1248 451 OnKill [Null] [Null]
+fence 32 136 627 OnKill [Null] [Null]
+fence 64 136 629 OnKill [Null] [Null]
+fence 96 136 630 OnKill [Null] [Null]
+fence 96 184 631 OnKill [Null] [Null]
+fence 64 184 632 OnKill [Null] [Null]
+fence 32 184 633 OnKill [Null] [Null]
+barrel 256 64 739 OnKill [Explode] [64.0f]
+barrel 232 64 743 OnKill [Explode] [64.0f]
+barrel 208 64 744 OnKill [Explode] [64.0f]
+barrel 830.893 223.306 745 OnKill [Explode] [64.0f]
+barrel 926.253 222.666 746 OnKill [Explode] [64.0f]
+barrel 926.65 482.973 747 OnKill [Explode] [64.0f]
+barrel 833.862 482.371 748 OnKill [Explode] [64.0f]
+bridge 608 752 816 OnKill [Null] [Null]
+door 688 672 837 OnKill [Null] [Null]
+fence 1408 832 845 OnKill [Null] [Null]
+fence 1376 832 847 OnKill [Null] [Null]
+fence 1344 832 848 OnKill [Null] [Null]
+fence 1312 832 849 OnKill [Null] [Null]
+fence_side 1424 824 850 OnKill [Null] [Null]
+fence_side 1296 824 851 OnKill [Null] [Null]
+barrel 1656 1824 863 OnKill [Explode] [64.0f]
+barrel 1624 1824 864 OnKill [Explode] [64.0f]
+barrel 1592 1824 865 OnKill [Explode] [64.0f]
+barrel 1928 1728 866 OnKill [Explode] [64.0f]
+barrel 1984 1696 867 OnKill [Explode] [64.0f]
+barrel 2016 992 868 OnKill [Explode] [64.0f]
+barrel 1984 1056 869 OnKill [Explode] [64.0f]
+barrel 1760 696 870 OnKill [Explode] [64.0f]
+fence 256 168 907 OnKill [Null] [Null]
+fence 288 168 908 OnKill [Null] [Null]
+fence 320 168 909 OnKill [Null] [Null]
+fence 352 168 910 OnKill [Null] [Null]
+fence 416 168 912 OnKill [Null] [Null]
+fence 448 168 913 OnKill [Null] [Null]
+fence 480 168 914 OnKill [Null] [Null]
+fence 224 200 915 OnKill [Null] [Null]
+fence_side 240 192 917 OnKill [Null] [Null]
+fence_side 208 224 918 OnKill [Null] [Null]
+fence_side 208 264 919 OnKill [Null] [Null]
+fence_side 736 1216 927 OnKill [Null] [Null]
+fence_side 736 1184 928 OnKill [Null] [Null]
+fence_side 736 1152 929 OnKill [Null] [Null]
+fence_side 672 1216 930 OnKill [Null] [Null]
+fence_side 672 1184 931 OnKill [Null] [Null]
+fence_side 672 1152 932 OnKill [Null] [Null]
 
 characters: 
-standard 4200 4800 231 OnKill [SpawnPlayerThought] [Die!] []
-standard 5700 6700 233 OnKill [SpawnAmmo] [heavy] []
-standard 5900 5900 234 OnKill [SpawnAmmo] [heavy] []
-standard 6269.1 4570.59 235 OnKill [SpawnAmmo] [heavy] []
-standard 5000 5400 236 OnKill [SpawnAmmo] [heavy] []
-standard 5800 3200 237 OnKill [SpawnAmmo] [heavy] []
-standard 7300 2700 238 OnKill [SpawnAmmo] [heavy] []
-standard 5200 1800 239 OnKill [SpawnAmmo] [heavy] []
-standard 7700 1700 240 OnKill [SpawnAmmo] [heavy] []
-standard 3850 1975 327 OnKill [SpawnAmmo] [heavy] []
-standard 4050 2025 328 OnKill [SpawnAmmo] [heavy] []
-standard 3975 1825 329 OnKill [SpawnAmmo] [heavy] []
-standard 3300 1850 330 OnKill [SpawnAmmo] [heavy] []
-standard 3400 2025 331 OnKill [SpawnAmmo] [heavy] []
-standard 2725 1975 332 OnKill [SpawnAmmo] [heavy] []
-standard 2825 1875 333 OnKill [SpawnAmmo] [heavy] []
-standard 3250 150 336 OnKill [SpawnAmmo] [heavy] []
-standard 3425 275 337 OnKill [SpawnAmmo] [heavy] []
-standard 3875 300 338 OnKill [SpawnAmmo] [heavy] []
-standard 3950 175 340 OnKill [SpawnAmmo] [heavy] []
-standard 4050 325 341 OnKill [SpawnAmmo] [heavy] []
-standard 2425 3350 459 OnKill [SpawnAmmo] [heavy] []
-standard 2575 3550 460 OnKill [SpawnAmmo] [heavy] []
-standard 2375 4875 461 OnKill [SpawnAmmo] [heavy] []
-standard 1000 425 638 OnKill [SpawnAmmo] [heavy] []
-standard 2655.64 198.706 787 OnKill [SpawnAmmo] [light] []
-standard 2862.33 138.633 788 OnKill [SpawnAmmo;OpenDoor] [light;373] []
-slave 599.381 1081.39 793 OnKill [OpenDoor] [837] [Why_are_you_bounded_asshole?;HELP_ME!;I'm_not_gonna_:);Please...]
-zombie 1723.04 414.091 813 OnKill [Null] [Null] []
-zombie 2022.66 470.6 814 OnKill [Null] [Null] []
-zombie 1907.7 593.599 815 OnKill [Null] [Null] []
-slave 4246.69 2518.66 843 OnKill [Null] [Null] [Whera_are_we?;Go_ahead_and_look_:);How?!;Read_the_notes...;Any_further_advices?;Use_your_crystal...]
-zombie 3530.27 3583.03 859 OnKill [Null] [Null] []
+standard 1344 1536 231 OnKill [SpawnPlayerThought] [Die!] []
+standard 1824 2144 233 OnKill [SpawnAmmo] [heavy] []
+standard 1888 1888 234 OnKill [SpawnAmmo] [heavy] []
+standard 2006.11 1462.59 235 OnKill [SpawnAmmo] [heavy] []
+standard 1600 1728 236 OnKill [SpawnAmmo] [heavy] []
+standard 1856 1024 237 OnKill [SpawnAmmo] [heavy] []
+standard 2336 864 238 OnKill [SpawnAmmo] [heavy] []
+standard 1664 576 239 OnKill [SpawnAmmo] [heavy] []
+standard 2464 544 240 OnKill [SpawnAmmo] [heavy] []
+standard 1232 632 327 OnKill [SpawnAmmo] [heavy] []
+standard 1296 648 328 OnKill [SpawnAmmo] [heavy] []
+standard 1272 584 329 OnKill [SpawnAmmo] [heavy] []
+standard 1056 592 330 OnKill [SpawnAmmo] [heavy] []
+standard 1088 648 331 OnKill [SpawnAmmo] [heavy] []
+standard 872 632 332 OnKill [SpawnAmmo] [heavy] []
+standard 904 600 333 OnKill [SpawnAmmo] [heavy] []
+standard 1040 48 336 OnKill [SpawnAmmo] [heavy] []
+standard 1096 88 337 OnKill [SpawnAmmo] [heavy] []
+standard 1240 96 338 OnKill [SpawnAmmo] [heavy] []
+standard 1264 56 340 OnKill [SpawnAmmo] [heavy] []
+standard 1296 104 341 OnKill [SpawnAmmo] [heavy] []
+standard 776 1072 459 OnKill [SpawnAmmo] [heavy] []
+standard 824 1136 460 OnKill [SpawnAmmo] [heavy] []
+standard 760 1560 461 OnKill [SpawnAmmo] [heavy] []
+standard 320 136 638 OnKill [SpawnAmmo] [heavy] []
+standard 849.805 63.5859 787 OnKill [SpawnAmmo] [light] []
+standard 915.946 44.3626 788 OnKill [SpawnAmmo;OpenDoor] [light;373] []
+slave 191.125 354.041 793 OnKill [OpenDoor] [837] [Why_are_you_bounded_asshole?;HELP_ME!;I'm_not_gonna_:);Please...]
+zombie 551.373 132.509 813 OnKill [Null] [Null] []
+zombie 647.251 150.592 814 OnKill [Null] [Null] []
+zombie 610.464 189.952 815 OnKill [Null] [Null] []
+slave 1359.76 804.647 843 OnKill [Null] [Null] [Whera_are_we?;Go_ahead_and_look_:);How?!;Read_the_notes...;Any_further_advices?;Use_your_crystal...]
+zombie 1129.69 1146.57 859 OnKill [Null] [Null] []
 
 specials: 
-lever 5400 5000 200 1 OnUse [OpenDoor;ChangeOpenState] [187;187]
-lever 5200 4800 201 1 OnUse [OpenDoor;ChangeOpenState] [187;187]
-lever 4400 4800 202 1 OnUse [OpenDoor;OpenDoor;ChangeOpenState] [163;162;Null]
-lever 6800 5400 203 1 OnUse [OpenDoor;ChangeOpenState] [185;185]
-lever 6800 5200 204 1 OnUse [OpenDoor;ChangeOpenState] [185;185]
-m4 3800 3100 208 1 OnEnter [AddWeapon;SpawnThought;Destroy] [m4;Fuck_yeah!;Null]
-health 5700 5800 229 1 OnEnter [AddHealth;Destroy] [30;Null]
-desert_eagle 5600 5800 230 1 OnEnter [AddWeapon;Destroy] [desert_eagle;Null]
-rocket_launcher 4900 5200 241 1 OnEnter [AddWeapon;Destroy] [rocket_launcher;Null]
-shotgun 4900 5100 242 1 OnEnter [AddWeapon;Destroy] [shotgun;Null]
-note 4900 5000 243 1 OnUse [ReadNote] ["Use_wisely!"$Gotch'ya!]
-note 5600 5900 245 1 OnUse [ReadNote] ["How_was_your_first_fight?"$Fucking_jocker...]
-note 3700 3200 249 1 OnUse [ReadNote] ["Welcome_to_RAG3!$Pick_your_weapon$and_have_fun!"$Where_the_hell_am_I?!]
-note 5000 3400 250 1 OnUse [ReadNote] ["You_can_use$Q_and_E_keys$to_avoid_bullets."]
-note 4300 3900 251 1 OnUse [ReadNote] ["Press_right_mouse_button$to_use_crystal$to_slower_the_time."$What_does_it_mean?]
-note 4200 4300 252 1 OnUse [ReadNote] ["Prepare_for_the_battle...$Crystal_has_strange_ability$of_traveling_in_time!$Press_and_hold_R_to_check!"$Very_funny_:)]
-light_ammo 6100 5900 253 1 OnEnter [AddAmmo;Destroy] [m4;Null]
-heavy_ammo 4900 5300 255 1 OnEnter [AddAmmo;Destroy] [desert_eagle;Null]
-rocket_ammo 5700 4300 256 1 OnEnter [AddAmmo;Destroy] [rocket_launcher;Null]
-rocket_ammo 5800 4200 257 1 OnEnter [AddAmmo;Destroy] [rocket_launcher;Null]
-more_speed 4000 3700 259 1 OnEnter [AddSpeed;Destroy] [0.25f;Null]
-crystal 3900 3575 294 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 4600 4650 295 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 7200 4050 296 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 6075 2375 297 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 2225 975 346 1 OnEnter [PickCrystal;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;Destroy] [Null;(2700,750);(2675,800);(2825,870);(2700,950);(2600,800);(2725,1000);(2900,1050);(2800,1025);Null]
-health 2225 800 347 1 OnEnter [AddHealth;Destroy] [30;Null]
-health 2225 1350 348 1 OnEnter [AddHealth;Destroy] [30;Null]
-more_speed 2225 1275 349 1 OnEnter [AddSpeed;Destroy] [0.25f;Null]
-more_speed 2225 875 350 1 OnEnter [AddSpeed;Destroy] [0.25f;Null]
-crystal 2225 1175 351 1 OnEnter [PickCrystal;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;Destroy] [Null;(2725.0,1200.0);(2925.0,1225.0);(2725.0,1375.0);(2825.0,1300.0);(2975.0,1375.0);(2850.0,1450.0);(2700.0,1475.0);(2625.0,1400.0);Null]
-m4 2225 1075 352 1 OnEnter [AddWeapon;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;Destroy] [m4;320;321;322;324;325;326;314;315;316;317;318;319;Null]
-note 2475 1075 375 1 OnUse [ReadNote] ["Brace_yourself!"]
-lever 7325 1625 377 1 OnUse [OpenDoor;ChangeOpenState] [376;376]
-special_event 4800 1100 382 1 OnEnter [OpenDoor;Destroy] [376;Null]
-downstairs 8100 1800 383 1 OnEnter [Teleport] [(1800,3125)]
-health 2600 3000 385 1 OnEnter [AddHealth;Destroy] [30;Null]
-shotgun 2400 3000 387 1 OnEnter [AddWeapon;Destroy] [shotgun;Null]
-heavy_ammo 2500 3000 388 1 OnEnter [AddAmmo;Destroy] [m4;Null]
-heavy_ammo 2400 3050 389 1 OnEnter [AddAmmo;Destroy] [m4;Null]
-heavy_ammo 2475 3050 390 1 OnEnter [AddAmmo;Destroy] [m4;Null]
-heavy_ammo 2400 3125 395 1 OnEnter [AddAmmo;Destroy] [desert_eagle;Null]
-more_speed 2600 3100 396 1 OnEnter [AddSpeed;Destroy] [0.25f;Null]
-note 2600 3225 397 1 OnUse [ReadNote;Destroy] ["I_hide_it_for_the_better$times..."_-_well_said!$I_will_take_this_note.;Null]
-crystal 2025 5175 398 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 2125 5200 399 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 2225 5175 400 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 2300 5150 401 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 2325 5200 402 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 2400 5150 403 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 2225 5100 404 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 2125 5125 405 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 2000 5100 406 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 2350 5075 407 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-lava 1500 600 540 1 OnEnter [Kill] [lava]
-lava 1400 600 546 1 OnEnter [Kill] [lava]
-lava 1300 600 547 1 OnEnter [Kill] [lava]
-lava 1000 700 551 1 OnEnter [Kill] [lava]
-lava 1100 700 552 1 OnEnter [Kill] [lava]
-lava 1300 700 555 1 OnEnter [Kill] [lava]
-lava 1400 700 556 1 OnEnter [Kill] [lava]
-lava 1500 700 558 1 OnEnter [Kill] [lava]
-lava 1600 700 559 1 OnEnter [Kill] [lava]
-lava 1700 800 560 1 OnEnter [Kill] [lava]
-lava 1600 800 561 1 OnEnter [Kill] [lava]
-lava 1500 800 562 1 OnEnter [Kill] [lava]
-lava 1400 800 563 1 OnEnter [Kill] [lava]
-lava 1000 800 567 1 OnEnter [Kill] [lava]
-lava 900 700 569 1 OnEnter [Kill] [lava]
-lava 900 800 570 1 OnEnter [Kill] [lava]
-lava 800 800 571 1 OnEnter [Kill] [lava]
-lava 800 700 572 1 OnEnter [Kill] [lava]
-lava 700 800 575 1 OnEnter [Kill] [lava]
-lava 800 900 576 1 OnEnter [Kill] [lava]
-lava 800 1000 577 1 OnEnter [Kill] [lava]
-lava 900 1100 578 1 OnEnter [Kill] [lava]
-lava 900 1000 579 1 OnEnter [Kill] [lava]
-lava 900 900 580 1 OnEnter [Kill] [lava]
-lava 1000 900 582 1 OnEnter [Kill] [lava]
-lava 1000 1000 583 1 OnEnter [Kill] [lava]
-lava 1100 1000 584 1 OnEnter [Kill] [lava]
-lava 1100 1100 588 1 OnEnter [Kill] [lava]
-lava 1300 1000 589 1 OnEnter [Kill] [lava]
-lava 1300 900 590 1 OnEnter [Kill] [lava]
-lava 1100 900 592 1 OnEnter [Kill] [lava]
-lava 1400 1000 593 1 OnEnter [Kill] [lava]
-lava 1500 1100 594 1 OnEnter [Kill] [lava]
-lava 1500 1000 595 1 OnEnter [Kill] [lava]
-lava 1500 900 596 1 OnEnter [Kill] [lava]
-lava 1400 900 598 1 OnEnter [Kill] [lava]
-lava 1600 900 599 1 OnEnter [Kill] [lava]
-lava 1700 900 600 1 OnEnter [Kill] [lava]
-lava 1700 1000 602 1 OnEnter [Kill] [lava]
-lava 1600 1000 603 1 OnEnter [Kill] [lava]
-lava 1600 1100 604 1 OnEnter [Kill] [lava]
-lava 1500 1200 605 1 OnEnter [Kill] [lava]
-lava 1400 1100 607 1 OnEnter [Kill] [lava]
-lava 1100 1200 609 1 OnEnter [Kill] [lava]
-lava 1000 1100 610 1 OnEnter [Kill] [lava]
-lava 1300 1100 612 1 OnEnter [Kill] [lava]
-lava 1100 600 619 1 OnEnter [Kill] [lava]
-lava 1000 600 620 1 OnEnter [Kill] [lava]
-lava 900 600 621 1 OnEnter [Kill] [lava]
-lava 800 600 622 1 OnEnter [Kill] [lava]
-lava 700 700 623 1 OnEnter [Kill] [lava]
-lava 700 900 624 1 OnEnter [Kill] [lava]
-health 136.19 488.18 626 1 OnEnter [AddHealth;Destroy] [30;Null]
-lever 1994.54 640.837 639 1 OnUse [OpenDoor;ChangeOpenState] [373;373]
-special_event 1200 725 717 1 OnEnter [RemoveDecoration;SpawnLava;SpawnExplosionEventByPos;Destroy] [671;(1200,600);(1200,600);Null]
-special_event 1200 925 719 1 OnEnter [RemoveDecoration;SpawnLava;SpawnExplosionEventByPos;Destroy] [658;(1200,800);(1200,800);Null]
-special_event 1200 1025 720 1 OnEnter [RemoveDecoration;SpawnLava;SpawnExplosionEventByPos;Destroy] [657;(1200,900);(1200,900);Null]
-special_event 1200 1125 721 1 OnEnter [RemoveDecoration;SpawnLava;SpawnExplosionEventByPos;Destroy] [656;(1200,1000);(1200,1000);Null]
-special_event 1200 1225 722 1 OnEnter [RemoveDecoration;SpawnLava;SpawnExplosionEventByPos;Destroy] [655;(1200,1100);(1200,1100);Null]
-special_event 1200 1325 723 1 OnEnter [RemoveDecoration;SpawnLava;SpawnExplosionEventByPos;Destroy] [654;(1200,1200);(1200,1200);Null]
-lava 800 1200 730 1 OnEnter [Kill] [lava]
-lava 700 1200 731 1 OnEnter [Kill] [lava]
-lava 600 1200 732 1 OnEnter [Kill] [lava]
-lava 500 1200 733 1 OnEnter [Kill] [lava]
-flame 4100 3400 165 1 OnEnter [SetOnFire] [Null]
-flame 4200 3400 166 1 OnEnter [SetOnFire] [Null]
-flame 4300 3400 167 1 OnEnter [SetOnFire] [Null]
-flame 4400 3400 168 1 OnEnter [SetOnFire] [Null]
-flame 4400 3500 169 1 OnEnter [SetOnFire] [Null]
-flame 4300 3500 170 1 OnEnter [SetOnFire] [Null]
-flame 4200 3500 171 1 OnEnter [SetOnFire] [Null]
-flame 4100 3500 172 1 OnEnter [SetOnFire] [Null]
-flame 4200 3600 173 1 OnEnter [SetOnFire] [Null]
-flame 4300 3600 174 1 OnEnter [SetOnFire] [Null]
-flame 4200 3300 175 1 OnEnter [SetOnFire] [Null]
-flame 4300 3300 176 1 OnEnter [SetOnFire] [Null]
-flame 6425 5775 277 1 OnEnter [SetOnFire] [Null]
-flame 6500 5825 278 1 OnEnter [SetOnFire] [Null]
-flame 6425 5875 279 1 OnEnter [SetOnFire] [Null]
-flame 6700 5775 280 1 OnEnter [SetOnFire] [Null]
-flame 6825 5900 281 1 OnEnter [SetOnFire] [Null]
-flame 6850 5800 282 1 OnEnter [SetOnFire] [Null]
-flame 6700 5850 283 1 OnEnter [SetOnFire] [Null]
-flame 6575 5925 284 1 OnEnter [SetOnFire] [Null]
-flame 6700 5925 286 1 OnEnter [SetOnFire] [Null]
-flame 6775 5825 287 1 OnEnter [SetOnFire] [Null]
-flame 6600 5800 289 1 OnEnter [SetOnFire] [Null]
-flame 6550 5850 290 1 OnEnter [SetOnFire] [Null]
-flame 6475 5925 291 1 OnEnter [SetOnFire] [Null]
-flame 6900 5875 292 1 OnEnter [SetOnFire] [Null]
-flame 6750 5925 293 1 OnEnter [SetOnFire] [Null]
-flame 4400 700 353 1 OnEnter [SetOnFire] [Null]
-flame 4400 1475 354 1 OnEnter [SetOnFire] [Null]
-flame 2300 675 355 1 OnEnter [SetOnFire] [Null]
-flame 2300 1475 356 1 OnEnter [SetOnFire] [Null]
-flame 1900 4700 412 1 OnEnter [SetOnFire] [Null]
-flame 1800 4975 414 1 OnEnter [SetOnFire] [Null]
-flame 1800 3775 416 1 OnEnter [SetOnFire] [Null]
-flame 2200 3775 452 1 OnEnter [SetOnFire] [Null]
-flame 2175 3850 453 1 OnEnter [SetOnFire] [Null]
-flame 2225 3850 454 1 OnEnter [SetOnFire] [Null]
-flame 2175 3700 455 1 OnEnter [SetOnFire] [Null]
-flame 2225 3700 456 1 OnEnter [SetOnFire] [Null]
-flame 2150 3550 457 1 OnEnter [SetOnFire] [Null]
-flame 2250 3525 458 1 OnEnter [SetOnFire] [Null]
-flame 1300 300 634 1 OnEnter [SetOnFire] [Null]
-flame 600 850 635 1 OnEnter [SetOnFire] [Null]
-flame 463.189 752.178 636 1 OnEnter [SetOnFire] [Null]
-flame 338.191 703.177 672 1 OnEnter [SetOnFire] [Null]
-flame 403.191 740.176 673 1 OnEnter [SetOnFire] [Null]
-flame 307.19 679.178 674 1 OnEnter [SetOnFire] [Null]
-flame 386.189 815.178 675 1 OnEnter [SetOnFire] [Null]
-flame 453.189 683.178 676 1 OnEnter [SetOnFire] [Null]
-flame 343.333 760.955 677 1 OnEnter [SetOnFire] [Null]
-flame 436.189 795.178 678 1 OnEnter [SetOnFire] [Null]
-flame 412.19 697.178 679 1 OnEnter [SetOnFire] [Null]
-flame 378.19 665.178 680 1 OnEnter [SetOnFire] [Null]
-special_event 1200 825 749 1 OnEnter [RemoveDecoration;SpawnLava;SpawnExplosionEventByPos;Destroy] [659;(1200.0,700.0);(1200,700);Null]
-stairs 1800 2950 790 1 OnEnter [Teleport] [(7981.1,1784.7)]
-lever 400 1325 811 0 OnUse [ActivateWeapon;ChangeOpenState] [808;Null]
-lava 1900 2500 822 1 OnEnter [Kill] [lava]
-lava 1800 2500 823 1 OnEnter [Kill] [lava]
-lava 1800 2600 826 1 OnEnter [Kill] [lava]
-lava 1800 2700 827 1 OnEnter [Kill] [lava]
-lava 1700 2600 828 1 OnEnter [Kill] [lava]
-lava 1700 2700 829 1 OnEnter [Kill] [lava]
-lever 2000 2225 833 1 OnUse [OpenDoor;ChangeOpenState;RemoveSpecial;RemoveSpecial;SpawnMiniLava;Deactivate] [816;Null;836;835;(1900.0,2450.0);Null]
-lava 1900 2400 835 1 OnEnter [Kill] [lava]
-lava 1900 2300 836 1 OnEnter [Kill] [lava]
-special_event 1900 725 838 1 OnEnter [ActivateWeapon;Destroy] [807;Null]
-starting_position 3548.39 3148.56 839 1 OnEnter [MapStart] [Null]
-note 4818.49 3772.46 840 1 OnUse [ReadNote] ["Objects_are_destructible!"]
-lever 4400 4325 860 1 OnUse [OpenDoor;OpenDoor;ChangeOpenState] [163;162;Null]
-melee_axe 4600 3600 861 1 OnEnter [AddWeapon;Destroy] [melee_axe;Null]
-flamethrower 5800 5500 862 1 OnEnter [AddWeapon;SpawnThought;Destroy] [flamethrower;FLAMETHROWER!;Null]
-health 4700 6200 871 1 OnEnter [AddHealth;Destroy] [30;Null]
-health 7200 5600 872 1 OnEnter [AddHealth;Destroy] [30;Null]
-health 4900 4900 873 1 OnEnter [AddHealth;Destroy] [30;Null]
-health 6400 2875 874 1 OnEnter [AddHealth;Destroy] [30;Null]
-health 8000 1700 875 1 OnEnter [AddHealth;Destroy] [30;Null]
-health 1500 1400 876 1 OnEnter [AddHealth;Destroy] [30;Null]
-ending_position 1325 2225 877 1 OnEnter [MapEnd] [Null]
-flame 7100 4500 902 1 OnEnter [SetOnFire] [Null]
-flame 7033.62 4483.59 903 1 OnEnter [SetOnFire] [Null]
-flame 7041.77 4513.51 904 1 OnEnter [SetOnFire] [Null]
-flame 7082.57 4532.54 905 1 OnEnter [SetOnFire] [Null]
-flame 7101.6 4453.68 906 1 OnEnter [SetOnFire] [Null]
-special_event 6700 5250 920 1 OnEnter [ActivateWeapon;Destroy] [901;Null]
-lever 800 1325 933 1 OnUse [ActivateSpecial;ChangeOpenState;Deactivate] [811;Null;Null]
+lever 1728 1600 200 1 OnUse [OpenDoor;ChangeOpenState] [187;187]
+lever 1664 1536 201 1 OnUse [OpenDoor;ChangeOpenState] [187;187]
+lever 1408 1536 202 1 OnUse [OpenDoor;OpenDoor;ChangeOpenState] [163;162;Null]
+lever 2176 1728 203 1 OnUse [OpenDoor;ChangeOpenState] [185;185]
+lever 2176 1664 204 1 OnUse [OpenDoor;ChangeOpenState] [185;185]
+m4 1216 992 208 1 OnEnter [AddWeapon;SpawnThought;Destroy] [m4;Fuck_yeah!;Null]
+health 1824 1856 229 1 OnEnter [AddHealth;Destroy] [30;Null]
+desert_eagle 1792 1856 230 1 OnEnter [AddWeapon;Destroy] [desert_eagle;Null]
+rocket_launcher 1568 1664 241 1 OnEnter [AddWeapon;Destroy] [rocket_launcher;Null]
+shotgun 1568 1632 242 1 OnEnter [AddWeapon;Destroy] [shotgun;Null]
+note 1568 1600 243 1 OnUse [ReadNote] ["Use_wisely!"$Gotch'ya!]
+note 1792 1888 245 1 OnUse [ReadNote] ["How_was_your_first_fight?"$Fucking_jocker...]
+note 1184 1024 249 1 OnUse [ReadNote] ["Welcome_to_RAG3!$Pick_your_weapon$and_have_fun!"$Where_the_hell_am_I?!]
+note 1600 1088 250 1 OnUse [ReadNote] ["You_can_use$Q_and_E_keys$to_avoid_bullets."]
+note 1376 1248 251 1 OnUse [ReadNote] ["Press_right_mouse_button$to_use_crystal$to_slower_the_time."$What_does_it_mean?]
+note 1344 1376 252 1 OnUse [ReadNote] ["Prepare_for_the_battle...$Crystal_has_strange_ability$of_traveling_in_time!$Press_and_hold_R_to_check!"$Very_funny_:)]
+light_ammo 1952 1888 253 1 OnEnter [AddAmmo;Destroy] [m4;Null]
+heavy_ammo 1568 1696 255 1 OnEnter [AddAmmo;Destroy] [desert_eagle;Null]
+rocket_ammo 1824 1376 256 1 OnEnter [AddAmmo;Destroy] [rocket_launcher;Null]
+rocket_ammo 1856 1344 257 1 OnEnter [AddAmmo;Destroy] [rocket_launcher;Null]
+more_speed 1280 1184 259 1 OnEnter [AddSpeed;Destroy] [0.25f;Null]
+crystal 1248 1144 294 1 OnEnter [PickCrystal;Destroy] [Null;Null]
+crystal 1472 1488 295 1 OnEnter [PickCrystal;Destroy] [Null;Null]
+crystal 2304 1296 296 1 OnEnter [PickCrystal;Destroy] [Null;Null]
+crystal 1944 760 297 1 OnEnter [PickCrystal;Destroy] [Null;Null]
+crystal 712 312 346 1 OnEnter [PickCrystal;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;Destroy] [Null;(864.0,240.0);(856.0,256.0);(904.0,278.4);(864.0,304.0);(832.0,256.0);(872.0,320.0);(928.0,336.0);(896.0,328.0);Null]
+health 712 256 347 1 OnEnter [AddHealth;Destroy] [30;Null]
+health 712 432 348 1 OnEnter [AddHealth;Destroy] [30;Null]
+more_speed 712 408 349 1 OnEnter [AddSpeed;Destroy] [0.25f;Null]
+more_speed 712 280 350 1 OnEnter [AddSpeed;Destroy] [0.25f;Null]
+crystal 712 376 351 1 OnEnter [PickCrystal;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;SpawnFlame;Destroy] [Null;(872.0,384.0);(936.0,392.0);(872.0,440.0);(904.0,416.0);(952.0,440.0);(912.0,464.0);(864.0,472.0);(840.0,448.0);Null]
+m4 712 344 352 1 OnEnter [AddWeapon;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;OpenDoor;Destroy] [m4;320;321;322;324;325;326;314;315;316;317;318;319;Null]
+note 792 344 375 1 OnUse [ReadNote] ["Brace_yourself!"]
+lever 2344 520 377 1 OnUse [OpenDoor;ChangeOpenState] [376;376]
+special_event 1536 352 382 1 OnEnter [OpenDoor;Destroy] [376;Null]
+downstairs 2592 576 383 1 OnEnter [Teleport] [(576.0,1000.0)]
+health 832 960 385 1 OnEnter [AddHealth;Destroy] [30;Null]
+shotgun 768 960 387 1 OnEnter [AddWeapon;Destroy] [shotgun;Null]
+heavy_ammo 800 960 388 1 OnEnter [AddAmmo;Destroy] [m4;Null]
+heavy_ammo 768 976 389 1 OnEnter [AddAmmo;Destroy] [m4;Null]
+heavy_ammo 792 976 390 1 OnEnter [AddAmmo;Destroy] [m4;Null]
+heavy_ammo 768 1000 395 1 OnEnter [AddAmmo;Destroy] [desert_eagle;Null]
+more_speed 832 992 396 1 OnEnter [AddSpeed;Destroy] [0.25f;Null]
+note 832 1032 397 1 OnUse [ReadNote;Destroy] ["I_hide_it_for_the_better$times..."_-_well_said!$I_will_take_this_note.;Null]
+crystal 648 1656 398 1 OnEnter [PickCrystal;Destroy] [Null;Null]
+crystal 680 1664 399 1 OnEnter [PickCrystal;Destroy] [Null;Null]
+crystal 712 1656 400 1 OnEnter [PickCrystal;Destroy] [Null;Null]
+crystal 736 1648 401 1 OnEnter [PickCrystal;Destroy] [Null;Null]
+crystal 744 1664 402 1 OnEnter [PickCrystal;Destroy] [Null;Null]
+crystal 768 1648 403 1 OnEnter [PickCrystal;Destroy] [Null;Null]
+crystal 712 1632 404 1 OnEnter [PickCrystal;Destroy] [Null;Null]
+crystal 680 1640 405 1 OnEnter [PickCrystal;Destroy] [Null;Null]
+crystal 640 1632 406 1 OnEnter [PickCrystal;Destroy] [Null;Null]
+crystal 752 1624 407 1 OnEnter [PickCrystal;Destroy] [Null;Null]
+lava 480 192 540 1 OnEnter [Kill] [lava]
+lava 448 192 546 1 OnEnter [Kill] [lava]
+lava 416 192 547 1 OnEnter [Kill] [lava]
+lava 320 224 551 1 OnEnter [Kill] [lava]
+lava 352 224 552 1 OnEnter [Kill] [lava]
+lava 416 224 555 1 OnEnter [Kill] [lava]
+lava 448 224 556 1 OnEnter [Kill] [lava]
+lava 480 224 558 1 OnEnter [Kill] [lava]
+lava 512 224 559 1 OnEnter [Kill] [lava]
+lava 544 256 560 1 OnEnter [Kill] [lava]
+lava 512 256 561 1 OnEnter [Kill] [lava]
+lava 480 256 562 1 OnEnter [Kill] [lava]
+lava 448 256 563 1 OnEnter [Kill] [lava]
+lava 320 256 567 1 OnEnter [Kill] [lava]
+lava 288 224 569 1 OnEnter [Kill] [lava]
+lava 288 256 570 1 OnEnter [Kill] [lava]
+lava 256 256 571 1 OnEnter [Kill] [lava]
+lava 256 224 572 1 OnEnter [Kill] [lava]
+lava 224 256 575 1 OnEnter [Kill] [lava]
+lava 256 288 576 1 OnEnter [Kill] [lava]
+lava 256 320 577 1 OnEnter [Kill] [lava]
+lava 288 352 578 1 OnEnter [Kill] [lava]
+lava 288 320 579 1 OnEnter [Kill] [lava]
+lava 288 288 580 1 OnEnter [Kill] [lava]
+lava 320 288 582 1 OnEnter [Kill] [lava]
+lava 320 320 583 1 OnEnter [Kill] [lava]
+lava 352 320 584 1 OnEnter [Kill] [lava]
+lava 352 352 588 1 OnEnter [Kill] [lava]
+lava 416 320 589 1 OnEnter [Kill] [lava]
+lava 416 288 590 1 OnEnter [Kill] [lava]
+lava 352 288 592 1 OnEnter [Kill] [lava]
+lava 448 320 593 1 OnEnter [Kill] [lava]
+lava 480 352 594 1 OnEnter [Kill] [lava]
+lava 480 320 595 1 OnEnter [Kill] [lava]
+lava 480 288 596 1 OnEnter [Kill] [lava]
+lava 448 288 598 1 OnEnter [Kill] [lava]
+lava 512 288 599 1 OnEnter [Kill] [lava]
+lava 544 288 600 1 OnEnter [Kill] [lava]
+lava 544 320 602 1 OnEnter [Kill] [lava]
+lava 512 320 603 1 OnEnter [Kill] [lava]
+lava 512 352 604 1 OnEnter [Kill] [lava]
+lava 480 384 605 1 OnEnter [Kill] [lava]
+lava 448 352 607 1 OnEnter [Kill] [lava]
+lava 352 384 609 1 OnEnter [Kill] [lava]
+lava 320 352 610 1 OnEnter [Kill] [lava]
+lava 416 352 612 1 OnEnter [Kill] [lava]
+lava 352 192 619 1 OnEnter [Kill] [lava]
+lava 320 192 620 1 OnEnter [Kill] [lava]
+lava 288 192 621 1 OnEnter [Kill] [lava]
+lava 256 192 622 1 OnEnter [Kill] [lava]
+lava 224 224 623 1 OnEnter [Kill] [lava]
+lava 224 288 624 1 OnEnter [Kill] [lava]
+health 43.5808 156.218 626 1 OnEnter [AddHealth;Destroy] [30;Null]
+lever 638.253 205.068 639 1 OnUse [OpenDoor;ChangeOpenState] [373;373]
+special_event 384 232 717 1 OnEnter [RemoveDecoration;SpawnLava;SpawnExplosionEventByPos;Destroy] [671;(384.0,192.0);(384.0,192.0);Null]
+special_event 384 264 749 1 OnEnter [RemoveDecoration;SpawnLava;SpawnExplosionEventByPos;Destroy] [659;(384.0,224.0);(384.0,224.0);Null]
+special_event 384 296 719 1 OnEnter [RemoveDecoration;SpawnLava;SpawnExplosionEventByPos;Destroy] [658;(384.0,256.0);(384.0,256.0);Null]
+special_event 384 328 720 1 OnEnter [RemoveDecoration;SpawnLava;SpawnExplosionEventByPos;Destroy] [657;(384.0,288.0);(384.0,288.0);Null]
+special_event 384 360 721 1 OnEnter [RemoveDecoration;SpawnLava;SpawnExplosionEventByPos;Destroy] [656;(384.0,320.0);(384.0,320.0);Null]
+special_event 384 392 722 1 OnEnter [RemoveDecoration;SpawnLava;SpawnExplosionEventByPos;Destroy] [655;(384.0,352.0);(384.0,352.0);Null]
+special_event 384 424 723 1 OnEnter [RemoveDecoration;SpawnLava;SpawnExplosionEventByPos;Destroy] [654;(384.0,384.0);(384.0,384.0);Null]
+lava 256 384 730 1 OnEnter [Kill] [lava]
+lava 224 384 731 1 OnEnter [Kill] [lava]
+lava 192 384 732 1 OnEnter [Kill] [lava]
+lava 160 384 733 1 OnEnter [Kill] [lava]
+flame 1312 1088 165 1 OnEnter [SetOnFire] [Null]
+flame 1344 1088 166 1 OnEnter [SetOnFire] [Null]
+flame 1376 1088 167 1 OnEnter [SetOnFire] [Null]
+flame 1408 1088 168 1 OnEnter [SetOnFire] [Null]
+flame 1408 1120 169 1 OnEnter [SetOnFire] [Null]
+flame 1376 1120 170 1 OnEnter [SetOnFire] [Null]
+flame 1344 1120 171 1 OnEnter [SetOnFire] [Null]
+flame 1312 1120 172 1 OnEnter [SetOnFire] [Null]
+flame 1344 1152 173 1 OnEnter [SetOnFire] [Null]
+flame 1376 1152 174 1 OnEnter [SetOnFire] [Null]
+flame 1344 1056 175 1 OnEnter [SetOnFire] [Null]
+flame 1376 1056 176 1 OnEnter [SetOnFire] [Null]
+flame 2056 1848 277 1 OnEnter [SetOnFire] [Null]
+flame 2080 1864 278 1 OnEnter [SetOnFire] [Null]
+flame 2056 1880 279 1 OnEnter [SetOnFire] [Null]
+flame 2144 1848 280 1 OnEnter [SetOnFire] [Null]
+flame 2184 1888 281 1 OnEnter [SetOnFire] [Null]
+flame 2192 1856 282 1 OnEnter [SetOnFire] [Null]
+flame 2144 1872 283 1 OnEnter [SetOnFire] [Null]
+flame 2104 1896 284 1 OnEnter [SetOnFire] [Null]
+flame 2144 1896 286 1 OnEnter [SetOnFire] [Null]
+flame 2168 1864 287 1 OnEnter [SetOnFire] [Null]
+flame 2112 1856 289 1 OnEnter [SetOnFire] [Null]
+flame 2096 1872 290 1 OnEnter [SetOnFire] [Null]
+flame 2072 1896 291 1 OnEnter [SetOnFire] [Null]
+flame 2208 1880 292 1 OnEnter [SetOnFire] [Null]
+flame 2160 1896 293 1 OnEnter [SetOnFire] [Null]
+flame 1408 224 353 1 OnEnter [SetOnFire] [Null]
+flame 1408 472 354 1 OnEnter [SetOnFire] [Null]
+flame 736 216 355 1 OnEnter [SetOnFire] [Null]
+flame 736 472 356 1 OnEnter [SetOnFire] [Null]
+flame 608 1504 412 1 OnEnter [SetOnFire] [Null]
+flame 576 1592 414 1 OnEnter [SetOnFire] [Null]
+flame 576 1208 416 1 OnEnter [SetOnFire] [Null]
+flame 704 1208 452 1 OnEnter [SetOnFire] [Null]
+flame 696 1232 453 1 OnEnter [SetOnFire] [Null]
+flame 712 1232 454 1 OnEnter [SetOnFire] [Null]
+flame 696 1184 455 1 OnEnter [SetOnFire] [Null]
+flame 712 1184 456 1 OnEnter [SetOnFire] [Null]
+flame 688 1136 457 1 OnEnter [SetOnFire] [Null]
+flame 720 1128 458 1 OnEnter [SetOnFire] [Null]
+flame 416 96 634 1 OnEnter [SetOnFire] [Null]
+flame 192 272 635 1 OnEnter [SetOnFire] [Null]
+flame 148.22 240.697 636 1 OnEnter [SetOnFire] [Null]
+flame 108.221 225.017 672 1 OnEnter [SetOnFire] [Null]
+flame 129.021 236.856 673 1 OnEnter [SetOnFire] [Null]
+flame 98.3008 217.337 674 1 OnEnter [SetOnFire] [Null]
+flame 123.58 260.857 675 1 OnEnter [SetOnFire] [Null]
+flame 145.02 218.617 676 1 OnEnter [SetOnFire] [Null]
+flame 109.867 243.506 677 1 OnEnter [SetOnFire] [Null]
+flame 139.58 254.457 678 1 OnEnter [SetOnFire] [Null]
+flame 131.901 223.097 679 1 OnEnter [SetOnFire] [Null]
+flame 121.021 212.857 680 1 OnEnter [SetOnFire] [Null]
+stairs 576 952 790 1 OnEnter [Teleport] [(2553.952,571.104)]
+lever 128 424 811 0 OnUse [ActivateWeapon;ChangeOpenState] [808;Null]
+lava 608 800 822 1 OnEnter [Kill] [lava]
+lava 576 800 823 1 OnEnter [Kill] [lava]
+lava 576 832 826 1 OnEnter [Kill] [lava]
+lava 576 864 827 1 OnEnter [Kill] [lava]
+lava 544 832 828 1 OnEnter [Kill] [lava]
+lava 544 864 829 1 OnEnter [Kill] [lava]
+lever 640 712 833 1 OnUse [OpenDoor;ChangeOpenState;RemoveSpecial;RemoveSpecial;SpawnMiniLava;Deactivate] [816;Null;836;835;(608.0,784.0);Null]
+lava 608 768 835 1 OnEnter [Kill] [lava]
+lava 608 736 836 1 OnEnter [Kill] [lava]
+special_event 608 232 838 1 OnEnter [ActivateWeapon;Destroy] [807;Null]
+starting_position 1135.48 1007.54 839 1 OnEnter [MapStart] [Null]
+note 1541.92 1207.19 840 1 OnUse [ReadNote] ["Objects_are_destructible!"]
+lever 1408 1384 860 1 OnUse [OpenDoor;OpenDoor;ChangeOpenState] [163;162;Null]
+melee_axe 1472 1152 861 1 OnEnter [AddWeapon;Destroy] [melee_axe;Null]
+flamethrower 1856 1760 862 1 OnEnter [AddWeapon;SpawnThought;Destroy] [flamethrower;FLAMETHROWER!;Null]
+health 1504 1984 871 1 OnEnter [AddHealth;Destroy] [30;Null]
+health 2304 1792 872 1 OnEnter [AddHealth;Destroy] [30;Null]
+health 1568 1568 873 1 OnEnter [AddHealth;Destroy] [30;Null]
+health 2048 920 874 1 OnEnter [AddHealth;Destroy] [30;Null]
+health 2560 544 875 1 OnEnter [AddHealth;Destroy] [30;Null]
+health 480 448 876 1 OnEnter [AddHealth;Destroy] [30;Null]
+ending_position 424 712 877 1 OnEnter [MapEnd] [Null]
+flame 2272 1440 902 1 OnEnter [SetOnFire] [Null]
+flame 2250.76 1434.75 903 1 OnEnter [SetOnFire] [Null]
+flame 2253.37 1444.32 904 1 OnEnter [SetOnFire] [Null]
+flame 2266.42 1450.41 905 1 OnEnter [SetOnFire] [Null]
+flame 2272.51 1425.18 906 1 OnEnter [SetOnFire] [Null]
+special_event 2144 1680 920 1 OnEnter [ActivateWeapon;Destroy] [901;Null]
+lever 256 424 933 1 OnUse [ActivateSpecial;ChangeOpenState;Deactivate] [811;Null;Null]
 
 weapons: 
-flamethrower 1760.08 260.598 35.9029 807 Interrupted 1
-m4 446.356 1062.32 0 808 Single 1
-flamethrower 6942.55 2608.06 132.109 901 Const 1
+flamethrower 563.226 83.3914 35.9029 807 Interrupted 1
+m4 142.834 339.942 0 808 Single 1
+flamethrower 2221.62 834.579 132.109 901 Const 1

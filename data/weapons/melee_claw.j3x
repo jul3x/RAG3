@@ -1,4 +1,4 @@
-float recoil=10000.0f
+float recoil=3200.0f
 
 float deadly_factor=3.0f
 
@@ -8,9 +8,10 @@ float spawn_timeout=1.0f
 string spawn_type=heavy
 int spawn_quantity=1
 float spawn_angular_diff=0.0f
+float spawn_offset=0.0f
 
-float size_x=30.0f
-float size_y=80.0f
+float size_x=9.0f
+float size_y=24.0f
 
 float offset_x=15.0f
 float offset_y=0.0f

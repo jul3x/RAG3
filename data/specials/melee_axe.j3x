@@ -1,7 +1,10 @@
-float size_x=70.0f
-float size_y=70.0f
+float size_x=42.0f
+float size_y=42.0f
 
-float collision_size_x=70.0f
+float collision_size_x=26.0f
+
+float collision_offset_x=0.0f
+float collision_offset_y=0.0f
 
 float map_offset_x=0.0f
 float map_offset_y=0.0f
@@ -18,4 +21,5 @@ bool is_drawable=1
 int z_index=1
 
 bool light_point=0
+bool shadow=0
 bool default_active=1

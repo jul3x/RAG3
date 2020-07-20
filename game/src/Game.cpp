@@ -60,14 +60,14 @@ void Game::initialize()
             "Codename: Rag3",
             CFG.get<int>("graphics/full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
             sf::Color(CFG.get<int>("graphics/background_color")));
-    engine_->setFPSLimit(0);
+    engine_->setFPSLimit(60);
 
     engine_->initializeSoundManager(CFG.get<float>("sound/sound_attenuation"));
 
     engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
 
-    map_->loadMap("test_map");
+    map_->loadMap("first_new_map");
 
 //    debug_map_blockage_ = std::make_unique<DebugMapBlockage>(&map_->getMapBlockage());
 
@@ -265,37 +265,11 @@ void Game::updateMapObjects(float time_elapsed)
 {
     auto& blockage = map_->getMapBlockage();
 
-    auto& obstacles_tiles = map_->getList<ObstacleTile>();
     auto& obstacles =  map_->getList<Obstacle>();;
     auto& npcs =  map_->getList<NPC>();;
     auto& specials = map_->getList<Special>();
     auto& decorations = map_->getList<Decoration>();
     auto& weapons = map_->getList<PlacedWeapon>();
-
-    for (auto it = obstacles_tiles.begin(); it != obstacles_tiles.end();)
-    {
-        bool do_increment = true;
-        if (!(*it)->update(time_elapsed))
-        {
-            journal_->event<DestroyObstacleTile>(it->get());
-            // draw on this place destruction
-            spawnDecoration((*it)->getPosition(), "destroyed_wall");
-            this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
-
-            auto next_it = std::next(it);
-            engine_->deleteStaticObject(it->get());
-
-            auto grid_pos = std::make_pair(std::round((*it)->getPosition().x / DecorationTile::SIZE_X_),
-                                           std::round((*it)->getPosition().y / DecorationTile::SIZE_Y_));
-            blockage.blockage_.at(grid_pos.first).at(grid_pos.second) = false;
-
-            obstacles_tiles.erase(it);
-            it = next_it;
-            do_increment = false;
-        }
-
-        if (do_increment) ++it;
-    }
 
     for (auto it = obstacles.begin(); it != obstacles.end();)
     {
@@ -320,8 +294,8 @@ void Game::updateMapObjects(float time_elapsed)
                 (*it)->use(player_.get());
             }
 
-            auto grid_pos = std::make_pair(std::round((*it)->getPosition().x / DecorationTile::SIZE_X_),
-                                           std::round((*it)->getPosition().y / DecorationTile::SIZE_Y_));
+            auto grid_pos = std::make_pair(std::round(((*it)->getPosition().x + utils::j3x::get<float>(RM.getObjectParams("obstacles", (*it)->getId()), "collision_offset_x")) / DecorationTile::SIZE_X_),
+                                           std::round(((*it)->getPosition().y + utils::j3x::get<float>(RM.getObjectParams("obstacles", (*it)->getId()), "collision_offset_y")) / DecorationTile::SIZE_Y_));
             blockage.blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
 
             obstacles.erase(it);
@@ -449,8 +423,9 @@ void Game::draw(graphics::Graphics& graphics)
     auto draw_light = [&graphics, this](auto& list) {
         for (const auto& obj : list)
         {
-            if (obj->getLightPoint() != nullptr)
-                this->lightning_->add(*obj->getLightPoint());
+            auto light = obj->getLightPoint();
+            if (light != nullptr)
+                this->lightning_->add(*light);
         }
     };
 
@@ -541,7 +516,7 @@ void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const floa
 
 void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
 {
-    auto number = std::to_string(utils::num::getRandom(1, 3));
+    auto number = std::to_string(utils::num::getRandom(1, 1));
     auto event = std::make_shared<Event>(pos, "explosion_" + number, 0.0f, r);
 
     engine_->spawnAnimationEvent(event);
@@ -607,6 +582,15 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, floa
         engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
 }
 
+void Game::spawnBloodEvent(const sf::Vector2f& pos, float dir)
+{
+    auto event = std::make_shared<Event>(pos, "blood", dir, 0.0f);
+    engine_->spawnAnimationEvent(event);
+
+    if (event->getLightPoint() != nullptr)
+        event->getLightPoint()->registerGraphics(engine_->getGraphics());
+}
+
 void Game::spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
     auto ptr = this->spawnNewBullet(user, name, pos, dir);
@@ -660,9 +644,6 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
         }
         else if (obstacle_tile != nullptr)
         {
-            journal_->event<ShotObstacleTile>(obstacle_tile);
-            obstacle_tile->getShot(*bullet);
-
             spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
                              static_cast<float>(std::pow(
                                      CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
@@ -676,11 +657,6 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
         {
             journal_->event<ShotObstacle>(obstacle);
             explosion->applyForce(obstacle);
-        }
-        else if (obstacle_tile != nullptr)
-        {
-            journal_->event<ShotObstacleTile>(obstacle_tile);
-            explosion->applyForce(obstacle_tile);
         }
     }
     else if (fire != nullptr)
@@ -699,9 +675,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         if (bullet->getUser() != character)
         {
             character->getShot(*bullet);
-            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                             static_cast<float>(std::pow(
-                                     CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+            spawnBloodEvent(character->getPosition() - sf::Vector2f(0.0f, 10.0f), bullet->getRotation() + 180.0f);
 
             bullet->setDead();
         }
@@ -759,7 +733,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         //character->setGlobalState(Character::GlobalState::OnFire);
         if (character != melee_weapon_area->getFather()->getUser())
         {
-            spawnSparksEvent(character->getPosition(), 0.0f, 100.0f);
+            spawnBloodEvent(character->getPosition(), character->getRotation());
             melee_weapon_area->setActive(false);
             character->getCut(*melee_weapon_area->getFather());
         }

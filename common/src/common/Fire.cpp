@@ -30,13 +30,17 @@ Fire::Fire(Character* user,
         r_(CFG.get<float>("fire_initial_radius")),
         offset_(utils::num::getRandom(0.0, 2 * M_PI))
 {
-    this->setRotation(direction * 180.0f / static_cast<float>(M_PI));
-    this->changeOrigin({r_/2.0f, r_});
+    this->setRotation(direction * 180.0f / static_cast<float>(M_PI) + 90.0f);
+    this->changeOrigin({r_, r_/2.0f});
 
+    float light_size = CFG.get<float>("graphics/fire_light_point_size") * CFG.get<float>("graphics/global_zoom");
     light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
-                                                    sf::Vector2f{CFG.get<float>("graphics/fire_light_point_size"),
-                                                                 CFG.get<float>("graphics/fire_light_point_size")},
+                                                    sf::Vector2f{light_size, light_size},
                                                     &RM.getTexture("lightpoint"));
+    light_->setColor(255, 255, 255, alpha_);
+
+    this->setSize({r_ * 2.0f, r_ * 2.0f});
+    this->setColor(color_.r, color_.g, color_.b, static_cast<sf::Uint8>(alpha_));
 }
 
 void Fire::setDead()
@@ -46,10 +50,8 @@ void Fire::setDead()
 
 bool Fire::update(float time_elapsed)
 {
-    this->updateAnimation(time_elapsed);
+    this->updateAnimation(time_elapsed, CFG.get<float>("graphics/fire_frame_times"));
     DynamicObject::update(time_elapsed);
-
-
 
     difference_ = CFG.get<float>("fire_spread_distance") *
             std::cos(offset_ + life_ / CFG.get<float>("fire_life") * 4 * M_PI);

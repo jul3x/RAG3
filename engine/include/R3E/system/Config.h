@@ -40,9 +40,9 @@ namespace r3e {
         }
 
         template <class T>
-        const T& get(const std::string& key) const
+        const T& get(const std::string& key, bool ignore_warn = false) const
         {
-            return utils::j3x::get<T>(params_, key);
+            return utils::j3x::get<T>(params_, key, ignore_warn);
         }
 
         template <class T>

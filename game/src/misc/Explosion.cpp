@@ -39,9 +39,3 @@ void Explosion::applyForce(Obstacle* obj) const
     obj->setHealth(obj->getHealth() - CFG.get<float>("explosion_hurt_factor") * r_ / distance);
 }
 
-void Explosion::applyForce(ObstacleTile* obj) const
-{
-    auto distance = utils::geo::getDistance(obj->getPosition(), this->getPosition());
-    obj->setHealth(obj->getHealth() - CFG.get<float>("explosion_hurt_factor") * r_ / distance);
-}
-

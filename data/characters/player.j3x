@@ -1,25 +1,28 @@
-float max_speed=500.0f
-float max_running_speed=800.0f
+float max_speed=200.0f
+float max_running_speed=300.0f
 
 float standby_speed=100.0f
-float side_step_speed=14000.0f
+float side_step_speed=4480.0f
 
 float max_health=160
 
 float size_x=50.0f
 float size_y=68.0f
 
-float collision_size_x=44.0f
-float collision_size_y=80.0f
+float collision_size_x=30.0f
+float collision_size_y=40.0f
+
+float collision_offset_x=0.0f
+float collision_offset_y=0.0f
 
 float map_offset_x=0.0f
-float map_offset_y=25.0f
+float map_offset_y=8.0f
 
-float gun_offset_x=25.0f
-float gun_offset_y=-50.0f
+list[float] gun_offset_x=[10.0f;10.0f;10.0f;10.0f]
+list[float] gun_offset_y=[-9.0f;-8.0f;-9.0f;-8.0f]
 
 int frames_number=4
-float frame_duration=0.08f
+float frame_duration=0.12f
 
 string default_activation=OnKill
 list[string] default_functions=[Null]
@@ -29,7 +32,7 @@ string ai_type=Standard
 
 int z_index=1
 
-list[string] weapons=[Null;Null;Null;Null]
+list[string] weapons=[flamethrower;m4;desert_eagle;shotgun;melee_axe;rocket_launcher]
 
 bool is_talkable=0
 bool light_point=1

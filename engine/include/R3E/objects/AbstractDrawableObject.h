@@ -57,9 +57,6 @@ namespace r3e {
         bool is_flipped_y_;
         int z_index_;
 
-    private:
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-
         float time_elapsed_;
         short int current_frame_;
         sf::Vector2i frame_size_;
@@ -67,6 +64,9 @@ namespace r3e {
 
         short int frames_number_;
         float frame_duration_;
+
+    private:
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     };
 

@@ -21,6 +21,9 @@ namespace editor {
 
         tgui::Slider::Ptr z_index_slider_;
         tgui::Label::Ptr z_index_label_;
+
+        tgui::Slider::Ptr random_slider_;
+        tgui::Label::Ptr random_label_;
     };
 
 } // namespace editor

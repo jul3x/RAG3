@@ -22,9 +22,9 @@ UserInterface::UserInterface() :
               &RM.getTexture("rag3_logo")),
         gui_theme_("../data/config/gui_theme.txt"),
         tiles_window_(this, &gui_, &gui_theme_, "Tiles",
-                      {CFG.get<float>("tiles_window_x"), CFG.get<float>("tiles_window_y")}, "tiles_window"),
+                      {CFG.get<float>("tiles_window_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("tiles_window_y") * CFG.get<float>("user_interface_zoom")}, "tiles_window"),
         objects_window_(this, &gui_, &gui_theme_, "Objects",
-                        {CFG.get<float>("objects_window_x"), CFG.get<float>("objects_window_y")}, "objects_window"),
+                        {CFG.get<float>("objects_window_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("objects_window_y") * CFG.get<float>("user_interface_zoom")}, "objects_window"),
         menu_window_(this, &gui_, &gui_theme_),
         save_window_(&gui_, &gui_theme_),
         load_window_(&gui_, &gui_theme_),
@@ -45,11 +45,11 @@ UserInterface::UserInterface() :
     gui_.get("character_object_window")->setVisible(false);
     gui_.get("obstacle_object_window")->setVisible(false);
 
-    information_.setPosition(CFG.get<float>("info_x"), CFG.get<float>("info_y"));
+    information_.setPosition(CFG.get<float>("info_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("info_y") * CFG.get<float>("user_interface_zoom"));
     information_.setFillColor(sf::Color(255, 255, 255, 0));
     information_.setFont(RM.getFont("editor"));
     information_.setString("");
-    information_.setCharacterSize(20);
+    information_.setCharacterSize(20 * CFG.get<float>("user_interface_zoom"));
     information_a_ = 0.0f;
 
     gui_.setFont(RM.getFont("editor"));
@@ -59,7 +59,8 @@ void UserInterface::generateMenuBar(sf::RenderWindow& window)
 {
     auto list_menu = tgui::MenuBar::create();
     list_menu->setRenderer(gui_theme_.getRenderer("MenuBar"));
-    list_menu->setSize("100%", 35);
+    list_menu->setSize("100%", 35 * CFG.get<float>("user_interface_zoom"));
+    list_menu->setTextSize(list_menu->getTextSize() * CFG.get<float>("user_interface_zoom"));
     list_menu->addMenu("File");
     list_menu->addMenuItem("File", "Clear existing map");
     list_menu->connectMenuItem("File", "Clear existing map", [&]() { Editor::get().clearMap(); });
@@ -395,11 +396,13 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
                                            float time_elapsed)
 {
     const auto& current_item = Editor::get().getCurrentItem();
+    auto is_tile = false;
 
     if (current_item.first.find("tile") != std::string::npos)
     {
         crosshair_.setPosition(DecorationTile::SIZE_X_ * std::round(mouse_world_pos.x / DecorationTile::SIZE_X_),
                                DecorationTile::SIZE_Y_ * std::round(mouse_world_pos.y / DecorationTile::SIZE_Y_));
+        is_tile = true;
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
     {
@@ -422,28 +425,38 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
 
         crosshair_.changeTexture(&RM.getTexture(current_item.first + "/" + current_item.second), true);
 
-        if (utils::j3x::get<int>(RM.getObjectParams(current_item.first, current_item.second), "frames_number") > 1)
-            crosshair_.changeTextureRect({{0, 0},
-                                          sf::Vector2i(utils::j3x::get<float>(
-                                                               RM.getObjectParams(current_item.first, current_item.second),
-                                                               "size_x"),
-                                                       utils::j3x::get<float>(RM.getObjectParams(current_item.first,
-                                                                                                 current_item.second),
-                                                                              "size_y"))});
+        if (is_tile)
+        {
+            crosshair_.setSize({DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_});
+            crosshair_.changeOrigin({DecorationTile::SIZE_X_ / 2.0f, DecorationTile::SIZE_Y_ / 2.0f});
+        }
+        else
+        {
+            crosshair_.setSize(
+                    sf::Vector2f(
+                            utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
+                            utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")));
+            crosshair_.changeOrigin(
+                    sf::Vector2f(
+                            utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
+                            utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")) /
+                    2.0f +
+                    sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
+                                                        "map_offset_x"),
+                                 utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
+                                                        "map_offset_y")));
 
-        crosshair_.setSize(
-                sf::Vector2f(
-                        utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
-                        utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")));
-        crosshair_.changeOrigin(
-                sf::Vector2f(
-                        utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
-                        utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")) /
-                2.0f +
-                sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
-                                                    "map_offset_x"),
-                             utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
-                                                    "map_offset_y")));
+
+            if (utils::j3x::get<int>(RM.getObjectParams(current_item.first, current_item.second), "frames_number") > 1)
+                crosshair_.changeTextureRect({{0, 0},
+                                              sf::Vector2i(utils::j3x::get<float>(
+                                                                   RM.getObjectParams(current_item.first, current_item.second),
+                                                                   "size_x"),
+                                                           utils::j3x::get<float>(RM.getObjectParams(current_item.first,
+                                                                                                     current_item.second),
+                                                                                  "size_y"))});
+
+        }
 
         if (current_item.first == "weapons" && sf::Mouse::isButtonPressed(sf::Mouse::Left) &&
             !sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))

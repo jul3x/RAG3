@@ -2,10 +2,13 @@ string default_activation=OnEnter
 list[string] default_functions=[PickCrystal;Destroy]
 list[string] default_datas=[Null;Null]
 
-float size_x=80.0f
-float size_y=80.0f
+float size_x=32.0f
+float size_y=32.0f
 
-float collision_size_x=40.0f
+float collision_size_x=16.0f
+
+float collision_offset_x=0.0f
+float collision_offset_y=0.0f
 
 float map_offset_x=0.0f
 float map_offset_y=0.0f
@@ -18,4 +21,5 @@ bool is_drawable=1
 int z_index=1
 
 bool light_point=1
+bool shadow=1
 bool default_active=1

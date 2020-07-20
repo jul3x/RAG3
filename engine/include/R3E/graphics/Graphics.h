@@ -11,6 +11,7 @@
 
 #include <R3E/objects/AbstractDrawableObject.h>
 #include <R3E/system/Config.h>
+#include <R3E/graphics/StaticShadow.h>
 
 
 namespace r3e::graphics {
@@ -36,6 +37,7 @@ namespace r3e::graphics {
 
         void clear();
         void draw(AbstractDrawableObject& object, sf::RenderStates states = sf::RenderStates::Default);
+        void draw(StaticShadow& object, sf::RenderStates states = sf::RenderStates::Default);
         void drawSorted(AbstractDrawableObject& object);
         void drawAlreadySorted(sf::RenderStates states = sf::RenderStates::Default);
         void display();

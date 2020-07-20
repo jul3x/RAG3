@@ -21,9 +21,9 @@ UserInterface::UserInterface() :
                      CFG.get<int>("graphics/window_height_px") - HEALTH_BAR_Y_ * CFG.get<float>("graphics/user_interface_zoom")}),
         time_bar_({TIME_BAR_X_ * CFG.get<float>("graphics/user_interface_zoom"),
                    CFG.get<int>("graphics/window_height_px") - TIME_BAR_Y_ * CFG.get<float>("graphics/user_interface_zoom")}),
-        fps_text_("FPS: ", RM.getFont(), 30),
-        object_use_text_("[F] Use object", RM.getFont(), 24 * CFG.get<float>("graphics/user_interface_zoom")),
-        npc_talk_text_("[T] Talk to NPC", RM.getFont(), 24 * CFG.get<float>("graphics/user_interface_zoom")),
+        fps_text_("FPS: ", RM.getFont("editor"), 12),
+        object_use_text_("[F] Use object", RM.getFont("editor"), 12),
+        npc_talk_text_("[T] Talk to NPC", RM.getFont("editor"), 12),
         left_hud_({0.0f, static_cast<float>(CFG.get<int>("graphics/window_height_px"))}),
         right_hud_({static_cast<float>(CFG.get<int>("graphics/window_width_px")),
                     static_cast<float>(CFG.get<int>("graphics/window_height_px"))}),
@@ -48,7 +48,8 @@ void UserInterface::initialize(graphics::Graphics& graphics)
 
     graphics.getWindow().setMouseCursorVisible(false);
     graphics.getWindow().setKeyRepeatEnabled(false);
-
+    graphics.getCurrentView().zoom(1.0f / CFG.get<float>("graphics/global_zoom"));
+    graphics.setCurrentView();
     camera_->setViewNormalSize(graphics.getWindow().getView().getSize());
 }
 
@@ -140,6 +141,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 
                 auto current_view = graphics.getCurrentView();
                 current_view.setSize(visible_area);
+                current_view.zoom(1.0f / CFG.get<float>("graphics/global_zoom"));
                 graphics.modifyCurrentView(current_view);
 
                 auto static_view = graphics.getStaticView();
@@ -158,7 +160,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 left_hud_.setPosition(0.0f, event.size.height);
                 right_hud_.setPosition(event.size.width, event.size.height);
 
-                camera_->setViewNormalSize(visible_area);
+                camera_->setViewNormalSize(graphics.getWindow().getView().getSize());
                 blood_splash_.resizeWindow(visible_area);
 
                 break;
@@ -376,5 +378,14 @@ inline void UserInterface::updateThoughts(float time_elapsed)
 
 void UserInterface::spawnThought(Character* user, const std::string& text)
 {
+    for (auto it = thoughts_.begin(); it != thoughts_.end(); ++it)
+    {
+        if (it->getFather() == user)
+        {
+            thoughts_.erase(it);
+            break;
+        }
+    }
+
     thoughts_.emplace_back(user, text, CFG.get<float>("thought_duration"));
 }

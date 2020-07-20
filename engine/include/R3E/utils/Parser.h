@@ -63,13 +63,15 @@ namespace r3e::utils::j3x {
     }
 
     template <class T>
-    const T& get(const Params<T>& params, const std::string& key)
+    const T& get(const Params<T>& params, const std::string& key, bool ignore_warn = false)
     {
         static T ERR = {};
         auto it = params.find(key);
         if (it == params.end())
         {
-            std::cerr << "[J3X] Param " << key << " not found!" << std::endl;
+            if (!ignore_warn)
+                std::cerr << "[J3X] Param " << key << " not found!" << std::endl;
+
             return ERR;
         }
 
@@ -77,7 +79,7 @@ namespace r3e::utils::j3x {
     }
 
     template <class T>
-    const T& get(const Parameters& params, const std::string& key)
+    const T& get(const Parameters& params, const std::string& key, bool ignore_warn = false)
     {
         throw std::invalid_argument("[J3X] Parameter type not handled!");
     }
@@ -95,39 +97,39 @@ namespace r3e::utils::j3x {
     }
 
     template <>
-    inline const int& get<int>(const Parameters& params, const std::string& key)
+    inline const int& get<int>(const Parameters& params, const std::string& key, bool ignore_warn)
     {
-        return get<int>(std::get<0>(params), key);
+        return get<int>(std::get<0>(params), key, ignore_warn);
     }
 
     template <>
-    inline const float& get<float>(const Parameters& params, const std::string& key)
+    inline const float& get<float>(const Parameters& params, const std::string& key, bool ignore_warn)
     {
-        return get<float>(std::get<1>(params), key);
+        return get<float>(std::get<1>(params), key, ignore_warn);
     }
 
     template <>
-    inline const std::string& get<std::string>(const Parameters& params, const std::string& key)
+    inline const std::string& get<std::string>(const Parameters& params, const std::string& key, bool ignore_warn)
     {
-        return get<std::string>(std::get<2>(params), key);
+        return get<std::string>(std::get<2>(params), key, ignore_warn);
     }
 
     template <>
-    inline const std::vector<int>& get<std::vector<int>>(const Parameters& params, const std::string& key)
+    inline const std::vector<int>& get<std::vector<int>>(const Parameters& params, const std::string& key, bool ignore_warn)
     {
-        return get<std::vector<int>>(std::get<3>(params), key);
+        return get<std::vector<int>>(std::get<3>(params), key, ignore_warn);
     }
 
     template <>
-    inline const std::vector<float>& get<std::vector<float>>(const Parameters& params, const std::string& key)
+    inline const std::vector<float>& get<std::vector<float>>(const Parameters& params, const std::string& key, bool ignore_warn)
     {
-        return get<std::vector<float>>(std::get<4>(params), key);
+        return get<std::vector<float>>(std::get<4>(params), key, ignore_warn);
     }
 
     template <>
-    inline const std::vector<std::string>& get<std::vector<std::string>>(const Parameters& params, const std::string& key)
+    inline const std::vector<std::string>& get<std::vector<std::string>>(const Parameters& params, const std::string& key, bool ignore_warn)
     {
-        return get<std::vector<std::string>>(std::get<5>(params), key);
+        return get<std::vector<std::string>>(std::get<5>(params), key, ignore_warn);
     }
 
     template <>

@@ -17,6 +17,8 @@ ShootingWeapon::ShootingWeapon(Character* user, const std::string& id) :
         spawn_type_(utils::j3x::get<std::string>(RM.getObjectParams("weapons", id), "spawn_type")),
         spawn_quantity_(utils::j3x::get<int>(RM.getObjectParams("weapons", id), "spawn_quantity")),
         spawn_angular_diff_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_angular_diff")),
+        spawn_offset_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_offset")),
+        spawn_offset_factor_(-1),
         AbstractWeapon(user,
                        {utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_x"),
                         utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_y")},
@@ -40,9 +42,10 @@ sf::Vector2f ShootingWeapon::use()
         auto sine = static_cast<float>(std::sin(this->getRotation() * M_PI / 180.0f));
         auto cosine = static_cast<float>(std::cos(this->getRotation() * M_PI / 180.0f));
         auto offset_position = this->getPosition();
-        auto weapon_size = sf::Vector2f{this->getSize().x - weapon_offset_.x + BULLET_STARTING_OFFSET_, 0.0f};
-        offset_position.x += weapon_size.x * cosine - weapon_size.y * sine;
-        offset_position.y += weapon_size.x * sine + weapon_size.y * cosine;
+        auto weapon_size = sf::Vector2f{this->getSize().x - weapon_offset_.x + BULLET_STARTING_OFFSET_,
+                                        static_cast<float>(spawn_offset_factor_) * spawn_offset_};
+        offset_position.x += weapon_size.x * cosine - 2.0f * weapon_size.y * sine;
+        offset_position.y += weapon_size.x * sine + 2.0f * weapon_size.y * cosine;
 
         auto primary_rotation = this->getRotation() -
                                 spawn_angular_diff_ * static_cast<float>(spawn_quantity_ - 1) / 2.0f;
@@ -76,4 +79,10 @@ float ShootingWeapon::getState() const
 void ShootingWeapon::setState(float state)
 {
     ammunition_ = static_cast<int>(state * max_ammunition_);
+}
+
+void ShootingWeapon::setFlipY(bool flip)
+{
+    AbstractDrawableObject::setFlipY(flip);
+    spawn_offset_factor_ = flip ? 1 : -1;
 }

@@ -14,53 +14,63 @@ using namespace editor;
 MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
         ui_(ui),
         ChildWindow(gui, theme, "Menu",
-                    {CFG.get<float>("menu_window_x"), CFG.get<float>("menu_window_y")},
-                    {CFG.get<float>("menu_window_size_x"), CFG.get<float>("menu_window_size_y")},
+                    {CFG.get<float>("menu_window_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("menu_window_y") * CFG.get<float>("user_interface_zoom")},
+                    {CFG.get<float>("menu_window_size_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("menu_window_size_y") * CFG.get<float>("user_interface_zoom")},
                     "menu_window")
 {
     grid_ = tgui::Grid::create();
-    grid_->setSize({CFG.get<float>("menu_window_size_x") * 0.75f, CFG.get<float>("menu_window_size_y") * 0.9f});
-    grid_->setPosition({CFG.get<float>("menu_window_size_x") * 0.125f, CFG.get<float>("menu_window_size_y") * 0.05f});
+    grid_->setSize({CFG.get<float>("menu_window_size_x") * CFG.get<float>("user_interface_zoom") * 0.75f, CFG.get<float>("menu_window_size_y") * CFG.get<float>("user_interface_zoom") * 0.9f});
+    grid_->setPosition({CFG.get<float>("menu_window_size_x") * CFG.get<float>("user_interface_zoom") * 0.125f, CFG.get<float>("menu_window_size_y") * CFG.get<float>("user_interface_zoom") * 0.05f});
     child_->add(grid_);
 
     auto button = tgui::Button::create();
     button->setRenderer(theme_->getRenderer("Button"));
-    button->setSize(CFG.get<float>("button_size_x"), CFG.get<float>("button_size_y"));
+
+    float button_width = CFG.get<float>("button_size_x") * CFG.get<float>("user_interface_zoom");
+    float button_height = CFG.get<float>("button_size_y") * CFG.get<float>("user_interface_zoom");
+    unsigned int button_text_size = button->getTextSize() * CFG.get<float>("user_interface_zoom");
+    button->setSize(button_width, button_height);
     button->setText("Load map");
+    button->setTextSize(button_text_size);
     button->connect("Clicked", [this]() { this->ui_->resetMapList(); this->gui_->get("load_window")->setVisible(true); });
     grid_->addWidget(button, 0, 0);
 
     button = tgui::Button::create();
     button->setRenderer(theme_->getRenderer("Button"));
-    button->setSize(CFG.get<float>("button_size_x"), CFG.get<float>("button_size_y"));
+    button->setSize(button_width, button_height);
+    button->setTextSize(button_text_size);
     button->setText("Save map");
     grid_->addWidget(button, 0, 1);
     button->connect("Clicked", [this]() { this->ui_->resetMapList(); this->gui_->get("save_window")->setVisible(true); });
 
     button = tgui::Button::create();
     button->setRenderer(theme_->getRenderer("Button"));
-    button->setSize(CFG.get<float>("button_size_x"), CFG.get<float>("button_size_y"));
+    button->setSize(button_width, button_height);
+    button->setTextSize(button_text_size);
     button->setText("Edit config");
     grid_->addWidget(button, 1, 0);
     button->connect("Clicked", [this]() { this->ui_->openConfigWindow("config_dir", "config"); });
 
     button = tgui::Button::create();
     button->setRenderer(theme_->getRenderer("Button"));
-    button->setSize(CFG.get<float>("button_size_x"), CFG.get<float>("button_size_y"));
+    button->setSize(button_width, button_height);
+    button->setTextSize(button_text_size);
     button->setText("Edit graphics");
     grid_->addWidget(button, 1, 1);
     button->connect("Clicked", [this]() { this->ui_->openConfigWindow("config_dir", "graphics"); });
 
     button = tgui::Button::create();
     button->setRenderer(theme_->getRenderer("Button"));
-    button->setSize(CFG.get<float>("button_size_x"), CFG.get<float>("button_size_y"));
+    button->setSize(button_width, button_height);
+    button->setTextSize(button_text_size);
     button->setText("Edit characters");
     grid_->addWidget(button, 2, 0);
     button->connect("Clicked", [this]() { this->ui_->openConfigWindow("config_dir", "characters"); });
 
     button = tgui::Button::create();
     button->setRenderer(theme_->getRenderer("Button"));
-    button->setSize(CFG.get<float>("button_size_x"), CFG.get<float>("button_size_y"));
+    button->setSize(button_width, button_height);
+    button->setTextSize(button_text_size);
     button->setText("Edit sound");
     grid_->addWidget(button, 2, 1);
     button->connect("Clicked", [this]() { this->ui_->openConfigWindow("config_dir", "sound"); });
@@ -68,12 +78,12 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
     z_index_label_ = tgui::Label::create();
     z_index_label_->setRenderer(theme_->getRenderer("Label"));
     z_index_label_->setText("Visible z-index: 10");
-    z_index_label_->setTextSize(14);
+    z_index_label_->setTextSize(14 * CFG.get<float>("user_interface_zoom"));
     grid_->addWidget(z_index_label_, 3, 0);
 
     z_index_slider_ = tgui::Slider::create();
     z_index_slider_->setRenderer(theme_->getRenderer("Slider"));
-    z_index_slider_->setSize(80, 10);
+    z_index_slider_->setSize(80 * CFG.get<float>("user_interface_zoom"), 10 * CFG.get<float>("user_interface_zoom"));
     z_index_slider_->setValue(10);
     z_index_slider_->setMinimum(-10);
     z_index_slider_->setMaximum(10);
@@ -87,17 +97,39 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
         this->ui_->setZIndex(value);
     });
 
+    random_label_ = tgui::Label::create();
+    random_label_->setRenderer(theme_->getRenderer("Label"));
+    random_label_->setText("Randomizing tiles: 0");
+    random_label_->setTextSize(14 * CFG.get<float>("user_interface_zoom"));
+    grid_->addWidget(random_label_, 4, 0);
+
+    random_slider_ = tgui::Slider::create();
+    random_slider_->setRenderer(theme_->getRenderer("Slider"));
+    random_slider_->setSize(80 * CFG.get<float>("user_interface_zoom"), 10 * CFG.get<float>("user_interface_zoom"));
+    random_slider_->setValue(0);
+    random_slider_->setMinimum(0);
+    random_slider_->setMaximum(9);
+    grid_->addWidget(random_slider_, 4, 1);
+
+    Editor::get().setRandomizing(0);
+
+    random_slider_->connect("ValueChanged", [this]() {
+        int value = this->random_slider_->getValue();
+        this->random_label_->setText("Randomizing tiles: " + std::to_string(value));
+        Editor::get().setRandomizing(value);
+    });
+
     auto label = tgui::Label::create();
     label->setRenderer(theme_->getRenderer("Label"));
     label->setText("Lightning");
-    label->setTextSize(14);
-    grid_->addWidget(label, 4, 0);
+    label->setTextSize(14 * CFG.get<float>("user_interface_zoom"));
+    grid_->addWidget(label, 5, 0);
 
     auto checkbox = tgui::CheckBox::create();
     checkbox->setRenderer(theme_->getRenderer("CheckBox"));
-    checkbox->setSize(15, 15);
+    checkbox->setSize(15 * CFG.get<float>("user_interface_zoom"), 15 * CFG.get<float>("user_interface_zoom"));
     checkbox->setChecked(true);
-    grid_->addWidget(checkbox, 4, 1);
+    grid_->addWidget(checkbox, 5, 1);
 
     checkbox->connect("Checked", [&]() {
         Editor::get().setLightning(true);

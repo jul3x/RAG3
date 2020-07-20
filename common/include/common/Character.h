@@ -13,6 +13,7 @@
 #include <R3E/objects/Identifiable.h>
 #include <R3E/objects/Unique.h>
 #include <R3E/graphics/LightPoint.h>
+#include <R3E/graphics/StaticShadow.h>
 
 #include <common/Functional.h>
 #include <common/AbstractWeapon.h>
@@ -58,7 +59,7 @@ public:
     void switchWeapon(int relative_position_backpack);
     int getCurrentWeapon() const;
     void makeOnlyOneWeapon(const std::string& id, float state);
-    void addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr);
+    bool addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr);
     void addAmmoToWeapon(const std::string& id);
 
     // Getters
@@ -76,6 +77,7 @@ public:
     const std::string& getTalkScenarioStr() const;
     const std::list<std::string>& getTalkScenario() const;
     graphics::LightPoint* getLightPoint() const;
+    graphics::StaticShadow* getShadow() const;
 
     // Setters
     void setMaxHealth(float health);
@@ -88,10 +90,13 @@ public:
     void setWeaponPointing(const sf::Vector2f& point);
     void setSpeedFactor(float factor);
     void setCurrentSpecialObject(Special* obj);
+    void setCurrentFrame(short int frame) override;
     void setCurrentTalkableCharacter(Character* obj);
     void setTalkScenarioStr(const std::string& str);
     void setTalkScenario(const std::list<std::string>& str);
+    void changeTexture(sf::Texture* texture, bool reset = false) override;
 
+    bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f) override;
     bool update(float time_elapsed) override;
     void getShot(const Bullet& bullet) override;
     virtual void getCut(const MeleeWeapon& weapon);
@@ -114,16 +119,18 @@ protected:
     short int current_rotation_quarter_;
 
     std::unique_ptr<graphics::LightPoint> light_;
+    std::unique_ptr<graphics::TransformedTextureShadow> static_shadow_;
     std::unique_ptr<Decoration> decorator_;
     std::unique_ptr<TalkableArea> talkable_area_;
     std::function<void(Character*, const std::string&)> talking_func_;
     bool is_talkable_;
+    bool is_moving_;
     bool should_respond_;
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    static constexpr float ROTATING_HYSTERESIS_ = 15.0f;
+    static constexpr float ROTATING_HYSTERESIS_ = 10.0f;
 
     sf::Vector2f gun_offset_;
     float rotate_to_;

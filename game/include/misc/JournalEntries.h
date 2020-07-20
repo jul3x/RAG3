@@ -189,34 +189,6 @@ private:
 
 };
 
-class DestroyObstacleTile : public JournalEntry {
-public:
-    DestroyObstacleTile(Journal* father, ObstacleTile* ptr);
-
-    void executeEntryReversal() override;
-
-private:
-    ObstacleTile* ptr_;
-
-    std::string id_;
-    sf::Vector2f pos_;
-
-};
-
-class ShotObstacleTile : public JournalEntry {
-public:
-    ShotObstacleTile(Journal* father, ObstacleTile* obstacle);
-
-    void executeEntryReversal() override;
-
-private:
-    ObstacleTile* ptr_;
-
-    float life_;
-
-};
-
-
 class SpawnDecoration : public JournalEntry {
 public:
     SpawnDecoration(Journal* father, Decoration* ptr);

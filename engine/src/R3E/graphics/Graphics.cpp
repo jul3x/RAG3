@@ -109,4 +109,11 @@ namespace r3e::graphics {
         window_.display();
     }
 
+    void Graphics::draw(StaticShadow& object, sf::RenderStates states)
+    {
+        object.setVisibility(window_.getView());
+        if (object.isVisible())
+            window_.draw(object, states);
+    }
+
 } // namespace r3e::graphics

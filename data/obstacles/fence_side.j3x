@@ -1,5 +1,5 @@
 float size_x=32.0f
-float size_y=48.0f
+float size_y=32.0f
 
 float collision_size_x=8.0f
 float collision_size_y=32.0f
@@ -23,3 +23,8 @@ int z_index=1
 
 bool light_point=1
 bool shadow=1
+string shadow_texture_suffix=_sh
+float shadow_offset_x=16.0f
+float shadow_offset_y=-3.0f
+float shadow_size_x=32.0f
+float shadow_size_y=48.0f

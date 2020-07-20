@@ -59,7 +59,7 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
 
     if (utils::j3x::get<int>(RM.getObjectParams("specials", id), "shadow"))
     {
-        static_shadow_ = std::make_unique<graphics::StaticTextureShadow>(
+        static_shadow_ = std::make_unique<graphics::TransformedTextureShadow>(
                 shadow_pos, this->getSize(), CFG.get<float>("graphics/shadow_direction"),
                 CFG.get<float>("graphics/shadow_length_factor"),
                 &RM.getTexture("specials/" + id), sf::Color(CFG.get<int>("graphics/shadow_color")),

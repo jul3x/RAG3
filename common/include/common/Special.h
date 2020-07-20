@@ -43,7 +43,7 @@ private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     std::unique_ptr<graphics::LightPoint> light_;
-    std::unique_ptr<graphics::StaticTextureShadow> static_shadow_;
+    std::unique_ptr<graphics::TransformedTextureShadow> static_shadow_;
     bool is_drawable_;
 
     bool additional_boolean_data_;

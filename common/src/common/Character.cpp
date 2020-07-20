@@ -86,7 +86,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
     }
 
     auto shadow_pos = this->getPosition();
-    static_shadow_ = std::make_unique<graphics::StaticTextureShadow>(
+    static_shadow_ = std::make_unique<graphics::TransformedTextureShadow>(
             shadow_pos, this->getSize(), CFG.get<float>("graphics/shadow_direction"),
             CFG.get<float>("graphics/shadow_length_factor"),
             &RM.getTexture("characters/" + id), sf::Color(CFG.get<int>("graphics/shadow_color")),

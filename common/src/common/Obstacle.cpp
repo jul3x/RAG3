@@ -53,13 +53,31 @@ Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id, const st
 
     if (utils::j3x::get<int>(RM.getObjectParams("obstacles", id), "shadow"))
     {
-        static_shadow_ = std::make_unique<graphics::StaticTextureShadow>(
-                shadow_pos, this->getSize(), CFG.get<float>("graphics/shadow_direction"),
-                CFG.get<float>("graphics/shadow_length_factor"),
-                &RM.getTexture("obstacles/" + id), sf::Color(CFG.get<int>("graphics/shadow_color")),
-                z_index_,
-                utils::j3x::get<int>(RM.getObjectParams("obstacles", id), "frames_number"),
-                utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "frame_duration"));
+        auto shadow_texture_suffix =
+                utils::j3x::get<std::string>(RM.getObjectParams("obstacles", id), "shadow_texture_suffix", true);
+        if (shadow_texture_suffix.empty())
+        {
+            static_shadow_ = std::make_unique<graphics::TransformedTextureShadow>(
+                    shadow_pos, this->getSize(), CFG.get<float>("graphics/shadow_direction"),
+                    CFG.get<float>("graphics/shadow_length_factor"),
+                    &RM.getTexture("obstacles/" + id),
+                    sf::Color(CFG.get<int>("graphics/shadow_color")), z_index_,
+                    utils::j3x::get<int>(RM.getObjectParams("obstacles", id), "frames_number"),
+                    utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "frame_duration"));
+        }
+        else
+        {
+            auto shadow_offset =  sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "shadow_offset_x"),
+                                               utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "shadow_offset_y"));
+            auto shadow_size = sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "shadow_size_x"),
+                                            utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "shadow_size_y"));
+            static_shadow_ = std::make_unique<graphics::StaticTextureShadow>(
+                    shadow_pos + shadow_offset, shadow_size,
+                    &RM.getTexture("obstacles/" + id + shadow_texture_suffix),
+                    sf::Color(CFG.get<int>("graphics/shadow_color")), z_index_,
+                    utils::j3x::get<int>(RM.getObjectParams("obstacles", id), "frames_number"),
+                    utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "frame_duration"));
+        }
     }
 }
 

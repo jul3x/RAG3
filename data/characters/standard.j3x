@@ -1,6 +1,6 @@
 float max_speed=200.0f
 
-float standby_speed=70.0f
+float standby_speed=90.0f
 
 float max_health=12
 
@@ -20,7 +20,7 @@ list[float] gun_offset_x=[9.0f;9.0f;9.0f;9.0f]
 list[float] gun_offset_y=[-9.0f;-8.0f;-9.0f;-8.0f]
 
 int frames_number=4
-float frame_duration=0.1f
+float frame_duration=0.07f
 
 string default_activation=OnKill
 list[string] default_functions=[SpawnAmmo]

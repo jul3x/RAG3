@@ -95,7 +95,17 @@ const sf::Vector2f& NPC::getStartPosition() const
 
 void NPC::handleEnemySelection()
 {
+    if (enemies_.empty())
+    {
+        current_enemy_ = nullptr;
+        return;
+    }
+
     current_enemy_ = enemies_.front();
+
+    if (current_enemy_ == nullptr)
+        return;
+
     auto current_distance = utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition());
     for (const auto& enemy : enemies_)
     {
@@ -111,6 +121,12 @@ void NPC::handleEnemySelection()
 
 void NPC::handleVisibilityState()
 {
+    if (current_enemy_ == nullptr)
+    {
+        visibility_state_ = VisibilityState::OutOfRange;
+        return;
+    }
+
     float start_x = std::round((this->getPosition().x) / map_blockage_->scale_x_);
     float start_y = std::round((this->getPosition().y) / map_blockage_->scale_y_);
     float goal_x = std::round(current_enemy_->getPosition().x / map_blockage_->scale_x_);

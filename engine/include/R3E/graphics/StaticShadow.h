@@ -16,8 +16,7 @@ namespace r3e::graphics {
     public:
         StaticShadow(const sf::Vector2f& position,
                      const sf::Vector2f& size,
-                     float shadow_direction,
-                     float shadow_length_factor,
+                     sf::Texture* texture,
                      const sf::Color& shadow_color,
                      int z_index = 0,
                      short int frames_number = 1,
@@ -34,8 +33,6 @@ namespace r3e::graphics {
     protected:
         sf::Vector2f position_;
         sf::VertexArray shape_;
-        float shadow_direction_;
-        float shadow_length_factor_;
         sf::RenderStates states_;
 
     private:
@@ -43,34 +40,37 @@ namespace r3e::graphics {
 
     };
 
-    class StaticTextureShadow : public StaticShadow {
+    class TransformedTextureShadow : public StaticShadow {
     public:
-        StaticTextureShadow(const sf::Vector2f& position,
-                            const sf::Vector2f& size,
-                            float shadow_direction,
-                            float shadow_length_factor,
-                            sf::Texture* texture_name,
-                            const sf::Color& shadow_color,
-                            int z_index = 0,
-                            short int frames_number = 1,
-                            float frame_duration = 0.0f);
+        TransformedTextureShadow(const sf::Vector2f& position,
+                                 const sf::Vector2f& size,
+                                 float shadow_direction,
+                                 float shadow_length_factor,
+                                 sf::Texture* texture_name,
+                                 const sf::Color& shadow_color,
+                                 int z_index = 0,
+                                 short int frames_number = 1,
+                                 float frame_duration = 0.0f);
 
         void setPosition(const sf::Vector2f& position) override;
         void changeTexture(sf::Texture* texture, bool reset = false) override;
         bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f) override;
 
+    private:
+        float shadow_direction_;
+        float shadow_length_factor_;
+
     };
 
-    class StaticBlockShadow : public StaticShadow {
+    class StaticTextureShadow : public StaticShadow {
     public:
-        StaticBlockShadow(const sf::Vector2f& position,
-                          const sf::Vector2f& size,
-                          float shadow_direction,
-                          float shadow_length_factor,
-                          const sf::Color& shadow_color,
-                          int z_index = 0);
+        StaticTextureShadow(const sf::Vector2f& position, const sf::Vector2f& size,
+                            sf::Texture* texture_name, const sf::Color& shadow_color,
+                            int z_index = 0, short frames_number = 1, float frame_duration = 1.0f);
 
         void setPosition(const sf::Vector2f& position) override;
+        void changeTexture(sf::Texture* texture, bool reset = false) override;
+        bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f) override;
 
     };
 } // namespace r3e::graphics

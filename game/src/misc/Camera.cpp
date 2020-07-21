@@ -13,7 +13,6 @@
 
 Camera::Camera() : state_(State::Normal) {
     center_ = {};
-    shaking_factor_ = 0.0f;
 }
 
 void Camera::setShaking(float factor)
@@ -21,7 +20,7 @@ void Camera::setShaking(float factor)
     if (state_ == State::Normal)
     {
         time_elapsed_ = CFG.get<float>("graphics/camera_shaking_time");
-        shaking_factor_ = std::max(factor, shaking_factor_);
+        shaking_map_[factor] = time_elapsed_;
     }
 }
 
@@ -33,7 +32,7 @@ void Camera::setZoomInOut()
 
 void Camera::setNormal()
 {
-    shaking_factor_ = 0.0f;
+    shaking_map_.clear();
     time_elapsed_ = -1.0f;
     state_ = State::Normal;
 }
@@ -56,15 +55,34 @@ void Camera::update(float time_elapsed)
     view_size_.x += zoom_diff.x * time_elapsed * CFG.get<float>("graphics/camera_zoom_speed");
     view_size_.y += zoom_diff.y * time_elapsed * CFG.get<float>("graphics/camera_zoom_speed");
 
-    if (!utils::num::isNearlyEqual(shaking_factor_, 0.0f) && state_ == State::Normal)
+    for (auto & it : shaking_map_)
     {
-        center_.z = shaking_factor_ * CFG.get<float>("graphics/camera_rotation_recoil") *
-                    std::sin(shaking_factor_ * time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
-        center_.x += shaking_factor_ * time_elapsed * CFG.get<float>("graphics/camera_position_recoil") *
-                     std::cos(shaking_factor_ * time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
-        center_.y -= shaking_factor_ * time_elapsed * CFG.get<float>("graphics/camera_position_recoil") *
-                     std::cos(shaking_factor_ * time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
+        it.second -= time_elapsed;
+    }
+
+    if (!shaking_map_.empty() && state_ == State::Normal)
+    {
+        auto element = shaking_map_.begin();
+        for (auto it = element; it != shaking_map_.end(); ++it)
+        {
+            if (element->first < it->first)
+            {
+                element = it;
+            }
+        }
+
+        center_.z = element->first * CFG.get<float>("graphics/camera_rotation_recoil") *
+                    std::sin(element->first * time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
+        center_.x += element->first * time_elapsed * CFG.get<float>("graphics/camera_position_recoil") *
+                     std::cos(element->first * time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
+        center_.y -= element->first * time_elapsed * CFG.get<float>("graphics/camera_position_recoil") *
+                     std::cos(element->first * time_elapsed_ / CFG.get<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
         time_elapsed_ -= time_elapsed;
+
+        if (element->second <= 0.0f)
+        {
+            shaking_map_.erase(element);
+        }
     }
     else if (state_ == State::ZoomInOut)
     {

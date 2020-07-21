@@ -309,7 +309,8 @@ graphics::LightPoint* Character::getLightPoint() const
 
 void Character::setRotation(float theta)
 {
-    weapons_in_backpack_.at(current_weapon_)->setRotation(theta);
+    for (auto& weapon : weapons_in_backpack_)
+        weapon->setRotation(theta);
 
     auto get_quarter = [](float theta) {
         if (theta >= 0.0f && theta < 45.0f)

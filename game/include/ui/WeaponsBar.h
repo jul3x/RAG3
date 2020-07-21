@@ -30,10 +30,7 @@ public:
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    static constexpr float WEAPON_SIZE_X_ = 70.0f;
-    static constexpr float WEAPON_SIZE_Y_ = 70.0f;
-    static constexpr float CHOSEN_WEAPON_SIZE_X_ = 100.0f;
-    static constexpr float CHOSEN_WEAPON_SIZE_Y_ = 100.0f;
+    static constexpr float CHOSEN_WEAPON_SIZE_FACTOR_ = 1.25f;
     static constexpr int SLOTS_ = 4;
 
     std::vector<sf::Vector2f> weapons_positions_;

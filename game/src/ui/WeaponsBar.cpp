@@ -42,14 +42,15 @@ void WeaponsBar::update(const std::vector<std::shared_ptr<AbstractWeapon>>& weap
         auto mod_i = (curr_weapon + i) % weapons.size();
         auto weapon_cast = dynamic_cast<ShootingWeapon*>(weapons.at(mod_i).get());
         auto melee_cast = dynamic_cast<MeleeWeapon*>(weapons.at(mod_i).get());
-        auto size = i == 0 ? sf::Vector2f(CHOSEN_WEAPON_SIZE_X_, CHOSEN_WEAPON_SIZE_Y_) :
-                    sf::Vector2f(WEAPON_SIZE_X_, WEAPON_SIZE_Y_);
-
+        auto& name = weapons.at(mod_i)->getId();
+        auto size = (i == 0 ? CHOSEN_WEAPON_SIZE_FACTOR_ : 1.0f) *
+                sf::Vector2f{utils::j3x::get<float>(RM.getObjectParams("specials", name), "size_x"),
+                             utils::j3x::get<float>(RM.getObjectParams("specials", name), "size_y")};
         auto weapon_pos = base_position + weapons_positions_.at(i) * CFG.get<float>("graphics/user_interface_zoom");
         if (weapon_cast != nullptr || melee_cast != nullptr)
         {
-            weapons_.emplace_back(weapon_pos, size * CFG.get<float>("graphics/user_interface_zoom"),
-                                  &RM.getTexture("specials/" + weapons.at(mod_i)->getId()));
+            weapons_.emplace_back(weapon_pos, size * CFG.get<float>("graphics/global_zoom"),
+                                  &RM.getTexture("specials/" + name));
         }
 
         if (weapon_cast != nullptr)

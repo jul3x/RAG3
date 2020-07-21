@@ -29,7 +29,7 @@ private:
         Reverse
     };
 
-    float shaking_factor_;
+    std::unordered_map<float, float> shaking_map_;
     Camera::State state_;
 
 };

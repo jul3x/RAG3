@@ -1,5 +1,5 @@
-float size_x=32.0f
-float size_y=32.0f
+float size_x=40.0f
+float size_y=26.0f
 
 float collision_size_x=16.0f
 
@@ -22,4 +22,4 @@ int z_index=1
 
 bool light_point=0
 bool default_active=1
-bool shadow=0
+bool shadow=1

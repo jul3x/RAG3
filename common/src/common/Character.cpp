@@ -231,6 +231,7 @@ bool Character::update(float time_elapsed)
     {
         vel = 0.0f;
         is_moving_ = false;
+        this->setCurrentFrame(0);
     }
 
     this->updateAnimation(time_elapsed,

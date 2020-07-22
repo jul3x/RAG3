@@ -8,6 +8,8 @@
 
 #include <memory>
 
+#include <R3E/graphics/StaticShadow.h>
+
 #include <common/AbstractWeapon.h>
 #include <common/MeleeWeaponArea.h>
 
@@ -24,6 +26,7 @@ public:
 
     MeleeWeaponArea* getMeleeWeaponArea() const;
     float getDeadlyFactor() const;
+    bool isUsed() const;
 
     void setPosition(const sf::Vector2f& position) override;
     void setPosition(float x, float y) override;
@@ -31,12 +34,18 @@ public:
     void setPositionY(float y) override;
 
     void setRotation(float angle) override;
+    void changeTexture(sf::Texture* texture, bool reset = false) override;
+    void setFlipY(bool flip) override;
 
     void update(float time_elapsed) override;
 
 private:
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+    std::unique_ptr<graphics::TransformedTextureShadow> static_shadow_;
     std::unique_ptr<MeleeWeaponArea> area_;
 
+    bool is_used_;
     float use_elapsed_;
     float use_timeout_;
     float reversed_recoil_;

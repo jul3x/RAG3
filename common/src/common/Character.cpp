@@ -279,20 +279,34 @@ bool Character::update(float time_elapsed)
 
 void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    target.draw(*static_shadow_, states);
+    bool show_body = true;
+    if (!weapons_in_backpack_.empty())
+    {
+        auto melee = dynamic_cast<MeleeWeapon*>(weapons_in_backpack_.at(current_weapon_).get());
+        if (melee != nullptr && melee->isUsed())
+        {
+            show_body = false;
+        }
+    }
+
+    if (show_body)
+        target.draw(*static_shadow_, states);
+
     if (current_rotation_quarter_ == 3 || current_rotation_quarter_ == 4)
     {
         if (!weapons_in_backpack_.empty())
             target.draw(*weapons_in_backpack_.at(current_weapon_), states);
 
-        target.draw(shape_, states);
+        if (show_body)
+            target.draw(shape_, states);
 
         if (decorator_ != nullptr)
             target.draw(*decorator_, states);
     }
     else
     {
-        target.draw(shape_, states);
+        if (show_body)
+            target.draw(shape_, states);
 
         if (decorator_ != nullptr)
             target.draw(*decorator_, states);

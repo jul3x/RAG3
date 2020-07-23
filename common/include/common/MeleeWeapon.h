@@ -45,6 +45,7 @@ private:
     std::unique_ptr<graphics::TransformedTextureShadow> static_shadow_;
     std::unique_ptr<MeleeWeaponArea> area_;
 
+    float saved_rotation_;
     bool is_used_;
     float use_elapsed_;
     float use_timeout_;

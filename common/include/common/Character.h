@@ -78,6 +78,7 @@ public:
     const std::list<std::string>& getTalkScenario() const;
     graphics::LightPoint* getLightPoint() const;
     graphics::StaticShadow* getShadow() const;
+    float getRotateTo() const;
 
     // Setters
     void setMaxHealth(float health);

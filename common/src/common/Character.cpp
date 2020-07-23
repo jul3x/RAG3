@@ -732,3 +732,8 @@ graphics::StaticShadow* Character::getShadow() const
 {
     return static_shadow_.get();
 }
+
+float Character::getRotateTo() const
+{
+    return rotate_to_;
+}

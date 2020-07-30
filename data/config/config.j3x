@@ -31,8 +31,8 @@ float explosion_hurt_factor=30.0f
 float explosion_velocity_factor=1280.0f
 float explosion_force_duration=0.2f
 
-float melee_weapon_range=16.0f
-float melee_weapon_offset_x=10.0f
+float melee_weapon_range=20.0f
+float melee_weapon_offset_x=20.0f
 
 float shot_force_duration=0.1f
 float side_step_force_duration=0.1f

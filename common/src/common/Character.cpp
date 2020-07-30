@@ -463,7 +463,7 @@ void Character::setRotation(float theta)
 void Character::setPosition(const sf::Vector2f& pos)
 {
     AbstractDrawableObject::setPosition(pos);
-    weapons_in_backpack_.at(current_weapon_)->setPosition(pos + sf::Vector2f{gun_offset_.x, gun_offset_.y});
+    weapons_in_backpack_.at(current_weapon_)->setPosition(pos, gun_offset_);
 
     if (decorator_ != nullptr)
         decorator_->setPosition(pos);
@@ -486,36 +486,12 @@ void Character::setPosition(float x, float y)
 
 void Character::setPositionX(float x)
 {
-    AbstractDrawableObject::setPositionX(x);
-    weapons_in_backpack_.at(current_weapon_)->setPositionX(x + gun_offset_.x);
-
-    if (decorator_ != nullptr)
-        decorator_->setPositionX(x);
-
-    if (talkable_area_ != nullptr)
-        talkable_area_->setPositionX(x);
-
-    if (light_ != nullptr)
-        light_->setPositionX(x);
-
-    static_shadow_->setPositionX(x - utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_x"));
+    this->setPosition(x, this->getPosition().y);
 }
 
 void Character::setPositionY(float y)
 {
-    AbstractDrawableObject::setPositionY(y);
-    weapons_in_backpack_.at(current_weapon_)->setPositionY(y + gun_offset_.y);
-
-    if (decorator_ != nullptr)
-        decorator_->setPositionY(y);
-
-    if (talkable_area_ != nullptr)
-        talkable_area_->setPositionY(y);
-
-    if (light_ != nullptr)
-        light_->setPositionY(y);
-
-    static_shadow_->setPositionY(y - utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_y"));
+    this->setPosition(this->getPosition().x, y);
 }
 
 void Character::setWeaponPointing(const sf::Vector2f& point)

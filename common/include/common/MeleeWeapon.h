@@ -26,13 +26,10 @@ public:
 
     MeleeWeaponArea* getMeleeWeaponArea() const;
     float getDeadlyFactor() const;
+    float getRotation() const override;
     bool isUsed() const;
 
-    void setPosition(const sf::Vector2f& position) override;
-    void setPosition(float x, float y) override;
-    void setPositionX(float x) override;
-    void setPositionY(float y) override;
-
+    void setPosition(const sf::Vector2f& position, const sf::Vector2f& offset) override;
     void setRotation(float angle) override;
     void changeTexture(sf::Texture* texture, bool reset = false) override;
     void setFlipY(bool flip) override;

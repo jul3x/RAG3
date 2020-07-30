@@ -58,7 +58,7 @@ sf::Vector2f MeleeWeapon::use()
         this->setSize(static_shadow_->getSize());
         this->setCurrentFrame(0);
         static_shadow_->setCurrentFrame(0);
-        this->setPosition(user_->getPosition());
+        this->setPosition(user_->getPosition(), {});
         use_elapsed_ = utils::j3x::get<float>(RM.getObjectParams("weapons", this->getId()), "use_time");
         time_elapsed_ = use_timeout_;
         is_used_ = true;
@@ -91,41 +91,27 @@ MeleeWeaponArea* MeleeWeapon::getMeleeWeaponArea() const
     return area_.get();
 }
 
-void MeleeWeapon::setPosition(const sf::Vector2f& position)
+void MeleeWeapon::setPosition(const sf::Vector2f& position, const sf::Vector2f& offset)
 {
     if (!is_used_)
     {
-        AbstractDrawableObject::setPosition(position);
+        AbstractDrawableObject::setPosition(position + offset);
     }
     else
     {
-        auto offset = sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("weapons", this->getId()), "use_offset_x"),
-                                   utils::j3x::get<float>(RM.getObjectParams("weapons", this->getId()), "use_offset_y"));
+        auto use_offset = sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("weapons", this->getId()), "use_offset_x"),
+                                       utils::j3x::get<float>(RM.getObjectParams("weapons", this->getId()), "use_offset_y"));
 
         auto shadow_offset = sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("weapons", this->getId()), "shadow_offset_x"),
                                           utils::j3x::get<float>(RM.getObjectParams("weapons", this->getId()), "shadow_offset_y"));
-        AbstractDrawableObject::setPosition(position + offset);
+        AbstractDrawableObject::setPosition(position + use_offset);
         static_shadow_->setPosition(position + shadow_offset);
+
+        auto radians = saved_rotation_ * M_PI / 180.0f;
+        area_->setPosition(position + CFG.get<float>("melee_weapon_offset_x") *
+                sf::Vector2f{static_cast<float>(std::cos(radians)), static_cast<float>(std::sin(radians))});
     }
 
-    auto radians = saved_rotation_ * M_PI / 180.0f;
-    area_->setPosition(position + CFG.get<float>("melee_weapon_offset_x") *
-                                  sf::Vector2f{static_cast<float>(std::cos(radians)), static_cast<float>(std::sin(radians))});
-}
-
-void MeleeWeapon::setPosition(float x, float y)
-{
-    this->setPosition({x, y});
-}
-
-void MeleeWeapon::setPositionX(float x)
-{
-    this->setPosition({x, this->getPosition().y});
-}
-
-void MeleeWeapon::setPositionY(float y)
-{
-    this->setPosition({this->getPosition().x, y});
 }
 
 void MeleeWeapon::setRotation(float angle)
@@ -212,11 +198,12 @@ void MeleeWeapon::draw(sf::RenderTarget& target, sf::RenderStates states) const
         target.draw(*static_shadow_, states);
     }
     target.draw(shape_, states);
+}
 
-    static sf::CircleShape shape;
-    shape.setPosition(area_->getPosition());
-    shape.setRadius(10.0f);
-    shape.setOrigin(10.0f, 10.0f);
-
-    target.draw(shape, states);
+float MeleeWeapon::getRotation() const
+{
+    if (!is_used_)
+        return AbstractDrawableObject::getRotation();
+    else
+        return user_->getRotateTo();
 }

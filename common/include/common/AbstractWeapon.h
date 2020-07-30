@@ -30,6 +30,7 @@ public:
     virtual sf::Vector2f use() = 0;
     virtual float getState() const = 0;
     virtual void setState(float state) = 0;
+    virtual void setPosition(const sf::Vector2f& pos, const sf::Vector2f& offset);
 
     const sf::Vector2f& getWeaponOffset() const;
     Character* getUser() const;

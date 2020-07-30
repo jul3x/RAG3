@@ -19,9 +19,9 @@ int frames_number=6
 float frame_duration=0.07f
 float use_size_x=65.0f
 float use_size_y=92.0f
-float use_offset_x=-32.0f
-float use_offset_y=-8.0f
-float shadow_offset_x=-8.0f
-float shadow_offset_y=2.0f
+float use_offset_x=-28.0f
+float use_offset_y=-15.0f
+float shadow_offset_x=-4.0f
+float shadow_offset_y=-5.0f
 
 int z_index=1

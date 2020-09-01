@@ -49,7 +49,8 @@ sf::Vector2f MeleeWeapon::use()
         auto added_str = "";
         if (saved_rotation_ > 90.0f && saved_rotation_ <= 270.0f)
         {
-            added_str = "_2";
+//            added_str = "_2";
+            this->setFlipX(true);
         }
         auto texture = &RM.getTexture("weapons/" + user_->getId() + "_" + this->getId() + added_str);
         this->changeTexture(texture, true);
@@ -160,6 +161,7 @@ void MeleeWeapon::update(float time_elapsed)
         area_->setActive(false);
 
         is_used_ = false;
+        this->setFlipX(false);
         this->setRotation(user_->getRotateTo());
         setCurrentFrame(0);
         static_shadow_->setCurrentFrame(0);
@@ -206,4 +208,10 @@ float MeleeWeapon::getRotation() const
         return AbstractDrawableObject::getRotation();
     else
         return user_->getRotateTo();
+}
+
+void MeleeWeapon::setFlipX(bool flip)
+{
+    AbstractDrawableObject::setFlipX(flip);
+    static_shadow_->setFlipX(flip);
 }

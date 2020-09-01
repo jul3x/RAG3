@@ -124,12 +124,12 @@ namespace r3e::graphics {
             current_frame_ -= frames_number_;
         }
 
-        animation_source_.left = frame_size_.x * current_frame_;
-        animation_source_.top = 0;
+        animation_source_.left = (is_flipped_x_ ? 1 : 0) * frame_size_.x + frame_size_.x * current_frame_;
+        animation_source_.top = (is_flipped_y_ ? frame_size_.y : 0);
 
         shape_[0].texCoords = {static_cast<float>(animation_source_.left), static_cast<float>(frame_size_.y)};
-        shape_[1].texCoords = {static_cast<float>(animation_source_.left) + frame_size_.x, static_cast<float>(frame_size_.y)};
-        shape_[2].texCoords = {static_cast<float>(animation_source_.left) + frame_size_.x, 0.0f};
+        shape_[1].texCoords = {static_cast<float>(animation_source_.left) + (is_flipped_x_ ? -frame_size_.x : frame_size_.x), static_cast<float>(frame_size_.y)};
+        shape_[2].texCoords = {static_cast<float>(animation_source_.left) + (is_flipped_x_ ? -frame_size_.x : frame_size_.x), 0.0f};
         shape_[3].texCoords = {static_cast<float>(animation_source_.left), 0.0f};
 
         return true;
@@ -180,12 +180,12 @@ namespace r3e::graphics {
             current_frame_ -= frames_number_;
         }
 
-        animation_source_.left = frame_size_.x * current_frame_;
-        animation_source_.top = 0;
+        animation_source_.left = (is_flipped_x_ ? 1 : 0) * frame_size_.x + frame_size_.x * current_frame_;
+        animation_source_.top = (is_flipped_y_ ? frame_size_.y : 0);
 
         shape_[0].texCoords = {static_cast<float>(animation_source_.left), static_cast<float>(frame_size_.y)};
-        shape_[1].texCoords = {static_cast<float>(animation_source_.left) + frame_size_.x, static_cast<float>(frame_size_.y)};
-        shape_[2].texCoords = {static_cast<float>(animation_source_.left) + frame_size_.x, 0.0f};
+        shape_[1].texCoords = {static_cast<float>(animation_source_.left) + (is_flipped_x_ ? -frame_size_.x : frame_size_.x), static_cast<float>(frame_size_.y)};
+        shape_[2].texCoords = {static_cast<float>(animation_source_.left) + (is_flipped_x_ ? -frame_size_.x : frame_size_.x), 0.0f};
         shape_[3].texCoords = {static_cast<float>(animation_source_.left), 0.0f};
 
         return true;

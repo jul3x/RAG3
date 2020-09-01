@@ -33,6 +33,7 @@ public:
     void setRotation(float angle) override;
     void changeTexture(sf::Texture* texture, bool reset = false) override;
     void setFlipY(bool flip) override;
+    void setFlipX(bool flip) override;
 
     void update(float time_elapsed) override;
 

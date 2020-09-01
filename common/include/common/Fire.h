@@ -8,6 +8,7 @@
 
 
 #include <R3E/graphics/LightPoint.h>
+#include <R3E/objects/Lightable.h>
 #include <R3E/objects/AbstractPhysicalObject.h>
 
 
@@ -15,7 +16,7 @@ using namespace r3e;
 
 class Character;
 
-class Fire : public HoveringObject {
+class Fire : public Lightable, public HoveringObject {
 public:
     Fire(Character* user,
          const sf::Vector2f& position,
@@ -26,15 +27,13 @@ public:
     Character* getUser() const;
     float getAlpha() const;
     float getR() const;
-    graphics::LightPoint* getLightPoint() const;
 
+    void setSize(const sf::Vector2f& size) override;
     void setDead();
     void setAlpha(float alpha);
     void setR(float r);
 
 private:
-    std::unique_ptr<graphics::LightPoint> light_;
-
     Character* user_;
 
     sf::Color color_;

@@ -79,64 +79,25 @@ void Game::initialize()
     for (auto& obstacle : map_->getList<Obstacle>())
     {
         engine_->registerStaticObject(obstacle.get());
+        registerLight(obstacle.get());
 
-        if (obstacle->getLightPoint() != nullptr)
-        {
-            obstacle->getLightPoint()->registerGraphics(engine_->getGraphics());
-        }
-
-        for (const auto& function : obstacle->getFunctions())
-        {
-            obstacle->bindFunction(special_functions_->bindFunction(function),
-                                   special_functions_->bindTextToUse(function),
-                                   special_functions_->isUsableByNPC(function));
-        }
+        registerFunctions(obstacle.get());
     }
 
     for (auto& decoration : map_->getList<Decoration>())
     {
-        if (decoration->getLightPoint() != nullptr)
-        {
-            decoration->getLightPoint()->registerGraphics(engine_->getGraphics());
-        }
+        registerLight(decoration.get());
     }
 
     for (auto& character : map_->getList<NPC>())
     {
         engine_->registerDynamicObject(character.get());
-
-        if (character->getLightPoint() != nullptr)
-        {
-            character->getLightPoint()->registerGraphics(engine_->getGraphics());
-        }
-
+        registerLight(character.get());
         character->registerAgentsManager(agents_manager_.get());
         character->registerEnemy(player_.get());
         character->registerMapBlockage(&map_->getMapBlockage());
-
-        for (const auto& function : character->getFunctions())
-        {
-            character->bindFunction(special_functions_->bindFunction(function),
-                                    special_functions_->bindTextToUse(function),
-                                    special_functions_->isUsableByNPC(function));
-        }
-
-        for (auto& weapon : character->getWeapons())
-        {
-            if (!weapon->getId().empty())
-            {
-                weapon->registerSpawningFunction(
-                        this->getSpawningFunction(utils::j3x::get<std::string>(
-                                RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
-
-                auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
-
-                if (melee_weapon != nullptr)
-                {
-                    engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
-                }
-            }
-        }
+        registerFunctions(character.get());
+        registerWeapons(character.get());
 
         auto talkable_area = character->getTalkableArea();
         if (talkable_area != nullptr)
@@ -146,21 +107,8 @@ void Game::initialize()
     }
 
     engine_->registerDynamicObject(player_.get());
-    player_->getLightPoint()->registerGraphics(engine_->getGraphics());
-    for (auto& weapon : player_->getWeapons())
-    {
-        if (!weapon->getId().empty())
-            weapon->registerSpawningFunction(
-                    this->getSpawningFunction(utils::j3x::get<std::string>(
-                            RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
-
-        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
-
-        if (melee_weapon != nullptr)
-        {
-            engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
-        }
-    }
+    registerLight(player_.get());
+    registerWeapons(player_.get());
 
     for (auto& weapon : map_->getList<PlacedWeapon>())
     {
@@ -174,19 +122,9 @@ void Game::initialize()
         if (special->getId() == "starting_position")
             player_->setPosition(special->getPosition());
 
-        if (special->getLightPoint() != nullptr)
-        {
-            special->getLightPoint()->registerGraphics(engine_->getGraphics());
-        }
-
+        registerLight(special.get());
         engine_->registerHoveringObject(special.get());
-
-        for (const auto& function : special->getFunctions())
-        {
-            special->bindFunction(special_functions_->bindFunction(function),
-                                  special_functions_->bindTextToUse(function),
-                                  special_functions_->isUsableByNPC(function));
-        }
+        registerFunctions(special.get());
     }
 }
 
@@ -294,8 +232,10 @@ void Game::updateMapObjects(float time_elapsed)
                 (*it)->use(player_.get());
             }
 
-            auto grid_pos = std::make_pair(std::round(((*it)->getPosition().x + utils::j3x::get<float>(RM.getObjectParams("obstacles", (*it)->getId()), "collision_offset_x")) / DecorationTile::SIZE_X_),
-                                           std::round(((*it)->getPosition().y + utils::j3x::get<float>(RM.getObjectParams("obstacles", (*it)->getId()), "collision_offset_y")) / DecorationTile::SIZE_Y_));
+            auto grid_pos = std::make_pair(std::round(((*it)->getPosition().x + utils::j3x::get<float>(
+                    RM.getObjectParams("obstacles", (*it)->getId()), "collision_offset_x")) / DecorationTile::SIZE_X_),
+                                           std::round(((*it)->getPosition().y + utils::j3x::get<float>(
+                    RM.getObjectParams("obstacles", (*it)->getId()), "collision_offset_y")) / DecorationTile::SIZE_Y_));
             blockage.blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
 
             obstacles.erase(it);
@@ -510,8 +450,7 @@ void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const floa
     auto event = std::make_shared<Event>(pos, "sparks", dir, r);
     engine_->spawnAnimationEvent(event);
 
-    if (event->getLightPoint() != nullptr)
-        event->getLightPoint()->registerGraphics(engine_->getGraphics());
+    registerLight(event.get());
 }
 
 void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
@@ -520,8 +459,7 @@ void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
     auto event = std::make_shared<Event>(pos, "explosion_" + number, 0.0f, r);
 
     engine_->spawnAnimationEvent(event);
-    if (event->getLightPoint() != nullptr)
-        event->getLightPoint()->registerGraphics(engine_->getGraphics());
+    registerLight(event.get());
 
     if (CFG.get<int>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
@@ -531,12 +469,21 @@ void Game::spawnTeleportationEvent(const sf::Vector2f& pos)
 {
     auto event = std::make_shared<Event>(pos + sf::Vector2f{0.0f, 10.0f}, "teleportation");
     engine_->spawnAnimationEvent(event);
-
-    if (event->getLightPoint() != nullptr)
-        event->getLightPoint()->registerGraphics(engine_->getGraphics());
+    registerLight(event.get());
 
     if (CFG.get<int>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("teleportation"), pos);
+}
+
+void Game::spawnSwirlEvent(const std::string& name, const sf::Vector2f& pos, bool flipped)
+{
+    auto event = std::make_shared<Event>(pos, name + "_swirl");
+    engine_->spawnAnimationEvent(event);
+
+    if (flipped)
+        event->setFlipX(true);
+
+    registerLight(event.get());
 }
 
 void Game::spawnFadeInOut()
@@ -575,8 +522,7 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, floa
                                                                      "burst_size"));
     engine_->spawnAnimationEvent(shot_event);
 
-    if (shot_event->getLightPoint() != nullptr)
-        shot_event->getLightPoint()->registerGraphics(engine_->getGraphics());
+    registerLight(shot_event.get());
 
     if (CFG.get<int>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
@@ -587,8 +533,7 @@ void Game::spawnBloodEvent(const sf::Vector2f& pos, float dir)
     auto event = std::make_shared<Event>(pos, "blood", dir, 0.0f);
     engine_->spawnAnimationEvent(event);
 
-    if (event->getLightPoint() != nullptr)
-        event->getLightPoint()->registerGraphics(engine_->getGraphics());
+    registerLight(event.get());
 }
 
 void Game::spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
@@ -756,13 +701,7 @@ Bullet* Game::spawnNewBullet(Character* user, const std::string& id, const sf::V
 
     auto ptr = bullets_.back().get();
 
-    for (const auto& function : ptr->getFunctions())
-    {
-        ptr->bindFunction(special_functions_->bindFunction(function),
-                          special_functions_->bindTextToUse(function),
-                          special_functions_->isUsableByNPC(function));
-    }
-
+    registerFunctions(ptr);
     engine_->registerHoveringObject(ptr);
 
     return ptr;
@@ -795,7 +734,7 @@ Fire* Game::spawnNewFire(Character* user, const sf::Vector2f& pos, float dir)
 
     auto ptr = fire_.back().get();
 
-    ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
+    registerLight(ptr);
     engine_->registerHoveringObject(ptr);
 
     return ptr;
@@ -816,11 +755,7 @@ NPC* Game::spawnNewNPC(const std::string& id, int u_id, const std::string& activ
     ptr->setFunctions(funcs);
     ptr->setDatas(datas);
     engine_->registerDynamicObject(ptr);
-
-    if (ptr->getLightPoint() != nullptr)
-    {
-        ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
-    }
+    registerLight(ptr);
 
     ptr->registerAgentsManager(agents_manager_.get());
     ptr->registerEnemy(player_.get());
@@ -829,28 +764,8 @@ NPC* Game::spawnNewNPC(const std::string& id, int u_id, const std::string& activ
         player_clone_->registerEnemy(ptr);
 
     ptr->registerMapBlockage(&map_->getMapBlockage());
-
-    for (auto& weapon : ptr->getWeapons())
-    {
-        if (!weapon->getId().empty())
-            weapon->registerSpawningFunction(
-                    this->getSpawningFunction(utils::j3x::get<std::string>(
-                            RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
-
-        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
-
-        if (melee_weapon != nullptr)
-        {
-            engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
-        }
-    }
-
-    for (const auto& function : ptr->getFunctions())
-    {
-        ptr->bindFunction(special_functions_->bindFunction(function),
-                          special_functions_->bindTextToUse(function),
-                          special_functions_->isUsableByNPC(function));
-    }
+    registerWeapons(ptr);
+    registerFunctions(ptr);
 
     auto talkable_area = ptr->getTalkableArea();
     if (talkable_area != nullptr)
@@ -870,11 +785,7 @@ NPC* Game::spawnNewPlayerClone(const std::string& weapon_id)
                                                   journal_->getDurationSaved() *
                                                   CFG.get<float>("player_clone_time_factor"));
     engine_->registerDynamicObject(player_clone_.get());
-
-    if (player_clone_->getLightPoint() != nullptr)
-    {
-        player_clone_->getLightPoint()->registerGraphics(engine_->getGraphics());
-    }
+    registerLight(player_clone_.get());
 
     player_clone_->registerAgentsManager(agents_manager_.get());
     player_clone_->registerMapBlockage(&map_->getMapBlockage());
@@ -887,21 +798,7 @@ NPC* Game::spawnNewPlayerClone(const std::string& weapon_id)
     }
 
     player_clone_->makeOnlyOneWeapon(weapon_id, 0.0f);
-
-    for (auto& weapon : player_clone_->getWeapons())
-    {
-        if (!weapon->getId().empty())
-            weapon->registerSpawningFunction(
-                    this->getSpawningFunction(utils::j3x::get<std::string>(
-                            RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
-
-        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
-
-        if (melee_weapon != nullptr)
-        {
-            engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
-        }
-    }
+    registerWeapons(player_clone_.get());
 
     return player_clone_.get();
 }
@@ -952,19 +849,10 @@ Obstacle* Game::spawnNewObstacle(const std::string& id, int u_id, const sf::Vect
         new_ptr->setDatas(datas);
     }
 
-    if (new_ptr->getLightPoint() != nullptr)
-    {
-        new_ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
-    }
-
+    registerLight(new_ptr);
     engine_->registerStaticObject(new_ptr);
 
-    for (const auto& function : new_ptr->getFunctions())
-    {
-        new_ptr->bindFunction(special_functions_->bindFunction(function),
-                              special_functions_->bindTextToUse(function),
-                              special_functions_->isUsableByNPC(function));
-    }
+    registerFunctions(new_ptr);
 
     return new_ptr;
 }
@@ -1214,11 +1102,7 @@ Decoration* Game::spawnNewDecoration(const std::string& id, int u_id, const sf::
     {
         ptr->setUniqueId(u_id);
     }
-
-    if (ptr->getLightPoint() != nullptr)
-    {
-        ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
-    }
+    registerLight(ptr);
 
     return ptr;
 }
@@ -1248,17 +1132,8 @@ Special* Game::spawnNewSpecial(const std::string& id, int u_id,
         ptr->setDatas(datas);
     }
 
-    if (ptr->getLightPoint() != nullptr)
-    {
-        ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
-    }
-
-    for (const auto& function : ptr->getFunctions())
-    {
-        ptr->bindFunction(special_functions_->bindFunction(function),
-                          special_functions_->bindTextToUse(function),
-                          special_functions_->isUsableByNPC(function));
-    }
+    registerLight(ptr);
+    registerFunctions(ptr);
 
     return ptr;
 }
@@ -1279,7 +1154,47 @@ void Game::findAndDeleteSpecial(Special* ptr)
     std::cerr << "[Game] Warning - special to delete not found!" << std::endl;
 }
 
-void Game::registerHoveringObject(HoveringObject* obj)
+void Game::registerWeapons(Character* character)
 {
-    engine_->registerHoveringObject(obj);
+    for (auto& weapon : character->getWeapons())
+    {
+        registerWeapon(weapon.get());
+    }
+}
+
+void Game::registerWeapon(AbstractWeapon* weapon)
+{
+    if (!weapon->getId().empty())
+    {
+        weapon->registerSpawningFunction(
+                this->getSpawningFunction(utils::j3x::get<std::string>(
+                        RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
+
+        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon);
+
+        if (melee_weapon != nullptr)
+        {
+            engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
+            melee_weapon->registerAnimationSpawningFunction(
+                    std::bind(&Game::spawnSwirlEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+        }
+    }
+}
+
+void Game::registerFunctions(Functional* functional) const
+{
+    for (const auto& function : functional->getFunctions())
+    {
+        functional->bindFunction(special_functions_->bindFunction(function),
+                                 special_functions_->bindTextToUse(function),
+                                 special_functions_->isUsableByNPC(function));
+    }
+}
+
+void Game::registerLight(Lightable* lightable) const
+{
+    if (lightable->getLightPoint() != nullptr)
+    {
+        lightable->getLightPoint()->registerGraphics(engine_->getGraphics());
+    }
 }

@@ -3,12 +3,8 @@ float recoil=4800.0f
 float deadly_factor=6.0f
 
 string spawn_func=Null
-float use_time=0.30f
+float use_time=0.42f
 float spawn_timeout=1.0f
-string spawn_type=heavy
-int spawn_quantity=1
-float spawn_angular_diff=0.0f
-float spawn_offset=0.0f
 
 float size_x=32.0f
 float size_y=60.0f
@@ -20,6 +16,12 @@ float map_offset_x=0.0f
 float map_offset_y=0.0f
 
 int frames_number=6
-float frame_duration=0.05f
+float frame_duration=0.07f
+float use_size_x=65.0f
+float use_size_y=92.0f
+float use_offset_x=-28.0f
+float use_offset_y=-15.0f
+float shadow_offset_x=-4.0f
+float shadow_offset_y=-5.0f
 
 int z_index=1

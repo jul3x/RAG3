@@ -12,6 +12,7 @@
 #include <R3E/objects/AbstractPhysicalObject.h>
 #include <R3E/objects/Identifiable.h>
 #include <R3E/objects/Unique.h>
+#include <R3E/objects/Lightable.h>
 #include <R3E/graphics/LightPoint.h>
 #include <R3E/graphics/StaticShadow.h>
 
@@ -26,7 +27,7 @@
 
 using namespace r3e;
 
-class Character : public DynamicObject, public Shootable, public Functional {
+class Character : public DynamicObject, public Shootable, public Lightable, public Functional {
 public:
     enum class LifeState {
         High,
@@ -76,8 +77,8 @@ public:
     TalkableArea* getTalkableArea() const;
     const std::string& getTalkScenarioStr() const;
     const std::list<std::string>& getTalkScenario() const;
-    graphics::LightPoint* getLightPoint() const;
     graphics::StaticShadow* getShadow() const;
+    float getRotateTo() const;
 
     // Setters
     void setMaxHealth(float health);
@@ -118,7 +119,6 @@ protected:
     float on_fire_time_;
     short int current_rotation_quarter_;
 
-    std::unique_ptr<graphics::LightPoint> light_;
     std::unique_ptr<graphics::TransformedTextureShadow> static_shadow_;
     std::unique_ptr<Decoration> decorator_;
     std::unique_ptr<TalkableArea> talkable_area_;

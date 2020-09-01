@@ -103,7 +103,7 @@ void Fire::setR(float r)
     this->setSize({r_ * 2.0f, r_ * 2.0f});
 }
 
-graphics::LightPoint* Fire::getLightPoint() const
+void Fire::setSize(const sf::Vector2f& size)
 {
-    return light_.get();
+    shape_.setSize(size);
 }

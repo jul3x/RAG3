@@ -26,7 +26,7 @@ PlacedWeapon::PlacedWeapon(const sf::Vector2f& position, float direction, const 
 {
     // TODO Change origin?
 
-    this->setPosition(position);
+    this->setPosition(position, {});
     this->setRotation(direction);
 
     if (usage == "Const")

@@ -8,7 +8,6 @@
 #include <memory>
 
 #include <R3E/graphics/AnimationEvent.h>
-#include <R3E/graphics/LightPoint.h>
 
 
 using namespace r3e;

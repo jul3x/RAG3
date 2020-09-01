@@ -41,8 +41,3 @@ void Decoration::deactivate()
 {
     is_active_ = false;
 }
-
-graphics::LightPoint* Decoration::getLightPoint() const
-{
-    return light_.get();
-}

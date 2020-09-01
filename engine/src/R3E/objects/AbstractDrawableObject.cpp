@@ -92,6 +92,7 @@ namespace r3e {
     void AbstractDrawableObject::setSize(const sf::Vector2f& size)
     {
         shape_.setSize(size);
+        frame_size_ = sf::Vector2i(size.x, size.y);
     }
 
     void AbstractDrawableObject::setVisibility(const sf::View& view)
@@ -171,6 +172,9 @@ namespace r3e {
         {
             throw std::invalid_argument("[AbstractDrawableObject] Frame to set should be less then frames_number_");
         }
+
+        if (frame == 0)
+            time_elapsed_ = 0.0f;
 
         current_frame_ = frame;
         animation_source_.left = (is_flipped_x_ ? 1 : 0) * frame_size_.x + frame_size_.x * current_frame_;

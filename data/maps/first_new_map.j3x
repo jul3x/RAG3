@@ -84,6 +84,12 @@ floor_side2 1184 80 962
 floor_side2 1216 80 963
 floor_side2 1248 80 965
 floor_side2 1280 80 967
+floor_tile 1312 256 992
+floor_tile 1280 256 993
+floor_tile 1248 256 994
+floor_tile 1216 256 995
+floor_tile 1184 256 996
+floor_tile 1152 256 997
 
 obstacles: 
 door 784 264 85 OnKill [Null] [Null]

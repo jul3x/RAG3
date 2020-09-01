@@ -8,6 +8,8 @@
 #include <common/ResourceManager.h>
 #include <common/MeleeWeapon.h>
 
+#include <utility>
+
 
 MeleeWeapon::MeleeWeapon(Character* user, const std::string& id) :
         AbstractWeapon(user,
@@ -47,7 +49,8 @@ sf::Vector2f MeleeWeapon::use()
     if (time_elapsed_ < 0.0f)
     {
         auto added_str = "";
-        if (saved_rotation_ > 90.0f && saved_rotation_ <= 270.0f)
+        bool flipped = saved_rotation_ > 90.0f && saved_rotation_ <= 270.0f;
+        if (flipped)
         {
 //            added_str = "_2";
             this->setFlipX(true);
@@ -69,7 +72,7 @@ sf::Vector2f MeleeWeapon::use()
         auto offset_position = this->getPosition();
 
         spawning_function_(user_, "", offset_position, this->getRotation());
-
+        animation_spawning_function_(this->getId(), this->getPosition(), flipped);
         area_->setActive(true);
 
         return reversed_recoil_ * sf::Vector2f{cosine, sine};
@@ -214,4 +217,9 @@ void MeleeWeapon::setFlipX(bool flip)
 {
     AbstractDrawableObject::setFlipX(flip);
     static_shadow_->setFlipX(flip);
+}
+
+void MeleeWeapon::registerAnimationSpawningFunction(std::function<void(const std::string&, const sf::Vector2f&, bool)> func)
+{
+    animation_spawning_function_ = std::move(func);
 }

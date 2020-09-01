@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include <R3E/objects/Lightable.h>
 #include <R3E/objects/AbstractPhysicalObject.h>
 #include <R3E/graphics/LightPoint.h>
 
@@ -16,7 +17,7 @@
 
 using namespace r3e;
 
-class Obstacle : public StaticObject, public Shootable, public Functional {
+class Obstacle : public StaticObject, public Shootable, public Lightable, public Functional {
 public:
     Obstacle(const sf::Vector2f& position, const std::string& id, int u_id = -1);
 
@@ -24,7 +25,6 @@ public:
              const std::string& activation, const std::vector<std::string>& functions,
              const std::vector<std::string>& datas, int u_id = -1);
 
-    graphics::LightPoint* getLightPoint() const;
     graphics::StaticShadow* getShadow() const;
 
     bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f) override;
@@ -36,7 +36,6 @@ public:
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    std::unique_ptr<graphics::LightPoint> light_;
     std::unique_ptr<graphics::StaticShadow> static_shadow_;
 
 };

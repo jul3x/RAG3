@@ -86,11 +86,6 @@ bool Obstacle::update(float time_elapsed)
     return life_ > 0;
 }
 
-graphics::LightPoint* Obstacle::getLightPoint() const
-{
-    return light_.get();
-}
-
 graphics::StaticShadow* Obstacle::getShadow() const
 {
     return static_shadow_.get();

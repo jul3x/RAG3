@@ -84,11 +84,6 @@ void Special::setAdditionalBooleanData(bool data)
     additional_boolean_data_ = data;
 }
 
-graphics::LightPoint* Special::getLightPoint() const
-{
-    return light_.get();
-}
-
 graphics::StaticShadow* Special::getShadow() const
 {
     return static_shadow_.get();

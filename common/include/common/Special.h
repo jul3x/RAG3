@@ -11,6 +11,7 @@
 
 #include <R3E/graphics/LightPoint.h>
 
+#include <R3E/objects/Lightable.h>
 #include <R3E/objects/AbstractPhysicalObject.h>
 #include <R3E/objects/Identifiable.h>
 #include <R3E/objects/Unique.h>
@@ -20,7 +21,7 @@
 
 using namespace r3e;
 
-class Special : public HoveringObject, public Functional {
+class Special : public HoveringObject, public Lightable, public Functional {
 public:
     Special(const sf::Vector2f& position, const std::string& id, int u_id = -1);
 
@@ -30,7 +31,6 @@ public:
 
     [[nodiscard]] bool isDrawable() const;
     [[nodiscard]] bool getAdditionalBooleanData() const;
-    graphics::LightPoint* getLightPoint() const;
     graphics::StaticShadow* getShadow() const;
 
     bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f) override;
@@ -42,7 +42,6 @@ public:
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    std::unique_ptr<graphics::LightPoint> light_;
     std::unique_ptr<graphics::TransformedTextureShadow> static_shadow_;
     bool is_drawable_;
 

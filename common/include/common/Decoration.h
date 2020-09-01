@@ -10,13 +10,14 @@
 
 #include <R3E/objects/AbstractDrawableObject.h>
 #include <R3E/objects/Identifiable.h>
+#include <R3E/objects/Lightable.h>
 #include <R3E/objects/Unique.h>
 #include <R3E/graphics/LightPoint.h>
 
 
 using namespace r3e;
 
-class Decoration : public AbstractDrawableObject, public Identifiable, public Unique {
+class Decoration : public AbstractDrawableObject, public Identifiable, public Lightable, public Unique {
 public:
     Decoration(const sf::Vector2f& position, const std::string& id, int u_id = -1);
 
@@ -24,10 +25,7 @@ public:
 
     void deactivate();
 
-    graphics::LightPoint* getLightPoint() const;
-
 private:
-    std::unique_ptr<graphics::LightPoint> light_;
     bool is_active_;
 };
 

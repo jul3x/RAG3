@@ -316,11 +316,6 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
     }
 }
 
-graphics::LightPoint* Character::getLightPoint() const
-{
-    return light_.get();
-}
-
 void Character::setRotation(float theta)
 {
     for (auto& weapon : weapons_in_backpack_)

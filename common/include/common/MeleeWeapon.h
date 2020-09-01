@@ -18,6 +18,8 @@ class MeleeWeapon : public AbstractWeapon {
 public:
     explicit MeleeWeapon(Character* user, const std::string& id);
 
+    void registerAnimationSpawningFunction(std::function<void(const std::string&, const sf::Vector2f&, bool)> func);
+
     sf::Vector2f use() override;
 
     float getState() const override;
@@ -42,6 +44,8 @@ private:
 
     std::unique_ptr<graphics::TransformedTextureShadow> static_shadow_;
     std::unique_ptr<MeleeWeaponArea> area_;
+
+    std::function<void(const std::string&, const sf::Vector2f&, bool)> animation_spawning_function_;
 
     float saved_rotation_;
     bool is_used_;

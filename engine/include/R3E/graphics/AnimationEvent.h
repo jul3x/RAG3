@@ -9,11 +9,12 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 
 #include <R3E/objects/AbstractDrawableObject.h>
-#include <R3E/graphics/LightPoint.h>
+#include <R3E/objects/Lightable.h>
+
 
 namespace r3e::graphics {
 
-    class AnimationEvent : public AbstractDrawableObject {
+    class AnimationEvent : public Lightable, public AbstractDrawableObject {
 
     public:
         enum class AnimationType {
@@ -32,21 +33,12 @@ namespace r3e::graphics {
 
         bool update(float time_elapsed);
 
-        graphics::LightPoint* getLightPoint() const;
-
     protected:
-        short int max_frames_count_;
         float duration_s_;
-
-        sf::Vector2i frame_size_;
-
-        sf::IntRect animation_source_;
 
         AnimationType type_;
 
         float time_elapsed_;
-
-        std::unique_ptr<graphics::LightPoint> light_;
 
     };
 

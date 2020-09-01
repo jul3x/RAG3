@@ -168,20 +168,9 @@ void SpecialFunctions::addWeapon(Functional* obj, const std::string& data, Chara
         weapon = std::make_shared<ShootingWeapon>(user, data_parsed);
     }
 
-
-
     if (user->addWeaponToBackpack(weapon))
     {
-        if (!weapon->getId().empty())
-            weapon->registerSpawningFunction(
-                    Game::get().getSpawningFunction(utils::j3x::get<std::string>(
-                            RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
-
-        if (data_parsed.substr(0, 5) == "melee")
-        {
-            auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
-            Game::get().registerHoveringObject(melee_weapon->getMeleeWeaponArea());
-        }
+        Game::get().registerWeapon(weapon.get());
     }
 }
 

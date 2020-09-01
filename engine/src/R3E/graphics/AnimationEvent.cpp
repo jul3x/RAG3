@@ -18,12 +18,9 @@ namespace r3e::graphics {
                                    const AnimationType& animation_type) :
             AbstractDrawableObject(position,
                                    static_cast<sf::Vector2f>(frame_size),
-                                   texture, z_index),
-            frame_size_(frame_size),
-            animation_source_({0, 0}, frame_size),
+                                   texture, z_index, frames_count, duration_s / static_cast<float>(frames_count)),
             type_(animation_type),
             duration_s_(duration_s),
-            max_frames_count_(frames_count),
             time_elapsed_(0.0f)
     {
         shape_.setTextureRect(animation_source_);
@@ -39,9 +36,9 @@ namespace r3e::graphics {
 
         time_elapsed_ += time_elapsed;
 
-        auto current_frame = static_cast<short int>(time_elapsed_ * max_frames_count_ / duration_s_);
+        auto current_frame = static_cast<short int>(time_elapsed_ * frames_number_ / duration_s_);
 
-        if (current_frame >= max_frames_count_)
+        if (current_frame >= frames_number_)
         {
             return true;
         }
@@ -50,16 +47,16 @@ namespace r3e::graphics {
         {
             case AnimationType::Linear:
             {
-                animation_source_.left = frame_size_.x * current_frame;
-                animation_source_.top = 0;
+                animation_source_.left = (is_flipped_x_ ? frame_size_.x : 0) + frame_size_.x * current_frame;
+                animation_source_.top = (is_flipped_y_ ? frame_size_.y : 0);
                 break;
             }
             case AnimationType::Quadratic:
             {
-                animation_source_.left = frame_size_.x *
-                                         (current_frame % static_cast<short int>(std::sqrt(max_frames_count_)));
-                animation_source_.top = frame_size_.y *
-                                        (current_frame / static_cast<short int>(std::sqrt(max_frames_count_)));
+                animation_source_.left = (is_flipped_x_ ? frame_size_.x : 0) + frame_size_.x *
+                                         (current_frame % static_cast<short int>(std::sqrt(frames_number_)));
+                animation_source_.top = (is_flipped_y_ ? frame_size_.y : 0) + frame_size_.y *
+                                        (current_frame / static_cast<short int>(std::sqrt(frames_number_)));
                 break;
             }
             default:
@@ -71,11 +68,6 @@ namespace r3e::graphics {
         shape_.setTextureRect(animation_source_);
 
         return false;
-    }
-
-    graphics::LightPoint* AnimationEvent::getLightPoint() const
-    {
-        return light_.get();
     }
 
 } // namespace r3e::graphics

@@ -355,6 +355,15 @@ void Game::killNPC(NPC* npc)
 
 void Game::draw(graphics::Graphics& graphics)
 {
+    RM.setFontSmoothDisabled(RM.getFont(),
+                             {CFG.get<int>("graphics/use_text_size"),
+                              CFG.get<int>("graphics/thought_text_size"),
+                              CFG.get<int>("graphics/stats_text_size"),
+                              CFG.get<int>("graphics/weapons_text_size"),
+                              CFG.get<int>("graphics/achievement_title_text_size"),
+                              CFG.get<int>("graphics/achievement_text_text_size"),
+                             });
+
     auto draw = [&graphics](auto& list) {
         for (auto& obj : list)
             graphics.drawSorted(*obj);

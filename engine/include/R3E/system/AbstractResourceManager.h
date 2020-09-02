@@ -29,6 +29,7 @@ namespace r3e {
                                 std::string sounds_dir, std::string music_dir);
 
         void setTexturesSmoothAllowed(bool allowed);
+        static void setFontSmoothDisabled(sf::Font& font, const std::vector<int>& sizes);
 
         sf::Texture& getTexture(const std::string& key);
         sf::SoundBuffer& getSound(const std::string& key);

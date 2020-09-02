@@ -20,7 +20,7 @@ WeaponsBar::WeaponsBar(const sf::Vector2f& position) :
 {
     for (int i = 0; i < SLOTS_; ++i)
     {
-        ammo_.emplace_back("0", RM.getFont(), 16 * CFG.get<float>("graphics/user_interface_zoom"));
+        ammo_.emplace_back("0", RM.getFont(), CFG.get<int>("graphics/weapons_text_size") * CFG.get<float>("graphics/user_interface_zoom"));
         ammo_.at(i).setFillColor(sf::Color(CFG.get<int>("graphics/font_color")));
 
         ammo_quantity_.emplace_back(CFG.get<float>("graphics/inertial_states_change_speed"));

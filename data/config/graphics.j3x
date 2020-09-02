@@ -1,5 +1,5 @@
 bool auto_resolution=1
-bool full_screen=0
+bool full_screen=1
 int window_width_px=1280
 int window_height_px=720
 float user_interface_zoom=2.0f
@@ -9,6 +9,14 @@ int32 background_color=0x11111100
 int32 trail_color=0xFFFFFF30
 float full_trail_time=0.2f
 int32 font_color=0xFFFFFFAA
+
+int use_text_size=16
+int thought_text_size=14
+int stats_text_size=36
+int weapons_text_size=24
+int achievement_title_text_size=24
+int achievement_text_text_size=20
+
 int32 fire_color=0xFFFFFFFF
 float fire_frame_times=2.5
 int fire_frames=4

@@ -117,4 +117,13 @@ namespace r3e {
         std::cout << "[AbstractResourceManager] Music " << key << " is loaded!" << std::endl;
     }
 
+    void AbstractResourceManager::setFontSmoothDisabled(sf::Font& font, const std::vector<int>& sizes)
+    {
+        for (const auto& size : sizes)
+        {
+            auto& texture = const_cast<sf::Texture&>(font.getTexture(size));
+            texture.setSmooth(false);
+        }
+    }
+
 } // namespace r3e

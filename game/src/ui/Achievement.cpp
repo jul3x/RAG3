@@ -19,8 +19,8 @@ Achievement::Achievement(const sf::Vector2f& position,
                                 IMG_SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom")},
                                tex),
         position_(CFG.get<float>("graphics/achievement_show_speed")),
-        title_text_(title, RM.getFont(), static_cast<int>(20 * CFG.get<float>("graphics/user_interface_zoom"))),
-        text_text_(text, RM.getFont(), static_cast<int>(16 * CFG.get<float>("graphics/user_interface_zoom"))),
+        title_text_(title, RM.getFont(), static_cast<int>(CFG.get<int>("graphics/achievement_title_text_size") * CFG.get<float>("graphics/user_interface_zoom"))),
+        text_text_(text, RM.getFont(), static_cast<int>(CFG.get<int>("graphics/achievement_text_text_size") * CFG.get<float>("graphics/user_interface_zoom"))),
         bg_(sf::Quads, 4),
         time_elapsed_(CFG.get<float>("graphics/achievement_show_time"))
 {

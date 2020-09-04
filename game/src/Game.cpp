@@ -454,21 +454,23 @@ const std::list<std::unique_ptr<Bullet>>& Game::getBullets() const
     return bullets_;
 }
 
-void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const float r)
+void Game::spawnEvent(const std::string& name, const sf::Vector2f& pos, float dir, float r)
 {
-    auto event = std::make_shared<Event>(pos, "sparks", dir, r);
+    auto event = std::make_shared<Event>(pos, name, dir, r);
     engine_->spawnAnimationEvent(event);
 
     registerLight(event.get());
 }
 
+void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const float r)
+{
+    spawnEvent("sparks", pos, dir, r);
+}
+
 void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
 {
     auto number = std::to_string(utils::num::getRandom(1, 1));
-    auto event = std::make_shared<Event>(pos, "explosion_" + number, 0.0f, r);
-
-    engine_->spawnAnimationEvent(event);
-    registerLight(event.get());
+    spawnEvent("explosion_" + number, pos, 0.0f, r);
 
     if (CFG.get<int>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
@@ -476,9 +478,7 @@ void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
 
 void Game::spawnTeleportationEvent(const sf::Vector2f& pos)
 {
-    auto event = std::make_shared<Event>(pos + sf::Vector2f{0.0f, 10.0f}, "teleportation");
-    engine_->spawnAnimationEvent(event);
-    registerLight(event.get());
+    spawnEvent("teleportation", pos + sf::Vector2f{0.0f, 10.0f});
 
     if (CFG.get<int>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("teleportation"), pos);
@@ -526,12 +526,8 @@ void Game::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
 
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir)
 {
-    auto shot_event = std::make_shared<Event>(pos, "shot", dir * 180.0f / M_PI,
-                                              utils::j3x::get<float>(RM.getObjectParams("bullets", name),
-                                                                     "burst_size"));
-    engine_->spawnAnimationEvent(shot_event);
-
-    registerLight(shot_event.get());
+    spawnEvent("shot", pos, dir * 180.0f / M_PI, utils::j3x::get<float>(RM.getObjectParams("bullets", name),
+                                                                        "burst_size"));
 
     if (CFG.get<int>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
@@ -539,10 +535,7 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, floa
 
 void Game::spawnBloodEvent(const sf::Vector2f& pos, float dir)
 {
-    auto event = std::make_shared<Event>(pos, "blood", dir, 0.0f);
-    engine_->spawnAnimationEvent(event);
-
-    registerLight(event.get());
+    spawnEvent("blood", pos, dir, 0.0f);
 }
 
 void Game::spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)

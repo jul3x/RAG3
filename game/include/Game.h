@@ -84,6 +84,7 @@ public:
     void spawnBloodEvent(const sf::Vector2f& pos, float dir);
     void spawnExplosionEvent(const sf::Vector2f& pos, float r);
     void spawnTeleportationEvent(const sf::Vector2f& pos);
+    void spawnEvent(const std::string& name, const sf::Vector2f& pos, float dir = 0.0f, float r = 0.0f);
     void spawnSwirlEvent(const std::string& name, const sf::Vector2f& pos, bool flipped);
     void spawnExplosionForce(const sf::Vector2f& pos, float r);
     void spawnAchievement(Achievements::Type type);

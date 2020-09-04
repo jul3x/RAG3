@@ -143,7 +143,10 @@ void SpecialFunctions::changeOpenState(Functional* obj, const std::string& data,
     }
 
     if (user != nullptr)
+    {
+        Game::get().spawnEvent("dust", special_obj->getPosition() + sf::Vector2f{0.0f, 10.0f});
         Game::get().getJournal().event<ChangeOpenState>(special_obj);
+    }
 }
 
 void SpecialFunctions::readNote(Functional* obj, const std::string& data, Character* user)
@@ -344,6 +347,7 @@ void SpecialFunctions::deactivate(Functional *obj, const std::string &data, Char
 void SpecialFunctions::destroy(Functional *obj, const std::string &data, Character* user)
 {
     std::cout << "[SpecialFunction] Destroying " + std::to_string(obj->getUniqueId()) + "." << std::endl;
+    Game::get().spawnEvent("dust", dynamic_cast<AbstractPhysicalObject*>(obj)->getPosition());
     obj->destroy();
 }
 

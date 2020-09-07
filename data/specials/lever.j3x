@@ -13,8 +13,8 @@ int frames_number=1
 float frame_duration=0.0
 
 string default_activation="OnUse"
-list[string] default_functions=["OpenDoor"; "ChangeOpenState"]
-list[string] default_datas=["Null"; "Null"]
+list default_functions=["OpenDoor"; "ChangeOpenState"]
+list default_datas=["Null"; "Null"]
 
 bool is_drawable=true
 

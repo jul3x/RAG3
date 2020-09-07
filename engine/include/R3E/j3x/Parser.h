@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 
+
 class Script;
 class Def;
 class ListDef;
@@ -13,20 +14,22 @@ class ListExpr;
 
 typedef union
 {
-    int int_;
-    char char_;
-    double double_;
-    char* string_;
-    Script* script_;
-    Def* def_;
-    ListDef* listdef_;
-    Type* type_;
-    Expr* expr_;
-    ListExpr* listexpr_;
+  int int_;
+  char char_;
+  double double_;
+  char* string_;
+  Script* script_;
+  Def* def_;
+  ListDef* listdef_;
+  Type* type_;
+  Expr* expr_;
+  ListExpr* listexpr_;
 } YYSTYPE;
 
 Script* pScript(FILE *inp);
 Script* pScript(const char *str);
+
+
 
 #define _ERROR_ 258
 #define _SYMB_0 259
@@ -54,6 +57,5 @@ Script* pScript(const char *str);
 #define _IDENT_ 281
 
 extern YYSTYPE yylval;
-
 
 #endif

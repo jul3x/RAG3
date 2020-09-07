@@ -25,12 +25,12 @@ public:
     [[nodiscard]] const std::string& getActivation() const;
     [[nodiscard]] const std::string& getFunctionsStr() const;
     [[nodiscard]] const std::string& getDatasStr() const;
-    [[nodiscard]] const std::vector<std::string>& getFunctions() const;
-    [[nodiscard]] const std::vector<std::string>& getDatas() const;
+    [[nodiscard]] const j3x::List& getFunctions() const;
+    [[nodiscard]] const j3x::List& getDatas() const;
     [[nodiscard]] const std::string& getTextToUse() const;
 
-    void setFunctions(const std::vector<std::string>& func);
-    void setDatas(const std::vector<std::string>& data);
+    void setFunctions(const j3x::List& func);
+    void setDatas(const j3x::List& data);
     void setActivation(const std::string& str);
     void setFunctionsStr(const std::string& str);
     void setDatasStr(const std::string& str);
@@ -42,7 +42,7 @@ public:
     virtual void deactivate();
     virtual void destroy();
 
-    void bindFunction(std::function<void(Functional*, const std::string&, Character*)> func, const std::string& text,
+    void bindFunction(const std::function<void(Functional*, const j3x::Obj&, Character*)>& func, const std::string& text,
                       bool is_usable_by_npc);
     virtual void use(Character* user);
 
@@ -51,9 +51,9 @@ private:
     bool is_destroyed_;
 
     std::string activation_;
-    std::vector<std::string> functions_, datas_;
+    j3x::List functions_, datas_;
 
-    std::vector<std::function<void(Functional*, const std::string&, Character*)>> funcs_;
+    std::vector<std::function<void(Functional*, const j3x::Obj&, Character*)>> funcs_;
 
     const std::string* text_to_use_;
 

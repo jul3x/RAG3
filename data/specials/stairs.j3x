@@ -1,6 +1,6 @@
 string default_activation="OnEnter"
-list[string] default_functions=["Teleport"]
-list[string] default_datas=["(0,0)"]
+list default_functions=["Teleport"]
+list default_datas=[(0,0)]
 
 float size_x=32.0
 float size_y=64.0

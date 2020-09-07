@@ -14,8 +14,8 @@ int frames_number=1
 float frame_duration=0.0
 
 string default_activation="OnEnter"
-list[string] default_functions=["MapEnd"]
-list[string] default_datas=["Null"]
+list default_functions=["MapEnd"]
+list default_datas=["Null"]
 
 bool is_drawable=false
 

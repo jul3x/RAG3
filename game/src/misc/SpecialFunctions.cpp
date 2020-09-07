@@ -81,21 +81,21 @@ bool SpecialFunctions::isUsableByNPC(const std::string& key) const
     return std::get<2>(it->second);
 }
 
-void SpecialFunctions::mapStart(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::mapStart(Functional* obj, const j3x::Obj& data, Character* user)
 {
     // empty
 }
 
-void SpecialFunctions::mapEnd(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::mapEnd(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Map end." << std::endl;
     user->setHealth(0);
 }
 
-void SpecialFunctions::openDoor(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::openDoor(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Open door." << std::endl;
-    auto door_id = std::stoi(data);
+    auto door_id = j3x::getObj<int>(data);
     auto door = Game::get().getMap().getObjectById<Obstacle>(door_id);
 
     auto grid_pos = std::make_pair(std::round((door->getPosition().x + j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_offset_x")) / DecorationTile::SIZE_X_),
@@ -126,7 +126,7 @@ void SpecialFunctions::openDoor(Functional* obj, const std::string& data, Charac
         Game::get().getJournal().event<DoorOpen>(door);
 }
 
-void SpecialFunctions::changeOpenState(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::changeOpenState(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Changing open state." << std::endl;
     auto special_obj = Game::get().getMap().getObjectById<Special>(obj->getUniqueId());
@@ -149,19 +149,19 @@ void SpecialFunctions::changeOpenState(Functional* obj, const std::string& data,
     }
 }
 
-void SpecialFunctions::readNote(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::readNote(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Reading note." << std::endl;
-    auto str = data;
+    auto str = j3x::getObj<std::string>(data);
     std::replace(str.begin(), str.end(), '$', '\n');
     Game::get().spawnThought(user, str);
 }
 
-void SpecialFunctions::addWeapon(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::addWeapon(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Adding weapon." << std::endl;
 
-    auto data_parsed = data;
+    auto data_parsed = j3x::getObj<std::string>(data);
     std::replace(data_parsed.begin(), data_parsed.end(), ' ', '_');
     std::shared_ptr<AbstractWeapon> weapon;
     if (data_parsed.length() > 5 && data_parsed.substr(0, 5) == "melee")
@@ -179,36 +179,36 @@ void SpecialFunctions::addWeapon(Functional* obj, const std::string& data, Chara
     }
 }
 
-void SpecialFunctions::addAmmo(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::addAmmo(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Adding ammo." << std::endl;
-    auto data_parsed = data;
+    auto data_parsed = j3x::getObj<std::string>(data);
     std::replace(data_parsed.begin(), data_parsed.end(), ' ', '_');
 
     user->addAmmoToWeapon(data_parsed);
 }
 
-void SpecialFunctions::addHealth(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::addHealth(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Adding health." << std::endl;
-    auto data_parsed = std::stoi(data);
+    auto data_parsed = j3x::getObj<int>(data);
 
     user->setHealth(std::min(user->getHealth() + data_parsed, user->getMaxHealth()));
 
     Game::get().spawnThought(user, "Uff!\nThat's what I needed...");
 }
 
-void SpecialFunctions::addSpeed(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::addSpeed(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Adding speed." << std::endl;
-    auto data_parsed = std::stof(data);
+    auto data_parsed = j3x::getObj<float>(data);
 
     user->setSpeedFactor(user->getSpeedFactor() + data_parsed);
 
     Game::get().spawnThought(user, "Woah!\nI feel... faster...");
 }
 
-void SpecialFunctions::pickCrystal(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::pickCrystal(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Picking crystal." << std::endl;
 
@@ -217,22 +217,22 @@ void SpecialFunctions::pickCrystal(Functional* obj, const std::string& data, Cha
     Game::get().spawnThought(user, "I need more of them!");
 }
 
-void SpecialFunctions::spawnThought(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::spawnThought(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Spawning thought." << std::endl;
-    auto str = data;
+    auto str = j3x::getObj<std::string>(data);
     std::replace(str.begin(), str.end(), '$', '\n');
     Game::get().spawnThought(user, str);
 }
 
-void SpecialFunctions::teleport(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::teleport(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Teleport." << std::endl;
     auto player = dynamic_cast<Player*>(user);
 
     try
     {
-        auto pos = j3x::convert<sf::Vector2f>(data);
+        auto pos = j3x::getObj<sf::Vector2f>(data);
 
         user->setPosition(pos);
         user->setForcedVelocity({0.0f, 0.0f});
@@ -249,59 +249,59 @@ void SpecialFunctions::teleport(Functional* obj, const std::string& data, Charac
     }
 }
 
-void SpecialFunctions::setOnFire(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::setOnFire(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Setting on fire." << std::endl;
     user->setGlobalState(Character::GlobalState::OnFire);
 }
 
-void SpecialFunctions::explode(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::explode(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Explode." << std::endl;
     auto obs = dynamic_cast<AbstractPhysicalObject*>(obj);
 
-    Game::get().spawnExplosionForce(obs->getPosition(), std::stof(data));
+    Game::get().spawnExplosionForce(obs->getPosition(), j3x::getObj<float>(data));
 
     Game::get().getStats().explode();
 }
 
-void SpecialFunctions::removeDecoration(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::removeDecoration(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Remove decoration." << std::endl;
-    auto decoration_id = std::stoi(data);
+    auto decoration_id = j3x::getObj<int>(data);
     auto decoration = Game::get().getMap().getObjectById<Decoration>(decoration_id);
     decoration->deactivate();
 }
 
-void SpecialFunctions::spawnExplosionEvent(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::spawnExplosionEvent(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Spawn explosion event." << std::endl;
     auto obs = dynamic_cast<AbstractPhysicalObject*>(obj);
-    Game::get().spawnExplosionEvent(obs->getPosition(), std::stof(data));
+    Game::get().spawnExplosionEvent(obs->getPosition(), j3x::getObj<float>(data));
 }
 
-void SpecialFunctions::spawnExplosionEventByPos(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::spawnExplosionEventByPos(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Spawn explosion event by pos." << std::endl;
-    auto pos = j3x::convert<sf::Vector2f>(data);
+    auto pos = j3x::getObj<sf::Vector2f>(data);
     Game::get().spawnExplosionEvent(pos, 250.0f);
 }
 
-void SpecialFunctions::spawnLava(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::spawnLava(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Spawn lava." << std::endl;
-    auto pos = j3x::convert<sf::Vector2f>(data);
+    auto pos = j3x::getObj<sf::Vector2f>(data);
     Game::get().spawnSpecial(pos, "lava");
 }
 
-void SpecialFunctions::spawnMiniLava(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::spawnMiniLava(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Spawn mini lava." << std::endl;
-    auto pos = j3x::convert<sf::Vector2f>(data);
+    auto pos = j3x::getObj<sf::Vector2f>(data);
     Game::get().spawnSpecial(pos, "mini_lava");
 }
 
-void SpecialFunctions::spawnAmmo(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::spawnAmmo(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Spawn ammo." << std::endl;
 
@@ -312,19 +312,19 @@ void SpecialFunctions::spawnAmmo(Functional* obj, const std::string& data, Chara
     {
         auto offset = sf::Vector2f(utils::num::getRandom(-ammo_offset, ammo_offset),
                                    utils::num::getRandom(-ammo_offset, ammo_offset));
-        Game::get().spawnSpecial(npc->getPosition() + offset, data + "_ammo");
+        Game::get().spawnSpecial(npc->getPosition() + offset, j3x::getObj<std::string>(data) + "_ammo");
     }
 }
 
-void SpecialFunctions::spawnFlame(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::spawnFlame(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Spawn flame." << std::endl;
-    auto pos = j3x::convert<sf::Vector2f>(data);
+    auto pos = j3x::getObj<sf::Vector2f>(data);
     Game::get().spawnSpecial(pos, "flame");
     Game::get().spawnExplosionEvent(pos, 250.0f);
 }
 
-void SpecialFunctions::kill(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::kill(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Kill." << std::endl;
     user->setHealth(0);
@@ -332,60 +332,60 @@ void SpecialFunctions::kill(Functional* obj, const std::string& data, Character*
     // Game::get().spawnAnimationEvent(data);
 }
 
-void SpecialFunctions::nullFunc(Functional *obj, const std::string &data, Character* user)
+void SpecialFunctions::nullFunc(Functional *obj, const j3x::Obj &data, Character* user)
 {
     std::cout << "[SpecialFunction] Null." << std::endl;
 }
 
-void SpecialFunctions::deactivate(Functional *obj, const std::string &data, Character* user)
+void SpecialFunctions::deactivate(Functional *obj, const j3x::Obj &data, Character* user)
 {
     std::cout << "[SpecialFunction] Deactivating." << std::endl;
     obj->deactivate();
     Game::get().getJournal().event<ObjectDeactivated>(dynamic_cast<Special*>(obj));
 }
 
-void SpecialFunctions::destroy(Functional *obj, const std::string &data, Character* user)
+void SpecialFunctions::destroy(Functional *obj, const j3x::Obj &data, Character* user)
 {
     std::cout << "[SpecialFunction] Destroying " + std::to_string(obj->getUniqueId()) + "." << std::endl;
     Game::get().spawnEvent("dust", dynamic_cast<AbstractPhysicalObject*>(obj)->getPosition());
     obj->destroy();
 }
 
-void SpecialFunctions::activateWeapon(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::activateWeapon(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Activate weapon." << std::endl;
-    auto weapon_id = std::stoi(data);
+    auto weapon_id = j3x::getObj<int>(data);
     auto weapon = Game::get().getMap().getObjectById<PlacedWeapon>(weapon_id);
     weapon->setActive(!weapon->getActive());
 
     Game::get().getJournal().event<WeaponActivation>(weapon);
 }
 
-void SpecialFunctions::spawnPlayerThought(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::spawnPlayerThought(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Spawning player thought." << std::endl;
-    auto str = data;
+    auto str = j3x::getObj<std::string>(data);
     std::replace(str.begin(), str.end(), '$', '\n');
     Game::get().spawnThought(&Game::get().getPlayer(), str);
 }
 
-void SpecialFunctions::removeSpecial(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::removeSpecial(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Remove special." << std::endl;
-    auto special_id = std::stoi(data);
+    auto special_id = j3x::getObj<int>(data);
     auto special = Game::get().getMap().getObjectById<Special>(special_id);
     special->destroy();
 }
 
-void SpecialFunctions::activateSpecial(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::activateSpecial(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Activate special." << std::endl;
-    auto special_id = std::stoi(data);
+    auto special_id = j3x::getObj<int>(data);
     auto special = Game::get().getMap().getObjectById<Special>(special_id);
     special->activate();
 }
 
-void SpecialFunctions::spawnDestruction(Functional* obj, const std::string& data, Character* user)
+void SpecialFunctions::spawnDestruction(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Spawn destruction." << std::endl;
     auto object = dynamic_cast<AbstractPhysicalObject*>(obj);

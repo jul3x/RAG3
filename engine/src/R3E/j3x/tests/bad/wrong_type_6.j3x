@@ -1,1 +1,3 @@
-list[int] a = [1; "a"]
+// wrong name of variable
+
+list list = [1; "a"]

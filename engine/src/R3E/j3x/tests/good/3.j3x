@@ -1,6 +1,6 @@
 string a = "some string"
 
-list[string] b = [a; "some other string"; "maybe next"]
-list[string] empty = []
+list b = [a; "some other string"; "maybe next"]
+list empty = []
 
-list[list[string]] nonempty = [["one string"]; ["two strings"; a]; empty]
+list nonempty = [["one string"]; ["two strings"; a]; empty]

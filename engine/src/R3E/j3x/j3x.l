@@ -27,21 +27,21 @@ IDENT [a-zA-Z0-9'_]
 %%
 
 <YYINITIAL>"="      	 return _SYMB_0;
-<YYINITIAL>"list["      	 return _SYMB_1;
-<YYINITIAL>"]"      	 return _SYMB_2;
-<YYINITIAL>"+"      	 return _SYMB_3;
-<YYINITIAL>"-"      	 return _SYMB_4;
-<YYINITIAL>"*"      	 return _SYMB_5;
-<YYINITIAL>"/"      	 return _SYMB_6;
-<YYINITIAL>"["      	 return _SYMB_7;
-<YYINITIAL>";"      	 return _SYMB_8;
-<YYINITIAL>"("      	 return _SYMB_9;
-<YYINITIAL>","      	 return _SYMB_10;
-<YYINITIAL>")"      	 return _SYMB_11;
-<YYINITIAL>"bool"      	 return _SYMB_12;
-<YYINITIAL>"false"      	 return _SYMB_13;
-<YYINITIAL>"float"      	 return _SYMB_14;
-<YYINITIAL>"int"      	 return _SYMB_15;
+<YYINITIAL>"+"      	 return _SYMB_1;
+<YYINITIAL>"-"      	 return _SYMB_2;
+<YYINITIAL>"*"      	 return _SYMB_3;
+<YYINITIAL>"/"      	 return _SYMB_4;
+<YYINITIAL>"["      	 return _SYMB_5;
+<YYINITIAL>"]"      	 return _SYMB_6;
+<YYINITIAL>";"      	 return _SYMB_7;
+<YYINITIAL>"("      	 return _SYMB_8;
+<YYINITIAL>","      	 return _SYMB_9;
+<YYINITIAL>")"      	 return _SYMB_10;
+<YYINITIAL>"bool"      	 return _SYMB_11;
+<YYINITIAL>"false"      	 return _SYMB_12;
+<YYINITIAL>"float"      	 return _SYMB_13;
+<YYINITIAL>"int"      	 return _SYMB_14;
+<YYINITIAL>"list"      	 return _SYMB_15;
 <YYINITIAL>"string"      	 return _SYMB_16;
 <YYINITIAL>"true"      	 return _SYMB_17;
 <YYINITIAL>"vector"      	 return _SYMB_18;

@@ -13,8 +13,8 @@ int frames_number=1
 float frame_duration=0.0
 
 string default_activation="OnEnter"
-list[string] default_functions=["AddWeapon"; "Destroy"]
-list[string] default_datas=["m4"; "Null"]
+list default_functions=["AddWeapon"; "Destroy"]
+list default_datas=["m4"; "Null"]
 
 bool is_drawable=true
 

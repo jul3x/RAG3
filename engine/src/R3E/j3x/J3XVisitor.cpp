@@ -23,10 +23,9 @@ void J3XVisitor::visitVarDef(VarDef *vardef)
     visitIdent(vardef->ident_);
     vardef->expr_->accept(this);
 
-    bool is_empty_list = vardef->type_->strtype_.rfind("list", 0) == 0 and vardef->expr_->strtype_ == "empty_list";
     bool int_to_float = vardef->type_->strtype_ == "float" and vardef->expr_->strtype_ == "int";
 
-    if (vardef->type_->strtype_ == vardef->expr_->strtype_ or is_empty_list) {
+    if (vardef->type_->strtype_ == vardef->expr_->strtype_) {
         this->addNewVariable(vardef->ident_, vardef->expr_->value_, vardef->type_->strtype_);
     }
     else if (int_to_float) {
@@ -64,8 +63,7 @@ void J3XVisitor::visitVector(Vector *vector)
 
 void J3XVisitor::visitArrType(ArrType *arrtype)
 {
-    arrtype->type_->accept(this);
-    arrtype->strtype_ = "list[" + arrtype->type_->strtype_ + "]";
+    arrtype->strtype_ = "list";
 }
 
 void J3XVisitor::visitEAdd(EAdd *eadd)
@@ -193,22 +191,15 @@ void J3XVisitor::visitEList(EList *elist)
 {
     elist->listexpr_->accept(this);
 
-    elist->strtype_ = "empty_list";
+    elist->strtype_ = "list";
 
     std::vector<std::any> value;
 
     for (auto& expr : *elist->listexpr_) {
-        if (elist->strtype_ != "empty_list" and elist->strtype_ != expr->strtype_ and expr->strtype_ != "empty_list")
-            throw std::invalid_argument("Not matching types inside list");
-
-        elist->strtype_ = expr->strtype_;
         value.emplace_back(expr->value_);
     }
 
     elist->value_ = value;
-
-    if (!elist->listexpr_->empty())
-        elist->strtype_ = "list[" + elist->strtype_ + "]";
 }
 
 void J3XVisitor::visitELitInt(ELitInt *elitint)
@@ -279,44 +270,51 @@ void J3XVisitor::visitEVector(EVector *evector)
         evector->strtype_ = "vector";
     }
     else {
-        throw std::invalid_argument("Vector can be constructed only from floats!");
+        throw std::invalid_argument("Vector can be constructed only from numbers!");
     }
 }
 
+
 void J3XVisitor::visitListDef(ListDef* listdef)
 {
-  for (auto & i : *listdef)
+  for (ListDef::iterator i = listdef->begin() ; i != listdef->end() ; ++i)
   {
-    i->accept(this);
+    (*i)->accept(this);
   }
 }
 
 void J3XVisitor::visitListExpr(ListExpr* listexpr)
 {
-  for (auto & i : *listexpr)
+  for (ListExpr::iterator i = listexpr->begin() ; i != listexpr->end() ; ++i)
   {
-    i->accept(this);
+    (*i)->accept(this);
   }
 }
 
+
 void J3XVisitor::visitInteger(Integer x)
 {
+  /* Code for Integer Goes Here */
 }
 
 void J3XVisitor::visitChar(Char x)
 {
+  /* Code for Char Goes Here */
 }
 
 void J3XVisitor::visitDouble(Double x)
 {
+  /* Code for Double Goes Here */
 }
 
 void J3XVisitor::visitString(String x)
 {
+  /* Code for String Goes Here */
 }
 
 void J3XVisitor::visitIdent(Ident x)
 {
+  /* Code for Ident Goes Here */
 }
 
 

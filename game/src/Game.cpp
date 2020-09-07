@@ -744,7 +744,7 @@ Fire* Game::spawnNewFire(Character* user, const sf::Vector2f& pos, float dir)
 
 
 NPC* Game::spawnNewNPC(const std::string& id, int u_id, const std::string& activation,
-                       const std::vector<std::string>& funcs, const std::vector<std::string>& datas)
+                       const j3x::List& funcs, const j3x::List& datas)
 {
     auto ptr = map_->spawn<NPC>({}, 0.0f, id);
 
@@ -835,7 +835,7 @@ ObstacleTile* Game::spawnNewObstacleTile(const std::string& id, const sf::Vector
 
 Obstacle* Game::spawnNewObstacle(const std::string& id, int u_id, const sf::Vector2f& pos,
                                  const std::string& activation,
-                                 const std::vector<std::string>& funcs, const std::vector<std::string>& datas)
+                                 const j3x::List& funcs, const j3x::List& datas)
 {
     auto new_ptr = map_->spawn<Obstacle>(pos, 0.0f, id);
 
@@ -1117,7 +1117,7 @@ void Game::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
 
 Special* Game::spawnNewSpecial(const std::string& id, int u_id,
                                const sf::Vector2f& pos, const std::string& activation,
-                               const std::vector<std::string>& funcs, const std::vector<std::string>& datas)
+                               const j3x::List& funcs, const j3x::List& datas)
 {
     auto ptr = map_->spawn<Special>(pos, 0.0f, id);
     engine_->registerHoveringObject(ptr);
@@ -1187,9 +1187,10 @@ void Game::registerFunctions(Functional* functional) const
 {
     for (const auto& function : functional->getFunctions())
     {
-        functional->bindFunction(special_functions_->bindFunction(function),
-                                 special_functions_->bindTextToUse(function),
-                                 special_functions_->isUsableByNPC(function));
+        auto& function_str = j3x::getObj<std::string>(function);
+        functional->bindFunction(special_functions_->bindFunction(function_str),
+                                 special_functions_->bindTextToUse(function_str),
+                                 special_functions_->isUsableByNPC(function_str));
     }
 }
 

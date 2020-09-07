@@ -15,8 +15,8 @@ float collision_offset_x=0.0
 float collision_offset_y=0.0
 
 string default_activation="OnEnter"
-list[string] default_functions=["SetOnFire"]
-list[string] default_datas=["Null"]
+list default_functions=["SetOnFire"]
+list default_datas=["Null"]
 
 bool is_drawable=true
 

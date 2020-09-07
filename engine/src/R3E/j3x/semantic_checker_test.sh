@@ -12,7 +12,7 @@ function check()
     for f in $(find tests/$1 -type f -name "*.j3x")
     do
         echo "$f:"
-        ../../../../build/J3XParser $f >> /dev/null
+        ./Testj3x $f >> /dev/null
         if [[ $? -ne $2 ]] ; then
             echo -e "\e[92mOK!\e[0m"
 	else

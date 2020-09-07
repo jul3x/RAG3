@@ -1,1 +1,1 @@
-list[list[string]] list = [[]; []; []; ["good"; "better"]]
+list list_a = [[]; []; []; ["good"; "better"]]

@@ -30,13 +30,15 @@ int main(int argc, char ** argv)
         printf("\nParse Succesful!\n");
 
         try {
-            auto* visitor = new J3XVisitor("");
+            J3XVisitor *visitor = new J3XVisitor();
             parse_tree->accept(visitor);
         }
         catch (const std::exception& e) {
-            fprintf(stderr, "error: %s\n", e.what());
+            fprintf(stderr, "semantic error: %s\n", e.what());
             return 1;
         }
+
+        printf("Semantic Analysis Succesful!\n");
 
         return 0;
     }

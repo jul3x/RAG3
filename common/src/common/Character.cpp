@@ -42,8 +42,10 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
         max_life_(j3x::get<float>(RM.getObjectParams("characters", id), "max_health")),
         ammo_state_(AmmoState::High),
         life_state_(LifeState::High),
-        gun_offset_({j3x::getElem<float>(j3x::get<j3x::List>(RM.getObjectParams("characters", id), "gun_offset_x").front()),
-                     j3x::getElem<float>(j3x::get<j3x::List>(RM.getObjectParams("characters", id), "gun_offset_y").front())}),
+        gun_offset_({j3x::getObj<float>(
+                j3x::get<j3x::List>(RM.getObjectParams("characters", id), "gun_offset_x").front()),
+                     j3x::getObj<float>(
+                             j3x::get<j3x::List>(RM.getObjectParams("characters", id), "gun_offset_y").front())}),
         current_rotation_quarter_(1),
         speed_factor_(1.0f),
         rotate_to_(0.0f),
@@ -62,7 +64,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
     for (const auto& weapon :
             j3x::get<j3x::List>(RM.getObjectParams("characters", id), "weapons"))
     {
-        auto& weapon_str = j3x::getElem<std::string>(weapon);
+        auto& weapon_str = j3x::getObj<std::string>(weapon);
         if (weapon_str == "Null")
             weapons_in_backpack_.push_back(std::make_shared<NoWeapon>());
         else if (weapon_str.length() >= 5 && weapon_str.substr(0, 5) == "melee")
@@ -353,8 +355,10 @@ void Character::setRotation(float theta)
     static std::string weapon_added_name;
     weapon_added_name = "";
 
-    gun_offset_.x = j3x::getElem<float>(j3x::get<j3x::List>(RM.getObjectParams("characters", this->getId()), "gun_offset_x"), current_frame_);
-    gun_offset_.y = j3x::getElem<float>(j3x::get<j3x::List>(RM.getObjectParams("characters", this->getId()), "gun_offset_y"), current_frame_);
+    gun_offset_.x = j3x::getObj<float>(
+            j3x::get<j3x::List>(RM.getObjectParams("characters", this->getId()), "gun_offset_x"), current_frame_);
+    gun_offset_.y = j3x::getObj<float>(
+            j3x::get<j3x::List>(RM.getObjectParams("characters", this->getId()), "gun_offset_y"), current_frame_);
     switch (current_rotation_quarter_)
     {
         case 1:

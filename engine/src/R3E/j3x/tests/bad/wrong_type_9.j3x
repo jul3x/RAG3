@@ -1,1 +1,1 @@
-list[string] list = ["string"; "string_2"; 5]
+list list = ["string"; "string_2"; 5]

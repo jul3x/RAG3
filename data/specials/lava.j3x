@@ -13,8 +13,8 @@ int frames_number=4
 float frame_duration=0.2f
 
 string default_activation="OnEnter"
-list[string] default_functions=["Kill"]
-list[string] default_datas=["lava"]
+list default_functions=["Kill"]
+list default_datas=["lava"]
 
 bool is_drawable=true
 

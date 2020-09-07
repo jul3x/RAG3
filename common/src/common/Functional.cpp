@@ -18,16 +18,10 @@ Functional::Functional(std::string activation, const j3x::List& functions,
         is_active_(true),
         is_destroyed_(false),
         text_to_use_(nullptr),
-        is_usable_by_npc_(true)
+        is_usable_by_npc_(true),
+        functions_(functions),
+        datas_(datas)
 {
-    functions_.reserve(functions.size());
-    for (const auto& val : functions) {
-        functions_.emplace_back(j3x::getElem<std::string>(val));
-    }
-    datas_.reserve(datas.size());
-    for (const auto& val : datas) {
-        datas_.emplace_back(j3x::getElem<std::string>(val));
-    }
 }
 
 const std::string& Functional::getActivation() const
@@ -37,12 +31,13 @@ const std::string& Functional::getActivation() const
 
 const std::string& Functional::getFunctionsStr() const
 {
+    // TODO - move to J3X
     static std::string result;
     result.clear();
 
     for (auto& function : functions_)
     {
-        result += function + j3x::DELIMITER_;
+        result += j3x::getObj<std::string>(function) + j3x::DELIMITER_;
     }
 
     if (result.length() >= 1)
@@ -53,12 +48,41 @@ const std::string& Functional::getFunctionsStr() const
 
 const std::string& Functional::getDatasStr() const
 {
+    // TODO - move to J3X
+
     static std::string result;
     result.clear();
 
     for (auto& data : datas_)
     {
-        result += data + j3x::DELIMITER_;
+        if (data.type() == typeid(j3x::List))
+        {
+            // TODO!
+        }
+        else if (data.type() == typeid(int))
+        {
+            auto obj = j3x::getObj<int>(data);
+            result += std::to_string(obj) + j3x::DELIMITER_;
+        }
+        else if (data.type() == typeid(float))
+        {
+            auto obj = j3x::getObj<float>(data);
+            result += std::to_string(obj) + j3x::DELIMITER_;
+        }
+        else if (data.type() == typeid(bool))
+        {
+            auto obj = j3x::getObj<bool>(data);
+            result += (obj ? "true" : "false") + j3x::DELIMITER_;
+        }
+        else if (data.type() == typeid(sf::Vector2f))
+        {
+            auto vec = j3x::getObj<sf::Vector2f>(data);
+            result += "(" + std::to_string(vec.x) + "," + std::to_string(vec.y) + ")" + j3x::DELIMITER_;
+        }
+        else
+        {
+            throw std::logic_error("[Functional] Not handled data type: " + std::string(data.type().name()));
+        }
     }
 
     if (result.length() >= 1)
@@ -72,12 +96,12 @@ const std::string& Functional::getTextToUse() const
     return *text_to_use_;
 }
 
-const std::vector<std::string>& Functional::getFunctions() const
+const j3x::List& Functional::getFunctions() const
 {
     return functions_;
 }
 
-const std::vector<std::string>& Functional::getDatas() const
+const j3x::List& Functional::getDatas() const
 {
     return datas_;
 }
@@ -87,12 +111,12 @@ void Functional::setActivation(const std::string& str)
     activation_ = str;
 }
 
-void Functional::setFunctions(const std::vector<std::string>& func)
+void Functional::setFunctions(const j3x::List& func)
 {
     functions_ = func;
 }
 
-void Functional::setDatas(const std::vector<std::string>& data)
+void Functional::setDatas(const j3x::List& data)
 {
     datas_ = data;
 }
@@ -127,7 +151,8 @@ void Functional::activate()
     is_active_ = true;
 }
 
-void Functional::bindFunction(std::function<void(Functional*, const std::string&, Character*)> func, const std::string& text, bool is_usable_by_npc)
+void Functional::bindFunction(const std::function<void(Functional*, const j3x::Obj&, Character*)>& func,
+                              const std::string& text, bool is_usable_by_npc)
 {
     funcs_.emplace_back(func);
 

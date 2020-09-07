@@ -19,8 +19,6 @@ typedef std::string String;
 typedef std::string Ident;
 
 
-
-
 /********************   Forward Declarations    ********************/
 
 class Script;
@@ -53,74 +51,101 @@ class ListExpr;
 
 
 /********************   Visitor Interfaces    ********************/
-class Visitor
-{
+class Visitor {
 public:
     virtual ~Visitor() {}
+
     virtual void visitScript(Script *p) = 0;
+
     virtual void visitDef(Def *p) = 0;
+
     virtual void visitType(Type *p) = 0;
+
     virtual void visitExpr(Expr *p) = 0;
+
     virtual void visitProg(Prog *p) = 0;
+
     virtual void visitVarDef(VarDef *p) = 0;
+
     virtual void visitInt(Int *p) = 0;
+
     virtual void visitStr(Str *p) = 0;
+
     virtual void visitBool(Bool *p) = 0;
+
     virtual void visitFloat(Float *p) = 0;
+
     virtual void visitVector(Vector *p) = 0;
+
     virtual void visitArrType(ArrType *p) = 0;
+
     virtual void visitEAdd(EAdd *p) = 0;
+
     virtual void visitESub(ESub *p) = 0;
+
     virtual void visitEMul(EMul *p) = 0;
+
     virtual void visitEDiv(EDiv *p) = 0;
+
     virtual void visitENeg(ENeg *p) = 0;
+
     virtual void visitEList(EList *p) = 0;
+
     virtual void visitELitInt(ELitInt *p) = 0;
+
     virtual void visitEString(EString *p) = 0;
+
     virtual void visitEDouble(EDouble *p) = 0;
+
     virtual void visitELitTrue(ELitTrue *p) = 0;
+
     virtual void visitELitFalse(ELitFalse *p) = 0;
+
     virtual void visitEVar(EVar *p) = 0;
+
     virtual void visitEVector(EVector *p) = 0;
+
     virtual void visitListDef(ListDef *p) = 0;
+
     virtual void visitListExpr(ListExpr *p) = 0;
 
 
     virtual void visitInteger(Integer x) = 0;
+
     virtual void visitChar(Char x) = 0;
+
     virtual void visitDouble(Double x) = 0;
+
     virtual void visitString(String x) = 0;
+
     virtual void visitIdent(Ident x) = 0;
 
 };
 
 
-class Visitable
-{
+class Visitable {
 public:
     virtual ~Visitable() {}
+
     virtual void accept(Visitor *v) = 0;
 };
 
 
 /********************   Abstract Syntax Classes    ********************/
 
-class Script : public Visitable
-{
+class Script : public Visitable {
 public:
     virtual Script *clone() const = 0;
 
 };
 
-class Def : public Visitable
-{
+class Def : public Visitable {
 public:
     virtual Def *clone() const = 0;
 
 };
 
-class Type : public Visitable
-{
+class Type : public Visitable {
 public:
     virtual Type *clone() const = 0;
 
@@ -128,8 +153,7 @@ public:
 
 };
 
-class Expr : public Visitable
-{
+class Expr : public Visitable {
 public:
     virtual Expr *clone() const = 0;
 
@@ -139,315 +163,418 @@ public:
 };
 
 
-
-class Prog : public Script
-{
+class Prog : public Script {
 public:
     ListDef *listdef_;
 
     Prog(const Prog &);
+
     Prog &operator=(const Prog &);
+
     Prog(ListDef *p1);
+
     ~Prog();
+
     virtual void accept(Visitor *v);
+
     virtual Prog *clone() const;
+
     void swap(Prog &);
 };
 
-class VarDef : public Def
-{
+class VarDef : public Def {
 public:
     Type *type_;
     Ident ident_;
     Expr *expr_;
 
     VarDef(const VarDef &);
+
     VarDef &operator=(const VarDef &);
+
     VarDef(Type *p1, Ident p2, Expr *p3);
+
     ~VarDef();
+
     virtual void accept(Visitor *v);
+
     virtual VarDef *clone() const;
+
     void swap(VarDef &);
 };
 
-class Int : public Type
-{
+class Int : public Type {
 public:
 
     Int(const Int &);
+
     Int &operator=(const Int &);
+
     Int();
+
     ~Int();
+
     virtual void accept(Visitor *v);
+
     virtual Int *clone() const;
+
     void swap(Int &);
 };
 
-class Str : public Type
-{
+class Str : public Type {
 public:
 
     Str(const Str &);
+
     Str &operator=(const Str &);
+
     Str();
+
     ~Str();
+
     virtual void accept(Visitor *v);
+
     virtual Str *clone() const;
+
     void swap(Str &);
 };
 
-class Bool : public Type
-{
+class Bool : public Type {
 public:
 
     Bool(const Bool &);
+
     Bool &operator=(const Bool &);
+
     Bool();
+
     ~Bool();
+
     virtual void accept(Visitor *v);
+
     virtual Bool *clone() const;
+
     void swap(Bool &);
 };
 
-class Float : public Type
-{
+class Float : public Type {
 public:
 
     Float(const Float &);
+
     Float &operator=(const Float &);
+
     Float();
+
     ~Float();
+
     virtual void accept(Visitor *v);
+
     virtual Float *clone() const;
+
     void swap(Float &);
 };
 
-class Vector : public Type
-{
+class Vector : public Type {
 public:
 
     Vector(const Vector &);
+
     Vector &operator=(const Vector &);
+
     Vector();
+
     ~Vector();
+
     virtual void accept(Visitor *v);
+
     virtual Vector *clone() const;
+
     void swap(Vector &);
 };
 
-class ArrType : public Type
-{
+class ArrType : public Type {
 public:
-    Type *type_;
 
     ArrType(const ArrType &);
+
     ArrType &operator=(const ArrType &);
-    ArrType(Type *p1);
+
+    ArrType();
+
     ~ArrType();
+
     virtual void accept(Visitor *v);
+
     virtual ArrType *clone() const;
+
     void swap(ArrType &);
 };
 
-class EAdd : public Expr
-{
+class EAdd : public Expr {
 public:
     Expr *expr_1;
     Expr *expr_2;
 
     EAdd(const EAdd &);
+
     EAdd &operator=(const EAdd &);
+
     EAdd(Expr *p1, Expr *p2);
+
     ~EAdd();
+
     virtual void accept(Visitor *v);
+
     virtual EAdd *clone() const;
+
     void swap(EAdd &);
 };
 
-class ESub : public Expr
-{
+class ESub : public Expr {
 public:
     Expr *expr_1;
     Expr *expr_2;
 
     ESub(const ESub &);
+
     ESub &operator=(const ESub &);
+
     ESub(Expr *p1, Expr *p2);
+
     ~ESub();
+
     virtual void accept(Visitor *v);
+
     virtual ESub *clone() const;
+
     void swap(ESub &);
 };
 
-class EMul : public Expr
-{
+class EMul : public Expr {
 public:
     Expr *expr_1;
     Expr *expr_2;
 
     EMul(const EMul &);
+
     EMul &operator=(const EMul &);
+
     EMul(Expr *p1, Expr *p2);
+
     ~EMul();
+
     virtual void accept(Visitor *v);
+
     virtual EMul *clone() const;
+
     void swap(EMul &);
 };
 
-class EDiv : public Expr
-{
+class EDiv : public Expr {
 public:
     Expr *expr_1;
     Expr *expr_2;
 
     EDiv(const EDiv &);
+
     EDiv &operator=(const EDiv &);
+
     EDiv(Expr *p1, Expr *p2);
+
     ~EDiv();
+
     virtual void accept(Visitor *v);
+
     virtual EDiv *clone() const;
+
     void swap(EDiv &);
 };
 
-class ENeg : public Expr
-{
+class ENeg : public Expr {
 public:
     Expr *expr_;
 
     ENeg(const ENeg &);
+
     ENeg &operator=(const ENeg &);
+
     ENeg(Expr *p1);
+
     ~ENeg();
+
     virtual void accept(Visitor *v);
+
     virtual ENeg *clone() const;
+
     void swap(ENeg &);
 };
 
-class EList : public Expr
-{
+class EList : public Expr {
 public:
     ListExpr *listexpr_;
 
     EList(const EList &);
+
     EList &operator=(const EList &);
+
     EList(ListExpr *p1);
+
     ~EList();
+
     virtual void accept(Visitor *v);
+
     virtual EList *clone() const;
+
     void swap(EList &);
 };
 
-class ELitInt : public Expr
-{
+class ELitInt : public Expr {
 public:
     Integer integer_;
 
     ELitInt(const ELitInt &);
+
     ELitInt &operator=(const ELitInt &);
+
     ELitInt(Integer p1);
+
     ~ELitInt();
+
     virtual void accept(Visitor *v);
+
     virtual ELitInt *clone() const;
+
     void swap(ELitInt &);
 };
 
-class EString : public Expr
-{
+class EString : public Expr {
 public:
     String string_;
 
     EString(const EString &);
+
     EString &operator=(const EString &);
+
     EString(String p1);
+
     ~EString();
+
     virtual void accept(Visitor *v);
+
     virtual EString *clone() const;
+
     void swap(EString &);
 };
 
-class EDouble : public Expr
-{
+class EDouble : public Expr {
 public:
     Double double_;
 
     EDouble(const EDouble &);
+
     EDouble &operator=(const EDouble &);
+
     EDouble(Double p1);
+
     ~EDouble();
+
     virtual void accept(Visitor *v);
+
     virtual EDouble *clone() const;
+
     void swap(EDouble &);
 };
 
-class ELitTrue : public Expr
-{
+class ELitTrue : public Expr {
 public:
 
     ELitTrue(const ELitTrue &);
+
     ELitTrue &operator=(const ELitTrue &);
+
     ELitTrue();
+
     ~ELitTrue();
+
     virtual void accept(Visitor *v);
+
     virtual ELitTrue *clone() const;
+
     void swap(ELitTrue &);
 };
 
-class ELitFalse : public Expr
-{
+class ELitFalse : public Expr {
 public:
 
     ELitFalse(const ELitFalse &);
+
     ELitFalse &operator=(const ELitFalse &);
+
     ELitFalse();
+
     ~ELitFalse();
+
     virtual void accept(Visitor *v);
+
     virtual ELitFalse *clone() const;
+
     void swap(ELitFalse &);
 };
 
-class EVar : public Expr
-{
+class EVar : public Expr {
 public:
     Ident ident_;
 
     EVar(const EVar &);
+
     EVar &operator=(const EVar &);
+
     EVar(Ident p1);
+
     ~EVar();
+
     virtual void accept(Visitor *v);
+
     virtual EVar *clone() const;
+
     void swap(EVar &);
 };
 
-class EVector : public Expr
-{
+class EVector : public Expr {
 public:
     Expr *expr_1;
     Expr *expr_2;
 
     EVector(const EVector &);
+
     EVector &operator=(const EVector &);
+
     EVector(Expr *p1, Expr *p2);
+
     ~EVector();
+
     virtual void accept(Visitor *v);
+
     virtual EVector *clone() const;
+
     void swap(EVector &);
 };
 
 
-
-class ListDef : public Visitable, public std::vector<Def*>
-{
+class ListDef : public Visitable, public std::vector<Def *> {
 public:
     virtual void accept(Visitor *v);
+
     virtual ListDef *clone() const;
 };
 
-class ListExpr : public Visitable, public std::vector<Expr*>
-{
+class ListExpr : public Visitable, public std::vector<Expr *> {
 public:
     virtual void accept(Visitor *v);
+
     virtual ListExpr *clone() const;
 };
 
-#endif // RAG3_ENGINE_INCLUDE_R3E_J3X_ABSYN_H
+
+#endif

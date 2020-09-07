@@ -13,5 +13,5 @@ float collision_offset_y=0.0
 int z_index=1
 
 string default_activation="OnKill"
-list[string] default_functions=["Explode";"SpawnExplosionEvent"]
-list[string] default_datas=["64.0";"512.0"]
+list default_functions=["Explode";"SpawnExplosionEvent"]
+list default_datas=[64.0;512.0]

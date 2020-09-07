@@ -19,8 +19,9 @@
 namespace r3e::j3x {
     constexpr char DELIMITER_ = ';';
 
-    using Parameters = std::unordered_map<std::string, std::any>;
-    using List = std::vector<std::any>;
+    using Obj = std::any;
+    using List = std::vector<Obj>;
+    using Parameters = std::unordered_map<std::string, Obj>;
 
     Parameters parse(const std::string& filename, const std::string& ns);
 
@@ -85,7 +86,7 @@ namespace r3e::j3x {
     }
 
     template <class T>
-    const T& getElem(const std::any& param, bool ignore_warn = false)
+    const T& getObj(const Obj& param, bool ignore_warn = false)
     {
         static T ERR = {};
         try
@@ -95,16 +96,17 @@ namespace r3e::j3x {
         catch (const std::bad_any_cast& exception)
         {
             if (!ignore_warn)
-                std::cerr << "[J3X] Param not matching return type!" << std::endl;
+                std::cerr << "[J3X] Param of type " + std::string(param.type().name()) + " not matching " +
+                             std::string(typeid(T).name()) + " return type!" << std::endl;
 
             return ERR;
         }
     }
 
     template <class T>
-    const T& getElem(const j3x::List& list, size_t index, bool ignore_warn = false)
+    const T& getObj(const j3x::List& list, size_t index, bool ignore_warn = false)
     {
-        return getElem<T>(list.at(index), ignore_warn);
+        return getObj<T>(list.at(index), ignore_warn);
     }
 
     template <class T>

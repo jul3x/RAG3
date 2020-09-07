@@ -20,7 +20,7 @@ Float.     Type ::= "float" ;
 
 Vector.    Type ::= "vector" ;
 
-ArrType.   Type ::= "list[" Type "]" ;
+ArrType.   Type ::= "list" ;
 
 -- expressions ----------------------------------------------
 

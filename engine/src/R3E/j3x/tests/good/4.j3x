@@ -4,4 +4,4 @@ vector b = (5.0, 6.0)
 
 vector c = a
 
-list[vector] d = [(5,6); c; a; b; (0.0, 0.0)]
+list d = [(5,6); c; a; b; (0.0, 0.0)]

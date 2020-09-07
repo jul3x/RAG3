@@ -1,6 +1,6 @@
 string default_activation="OnUse"
-list[string] default_functions=["ReadNote"]
-list[string] default_datas=["Example text"]
+list default_functions=["ReadNote"]
+list default_datas=["Example text"]
 
 float size_x=24.0
 float size_y=24.0

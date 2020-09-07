@@ -1,6 +1,6 @@
 string default_activation="OnEnter"
-list[string] default_functions=["PickCrystal"; "Destroy"]
-list[string] default_datas=["Null"; "Null"]
+list default_functions=["PickCrystal"; "Destroy"]
+list default_datas=["Null"; "Null"]
 
 float size_x=32.0
 float size_y=32.0

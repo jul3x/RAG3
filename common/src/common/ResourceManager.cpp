@@ -18,7 +18,7 @@ ResourceManager& ResourceManager::getInstance()
     return resource_manager_instance;
 }
 
-const utils::j3x::Parameters& ResourceManager::getObjectParams(const std::string& category, const std::string& id)
+const j3x::Parameters& ResourceManager::getObjectParams(const std::string& category, const std::string& id)
 {
     return getParameters(category + "/" + id);
 }
@@ -229,7 +229,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             if (word.length() < 2)
                                 throw std::logic_error("[ResourceManager] Wrong map list object format!");
 
-                            utils::j3x::tokenize(word.substr(1, word.length() - 2), utils::j3x::DELIMITER_, functions);
+                            j3x::tokenize(word.substr(1, word.length() - 2), j3x::DELIMITER_, functions);
                         }
                         else
                         {
@@ -238,7 +238,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             if (word.length() < 2)
                                 throw std::logic_error("[ResourceManager] Wrong map list object format!");
 
-                            utils::j3x::tokenize(word.substr(1, word.length() - 2), utils::j3x::DELIMITER_, f_datas);
+                            j3x::tokenize(word.substr(1, word.length() - 2), j3x::DELIMITER_, f_datas);
                             should_add_new_object = true;
                         }
 
@@ -278,7 +278,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             if (word.length() < 2)
                                 throw std::logic_error("[ResourceManager] Wrong map list object format!");
 
-                            utils::j3x::tokenize(word.substr(1, word.length() - 2), utils::j3x::DELIMITER_, functions);
+                            j3x::tokenize(word.substr(1, word.length() - 2), j3x::DELIMITER_, functions);
                         }
                         else
                         {
@@ -287,7 +287,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             if (word.length() < 2)
                                 throw std::logic_error("[ResourceManager] Wrong map list object format!");
 
-                            utils::j3x::tokenize(word.substr(1, word.length() - 2), utils::j3x::DELIMITER_, f_datas);
+                            j3x::tokenize(word.substr(1, word.length() - 2), j3x::DELIMITER_, f_datas);
                             should_add_new_object = true;
                         }
 
@@ -323,7 +323,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             if (word.length() < 2)
                                 throw std::logic_error("[ResourceManager] Wrong map list object format!");
 
-                            utils::j3x::tokenize(word.substr(1, word.length() - 2), utils::j3x::DELIMITER_, functions);
+                            j3x::tokenize(word.substr(1, word.length() - 2), j3x::DELIMITER_, functions);
                         }
                         else if (number % 8 == 7)
                         {
@@ -332,7 +332,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             if (word.length() < 2)
                                 throw std::logic_error("[ResourceManager] Wrong map list object format!");
 
-                            utils::j3x::tokenize(word.substr(1, word.length() - 2), utils::j3x::DELIMITER_, f_datas);
+                            j3x::tokenize(word.substr(1, word.length() - 2), j3x::DELIMITER_, f_datas);
                         }
                         else
                         {
@@ -341,7 +341,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                             if (word.length() < 2)
                                 throw std::logic_error("[ResourceManager] Wrong map list object format!");
 
-                            utils::j3x::tokenize(word.substr(1, word.length() - 2), utils::j3x::DELIMITER_,
+                            j3x::tokenize(word.substr(1, word.length() - 2), j3x::DELIMITER_,
                                     conversation);
                             should_add_new_object = true;
                         }
@@ -364,9 +364,9 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                                 throw std::logic_error("[ResourceManager] Wrong map special object data and function format!");
                             }
 
-                            characters.emplace_back(std::make_shared<NPC>(current_pos, current_id,
-                                                                          activation, functions, f_datas, u_id));
-                            characters.back()->setTalkScenario(conversation);
+//                            characters.emplace_back(std::make_shared<NPC>(current_pos, current_id,
+//                                                                          activation, functions, f_datas, u_id));
+//                            characters.back()->setTalkScenario(conversation);
                             break;
                         case MapReading::Specials:
                             if (functions.size() != f_datas.size())
@@ -374,28 +374,28 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
                                 throw std::logic_error("[ResourceManager] Wrong map special object data and function format!");
                             }
 
-                            specials.emplace_back(std::make_shared<Special>(current_pos, current_id,
-                                                                            activation, functions, f_datas, is_active, u_id));
+//                            specials.emplace_back(std::make_shared<Special>(current_pos, current_id,
+//                                                                            activation, functions, f_datas, is_active, u_id));
                             break;
                         case MapReading::Obstacles:
                             if (functions.size() != f_datas.size())
                             {
                                 throw std::logic_error("[ResourceManager] Wrong map special object data and function format!");
                             }
-
-                            obstacles.emplace_back(std::make_shared<Obstacle>(current_pos, current_id,
-                                                                              activation, functions, f_datas, u_id));
-
-                            blocked.at(std::round((current_pos.x + utils::j3x::get<float>(RM.getObjectParams("obstacles", current_id), "collision_offset_x")) / DecorationTile::SIZE_X_)).
-                                    at(std::round((current_pos.y + utils::j3x::get<float>(RM.getObjectParams("obstacles", current_id), "collision_offset_y")) / DecorationTile::SIZE_Y_)) =
-                                    utils::j3x::get<float>(RM.getObjectParams("obstacles", current_id), "endurance");
+//
+//                            obstacles.emplace_back(std::make_shared<Obstacle>(current_pos, current_id,
+//                                                                              activation, functions, f_datas, u_id));
+//
+//                            blocked.at(std::round((current_pos.x + j3x::get<float>(RM.getObjectParams("obstacles", current_id), "collision_offset_x")) / DecorationTile::SIZE_X_)).
+//                                    at(std::round((current_pos.y + j3x::get<float>(RM.getObjectParams("obstacles", current_id), "collision_offset_y")) / DecorationTile::SIZE_Y_)) =
+//                                    j3x::get<float>(RM.getObjectParams("obstacles", current_id), "endurance");
                             break;
                         case MapReading::Decorations:
-                            decorations.emplace_back(std::make_shared<Decoration>(current_pos, current_id, u_id));
+//                            decorations.emplace_back(std::make_shared<Decoration>(current_pos, current_id, u_id));
                             break;
                         case MapReading::Weapons:
-                            weapons.emplace_back(std::make_shared<PlacedWeapon>(current_pos, direction, current_id,
-                                    usage, usage_data, u_id));
+//                            weapons.emplace_back(std::make_shared<PlacedWeapon>(current_pos, direction, current_id,
+//                                    usage, usage_data, u_id));
                             break;
                         default:
                             throw std::logic_error("[ResourceManager] Wrong map format!");

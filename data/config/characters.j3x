@@ -1,10 +1,10 @@
-float max_acceleration=1200.0f
-float mouse_reaction_speed=100.0f
+float max_acceleration=1200.0
+float mouse_reaction_speed=100.0
 
 int ammo_dropped=3
-float ammo_drop_offset=14.0f
+float ammo_drop_offset=14.0
 
-float talkable_distance=64.0f
-float talking_respond_time=1.5f
+float talkable_distance=64.0
+float talking_respond_time=1.5
 
-float min_melee_distance_ai=48.0f
+float min_melee_distance_ai=48.0

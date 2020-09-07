@@ -27,7 +27,7 @@ namespace r3e {
         textures_smooth_allowed_ = allowed;
     }
 
-    utils::j3x::Parameters& AbstractResourceManager::getParameters(const std::string& key)
+    j3x::Parameters& AbstractResourceManager::getParameters(const std::string& key)
     {
         return getOrLoad(parameters_, std::bind(&AbstractResourceManager::loadJ3XFile, this, std::placeholders::_1), key);
     }
@@ -65,9 +65,7 @@ namespace r3e {
 
     void AbstractResourceManager::loadJ3XFile(const std::string& key)
     {
-        utils::j3x::Parameters params;
-
-        params = utils::j3x::parse(j3x_directory_ + "/" + key + ".j3x");
+        j3x::Parameters params = j3x::parse(j3x_directory_ + "/" + key + ".j3x");
 
         parameters_.emplace(key, params);
 

@@ -1,27 +1,27 @@
-float recoil=640.0f
+float recoil=640.0
 int max_ammo=150
 int ammo_portion=10
 
-float size_x=39.0f
-float size_y=32.0f
+float size_x=39.0
+float size_y=32.0
 
-float offset_x=3.0f
-float offset_y=0.0f
+float offset_x=3.0
+float offset_y=0.0
 
-float map_offset_x=0.0f
-float map_offset_y=0.0f
+float map_offset_x=0.0
+float map_offset_y=0.0
 
-string spawn_func=bullet
-float spawn_timeout=0.1f
-string spawn_type=light
+string spawn_func="bullet"
+float spawn_timeout=0.1
+string spawn_type="light"
 int spawn_quantity=1
-float spawn_angular_diff=0.0f
-float spawn_offset=-2.0f
+float spawn_angular_diff=0.0
+float spawn_offset=-2.0
 
 int frames_number=1
-float frame_duration=0.0f
+float frame_duration=0.0
 
 int z_index=1
 
-string default_usage=Const
-float default_data=0.0f
+string default_usage="Const"
+float default_data=0.0

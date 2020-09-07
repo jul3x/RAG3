@@ -1,26 +1,26 @@
-float max_speed=200.0f
+float max_speed=200.0
 
-float standby_speed=90.0f
+float standby_speed=90.0
 
 float max_health=12
 
-float size_x=44.0f
-float size_y=64.0f
+float size_x=44.0
+float size_y=64.0
 
-float collision_size_x=28.0f
-float collision_size_y=36.0f
+float collision_size_x=28.0
+float collision_size_y=36.0
 
-float collision_offset_x=0.0f
-float collision_offset_y=0.0f
+float collision_offset_x=0.0
+float collision_offset_y=0.0
 
-float map_offset_x=0.0f
-float map_offset_y=8.0f
+float map_offset_x=0.0
+float map_offset_y=8.0
 
-list[float] gun_offset_x=[9.0f;9.0f;9.0f;9.0f]
-list[float] gun_offset_y=[-9.0f;-8.0f;-9.0f;-8.0f]
+list[float] gun_offset_x=[9.0;9.0;9.0;9.0]
+list[float] gun_offset_y=[-9.0;-8.0;-9.0;-8.0]
 
 int frames_number=4
-float frame_duration=0.07f
+float frame_duration=0.07
 
 string default_activation=OnKill
 list[string] default_functions=[SpawnAmmo]
@@ -32,5 +32,5 @@ int z_index=1
 
 list[string] weapons=[enemy_pistol]
 
-bool is_talkable=0
-bool light_point=0
+bool is_talkable=false
+bool light_point=false

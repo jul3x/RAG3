@@ -34,6 +34,7 @@
 # IDE
 .idea/*
 .vscode/*
+*.cbp
 
 # CMake
 cmake-build-debug/*

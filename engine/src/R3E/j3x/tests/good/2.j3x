@@ -1,0 +1,8 @@
+float a = 5.0
+
+float b = 5
+
+float c = a + b
+float d = c * a
+float e = d / c
+float f = a - b

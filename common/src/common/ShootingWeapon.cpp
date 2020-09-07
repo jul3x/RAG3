@@ -10,29 +10,29 @@
 
 
 ShootingWeapon::ShootingWeapon(Character* user, const std::string& id) :
-        spawn_timeout_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_timeout")),
-        recoil_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "recoil")),
-        ammunition_(utils::j3x::get<int>(RM.getObjectParams("weapons", id), "max_ammo")),
-        max_ammunition_(utils::j3x::get<int>(RM.getObjectParams("weapons", id), "max_ammo")),
-        spawn_type_(utils::j3x::get<std::string>(RM.getObjectParams("weapons", id), "spawn_type")),
-        spawn_quantity_(utils::j3x::get<int>(RM.getObjectParams("weapons", id), "spawn_quantity")),
-        spawn_angular_diff_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_angular_diff")),
-        spawn_offset_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_offset")),
+        spawn_timeout_(j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_timeout")),
+        recoil_(j3x::get<float>(RM.getObjectParams("weapons", id), "recoil")),
+        ammunition_(j3x::get<int>(RM.getObjectParams("weapons", id), "max_ammo")),
+        max_ammunition_(j3x::get<int>(RM.getObjectParams("weapons", id), "max_ammo")),
+        spawn_type_(j3x::get<std::string>(RM.getObjectParams("weapons", id), "spawn_type")),
+        spawn_quantity_(j3x::get<int>(RM.getObjectParams("weapons", id), "spawn_quantity")),
+        spawn_angular_diff_(j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_angular_diff")),
+        spawn_offset_(j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_offset")),
         spawn_offset_factor_(-1),
         AbstractWeapon(user,
-                       {utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_x"),
-                        utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_y")},
-                       {utils::j3x::get<float>(RM.getObjectParams("weapons", id), "offset_x"),
-                        utils::j3x::get<float>(RM.getObjectParams("weapons", id), "offset_y")},
+                       {j3x::get<float>(RM.getObjectParams("weapons", id), "size_x"),
+                        j3x::get<float>(RM.getObjectParams("weapons", id), "size_y")},
+                       {j3x::get<float>(RM.getObjectParams("weapons", id), "offset_x"),
+                        j3x::get<float>(RM.getObjectParams("weapons", id), "offset_y")},
                        id)
 {
     if (max_ammunition_ <= 0 || spawn_timeout_ <= 0.0f)
         throw std::invalid_argument("[ShootingWeapon] Constructor parameters are invalid!");
 
     this->changeOrigin(sf::Vector2f(0.0f,
-                                    utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_y")) / 2.0f +
-                       sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "offset_x"),
-                                    utils::j3x::get<float>(RM.getObjectParams("weapons", id), "offset_y")));
+                                    j3x::get<float>(RM.getObjectParams("weapons", id), "size_y")) / 2.0f +
+                       sf::Vector2f(j3x::get<float>(RM.getObjectParams("weapons", id), "offset_x"),
+                                    j3x::get<float>(RM.getObjectParams("weapons", id), "offset_y")));
 }
 
 sf::Vector2f ShootingWeapon::use()

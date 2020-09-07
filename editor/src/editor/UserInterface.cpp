@@ -434,25 +434,25 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
         {
             crosshair_.setSize(
                     sf::Vector2f(
-                            utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
-                            utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")));
+                            j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
+                            j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")));
             crosshair_.changeOrigin(
                     sf::Vector2f(
-                            utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
-                            utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")) /
+                            j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
+                            j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")) /
                     2.0f +
-                    sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
+                    sf::Vector2f(j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
                                                         "map_offset_x"),
-                                 utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
+                                 j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
                                                         "map_offset_y")));
 
 
-            if (utils::j3x::get<int>(RM.getObjectParams(current_item.first, current_item.second), "frames_number") > 1)
+            if (j3x::get<int>(RM.getObjectParams(current_item.first, current_item.second), "frames_number") > 1)
                 crosshair_.changeTextureRect({{0, 0},
-                                              sf::Vector2i(utils::j3x::get<float>(
+                                              sf::Vector2i(j3x::get<float>(
                                                                    RM.getObjectParams(current_item.first, current_item.second),
                                                                    "size_x"),
-                                                           utils::j3x::get<float>(RM.getObjectParams(current_item.first,
+                                                           j3x::get<float>(RM.getObjectParams(current_item.first,
                                                                                                      current_item.second),
                                                                                   "size_y"))});
 

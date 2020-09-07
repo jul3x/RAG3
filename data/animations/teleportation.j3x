@@ -1,15 +1,15 @@
-float size_x=64.0f
-float size_y=64.0f
+float size_x=64.0
+float size_y=64.0
 
-float map_offset_x=-5.0f
-float map_offset_y=6.0f
+float map_offset_x=-5.0
+float map_offset_y=6.0
 
 int frames_number=100
-float frame_duration=1.0f
+float frame_duration=1.0
 
 int z_index=1
 
-bool animation_type_quadratic=1
-bool scale=0
+bool animation_type_quadratic=false
+bool scale=false
 
-bool light_point=1
+bool light_point=true

@@ -10,36 +10,36 @@
 
 Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id, int u_id) :
     Obstacle(position, id,
-             utils::j3x::get<std::string>(RM.getObjectParams("obstacles", id), "default_activation"),
-             utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("obstacles", id), "default_functions"),
-             utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("obstacles", id), "default_datas"), u_id)
+             j3x::get<std::string>(RM.getObjectParams("obstacles", id), "default_activation"),
+             j3x::get<j3x::List>(RM.getObjectParams("obstacles", id), "default_functions"),
+             j3x::get<j3x::List>(RM.getObjectParams("obstacles", id), "default_datas"), u_id)
 {
 
 }
 
 Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id, const std::string& activation,
-                   const std::vector<std::string>& functions, const std::vector<std::string>& datas, int u_id) :
+                   const j3x::List& functions, const j3x::List& datas, int u_id) :
         Functional(activation, functions, datas, id, u_id),
         StaticObject(position,
-                     {utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "size_x"),
-                      utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "size_y")},
-                     collision::Box(utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_size_x"),
-                                    utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_size_y"),
-                                    {utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_offset_x"),
-                                     utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_offset_y")}),
+                     {j3x::get<float>(RM.getObjectParams("obstacles", id), "size_x"),
+                      j3x::get<float>(RM.getObjectParams("obstacles", id), "size_y")},
+                     collision::Box(j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_size_x"),
+                                    j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_size_y"),
+                                    {j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_offset_x"),
+                                     j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_offset_y")}),
                      &RM.getTexture("obstacles/" + id),
-                     utils::j3x::get<int>(RM.getObjectParams("obstacles", id), "z_index"),
-                     utils::j3x::get<int>(RM.getObjectParams("obstacles", id), "frames_number"),
-                     utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "frame_duration")),
-        Shootable(utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "endurance") *
+                     j3x::get<int>(RM.getObjectParams("obstacles", id), "z_index"),
+                     j3x::get<int>(RM.getObjectParams("obstacles", id), "frames_number"),
+                     j3x::get<float>(RM.getObjectParams("obstacles", id), "frame_duration")),
+        Shootable(j3x::get<float>(RM.getObjectParams("obstacles", id), "endurance") *
                   CFG.get<float>("obstacles_endurance_factor"))
 {
-    this->changeOrigin(sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "size_x"),
-                                    utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "size_y")) / 2.0f +
-                       sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "map_offset_x"),
-                                    utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "map_offset_y")));
+    this->changeOrigin(sf::Vector2f(j3x::get<float>(RM.getObjectParams("obstacles", id), "size_x"),
+                                    j3x::get<float>(RM.getObjectParams("obstacles", id), "size_y")) / 2.0f +
+                       sf::Vector2f(j3x::get<float>(RM.getObjectParams("obstacles", id), "map_offset_x"),
+                                    j3x::get<float>(RM.getObjectParams("obstacles", id), "map_offset_y")));
 
-    if (utils::j3x::get<int>(RM.getObjectParams("obstacles", id), "light_point"))
+    if (j3x::get<bool>(RM.getObjectParams("obstacles", id), "light_point"))
     {
         float light_size = CFG.get<float>("graphics/obstacles_light_point_size") * CFG.get<float>("graphics/global_zoom");
         light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
@@ -48,13 +48,13 @@ Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id, const st
     }
 
     auto shadow_pos = this->getPosition() -
-                      sf::Vector2f{utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "map_offset_x"),
-                                   utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "map_offset_y")};
+                      sf::Vector2f{j3x::get<float>(RM.getObjectParams("obstacles", id), "map_offset_x"),
+                                   j3x::get<float>(RM.getObjectParams("obstacles", id), "map_offset_y")};
 
-    if (utils::j3x::get<int>(RM.getObjectParams("obstacles", id), "shadow"))
+    if (j3x::get<bool>(RM.getObjectParams("obstacles", id), "shadow"))
     {
         auto shadow_texture_suffix =
-                utils::j3x::get<std::string>(RM.getObjectParams("obstacles", id), "shadow_texture_suffix", true);
+                j3x::get<std::string>(RM.getObjectParams("obstacles", id), "shadow_texture_suffix", true);
         if (shadow_texture_suffix.empty())
         {
             static_shadow_ = std::make_unique<graphics::TransformedTextureShadow>(
@@ -62,21 +62,21 @@ Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id, const st
                     CFG.get<float>("graphics/shadow_length_factor"),
                     &RM.getTexture("obstacles/" + id),
                     sf::Color(CFG.get<int>("graphics/shadow_color")), z_index_,
-                    utils::j3x::get<int>(RM.getObjectParams("obstacles", id), "frames_number"),
-                    utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "frame_duration"));
+                    j3x::get<int>(RM.getObjectParams("obstacles", id), "frames_number"),
+                    j3x::get<float>(RM.getObjectParams("obstacles", id), "frame_duration"));
         }
         else
         {
-            auto shadow_offset =  sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "shadow_offset_x"),
-                                               utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "shadow_offset_y"));
-            auto shadow_size = sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "shadow_size_x"),
-                                            utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "shadow_size_y"));
+            auto shadow_offset =  sf::Vector2f(j3x::get<float>(RM.getObjectParams("obstacles", id), "shadow_offset_x"),
+                                               j3x::get<float>(RM.getObjectParams("obstacles", id), "shadow_offset_y"));
+            auto shadow_size = sf::Vector2f(j3x::get<float>(RM.getObjectParams("obstacles", id), "shadow_size_x"),
+                                            j3x::get<float>(RM.getObjectParams("obstacles", id), "shadow_size_y"));
             static_shadow_ = std::make_unique<graphics::StaticTextureShadow>(
                     shadow_pos + shadow_offset, shadow_size,
                     &RM.getTexture("obstacles/" + id + shadow_texture_suffix),
                     sf::Color(CFG.get<int>("graphics/shadow_color")), z_index_,
-                    utils::j3x::get<int>(RM.getObjectParams("obstacles", id), "frames_number"),
-                    utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "frame_duration"));
+                    j3x::get<int>(RM.getObjectParams("obstacles", id), "frames_number"),
+                    j3x::get<float>(RM.getObjectParams("obstacles", id), "frame_duration"));
         }
     }
 }

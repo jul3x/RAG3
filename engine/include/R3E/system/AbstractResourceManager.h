@@ -15,7 +15,7 @@
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Audio/Music.hpp>
 
-#include <R3E/utils/Parser.h>
+#include <R3E/j3x/J3X.h>
 
 
 namespace r3e {
@@ -35,7 +35,7 @@ namespace r3e {
         sf::SoundBuffer& getSound(const std::string& key);
         sf::Music& getMusic(const std::string& key);
         sf::Font& getFont(const std::string& key);
-        utils::j3x::Parameters& getParameters(const std::string& key);
+        j3x::Parameters& getParameters(const std::string& key);
         sf::Font& getFont();
 
         // TODO LazyLoad every type of objects
@@ -77,7 +77,7 @@ namespace r3e {
         std::unordered_map<std::string, sf::SoundBuffer> sounds_;
         std::unordered_map<std::string, sf::Music> music_;
         std::unordered_map<std::string, sf::Font> fonts_;
-        std::unordered_map<std::string, utils::j3x::Parameters> parameters_;
+        std::unordered_map<std::string, j3x::Parameters> parameters_;
 
         std::string j3x_directory_;
         std::string textures_directory_;

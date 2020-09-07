@@ -1,24 +1,24 @@
-float max_speed=0.0f
+float max_speed=0.0
 
 float max_health=3
 
-float size_x=32.0f
-float size_y=50.0f
+float size_x=32.0
+float size_y=50.0
 
-float collision_size_x=30.0f
-float collision_size_y=30.0f
+float collision_size_x=30.0
+float collision_size_y=30.0
 
-float collision_offset_x=0.0f
-float collision_offset_y=0.0f
+float collision_offset_x=0.0
+float collision_offset_y=0.0
 
-float map_offset_x=0.0f
-float map_offset_y=8.0f
+float map_offset_x=0.0
+float map_offset_y=8.0
 
-list[float] gun_offset_x=[0.0f]
-list[float] gun_offset_y=[0.0f]
+list[float] gun_offset_x=[0.0]
+list[float] gun_offset_y=[0.0]
 
 int frames_number=1
-float frame_duration=1.0f
+float frame_duration=1.0
 
 string default_activation=OnKill
 list[string] default_functions=[Null]
@@ -30,5 +30,5 @@ int z_index=1
 
 list[string] weapons=[Null]
 
-bool is_talkable=1
-bool light_point=0
+bool is_talkable=true
+bool light_point=false

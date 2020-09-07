@@ -15,35 +15,35 @@
 
 Character::Character(const sf::Vector2f& position, const std::string& id, int u_id) :
         Character(position, id,
-                  utils::j3x::get<std::string>(RM.getObjectParams("characters", id), "default_activation"),
-                  utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("characters", id), "default_functions"),
-                  utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("characters", id), "default_datas"), u_id)
+                  j3x::get<std::string>(RM.getObjectParams("characters", id), "default_activation"),
+                  j3x::get<j3x::List>(RM.getObjectParams("characters", id), "default_functions"),
+                  j3x::get<j3x::List>(RM.getObjectParams("characters", id), "default_datas"), u_id)
 {
 
 }
 
 Character::Character(const sf::Vector2f& position, const std::string& id,
-                     const std::string& activation, const std::vector<std::string>& functions,
-                     const std::vector<std::string>& datas, int u_id) :
+                     const std::string& activation, const j3x::List& functions,
+                     const j3x::List& datas, int u_id) :
         Functional(activation, functions, datas, id, u_id),
         DynamicObject(position, {},
-                      {utils::j3x::get<float>(RM.getObjectParams("characters", id), "size_x"),
-                       utils::j3x::get<float>(RM.getObjectParams("characters", id), "size_y")},
-                      collision::Box(utils::j3x::get<float>(RM.getObjectParams("characters", id), "collision_size_x"),
-                                     utils::j3x::get<float>(RM.getObjectParams("characters", id), "collision_size_y"),
-                                     {utils::j3x::get<float>(RM.getObjectParams("characters", id), "collision_offset_x"),
-                                      utils::j3x::get<float>(RM.getObjectParams("characters", id), "collision_offset_y")}),
+                      {j3x::get<float>(RM.getObjectParams("characters", id), "size_x"),
+                       j3x::get<float>(RM.getObjectParams("characters", id), "size_y")},
+                      collision::Box(j3x::get<float>(RM.getObjectParams("characters", id), "collision_size_x"),
+                                     j3x::get<float>(RM.getObjectParams("characters", id), "collision_size_y"),
+                                     {j3x::get<float>(RM.getObjectParams("characters", id), "collision_offset_x"),
+                                      j3x::get<float>(RM.getObjectParams("characters", id), "collision_offset_y")}),
                       &RM.getTexture("characters/" + id),
-                      utils::j3x::get<int>(RM.getObjectParams("characters", id), "z_index"),
-                      utils::j3x::get<int>(RM.getObjectParams("characters", id), "frames_number"),
-                      utils::j3x::get<float>(RM.getObjectParams("characters", id), "frame_duration"),
+                      j3x::get<int>(RM.getObjectParams("characters", id), "z_index"),
+                      j3x::get<int>(RM.getObjectParams("characters", id), "frames_number"),
+                      j3x::get<float>(RM.getObjectParams("characters", id), "frame_duration"),
                       CFG.get<float>("characters/max_acceleration")),
         global_state_(GlobalState::Normal),
-        max_life_(utils::j3x::get<float>(RM.getObjectParams("characters", id), "max_health")),
+        max_life_(j3x::get<float>(RM.getObjectParams("characters", id), "max_health")),
         ammo_state_(AmmoState::High),
         life_state_(LifeState::High),
-        gun_offset_({utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", id), "gun_offset_x").front(),
-                     utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", id), "gun_offset_y").front()}),
+        gun_offset_({j3x::getElem<float>(j3x::get<j3x::List>(RM.getObjectParams("characters", id), "gun_offset_x").front()),
+                     j3x::getElem<float>(j3x::get<j3x::List>(RM.getObjectParams("characters", id), "gun_offset_y").front())}),
         current_rotation_quarter_(1),
         speed_factor_(1.0f),
         rotate_to_(0.0f),
@@ -51,23 +51,24 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
         current_talkable_character_(nullptr),
         should_respond_(false),
         is_moving_(false),
-        is_talkable_(utils::j3x::get<int>(RM.getObjectParams("characters", id), "is_talkable")),
-        Shootable(utils::j3x::get<float>(RM.getObjectParams("characters", id), "max_health"))
+        is_talkable_(j3x::get<bool>(RM.getObjectParams("characters", id), "is_talkable")),
+        Shootable(j3x::get<float>(RM.getObjectParams("characters", id), "max_health"))
 {
-    this->changeOrigin(sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("characters", id), "size_x"),
-                                    utils::j3x::get<float>(RM.getObjectParams("characters", id), "size_y")) / 2.0f +
-                       sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("characters", id), "map_offset_x"),
-                                    utils::j3x::get<float>(RM.getObjectParams("characters", id), "map_offset_y")));
+    this->changeOrigin(sf::Vector2f(j3x::get<float>(RM.getObjectParams("characters", id), "size_x"),
+                                    j3x::get<float>(RM.getObjectParams("characters", id), "size_y")) / 2.0f +
+                       sf::Vector2f(j3x::get<float>(RM.getObjectParams("characters", id), "map_offset_x"),
+                                    j3x::get<float>(RM.getObjectParams("characters", id), "map_offset_y")));
 
     for (const auto& weapon :
-            utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("characters", id), "weapons"))
+            j3x::get<j3x::List>(RM.getObjectParams("characters", id), "weapons"))
     {
-        if (weapon == "Null")
+        auto& weapon_str = j3x::getElem<std::string>(weapon);
+        if (weapon_str == "Null")
             weapons_in_backpack_.push_back(std::make_shared<NoWeapon>());
-        else if (weapon.length() >= 5 && weapon.substr(0, 5) == "melee")
-            weapons_in_backpack_.push_back(std::make_shared<MeleeWeapon>(this, weapon));
+        else if (weapon_str.length() >= 5 && weapon_str.substr(0, 5) == "melee")
+            weapons_in_backpack_.push_back(std::make_shared<MeleeWeapon>(this, weapon_str));
         else
-            weapons_in_backpack_.push_back(std::make_shared<ShootingWeapon>(this, weapon));
+            weapons_in_backpack_.push_back(std::make_shared<ShootingWeapon>(this, weapon_str));
     }
 
     current_weapon_ = 0;
@@ -77,7 +78,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
         talkable_area_ = std::make_unique<TalkableArea>(this, CFG.get<float>("characters/talkable_distance"));
     }
 
-    if (utils::j3x::get<int>(RM.getObjectParams("characters", id), "light_point"))
+    if (j3x::get<bool>(RM.getObjectParams("characters", id), "light_point"))
     {
         float light_size = CFG.get<float>("graphics/characters_light_point_size") * CFG.get<float>("graphics/global_zoom");
         light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
@@ -91,8 +92,8 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
             CFG.get<float>("graphics/shadow_length_factor"),
             &RM.getTexture("characters/" + id), sf::Color(CFG.get<int>("graphics/shadow_color")),
             z_index_,
-            utils::j3x::get<int>(RM.getObjectParams("characters", id), "frames_number"),
-            utils::j3x::get<float>(RM.getObjectParams("characters", id), "frame_duration"));
+            j3x::get<int>(RM.getObjectParams("characters", id), "frames_number"),
+            j3x::get<float>(RM.getObjectParams("characters", id), "frame_duration"));
 }
 
 bool Character::shot()
@@ -176,8 +177,8 @@ void Character::addAmmoToWeapon(const std::string& id)
         if (weapon->getId() == id)
         {
             weapon->setState(std::min(1.0f, weapon->getState() +
-                                            static_cast<float>(utils::j3x::get<int>(RM.getObjectParams("weapons", id), "ammo_portion")) /
-                                            static_cast<float>(utils::j3x::get<int>(RM.getObjectParams("weapons", id), "max_ammo"))));
+                                            static_cast<float>(j3x::get<int>(RM.getObjectParams("weapons", id), "ammo_portion")) /
+                                            static_cast<float>(j3x::get<int>(RM.getObjectParams("weapons", id), "max_ammo"))));
 
             return;
         }
@@ -223,7 +224,7 @@ bool Character::update(float time_elapsed)
     bool is_alive = life_ > 0;
     DynamicObject::update(time_elapsed);
     auto vel = std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
-    if (!utils::num::isNearlyEqual(vel, 0.0f, utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") / 3.0f))
+    if (!utils::num::isNearlyEqual(vel, 0.0f, j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") / 3.0f))
     {
         is_moving_ = true;
     }
@@ -236,7 +237,7 @@ bool Character::update(float time_elapsed)
 
     this->updateAnimation(time_elapsed,
                           vel /
-                          utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed"));
+                          j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed"));
 
     weapons_in_backpack_.at(current_weapon_)->update(time_elapsed);
 
@@ -352,13 +353,13 @@ void Character::setRotation(float theta)
     static std::string weapon_added_name;
     weapon_added_name = "";
 
+    gun_offset_.x = j3x::getElem<float>(j3x::get<j3x::List>(RM.getObjectParams("characters", this->getId()), "gun_offset_x"), current_frame_);
+    gun_offset_.y = j3x::getElem<float>(j3x::get<j3x::List>(RM.getObjectParams("characters", this->getId()), "gun_offset_y"), current_frame_);
     switch (current_rotation_quarter_)
     {
         case 1:
         {
             weapon_added_name = "_back";
-            gun_offset_.x = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
-            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
 
@@ -371,8 +372,6 @@ void Character::setRotation(float theta)
         case 11:
         {
             weapon_added_name = "_back";
-            gun_offset_.x = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
-            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
 
@@ -386,8 +385,7 @@ void Character::setRotation(float theta)
         {
             added_name += "_2";
             weapon_added_name = "_back";
-            gun_offset_.x = -utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
-            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
+            gun_offset_.x = -gun_offset_.x;
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
 
@@ -401,8 +399,7 @@ void Character::setRotation(float theta)
         {
             added_name += "_2";
             weapon_added_name = "_back";
-            gun_offset_.x = -utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
-            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
+            gun_offset_.x = -gun_offset_.x;
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
 
@@ -416,8 +413,7 @@ void Character::setRotation(float theta)
         {
             added_name += "_3";
 
-            gun_offset_.x = -utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
-            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
+            gun_offset_.x = -gun_offset_.x;
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
 
@@ -430,9 +426,6 @@ void Character::setRotation(float theta)
         case 4:
         {
             added_name += "_4";
-
-            gun_offset_.x = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_x").at(current_frame_);
-            gun_offset_.y = utils::j3x::get<std::vector<float>>(RM.getObjectParams("characters", this->getId()), "gun_offset_y").at(current_frame_);
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
 
@@ -470,8 +463,8 @@ void Character::setPosition(const sf::Vector2f& pos)
         light_->setPosition(pos);
 
     static_shadow_->setPosition(pos -
-                                sf::Vector2f{utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_x"),
-                                             utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_y")});
+                                sf::Vector2f{j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_x"),
+                                             j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_y")});
 }
 
 void Character::setPosition(float x, float y)
@@ -657,7 +650,7 @@ const std::string& Character::getTalkScenarioStr() const
 
     for (auto& msg : talk_scenario_)
     {
-        result += msg + utils::j3x::DELIMITER_;
+        result += msg + j3x::DELIMITER_;
     }
 
     if (result.length() >= 1)
@@ -668,7 +661,7 @@ const std::string& Character::getTalkScenarioStr() const
 
 void Character::setTalkScenarioStr(const std::string& str)
 {
-    utils::j3x::tokenize(str, utils::j3x::DELIMITER_, talk_scenario_);
+    j3x::tokenize(str, j3x::DELIMITER_, talk_scenario_);
 }
 
 const std::list<std::string>& Character::getTalkScenario() const

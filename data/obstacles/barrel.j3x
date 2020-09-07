@@ -1,25 +1,25 @@
-float size_x=24.0f
-float size_y=33.0f
+float size_x=24.0
+float size_y=33.0
 
-float collision_size_x=24.0f
-float collision_size_y=24.0f
+float collision_size_x=24.0
+float collision_size_y=24.0
 
-float collision_offset_x=0.0f
-float collision_offset_y=0.0f
+float collision_offset_x=0.0
+float collision_offset_y=0.0
 
-float map_offset_x=0.0f
-float map_offset_y=8.0f
+float map_offset_x=0.0
+float map_offset_y=8.0
 
 int frames_number=1
-float frame_duration=1.0f
+float frame_duration=1.0
 
-float endurance=1.0f
+float endurance=1.0
 
 string default_activation=OnKill
 list[string] default_functions=[Explode]
-list[string] default_datas=[80.0f]
+list[string] default_datas=[80.0]
 
 int z_index=1
 
-bool light_point=0
-bool shadow=1
+bool light_point=false
+bool shadow=true

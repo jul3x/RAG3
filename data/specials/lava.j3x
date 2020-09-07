@@ -1,25 +1,25 @@
-float size_x=32.0f
-float size_y=32.0f
+float size_x=32.0
+float size_y=32.0
 
-float collision_size_x=15.0f
+float collision_size_x=15.0
 
-float collision_offset_x=0.0f
-float collision_offset_y=0.0f
+float collision_offset_x=0.0
+float collision_offset_y=0.0
 
-float map_offset_x=0.0f
-float map_offset_y=-8.0f
+float map_offset_x=0.0
+float map_offset_y=-8.0
 
 int frames_number=4
 float frame_duration=0.2f
 
-string default_activation=OnEnter
-list[string] default_functions=[Kill]
-list[string] default_datas=[lava]
+string default_activation="OnEnter"
+list[string] default_functions=["Kill"]
+list[string] default_datas=["lava"]
 
-bool is_drawable=1
+bool is_drawable=true
 
 int z_index=-2
 
-bool light_point=1
-bool default_active=1
-bool shadow=0
+bool light_point=true
+bool default_active=true
+bool shadow=false

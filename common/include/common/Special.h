@@ -26,8 +26,8 @@ public:
     Special(const sf::Vector2f& position, const std::string& id, int u_id = -1);
 
     Special(const sf::Vector2f& position, const std::string& id,
-            const std::string& activation, const std::vector<std::string>& functions,
-            const std::vector<std::string>& datas, bool is_active, int u_id = -1);
+            const std::string& activation, const j3x::List& functions,
+            const j3x::List& datas, bool is_active, int u_id = -1);
 
     [[nodiscard]] bool isDrawable() const;
     [[nodiscard]] bool getAdditionalBooleanData() const;

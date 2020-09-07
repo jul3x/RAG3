@@ -22,6 +22,7 @@ include_directories(${CMAKE_SOURCE_DIR}/game/include)
 include_directories(${SFML_INCLUDE_DIR} ${TGUI_INCLUDE_DIR})
 
 # R3Engine
+
 set(LIBRARY_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/build")
 file(GLOB_RECURSE ENGINE_SRC "engine/src/*.cpp")
 set(R3ENGINE_LIBRARY "R3Engine")
@@ -33,6 +34,11 @@ target_link_libraries(${R3ENGINE_LIBRARY}
         ${SFML_WINDOW_LIBRARY_RELEASE}
         ${SFML_SYSTEM_LIBRARY_RELEASE}
         ${SFML_AUDIO_LIBRARY_RELEASE})
+
+# j3x Parser test
+file(GLOB_RECURSE J3X_SRC "engine/src/R3E/j3x/*.cpp")
+set(J3X_PARSER "J3XParser")
+add_executable(${J3X_PARSER} ${J3X_SRC})
 
 # Common
 set(LIBRARY_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/build")

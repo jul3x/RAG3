@@ -8,7 +8,7 @@
 #include <map>
 #include <iostream>
 
-#include <R3E/utils/Parser.h>
+#include <R3E/j3x/J3X.h>
 
 
 namespace r3e {
@@ -27,34 +27,34 @@ namespace r3e {
 
         void initialize(const std::string& filename)
         {
-            params_ = utils::j3x::parse(filename);
+            params_ = j3x::parse(filename);
         }
 
         void appendConfig(const std::string& filename, const std::string& ns = "")
         {
-            utils::j3x::Parameters new_params;
+            j3x::Parameters new_params;
 
-            new_params = utils::j3x::parse(filename, ns);
+            new_params = j3x::parse(filename, ns);
 
-            utils::j3x::mergeParams(params_, new_params);
+            j3x::mergeParams(params_, new_params);
         }
 
         template <class T>
         const T& get(const std::string& key, bool ignore_warn = false) const
         {
-            return utils::j3x::get<T>(params_, key, ignore_warn);
+            return j3x::get<T>(params_, key, ignore_warn);
         }
 
         template <class T>
         void set(const std::string& key, const T& value)
         {
-            utils::j3x::set<T>(params_, key, value);
+            j3x::set<T>(params_, key, value);
         }
 
     private:
         Config() = default;
 
-        utils::j3x::Parameters params_;
+        j3x::Parameters params_;
 
     };
 

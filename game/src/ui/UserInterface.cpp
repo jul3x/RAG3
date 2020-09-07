@@ -288,9 +288,9 @@ inline void UserInterface::handleKeys()
     float max_speed;
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
-        max_speed = utils::j3x::get<float>(RM.getObjectParams("characters", "player"), "max_running_speed");
+        max_speed = j3x::get<float>(RM.getObjectParams("characters", "player"), "max_running_speed");
     else
-        max_speed = utils::j3x::get<float>(RM.getObjectParams("characters", "player"), "max_speed");
+        max_speed = j3x::get<float>(RM.getObjectParams("characters", "player"), "max_speed");
 
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))

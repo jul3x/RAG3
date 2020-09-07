@@ -18,7 +18,7 @@ Player::Player(const sf::Vector2f& position) :
         is_alive_(true),
         side_stepping_freeze_time_(-1.0f)
 {
-    if (CFG.get<int>("no_clip_mode"))
+    if (CFG.get<bool>("no_clip_mode"))
     {
         this->changeCollisionArea(collision::None());
     }
@@ -40,13 +40,16 @@ bool Player::sideStep(Player::SideStepDir dir)
     {
         this->addSteeringForce(this->getSpeedFactor() *
                                utils::geo::polarToCartesian(
-                                       utils::j3x::get<float>(RM.getObjectParams("characters", "player"),
+                                       j3x::get<float>(RM.getObjectParams("characters", "player"),
                                                               "side_step_speed"),
                                        (this->getRotation() + static_cast<int>(dir) * 90.0f) * M_PI / 180.0f),
                                CFG.get<float>("side_step_force_duration"));
 
         side_stepping_freeze_time_ = CFG.get<float>("side_stepping_freeze_time");
+        return true;
     }
+
+    return false;
 }
 
 bool Player::update(float time_elapsed)
@@ -59,7 +62,7 @@ bool Player::update(float time_elapsed)
 
 void Player::setHealth(float life)
 {
-    if (!CFG.get<int>("god_mode"))
+    if (!CFG.get<bool>("god_mode"))
     {
         Character::setHealth(life);
     }
@@ -67,7 +70,7 @@ void Player::setHealth(float life)
 
 void Player::getShot(const Bullet& bullet)
 {
-    if (!CFG.get<int>("god_mode"))
+    if (!CFG.get<bool>("god_mode"))
     {
         Character::getShot(bullet);
     }
@@ -81,7 +84,7 @@ void Player::handleGlobalState(float time_elapsed)
             break;
 
         case GlobalState::OnFire:
-            if (!CFG.get<int>("god_mode"))
+            if (!CFG.get<bool>("god_mode"))
             {
                 life_ -= time_elapsed * CFG.get<float>("on_fire_hurt_speed");
             }
@@ -95,7 +98,7 @@ void Player::handleGlobalState(float time_elapsed)
 
 void Player::getCut(const MeleeWeapon& weapon)
 {
-    if (!CFG.get<int>("god_mode"))
+    if (!CFG.get<int>("bool"))
     {
         Character::getCut(weapon);
     }

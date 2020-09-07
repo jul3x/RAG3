@@ -19,8 +19,8 @@ class Character;
 
 class Functional : public Identifiable, public Unique {
 public:
-    Functional(const std::string& activation, const std::vector<std::string>& functions,
-               const std::vector<std::string>& datas, const std::string& id, int u_id = -1);
+    Functional(std::string  activation, const j3x::List& functions,
+               const j3x::List& datas, const std::string& id, int u_id = -1);
 
     [[nodiscard]] const std::string& getActivation() const;
     [[nodiscard]] const std::string& getFunctionsStr() const;

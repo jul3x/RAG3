@@ -1,25 +1,25 @@
-float size_x=40.0f
-float size_y=32.0f
+float size_x=40.0
+float size_y=32.0
 
-float collision_size_x=30.0f
+float collision_size_x=30.0
 
-float collision_offset_x=0.0f
-float collision_offset_y=0.0f
+float collision_offset_x=0.0
+float collision_offset_y=0.0
 
-float map_offset_x=0.0f
-float map_offset_y=0.0f
+float map_offset_x=0.0
+float map_offset_y=0.0
 
 int frames_number=1
-float frame_duration=0.0f
+float frame_duration=0.0
 
-string default_activation=OnEnter
-list[string] default_functions=[AddWeapon;Destroy]
-list[string] default_datas=[rocket_launcher;Null]
+string default_activation="OnEnter"
+list[string] default_functions=["AddWeapon"; "Destroy"]
+list[string] default_datas=["rocket_launcher"; "Null"]
 
-bool is_drawable=1
+bool is_drawable=true
 
 int z_index=1
 
-bool light_point=0
-bool shadow=1
-bool default_active=1
+bool light_point=false
+bool shadow=true
+bool default_active=true

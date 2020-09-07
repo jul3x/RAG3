@@ -1,0 +1,63 @@
+-- j3x ------------------------------------------------
+
+entrypoints Script ;
+
+Prog.      Script ::= [Def] ;
+
+VarDef.	   Def ::= Type Ident "=" Expr ;
+
+separator nonempty Def "" ;
+
+-- types ---------------------------------------------------
+
+Int.       Type ::= "int" ;
+
+Str.       Type ::= "string" ;
+
+Bool.      Type ::= "bool" ;
+
+Float.     Type ::= "float" ;
+
+Vector.    Type ::= "vector" ;
+
+ArrType.   Type ::= "list[" Type "]" ;
+
+-- expressions ----------------------------------------------
+
+EAdd.      Expr ::= Expr "+" Expr1 ;
+
+ESub.      Expr ::= Expr "-" Expr1 ;
+
+EMul.      Expr1 ::= Expr1 "*" Expr2 ;
+
+EDiv.      Expr1 ::= Expr1 "/" Expr2 ;
+
+ENeg.      Expr1 ::= "-" Expr2 ;
+
+EList.     Expr2 ::= "[" [Expr] "]" ;
+
+separator  Expr ";" ;
+
+ELitInt.   Expr2 ::= Integer ;
+
+EString.   Expr2 ::= String ;
+
+EDouble.   Expr2 ::= Double ;
+
+ELitTrue.  Expr2 ::= "true" ;
+
+ELitFalse. Expr2 ::= "false" ;
+
+EVar.      Expr2 ::= Ident ;
+
+EVector.   Expr2 ::= "(" Expr "," Expr ")" ;
+
+coercions  Expr 2 ;
+
+-- comments ------------------------------------------------
+
+comment    "#" ;
+
+comment    "//" ;
+
+comment    "/*" "*/" ;

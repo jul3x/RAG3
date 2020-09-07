@@ -3,25 +3,31 @@
 //
 
 #include <string>
+#include <utility>
 
 #include <common/ResourceManager.h>
 #include <common/Functional.h>
 #include <common/Character.h>
 
 
-Functional::Functional(const std::string& activation, const std::vector<std::string>& functions,
-                       const std::vector<std::string>& datas, const std::string& id, int u_id) :
+Functional::Functional(std::string activation, const j3x::List& functions,
+                       const j3x::List& datas, const std::string& id, int u_id) :
         Identifiable(id),
         Unique(u_id),
-        activation_(activation),
-        functions_(functions),
-        datas_(datas),
+        activation_(std::move(activation)),
         is_active_(true),
         is_destroyed_(false),
         text_to_use_(nullptr),
         is_usable_by_npc_(true)
 {
-
+    functions_.reserve(functions.size());
+    for (const auto& val : functions) {
+        functions_.emplace_back(j3x::getElem<std::string>(val));
+    }
+    datas_.reserve(datas.size());
+    for (const auto& val : datas) {
+        datas_.emplace_back(j3x::getElem<std::string>(val));
+    }
 }
 
 const std::string& Functional::getActivation() const
@@ -36,7 +42,7 @@ const std::string& Functional::getFunctionsStr() const
 
     for (auto& function : functions_)
     {
-        result += function + utils::j3x::DELIMITER_;
+        result += function + j3x::DELIMITER_;
     }
 
     if (result.length() >= 1)
@@ -52,7 +58,7 @@ const std::string& Functional::getDatasStr() const
 
     for (auto& data : datas_)
     {
-        result += data + utils::j3x::DELIMITER_;
+        result += data + j3x::DELIMITER_;
     }
 
     if (result.length() >= 1)
@@ -93,12 +99,12 @@ void Functional::setDatas(const std::vector<std::string>& data)
 
 void Functional::setFunctionsStr(const std::string& str)
 {
-    utils::j3x::tokenize(str, utils::j3x::DELIMITER_, functions_);
+    j3x::tokenize(str, j3x::DELIMITER_, functions_);
 }
 
 void Functional::setDatasStr(const std::string& str)
 {
-    utils::j3x::tokenize(str, utils::j3x::DELIMITER_, datas_);
+    j3x::tokenize(str, j3x::DELIMITER_, datas_);
 }
 
 bool Functional::isActive() const

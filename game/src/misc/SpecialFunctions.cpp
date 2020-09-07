@@ -98,26 +98,26 @@ void SpecialFunctions::openDoor(Functional* obj, const std::string& data, Charac
     auto door_id = std::stoi(data);
     auto door = Game::get().getMap().getObjectById<Obstacle>(door_id);
 
-    auto grid_pos = std::make_pair(std::round((door->getPosition().x + utils::j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_offset_x")) / DecorationTile::SIZE_X_),
-                                   std::round((door->getPosition().y + utils::j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_offset_y")) / DecorationTile::SIZE_Y_));
+    auto grid_pos = std::make_pair(std::round((door->getPosition().x + j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_offset_x")) / DecorationTile::SIZE_X_),
+                                   std::round((door->getPosition().y + j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_offset_y")) / DecorationTile::SIZE_Y_));
 
     if (door->getCollisionArea().getType() == collision::Area::Type::None)
     {
         door->changeTexture(&RM.getTexture("obstacles/" + door->getId()));
-        door->changeCollisionArea(collision::Box(utils::j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_size_x"),
-                                                 utils::j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_size_y"),
-                                                 {utils::j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_offset_x"),
-                                                  utils::j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_offset_y")}));
-        door->setZIndex(utils::j3x::get<int>(RM.getObjectParams("obstacles", door->getId()), "z_index"));
+        door->changeCollisionArea(collision::Box(j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_size_x"),
+                                                 j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_size_y"),
+                                                 {j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_offset_x"),
+                                                  j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_offset_y")}));
+        door->setZIndex(j3x::get<int>(RM.getObjectParams("obstacles", door->getId()), "z_index"));
 
         Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) =
-                utils::j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "endurance");
+                j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "endurance");
     }
     else
     {
         door->changeTexture(&RM.getTexture("obstacles/" + door->getId() + "_open"));
         door->changeCollisionArea(collision::None());
-        door->setZIndex(utils::j3x::get<int>(RM.getObjectParams("obstacles", door->getId() + "_open"), "z_index"));
+        door->setZIndex(j3x::get<int>(RM.getObjectParams("obstacles", door->getId() + "_open"), "z_index"));
 
         Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
     }
@@ -232,7 +232,7 @@ void SpecialFunctions::teleport(Functional* obj, const std::string& data, Charac
 
     try
     {
-        auto pos = utils::j3x::convert<sf::Vector2f>(data);
+        auto pos = j3x::convert<sf::Vector2f>(data);
 
         user->setPosition(pos);
         user->setForcedVelocity({0.0f, 0.0f});
@@ -283,21 +283,21 @@ void SpecialFunctions::spawnExplosionEvent(Functional* obj, const std::string& d
 void SpecialFunctions::spawnExplosionEventByPos(Functional* obj, const std::string& data, Character* user)
 {
     std::cout << "[SpecialFunction] Spawn explosion event by pos." << std::endl;
-    auto pos = utils::j3x::convert<sf::Vector2f>(data);
+    auto pos = j3x::convert<sf::Vector2f>(data);
     Game::get().spawnExplosionEvent(pos, 250.0f);
 }
 
 void SpecialFunctions::spawnLava(Functional* obj, const std::string& data, Character* user)
 {
     std::cout << "[SpecialFunction] Spawn lava." << std::endl;
-    auto pos = utils::j3x::convert<sf::Vector2f>(data);
+    auto pos = j3x::convert<sf::Vector2f>(data);
     Game::get().spawnSpecial(pos, "lava");
 }
 
 void SpecialFunctions::spawnMiniLava(Functional* obj, const std::string& data, Character* user)
 {
     std::cout << "[SpecialFunction] Spawn mini lava." << std::endl;
-    auto pos = utils::j3x::convert<sf::Vector2f>(data);
+    auto pos = j3x::convert<sf::Vector2f>(data);
     Game::get().spawnSpecial(pos, "mini_lava");
 }
 
@@ -319,7 +319,7 @@ void SpecialFunctions::spawnAmmo(Functional* obj, const std::string& data, Chara
 void SpecialFunctions::spawnFlame(Functional* obj, const std::string& data, Character* user)
 {
     std::cout << "[SpecialFunction] Spawn flame." << std::endl;
-    auto pos = utils::j3x::convert<sf::Vector2f>(data);
+    auto pos = j3x::convert<sf::Vector2f>(data);
     Game::get().spawnSpecial(pos, "flame");
     Game::get().spawnExplosionEvent(pos, 250.0f);
 }

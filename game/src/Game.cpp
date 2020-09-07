@@ -58,7 +58,7 @@ void Game::initialize()
     engine_->initializeGraphics(
             sf::Vector2i{CFG.get<int>("graphics/window_width_px"), CFG.get<int>("graphics/window_height_px")},
             "Codename: Rag3",
-            CFG.get<int>("graphics/full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
+            CFG.get<bool>("graphics/full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
             sf::Color(CFG.get<int>("graphics/background_color")));
     engine_->setFPSLimit(60);
 
@@ -113,7 +113,7 @@ void Game::initialize()
     for (auto& weapon : map_->getList<PlacedWeapon>())
     {
         weapon->registerSpawningFunction(
-                this->getSpawningFunction(utils::j3x::get<std::string>(RM.getObjectParams("weapons",
+                this->getSpawningFunction(j3x::get<std::string>(RM.getObjectParams("weapons",
                                                                                           weapon->getId()), "spawn_func")));
     }
 
@@ -151,7 +151,7 @@ void Game::update(float time_elapsed)
             journal_->update(time_elapsed);
             camera_->update(time_elapsed);
 
-            if (CFG.get<int>("sound/sound_on"))
+            if (CFG.get<bool>("sound/sound_on"))
             {
                 Engine::changeSoundListenerPosition(player_->getPosition());
                 music_manager_->update(time_elapsed);
@@ -232,9 +232,9 @@ void Game::updateMapObjects(float time_elapsed)
                 (*it)->use(player_.get());
             }
 
-            auto grid_pos = std::make_pair(std::round(((*it)->getPosition().x + utils::j3x::get<float>(
+            auto grid_pos = std::make_pair(std::round(((*it)->getPosition().x + j3x::get<float>(
                     RM.getObjectParams("obstacles", (*it)->getId()), "collision_offset_x")) / DecorationTile::SIZE_X_),
-                                           std::round(((*it)->getPosition().y + utils::j3x::get<float>(
+                                           std::round(((*it)->getPosition().y + j3x::get<float>(
                     RM.getObjectParams("obstacles", (*it)->getId()), "collision_offset_y")) / DecorationTile::SIZE_Y_));
             blockage.blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
 
@@ -472,7 +472,7 @@ void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
     auto number = std::to_string(utils::num::getRandom(1, 1));
     spawnEvent("explosion_" + number, pos, 0.0f, r);
 
-    if (CFG.get<int>("sound/sound_on"))
+    if (CFG.get<bool>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
 }
 
@@ -480,7 +480,7 @@ void Game::spawnTeleportationEvent(const sf::Vector2f& pos)
 {
     spawnEvent("teleportation", pos + sf::Vector2f{0.0f, 10.0f});
 
-    if (CFG.get<int>("sound/sound_on"))
+    if (CFG.get<bool>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("teleportation"), pos);
 }
 
@@ -526,10 +526,10 @@ void Game::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
 
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir)
 {
-    spawnEvent("shot", pos, dir * 180.0f / M_PI, utils::j3x::get<float>(RM.getObjectParams("bullets", name),
+    spawnEvent("shot", pos, dir * 180.0f / M_PI, j3x::get<float>(RM.getObjectParams("bullets", name),
                                                                         "burst_size"));
 
-    if (CFG.get<int>("sound/sound_on"))
+    if (CFG.get<bool>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
 }
 
@@ -946,7 +946,7 @@ void Game::setBulletTime()
     current_time_factor_ = CFG.get<float>("bullet_time_factor");
     engine_->setTimeScaleFactor(current_time_factor_);
 
-    if (CFG.get<int>("sound/sound_on"))
+    if (CFG.get<bool>("sound/sound_on"))
         music_manager_->setPlaybackPitch(CFG.get<float>("sound/bullet_time_music_factor"));
 }
 
@@ -955,7 +955,7 @@ void Game::setNormalTime()
     current_time_factor_ = 1.0f;
     engine_->setTimeScaleFactor(1.0f);
 
-    if (CFG.get<int>("sound/sound_on"))
+    if (CFG.get<bool>("sound/sound_on"))
         music_manager_->setPlaybackPitch(1.0f);
 }
 
@@ -1169,7 +1169,7 @@ void Game::registerWeapon(AbstractWeapon* weapon)
     if (!weapon->getId().empty())
     {
         weapon->registerSpawningFunction(
-                this->getSpawningFunction(utils::j3x::get<std::string>(
+                this->getSpawningFunction(j3x::get<std::string>(
                         RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
 
         auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon);

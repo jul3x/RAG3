@@ -114,7 +114,8 @@ DecorationTile* Map::spawn(const sf::Vector2f& pos, float direction, const std::
 template<>
 ObstacleTile* Map::spawn(const sf::Vector2f& pos, float direction, const std::string& id, bool check, int max_z_index)
 {
-    if (!check || (!this->checkCollisions(pos, decorations_tiles_, false, max_z_index) && !this->checkCollisions(pos, obstacles_tiles_, false, max_z_index)))
+    if (!check || (!this->checkCollisions(pos, decorations_tiles_, false, max_z_index) &&
+                   !this->checkCollisions(pos, obstacles_tiles_, false, max_z_index)))
     {
         auto grid_pos = std::make_pair(std::round(pos.x / DecorationTile::SIZE_X_),
                                        std::round(pos.y / DecorationTile::SIZE_Y_));
@@ -175,8 +176,9 @@ Obstacle* Map::spawn(const sf::Vector2f& pos, float direction, const std::string
 {
     if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
     {
-        auto grid_pos = std::make_pair(std::round((pos.x + j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_offset_x")) / DecorationTile::SIZE_X_),
-                                       std::round((pos.y + j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_offset_y")) / DecorationTile::SIZE_Y_));
+        auto& collision_offset = j3x::get<sf::Vector2f>(RM.getObjectParams("obstacles", id), "collision_offset");
+        auto grid_pos = std::make_pair(std::round((pos.x + collision_offset.x) / DecorationTile::SIZE_X_),
+                                       std::round((pos.y + collision_offset.y) / DecorationTile::SIZE_Y_));
 
         if (!blocked_.blockage_.empty())
         {

@@ -337,7 +337,8 @@ void NPC::standardAI(float time_elapsed)
     {
         case ActionState::StandBy:
         {
-            velocity = j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed") * this->getWanderingDirection(0.2f, 100.0f, 20);
+            velocity = j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed")
+                    * this->getWanderingDirection(0.2f, 100.0f, 20);
 
             this->setNoGoal();
             this->setWeaponPointing(this->getPosition() + velocity);
@@ -413,7 +414,8 @@ void NPC::meleeAttackAI(float time_elapsed)
     {
         case ActionState::StandBy:
         {
-            velocity = j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed") * this->getWanderingDirection(0.2f, 100.0f, 20);
+            velocity = j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed")
+                    * this->getWanderingDirection(0.2f, 100.0f, 20);
 
             this->setNoGoal();
             this->setWeaponPointing(this->getPosition() + velocity);

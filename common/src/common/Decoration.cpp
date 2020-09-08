@@ -10,18 +10,15 @@ Decoration::Decoration(const sf::Vector2f& position, const std::string& id, int 
         Identifiable(id),
         Unique(u_id),
         AbstractDrawableObject(position,
-                               sf::Vector2f{j3x::get<float>(RM.getObjectParams("decorations", id), "size_x"),
-                                                 j3x::get<float>(RM.getObjectParams("decorations", id), "size_y")},
+                               j3x::get<sf::Vector2f>(RM.getObjectParams("decorations", id), "size"),
                                &RM.getTexture("decorations/" + id),
                                j3x::get<int>(RM.getObjectParams("decorations", id), "z_index"),
                                j3x::get<int>(RM.getObjectParams("decorations", id), "frames_number"),
                                j3x::get<float>(RM.getObjectParams("decorations", id), "frame_duration")),
         is_active_(true)
 {
-    this->changeOrigin(sf::Vector2f(j3x::get<float>(RM.getObjectParams("decorations", id), "size_x"),
-                                    j3x::get<float>(RM.getObjectParams("decorations", id), "size_y")) / 2.0f +
-                       sf::Vector2f(j3x::get<float>(RM.getObjectParams("decorations", id), "map_offset_x"),
-                                    j3x::get<float>(RM.getObjectParams("decorations", id), "map_offset_y")));
+    this->changeOrigin(j3x::get<sf::Vector2f>(RM.getObjectParams("decorations", id), "size") / 2.0f +
+                       j3x::get<sf::Vector2f>(RM.getObjectParams("decorations", id), "map_offset"));
 
     if (j3x::get<bool>(RM.getObjectParams("decorations", id), "light_point"))
     {

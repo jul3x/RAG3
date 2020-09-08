@@ -17,8 +17,7 @@ Event::Event(const sf::Vector2f& position, const std::string& id,
              float direction,
              float radius) :
         AnimationEvent(&RM.getTexture("animations/" + id),
-                       sf::Vector2i(j3x::get<float>(RM.getObjectParams("animations", id), "size_x"),
-                                    j3x::get<float>(RM.getObjectParams("animations", id), "size_y")),
+                       static_cast<sf::Vector2i>(j3x::get<sf::Vector2f>(RM.getObjectParams("animations", id), "size")),
                        position,
                        j3x::get<int>(RM.getObjectParams("animations", id), "z_index"),
                        j3x::get<float>(RM.getObjectParams("animations", id), "frame_duration"),
@@ -31,10 +30,8 @@ Event::Event(const sf::Vector2f& position, const std::string& id,
     if (j3x::get<bool>(RM.getObjectParams("animations", id), "scale"))
         shape_.setScale(radius / shape_.getSize().x, radius / shape_.getSize().x);
 
-    this->changeOrigin(sf::Vector2f(j3x::get<float>(RM.getObjectParams("animations", id), "size_x"),
-                                    j3x::get<float>(RM.getObjectParams("animations", id), "size_y")) / 2.0f +
-                       sf::Vector2f(j3x::get<float>(RM.getObjectParams("animations", id), "map_offset_x"),
-                                    j3x::get<float>(RM.getObjectParams("animations", id), "map_offset_y")));
+    this->changeOrigin(j3x::get<sf::Vector2f>(RM.getObjectParams("animations", id), "size") / 2.0f +
+                               j3x::get<sf::Vector2f>(RM.getObjectParams("animations", id), "map_offset"));
 
     if (j3x::get<bool>(RM.getObjectParams("animations", id), "light_point"))
     {

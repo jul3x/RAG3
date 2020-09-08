@@ -1,8 +1,6 @@
-float size_x=58.0
-float size_y=24.0
+vector size=(58.0,24.0)
 
-float map_offset_x=0.0
-float map_offset_y=16.0
+vector map_offset=(0.0,16.0)
 
 int frames_number=1
 float frame_duration=0.0

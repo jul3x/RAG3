@@ -44,8 +44,7 @@ void WeaponsBar::update(const std::vector<std::shared_ptr<AbstractWeapon>>& weap
         auto melee_cast = dynamic_cast<MeleeWeapon*>(weapons.at(mod_i).get());
         auto& name = weapons.at(mod_i)->getId();
         auto size = (i == 0 ? CHOSEN_WEAPON_SIZE_FACTOR_ : 1.0f) *
-                sf::Vector2f{j3x::get<float>(RM.getObjectParams("specials", name), "size_x"),
-                             j3x::get<float>(RM.getObjectParams("specials", name), "size_y")};
+                j3x::get<sf::Vector2f>(RM.getObjectParams("specials", name), "size");
         auto weapon_pos = base_position + weapons_positions_.at(i) * CFG.get<float>("graphics/user_interface_zoom");
         if (weapon_cast != nullptr || melee_cast != nullptr)
         {

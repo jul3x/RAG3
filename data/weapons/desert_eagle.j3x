@@ -9,14 +9,9 @@ int spawn_quantity=1
 float spawn_angular_diff=0.0
 float spawn_offset=4.0
 
-float size_x=26.0
-float size_y=24.0
-
-float offset_x=3.0
-float offset_y=0.0
-
-float map_offset_x=0.0
-float map_offset_y=0.0
+vector size=(26.0,24.0)
+vector offset=(3.0,0.0)
+vector map_offset=(0.0,0.0)
 
 int frames_number=1
 float frame_duration=0.0

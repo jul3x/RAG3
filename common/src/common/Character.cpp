@@ -27,12 +27,10 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
                      const j3x::List& datas, int u_id) :
         Functional(activation, functions, datas, id, u_id),
         DynamicObject(position, {},
-                      {j3x::get<float>(RM.getObjectParams("characters", id), "size_x"),
-                       j3x::get<float>(RM.getObjectParams("characters", id), "size_y")},
-                      collision::Box(j3x::get<float>(RM.getObjectParams("characters", id), "collision_size_x"),
-                                     j3x::get<float>(RM.getObjectParams("characters", id), "collision_size_y"),
-                                     {j3x::get<float>(RM.getObjectParams("characters", id), "collision_offset_x"),
-                                      j3x::get<float>(RM.getObjectParams("characters", id), "collision_offset_y")}),
+                      j3x::get<sf::Vector2f>(RM.getObjectParams("characters", id), "size"),
+                      collision::Box(j3x::get<sf::Vector2f>(RM.getObjectParams("characters", id), "collision_size").x,
+                                     j3x::get<sf::Vector2f>(RM.getObjectParams("characters", id), "collision_size").y,
+                                     j3x::get<sf::Vector2f>(RM.getObjectParams("characters", id), "collision_offset")),
                       &RM.getTexture("characters/" + id),
                       j3x::get<int>(RM.getObjectParams("characters", id), "z_index"),
                       j3x::get<int>(RM.getObjectParams("characters", id), "frames_number"),
@@ -42,10 +40,8 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
         max_life_(j3x::get<float>(RM.getObjectParams("characters", id), "max_health")),
         ammo_state_(AmmoState::High),
         life_state_(LifeState::High),
-        gun_offset_({j3x::getObj<float>(
-                j3x::get<j3x::List>(RM.getObjectParams("characters", id), "gun_offset_x").front()),
-                     j3x::getObj<float>(
-                             j3x::get<j3x::List>(RM.getObjectParams("characters", id), "gun_offset_y").front())}),
+        gun_offset_(j3x::getObj<sf::Vector2f>(
+                j3x::get<j3x::List>(RM.getObjectParams("characters", id), "gun_offset").front())),
         current_rotation_quarter_(1),
         speed_factor_(1.0f),
         rotate_to_(0.0f),
@@ -56,10 +52,8 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
         is_talkable_(j3x::get<bool>(RM.getObjectParams("characters", id), "is_talkable")),
         Shootable(j3x::get<float>(RM.getObjectParams("characters", id), "max_health"))
 {
-    this->changeOrigin(sf::Vector2f(j3x::get<float>(RM.getObjectParams("characters", id), "size_x"),
-                                    j3x::get<float>(RM.getObjectParams("characters", id), "size_y")) / 2.0f +
-                       sf::Vector2f(j3x::get<float>(RM.getObjectParams("characters", id), "map_offset_x"),
-                                    j3x::get<float>(RM.getObjectParams("characters", id), "map_offset_y")));
+    this->changeOrigin(j3x::get<sf::Vector2f>(RM.getObjectParams("characters", id), "size") / 2.0f +
+                       j3x::get<sf::Vector2f>(RM.getObjectParams("characters", id), "map_offset"));
 
     for (const auto& weapon :
             j3x::get<j3x::List>(RM.getObjectParams("characters", id), "weapons"))
@@ -355,10 +349,8 @@ void Character::setRotation(float theta)
     static std::string weapon_added_name;
     weapon_added_name = "";
 
-    gun_offset_.x = j3x::getObj<float>(
-            j3x::get<j3x::List>(RM.getObjectParams("characters", this->getId()), "gun_offset_x"), current_frame_);
-    gun_offset_.y = j3x::getObj<float>(
-            j3x::get<j3x::List>(RM.getObjectParams("characters", this->getId()), "gun_offset_y"), current_frame_);
+    gun_offset_ = j3x::getObj<sf::Vector2f>(
+            j3x::get<j3x::List>(RM.getObjectParams("characters", this->getId()), "gun_offset"), current_frame_);
     switch (current_rotation_quarter_)
     {
         case 1:
@@ -466,9 +458,7 @@ void Character::setPosition(const sf::Vector2f& pos)
     if (light_ != nullptr)
         light_->setPosition(pos);
 
-    static_shadow_->setPosition(pos -
-                                sf::Vector2f{j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_x"),
-                                             j3x::get<float>(RM.getObjectParams("characters", this->getId()), "map_offset_y")});
+    static_shadow_->setPosition(pos - j3x::get<sf::Vector2f>(RM.getObjectParams("characters", this->getId()), "map_offset"));
 }
 
 void Character::setPosition(float x, float y)

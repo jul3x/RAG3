@@ -1,14 +1,11 @@
 float speed=900.0
 float life=1.0
 float deadly_factor=3.0
-float size_x=7.0
-float size_y=3.0
+vector size=(7.0,3.0)
 float burst_size=150.0
-float map_offset_x=0.0
-float map_offset_y=0.0
+vector map_offset=(0.0,0.0)
 
-float collision_offset_x=0.0
-float collision_offset_y=0.0
+vector collision_offset=(0.0,0.0)
 
 int z_index=1
 

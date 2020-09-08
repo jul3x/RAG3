@@ -21,11 +21,9 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
                  const std::string& activation, const j3x::List& functions,
                  const j3x::List& datas, bool is_active, int u_id) :
         HoveringObject(position, {},
-                       {j3x::get<float>(RM.getObjectParams("specials", id), "size_x"),
-                        j3x::get<float>(RM.getObjectParams("specials", id), "size_y")},
-                       collision::Circle(j3x::get<float>(RM.getObjectParams("specials", id), "collision_size_x"),
-                                         {j3x::get<float>(RM.getObjectParams("specials", id), "collision_offset_x"),
-                                          j3x::get<float>(RM.getObjectParams("specials", id), "collision_offset_y")}),
+                       j3x::get<sf::Vector2f>(RM.getObjectParams("specials", id), "size"),
+                       collision::Circle(j3x::get<float>(RM.getObjectParams("specials", id), "collision_radius"),
+                                         j3x::get<sf::Vector2f>(RM.getObjectParams("specials", id), "collision_offset")),
                        &RM.getTexture("specials/" + id),
                        j3x::get<int>(RM.getObjectParams("specials", id), "z_index"),
                        j3x::get<int>(RM.getObjectParams("specials", id), "frames_number"),
@@ -35,10 +33,8 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
         is_drawable_(j3x::get<int>(RM.getObjectParams("specials", id), "is_drawable")),
         additional_boolean_data_(false)
 {
-    this->changeOrigin(sf::Vector2f(j3x::get<float>(RM.getObjectParams("specials", id), "size_x"),
-                                    j3x::get<float>(RM.getObjectParams("specials", id), "size_y")) / 2.0f +
-                       sf::Vector2f(j3x::get<float>(RM.getObjectParams("specials", id), "map_offset_x"),
-                                    j3x::get<float>(RM.getObjectParams("specials", id), "map_offset_y")));
+    this->changeOrigin(j3x::get<sf::Vector2f>(RM.getObjectParams("specials", id), "size") / 2.0f +
+                               j3x::get<sf::Vector2f>(RM.getObjectParams("specials", id), "map_offset"));
 
     if (is_active)
         this->activate();
@@ -53,9 +49,7 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
                                                         &RM.getTexture("lightpoint"));
     }
 
-    auto shadow_pos = this->getPosition() -
-                      sf::Vector2f{j3x::get<float>(RM.getObjectParams("specials", id), "map_offset_x"),
-                                   j3x::get<float>(RM.getObjectParams("specials", id), "map_offset_y")};
+    auto shadow_pos = this->getPosition() - j3x::get<sf::Vector2f>(RM.getObjectParams("specials", id), "map_offset");
 
     if (j3x::get<bool>(RM.getObjectParams("specials", id), "shadow"))
     {

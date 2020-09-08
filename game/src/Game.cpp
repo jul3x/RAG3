@@ -232,10 +232,10 @@ void Game::updateMapObjects(float time_elapsed)
                 (*it)->use(player_.get());
             }
 
-            auto grid_pos = std::make_pair(std::round(((*it)->getPosition().x + j3x::get<float>(
-                    RM.getObjectParams("obstacles", (*it)->getId()), "collision_offset_x")) / DecorationTile::SIZE_X_),
-                                           std::round(((*it)->getPosition().y + j3x::get<float>(
-                    RM.getObjectParams("obstacles", (*it)->getId()), "collision_offset_y")) / DecorationTile::SIZE_Y_));
+            auto grid_vector_pos = (*it)->getPosition() + j3x::get<sf::Vector2f>(
+                    RM.getObjectParams("obstacles", (*it)->getId()), "collision_offset");
+            auto grid_pos = std::make_pair(std::round(grid_vector_pos.x / DecorationTile::SIZE_X_),
+                                           std::round(grid_vector_pos.y / DecorationTile::SIZE_Y_));
             blockage.blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
 
             obstacles.erase(it);

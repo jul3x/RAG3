@@ -1,7 +1,4 @@
-float collision_size_x=32.0
-float collision_size_y=32.0
-
-float collision_offset_x=0.0
-float collision_offset_y=0.0
+vector collision_size=(32.0,32.0)
+vector collision_offset=(0.0,0.0)
 
 int z_index=2

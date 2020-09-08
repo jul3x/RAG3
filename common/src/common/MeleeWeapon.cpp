@@ -12,11 +12,8 @@
 
 
 MeleeWeapon::MeleeWeapon(Character* user, const std::string& id) :
-        AbstractWeapon(user,
-                       {j3x::get<float>(RM.getObjectParams("weapons", id), "size_x"),
-                        j3x::get<float>(RM.getObjectParams("weapons", id), "size_y")},
-                       {j3x::get<float>(RM.getObjectParams("weapons", id), "offset_x"),
-                        j3x::get<float>(RM.getObjectParams("weapons", id), "offset_y")},
+        AbstractWeapon(user, j3x::get<sf::Vector2f>(RM.getObjectParams("weapons", id), "size"),
+                       j3x::get<sf::Vector2f>(RM.getObjectParams("weapons", id), "offset"),
                        id),
         reversed_recoil_(j3x::get<float>(RM.getObjectParams("weapons", id), "recoil")),
         use_timeout_(j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_timeout")),
@@ -25,17 +22,14 @@ MeleeWeapon::MeleeWeapon(Character* user, const std::string& id) :
         saved_rotation_(0.0f),
         is_used_(false)
 {
-    this->changeOrigin(sf::Vector2f(0.0f,
-                                    j3x::get<float>(RM.getObjectParams("weapons", id), "size_y")) / 2.0f +
-                       sf::Vector2f(j3x::get<float>(RM.getObjectParams("weapons", id), "offset_x"),
-                                    j3x::get<float>(RM.getObjectParams("weapons", id), "offset_y")));
+    this->changeOrigin(sf::Vector2f(0.0f, j3x::get<sf::Vector2f>(RM.getObjectParams("weapons", id), "size").y) / 2.0f +
+                       j3x::get<sf::Vector2f>(RM.getObjectParams("weapons", id), "offset"));
 
     area_ = std::make_unique<MeleeWeaponArea>(this, CFG.get<float>("melee_weapon_range"));
 
     auto shadow_pos = this->getPosition();
     static_shadow_ = std::make_unique<graphics::TransformedTextureShadow>(
-            shadow_pos, sf::Vector2f{j3x::get<float>(RM.getObjectParams("weapons", this->getId()), "use_size_x"),
-                                     j3x::get<float>(RM.getObjectParams("weapons", this->getId()), "use_size_y")},
+            shadow_pos, j3x::get<sf::Vector2f>(RM.getObjectParams("weapons", this->getId()), "use_size"),
             CFG.get<float>("graphics/shadow_direction"),
             CFG.get<float>("graphics/shadow_length_factor"),
             &RM.getTexture("weapons/" + user_->getId() + "_" + this->getId()), sf::Color(CFG.get<int>("graphics/shadow_color")),
@@ -103,11 +97,9 @@ void MeleeWeapon::setPosition(const sf::Vector2f& position, const sf::Vector2f& 
     }
     else
     {
-        auto use_offset = sf::Vector2f(j3x::get<float>(RM.getObjectParams("weapons", this->getId()), "use_offset_x"),
-                                       j3x::get<float>(RM.getObjectParams("weapons", this->getId()), "use_offset_y"));
+        auto& use_offset = j3x::get<sf::Vector2f>(RM.getObjectParams("weapons", this->getId()), "use_offset");
 
-        auto shadow_offset = sf::Vector2f(j3x::get<float>(RM.getObjectParams("weapons", this->getId()), "shadow_offset_x"),
-                                          j3x::get<float>(RM.getObjectParams("weapons", this->getId()), "shadow_offset_y"));
+        auto& shadow_offset = j3x::get<sf::Vector2f>(RM.getObjectParams("weapons", this->getId()), "shadow_offset");
         AbstractDrawableObject::setPosition(position + use_offset);
         static_shadow_->setPosition(position + shadow_offset);
 
@@ -157,8 +149,7 @@ void MeleeWeapon::update(float time_elapsed)
     if (use_elapsed_ < 0 && use_elapsed_ > -10.0f)
     {
         AbstractDrawableObject::changeTexture(&RM.getTexture("weapons/" + this->getId()), true);
-        this->setSize({j3x::get<float>(RM.getObjectParams("weapons", this->getId()), "size_x"),
-                       j3x::get<float>(RM.getObjectParams("weapons", this->getId()), "size_y")});
+        this->setSize(j3x::get<sf::Vector2f>(RM.getObjectParams("weapons", this->getId()), "size"));
 
         use_elapsed_ = -100.0f;
         area_->setActive(false);

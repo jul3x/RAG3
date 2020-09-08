@@ -1,24 +1,14 @@
 float max_speed=200.0
-
 float standby_speed=90.0
 
 float max_health=12
 
-float size_x=44.0
-float size_y=64.0
+vector size=(44.0,64.0)
+vector collision_size=(28.0,36.0)
+vector collision_offset=(0.0,0.0)
+vector map_offset=(0.0,8.0)
 
-float collision_size_x=28.0
-float collision_size_y=36.0
-
-float collision_offset_x=0.0
-float collision_offset_y=0.0
-
-float map_offset_x=0.0
-float map_offset_y=8.0
-
-list gun_offset_x=[9.0;9.0;9.0;9.0]
-list gun_offset_y=[-9.0;-8.0;-9.0;-8.0]
-
+list gun_offset=[(9.0,-9.0);(9.0,-8.0);(9.0,-9.0);(9.0,-8.0)]
 int frames_number=4
 float frame_duration=0.07
 

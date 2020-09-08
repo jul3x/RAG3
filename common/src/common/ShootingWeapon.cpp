@@ -20,19 +20,16 @@ ShootingWeapon::ShootingWeapon(Character* user, const std::string& id) :
         spawn_offset_(j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_offset")),
         spawn_offset_factor_(-1),
         AbstractWeapon(user,
-                       {j3x::get<float>(RM.getObjectParams("weapons", id), "size_x"),
-                        j3x::get<float>(RM.getObjectParams("weapons", id), "size_y")},
-                       {j3x::get<float>(RM.getObjectParams("weapons", id), "offset_x"),
-                        j3x::get<float>(RM.getObjectParams("weapons", id), "offset_y")},
+                       j3x::get<sf::Vector2f>(RM.getObjectParams("weapons", id), "size"),
+                       j3x::get<sf::Vector2f>(RM.getObjectParams("weapons", id), "offset"),
                        id)
 {
     if (max_ammunition_ <= 0 || spawn_timeout_ <= 0.0f)
         throw std::invalid_argument("[ShootingWeapon] Constructor parameters are invalid!");
 
     this->changeOrigin(sf::Vector2f(0.0f,
-                                    j3x::get<float>(RM.getObjectParams("weapons", id), "size_y")) / 2.0f +
-                       sf::Vector2f(j3x::get<float>(RM.getObjectParams("weapons", id), "offset_x"),
-                                    j3x::get<float>(RM.getObjectParams("weapons", id), "offset_y")));
+                                    j3x::get<sf::Vector2f>(RM.getObjectParams("weapons", id), "size").y) / 2.0f +
+                       j3x::get<sf::Vector2f>(RM.getObjectParams("weapons", id), "offset"));
 }
 
 sf::Vector2f ShootingWeapon::use()

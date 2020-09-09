@@ -14,22 +14,21 @@ using namespace editor;
 MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
         ui_(ui),
         ChildWindow(gui, theme, "Menu",
-                    {CFG.get<float>("menu_window_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("menu_window_y") * CFG.get<float>("user_interface_zoom")},
-                    {CFG.get<float>("menu_window_size_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("menu_window_size_y") * CFG.get<float>("user_interface_zoom")},
+                    CFG.get<sf::Vector2f>("menu_window_pos") * CFG.get<float>("user_interface_zoom"),
+                    CFG.get<sf::Vector2f>("menu_window_size") * CFG.get<float>("user_interface_zoom"),
                     "menu_window")
 {
     grid_ = tgui::Grid::create();
-    grid_->setSize({CFG.get<float>("menu_window_size_x") * CFG.get<float>("user_interface_zoom") * 0.75f, CFG.get<float>("menu_window_size_y") * CFG.get<float>("user_interface_zoom") * 0.9f});
-    grid_->setPosition({CFG.get<float>("menu_window_size_x") * CFG.get<float>("user_interface_zoom") * 0.125f, CFG.get<float>("menu_window_size_y") * CFG.get<float>("user_interface_zoom") * 0.05f});
+    grid_->setSize(CFG.get<sf::Vector2f>("menu_window_size") * CFG.get<float>("user_interface_zoom") * 0.85f);
+    grid_->setPosition(CFG.get<sf::Vector2f>("menu_window_size") * CFG.get<float>("user_interface_zoom") * 0.075f);
     child_->add(grid_);
 
     auto button = tgui::Button::create();
     button->setRenderer(theme_->getRenderer("Button"));
 
-    float button_width = CFG.get<float>("button_size_x") * CFG.get<float>("user_interface_zoom");
-    float button_height = CFG.get<float>("button_size_y") * CFG.get<float>("user_interface_zoom");
+    auto button_size = CFG.get<sf::Vector2f>("button_size") * CFG.get<float>("user_interface_zoom");
     unsigned int button_text_size = button->getTextSize() * CFG.get<float>("user_interface_zoom");
-    button->setSize(button_width, button_height);
+    button->setSize(button_size);
     button->setText("Load map");
     button->setTextSize(button_text_size);
     button->connect("Clicked", [this]() { this->ui_->resetMapList(); this->gui_->get("load_window")->setVisible(true); });
@@ -37,7 +36,7 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
 
     button = tgui::Button::create();
     button->setRenderer(theme_->getRenderer("Button"));
-    button->setSize(button_width, button_height);
+    button->setSize(button_size);
     button->setTextSize(button_text_size);
     button->setText("Save map");
     grid_->addWidget(button, 0, 1);
@@ -45,7 +44,7 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
 
     button = tgui::Button::create();
     button->setRenderer(theme_->getRenderer("Button"));
-    button->setSize(button_width, button_height);
+    button->setSize(button_size);
     button->setTextSize(button_text_size);
     button->setText("Edit config");
     grid_->addWidget(button, 1, 0);
@@ -53,7 +52,7 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
 
     button = tgui::Button::create();
     button->setRenderer(theme_->getRenderer("Button"));
-    button->setSize(button_width, button_height);
+    button->setSize(button_size);
     button->setTextSize(button_text_size);
     button->setText("Edit graphics");
     grid_->addWidget(button, 1, 1);
@@ -61,7 +60,7 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
 
     button = tgui::Button::create();
     button->setRenderer(theme_->getRenderer("Button"));
-    button->setSize(button_width, button_height);
+    button->setSize(button_size);
     button->setTextSize(button_text_size);
     button->setText("Edit characters");
     grid_->addWidget(button, 2, 0);
@@ -69,7 +68,7 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
 
     button = tgui::Button::create();
     button->setRenderer(theme_->getRenderer("Button"));
-    button->setSize(button_width, button_height);
+    button->setSize(button_size);
     button->setTextSize(button_text_size);
     button->setText("Edit sound");
     grid_->addWidget(button, 2, 1);

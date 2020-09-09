@@ -152,17 +152,14 @@ void SpecialFunctions::changeOpenState(Functional* obj, const j3x::Obj& data, Ch
 void SpecialFunctions::readNote(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Reading note." << std::endl;
-    auto str = j3x::getObj<std::string>(data);
-    std::replace(str.begin(), str.end(), '$', '\n');
-    Game::get().spawnThought(user, str);
+    Game::get().spawnThought(user, j3x::getObj<std::string>(data));
 }
 
 void SpecialFunctions::addWeapon(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Adding weapon." << std::endl;
 
-    auto data_parsed = j3x::getObj<std::string>(data);
-    std::replace(data_parsed.begin(), data_parsed.end(), ' ', '_');
+    auto& data_parsed = j3x::getObj<std::string>(data);
     std::shared_ptr<AbstractWeapon> weapon;
     if (data_parsed.length() > 5 && data_parsed.substr(0, 5) == "melee")
     {
@@ -182,10 +179,7 @@ void SpecialFunctions::addWeapon(Functional* obj, const j3x::Obj& data, Characte
 void SpecialFunctions::addAmmo(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Adding ammo." << std::endl;
-    auto data_parsed = j3x::getObj<std::string>(data);
-    std::replace(data_parsed.begin(), data_parsed.end(), ' ', '_');
-
-    user->addAmmoToWeapon(data_parsed);
+    user->addAmmoToWeapon(j3x::getObj<std::string>(data));
 }
 
 void SpecialFunctions::addHealth(Functional* obj, const j3x::Obj& data, Character* user)
@@ -220,9 +214,7 @@ void SpecialFunctions::pickCrystal(Functional* obj, const j3x::Obj& data, Charac
 void SpecialFunctions::spawnThought(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Spawning thought." << std::endl;
-    auto str = j3x::getObj<std::string>(data);
-    std::replace(str.begin(), str.end(), '$', '\n');
-    Game::get().spawnThought(user, str);
+    Game::get().spawnThought(user, j3x::getObj<std::string>(data));
 }
 
 void SpecialFunctions::teleport(Functional* obj, const j3x::Obj& data, Character* user)
@@ -364,9 +356,7 @@ void SpecialFunctions::activateWeapon(Functional* obj, const j3x::Obj& data, Cha
 void SpecialFunctions::spawnPlayerThought(Functional* obj, const j3x::Obj& data, Character* user)
 {
     std::cout << "[SpecialFunction] Spawning player thought." << std::endl;
-    auto str = j3x::getObj<std::string>(data);
-    std::replace(str.begin(), str.end(), '$', '\n');
-    Game::get().spawnThought(&Game::get().getPlayer(), str);
+    Game::get().spawnThought(&Game::get().getPlayer(), j3x::getObj<std::string>(data));
 }
 
 void SpecialFunctions::removeSpecial(Functional* obj, const j3x::Obj& data, Character* user)

@@ -5,7 +5,7 @@ float collision_radius=15.0
 
 
 int frames_number=4
-float frame_duration=0.2f
+float frame_duration=0.2
 
 string default_activation="OnEnter"
 list default_functions=["Kill"]

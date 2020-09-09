@@ -1,287 +1,69 @@
-50 31
-tile_map:
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -38 -30 -30 -30 -30 -30 -30 -30 -30 -30 -30 -30 -30 -30 -39 0 0 0 0 0 0 0 0 0 -63 -55 -55 -55 -55 -55 -55 -55 -64 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 36 22 21 22 24 24 24 22 21 22 24 22 24 22 41 -30 -39 0 0 0 0 0 0 0 57 45 46 47 49 49 48 47 57 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 36 3 2 2 1 2 1 1 2 2 2 3 2 1 23 24 36 -27 -27 -27 -27 -26 -26 -27 57 43 42 44 43 44 44 43 57 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 36 -17 -10 -13 -11 -16 -13 -17 -13 -13 -10 -18 -17 -15 1 1 41 -39 0 0 0 0 0 0 57 -7 -6 -5 -8 -1 -8 -2 57 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 36 -17 -16 -15 -11 -10 -14 -15 -18 -12 -17 -17 -18 -13 -10 -12 23 37 0 -51 -53 -52 0 -54 62 -7 -1 -8 -3 -1 -1 -2 57 
-0 0 0 0 0 0 0 0 0 0 0 0 -27 -28 -26 0 -29 40 -16 -14 -17 -15 -13 -15 -18 -11 -18 -14 -13 -11 -12 -16 -17 2 20 0 48 45 50 -51 48 46 -8 -8 -2 -1 -9 -4 -6 57 
-0 0 0 0 0 0 0 0 0 0 0 33 33 24 23 -26 21 22 -17 -11 -16 -29 -30 -30 -30 -30 -30 -31 -12 -11 -12 -18 -12 -16 2 -8 44 44 44 43 44 44 -2 -5 0 0 0 -4 -9 57 
-0 0 0 0 0 0 0 0 0 0 0 34 24 2 3 2 3 3 -11 -15 -11 23 21 24 -11 23 20 24 -10 -12 -12 -15 -10 -13 -7 -9 -1 -1 -2 -2 -2 -8 -5 -9 -5 -3 0 -2 -6 57 
-0 0 0 0 0 0 0 0 0 0 0 33 2 -10 -10 -14 -13 -12 -14 -11 -10 3 1 1 -11 2 2 2 -16 -13 -13 -12 -12 -18 -35 -2 -51 -53 -52 -51 -53 -52 -64 -6 -8 -8 -2 -7 -9 57 
-0 0 0 0 0 0 0 0 0 0 0 32 -13 -11 -11 -13 -15 -13 -11 -14 -18 -8 -4 -3 -4 -4 -4 -3 -18 -11 -13 -38 -30 -30 40 -4 47 46 46 48 47 48 57 -2 -5 -8 -5 -5 -4 57 
-0 0 0 0 0 0 0 0 0 0 0 34 -15 -15 -15 -18 -15 -16 -13 -18 -12 -9 -7 -2 -4 -8 -2 -2 -10 -16 -17 36 23 24 21 -6 44 43 42 44 43 42 57 -4 -4 -4 -9 -5 -5 57 
-0 0 0 0 0 0 0 0 0 0 0 34 -17 -13 -11 -11 -13 -14 -11 -17 -15 -1 -3 -2 -5 -5 -7 -5 -29 -30 -30 40 2 1 3 0 0 0 0 0 0 0 61 -55 -55 -55 -55 -55 -55 62 
-0 0 0 0 0 0 0 0 0 0 0 34 -15 -11 -12 -12 -18 -13 -11 -14 -18 -35 -6 -2 -2 -9 -4 -1 33 33 33 33 0 0 0 0 0 0 0 0 0 0 46 48 46 49 50 47 46 50 
--38 -30 -30 -30 -30 -30 -30 -30 -30 -30 -30 -30 -30 -30 -30 -30 -30 -30 -30 -30 -30 40 -9 -7 -1 -6 -3 33 34 33 33 33 0 0 0 0 0 0 0 0 0 0 42 44 42 44 43 43 42 43 
-36 21 21 21 22 23 25 23 21 21 20 22 20 20 21 21 23 21 21 25 22 23 -5 -2 -4 -1 -7 33 34 33 32 32 -26 -28 -26 -27 -26 -28 -26 -26 -27 -28 -26 -26 -27 -27 -27 -27 -28 -28 
-36 22 22 21 25 25 25 25 25 23 21 21 21 25 20 21 22 23 21 22 21 25 -8 -2 -3 -2 -6 21 20 34 32 33 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-36 2 1 2 1 3 2 3 3 1 2 2 1 1 2 3 1 1 3 2 1 3 -5 -2 -6 -2 -8 3 1 33 34 32 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-36 -7 -6 -1 -6 -4 -6 -2 -2 -1 -5 -6 -5 -3 -7 -7 -3 -8 -8 -5 -7 -9 -4 -2 -6 -7 -3 -1 -4 20 33 34 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-36 -2 -7 -7 -7 -7 -3 -8 -5 -9 -8 -2 -6 -7 -1 -2 -3 -9 -4 -7 -8 -6 -3 -5 -8 -7 -4 -4 -3 3 32 33 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-36 -2 -1 -9 -5 -4 -2 -3 -5 -4 -5 -6 -5 -3 -4 -4 -2 -7 -2 -5 -4 -7 0 0 -4 -8 -6 -6 -2 -2 34 34 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-36 -6 -8 -3 -7 -7 -8 -4 -4 -1 -2 -6 -9 -8 -3 -7 -7 -3 -8 -7 -1 0 0 0 0 -7 -5 -9 -2 -6 32 32 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-41 -30 -30 -30 -30 -30 -30 -30 -30 -30 -30 -30 -39 -8 -4 -3 -4 -7 -2 -3 -8 -8 0 0 -3 -7 -6 -6 -6 34 34 32 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-22 23 22 23 25 24 22 21 21 22 23 23 36 -4 -5 -7 -3 -9 -2 -3 -2 -7 -1 -7 -7 -3 -5 -6 -3 34 33 33 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-2 2 2 2 3 2 2 2 3 1 3 2 36 -4 -7 -3 -2 -4 -8 -9 -2 -5 -7 -2 -38 -30 -30 -30 -30 23 -28 -28 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 36 -7 -8 -2 -7 -7 -9 -4 -5 -7 -8 -1 36 24 21 21 21 -28 24 24 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 36 -6 -4 -3 -4 -6 -2 -2 -2 -2 -2 -9 36 2 2 2 2 2 2 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 36 -6 -5 -1 -7 -6 -8 -7 -8 -2 -3 -38 40 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 0 0 36 -5 -4 -3 -3 -6 -5 -4 -38 -30 -30 40 20 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 -29 -30 -30 -30 40 -3 -9 -26 -27 -28 -4 -29 40 21 25 22 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 21 21 23 21 21 -28 -27 25 23 21 -27 21 25 2 2 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 3 1 1 2 2 2 1 3 2 3 2 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+vector map_size = (50, 31)
+list tile_map = [
+    0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; -38; -30; -30; -30; -30; -30; -30; -30; -30; -30; -30; -30; -30; -30; -39; 0; 0; 0; 0; 0; 0; 0; 0; 0; -63; -55; -55; -55; -55; -55; -55; -55; -64; 
+    0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 36; 22; 21; 22; 24; 24; 24; 22; 21; 22; 24; 22; 24; 22; 41; -30; -39; 0; 0; 0; 0; 0; 0; 0; 57; 45; 46; 47; 49; 49; 48; 47; 57; 
+    0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 36; 3; 2; 2; 1; 2; 1; 1; 2; 2; 2; 3; 2; 1; 23; 24; 36; -27; -27; -27; -27; -26; -26; -27; 57; 43; 42; 44; 43; 44; 44; 43; 57; 
+    0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 36; -17; -10; -13; -11; -16; -13; -17; -13; -13; -10; -18; -17; -15; 1; 1; 41; -39; 0; 0; 0; 0; 0; 0; 57; -7; -6; -5; -8; -1; -8; -2; 57; 
+    0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 36; -17; -16; -15; -11; -10; -14; -15; -18; -12; -17; -17; -18; -13; -10; -12; 23; 37; 0; -51; -53; -52; 0; -54; 62; -7; -1; -8; -3; -1; -1; -2; 57; 
+    0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; -27; -28; -26; 0; -29; 40; -16; -14; -17; -15; -13; -15; -18; -11; -18; -14; -13; -11; -12; -16; -17; 2; 20; 0; 48; 45; 50; -51; 48; 46; -8; -8; -2; -1; -9; -4; -6; 57; 
+    0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 33; 33; 24; 23; -26; 21; 22; -17; -11; -16; -29; -30; -30; -30; -30; -30; -31; -12; -11; -12; -18; -12; -16; 2; -8; 44; 44; 44; 43; 44; 44; -2; -5; 0; 0; 0; -4; -9; 57; 
+    0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 34; 24; 2; 3; 2; 3; 3; -11; -15; -11; 23; 21; 24; -11; 23; 20; 24; -10; -12; -12; -15; -10; -13; -7; -9; -1; -1; -2; -2; -2; -8; -5; -9; -5; -3; 0; -2; -6; 57; 
+    0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 33; 2; -10; -10; -14; -13; -12; -14; -11; -10; 3; 1; 1; -11; 2; 2; 2; -16; -13; -13; -12; -12; -18; -35; -2; -51; -53; -52; -51; -53; -52; -64; -6; -8; -8; -2; -7; -9; 57; 
+    0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 32; -13; -11; -11; -13; -15; -13; -11; -14; -18; -8; -4; -3; -4; -4; -4; -3; -18; -11; -13; -38; -30; -30; 40; -4; 47; 46; 46; 48; 47; 48; 57; -2; -5; -8; -5; -5; -4; 57; 
+    0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 34; -15; -15; -15; -18; -15; -16; -13; -18; -12; -9; -7; -2; -4; -8; -2; -2; -10; -16; -17; 36; 23; 24; 21; -6; 44; 43; 42; 44; 43; 42; 57; -4; -4; -4; -9; -5; -5; 57; 
+    0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 34; -17; -13; -11; -11; -13; -14; -11; -17; -15; -1; -3; -2; -5; -5; -7; -5; -29; -30; -30; 40; 2; 1; 3; 0; 0; 0; 0; 0; 0; 0; 61; -55; -55; -55; -55; -55; -55; 62; 
+    0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 34; -15; -11; -12; -12; -18; -13; -11; -14; -18; -35; -6; -2; -2; -9; -4; -1; 33; 33; 33; 33; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 46; 48; 46; 49; 50; 47; 46; 50; 
+    -38; -30; -30; -30; -30; -30; -30; -30; -30; -30; -30; -30; -30; -30; -30; -30; -30; -30; -30; -30; -30; 40; -9; -7; -1; -6; -3; 33; 34; 33; 33; 33; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 42; 44; 42; 44; 43; 43; 42; 43; 
+    36; 21; 21; 21; 22; 23; 25; 23; 21; 21; 20; 22; 20; 20; 21; 21; 23; 21; 21; 25; 22; 23; -5; -2; -4; -1; -7; 33; 34; 33; 32; 32; -26; -28; -26; -27; -26; -28; -26; -26; -27; -28; -26; -26; -27; -27; -27; -27; -28; -28; 
+    36; 22; 22; 21; 25; 25; 25; 25; 25; 23; 21; 21; 21; 25; 20; 21; 22; 23; 21; 22; 21; 25; -8; -2; -3; -2; -6; 21; 20; 34; 32; 33; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 
+    36; 2; 1; 2; 1; 3; 2; 3; 3; 1; 2; 2; 1; 1; 2; 3; 1; 1; 3; 2; 1; 3; -5; -2; -6; -2; -8; 3; 1; 33; 34; 32; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 
+    36; -7; -6; -1; -6; -4; -6; -2; -2; -1; -5; -6; -5; -3; -7; -7; -3; -8; -8; -5; -7; -9; -4; -2; -6; -7; -3; -1; -4; 20; 33; 34; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 
+    36; -2; -7; -7; -7; -7; -3; -8; -5; -9; -8; -2; -6; -7; -1; -2; -3; -9; -4; -7; -8; -6; -3; -5; -8; -7; -4; -4; -3; 3; 32; 33; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 
+    36; -2; -1; -9; -5; -4; -2; -3; -5; -4; -5; -6; -5; -3; -4; -4; -2; -7; -2; -5; -4; -7; 0; 0; -4; -8; -6; -6; -2; -2; 34; 34; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 
+    36; -6; -8; -3; -7; -7; -8; -4; -4; -1; -2; -6; -9; -8; -3; -7; -7; -3; -8; -7; -1; 0; 0; 0; 0; -7; -5; -9; -2; -6; 32; 32; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 
+    41; -30; -30; -30; -30; -30; -30; -30; -30; -30; -30; -30; -39; -8; -4; -3; -4; -7; -2; -3; -8; -8; 0; 0; -3; -7; -6; -6; -6; 34; 34; 32; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 
+    22; 23; 22; 23; 25; 24; 22; 21; 21; 22; 23; 23; 36; -4; -5; -7; -3; -9; -2; -3; -2; -7; -1; -7; -7; -3; -5; -6; -3; 34; 33; 33; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 
+    2; 2; 2; 2; 3; 2; 2; 2; 3; 1; 3; 2; 36; -4; -7; -3; -2; -4; -8; -9; -2; -5; -7; -2; -38; -30; -30; -30; -30; 23; -28; -28; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 
+    0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 36; -7; -8; -2; -7; -7; -9; -4; -5; -7; -8; -1; 36; 24; 21; 21; 21; -28; 24; 24; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 
+    0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 36; -6; -4; -3; -4; -6; -2; -2; -2; -2; -2; -9; 36; 2; 2; 2; 2; 2; 2; 3; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 
+    0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 36; -6; -5; -1; -7; -6; -8; -7; -8; -2; -3; -38; 40; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 
+    0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 36; -5; -4; -3; -3; -6; -5; -4; -38; -30; -30; 40; 20; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 
+    0; 0; 0; 0; 0; 0; 0; 0; -29; -30; -30; -30; 40; -3; -9; -26; -27; -28; -4; -29; 40; 21; 25; 22; 3; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 
+    0; 0; 0; 0; 0; 0; 0; 0; 21; 21; 23; 21; 21; -28; -27; 25; 23; 21; -27; 21; 25; 2; 2; 3; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 
+    0; 0; 0; 0; 0; 0; 0; 0; 3; 1; 1; 2; 2; 2; 1; 3; 2; 3; 2; 2; 2; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0
+]
 
-decorations: 
-blood 290.046 568.392 107
-blood 490.942 787.689 108
-blood 822.657 651.221 109
-blood 746.686 417.072 110
-blood 589.448 589.043 111
-flesh 163.675 491.829 177
-painting 783.753 41.9716 183
-lamp 240 456 187
-lamp 432 456 188
-lamp 80 456 189
-lamp 608 456 190
-lamp 712 224 195
-lamp 832 224 197
-lamp 608 32 198
-lamp 960 32 199
-lamp 544 192 200
-painting 335.326 481.751 210
-flesh 912 48 211
-chains 672 56 213
-lamp 1088 160 220
-lamp 1312 160 221
-lamp 1344 32 222
-lamp 1536 32 223
-blood 1129.48 247.131 275
-blood 1432.15 140.379 276
-flesh2 1440 48 277
-painting 1184 168 278
-floor_side 1312 336 322
-floor_side 1280 336 323
-floor_side 1248 336 324
-floor_side 1216 336 325
-floor_side 1184 336 326
-floor_side 1152 336 327
-lamp_l 24 584 944
-lamp_r 936 600 946
-lamp_l 408 832 947
-lamp_l 696 416 948
-lamp_l 568 120 949
-lamp_r 1544 208 950
-flesh3 1008 80 951
-flesh3 536 488 953
-floor_side2 1024 368 954
-floor_side2 1056 368 955
-floor_side2 1088 368 956
-floor_side2 1120 336 959
-floor_side2 1120 80 960
-floor_side2 1152 80 961
-floor_side2 1184 80 962
-floor_side2 1216 80 963
-floor_side2 1248 80 965
-floor_side2 1280 80 967
-floor_tile 1312 256 992
-floor_tile 1280 256 993
-floor_tile 1248 256 994
-floor_tile 1216 256 995
-floor_tile 1184 256 996
-floor_tile 1152 256 997
+list decorations_id = ["blood"; "blood"; "blood"; "blood"; "blood"; "flesh"; "painting"; "lamp"; "lamp"; "lamp"; "lamp"; "lamp"; "lamp"; "lamp"; "lamp"; "lamp"; "painting"; "flesh"; "chains"; "lamp"; "lamp"; "lamp"; "lamp"; "blood"; "blood"; "flesh2"; "painting"; "floor_side"; "floor_side"; "floor_side"; "floor_side"; "floor_side"; "floor_side"; "lamp_l"; "lamp_r"; "lamp_l"; "lamp_l"; "lamp_l"; "lamp_r"; "flesh3"; "flesh3"; "floor_side2"; "floor_side2"; "floor_side2"; "floor_side2"; "floor_side2"; "floor_side2"; "floor_side2"; "floor_side2"; "floor_side2"; "floor_side2"; "floor_tile"; "floor_tile"; "floor_tile"; "floor_tile"; "floor_tile"; "floor_tile"]
+list decorations_pos = [(290.046, 568.392); (490.942, 787.689); (822.657, 651.221); (746.686, 417.072); (589.448, 589.043); (163.675, 491.829); (783.753, 41.9716); (240, 456); (432, 456); (80, 456); (608, 456); (712, 224); (832, 224); (608, 32); (960, 32); (544, 192); (335.326, 481.751); (912, 48); (672, 56); (1088, 160); (1312, 160); (1344, 32); (1536, 32); (1129.48, 247.131); (1432.15, 140.379); (1440, 48); (1184, 168); (1312, 336); (1280, 336); (1248, 336); (1216, 336); (1184, 336); (1152, 336); (24, 584); (936, 600); (408, 832); (696, 416); (568, 120); (1544, 208); (1008, 80); (536, 488); (1024, 368); (1056, 368); (1088, 368); (1120, 336); (1120, 80); (1152, 80); (1184, 80); (1216, 80); (1248, 80); (1280, 80); (1312, 256); (1280, 256); (1248, 256); (1216, 256); (1184, 256); (1152, 256)]
+list decorations_uid = [107; 108; 109; 110; 111; 177; 183; 187; 188; 189; 190; 195; 197; 198; 199; 200; 210; 211; 213; 220; 221; 222; 223; 275; 276; 277; 278; 322; 323; 324; 325; 326; 327; 944; 946; 947; 948; 949; 950; 951; 953; 954; 955; 956; 959; 960; 961; 962; 963; 965; 967; 992; 993; 994; 995; 996; 997]
 
-obstacles: 
-door 784 264 85 OnKill [Null] [Null]
-fence_side 672 376 97 OnKill [Null] [Null]
-fence_side 672 344 98 OnKill [Null] [Null]
-fence_side 672 312 99 OnKill [Null] [Null]
-fence_side 672 280 100 OnKill [Null] [Null]
-fence_side 864 408 101 OnKill [Null] [Null]
-fence_side 864 376 102 OnKill [Null] [Null]
-fence_side 864 344 103 OnKill [Null] [Null]
-fence_side 864 312 104 OnKill [Null] [Null]
-fence_side 864 280 105 OnKill [Null] [Null]
-fence 544 736 129 OnKill [Null] [Null]
-fence 576 736 130 OnKill [Null] [Null]
-fence 512 736 131 OnKill [Null] [Null]
-fence_side 592 728 133 OnKill [Null] [Null]
-fence_side 592 696 134 OnKill [Null] [Null]
-fence_side 496 728 135 OnKill [Null] [Null]
-fence_side 496 696 136 OnKill [Null] [Null]
-fence 512 672 137 OnKill [Null] [Null]
-fence 544 672 138 OnKill [Null] [Null]
-fence 576 672 139 OnKill [Null] [Null]
-barrel 959.86 95.0437 140 OnKill [Explode] [80.0]
-barrel 928 96 141 OnKill [Explode] [80.0]
-barrel 896 96 142 OnKill [Explode] [80.0]
-barrel 480 544 143 OnKill [Explode] [80.0]
-barrel 512 544 144 OnKill [Explode] [80.0]
-barrel 416 744 145 OnKill [Explode] [80.0]
-barrel 416 768 146 OnKill [Explode] [80.0]
-fence 1120 320 214 OnKill [Null] [Null]
-fence 1120 192 215 OnKill [Null] [Null]
-fence_side 672 408 970 OnKill [Null] [Null]
-wall1 672 640 972 OnKill [SpawnDestruction] [20.0]
-wall1 768 640 974 OnKill [SpawnDestruction] [20.0]
-wall1 736 608 975 OnKill [SpawnDestruction] [20.0]
-wall3 736 640 976 OnKill [SpawnDestruction] [20.0]
-wall3 672 608 977 OnKill [SpawnDestruction] [20.0]
-wall2 704 608 978 OnKill [SpawnDestruction] [20.0]
-wall2 704 640 979 OnKill [SpawnDestruction] [20.0]
-wall2 768 608 980 OnKill [SpawnDestruction] [20.0]
-wall2 736 576 981 OnKill [SpawnDestruction] [20.0]
-wall1 704 576 982 OnKill [SpawnDestruction] [20.0]
-wall1 736 672 983 OnKill [SpawnDestruction] [20.0]
-wall3 704 672 984 OnKill [SpawnDestruction] [20.0]
-wall4 1408 192 985 OnKill [SpawnDestruction] [20.0]
-wall5 1472 192 987 OnKill [SpawnDestruction] [20.0]
-wall6 1440 192 988 OnKill [SpawnDestruction] [20.0]
-wall4 1472 224 991 OnKill [SpawnDestruction] [20.0]
+list obstacles_id = ["door"; "fence_side"; "fence_side"; "fence_side"; "fence_side"; "fence_side"; "fence_side"; "fence_side"; "fence_side"; "fence_side"; "fence"; "fence"; "fence"; "fence_side"; "fence_side"; "fence_side"; "fence_side"; "fence"; "fence"; "fence"; "barrel"; "barrel"; "barrel"; "barrel"; "barrel"; "barrel"; "barrel"; "fence"; "fence"; "fence_side"; "wall1"; "wall1"; "wall1"; "wall3"; "wall3"; "wall2"; "wall2"; "wall2"; "wall2"; "wall1"; "wall1"; "wall3"; "wall4"; "wall5"; "wall6"; "wall4"]
+list obstacles_pos = [(784, 264); (672, 376); (672, 344); (672, 312); (672, 280); (864, 408); (864, 376); (864, 344); (864, 312); (864, 280); (544, 736); (576, 736); (512, 736); (592, 728); (592, 696); (496, 728); (496, 696); (512, 672); (544, 672); (576, 672); (959.86, 95.0437); (928, 96); (896, 96); (480, 544); (512, 544); (416, 744); (416, 768); (1120, 320); (1120, 192); (672, 408); (672, 640); (768, 640); (736, 608); (736, 640); (672, 608); (704, 608); (704, 640); (768, 608); (736, 576); (704, 576); (736, 672); (704, 672); (1408, 192); (1472, 192); (1440, 192); (1472, 224)]
+list obstacles_activation = ["OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"; "OnKill"]
+list obstacles_funcs = [["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Explode"]; ["Explode"]; ["Explode"]; ["Explode"]; ["Explode"]; ["Explode"]; ["Explode"]; ["Null"]; ["Null"]; ["Null"]; ["SpawnDestruction"]; ["SpawnDestruction"]; ["SpawnDestruction"]; ["SpawnDestruction"]; ["SpawnDestruction"]; ["SpawnDestruction"]; ["SpawnDestruction"]; ["SpawnDestruction"]; ["SpawnDestruction"]; ["SpawnDestruction"]; ["SpawnDestruction"]; ["SpawnDestruction"]; ["SpawnDestruction"]; ["SpawnDestruction"]; ["SpawnDestruction"]; ["SpawnDestruction"]]
+list obstacles_datas = [["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; [80.0]; [80.0]; [80.0]; [80.0]; [80.0]; [80.0]; [80.0]; ["Null"]; ["Null"]; ["Null"]; [20.0]; [20.0]; [20.0]; [20.0]; [20.0]; [20.0]; [20.0]; [20.0]; [20.0]; [20.0]; [20.0]; [20.0]; [20.0]; [20.0]; [20.0]; [20.0]]
+list obstacles_uid = [85; 97; 98; 99; 100; 101; 102; 103; 104; 105; 129; 130; 131; 133; 134; 135; 136; 137; 138; 139; 140; 141; 142; 143; 144; 145; 146; 214; 215; 970; 972; 974; 975; 976; 977; 978; 979; 980; 981; 982; 983; 984; 985; 987; 988; 991]
 
-characters: 
-standard 1016 232 112 OnKill [SpawnAmmo] [light] []
-standard 616 128 113 OnKill [SpawnAmmo] [light] []
-standard 440 344 114 OnKill [SpawnAmmo] [light] []
+list characters_id = ["standard"; "standard"; "standard"]
+list characters_pos = [(1016, 232); (616, 128); (440, 344)]
+list characters_activation = ["OnKill"; "OnKill"; "OnKill"]
+list characters_funcs = [["SpawnAmmo"]; ["SpawnAmmo"]; ["SpawnAmmo"]]
+list characters_datas = [["light"]; ["light"]; ["light"]]
+list characters_talks = [[]; []; []]
+list characters_uid = [112; 113; 114]
 
-specials: 
-starting_position 86.505 602.196 1 1 OnEnter [MapStart] [Null]
-flame 36.8525 535.45 2 1 OnEnter [SetOnFire] [Null]
-flame 733.922 786.982 3 1 OnEnter [SetOnFire] [Null]
-flame 727.907 764.423 4 1 OnEnter [SetOnFire] [Null]
-flame 713.243 796.006 5 1 OnEnter [SetOnFire] [Null]
-flame 894.795 544.118 6 1 OnEnter [SetOnFire] [Null]
-flame 871.741 531.915 7 1 OnEnter [SetOnFire] [Null]
-flame 882.02 555.553 8 1 OnEnter [SetOnFire] [Null]
-lava 0 760 9 1 OnEnter [Kill] [lava]
-lava 32 760 10 1 OnEnter [Kill] [lava]
-lava 64 760 11 1 OnEnter [Kill] [lava]
-lava 96 760 12 1 OnEnter [Kill] [lava]
-lava 128 760 14 1 OnEnter [Kill] [lava]
-lava 160 760 15 1 OnEnter [Kill] [lava]
-lava 192 760 16 1 OnEnter [Kill] [lava]
-lava 224 760 17 1 OnEnter [Kill] [lava]
-lava 256 760 18 1 OnEnter [Kill] [lava]
-lava 288 760 19 1 OnEnter [Kill] [lava]
-lava 320 760 20 1 OnEnter [Kill] [lava]
-lava 352 760 21 1 OnEnter [Kill] [lava]
-lava 352 792 22 1 OnEnter [Kill] [lava]
-lava 320 792 24 1 OnEnter [Kill] [lava]
-lava 352 824 25 1 OnEnter [Kill] [lava]
-lava 320 824 26 1 OnEnter [Kill] [lava]
-lava 288 792 27 1 OnEnter [Kill] [lava]
-lava 288 824 28 1 OnEnter [Kill] [lava]
-lava 352 856 29 1 OnEnter [Kill] [lava]
-lava 320 856 30 1 OnEnter [Kill] [lava]
-lava 288 856 31 1 OnEnter [Kill] [lava]
-lava 256 856 32 1 OnEnter [Kill] [lava]
-lava 256 824 33 1 OnEnter [Kill] [lava]
-lava 256 792 34 1 OnEnter [Kill] [lava]
-lava 224 792 35 1 OnEnter [Kill] [lava]
-lava 192 792 36 1 OnEnter [Kill] [lava]
-lava 160 792 37 1 OnEnter [Kill] [lava]
-lava 128 792 38 1 OnEnter [Kill] [lava]
-lava 96 792 39 1 OnEnter [Kill] [lava]
-lava 64 792 40 1 OnEnter [Kill] [lava]
-lava 32 792 43 1 OnEnter [Kill] [lava]
-lava 0 792 45 1 OnEnter [Kill] [lava]
-lava 0 824 47 1 OnEnter [Kill] [lava]
-lava 32 856 51 1 OnEnter [Kill] [lava]
-lava 32 824 54 1 OnEnter [Kill] [lava]
-lava 64 824 55 1 OnEnter [Kill] [lava]
-lava 64 856 56 1 OnEnter [Kill] [lava]
-lava 96 888 58 1 OnEnter [Kill] [lava]
-lava 96 856 59 1 OnEnter [Kill] [lava]
-lava 96 824 60 1 OnEnter [Kill] [lava]
-lava 128 824 61 1 OnEnter [Kill] [lava]
-lava 128 856 62 1 OnEnter [Kill] [lava]
-lava 128 888 63 1 OnEnter [Kill] [lava]
-lava 160 856 65 1 OnEnter [Kill] [lava]
-lava 160 824 66 1 OnEnter [Kill] [lava]
-lava 192 824 67 1 OnEnter [Kill] [lava]
-lava 192 856 69 1 OnEnter [Kill] [lava]
-lava 192 888 70 1 OnEnter [Kill] [lava]
-lava 224 888 71 1 OnEnter [Kill] [lava]
-lava 224 856 72 1 OnEnter [Kill] [lava]
-lava 224 824 73 1 OnEnter [Kill] [lava]
-more_speed 698.022 832.806 74 1 OnEnter [AddSpeed;Destroy] [0.25f;Null]
-flamethrower 424 256 115 1 OnEnter [AddWeapon;Destroy] [flamethrower;Null]
-lever 800 272 116 1 OnUse [OpenDoor;ChangeOpenState] [85;Null]
-lever 736 176 118 1 OnUse [OpenDoor;ChangeOpenState] [85;Null]
-flame 1019.19 119.649 119 1 OnEnter [SetOnFire] [Null]
-flame 990.289 120.068 120 1 OnEnter [SetOnFire] [Null]
-flame 1001.6 126.77 121 1 OnEnter [SetOnFire] [Null]
-flame 385.896 276.297 122 1 OnEnter [SetOnFire] [Null]
-flame 387.571 295.983 123 1 OnEnter [SetOnFire] [Null]
-flame 402.231 272.527 124 1 OnEnter [SetOnFire] [Null]
-flame 699.192 277.972 125 1 OnEnter [SetOnFire] [Null]
-flame 534.167 695.56 126 1 OnEnter [SetOnFire] [Null]
-flame 552.177 690.953 127 1 OnEnter [SetOnFire] [Null]
-flame 531.235 679.225 128 1 OnEnter [SetOnFire] [Null]
-crystal 669.536 530.258 153 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 650.865 532.747 154 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 660.823 541.046 155 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 388.655 364.185 156 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 389.072 383.713 157 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 406.497 376.276 158 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 957.118 317.355 159 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 957.489 306.98 160 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-crystal 946.372 314.02 161 1 OnEnter [PickCrystal;Destroy] [Null;Null]
-health 736 280 162 1 OnEnter [AddHealth;Destroy] [30;Null]
-health 584 88 163 1 OnEnter [AddHealth;Destroy] [30;Null]
-note 832 512 164 1 OnUse [ReadNote] [BEWARE!!!]
-note 352 608 165 1 OnUse [ReadNote] ["Welcome_to_RAG3."]
-melee_axe 576 536 166 1 OnEnter [AddWeapon;Destroy] [melee_axe;Null]
-special_event 456 736 167 1 OnEnter [ActivateWeapon;Destroy] [150;Null]
-flame 1346.08 84.9934 224 1 OnEnter [SetOnFire] [Null]
-flame 1532.26 82.3711 225 1 OnEnter [SetOnFire] [Null]
-flame 1541.11 339.348 226 1 OnEnter [SetOnFire] [Null]
-flame 1379.52 339.348 227 1 OnEnter [SetOnFire] [Null]
-downstairs 1472 320 228 1 OnEnter [Teleport] [(1505.4,280.0)]
-lava 1120 352 279 1 OnEnter [Kill] [lava]
-lava 1152 352 280 1 OnEnter [Kill] [lava]
-lava 1184 352 281 1 OnEnter [Kill] [lava]
-lava 1216 352 282 1 OnEnter [Kill] [lava]
-lava 1248 352 283 1 OnEnter [Kill] [lava]
-lava 1280 352 284 1 OnEnter [Kill] [lava]
-lava 1312 352 285 1 OnEnter [Kill] [lava]
-lava 1312 384 286 1 OnEnter [Kill] [lava]
-lava 1312 416 288 1 OnEnter [Kill] [lava]
-lava 1280 384 290 1 OnEnter [Kill] [lava]
-lava 1280 416 291 1 OnEnter [Kill] [lava]
-lava 1248 384 292 1 OnEnter [Kill] [lava]
-lava 1216 384 293 1 OnEnter [Kill] [lava]
-lava 1184 384 294 1 OnEnter [Kill] [lava]
-lava 1152 384 295 1 OnEnter [Kill] [lava]
-lava 1120 384 296 1 OnEnter [Kill] [lava]
-lava 1088 384 297 1 OnEnter [Kill] [lava]
-lava 1024 416 300 1 OnEnter [Kill] [lava]
-lava 1056 416 301 1 OnEnter [Kill] [lava]
-lava 1088 416 302 1 OnEnter [Kill] [lava]
-lava 1120 416 303 1 OnEnter [Kill] [lava]
-lava 1152 416 304 1 OnEnter [Kill] [lava]
-lava 1184 416 305 1 OnEnter [Kill] [lava]
-lava 1216 416 306 1 OnEnter [Kill] [lava]
-lava 1248 416 307 1 OnEnter [Kill] [lava]
-lava 1120 96 308 1 OnEnter [Kill] [lava]
-lava 1152 96 309 1 OnEnter [Kill] [lava]
-lava 1184 96 310 1 OnEnter [Kill] [lava]
-lava 1216 96 312 1 OnEnter [Kill] [lava]
-lava 1280 128 315 1 OnEnter [Kill] [lava]
-lava 1248 128 316 1 OnEnter [Kill] [lava]
-lava 1216 128 317 1 OnEnter [Kill] [lava]
-lava 1184 128 318 1 OnEnter [Kill] [lava]
-lava 1152 128 319 1 OnEnter [Kill] [lava]
-lava 1120 128 320 1 OnEnter [Kill] [lava]
-lava 1120 160 321 1 OnEnter [Kill] [lava]
-flame 1320 336 341 1 OnEnter [SetOnFire] [Null]
-flame 1116.53 337.284 343 1 OnEnter [SetOnFire] [Null]
-flame 1113.88 175.665 344 1 OnEnter [SetOnFire] [Null]
-flame 1124.15 324.037 345 1 OnEnter [SetOnFire] [Null]
-lava 1056 384 957 1 OnEnter [Kill] [lava]
-lava 1024 384 958 1 OnEnter [Kill] [lava]
-lava 1280 96 968 1 OnEnter [Kill] [lava]
-lava 1248 96 969 1 OnEnter [Kill] [lava]
+list weapons_id = ["flamethrower"]
+list weapons_pos = [(407.324, 914.257)]
+list weapons_dir = [303.69]
+list weapons_usage = ["Interrupted"]
+list weapons_usage_data = [0.5]
+list weapons_uid = [150]
 
-weapons: 
-flamethrower 407.324 914.257 303.69 150 Interrupted 0.5
+list specials_id = ["starting_position"; "flame"; "flame"; "flame"; "flame"; "flame"; "flame"; "flame"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "more_speed"; "flamethrower"; "lever"; "lever"; "flame"; "flame"; "flame"; "flame"; "flame"; "flame"; "flame"; "flame"; "flame"; "flame"; "crystal"; "crystal"; "crystal"; "crystal"; "crystal"; "crystal"; "crystal"; "crystal"; "crystal"; "health"; "health"; "note"; "note"; "melee_axe"; "special_event"; "flame"; "flame"; "flame"; "flame"; "downstairs"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "lava"; "flame"; "flame"; "flame"; "flame"; "lava"; "lava"; "lava"; "lava"]
+list specials_pos = [(86.505, 602.196); (36.8525, 535.45); (733.922, 786.982); (727.907, 764.423); (713.243, 796.006); (894.795, 544.118); (871.741, 531.915); (882.02, 555.553); (0, 760); (32, 760); (64, 760); (96, 760); (128, 760); (160, 760); (192, 760); (224, 760); (256, 760); (288, 760); (320, 760); (352, 760); (352, 792); (320, 792); (352, 824); (320, 824); (288, 792); (288, 824); (352, 856); (320, 856); (288, 856); (256, 856); (256, 824); (256, 792); (224, 792); (192, 792); (160, 792); (128, 792); (96, 792); (64, 792); (32, 792); (0, 792); (0, 824); (32, 856); (32, 824); (64, 824); (64, 856); (96, 888); (96, 856); (96, 824); (128, 824); (128, 856); (128, 888); (160, 856); (160, 824); (192, 824); (192, 856); (192, 888); (224, 888); (224, 856); (224, 824); (698.022, 832.806); (424, 256); (800, 272); (736, 176); (1019.19, 119.649); (990.289, 120.068); (1001.6, 126.77); (385.896, 276.297); (387.571, 295.983); (402.231, 272.527); (699.192, 277.972); (534.167, 695.56); (552.177, 690.953); (531.235, 679.225); (669.536, 530.258); (650.865, 532.747); (660.823, 541.046); (388.655, 364.185); (389.072, 383.713); (406.497, 376.276); (957.118, 317.355); (957.489, 306.98); (946.372, 314.02); (736, 280); (584, 88); (832, 512); (352, 608); (576, 536); (456, 736); (1346.08, 84.9934); (1532.26, 82.3711); (1541.11, 339.348); (1379.52, 339.348); (1472, 320); (1120, 352); (1152, 352); (1184, 352); (1216, 352); (1248, 352); (1280, 352); (1312, 352); (1312, 384); (1312, 416); (1280, 384); (1280, 416); (1248, 384); (1216, 384); (1184, 384); (1152, 384); (1120, 384); (1088, 384); (1024, 416); (1056, 416); (1088, 416); (1120, 416); (1152, 416); (1184, 416); (1216, 416); (1248, 416); (1120, 96); (1152, 96); (1184, 96); (1216, 96); (1280, 128); (1248, 128); (1216, 128); (1184, 128); (1152, 128); (1120, 128); (1120, 160); (1320, 336); (1116.53, 337.284); (1113.88, 175.665); (1124.15, 324.037); (1056, 384); (1024, 384); (1280, 96); (1248, 96)]
+list specials_activation = ["OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnUse"; "OnUse"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnUse"; "OnUse"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"; "OnEnter"]
+list specials_is_active = [true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true; true]
+list specials_funcs = [["MapStart"]; ["SetOnFire"]; ["SetOnFire"]; ["SetOnFire"]; ["SetOnFire"]; ["SetOnFire"]; ["SetOnFire"]; ["SetOnFire"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["AddSpeed"; "Destroy"]; ["AddWeapon"; "Destroy"]; ["OpenDoor"; "ChangeOpenState"]; ["OpenDoor"; "ChangeOpenState"]; ["SetOnFire"]; ["SetOnFire"]; ["SetOnFire"]; ["SetOnFire"]; ["SetOnFire"]; ["SetOnFire"]; ["SetOnFire"]; ["SetOnFire"]; ["SetOnFire"]; ["SetOnFire"]; ["PickCrystal"; "Destroy"]; ["PickCrystal"; "Destroy"]; ["PickCrystal"; "Destroy"]; ["PickCrystal"; "Destroy"]; ["PickCrystal"; "Destroy"]; ["PickCrystal"; "Destroy"]; ["PickCrystal"; "Destroy"]; ["PickCrystal"; "Destroy"]; ["PickCrystal"; "Destroy"]; ["AddHealth"; "Destroy"]; ["AddHealth"; "Destroy"]; ["ReadNote"]; ["ReadNote"]; ["AddWeapon"; "Destroy"]; ["ActivateWeapon"; "Destroy"]; ["SetOnFire"]; ["SetOnFire"]; ["SetOnFire"]; ["SetOnFire"]; ["Teleport"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]; ["SetOnFire"]; ["SetOnFire"]; ["SetOnFire"]; ["SetOnFire"]; ["Kill"]; ["Kill"]; ["Kill"]; ["Kill"]]
+list specials_datas = [["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; [0.25; "Null"]; ["flamethrower"; "Null"]; [85; "Null"]; [85; "Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"; "Null"]; ["Null"; "Null"]; ["Null"; "Null"]; ["Null"; "Null"]; ["Null"; "Null"]; ["Null"; "Null"]; ["Null"; "Null"]; ["Null"; "Null"]; ["Null"; "Null"]; [30; "Null"]; [30; "Null"]; ["BEWARE!!!"]; ["Welcome to RAG3."]; ["melee_axe"; "Null"]; [150; "Null"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; [(1505.0,280.0)]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]; ["Null"]; ["Null"]; ["Null"]; ["Null"]; ["lava"]; ["lava"]; ["lava"]; ["lava"]]
+list specials_uid = [1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12; 14; 15; 16; 17; 18; 19; 20; 21; 22; 24; 25; 26; 27; 28; 29; 30; 31; 32; 33; 34; 35; 36; 37; 38; 39; 40; 43; 45; 47; 51; 54; 55; 56; 58; 59; 60; 61; 62; 63; 65; 66; 67; 69; 70; 71; 72; 73; 74; 115; 116; 118; 119; 120; 121; 122; 123; 124; 125; 126; 127; 128; 153; 154; 155; 156; 157; 158; 159; 160; 161; 162; 163; 164; 165; 166; 167; 224; 225; 226; 227; 228; 279; 280; 281; 282; 283; 284; 285; 286; 288; 290; 291; 292; 293; 294; 295; 296; 297; 300; 301; 302; 303; 304; 305; 306; 307; 308; 309; 310; 312; 315; 316; 317; 318; 319; 320; 321; 341; 343; 344; 345; 957; 958; 968; 969]
+

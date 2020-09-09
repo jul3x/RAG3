@@ -10,13 +10,12 @@
 
 using namespace editor;
 
-LoadWindow::LoadWindow(tgui::Gui* gui, tgui::Theme* theme) :
+LoadWindow::LoadWindow(tgui::Gui *gui, tgui::Theme *theme) :
         ChildWindow(gui, theme, "Load map",
-                    sf::Vector2f(CFG.get<int>("window_width_px") - CFG.get<float>("popup_window_size_x") * CFG.get<float>("user_interface_zoom"),
-                                 CFG.get<int>("window_height_px") - CFG.get<float>("popup_window_size_y") * CFG.get<float>("user_interface_zoom")) / 2.0f,
-                    {CFG.get<float>("popup_window_size_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("popup_window_size_y") * CFG.get<float>("user_interface_zoom")},
-                    "load_window")
-{
+                    (sf::Vector2f(CFG.get<int>("window_width_px"), CFG.get<int>("window_height_px")) -
+                     CFG.get<float>("user_interface_zoom") * CFG.get<sf::Vector2f>("popup_window_size")) / 2.0f,
+                    CFG.get<float>("user_interface_zoom") * CFG.get<sf::Vector2f>("popup_window_size"),
+                    "load_window") {
     grid_ = tgui::Grid::create();
     grid_->setPosition("50% - width/2", "50% - height/2");
     grid_->setSize("100%", "100%");
@@ -40,9 +39,15 @@ LoadWindow::LoadWindow(tgui::Gui* gui, tgui::Theme* theme) :
     button->setRenderer(theme_->getRenderer("Button"));
     button->setText("Load");
     button->setTextSize(button->getTextSize() * CFG.get<float>("user_interface_zoom"));
-    button->setSize(CFG.get<float>("button_size_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("button_size_y") * CFG.get<float>("user_interface_zoom"));
-    button->connect("pressed", [&](){ Editor::get().loadMap(list_box_->getSelectedItem()); child_->close(); });
-    list_box_->connect("DoubleClicked", [&](){ Editor::get().loadMap(list_box_->getSelectedItem()); child_->close(); });
+    button->setSize(CFG.get<sf::Vector2f>("button_size") * CFG.get<float>("user_interface_zoom"));
+    button->connect("pressed", [&]() {
+        Editor::get().loadMap(list_box_->getSelectedItem());
+        child_->close();
+    });
+    list_box_->connect("DoubleClicked", [&]() {
+        Editor::get().loadMap(list_box_->getSelectedItem());
+        child_->close();
+    });
 
     grid_->addWidget(button, 2, 0);
 
@@ -52,12 +57,10 @@ LoadWindow::LoadWindow(tgui::Gui* gui, tgui::Theme* theme) :
     grid_->setWidgetPadding(2, 0, {padding, padding});
 }
 
-void LoadWindow::refreshMapList(const std::vector<std::string>& map_list)
-{
+void LoadWindow::refreshMapList(const std::vector<std::string> &map_list) {
     list_box_->removeAllItems();
 
-    for (const auto& map : map_list)
-    {
+    for (const auto &map : map_list) {
         list_box_->addItem(map);
     }
 }

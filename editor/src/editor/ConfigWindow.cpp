@@ -12,13 +12,12 @@
 
 using namespace editor;
 
-ConfigWindow::ConfigWindow(tgui::Gui* gui, tgui::Theme* theme) :
+ConfigWindow::ConfigWindow(tgui::Gui *gui, tgui::Theme *theme) :
         ChildWindow(gui, theme, "Edit configuration",
-                    sf::Vector2f(CFG.get<int>("window_width_px") - CFG.get<float>("popup_window_size_x") * CFG.get<float>("user_interface_zoom"),
-                                 CFG.get<int>("window_height_px") - CFG.get<float>("popup_window_size_y") * CFG.get<float>("user_interface_zoom")) / 2.0f,
-                    {CFG.get<float>("popup_window_size_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("popup_window_size_y") * CFG.get<float>("user_interface_zoom")},
-                    "config_window")
-{
+                    (sf::Vector2f(CFG.get<int>("window_width_px"), CFG.get<int>("window_height_px")) -
+                     CFG.get<float>("user_interface_zoom") * CFG.get<sf::Vector2f>("popup_window_size")) / 2.0f,
+                    CFG.get<float>("user_interface_zoom") * CFG.get<sf::Vector2f>("popup_window_size"),
+                    "config_window") {
     grid_ = tgui::Grid::create();
     grid_->setPosition("50% - width/2", "50% - height/2");
     grid_->setSize("100%", "100%");
@@ -42,7 +41,7 @@ ConfigWindow::ConfigWindow(tgui::Gui* gui, tgui::Theme* theme) :
     button_->setRenderer(theme_->getRenderer("Button"));
     button_->setText("Save");
     button_->setTextSize(button_->getTextSize() * CFG.get<float>("user_interface_zoom"));
-    button_->setSize(CFG.get<float>("button_size_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("button_size_y") * CFG.get<float>("user_interface_zoom"));
+    button_->setSize(CFG.get<sf::Vector2f>("button_size") * CFG.get<float>("user_interface_zoom"));
 
     grid_->addWidget(button_, 2, 0);
 
@@ -52,12 +51,11 @@ ConfigWindow::ConfigWindow(tgui::Gui* gui, tgui::Theme* theme) :
     grid_->setWidgetPadding(2, 0, {padding, padding});
 }
 
-void ConfigWindow::setConfigContent(const std::string& category, const std::string& id)
-{
+void ConfigWindow::setConfigContent(const std::string &category, const std::string &id) {
     child_->setTitle(category + "/" + id);
     text_box_->setText(RM.getConfigContent(category, id));
 
-    button_->connect("pressed", [&](const std::string& category, const std::string& id, tgui::TextBox::Ptr box) {
+    button_->connect("pressed", [&](const std::string &category, const std::string &id, tgui::TextBox::Ptr box) {
         Editor::get().saveConfig(category, id, box->getText());
         child_->close();
     }, category, id, text_box_);

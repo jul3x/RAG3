@@ -1,7 +1,7 @@
-bool auto_resolution=true
-bool full_screen=true
-int window_width_px=2168
-int window_height_px=2160
+bool auto_resolution=false
+bool full_screen=false
+int window_width_px=3000
+int window_height_px=1500
 float user_interface_zoom=2.0
 float global_zoom=4.0
 

@@ -17,7 +17,7 @@ using namespace editor;
 
 ListWindow::ListWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme, std::string title, const sf::Vector2f& pos, std::string id) :
         ui_(ui),
-        ChildWindow(gui, theme, title, pos, {CFG.get<float>("list_windows_size_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("list_windows_size_y") * CFG.get<float>("user_interface_zoom")}, std::move(id))
+        ChildWindow(gui, theme, title, pos, CFG.get<sf::Vector2f>("list_windows_size") * CFG.get<float>("user_interface_zoom"), std::move(id))
 {
 
 }
@@ -64,8 +64,7 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
         int i = 0;
         for (const auto& item : items)
         {
-            auto size = sf::Vector2f(j3x::get<float>(RM.getObjectParams(tab_name, item), "size_x"),
-                                     j3x::get<float>(RM.getObjectParams(tab_name, item), "size_y"));
+            auto size = j3x::get<sf::Vector2f>(RM.getObjectParams(tab_name, item), "size", true);
 
             if (utils::num::isNearlyEqual(size, {}))
             {
@@ -75,7 +74,7 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
 
             auto full_name = tab_name + "/" + item;
 
-            if (j3x::get<int>(RM.getObjectParams(tab_name, item), "frames_number") == 1)
+            if (j3x::get<int>(RM.getObjectParams(tab_name, item), "frames_number", true) == 1)
                 button_textures_[full_name].load(RM.getTexture(full_name));
             else
                 button_textures_[full_name].load(
@@ -114,7 +113,7 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
         }
     }
 
-    tabs_->connect("TabSelected", onTabSelected, this, std::ref(*gui_));
+    tabs_->connect("TabSelected", [this](const std::string& tab) { this->onTabSelected(*this->gui_, tab); });
 
     tabs_->select(0);
 }

@@ -22,9 +22,9 @@ UserInterface::UserInterface() :
               &RM.getTexture("rag3_logo")),
         gui_theme_("../data/config/gui_theme.txt"),
         tiles_window_(this, &gui_, &gui_theme_, "Tiles",
-                      {CFG.get<float>("tiles_window_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("tiles_window_y") * CFG.get<float>("user_interface_zoom")}, "tiles_window"),
+                      CFG.get<sf::Vector2f>("tiles_window_pos") * CFG.get<float>("user_interface_zoom"), "tiles_window"),
         objects_window_(this, &gui_, &gui_theme_, "Objects",
-                        {CFG.get<float>("objects_window_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("objects_window_y") * CFG.get<float>("user_interface_zoom")}, "objects_window"),
+                        CFG.get<sf::Vector2f>("objects_window_pos") * CFG.get<float>("user_interface_zoom"), "objects_window"),
         menu_window_(this, &gui_, &gui_theme_),
         save_window_(&gui_, &gui_theme_),
         load_window_(&gui_, &gui_theme_),
@@ -45,7 +45,7 @@ UserInterface::UserInterface() :
     gui_.get("character_object_window")->setVisible(false);
     gui_.get("obstacle_object_window")->setVisible(false);
 
-    information_.setPosition(CFG.get<float>("info_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("info_y") * CFG.get<float>("user_interface_zoom"));
+    information_.setPosition(CFG.get<sf::Vector2f>("info_pos") * CFG.get<float>("user_interface_zoom"));
     information_.setFillColor(sf::Color(255, 255, 255, 0));
     information_.setFont(RM.getFont("editor"));
     information_.setString("");
@@ -432,29 +432,14 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
         }
         else
         {
-            crosshair_.setSize(
-                    sf::Vector2f(
-                            j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
-                            j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")));
-            crosshair_.changeOrigin(
-                    sf::Vector2f(
-                            j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
-                            j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")) /
-                    2.0f +
-                    sf::Vector2f(j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
-                                                        "map_offset_x"),
-                                 j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
-                                                        "map_offset_y")));
+            crosshair_.setSize(j3x::get<sf::Vector2f>(RM.getObjectParams(current_item.first, current_item.second), "size"));
+            crosshair_.changeOrigin(j3x::get<sf::Vector2f>(RM.getObjectParams(current_item.first, current_item.second), "size") / 2.0f
+                    + j3x::get<sf::Vector2f>(RM.getObjectParams(current_item.first, current_item.second),"map_offset"));
 
 
             if (j3x::get<int>(RM.getObjectParams(current_item.first, current_item.second), "frames_number") > 1)
                 crosshair_.changeTextureRect({{0, 0},
-                                              sf::Vector2i(j3x::get<float>(
-                                                                   RM.getObjectParams(current_item.first, current_item.second),
-                                                                   "size_x"),
-                                                           j3x::get<float>(RM.getObjectParams(current_item.first,
-                                                                                                     current_item.second),
-                                                                                  "size_y"))});
+                                              static_cast<sf::Vector2i>(j3x::get<sf::Vector2f>(RM.getObjectParams(current_item.first, current_item.second), "size"))});
 
         }
 

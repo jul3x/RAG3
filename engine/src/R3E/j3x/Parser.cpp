@@ -982,7 +982,7 @@ int yydebug;
 
 /* YYINITDEPTH -- initial size of the parser's stacks.  */
 #ifndef YYINITDEPTH
-# define YYINITDEPTH 200
+# define YYINITDEPTH 20000
 #endif
 
 /* YYMAXDEPTH -- maximum size the stacks can grow to (effective only
@@ -993,7 +993,7 @@ int yydebug;
    evaluated with infinite-precision integer arithmetic.  */
 
 #ifndef YYMAXDEPTH
-# define YYMAXDEPTH 10000
+# define YYMAXDEPTH 100000
 #endif
 
 

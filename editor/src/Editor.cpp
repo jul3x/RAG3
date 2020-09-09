@@ -29,7 +29,7 @@ void Editor::initialize()
 
     engine_->initializeGraphics(
             sf::Vector2i{CFG.get<int>("window_width_px"), CFG.get<int>("window_height_px")}, "RAG3 Editor",
-            CFG.get<int>("full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
+            CFG.get<bool>("full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
             sf::Color(CFG.get<int>("background_color")));
 
     engine_->registerCamera(camera_.get());

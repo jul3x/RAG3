@@ -639,6 +639,7 @@ bool Character::talk(const std::function<void(Character*, const std::string&)> &
 
 const std::string& Character::getTalkScenarioStr() const
 {
+    // TODO!
     static std::string result;
     result.clear();
 
@@ -661,6 +662,16 @@ void Character::setTalkScenarioStr(const std::string& str)
 const std::list<std::string>& Character::getTalkScenario() const
 {
     return talk_scenario_;
+}
+
+void Character::setTalkScenario(const j3x::List& str)
+{
+    talk_scenario_.clear();
+
+    for (auto& elem : str)
+    {
+        talk_scenario_.emplace_back(j3x::getObj<std::string>(elem));
+    }
 }
 
 void Character::setTalkScenario(const std::list<std::string>& str)

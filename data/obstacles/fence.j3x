@@ -4,7 +4,7 @@ vector collision_offset=(0.0,-16.0)
 vector map_offset=(0.0,8.0)
 
 int frames_number=4
-float frame_duration=0.2f
+float frame_duration=0.2
 
 float endurance=99999999.0
 

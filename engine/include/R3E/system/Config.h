@@ -32,29 +32,27 @@ namespace r3e {
 
         void appendConfig(const std::string& filename, const std::string& ns = "")
         {
-            j3x::Parameters new_params;
+            auto new_params = j3x::parse(filename, ns);
 
-            new_params = j3x::parse(filename, ns);
-
-            j3x::mergeParams(params_, new_params);
+            j3x::mergeParams(*params_, *new_params);
         }
 
         template <class T>
         const T& get(const std::string& key, bool ignore_warn = false) const
         {
-            return j3x::get<T>(params_, key, ignore_warn);
+            return j3x::get<T>(*params_, key, ignore_warn);
         }
 
         template <class T>
         void set(const std::string& key, const T& value)
         {
-            j3x::set<T>(params_, key, value);
+            j3x::set<T>(*params_, key, value);
         }
 
     private:
         Config() = default;
 
-        j3x::Parameters params_;
+        std::shared_ptr<j3x::Parameters> params_;
 
     };
 

@@ -77,7 +77,7 @@ namespace r3e {
         std::unordered_map<std::string, sf::SoundBuffer> sounds_;
         std::unordered_map<std::string, sf::Music> music_;
         std::unordered_map<std::string, sf::Font> fonts_;
-        std::unordered_map<std::string, j3x::Parameters> parameters_;
+        std::unordered_map<std::string, std::shared_ptr<j3x::Parameters>> parameters_;
 
         std::string j3x_directory_;
         std::string textures_directory_;

@@ -11,7 +11,7 @@ Special::Special(const sf::Vector2f& position, const std::string& id, int u_id) 
                 j3x::get<std::string>(RM.getObjectParams("specials", id), "default_activation"),
                 j3x::get<j3x::List>(RM.getObjectParams("specials", id), "default_functions"),
                 j3x::get<j3x::List>(RM.getObjectParams("specials", id), "default_datas"),
-                j3x::get<int>(RM.getObjectParams("specials", id), "default_active"), u_id)
+                j3x::get<bool>(RM.getObjectParams("specials", id), "default_active"), u_id)
 {
 
 }
@@ -30,7 +30,7 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
                        j3x::get<float>(RM.getObjectParams("specials", id), "frame_duration"),
                        0.0f),
         Functional(activation, functions, datas, id, u_id),
-        is_drawable_(j3x::get<int>(RM.getObjectParams("specials", id), "is_drawable")),
+        is_drawable_(j3x::get<bool>(RM.getObjectParams("specials", id), "is_drawable")),
         additional_boolean_data_(false)
 {
     this->changeOrigin(j3x::get<sf::Vector2f>(RM.getObjectParams("specials", id), "size") / 2.0f +
@@ -41,7 +41,7 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
     else
         this->deactivate();
 
-    if (j3x::get<int>(RM.getObjectParams("specials", id), "light_point"))
+    if (j3x::get<bool>(RM.getObjectParams("specials", id), "light_point"))
     {
         float light_size = CFG.get<float>("graphics/specials_light_point_size") * CFG.get<float>("graphics/global_zoom");
         light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),

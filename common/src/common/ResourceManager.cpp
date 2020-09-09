@@ -7,9 +7,9 @@
 
 #include <R3E/system/Config.h>
 #include <R3E/utils/Utils.h>
+#include <R3E/j3x/J3X.h>
 
 #include <common/ResourceManager.h>
-
 
 
 ResourceManager& ResourceManager::getInstance()
@@ -23,398 +23,128 @@ const j3x::Parameters& ResourceManager::getObjectParams(const std::string& categ
     return getParameters(category + "/" + id);
 }
 
-std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& key)
+std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& key)
 {
-    enum class MapReading {
-        None,
-        TileMap,
-        Characters,
-        Specials,
-        Obstacles,
-        Decorations,
-        Weapons
+    static std::tuple<Map::Data, Map::TileMap> map;
+    auto map_description = j3x::parse(CFG.get<std::string>("paths/maps_dir") + "/" + key + ".j3x");
+    auto get_param = [&map_description](const std::string& param) -> const j3x::List& {
+        return j3x::get<j3x::List>(*map_description, param);
     };
-    auto map_reading = MapReading::None;
 
-    std::ifstream file(CFG.get<std::string>("paths/maps_dir") + "/" + key + ".j3x");
-    std::list<std::shared_ptr<ObstacleTile>> obstacles_tiles;
-    std::list<std::shared_ptr<DecorationTile>> decorations_tiles;
-    std::list<std::shared_ptr<NPC>> characters;
-    std::list<std::shared_ptr<Special>> specials;
-    std::list<std::shared_ptr<Obstacle>> obstacles;
-    std::list<std::shared_ptr<Decoration>> decorations;
-    std::list<std::shared_ptr<PlacedWeapon>> weapons;
-    sf::Vector2f map_size;
-    std::vector<std::vector<float>> blocked;
+    auto& obstacles_tiles = std::get<0>(std::get<0>(map));
+    auto& decorations_tiles = std::get<1>(std::get<0>(map));
+    auto& characters = std::get<2>(std::get<0>(map));
+    auto& specials = std::get<3>(std::get<0>(map));
+    auto& obstacles = std::get<4>(std::get<0>(map));
+    auto& decorations = std::get<5>(std::get<0>(map));
+    auto& weapons = std::get<6>(std::get<0>(map));
 
-    int w, h;
-    if (file)
+    auto map_size = static_cast<sf::Vector2i>(j3x::get<sf::Vector2f>(*map_description, "map_size"));
+    if (map_size.x <= 0 || map_size.y <= 0)
+        throw std::invalid_argument("[ResourceManager] Map size should be positive!");
+
+    auto& blocked = std::get<1>(std::get<1>(map));
+    blocked.resize(map_size.x);
+    for (auto& column : blocked)
+        column.resize(map_size.y);
+    std::get<0>(std::get<1>(map)) = {DecorationTile::SIZE_X_ * blocked.size(),
+                                           DecorationTile::SIZE_Y_ * blocked.at(0).size()};
+
+    auto tile_number = 0;
+    for (auto& tile : get_param( "tile_map"))
     {
-        std::string word;
-
-        file >> w >> h;
-
-        blocked.resize(w);
-        for (auto& row : blocked)
-            row.resize(h);
-
-        int max_number = w * h;
-        int count = 0;
-        int number = 0;
-        int type = 0;
-        bool should_add_new_object = false;
-
-        std::string current_id = "";
-        sf::Vector2f current_pos = {};
-        float direction = 0.0f;
-        int u_id = -1;
-        bool is_active = true;
-
-        std::string activation = "";
-        std::vector<std::string> functions;
-        std::vector<std::string> f_datas;
-        std::list<std::string> conversation;
-
-        std::string usage;
-        float usage_data;
-
-        // type < 0 - decoration, type > 0 - obstacle
-        while (file >> word)
+        auto tile_id = j3x::getObj<int>(tile);
+        auto column = tile_number % map_size.x;
+        auto row = tile_number / map_size.x;
+        blocked.at(column).at(row) = 0.0f;
+        if (tile_id > 0)
         {
-            if (word == "tile_map:")
-            {
-                count = 0;
-                map_reading = MapReading::TileMap;
-            }
-            else if (word == "characters:")
-            {
-                number = 0;
-                map_reading = MapReading::Characters;
-            }
-            else if (word == "specials:")
-            {
-                number = 0;
-                map_reading = MapReading::Specials;
-            }
-            else if (word == "obstacles:")
-            {
-                number = 0;
-                map_reading = MapReading::Obstacles;
-            }
-            else if (word == "decorations:")
-            {
-                number = 0;
-                map_reading = MapReading::Decorations;
-            }
-            else if (word == "weapons:")
-            {
-                number = 0;
-                map_reading = MapReading::Weapons;
-            }
-            else
-            {
-                switch (map_reading)
-                {
-                    case MapReading::TileMap:
-                    {
-                        blocked.at(count % w).at(count / w) = 0.0f;
-                        type = std::stoi(word);
-                        if (type > 0)
-                        {
-                            blocked.at(count % w).at(count / w) = 9999999.0f;
-                            obstacles_tiles.emplace_back(std::make_shared<ObstacleTile>(
-                                    sf::Vector2f((count % w) * DecorationTile::SIZE_X_,
-                                                 (count / w) * DecorationTile::SIZE_Y_),
-                                    std::to_string(type)));
-                        }
-                        else if (type < 0)
-                        {
-                            decorations_tiles.emplace_back(std::make_shared<DecorationTile>(
-                                    sf::Vector2f((count % w) * DecorationTile::SIZE_X_,
-                                                 (count / w) * DecorationTile::SIZE_Y_),
-                                    std::to_string(-type)));
-                        }
-
-                        ++count;
-                        break;
-                    }
-                    case MapReading::Decorations:
-                    {
-                        ++number;
-                        should_add_new_object = false;
-
-                        if (number % 4 == 1)
-                        {
-                            current_id = word;
-                        }
-                        else if (number % 4 == 2)
-                        {
-                            current_pos.x = std::stof(word);
-                        }
-                        else if (number % 4 == 3)
-                        {
-                            current_pos.y = std::stof(word);
-                        }
-                        else
-                        {
-                            u_id = std::stoi(word);
-                            should_add_new_object = true;
-                        }
-                        break;
-                    }
-                    case MapReading::Weapons:
-                    {
-                        ++number;
-                        should_add_new_object = false;
-
-                        if (number % 7 == 1)
-                        {
-                            current_id = word;
-                        }
-                        else if (number % 7 == 2)
-                        {
-                            current_pos.x = std::stof(word);
-                        }
-                        else if (number % 7 == 3)
-                        {
-                            current_pos.y = std::stof(word);
-                        }
-                        else if (number % 7 == 4)
-                        {
-                            direction = std::stof(word);
-                        }
-                        else if (number % 7 == 5)
-                        {
-                            u_id = std::stoi(word);
-                        }
-                        else if (number % 7 == 6)
-                        {
-                            usage = word;
-                        }
-                        else
-                        {
-                            usage_data = std::stof(word);
-                            should_add_new_object = true;
-                        }
-
-                        break;
-                    }
-                    case MapReading::Obstacles:
-                    {
-                        ++number;
-                        should_add_new_object = false;
-
-                        if (number % 7 == 1)
-                        {
-                            current_id = word;
-                        }
-                        else if (number % 7 == 2)
-                        {
-                            current_pos.x = std::stof(word);
-                        }
-                        else if (number % 7 == 3)
-                        {
-                            current_pos.y = std::stof(word);
-                        }
-                        else if (number % 7 == 4)
-                        {
-                            u_id = std::stoi(word);
-                        }
-                        else if (number % 7 == 5)
-                        {
-                            activation = word;
-                        }
-                        else if (number % 7 == 6)
-                        {
-                            if (word.length() < 2)
-                                throw std::logic_error("[ResourceManager] Wrong map list object format!");
-
-                            j3x::tokenize(word.substr(1, word.length() - 2), j3x::DELIMITER_, functions);
-                        }
-                        else
-                        {
-                            std::replace(word.begin(), word.end(), '_', ' ');
-
-                            if (word.length() < 2)
-                                throw std::logic_error("[ResourceManager] Wrong map list object format!");
-
-                            j3x::tokenize(word.substr(1, word.length() - 2), j3x::DELIMITER_, f_datas);
-                            should_add_new_object = true;
-                        }
-
-                        break;
-                    }
-                    case MapReading::Specials:
-                    {
-                        ++number;
-                        should_add_new_object = false;
-
-                        if (number % 8 == 1)
-                        {
-                            current_id = word;
-                        }
-                        else if (number % 8 == 2)
-                        {
-                            current_pos.x = std::stof(word);
-                        }
-                        else if (number % 8 == 3)
-                        {
-                            current_pos.y = std::stof(word);
-                        }
-                        else if (number % 8 == 4)
-                        {
-                            u_id = std::stoi(word);
-                        }
-                        else if (number % 8 == 5)
-                        {
-                            is_active = std::stoi(word);
-                        }
-                        else if (number % 8 == 6)
-                        {
-                            activation = word;
-                        }
-                        else if (number % 8 == 7)
-                        {
-                            if (word.length() < 2)
-                                throw std::logic_error("[ResourceManager] Wrong map list object format!");
-
-                            j3x::tokenize(word.substr(1, word.length() - 2), j3x::DELIMITER_, functions);
-                        }
-                        else
-                        {
-                            std::replace(word.begin(), word.end(), '_', ' ');
-
-                            if (word.length() < 2)
-                                throw std::logic_error("[ResourceManager] Wrong map list object format!");
-
-                            j3x::tokenize(word.substr(1, word.length() - 2), j3x::DELIMITER_, f_datas);
-                            should_add_new_object = true;
-                        }
-
-                        break;
-                    }
-                    case MapReading::Characters:
-                    {
-                        ++number;
-                        should_add_new_object = false;
-
-                        if (number % 8 == 1)
-                        {
-                            current_id = word;
-                        }
-                        else if (number % 8 == 2)
-                        {
-                            current_pos.x = std::stof(word);
-                        }
-                        else if (number % 8 == 3)
-                        {
-                            current_pos.y = std::stof(word);
-                        }
-                        else if (number % 8 == 4)
-                        {
-                            u_id = std::stoi(word);
-                        }
-                        else if (number % 8 == 5)
-                        {
-                            activation = word;
-                        }
-                        else if (number % 8 == 6)
-                        {
-                            if (word.length() < 2)
-                                throw std::logic_error("[ResourceManager] Wrong map list object format!");
-
-                            j3x::tokenize(word.substr(1, word.length() - 2), j3x::DELIMITER_, functions);
-                        }
-                        else if (number % 8 == 7)
-                        {
-                            std::replace(word.begin(), word.end(), '_', ' ');
-
-                            if (word.length() < 2)
-                                throw std::logic_error("[ResourceManager] Wrong map list object format!");
-
-                            j3x::tokenize(word.substr(1, word.length() - 2), j3x::DELIMITER_, f_datas);
-                        }
-                        else
-                        {
-                            std::replace(word.begin(), word.end(), '_', ' ');
-
-                            if (word.length() < 2)
-                                throw std::logic_error("[ResourceManager] Wrong map list object format!");
-
-                            j3x::tokenize(word.substr(1, word.length() - 2), j3x::DELIMITER_,
-                                    conversation);
-                            should_add_new_object = true;
-                        }
-
-                        break;
-                    }
-                    default:
-                    {
-                        throw std::logic_error("[ResourceManager] Wrong map format!");
-                    }
-                }
-
-                if (should_add_new_object)
-                {
-                    switch (map_reading)
-                    {
-                        case MapReading::Characters:
-                            if (functions.size() != f_datas.size())
-                            {
-                                throw std::logic_error("[ResourceManager] Wrong map special object data and function format!");
-                            }
-
-//                            characters.emplace_back(std::make_shared<NPC>(current_pos, current_id,
-//                                                                          activation, functions, f_datas, u_id));
-//                            characters.back()->setTalkScenario(conversation);
-                            break;
-                        case MapReading::Specials:
-                            if (functions.size() != f_datas.size())
-                            {
-                                throw std::logic_error("[ResourceManager] Wrong map special object data and function format!");
-                            }
-
-//                            specials.emplace_back(std::make_shared<Special>(current_pos, current_id,
-//                                                                            activation, functions, f_datas, is_active, u_id));
-                            break;
-                        case MapReading::Obstacles:
-                            if (functions.size() != f_datas.size())
-                            {
-                                throw std::logic_error("[ResourceManager] Wrong map special object data and function format!");
-                            }
-//
-//                            obstacles.emplace_back(std::make_shared<Obstacle>(current_pos, current_id,
-//                                                                              activation, functions, f_datas, u_id));
-//
-//                            blocked.at(std::round((current_pos.x + j3x::get<float>(RM.getObjectParams("obstacles", current_id), "collision_offset_x")) / DecorationTile::SIZE_X_)).
-//                                    at(std::round((current_pos.y + j3x::get<float>(RM.getObjectParams("obstacles", current_id), "collision_offset_y")) / DecorationTile::SIZE_Y_)) =
-//                                    j3x::get<float>(RM.getObjectParams("obstacles", current_id), "endurance");
-                            break;
-                        case MapReading::Decorations:
-//                            decorations.emplace_back(std::make_shared<Decoration>(current_pos, current_id, u_id));
-                            break;
-                        case MapReading::Weapons:
-//                            weapons.emplace_back(std::make_shared<PlacedWeapon>(current_pos, direction, current_id,
-//                                    usage, usage_data, u_id));
-                            break;
-                        default:
-                            throw std::logic_error("[ResourceManager] Wrong map format!");
-                    }
-                }
-            }
+            blocked.at(tile_number % map_size.x).at(tile_number / map_size.x) = 9999999.0f;
+            obstacles_tiles.emplace_back(std::make_shared<ObstacleTile>(
+                    sf::Vector2f{column * DecorationTile::SIZE_X_, row * DecorationTile::SIZE_Y_},
+                    std::to_string(tile_id)));
         }
-
-        if (count != max_number)
+        else if (tile_id < 0)
         {
-            throw std::logic_error("[ResourceManager] Wrong number of tiles!");
+            decorations_tiles.emplace_back(std::make_shared<DecorationTile>(
+                    sf::Vector2f{column * DecorationTile::SIZE_X_, row * DecorationTile::SIZE_Y_},
+                    std::to_string(-tile_id)));
         }
-    }
-    else
-    {
-        throw std::logic_error("[ResourceManager] Map file not found! This should not happen during standard runtime.");
+        ++tile_number;
+
+        if (tile_number >= map_size.x * map_size.y)
+            break;
     }
 
-    map_size = {DecorationTile::SIZE_X_ * blocked.size(), DecorationTile::SIZE_Y_ * blocked.at(0).size()};
+    if (tile_number < map_size.x * map_size.y)
+        throw std::invalid_argument("[ResourceManager] Wrong size of map!");
+
+    try
+    {
+        for (size_t i = 0; i < get_param("decorations_pos").size(); ++i)
+        {
+            decorations.emplace_back(std::make_shared<Decoration>(
+                    j3x::getObj<sf::Vector2f>(get_param("decorations_pos"), i),
+                    j3x::getObj<std::string>(get_param("decorations_id"), i),
+                    j3x::getObj<int>(get_param("decorations_uid"), i)));
+        }
+
+        for (size_t i = 0; i < get_param("weapons_id").size(); ++i)
+        {
+            weapons.emplace_back(std::make_shared<PlacedWeapon>(
+                    j3x::getObj<sf::Vector2f>(get_param("weapons_pos"), i),
+                    j3x::getObj<float>(get_param("weapons_dir"), i),
+                    j3x::getObj<std::string>(get_param("weapons_id"), i),
+                    j3x::getObj<std::string>(get_param("weapons_usage"), i),
+                    j3x::getObj<float>(get_param("weapons_usage_data"), i),
+                    j3x::getObj<int>(get_param("weapons_uid"), i)));
+        }
+
+        for (size_t i = 0; i < get_param("obstacles_id").size(); ++i)
+        {
+            auto& id = j3x::getObj<std::string>(get_param("obstacles_id"), i);
+            auto& pos = j3x::getObj<sf::Vector2f>(get_param("obstacles_pos"), i);
+            auto blocked_pos = pos + j3x::get<sf::Vector2f>(RM.getObjectParams("obstacles", id), "collision_offset");
+            obstacles.emplace_back(std::make_shared<Obstacle>(
+                    pos, id,
+                    j3x::getObj<std::string>(get_param("obstacles_activation"), i),
+                    j3x::getObj<j3x::List>(get_param("obstacles_funcs"), i),
+                    j3x::getObj<j3x::List>(get_param("obstacles_datas"), i),
+                    j3x::getObj<int>(get_param("obstacles_uid"), i)));
+
+            blocked.at(std::round(blocked_pos.x / DecorationTile::SIZE_X_)).
+                    at(std::round(blocked_pos.y / DecorationTile::SIZE_Y_)) =
+                    j3x::get<float>(RM.getObjectParams("obstacles", id), "endurance");
+        }
+
+        for (size_t i = 0; i < get_param("characters_id").size(); ++i)
+        {
+            characters.emplace_back(std::make_shared<NPC>(
+                    j3x::getObj<sf::Vector2f>(get_param("characters_pos"), i),
+                    j3x::getObj<std::string>(get_param("characters_id"), i),
+                    j3x::getObj<std::string>(get_param("characters_activation"), i),
+                    j3x::getObj<j3x::List>(get_param("characters_funcs"), i),
+                    j3x::getObj<j3x::List>(get_param("characters_datas"), i),
+                    j3x::getObj<int>(get_param("characters_uid"), i)));
+            characters.back()->setTalkScenario(j3x::getObj<j3x::List>(get_param("characters_talks"), i));
+        }
+
+        for (size_t i = 0; i < get_param("specials_id").size(); ++i)
+        {
+            specials.emplace_back(std::make_shared<Special>(
+                    j3x::getObj<sf::Vector2f>(get_param("specials_pos"), i),
+                    j3x::getObj<std::string>(get_param("specials_id"), i),
+                    j3x::getObj<std::string>(get_param("specials_activation"), i),
+                    j3x::getObj<j3x::List>(get_param("specials_funcs"), i),
+                    j3x::getObj<j3x::List>(get_param("specials_datas"), i),
+                    j3x::getObj<bool>(get_param("specials_is_active"), i),
+                    j3x::getObj<int>(get_param("specials_uid"), i)));
+        }
+    }
+    catch (const std::out_of_range& e)
+    {
+        throw std::out_of_range("[ResourceManager] Wrong size of lists with elements in map description");
+    }
 
     auto set_random_initial_frame = [](auto& objects)
     {
@@ -437,8 +167,7 @@ std::tuple<Map::Data, Map::TileMap> ResourceManager::getMap(const std::string& k
 
     std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
 
-    return {{obstacles_tiles, decorations_tiles, characters, specials, obstacles, decorations, weapons},
-            {map_size, blocked}};
+    return map;
 }
 
 bool ResourceManager::saveMap(const std::string& name, Map& map)

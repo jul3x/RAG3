@@ -76,8 +76,13 @@ const std::string& Functional::getDatasStr() const
         }
         else if (data.type() == typeid(sf::Vector2f))
         {
-            auto vec = j3x::getObj<sf::Vector2f>(data);
+            auto& vec = j3x::getObj<sf::Vector2f>(data);
             result += "(" + std::to_string(vec.x) + "," + std::to_string(vec.y) + ")" + j3x::DELIMITER_;
+        }
+        else if (data.type() == typeid(std::string))
+        {
+            auto& str = j3x::getObj<std::string>(data);
+            result += str + j3x::DELIMITER_;
         }
         else
         {

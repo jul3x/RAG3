@@ -12,6 +12,7 @@
 #include <tuple>
 #include <unordered_map>
 #include <vector>
+#include <memory>
 
 #include <SFML/System/Vector2.hpp>
 
@@ -23,9 +24,9 @@ namespace r3e::j3x {
     using List = std::vector<Obj>;
     using Parameters = std::unordered_map<std::string, Obj>;
 
-    Parameters parse(const std::string& filename, const std::string& ns);
+    std::shared_ptr<Parameters> parse(const std::string& filename, const std::string& ns);
 
-    Parameters parse(const std::string& filename);
+    std::shared_ptr<Parameters> parse(const std::string& filename);
 
     void mergeParams(Parameters& params, const Parameters& new_params);
 
@@ -79,7 +80,8 @@ namespace r3e::j3x {
         }
         catch (const std::bad_any_cast& exception) {
             if (!ignore_warn)
-                std::cerr << "[J3X] Param " << key << " not matching return type!" << std::endl;
+                std::cerr << "[J3X] Param " << key << " not matching return type! It should be \""
+                    << it->second.type().name() << "\"." << std::endl;
 
             return ERR;
         }
@@ -96,8 +98,10 @@ namespace r3e::j3x {
         catch (const std::bad_any_cast& exception)
         {
             if (!ignore_warn)
+            {
                 std::cerr << "[J3X] Param of type " + std::string(param.type().name()) + " not matching " +
                              std::string(typeid(T).name()) + " return type!" << std::endl;
+            }
 
             return ERR;
         }

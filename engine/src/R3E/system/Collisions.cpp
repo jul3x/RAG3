@@ -14,7 +14,7 @@ namespace r3e {
     {
         grid_ = grid;
         if (size.x <= 0.0f || size.y <= 0.0f)
-            throw std::invalid_argument("[r3e::Collisions] Size of grid should cannot be negative!");
+            throw std::invalid_argument("[r3e::Collisions] Size of grid cannot be negative!");
 
         grid_size_x_ = static_cast<size_t>(std::ceil(size.x / grid));
         grid_size_y_ = static_cast<size_t>(std::ceil(size.y / grid));

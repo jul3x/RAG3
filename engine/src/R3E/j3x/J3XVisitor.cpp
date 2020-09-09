@@ -246,28 +246,22 @@ void J3XVisitor::visitEVector(EVector *evector)
 {
     evector->expr_1->accept(this);
     evector->expr_2->accept(this);
-
+    evector->strtype_ = "vector";
     if (evector->expr_1->strtype_ == "float" and evector->expr_2->strtype_ == "float") {
         evector->value_ = sf::Vector2f(std::any_cast<float>(evector->expr_1->value_),
                                        std::any_cast<float>(evector->expr_2->value_));
-        evector->strtype_ = "vector";
     }
     else if (evector->expr_1->strtype_ == "int" and evector->expr_2->strtype_ == "float") {
         evector->value_ = sf::Vector2f(static_cast<float>(std::any_cast<int>(evector->expr_1->value_)),
                                        std::any_cast<float>(evector->expr_2->value_));
-        evector->strtype_ = "vector";
     }
     else if (evector->expr_1->strtype_ == "float" and evector->expr_2->strtype_ == "int") {
         evector->value_ = sf::Vector2f(std::any_cast<float>(evector->expr_1->value_),
                                        static_cast<float>(std::any_cast<int>(evector->expr_2->value_)));
-        evector->value_ = 0;
-        evector->strtype_ = "vector";
     }
     else if (evector->expr_1->strtype_ == "int" and evector->expr_2->strtype_ == "int") {
         evector->value_ = sf::Vector2f(static_cast<float>(std::any_cast<int>(evector->expr_1->value_)),
                                        static_cast<float>(std::any_cast<int>(evector->expr_2->value_)));
-        evector->value_ = 0;
-        evector->strtype_ = "vector";
     }
     else {
         throw std::invalid_argument("Vector can be constructed only from numbers!");

@@ -94,6 +94,7 @@ public:
     void setCurrentFrame(short int frame) override;
     void setCurrentTalkableCharacter(Character* obj);
     void setTalkScenarioStr(const std::string& str);
+    void setTalkScenario(const j3x::List& str);
     void setTalkScenario(const std::list<std::string>& str);
     void changeTexture(sf::Texture* texture, bool reset = false) override;
 

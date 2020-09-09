@@ -11,9 +11,9 @@ using namespace editor;
 
 UniqueObjectWindow::UniqueObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
         ChildWindow(gui, theme, "Unique identifier of object",
-                    sf::Vector2f(CFG.get<int>("window_width_px") - CFG.get<float>("popup_window_size_x") * CFG.get<float>("user_interface_zoom"),
-                                 CFG.get<int>("window_height_px") - CFG.get<float>("popup_window_size_y") * CFG.get<float>("user_interface_zoom")) / 2.0f,
-                    {CFG.get<float>("unique_object_window_size_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("unique_object_window_size_y") * CFG.get<float>("user_interface_zoom")},
+                    (sf::Vector2f(CFG.get<int>("window_width_px"), CFG.get<int>("window_height_px")) -
+                     CFG.get<float>("user_interface_zoom") * CFG.get<sf::Vector2f>("unique_object_window_size")) / 2.0f,
+                    CFG.get<float>("user_interface_zoom") * CFG.get<sf::Vector2f>("unique_object_window_size"),
                     "unique_object_window")
 {
     grid_ = tgui::Grid::create();

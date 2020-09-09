@@ -4,7 +4,7 @@ vector map_offset=(0.0,-4)
 float collision_radius=5.0
 
 int frames_number=4
-float frame_duration=0.2f
+float frame_duration=0.2
 
 string default_activation="OnEnter"
 list default_functions=["Kill"]

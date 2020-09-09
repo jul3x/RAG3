@@ -1,41 +1,27 @@
-bool auto_resolution=true
+bool auto_resolution=false
 bool full_screen=false
-int window_height_px=1500
 int window_width_px=3000
-int32 background_color=0x33333300
+int window_height_px=2000
+
+int background_color=858993408
 
 float camera_speed=4.0
 float camera_zoom_speed=5.0
 
-float user_interface_zoom=2.0
+float user_interface_zoom=1.5
 
-float list_windows_size_x=350.0
-float list_windows_size_y=250.0
+vector list_windows_size=(350.0, 250.0)
 float items_padding=15.0
 float items_size=50.0
 
-float menu_window_x=1500.0
-float menu_window_y=200.0
-float menu_window_size_x=350.0
-float menu_window_size_y=250.0
-float button_size_x=100.0
-float button_size_y=30.0
+vector menu_window_pos=(1500.0, 200.0)
+vector menu_window_size=(350.0, 250.0)
+vector button_size=(100.0, 30.0)
+vector tiles_window_pos=(1500.0, 480.0)
+vector objects_window_pos=(1500.0, 760.0)
+vector popup_window_size=(600.0, 400.0)
+vector character_window_size=(600.0, 800.0)
+vector unique_object_window_size=(400.0, 100.0)
+vector info_pos=(50.0, 50.0)
 
-float tiles_window_x=1500.0
-float tiles_window_y=480.0
-
-float objects_window_x=1500.0
-float objects_window_y=760.0
-
-float popup_window_size_x=600.0
-float popup_window_size_y=400.0
-
-float character_window_size_x=600.0
-float character_window_size_y=800.0
-
-float unique_object_window_size_x=400.0
-float unique_object_window_size_y=100.0
-
-float info_x=50.0
-float info_y=50.0
 float info_fade_speed=200.0

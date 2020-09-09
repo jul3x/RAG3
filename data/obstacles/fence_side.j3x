@@ -16,6 +16,6 @@ int z_index=1
 
 bool light_point=true
 bool shadow=true
-string shadow_texture_suffix=_sh
+string shadow_texture_suffix="_sh"
 vector shadow_offset=(16.0,-3.0)
 vector shadow_size=(32.0,48.0)

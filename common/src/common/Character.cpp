@@ -49,6 +49,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
         current_talkable_character_(nullptr),
         should_respond_(false),
         is_moving_(false),
+        talk_moment_(0),
         is_talkable_(j3x::get<bool>(RM.getObjectParams("characters", id), "is_talkable")),
         Shootable(j3x::get<float>(RM.getObjectParams("characters", id), "max_health"))
 {
@@ -264,8 +265,8 @@ bool Character::update(float time_elapsed)
 
         if (talking_time_elapsed_ < 0)
         {
-            talking_func_(this, talk_scenario_.front());
-            talk_scenario_.pop_front();
+            talking_func_(this, j3x::getObj<std::string>(talk_scenario_, talk_moment_));
+            ++talk_moment_;
             should_respond_ = false;
             talking_time_elapsed_ = 10.0f;
         }
@@ -618,63 +619,45 @@ bool Character::talk(const std::function<void(Character*, const std::string&)> &
 {
     if (!should_respond_)
     {
-        if (talk_scenario_.size() % 2 != 0)
+        if ((talk_scenario_.size() - talk_moment_) % 2 != 0)
         {
-            talk_scenario_.pop_front();
+            ++talk_moment_;
         }
 
-        if (!talk_scenario_.empty())
+        if (talk_moment_ < talk_scenario_.size())
         {
-            talking_func(character, talk_scenario_.front());
+            talking_func(character, j3x::getObj<std::string>(talk_scenario_, talk_moment_));
             talking_func_ = talking_func;
-            talk_scenario_.pop_front();
+            ++talk_moment_;
 
-            should_respond_ = true;
             should_respond_ = true;
             talking_time_elapsed_ = CFG.get<float>("characters/talking_respond_time");
         }
     }
-    return talk_scenario_.size() > 1;
+    return talk_moment_ < talk_scenario_.size();
 }
 
 const std::string& Character::getTalkScenarioStr() const
 {
-    // TODO!
     static std::string result;
     result.clear();
 
-    for (auto& msg : talk_scenario_)
-    {
-        result += msg + j3x::DELIMITER_;
-    }
-
-    if (result.length() >= 1)
-        result.pop_back();
+    j3x::serialize(talk_scenario_, result);
 
     return result;
 }
 
 void Character::setTalkScenarioStr(const std::string& str)
 {
-    j3x::tokenize(str, j3x::DELIMITER_, talk_scenario_);
+    talk_scenario_ = j3x::parseObj<j3x::List>("list", str);
 }
 
-const std::list<std::string>& Character::getTalkScenario() const
+const j3x::List& Character::getTalkScenario() const
 {
     return talk_scenario_;
 }
 
 void Character::setTalkScenario(const j3x::List& str)
-{
-    talk_scenario_.clear();
-
-    for (auto& elem : str)
-    {
-        talk_scenario_.emplace_back(j3x::getObj<std::string>(elem));
-    }
-}
-
-void Character::setTalkScenario(const std::list<std::string>& str)
 {
     talk_scenario_ = str;
 }

@@ -72,7 +72,7 @@ private:
     j3x::List funcs_;
     j3x::List datas_;
 
-    std::list<std::string> talk_scenario_;
+    j3x::List talk_scenario_;
 
 };
 

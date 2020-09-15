@@ -16,6 +16,9 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include "Parser.h"
+#include "J3XVisitor.h"
+
 
 namespace r3e::j3x {
     constexpr char DELIMITER_ = ';';
@@ -117,6 +120,36 @@ namespace r3e::j3x {
     void set(Parameters& params, const std::string& key, const T& value)
     {
         params[key] = value;
+    }
+
+    void serialize(const j3x::List& data, std::string& out);
+
+    void serialize(const j3x::Obj& obj, std::string& out);
+
+    void serializeAssign(const std::string& variable, const j3x::Obj& obj, std::string& out);
+
+    template<class T>
+    T parseObj(const std::string& type, const std::string& str)
+    {
+        J3XVisitor visitor("");
+        try
+        {
+            std::string in_str = type + " tmp = " + str;
+            Script *parse_tree = pScript(in_str.c_str());
+            if (!parse_tree) {
+                throw std::logic_error("parse error");
+            }
+            parse_tree->accept(&visitor);
+
+            delete parse_tree;
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << "[J3X] Error while reading " + str + ".\nError message: " + e.what() + "!\n";
+            return {};
+        }
+
+        return getObj<T>(visitor.getParams().at("tmp"));
     }
 
 } // namespace r3e::j3x

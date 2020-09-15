@@ -51,6 +51,7 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
                                            DecorationTile::SIZE_Y_ * blocked.at(0).size()};
 
     auto tile_number = 0;
+    obstacles_tiles.clear();
     for (auto& tile : get_param( "tile_map"))
     {
         auto tile_id = j3x::getObj<int>(tile);
@@ -81,6 +82,7 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
 
     try
     {
+        decorations.clear();
         for (size_t i = 0; i < get_param("decorations_pos").size(); ++i)
         {
             decorations.emplace_back(std::make_shared<Decoration>(
@@ -89,6 +91,7 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
                     j3x::getObj<int>(get_param("decorations_uid"), i)));
         }
 
+        weapons.clear();
         for (size_t i = 0; i < get_param("weapons_id").size(); ++i)
         {
             weapons.emplace_back(std::make_shared<PlacedWeapon>(
@@ -100,6 +103,7 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
                     j3x::getObj<int>(get_param("weapons_uid"), i)));
         }
 
+        obstacles.clear();
         for (size_t i = 0; i < get_param("obstacles_id").size(); ++i)
         {
             auto& id = j3x::getObj<std::string>(get_param("obstacles_id"), i);
@@ -117,6 +121,7 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
                     j3x::get<float>(RM.getObjectParams("obstacles", id), "endurance");
         }
 
+        characters.clear();
         for (size_t i = 0; i < get_param("characters_id").size(); ++i)
         {
             characters.emplace_back(std::make_shared<NPC>(
@@ -129,6 +134,7 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
             characters.back()->setTalkScenario(j3x::getObj<j3x::List>(get_param("characters_talks"), i));
         }
 
+        specials.clear();
         for (size_t i = 0; i < get_param("specials_id").size(); ++i)
         {
             specials.emplace_back(std::make_shared<Special>(
@@ -181,10 +187,11 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
         return false;
     }
 
-    auto map_constraints = map.getTileConstraints();
-    file << map_constraints.first.x << " " << map_constraints.first.y << std::endl;
+    std::string out;
 
-    file << "tile_map:" << std::endl;
+    auto map_constraints = map.getTileConstraints();
+
+    j3x::serializeAssign("map_size", static_cast<sf::Vector2f>(map_constraints.first), out);
 
     std::vector<std::vector<int>> matrix;
     matrix.resize(map_constraints.first.y);
@@ -206,99 +213,94 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
                at(static_cast<size_t>((decoration->getPosition().x - map_constraints.second.x) / DecorationTile::SIZE_X_)) = - std::stoi(decoration->getId());
     }
 
+    j3x::List matrix_j3x;
     for (const auto& row : matrix)
     {
         for (const auto& item : row)
         {
-            file << item << " ";
+            matrix_j3x.emplace_back(item);
         }
-        file << std::endl;
     }
+    j3x::serializeAssign("tile_map", matrix_j3x, out);
 
-    auto add_obj_to_file = [&file, &map_constraints](const std::string& category, auto& objects) {
-        file << std::endl << category << ": " << std::endl;
+    auto add_obj_to_file = [&out, &map_constraints](const std::string& category, auto& objects) {
+        j3x::List id, pos, uid;
+
         for (const auto& obj : objects)
         {
-            file << obj->getId() << " " <<
-                 obj->getPosition().x - map_constraints.second.x << " " <<
-                 obj->getPosition().y - map_constraints.second.y << " " <<
-                 obj->getUniqueId() << std::endl;
+            id.emplace_back(obj->getId());
+            pos.emplace_back(obj->getPosition() - map_constraints.second);
+            uid.emplace_back(obj->getUniqueId());
         }
+
+        j3x::serializeAssign(category + "_id", id, out);
+        j3x::serializeAssign(category + "_pos", pos, out);
+        j3x::serializeAssign(category + "_uid", uid, out);
     };
 
-    auto add_weapon_to_file = [&file, &map_constraints](const std::string& category, auto& objects) {
-        file << std::endl << category << ": " << std::endl;
+    auto add_specials_to_file = [&out, &add_obj_to_file](const std::string& category, auto& objects) {
+        j3x::List activation, funcs, datas;
+        add_obj_to_file(category, objects);
+
         for (const auto& obj : objects)
         {
-            file << obj->getId() << " " <<
-                 obj->getPosition().x - map_constraints.second.x << " " <<
-                 obj->getPosition().y - map_constraints.second.y << " " <<
-                 obj->getRotation() << " " << obj->getUniqueId() << " " <<
-                 obj->getUsageStr() << " " << obj->getData() << std::endl;
+            activation.emplace_back(obj->getActivation());
+            funcs.emplace_back(obj->getFunctions());
+            datas.emplace_back(obj->getDatas());
         }
+
+        j3x::serializeAssign(category + "_activation", activation, out);
+        j3x::serializeAssign(category + "_funcs", funcs, out);
+        j3x::serializeAssign(category + "_datas", datas, out);
     };
 
-    auto add_obstacle_obj_to_file = [&file, &map_constraints](const std::string& category, auto& objects) {
-        file << std::endl << category << ": " << std::endl;
+    auto add_characters_to_file = [&out, &add_specials_to_file](const std::string& category, auto& objects) {
+        j3x::List talks;
+        add_specials_to_file(category, objects);
+
         for (const auto& obj : objects)
         {
-            auto new_data = obj->getDatasStr();
-            std::replace(new_data.begin(), new_data.end(), ' ', '_');
-
-            file << obj->getId() << " " <<
-                 obj->getPosition().x - map_constraints.second.x << " " <<
-                 obj->getPosition().y - map_constraints.second.y << " " <<
-                 obj->getUniqueId() << " " <<
-                 obj->getActivation() << " " <<
-                 "[" << obj->getFunctionsStr() << "] [" <<
-                 new_data << "]" << std::endl;
+            talks.emplace_back(obj->getTalkScenario());
         }
+
+        j3x::serializeAssign(category + "_talks", talks, out);
     };
 
-    auto add_special_obj_to_file = [&file, &map_constraints](const std::string& category, auto& objects) {
-        file << std::endl << category << ": " << std::endl;
+    auto add_special_obj_to_file = [&out, &add_specials_to_file](const std::string& category, auto& objects) {
+        j3x::List is_active;
+        add_specials_to_file(category, objects);
+
         for (const auto& obj : objects)
         {
-            auto new_data = obj->getDatasStr();
-            std::replace(new_data.begin(), new_data.end(), ' ', '_');
-
-            file << obj->getId() << " " <<
-                 obj->getPosition().x - map_constraints.second.x << " " <<
-                 obj->getPosition().y - map_constraints.second.y << " " <<
-                 obj->getUniqueId() << " " <<
-                 obj->isActive() << " " <<
-                 obj->getActivation() << " " <<
-                 "[" << obj->getFunctionsStr() << "] [" <<
-                 new_data << "]" << std::endl;
+            is_active.emplace_back(obj->isActive());
         }
+
+        j3x::serializeAssign(category + "_is_active", is_active, out);
     };
 
-    auto add_character_obj_to_file = [&file, &map_constraints](const std::string& category, auto& objects) {
-        file << std::endl << category << ": " << std::endl;
+    auto add_weapons_to_file = [&out, &add_obj_to_file](const std::string& category, auto& objects) {
+        j3x::List dir, usage, usage_data;
+        add_obj_to_file(category, objects);
+
         for (const auto& obj : objects)
         {
-            auto new_data = obj->getDatasStr();
-            std::replace(new_data.begin(), new_data.end(), ' ', '_');
-
-            auto new_conv = obj->getTalkScenarioStr();
-            std::replace(new_conv.begin(), new_conv.end(), ' ', '_');
-
-
-            file << obj->getId() << " " <<
-                 obj->getPosition().x - map_constraints.second.x << " " <<
-                 obj->getPosition().y - map_constraints.second.y << " " <<
-                 obj->getUniqueId() << " " <<
-                 obj->getActivation() << " " <<
-                 "[" << obj->getFunctionsStr() << "] [" << new_data << "]" <<
-                 " [" << new_conv << "]" << std::endl;
+            dir.emplace_back(obj->getRotation());
+            usage.emplace_back(obj->getUsageStr());
+            usage_data.emplace_back(obj->getData());
         }
+
+        j3x::serializeAssign(category + "_dir", dir, out);
+        j3x::serializeAssign(category + "_usage", usage, out);
+        j3x::serializeAssign(category + "_usage_data", usage_data, out);
     };
 
     add_obj_to_file("decorations", map.getList<Decoration>());
-    add_obstacle_obj_to_file("obstacles", map.getList<Obstacle>());
-    add_character_obj_to_file("characters", map.getList<NPC>());
+    add_specials_to_file("obstacles", map.getList<Obstacle>());
+    add_characters_to_file("characters", map.getList<NPC>());
     add_special_obj_to_file("specials", map.getList<Special>());
-    add_weapon_to_file("weapons", map.getList<PlacedWeapon>());
+    add_weapons_to_file("weapons", map.getList<PlacedWeapon>());
+
+    file << out;
 
     std::cout << "[ResourceManager] Map file " << CFG.get<std::string>("paths/maps_dir") + "/" + name + ".j3x" << " is saved!" << std::endl;
 

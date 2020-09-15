@@ -76,7 +76,7 @@ public:
     bool isTalkable() const;
     TalkableArea* getTalkableArea() const;
     const std::string& getTalkScenarioStr() const;
-    const std::list<std::string>& getTalkScenario() const;
+    const j3x::List& getTalkScenario() const;
     graphics::StaticShadow* getShadow() const;
     float getRotateTo() const;
 
@@ -95,7 +95,6 @@ public:
     void setCurrentTalkableCharacter(Character* obj);
     void setTalkScenarioStr(const std::string& str);
     void setTalkScenario(const j3x::List& str);
-    void setTalkScenario(const std::list<std::string>& str);
     void changeTexture(sf::Texture* texture, bool reset = false) override;
 
     bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f) override;
@@ -139,7 +138,8 @@ private:
 
     Special* current_special_object_;
     Character* current_talkable_character_;
-    std::list<std::string> talk_scenario_;
+    j3x::List talk_scenario_;
+    size_t talk_moment_;
 
     float talking_time_elapsed_;
 

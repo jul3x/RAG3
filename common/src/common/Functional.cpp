@@ -31,67 +31,20 @@ const std::string& Functional::getActivation() const
 
 const std::string& Functional::getFunctionsStr() const
 {
-    // TODO - move to J3X
     static std::string result;
     result.clear();
 
-    for (auto& function : functions_)
-    {
-        result += j3x::getObj<std::string>(function) + j3x::DELIMITER_;
-    }
-
-    if (result.length() >= 1)
-        result.pop_back();
+    j3x::serialize(functions_, result);
 
     return result;
 }
 
 const std::string& Functional::getDatasStr() const
 {
-    // TODO - move to J3X
-
     static std::string result;
     result.clear();
 
-    for (auto& data : datas_)
-    {
-        if (data.type() == typeid(j3x::List))
-        {
-            // TODO!
-        }
-        else if (data.type() == typeid(int))
-        {
-            auto obj = j3x::getObj<int>(data);
-            result += std::to_string(obj) + j3x::DELIMITER_;
-        }
-        else if (data.type() == typeid(float))
-        {
-            auto obj = j3x::getObj<float>(data);
-            result += std::to_string(obj) + j3x::DELIMITER_;
-        }
-        else if (data.type() == typeid(bool))
-        {
-            auto obj = j3x::getObj<bool>(data);
-            result += (obj ? "true" : "false") + j3x::DELIMITER_;
-        }
-        else if (data.type() == typeid(sf::Vector2f))
-        {
-            auto& vec = j3x::getObj<sf::Vector2f>(data);
-            result += "(" + std::to_string(vec.x) + "," + std::to_string(vec.y) + ")" + j3x::DELIMITER_;
-        }
-        else if (data.type() == typeid(std::string))
-        {
-            auto& str = j3x::getObj<std::string>(data);
-            result += str + j3x::DELIMITER_;
-        }
-        else
-        {
-            throw std::logic_error("[Functional] Not handled data type: " + std::string(data.type().name()));
-        }
-    }
-
-    if (result.length() >= 1)
-        result.pop_back();
+    j3x::serialize(datas_, result);
 
     return result;
 }
@@ -128,12 +81,12 @@ void Functional::setDatas(const j3x::List& data)
 
 void Functional::setFunctionsStr(const std::string& str)
 {
-    j3x::tokenize(str, j3x::DELIMITER_, functions_);
+    functions_ = j3x::parseObj<j3x::List>("list", str);
 }
 
 void Functional::setDatasStr(const std::string& str)
 {
-    j3x::tokenize(str, j3x::DELIMITER_, datas_);
+    datas_ = j3x::parseObj<j3x::List>("list", str);
 }
 
 bool Functional::isActive() const

@@ -18,7 +18,7 @@ int main()
     CFG.appendConfig("../data/config/characters.j3x", "characters");
     CFG.appendConfig("../data/config/paths.j3x", "paths");
 
-    if (CFG.get<bool>("auto_resolution"))
+    if (CONF<bool>("auto_resolution"))
     {
         sf::Vector2i res = Engine::detectResolution();
         CFG.set<int>("window_width_px", res.x);

@@ -9,7 +9,7 @@
 
 Thought::Thought(AbstractPhysicalObject* father, const std::string& text, float duration) :
         father_(father),
-        text_(text, RM.getFont(), CFG.get<int>("graphics/thought_text_size")),
+        text_(text, RM.getFont(), CONF<float>("graphics/thought_text_size")),
         time_elapsed_(duration),
         AbstractPhysicalObject(father->getPosition() + sf::Vector2f{GLOBAL_OFFSET_X_, GLOBAL_OFFSET_Y_}, {SIZE_X_, SIZE_Y_BOTTOM_}, collision::None(), &RM.getTexture("thought_bottom")),
         top_(father->getPosition() + sf::Vector2f{GLOBAL_OFFSET_X_, GLOBAL_OFFSET_Y_}, {SIZE_X_, SIZE_Y_TOP_}, &RM.getTexture("thought_top"))
@@ -41,7 +41,7 @@ bool Thought::update(float time_elapsed)
     }
 
     top_.setPosition(father_->getPosition() + sf::Vector2f{GLOBAL_OFFSET_X_, GLOBAL_OFFSET_Y_ - center_.size() * SIZE_Y_CENTER_ - SIZE_Y_BOTTOM_});
-    text_.setPosition(father_->getPosition() + sf::Vector2f{GLOBAL_OFFSET_X_ + TEXT_MARGIN_, GLOBAL_OFFSET_Y_ - center_.size() * SIZE_Y_CENTER_ - SIZE_Y_BOTTOM_ + SIZE_Y_TOP_ / 2.0f - CFG.get<int>("graphics/thought_text_size")});
+    text_.setPosition(father_->getPosition() + sf::Vector2f{GLOBAL_OFFSET_X_ + TEXT_MARGIN_, GLOBAL_OFFSET_Y_ - center_.size() * SIZE_Y_CENTER_ - SIZE_Y_BOTTOM_ + SIZE_Y_TOP_ / 2.0f - CONF<float>("graphics/thought_text_size")});
 
     return time_elapsed_ > 0.0f;
 }

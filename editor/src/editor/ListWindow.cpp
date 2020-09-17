@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <utility>
 
 #include <R3E/system/Config.h>
 
@@ -17,7 +18,7 @@ using namespace editor;
 
 ListWindow::ListWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme, std::string title, const sf::Vector2f& pos, std::string id) :
         ui_(ui),
-        ChildWindow(gui, theme, title, pos, CFG.get<sf::Vector2f>("list_windows_size") * CFG.get<float>("user_interface_zoom"), std::move(id))
+        ChildWindow(gui, theme, std::move(title), pos, CONF<sf::Vector2f>("list_windows_size"), std::move(id))
 {
 
 }
@@ -26,9 +27,9 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
 {
     tabs_ = tgui::Tabs::create();
     tabs_->setRenderer(theme_->getRenderer("Tabs"));
-    tabs_->setTabHeight(30 * CFG.get<float>("user_interface_zoom"));
+    tabs_->setTabHeight(CONF<float>("tab_height"));
     tabs_->setPosition(0, 0);
-    tabs_->setTextSize(tabs_->getTextSize() * CFG.get<float>("user_interface_zoom"));
+    tabs_->setTextSize(CONF<float>("label_text_size"));
 
     for (const auto& tab : tabs)
     {
@@ -42,7 +43,7 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
     });
 
     scroll_panel_ = tgui::ScrollablePanel::create({"100%", "&.height - 30"});
-    scroll_panel_->setPosition({"0", 30  * CFG.get<float>("user_interface_zoom")});
+    scroll_panel_->setPosition({"0", CONF<float>("tab_height")});
     scroll_panel_->setHorizontalScrollbarPolicy(tgui::Scrollbar::Policy::Never);
     scroll_panel_->setRenderer(theme_->getRenderer("ScrollablePanel"));
 
@@ -64,7 +65,7 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
         int i = 0;
         for (const auto& item : items)
         {
-            auto size = j3x::get<sf::Vector2f>(RM.getObjectParams(tab_name, item), "size", true);
+            auto size = RMGET<sf::Vector2f>(tab_name, item, "size", true);
 
             if (utils::num::isNearlyEqual(size, {}))
             {
@@ -74,7 +75,7 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
 
             auto full_name = tab_name + "/" + item;
 
-            if (j3x::get<int>(RM.getObjectParams(tab_name, item), "frames_number", true) == 1)
+            if (RMGET<int>(tab_name, item, "frames_number", true) == 1)
                 button_textures_[full_name].load(RM.getTexture(full_name));
             else
                 button_textures_[full_name].load(
@@ -83,24 +84,24 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
             auto button = tgui::Picture::create(button_textures_[full_name]);
             auto label = tgui::Label::create(item);
             label->setRenderer(theme_->getRenderer("ItemLabel"));
-            label->setTextSize(label->getTextSize() * CFG.get<float>("user_interface_zoom"));
+            label->setTextSize(CONF<float>("label_text_size"));
 
             if (size.x > size.y)
             {
-                size.y = size.y * CFG.get<float>("items_size") / size.x;
-                size.x = CFG.get<float>("items_size");
+                size.y = size.y * CONF<float>("items_size") / size.x;
+                size.x = CONF<float>("items_size");
             }
             else
             {
-                size.x = size.x * CFG.get<float>("items_size") / size.y;
-                size.y = CFG.get<float>("items_size");
+                size.x = size.x * CONF<float>("items_size") / size.y;
+                size.y = CONF<float>("items_size");
             }
 
-            button->setSize(size.x * CFG.get<float>("user_interface_zoom"), size.y * CFG.get<float>("user_interface_zoom"));
+            button->setSize(size.x, size.y);
             grids_.back()->addWidget(button, (i / 4) * 2, i % 4);
             grids_.back()->addWidget(label, (i / 4) * 2 + 1, i % 4);
             clickables_.back().push_back(button);
-            grids_.back()->setWidgetPadding(button, {CFG.get<float>("items_padding") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("items_padding") * CFG.get<float>("user_interface_zoom")});
+            grids_.back()->setWidgetPadding(button, {CONF<float>("items_padding"), CONF<float>("items_padding")});
             ++i;
 
             button->connect("Clicked", [&](const std::string& tab_name, const std::string& item_name) {

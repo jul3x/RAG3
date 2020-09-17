@@ -1489,19 +1489,19 @@ yyreduce:
     {
         case 2:
 #line 282 "j3x.y" /* yacc.c:1646  */
-    {  std::reverse((yyvsp[0].listdef_)->begin(),(yyvsp[0].listdef_)->end()) ;(yyval.script_) = new Prog((yyvsp[0].listdef_)); YY_RESULT_Script_= (yyval.script_); }
+    {  std::reverse((yyvsp[0].listdef_)->begin(),(yyvsp[0].listdef_)->end()) ;(yyval.script_) = new Prog((yyvsp[0].listdef_)); yyval.script_->line_number_ = yy_mylinenumber - 1; YY_RESULT_Script_= (yyval.script_); }
 #line 1494 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 3:
 #line 284 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.def_) = new VarDef((yyvsp[-3].type_), (yyvsp[-2].string_), (yyvsp[0].expr_));  }
+    {  (yyval.def_) = new VarDef((yyvsp[-3].type_), (yyvsp[-2].string_), (yyvsp[0].expr_));  yyval.def_->line_number_ = yy_mylinenumber - 1;  }
 #line 1500 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 4:
 #line 286 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.listdef_) = new ListDef() ; (yyval.listdef_)->push_back((yyvsp[0].def_));  }
+    {  (yyval.listdef_) = new ListDef() ; yyval.listdef_->line_number_ = yy_mylinenumber - 1;  (yyval.listdef_)->push_back((yyvsp[0].def_));  }
 #line 1506 "Parser.cpp" /* yacc.c:1646  */
     break;
 
@@ -1513,49 +1513,49 @@ yyreduce:
 
   case 6:
 #line 289 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.type_) = new Int();  }
+    {  (yyval.type_) = new Int(); yyval.type_->line_number_ = yy_mylinenumber - 1;  }
 #line 1518 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 7:
 #line 290 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.type_) = new Str();  }
+    {  (yyval.type_) = new Str(); yyval.type_->line_number_ = yy_mylinenumber - 1; }
 #line 1524 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 8:
 #line 291 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.type_) = new Bool();  }
+    {  (yyval.type_) = new Bool(); yyval.type_->line_number_ = yy_mylinenumber - 1; }
 #line 1530 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 9:
 #line 292 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.type_) = new Float();  }
+    {  (yyval.type_) = new Float(); yyval.type_->line_number_ = yy_mylinenumber - 1; }
 #line 1536 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 10:
 #line 293 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.type_) = new Vector();  }
+    {  (yyval.type_) = new Vector(); yyval.type_->line_number_ = yy_mylinenumber - 1; }
 #line 1542 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 11:
 #line 294 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.type_) = new ArrType();  }
+    {  (yyval.type_) = new ArrType(); yyval.type_->line_number_ = yy_mylinenumber - 1; }
 #line 1548 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 12:
 #line 296 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.expr_) = new EAdd((yyvsp[-2].expr_), (yyvsp[0].expr_));  }
+    {  (yyval.expr_) = new EAdd((yyvsp[-2].expr_), (yyvsp[0].expr_)); yyval.expr_->line_number_ = yy_mylinenumber - 1; }
 #line 1554 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 13:
 #line 297 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.expr_) = new ESub((yyvsp[-2].expr_), (yyvsp[0].expr_));  }
+    {  (yyval.expr_) = new ESub((yyvsp[-2].expr_), (yyvsp[0].expr_)); yyval.expr_->line_number_ = yy_mylinenumber - 1; }
 #line 1560 "Parser.cpp" /* yacc.c:1646  */
     break;
 
@@ -1567,91 +1567,91 @@ yyreduce:
 
   case 15:
 #line 300 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.expr_) = new EMul((yyvsp[-2].expr_), (yyvsp[0].expr_));  }
+    {  (yyval.expr_) = new EMul((yyvsp[-2].expr_), (yyvsp[0].expr_)); yyval.expr_->line_number_ = yy_mylinenumber - 1; }
 #line 1572 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 16:
 #line 301 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.expr_) = new EDiv((yyvsp[-2].expr_), (yyvsp[0].expr_));  }
+    {  (yyval.expr_) = new EDiv((yyvsp[-2].expr_), (yyvsp[0].expr_)); yyval.expr_->line_number_ = yy_mylinenumber - 1; }
 #line 1578 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 17:
 #line 302 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.expr_) = new ENeg((yyvsp[0].expr_));  }
+    {  (yyval.expr_) = new ENeg((yyvsp[0].expr_)); yyval.expr_->line_number_ = yy_mylinenumber - 1; }
 #line 1584 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 18:
 #line 303 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.expr_) = (yyvsp[0].expr_);  }
+    {  (yyval.expr_) = (yyvsp[0].expr_); yyval.expr_->line_number_ = yy_mylinenumber - 1; }
 #line 1590 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 19:
 #line 305 "j3x.y" /* yacc.c:1646  */
-    {  std::reverse((yyvsp[-1].listexpr_)->begin(),(yyvsp[-1].listexpr_)->end()) ;(yyval.expr_) = new EList((yyvsp[-1].listexpr_));  }
+    {  std::reverse((yyvsp[-1].listexpr_)->begin(),(yyvsp[-1].listexpr_)->end()) ;(yyval.expr_) = new EList((yyvsp[-1].listexpr_)); yyval.expr_->line_number_ = yy_mylinenumber - 1; }
 #line 1596 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 20:
 #line 306 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.expr_) = new ELitInt((yyvsp[0].int_));  }
+    {  (yyval.expr_) = new ELitInt((yyvsp[0].int_)); yyval.expr_->line_number_ = yy_mylinenumber - 1; }
 #line 1602 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 21:
 #line 307 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.expr_) = new EString((yyvsp[0].string_));  }
+    {  (yyval.expr_) = new EString((yyvsp[0].string_)); yyval.expr_->line_number_ = yy_mylinenumber - 1; }
 #line 1608 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 22:
 #line 308 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.expr_) = new EDouble((yyvsp[0].double_));  }
+    {  (yyval.expr_) = new EDouble((yyvsp[0].double_)); yyval.expr_->line_number_ = yy_mylinenumber - 1; }
 #line 1614 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 23:
 #line 309 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.expr_) = new ELitTrue();  }
+    {  (yyval.expr_) = new ELitTrue(); yyval.expr_->line_number_ = yy_mylinenumber - 1; }
 #line 1620 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 24:
 #line 310 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.expr_) = new ELitFalse();  }
+    {  (yyval.expr_) = new ELitFalse(); yyval.expr_->line_number_ = yy_mylinenumber - 1; }
 #line 1626 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 25:
 #line 311 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.expr_) = new EVar((yyvsp[0].string_));  }
+    {  (yyval.expr_) = new EVar((yyvsp[0].string_)); yyval.expr_->line_number_ = yy_mylinenumber - 1; }
 #line 1632 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 26:
 #line 312 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.expr_) = new EVector((yyvsp[-3].expr_), (yyvsp[-1].expr_));  }
+    {  (yyval.expr_) = new EVector((yyvsp[-3].expr_), (yyvsp[-1].expr_)); yyval.expr_->line_number_ = yy_mylinenumber - 1; }
 #line 1638 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 27:
 #line 313 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.expr_) = (yyvsp[-1].expr_);  }
+    {  (yyval.expr_) = (yyvsp[-1].expr_); yyval.expr_->line_number_ = yy_mylinenumber - 1; }
 #line 1644 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 28:
 #line 315 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.listexpr_) = new ListExpr();  }
+    {  (yyval.listexpr_) = new ListExpr(); yyval.listexpr_->line_number_ = yy_mylinenumber - 1; }
 #line 1650 "Parser.cpp" /* yacc.c:1646  */
     break;
 
   case 29:
 #line 316 "j3x.y" /* yacc.c:1646  */
-    {  (yyval.listexpr_) = new ListExpr() ; (yyval.listexpr_)->push_back((yyvsp[0].expr_));  }
+    {  (yyval.listexpr_) = new ListExpr() ; yyval.listexpr_->line_number_ = yy_mylinenumber - 1; (yyval.listexpr_)->push_back((yyvsp[0].expr_));  }
 #line 1656 "Parser.cpp" /* yacc.c:1646  */
     break;
 

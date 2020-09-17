@@ -128,6 +128,8 @@ public:
     virtual ~Visitable() {}
 
     virtual void accept(Visitor *v) = 0;
+
+    int line_number_;
 };
 
 

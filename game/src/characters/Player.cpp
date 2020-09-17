@@ -18,7 +18,7 @@ Player::Player(const sf::Vector2f& position) :
         is_alive_(true),
         side_stepping_freeze_time_(-1.0f)
 {
-    if (CFG.get<bool>("no_clip_mode"))
+    if (CONF<bool>("no_clip_mode"))
     {
         this->changeCollisionArea(collision::None());
     }
@@ -39,13 +39,11 @@ bool Player::sideStep(Player::SideStepDir dir)
     if (side_stepping_freeze_time_ <= 0.0f)
     {
         this->addSteeringForce(this->getSpeedFactor() *
-                               utils::geo::polarToCartesian(
-                                       j3x::get<float>(RM.getObjectParams("characters", "player"),
-                                                              "side_step_speed"),
+                               utils::geo::polarToCartesian(RMGET<float>("characters", "player", "side_step_speed"),
                                        (this->getRotation() + static_cast<int>(dir) * 90.0f) * M_PI / 180.0f),
-                               CFG.get<float>("side_step_force_duration"));
+                               CONF<float>("side_step_force_duration"));
 
-        side_stepping_freeze_time_ = CFG.get<float>("side_stepping_freeze_time");
+        side_stepping_freeze_time_ = CONF<float>("side_stepping_freeze_time");
         return true;
     }
 
@@ -62,7 +60,7 @@ bool Player::update(float time_elapsed)
 
 void Player::setHealth(float life)
 {
-    if (!CFG.get<bool>("god_mode"))
+    if (!CONF<bool>("god_mode"))
     {
         Character::setHealth(life);
     }
@@ -70,7 +68,7 @@ void Player::setHealth(float life)
 
 void Player::getShot(const Bullet& bullet)
 {
-    if (!CFG.get<bool>("god_mode"))
+    if (!CONF<bool>("god_mode"))
     {
         Character::getShot(bullet);
     }
@@ -84,9 +82,9 @@ void Player::handleGlobalState(float time_elapsed)
             break;
 
         case GlobalState::OnFire:
-            if (!CFG.get<bool>("god_mode"))
+            if (!CONF<bool>("god_mode"))
             {
-                life_ -= time_elapsed * CFG.get<float>("on_fire_hurt_speed");
+                life_ -= time_elapsed * CONF<float>("on_fire_hurt_speed");
             }
             on_fire_time_ -= time_elapsed;
 
@@ -98,7 +96,7 @@ void Player::handleGlobalState(float time_elapsed)
 
 void Player::getCut(const MeleeWeapon& weapon)
 {
-    if (!CFG.get<int>("bool"))
+    if (!CONF<int>("bool"))
     {
         Character::getCut(weapon);
     }

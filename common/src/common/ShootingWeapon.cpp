@@ -10,26 +10,26 @@
 
 
 ShootingWeapon::ShootingWeapon(Character* user, const std::string& id) :
-        spawn_timeout_(j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_timeout")),
-        recoil_(j3x::get<float>(RM.getObjectParams("weapons", id), "recoil")),
-        ammunition_(j3x::get<int>(RM.getObjectParams("weapons", id), "max_ammo")),
-        max_ammunition_(j3x::get<int>(RM.getObjectParams("weapons", id), "max_ammo")),
-        spawn_type_(j3x::get<std::string>(RM.getObjectParams("weapons", id), "spawn_type")),
-        spawn_quantity_(j3x::get<int>(RM.getObjectParams("weapons", id), "spawn_quantity")),
-        spawn_angular_diff_(j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_angular_diff")),
-        spawn_offset_(j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_offset")),
+        spawn_timeout_(RMGET<float>("weapons", id, "spawn_timeout")),
+        recoil_(RMGET<float>("weapons", id, "recoil")),
+        ammunition_(RMGET<int>("weapons", id, "max_ammo")),
+        max_ammunition_(RMGET<int>("weapons", id, "max_ammo")),
+        spawn_type_(RMGET<std::string>("weapons", id, "spawn_type")),
+        spawn_quantity_(RMGET<int>("weapons", id, "spawn_quantity")),
+        spawn_angular_diff_(RMGET<float>("weapons", id, "spawn_angular_diff")),
+        spawn_offset_(RMGET<float>("weapons", id, "spawn_offset")),
         spawn_offset_factor_(-1),
         AbstractWeapon(user,
-                       j3x::get<sf::Vector2f>(RM.getObjectParams("weapons", id), "size"),
-                       j3x::get<sf::Vector2f>(RM.getObjectParams("weapons", id), "offset"),
+                       RMGET<sf::Vector2f>("weapons", id, "size"),
+                       RMGET<sf::Vector2f>("weapons", id, "offset"),
                        id)
 {
     if (max_ammunition_ <= 0 || spawn_timeout_ <= 0.0f)
         throw std::invalid_argument("[ShootingWeapon] Constructor parameters are invalid!");
 
     this->changeOrigin(sf::Vector2f(0.0f,
-                                    j3x::get<sf::Vector2f>(RM.getObjectParams("weapons", id), "size").y) / 2.0f +
-                       j3x::get<sf::Vector2f>(RM.getObjectParams("weapons", id), "offset"));
+                                    RMGET<sf::Vector2f>("weapons", id, "size").y) / 2.0f +
+                       RMGET<sf::Vector2f>("weapons", id, "offset"));
 }
 
 sf::Vector2f ShootingWeapon::use()

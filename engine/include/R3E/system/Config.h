@@ -57,6 +57,8 @@ namespace r3e {
     };
 
 #define CFG Config::getInstance()
+#define CONF CFG.get
+
 } // namespace r3e
 
 #endif //RAG3_ENGINE_INCLUDE_R3E_SYSTEM_CONFIG_H

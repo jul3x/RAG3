@@ -10,19 +10,19 @@ Decoration::Decoration(const sf::Vector2f& position, const std::string& id, int 
         Identifiable(id),
         Unique(u_id),
         AbstractDrawableObject(position,
-                               j3x::get<sf::Vector2f>(RM.getObjectParams("decorations", id), "size"),
+                               RMGET<sf::Vector2f>("decorations", id, "size"),
                                &RM.getTexture("decorations/" + id),
-                               j3x::get<int>(RM.getObjectParams("decorations", id), "z_index"),
-                               j3x::get<int>(RM.getObjectParams("decorations", id), "frames_number"),
-                               j3x::get<float>(RM.getObjectParams("decorations", id), "frame_duration")),
+                               RMGET<int>("decorations", id, "z_index"),
+                               RMGET<int>("decorations", id, "frames_number"),
+                               RMGET<float>("decorations", id, "frame_duration")),
         is_active_(true)
 {
-    this->changeOrigin(j3x::get<sf::Vector2f>(RM.getObjectParams("decorations", id), "size") / 2.0f +
-                       j3x::get<sf::Vector2f>(RM.getObjectParams("decorations", id), "map_offset"));
+    this->changeOrigin(RMGET<sf::Vector2f>("decorations", id, "size") / 2.0f +
+                       RMGET<sf::Vector2f>("decorations", id, "map_offset"));
 
-    if (j3x::get<bool>(RM.getObjectParams("decorations", id), "light_point"))
+    if (RMGET<bool>("decorations", id, "light_point"))
     {
-        float light_size = CFG.get<float>("graphics/decorations_light_point_size") * CFG.get<float>("graphics/global_zoom");
+        float light_size = CONF<float>("graphics/decorations_light_point_size") * CONF<float>("graphics/global_zoom");
         light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
                                                         sf::Vector2f{light_size, light_size},
                                                         &RM.getTexture("lightpoint"));

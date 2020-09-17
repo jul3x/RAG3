@@ -18,9 +18,9 @@ AbstractWeapon::AbstractWeapon(Character* user,
         user_(user),
         AbstractDrawableObject({}, size,
                                name.empty() ? nullptr : &RM.getTexture("weapons/" + name),
-                               name.empty() ? 0 : j3x::get<int>(RM.getObjectParams("weapons", name), "z_index"),
-                               name.empty() ? 1 : j3x::get<int>(RM.getObjectParams("weapons", name), "frames_number"),
-                               name.empty() ? 0.0f : j3x::get<float>(RM.getObjectParams("weapons", name), "frame_duration"))
+                               name.empty() ? 0 : RMGET<int>("weapons", name, "z_index"),
+                               name.empty() ? 1 : RMGET<int>("weapons", name, "frames_number"),
+                               name.empty() ? 0.0f : RMGET<float>("weapons", name, "frame_duration"))
 {
 }
 

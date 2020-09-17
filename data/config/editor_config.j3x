@@ -1,27 +1,38 @@
-bool auto_resolution=false
-bool full_screen=false
-int window_width_px=3000
-int window_height_px=2000
+bool auto_resolution = false
+bool full_screen = false
+int window_width_px = 3800
+int window_height_px = 2000
 
-int background_color=858993408
+int background_color = 858993408
 
-float camera_speed=4.0
-float camera_zoom_speed=5.0
+float camera_speed = 4.0
+float camera_zoom_speed = 5.0
 
-float user_interface_zoom=1.5
+float user_interface_zoom = 2.0
 
-vector list_windows_size=(350.0, 250.0)
-float items_padding=15.0
-float items_size=50.0
+vector list_windows_size = (350.0 * user_interface_zoom, 250.0 * user_interface_zoom)
+float items_padding = 15.0 * user_interface_zoom
+float items_size = 50.0 * user_interface_zoom
 
-vector menu_window_pos=(1500.0, 200.0)
-vector menu_window_size=(350.0, 250.0)
-vector button_size=(100.0, 30.0)
-vector tiles_window_pos=(1500.0, 480.0)
-vector objects_window_pos=(1500.0, 760.0)
-vector popup_window_size=(600.0, 400.0)
-vector character_window_size=(600.0, 800.0)
-vector unique_object_window_size=(400.0, 100.0)
-vector info_pos=(50.0, 50.0)
+vector menu_window_pos = (1500.0 * user_interface_zoom, 200.0 * user_interface_zoom)
+vector menu_window_size = (350.0 * user_interface_zoom, 250.0 * user_interface_zoom)
+vector button_size = (100.0 * user_interface_zoom, 30.0 * user_interface_zoom)
+vector tiles_window_pos = (1500.0 * user_interface_zoom, 480.0 * user_interface_zoom)
+vector objects_window_pos = (1500.0 * user_interface_zoom, 760.0 * user_interface_zoom)
+vector popup_window_size = (600.0 * user_interface_zoom, 400.0 * user_interface_zoom)
+vector character_window_size = (600.0 * user_interface_zoom, 800.0 * user_interface_zoom)
+vector unique_object_window_size = (400.0 * user_interface_zoom, 100.0 * user_interface_zoom)
+vector info_pos = (50.0 * user_interface_zoom, 50.0 * user_interface_zoom)
 
-float info_fade_speed=200.0
+float crosshair_text_size = 24 * user_interface_zoom
+float label_text_size = 14 * user_interface_zoom
+float information_text_size = 20 * user_interface_zoom
+float tab_height = 30 * user_interface_zoom
+float text_box_height = 20 * user_interface_zoom
+float button_relative_valign = 60 * user_interface_zoom
+float load_items_height = 24 * user_interface_zoom
+float checkbox_size = 15 * user_interface_zoom
+float menu_bar_height = 35 * user_interface_zoom
+vector menu_slider_size = (80 * user_interface_zoom, 10 * user_interface_zoom)
+
+float info_fade_speed = 200.0

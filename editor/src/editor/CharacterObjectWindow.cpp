@@ -13,12 +13,12 @@ using namespace editor;
 
 CharacterObjectWindow::CharacterObjectWindow(tgui::Gui *gui, tgui::Theme *theme) :
         ChildWindow(gui, theme, "Character editor",
-                    (sf::Vector2f(CFG.get<int>("window_width_px"), CFG.get<int>("window_height_px")) -
-                     CFG.get<float>("user_interface_zoom") * CFG.get<sf::Vector2f>("character_window_size")) / 2.0f,
-                    CFG.get<float>("user_interface_zoom") * CFG.get<sf::Vector2f>("character_window_size"),
+                    (sf::Vector2f(CONF<int>("window_width_px"), CONF<int>("window_height_px")) -
+                     CONF<sf::Vector2f>("character_window_size")) / 2.0f,
+                    CONF<sf::Vector2f>("character_window_size"),
                     "character_object_window"),
         character_(nullptr) {
-    float padding = CFG.get<float>("items_padding") * CFG.get<float>("user_interface_zoom");
+    float padding = CONF<float>("items_padding");
 
     grid_ = tgui::Grid::create();
     grid_->setPosition("50% - width/2", "30% - height/2");
@@ -28,61 +28,61 @@ CharacterObjectWindow::CharacterObjectWindow(tgui::Gui *gui, tgui::Theme *theme)
     auto label = tgui::Label::create();
     label->setRenderer(theme_->getRenderer("Label"));
     label->setText("Identifier:");
-    label->setTextSize(14 * CFG.get<float>("user_interface_zoom"));
+    label->setTextSize(CONF<float>("label_text_size"));
 
     grid_->addWidget(label, 0, 0);
 
     id_box_ = tgui::EditBox::create();
     id_box_->setRenderer(theme_->getRenderer("EditBox"));
     id_box_->setReadOnly(true);
-    id_box_->setSize("35%", 20 * CFG.get<float>("user_interface_zoom"));
-    id_box_->setTextSize(14 * CFG.get<float>("user_interface_zoom"));
+    id_box_->setSize("35%", CONF<float>("text_box_height"));
+    id_box_->setTextSize(CONF<float>("label_text_size"));
     grid_->addWidget(id_box_, 1, 0);
 
     label = tgui::Label::create();
     label->setRenderer(theme_->getRenderer("Label"));
     label->setText("Activate:");
-    label->setTextSize(14 * CFG.get<float>("user_interface_zoom"));
+    label->setTextSize(CONF<float>("label_text_size"));
 
     grid_->addWidget(label, 0, 1);
 
     act_box_ = tgui::EditBox::create();
     act_box_->setRenderer(theme_->getRenderer("EditBox"));
-    act_box_->setSize("35%", 20 * CFG.get<float>("user_interface_zoom"));
-    act_box_->setTextSize(14 * CFG.get<float>("user_interface_zoom"));
+    act_box_->setSize("35%", CONF<float>("text_box_height"));
+    act_box_->setTextSize(CONF<float>("label_text_size"));
     grid_->addWidget(act_box_, 1, 1);
 
     label = tgui::Label::create();
     label->setRenderer(theme_->getRenderer("Label"));
     label->setText("Function:");
-    label->setTextSize(14 * CFG.get<float>("user_interface_zoom"));
+    label->setTextSize(CONF<float>("label_text_size"));
 
     grid_->addWidget(label, 2, 0);
 
     fun_box_ = tgui::TextBox::create();
     fun_box_->setRenderer(theme_->getRenderer("TextBox"));
     fun_box_->setSize("35%", "45%");
-    fun_box_->setTextSize(14 * CFG.get<float>("user_interface_zoom"));
+    fun_box_->setTextSize(CONF<float>("label_text_size"));
     grid_->addWidget(fun_box_, 3, 0);
 
     label = tgui::Label::create();
     label->setRenderer(theme_->getRenderer("Label"));
     label->setText("Function data:");
-    label->setTextSize(14 * CFG.get<float>("user_interface_zoom"));
+    label->setTextSize(CONF<float>("label_text_size"));
 
     grid_->addWidget(label, 2, 1);
 
     data_box_ = tgui::TextBox::create();
     data_box_->setRenderer(theme_->getRenderer("TextBox"));
     data_box_->setSize("35%", "45%");
-    data_box_->setTextSize(14 * CFG.get<float>("user_interface_zoom"));
+    data_box_->setTextSize(CONF<float>("label_text_size"));
     grid_->addWidget(data_box_, 3, 1);
 
 
     label = tgui::Label::create();
     label->setRenderer(theme_->getRenderer("Label"));
     label->setText("Conversation:");
-    label->setTextSize(14 * CFG.get<float>("user_interface_zoom"));
+    label->setTextSize(CONF<float>("label_text_size"));
     label->setPosition("50% - width/2", "50%");
     child_->add(label);
 
@@ -90,15 +90,15 @@ CharacterObjectWindow::CharacterObjectWindow(tgui::Gui *gui, tgui::Theme *theme)
     talk_box_->setRenderer(theme_->getRenderer("TextBox"));
     talk_box_->setSize("90% - " + std::to_string(padding * 2.0f), "35%");
     talk_box_->setPosition("50% - width/2", "55%");
-    talk_box_->setTextSize(14 * CFG.get<float>("user_interface_zoom"));
+    talk_box_->setTextSize(CONF<float>("label_text_size"));
     child_->add(talk_box_);
 
     button_ = tgui::Button::create();
     button_->setRenderer(theme_->getRenderer("Button"));
     button_->setText("Save");
-    button_->setTextSize(button_->getTextSize() * CFG.get<float>("user_interface_zoom"));
-    button_->setSize(CFG.get<sf::Vector2f>("button_size") * CFG.get<float>("user_interface_zoom"));
-    button_->setPosition("50% - width/2", "100% - " + std::to_string(60 * CFG.get<float>("user_interface_zoom")));
+    button_->setTextSize(CONF<float>("label_text_size"));
+    button_->setSize(CONF<sf::Vector2f>("button_size"));
+    button_->setPosition("50% - width/2", "100% - " + std::to_string(CONF<float>("button_relative_valign")));
 
     child_->add(button_);
 

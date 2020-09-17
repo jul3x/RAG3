@@ -10,18 +10,18 @@
 
 HealthBar::HealthBar(const sf::Vector2f& position) :
         AbstractDrawableObject(position,
-                               {HEALTH_SIZE_X_ * CFG.get<float>("graphics/user_interface_zoom"),
-                                HEALTH_SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom")},
+                               {HEALTH_SIZE_X_ * CONF<float>("graphics/user_interface_zoom"),
+                                HEALTH_SIZE_Y_ * CONF<float>("graphics/user_interface_zoom")},
                                &RM.getTexture("full_health_bar")),
         curr_health_shape_(4),
-        curr_health_(CFG.get<float>("graphics/inertial_states_change_speed"))
+        curr_health_(CONF<float>("graphics/inertial_states_change_speed"))
 {
 
     curr_health_shape_.setPosition(position);
     curr_health_shape_.setPoint(0, {0.0f, 0.0f});
     curr_health_shape_.setPoint(3, {HEALTH_SIZE_X_ / 2.0f, -HEALTH_SIZE_Y_ / 2.0f});
-    curr_health_shape_.setScale(CFG.get<float>("graphics/user_interface_zoom"),
-                                CFG.get<float>("graphics/user_interface_zoom"));
+    curr_health_shape_.setScale(CONF<float>("graphics/user_interface_zoom"),
+                                CONF<float>("graphics/user_interface_zoom"));
     curr_health_shape_.setTexture(&RM.getTexture("current_health_bar"));
 }
 

@@ -26,13 +26,15 @@ void J3XVisitor::visitVarDef(VarDef *vardef)
     bool int_to_float = vardef->type_->strtype_ == "float" and vardef->expr_->strtype_ == "int";
 
     if (vardef->type_->strtype_ == vardef->expr_->strtype_) {
-        this->addNewVariable(vardef->ident_, vardef->expr_->value_, vardef->type_->strtype_);
+        this->addNewVariable(vardef->ident_, vardef->expr_->value_, vardef->type_->strtype_, vardef->line_number_);
     }
     else if (int_to_float) {
-        this->addNewVariable(vardef->ident_, static_cast<float>(std::any_cast<int>(vardef->expr_->value_)), vardef->type_->strtype_);
+        this->addNewVariable(vardef->ident_, static_cast<float>(std::any_cast<int>(vardef->expr_->value_)),
+                vardef->type_->strtype_, vardef->line_number_);
     }
     else {
-        throw std::invalid_argument("Assigned type not matching!");
+        throw std::invalid_argument("line number " + std::to_string(vardef->line_number_) + " - Variable " + vardef->ident_ + " assign failed. Assigned type \"" +
+            vardef->expr_->strtype_ + "\" not matching declared type \"" + vardef->type_->strtype_ + "\"!");
     }
 }
 
@@ -88,7 +90,7 @@ void J3XVisitor::visitEAdd(EAdd *eadd)
         eadd->strtype_ = "float";
     }
     else {
-        throw std::invalid_argument("Addition can be performed only on numbers!");
+        throw std::invalid_argument("line number " + std::to_string(eadd->line_number_) + " - Addition can be performed only on numbers!");
     }
 }
 
@@ -114,7 +116,7 @@ void J3XVisitor::visitESub(ESub *esub)
         esub->strtype_ = "float";
     }
     else {
-        throw std::invalid_argument("Subtraction can be performed only on numbers!");
+        throw std::invalid_argument("line number " + std::to_string(esub->line_number_) + " - Subtraction can be performed only on numbers!");
     }
 }
 
@@ -140,7 +142,7 @@ void J3XVisitor::visitEMul(EMul *emul)
         emul->strtype_ = "float";
     }
     else {
-        throw std::invalid_argument("Multiplication can be performed only on numbers!");
+        throw std::invalid_argument("line number " + std::to_string(emul->line_number_) + " - Multiplication can be performed only on numbers!");
     }
 }
 
@@ -166,7 +168,7 @@ void J3XVisitor::visitEDiv(EDiv *ediv)
         ediv->strtype_ = "float";
     }
     else {
-        throw std::invalid_argument("Division can be performed only on numbers!");
+        throw std::invalid_argument("line number " + std::to_string(ediv->line_number_) + " - Division can be performed only on numbers!");
     }
 }
 
@@ -183,7 +185,7 @@ void J3XVisitor::visitENeg(ENeg *eneg)
         eneg->strtype_ = "float";
     }
     else {
-        throw std::invalid_argument("Division can be performed only on numbers!");
+        throw std::invalid_argument("line number " + std::to_string(eneg->line_number_) + " - Negation can be performed only on numbers!");
     }
 }
 
@@ -238,8 +240,8 @@ void J3XVisitor::visitELitFalse(ELitFalse *elitfalse)
 void J3XVisitor::visitEVar(EVar *evar)
 {
     visitIdent(evar->ident_);
-    evar->strtype_ = this->getVariableType(evar->ident_);
-    evar->value_ = this->getVariableValue(evar->ident_);
+    evar->strtype_ = this->getVariableType(evar->ident_, evar->line_number_);
+    evar->value_ = this->getVariableValue(evar->ident_, evar->line_number_);
 }
 
 void J3XVisitor::visitEVector(EVector *evector)
@@ -264,7 +266,7 @@ void J3XVisitor::visitEVector(EVector *evector)
                                        static_cast<float>(std::any_cast<int>(evector->expr_2->value_)));
     }
     else {
-        throw std::invalid_argument("Vector can be constructed only from numbers!");
+        throw std::invalid_argument("line number " + std::to_string(evector->line_number_) + " - Vector can be constructed only from numbers!");
     }
 }
 

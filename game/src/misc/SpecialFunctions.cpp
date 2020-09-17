@@ -98,26 +98,25 @@ void SpecialFunctions::openDoor(Functional* obj, const j3x::Obj& data, Character
     auto door_id = j3x::getObj<int>(data);
     auto door = Game::get().getMap().getObjectById<Obstacle>(door_id);
 
-    auto grid_pos = std::make_pair(std::round((door->getPosition().x + j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_offset_x")) / DecorationTile::SIZE_X_),
-                                   std::round((door->getPosition().y + j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_offset_y")) / DecorationTile::SIZE_Y_));
+    auto grid_pos = std::make_pair(std::round((door->getPosition().x + RMGET<sf::Vector2f>("obstacles", door->getId(), "collision_offset").x) / DecorationTile::SIZE_X_),
+                                   std::round((door->getPosition().y + RMGET<sf::Vector2f>("obstacles", door->getId(), "collision_offset").y) / DecorationTile::SIZE_Y_));
 
     if (door->getCollisionArea().getType() == collision::Area::Type::None)
     {
         door->changeTexture(&RM.getTexture("obstacles/" + door->getId()));
-        door->changeCollisionArea(collision::Box(j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_size_x"),
-                                                 j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_size_y"),
-                                                 {j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_offset_x"),
-                                                  j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "collision_offset_y")}));
-        door->setZIndex(j3x::get<int>(RM.getObjectParams("obstacles", door->getId()), "z_index"));
+        door->changeCollisionArea(collision::Box(RMGET<sf::Vector2f>("obstacles", door->getId(), "collision_size").x,
+                                                 RMGET<sf::Vector2f>("obstacles", door->getId(), "collision_size").y,
+                                                 RMGET<sf::Vector2f>("obstacles", door->getId(), "collision_offset")));
+        door->setZIndex(RMGET<int>("obstacles", door->getId(), "z_index"));
 
         Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) =
-                j3x::get<float>(RM.getObjectParams("obstacles", door->getId()), "endurance");
+                RMGET<float>("obstacles", door->getId(), "endurance");
     }
     else
     {
         door->changeTexture(&RM.getTexture("obstacles/" + door->getId() + "_open"));
         door->changeCollisionArea(collision::None());
-        door->setZIndex(j3x::get<int>(RM.getObjectParams("obstacles", door->getId() + "_open"), "z_index"));
+        door->setZIndex(RMGET<int>("obstacles", door->getId() + "_open", "z_index"));
 
         Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
     }
@@ -299,8 +298,8 @@ void SpecialFunctions::spawnAmmo(Functional* obj, const j3x::Obj& data, Characte
 
     auto npc = dynamic_cast<Character*>(obj);
 
-    auto ammo_offset = CFG.get<float>("characters/ammo_drop_offset");
-    for (size_t i = 0; i < CFG.get<int>("characters/ammo_dropped"); ++i)
+    auto ammo_offset = CONF<float>("characters/ammo_drop_offset");
+    for (size_t i = 0; i < CONF<int>("characters/ammo_dropped"); ++i)
     {
         auto offset = sf::Vector2f(utils::num::getRandom(-ammo_offset, ammo_offset),
                                    utils::num::getRandom(-ammo_offset, ammo_offset));

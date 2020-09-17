@@ -8,10 +8,10 @@
 
 Special::Special(const sf::Vector2f& position, const std::string& id, int u_id) :
         Special(position, id,
-                j3x::get<std::string>(RM.getObjectParams("specials", id), "default_activation"),
-                j3x::get<j3x::List>(RM.getObjectParams("specials", id), "default_functions"),
-                j3x::get<j3x::List>(RM.getObjectParams("specials", id), "default_datas"),
-                j3x::get<bool>(RM.getObjectParams("specials", id), "default_active"), u_id)
+                RMGET<std::string>("specials", id, "default_activation"),
+                RMGET<j3x::List>("specials", id, "default_functions"),
+                RMGET<j3x::List>("specials", id, "default_datas"),
+                RMGET<bool>("specials", id, "default_active"), u_id)
 {
 
 }
@@ -21,45 +21,45 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
                  const std::string& activation, const j3x::List& functions,
                  const j3x::List& datas, bool is_active, int u_id) :
         HoveringObject(position, {},
-                       j3x::get<sf::Vector2f>(RM.getObjectParams("specials", id), "size"),
-                       collision::Circle(j3x::get<float>(RM.getObjectParams("specials", id), "collision_radius"),
-                                         j3x::get<sf::Vector2f>(RM.getObjectParams("specials", id), "collision_offset")),
+                       RMGET<sf::Vector2f>("specials", id, "size"),
+                       collision::Circle(RMGET<float>("specials", id, "collision_radius"),
+                                         RMGET<sf::Vector2f>("specials", id, "collision_offset")),
                        &RM.getTexture("specials/" + id),
-                       j3x::get<int>(RM.getObjectParams("specials", id), "z_index"),
-                       j3x::get<int>(RM.getObjectParams("specials", id), "frames_number"),
-                       j3x::get<float>(RM.getObjectParams("specials", id), "frame_duration"),
+                       RMGET<int>("specials", id, "z_index"),
+                       RMGET<int>("specials", id, "frames_number"),
+                       RMGET<float>("specials", id, "frame_duration"),
                        0.0f),
         Functional(activation, functions, datas, id, u_id),
-        is_drawable_(j3x::get<bool>(RM.getObjectParams("specials", id), "is_drawable")),
+        is_drawable_(RMGET<bool>("specials", id, "is_drawable")),
         additional_boolean_data_(false)
 {
-    this->changeOrigin(j3x::get<sf::Vector2f>(RM.getObjectParams("specials", id), "size") / 2.0f +
-                               j3x::get<sf::Vector2f>(RM.getObjectParams("specials", id), "map_offset"));
+    this->changeOrigin(RMGET<sf::Vector2f>("specials", id, "size") / 2.0f +
+                               RMGET<sf::Vector2f>("specials", id, "map_offset"));
 
     if (is_active)
         this->activate();
     else
         this->deactivate();
 
-    if (j3x::get<bool>(RM.getObjectParams("specials", id), "light_point"))
+    if (RMGET<bool>("specials", id, "light_point"))
     {
-        float light_size = CFG.get<float>("graphics/specials_light_point_size") * CFG.get<float>("graphics/global_zoom");
+        float light_size = CONF<float>("graphics/specials_light_point_size") * CONF<float>("graphics/global_zoom");
         light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
                                                         sf::Vector2f{light_size, light_size},
                                                         &RM.getTexture("lightpoint"));
     }
 
-    auto shadow_pos = this->getPosition() - j3x::get<sf::Vector2f>(RM.getObjectParams("specials", id), "map_offset");
+    auto shadow_pos = this->getPosition() - RMGET<sf::Vector2f>("specials", id, "map_offset");
 
-    if (j3x::get<bool>(RM.getObjectParams("specials", id), "shadow"))
+    if (RMGET<bool>("specials", id, "shadow"))
     {
         static_shadow_ = std::make_unique<graphics::TransformedTextureShadow>(
-                shadow_pos, this->getSize(), CFG.get<float>("graphics/shadow_direction"),
-                CFG.get<float>("graphics/shadow_length_factor"),
-                &RM.getTexture("specials/" + id), sf::Color(CFG.get<int>("graphics/shadow_color")),
+                shadow_pos, this->getSize(), CONF<float>("graphics/shadow_direction"),
+                CONF<float>("graphics/shadow_length_factor"),
+                &RM.getTexture("specials/" + id), sf::Color(CONF<int>("graphics/shadow_color")),
                 z_index_,
-                j3x::get<int>(RM.getObjectParams("specials", id), "frames_number"),
-                j3x::get<float>(RM.getObjectParams("specials", id), "frame_duration"));
+                RMGET<int>("specials", id, "frames_number"),
+                RMGET<float>("specials", id, "frame_duration"));
     }
 }
 

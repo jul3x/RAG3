@@ -58,27 +58,27 @@ namespace r3e::j3x {
         }
 
     private:
-        void addNewVariable(const Ident& x, const std::any &value, const std::string &type) {
+        void addNewVariable(const Ident& x, const std::any &value, const std::string &type, int line_number) {
             std::string new_name = ns_.empty() ? x : ns_ + "/" + x;
             if (checkExistance(new_name))
-                throw std::invalid_argument("Redeclaration of \"" + new_name + "\" variable!");
+                throw std::invalid_argument("line number " + std::to_string(line_number) + " - Redeclaration of \"" + new_name + "\" variable!");
 
             variables_[new_name] = value;
             types_[new_name] = type;
         }
 
-        const std::string &getVariableType(const Ident& x) {
+        const std::string &getVariableType(const Ident& x, int line_number) {
             std::string new_name = ns_.empty() ? x : ns_ + "/" + x;
             if (!checkExistance(new_name))
-                throw std::invalid_argument("Variable \"" + new_name + "\" does not exist!");
+                throw std::invalid_argument("line number " + std::to_string(line_number) + " - Variable \"" + new_name + "\" does not exist!");
 
             return types_.find(new_name)->second;
         }
 
-        const std::any &getVariableValue(const Ident& x) {
+        const std::any &getVariableValue(const Ident& x, int line_number) {
             std::string new_name = ns_.empty() ? x : ns_ + "/" + x;
             if (!checkExistance(new_name))
-                throw std::invalid_argument("Variable \"" + new_name + "\" does not exist!");
+                throw std::invalid_argument("line number " + std::to_string(line_number) + " - Variable \"" + new_name + "\" does not exist!");
 
             return variables_.find(new_name)->second;
         }

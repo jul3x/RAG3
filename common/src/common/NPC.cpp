@@ -19,9 +19,9 @@
 
 NPC::NPC(const sf::Vector2f& position, const std::string& id, int u_id) :
         NPC(position, id,
-            j3x::get<std::string>(RM.getObjectParams("characters", id), "default_activation"),
-            j3x::get<j3x::List>(RM.getObjectParams("characters", id), "default_functions"),
-            j3x::get<j3x::List>(RM.getObjectParams("characters", id), "default_datas"), u_id)
+            RMGET<std::string>("characters", id, "default_activation"),
+            RMGET<j3x::List>("characters", id, "default_functions"),
+            RMGET<j3x::List>("characters", id, "default_datas"), u_id)
 {
 
 }
@@ -31,11 +31,11 @@ NPC::NPC(const sf::Vector2f& position, const std::string& id,
          const j3x::List& datas, int u_id) :
         Character(position, id, activation, functions, datas, u_id)
 {
-    if (j3x::get<std::string>(RM.getObjectParams("characters", id), "ai_type") == "Standard")
+    if (RMGET<std::string>("characters", id, "ai_type") == "Standard")
     {
         ai_function_ = &NPC::standardAI;
     }
-    else if (j3x::get<std::string>(RM.getObjectParams("characters", id), "ai_type") == "MeleeAttack")
+    else if (RMGET<std::string>("characters", id, "ai_type") == "MeleeAttack")
     {
         ai_function_ = &NPC::meleeAttackAI;
     }
@@ -331,13 +331,13 @@ void NPC::standardAI(float time_elapsed)
     handleActionState();
 
     auto& enemy_position = current_enemy_->getPosition();
-    auto velocity = j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") * this->generateVelocityForPath();
+    auto velocity = RMGET<float>("characters", this->getId(), "max_speed") * this->generateVelocityForPath();
 
     switch (action_state_)
     {
         case ActionState::StandBy:
         {
-            velocity = j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed")
+            velocity = RMGET<float>("characters", this->getId(), "standby_speed")
                     * this->getWanderingDirection(0.2f, 100.0f, 20);
 
             this->setNoGoal();
@@ -390,7 +390,7 @@ void NPC::standardAI(float time_elapsed)
     if (utils::num::isNearlyEqual(velocity, {0.0f, 0.0f}) &&
         action_state_ != ActionState::Shot && action_state_ != ActionState::DestroyWall)
     {
-        velocity = j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed") *
+        velocity = RMGET<float>("characters", this->getId(), "standby_speed") *
                    this->getWanderingDirection(0.2f, 100.0f, 20);
         this->setWeaponPointing(this->getPosition() + velocity);
     }
@@ -408,13 +408,13 @@ void NPC::meleeAttackAI(float time_elapsed)
     handleActionMeleeState();
 
     auto& enemy_position = current_enemy_->getPosition();
-    auto velocity = j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") * this->generateVelocityForPath();
+    auto velocity = RMGET<float>("characters", this->getId(), "max_speed") * this->generateVelocityForPath();
 
     switch (action_state_)
     {
         case ActionState::StandBy:
         {
-            velocity = j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed")
+            velocity = RMGET<float>("characters", this->getId(), "standby_speed")
                     * this->getWanderingDirection(0.2f, 100.0f, 20);
 
             this->setNoGoal();
@@ -444,7 +444,7 @@ void NPC::meleeAttackAI(float time_elapsed)
     if (utils::num::isNearlyEqual(velocity, {0.0f, 0.0f}) &&
         action_state_ != ActionState::Shot && action_state_ != ActionState::DestroyWall)
     {
-        velocity = j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed") *
+        velocity = RMGET<float>("characters", this->getId(), "standby_speed") *
                    this->getWanderingDirection(0.2f, 100.0f, 20);
         this->setWeaponPointing(this->getPosition() + velocity);
     }
@@ -459,7 +459,7 @@ void NPC::handleActionMeleeState()
         case VisibilityState::Close:
         {
             if (utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition()) <
-                    CFG.get<float>("characters/min_melee_distance_ai"))
+                    CONF<float>("characters/min_melee_distance_ai"))
                 action_state_ = ActionState::Shot;
             else
                 action_state_ = ActionState::Follow;

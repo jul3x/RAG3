@@ -360,7 +360,7 @@ void Character::setRotation(float theta)
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
 
-            if (new_quarter == 11 && theta >= 45.0f + Character::ROTATING_HYSTERESIS_)
+            if (new_quarter == 11 && theta >= 45.0f + CONF<float>("characters/rotating_hysteresis"))
                 current_rotation_quarter_ = 11;
             else if (new_quarter != 11)
                 current_rotation_quarter_ = new_quarter;
@@ -372,7 +372,7 @@ void Character::setRotation(float theta)
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
 
-            if (new_quarter == 3 && theta >= 90.0f + Character::ROTATING_HYSTERESIS_)
+            if (new_quarter == 3 && theta >= 90.0f + CONF<float>("characters/rotating_hysteresis"))
                 current_rotation_quarter_ = 3;
             else if (new_quarter != 3)
                 current_rotation_quarter_ = new_quarter;
@@ -386,7 +386,7 @@ void Character::setRotation(float theta)
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
 
-            if (new_quarter == 11 && theta < 90.0f - Character::ROTATING_HYSTERESIS_)
+            if (new_quarter == 11 && theta < 90.0f - CONF<float>("characters/rotating_hysteresis"))
                 current_rotation_quarter_ = 1;
             else if (new_quarter != 11)
                 current_rotation_quarter_ = new_quarter;
@@ -400,7 +400,7 @@ void Character::setRotation(float theta)
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
 
-            if (new_quarter == 2 && theta < 135.0f - Character::ROTATING_HYSTERESIS_)
+            if (new_quarter == 2 && theta < 135.0f - CONF<float>("characters/rotating_hysteresis"))
                 current_rotation_quarter_ = 2;
             else if (new_quarter != 2)
                 current_rotation_quarter_ = new_quarter;
@@ -414,7 +414,7 @@ void Character::setRotation(float theta)
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
 
-            if (new_quarter == 4 && theta >= 270.0f + Character::ROTATING_HYSTERESIS_)
+            if (new_quarter == 4 && theta >= 270.0f + CONF<float>("characters/rotating_hysteresis"))
                 current_rotation_quarter_ = 4;
             else if (new_quarter != 4)
                 current_rotation_quarter_ = new_quarter;
@@ -426,7 +426,7 @@ void Character::setRotation(float theta)
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
 
-            if (new_quarter == 3 && theta < 270.0f - Character::ROTATING_HYSTERESIS_)
+            if (new_quarter == 3 && theta < 270.0f - CONF<float>("characters/rotating_hysteresis"))
                 current_rotation_quarter_ = 3;
             else if (new_quarter != 3)
                 current_rotation_quarter_ = new_quarter;

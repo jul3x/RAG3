@@ -27,7 +27,6 @@ public:
 
 
 private:
-    static constexpr float BULLET_STARTING_OFFSET_ = 10.0f;
     // weapon parameters
     std::string spawn_type_;
     int spawn_quantity_;

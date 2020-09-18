@@ -580,17 +580,13 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
             journal_->event<ShotObstacle>(obstacle);
             obstacle->getShot(*bullet);
 
-            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                             static_cast<float>(std::pow(
-                                     CONF<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
 
             bullet->setDead();
         }
         else if (obstacle_tile != nullptr)
         {
-            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                             static_cast<float>(std::pow(
-                                     CONF<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
 
             bullet->setDead();
         }

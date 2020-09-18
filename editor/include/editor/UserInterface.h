@@ -67,15 +67,8 @@ namespace editor {
         inline void
         handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos, float time_elapsed);
 
-        static constexpr float LOGO_OFF_X_ = 240.0f;
-        static constexpr float LOGO_OFF_Y_ = 120.0f;
-        static constexpr float LOGO_SIZE_X_ = 512.0f;
-        static constexpr float LOGO_SIZE_Y_ = 288.0f;
-
         Camera* camera_;
-
         Crosshair crosshair_;
-
         AbstractDrawableObject logo_;
 
         tgui::Gui gui_;

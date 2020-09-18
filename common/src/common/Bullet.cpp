@@ -31,7 +31,7 @@ Bullet::Bullet(Character* user,
         trail_time_elapsed_(0.0f),
         life_(RMGET<float>("bullets", id, "life")),
         deadly_factor_(RMGET<float>("bullets", id, "deadly_factor")),
-        TRAIL_TIME_STEP_(CONF<float>("graphics/full_trail_time") / Bullet::TRAIL_COUNT_)
+        TRAIL_TIME_STEP_(CONF<float>("graphics/full_trail_time") / CONF<int>("graphics/bullet_trail_vertices"))
 {
     this->setRotation(direction * 180.0f / static_cast<float>(M_PI));
 }
@@ -58,7 +58,7 @@ bool Bullet::update(float time_elapsed)
 
         trail_.push_back(this->getPosition());
 
-        if (trail_.size() > TRAIL_COUNT_)
+        if (trail_.size() > CONF<int>("graphics/bullet_trail_vertices"))
         {
             trail_.pop_front();
         }

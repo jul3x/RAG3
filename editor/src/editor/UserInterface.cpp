@@ -16,9 +16,9 @@
 using namespace editor;
 
 UserInterface::UserInterface() :
-        logo_(sf::Vector2f{CONF<int>("window_width_px") - LOGO_OFF_X_ * CONF<float>("user_interface_zoom"),
-                           LOGO_OFF_Y_ * CONF<float>("user_interface_zoom")},
-              CONF<float>("user_interface_zoom") * sf::Vector2f{LOGO_SIZE_X_, LOGO_SIZE_Y_},
+        logo_(sf::Vector2f{CONF<int>("window_width_px") - CONF<sf::Vector2f>("logo_pos_off").x,
+                           CONF<sf::Vector2f>("logo_pos_off").y},
+              CONF<sf::Vector2f>("logo_size"),
               &RM.getTexture("rag3_logo")),
         gui_theme_("../data/config/gui_theme.txt"),
         tiles_window_(this, &gui_, &gui_theme_, "Tiles",
@@ -199,8 +199,8 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 camera_->setViewNormalSize(current_view.getSize());
                 gui_.setView(static_view);
 
-                logo_.setPosition(event.size.width - LOGO_OFF_X_ * CONF<float>("user_interface_zoom"),
-                                  LOGO_OFF_Y_ * CONF<float>("user_interface_zoom"));
+                logo_.setPosition(event.size.width - CONF<sf::Vector2f>("logo_pos_off").x,
+                                  CONF<sf::Vector2f>("logo_pos_off").y);
 
                 break;
             }

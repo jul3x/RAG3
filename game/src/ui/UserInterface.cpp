@@ -66,7 +66,7 @@ void UserInterface::registerCamera(Camera* camera)
 void UserInterface::spawnAchievement(const std::string& title, const std::string& text, const std::string& tex)
 {
     achievements_.emplace_back(sf::Vector2f{CONF<int>("graphics/window_width_px") - ACHIEVEMENTS_MARGIN_,
-                                            (ACHIEVEMENTS_MARGIN_ + Achievement::SIZE_Y_) * (achievements_.size() + 1)},
+                                            (ACHIEVEMENTS_MARGIN_ + CONF<sf::Vector2f>("graphics/achievement_size").y) * (achievements_.size() + 1)},
                                title, text, &RM.getTexture(tex));
 }
 

@@ -1,3 +1,4 @@
+// GRAPHICS SETTINGS
 bool auto_resolution = false
 bool full_screen = false
 int window_width_px = 3000
@@ -5,11 +6,16 @@ int window_height_px = 1500
 float global_zoom = 4.0
 float user_interface_zoom = global_zoom / 2.0
 
+// COLORS
 int background_color = 286331136
 int trail_color = -208
-float full_trail_time = 0.2
 int font_color = -86
 
+// BULLET TRAILS
+float full_trail_time = 0.2
+int bullet_trail_vertices = 10
+
+// FONTS
 float use_text_size = 16
 float thought_text_size = 16
 float stats_text_size = 36 * user_interface_zoom
@@ -17,11 +23,13 @@ float weapons_text_size = 24 * user_interface_zoom
 float achievement_title_text_size = 24 * user_interface_zoom
 float achievement_text_text_size = 20 * user_interface_zoom
 
+// FIRE GRAPHICS
 int fire_color = -1
 float fire_frame_times = 2.5
 int fire_frames = 4
 float fire_image_size = 66.0
 
+// CAMERA SETTINGS
 float fade_in_out_duration = 0.2
 float camera_speed = 4.0
 float camera_zoom_speed = 5.0
@@ -35,13 +43,25 @@ float camera_zoom_inout_time = 0.7
 float camera_right_click_distance_factor = 100.0
 float camera_right_click_zoom_factor = 0.6
 
+// MISC
 float blood_pulsating_time = 5.0
-float sparks_size_factor = 30000.0
 float inertial_states_change_speed = 4.0
+vector crosshair_size = (25.0 * user_interface_zoom, 25.0 * user_interface_zoom)
 
+// ACHIEVEMENT POPUPS
 float achievement_show_speed = 4.0
 float achievement_show_time = 10.0
+vector achievement_size = (350.0 * user_interface_zoom, 100.0 * user_interface_zoom)
+vector achievement_img_size = (70.0 * user_interface_zoom, 70.0 * user_interface_zoom)
+vector achievement_img_pos = (15.0 * user_interface_zoom, -85.0 * user_interface_zoom)
+vector achievement_title_pos = (-140.0 * user_interface_zoom, -90.0 * user_interface_zoom)
+vector achievement_text_pos = (-250.0 * user_interface_zoom, -50.0 * user_interface_zoom)
+int achievement_title_color = -1
+int achievement_text_color = -858993409
+int achievement_top_color = 1010580735
+int achievement_bottom_color = 606348543
 
+// LIGHT & SHADOW
 float characters_light_point_size = 150.0
 float obstacles_light_point_size = 96.0
 float specials_light_point_size = 96.0
@@ -52,3 +72,13 @@ int lightning_color = 2004318207
 float shadow_direction = 0.4
 float shadow_length_factor = 0.8
 int shadow_color = 170
+
+// THOUGHTS
+vector thought_size_bottom = (128.0, 16.0)
+vector thought_size_center = (128.0, 8.0)
+vector thought_size_top = (128.0, 8.0)
+vector thought_offset = (16.0, -32.0)
+float thought_text_margin = 4.0
+
+// HUD
+vector health_size = (250.0 * user_interface_zoom, 250.0 * user_interface_zoom)

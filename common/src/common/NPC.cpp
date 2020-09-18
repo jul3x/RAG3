@@ -151,14 +151,14 @@ void NPC::handleVisibilityState()
 
         walls_between += map_blockage_->blockage_.at(rounded_x).at(rounded_y);
 
-        if (walls_between > NPC::WALLS_BETWEEN_FAR_) break;
+        if (walls_between > CONF<float>("characters/walls_between_far_ai")) break;
     }
 
-    if (utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition()) > NPC::MAX_DISTANCE_)
+    if (utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition()) > CONF<float>("characters/max_distance_ai"))
         visibility_state_ = VisibilityState::OutOfRange;
-    else if (walls_between <= NPC::WALLS_BETWEEN_CLOSE_)
+    else if (walls_between <= CONF<float>("characters/walls_between_close_ai"))
         visibility_state_ = VisibilityState::Close;
-    else if (walls_between <= NPC::WALLS_BETWEEN_FAR_)
+    else if (walls_between <= CONF<float>("characters/walls_between_far_ai"))
         visibility_state_ = VisibilityState::Far;
     else
         visibility_state_ = VisibilityState::TooFar;

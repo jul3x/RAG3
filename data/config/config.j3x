@@ -1,20 +1,27 @@
+// CHEATS
 bool god_mode = true
 bool no_clip_mode = false
+
+// COLLISION DETECTION SETTINGS
 float collision_grid_size = 150.0
 
+// DESTRUCTION POWER FACTORS
 float obstacles_endurance_factor = 3
 float get_shot_factor = 640.0
-float bullet_time_factor = 0.3
 
+// TIME MANIPULATION MECHANICS
+float bullet_time_factor = 0.3
 float journal_sampling_rate = 30.0
 float journal_max_time = 10.0
 float journal_min_time = 3.0
 float time_reversal_speed_factor = 5.0
 float player_clone_time_factor = 3.0
 
+// MISC
 float thought_duration = 5.0
-
 float side_stepping_freeze_time = 0.5
+
+// FIRE MECHANICS
 float on_fire_hurt_speed = 10.0
 float on_fire_time = 3.0
 float fire_life = 1.0
@@ -26,12 +33,15 @@ float fire_spread_distance = 1000.0
 float fire_collision_factor = 0.5
 float fire_collision_offset = 16.0
 
+// EXPLOSIONS
 float explosion_hurt_factor = 30.0
 float explosion_velocity_factor = 1280.0
 float explosion_force_duration = 0.2
 
+// MELEE
 float melee_weapon_range = 20.0
 float melee_weapon_offset_x = 20.0
 
+// FORCES
 float shot_force_duration = 0.1
 float side_step_force_duration = 0.1

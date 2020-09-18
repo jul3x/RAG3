@@ -14,9 +14,6 @@ class Crosshair : public AbstractDrawableObject {
 public:
     explicit Crosshair();
 
-private:
-    static constexpr float SIZE_X_ = 25.0f;
-    static constexpr float SIZE_Y_ = 25.0f;
 };
 
 #endif //RAG3_GAME_INCLUDE_UI_CROSSHAIR_H

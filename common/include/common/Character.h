@@ -130,8 +130,6 @@ protected:
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    static constexpr float ROTATING_HYSTERESIS_ = 10.0f;
-
     sf::Vector2f gun_offset_;
     float rotate_to_;
     float speed_factor_;

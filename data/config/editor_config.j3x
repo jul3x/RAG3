@@ -7,6 +7,7 @@ int background_color = 858993408
 float user_interface_zoom = 2.0
 
 // CAMERA SETTINGS
+float camera_moving_factor = 2.0
 float camera_speed = 4.0
 float camera_zoom_speed = 5.0
 

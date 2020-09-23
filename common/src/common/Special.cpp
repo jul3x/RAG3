@@ -111,3 +111,13 @@ void Special::draw(sf::RenderTarget& target, sf::RenderStates states) const
         target.draw(*static_shadow_, states);
     target.draw(shape_, states);
 }
+
+void Special::setPosition(const sf::Vector2f &pos) {
+    AbstractDrawableObject::setPosition(pos);
+
+    if (light_ != nullptr)
+        light_->setPosition(pos);
+    if (static_shadow_ != nullptr)
+        static_shadow_->setPosition(pos - RMGET<sf::Vector2f>("specials", this->getId(), "map_offset") +
+                                    RMGET<sf::Vector2f>("specials", this->getId(), "shadow_offset", true));
+}

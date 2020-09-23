@@ -31,6 +31,8 @@ public:
     void setCurrentFrame(short int frame) override;
     void changeTexture(sf::Texture* texture, bool reset = false) override;
 
+    void setPosition(const sf::Vector2f& pos) override;
+
     bool update(float time_elapsed) override;
 
 private:

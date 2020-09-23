@@ -110,3 +110,13 @@ void Obstacle::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(shape_, states);
 }
 
+void Obstacle::setPosition(const sf::Vector2f &pos)
+{
+    AbstractDrawableObject::setPosition(pos);
+
+    if (light_ != nullptr)
+        light_->setPosition(pos);
+    if (static_shadow_ != nullptr)
+        static_shadow_->setPosition(pos - RMGET<sf::Vector2f>("obstacles", this->getId(), "map_offset") +
+                RMGET<sf::Vector2f>("obstacles", this->getId(), "shadow_offset", true));
+}

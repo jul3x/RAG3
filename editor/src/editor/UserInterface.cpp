@@ -385,11 +385,31 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window, float 
 inline void UserInterface::handleCameraCenter(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos,
                                               float time_elapsed)
 {
+    static sf::Vector2f previous_mouse_pos = mouse_world_pos;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        sf::Vector2f vec = camera_->getPointingTo() + previous_mouse_world_pos_ - mouse_world_pos;
-        camera_->setPointingTo(vec);
+        mouse_camera_center_vectors_.emplace_back(previous_mouse_pos - mouse_world_pos);
+
+        if (mouse_camera_center_vectors_.size() > MIN_VECTORS_TO_MOVE_)
+        {
+            sf::Vector2f vec = {};
+            for (const auto& vector : mouse_camera_center_vectors_)
+            {
+                vec += vector;
+            }
+
+            vec = vec / static_cast<float>(mouse_camera_center_vectors_.size()) * CFG.get<float>("camera_moving_factor");
+            camera_->setPointingTo(camera_->getPointingTo() + vec);
+
+            mouse_camera_center_vectors_.pop_front();
+        }
     }
+    else
+    {
+        mouse_camera_center_vectors_.clear();
+    }
+
+    previous_mouse_pos = mouse_world_pos;
 }
 
 inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos,

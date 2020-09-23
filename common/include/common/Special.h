@@ -36,6 +36,7 @@ public:
     bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f) override;
     void setCurrentFrame(short int frame) override;
     void changeTexture(sf::Texture* texture, bool reset = false) override;
+    void setPosition(const sf::Vector2f& pos) override;
 
     void setAdditionalBooleanData(bool data);
 

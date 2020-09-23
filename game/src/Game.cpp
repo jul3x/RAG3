@@ -921,8 +921,7 @@ void Game::talk()
     auto curr = player_->getCurrentTalkableCharacter();
     if (curr != nullptr)
     {
-        auto still_talking = curr->talk(std::bind(&Game::spawnThought, this, std::placeholders::_1,
-                std::placeholders::_2),
+        auto still_talking = curr->talk([this](Character* character, const std::string& text) { this->spawnThought(character, text); },
                 player_.get());
 
         if (!still_talking)

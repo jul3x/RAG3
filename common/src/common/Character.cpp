@@ -619,18 +619,14 @@ bool Character::talk(const std::function<void(Character*, const std::string&)> &
 {
     if (!should_respond_)
     {
-        if ((talk_scenario_.size() - talk_moment_) % 2 != 0)
-        {
-            ++talk_moment_;
-        }
-
         if (talk_moment_ < talk_scenario_.size())
         {
             talking_func(character, j3x::getObj<std::string>(talk_scenario_, talk_moment_));
             talking_func_ = talking_func;
             ++talk_moment_;
 
-            should_respond_ = true;
+            if (talk_moment_ < talk_scenario_.size())
+                should_respond_ = true;
             talking_time_elapsed_ = CONF<float>("characters/talking_respond_time");
         }
     }

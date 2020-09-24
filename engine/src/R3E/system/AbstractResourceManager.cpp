@@ -19,12 +19,26 @@ namespace r3e {
               sounds_directory_{std::move(sounds_dir)},
               music_directory_{std::move(music_dir)}
     {
-        textures_smooth_allowed_ = false;
     }
 
     void AbstractResourceManager::setTexturesSmoothAllowed(bool allowed)
     {
         textures_smooth_allowed_ = allowed;
+
+        for (auto& texture : textures_)
+        {
+            texture.second.setSmooth(textures_smooth_allowed_);
+        }
+    }
+
+    void AbstractResourceManager::setFontsSmoothAllowed(bool allowed)
+    {
+        fonts_smooth_allowed_ = allowed;
+
+        for (auto& font : fonts_)
+        {
+            font.second.setSmooth(fonts_smooth_allowed_);
+        }
     }
 
     j3x::Parameters& AbstractResourceManager::getParameters(const std::string& key)
@@ -79,8 +93,7 @@ namespace r3e {
             throw std::runtime_error("[AbstractResourceManager] " + key + " texture file not successfully loaded.");
         }
 
-        if (!textures_smooth_allowed_)
-            textures_[key].setSmooth(false);
+        textures_[key].setSmooth(textures_smooth_allowed_);
 
         std::cout << "[AbstractResourceManager] Texture " << key << " is loaded!" << std::endl;
     }
@@ -91,6 +104,8 @@ namespace r3e {
         {
             throw std::runtime_error("[AbstractResourceManager] " + key + " font file not successfully loaded.");
         }
+
+        fonts_[key].setSmooth(fonts_smooth_allowed_);
 
         std::cout << "[AbstractResourceManager] Font " << key << " is loaded!" << std::endl;
     }
@@ -115,13 +130,5 @@ namespace r3e {
         std::cout << "[AbstractResourceManager] Music " << key << " is loaded!" << std::endl;
     }
 
-    void AbstractResourceManager::setFontSmoothDisabled(sf::Font& font, const std::vector<float>& sizes)
-    {
-        for (const auto& size : sizes)
-        {
-            auto& texture = const_cast<sf::Texture&>(font.getTexture(static_cast<int>(size)));
-            texture.setSmooth(false);
-        }
-    }
 
 } // namespace r3e

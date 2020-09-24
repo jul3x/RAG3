@@ -13,7 +13,6 @@ AbstractWeapon::AbstractWeapon(Character* user,
                                const sf::Vector2f& weapon_offset,
                                const std::string& name) :
         weapon_offset_(weapon_offset),
-        time_elapsed_(0.0f),
         Identifiable(name),
         user_(user),
         AbstractDrawableObject({}, size,

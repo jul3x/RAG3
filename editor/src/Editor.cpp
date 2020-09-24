@@ -77,12 +77,6 @@ void Editor::update(float time_elapsed)
 
 void Editor::draw(graphics::Graphics& graphics)
 {
-    RM.setFontSmoothDisabled(RM.getFont("editor"),
-                             {CONF<float>("label_text_size"),
-                              CONF<float>("information_text_size"),
-                              CONF<float>("crosshair_text_size"),
-                             });
-
     grid_.draw(graphics);
     auto max_z_index = ui_->getZIndex();
 

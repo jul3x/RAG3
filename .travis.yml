@@ -44,13 +44,21 @@ install:
       fi
 
     # Download and install SFML
-    - sudo apt-get install libudev-dev libvorbis-dev libflac-dev libopenal-dev libfreetype6-dev libx11-dev libxrandr-dev
+    - sudo apt-get install libudev-dev libvorbis-dev libflac-dev libopenal-dev libfreetype6-dev libx11-dev libxrandr-dev libxcursor-dev
     - git clone https://github.com/SFML/SFML --branch master
     - cd SFML
     - cmake .
     - make
     - sudo mv include/* /usr/include/
     - sudo mv lib/* /usr/lib/
+    - cd ..
+
+    # Download and install TGUI (due to authentication issue - manual PPA repo adding is forbidden :()
+    - git clone https://github.com/texus/TGUI --branch 0.8
+    - cd TGUI
+    - cmake .
+    - make -j2
+    - sudo make install
     - cd ..
 
 script:

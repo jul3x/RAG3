@@ -40,7 +40,7 @@ protected:
     Character* user_;
 
     sf::Vector2f weapon_offset_;
-    float time_elapsed_;
+    float time_elapsed_{0.0f};
 
     std::function<void(Character*, const std::string&, const sf::Vector2f&, float)> spawning_function_;
 

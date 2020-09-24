@@ -328,6 +328,7 @@ void UserInterface::draw(graphics::Graphics& graphics)
     graphics.draw(logo_);
     graphics.getWindow().draw(information_);
     gui_.draw();
+    RM.setFontsSmoothAllowed(false);
 }
 
 void UserInterface::spawnInfo(const std::string& msg)

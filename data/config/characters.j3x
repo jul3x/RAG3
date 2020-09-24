@@ -17,5 +17,8 @@ float min_melee_distance_ai = 48.0
 float max_distance_ai = 1500.0
 float walls_between_close_ai = 0.0
 float walls_between_far_ai = 1.0
+float max_time_without_path_recalc = 1000.0
+float min_pos_change_without_path_recalc = 20.0
+int max_path_search_depth = 1000
 
 

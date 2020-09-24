@@ -22,12 +22,9 @@ Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal)
 
 void Game::initialize()
 {
-    spawning_func_["bullet"] = std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
-            std::placeholders::_3, std::placeholders::_4);
-    spawning_func_["fire"] = std::bind(&Game::spawnFire, this, std::placeholders::_1, std::placeholders::_2,
-                                       std::placeholders::_3, std::placeholders::_4);
-    spawning_func_["Null"] = std::bind(&Game::spawnNull, this, std::placeholders::_1, std::placeholders::_2,
-                                       std::placeholders::_3, std::placeholders::_4);
+    spawning_func_["bullet"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnBullet(user, name, pos, dir); };
+    spawning_func_["fire"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnFire(user, name, pos, dir); };
+    spawning_func_["Null"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnNull(user, name, pos, dir); };
 
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     ui_ = std::make_unique<UserInterface>();
@@ -42,9 +39,9 @@ void Game::initialize()
 
     map_ = std::make_unique<Map>();
     agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
-                                                          1000.0f, // max time without recalculation of path in ms
-                                                          20.0f, // min change of goal to trigger recalculation
-                                                          1000); // max search of path
+                                                          CONF<float>("characters/max_time_without_path_recalc"),
+                                                          CONF<float>("characters/min_pos_change_without_path_recalc"),
+                                                          CONF<int>("characters/max_path_search_depth"));
 
     music_manager_ = std::make_unique<audio::MusicManager>();
     music_manager_->addDirectoryToQueue(CONF<std::string>("paths/music_dir"));
@@ -353,15 +350,6 @@ void Game::killNPC(NPC* npc)
 
 void Game::draw(graphics::Graphics& graphics)
 {
-    RM.setFontSmoothDisabled(RM.getFont(),
-                             {CONF<float>("graphics/use_text_size"),
-                              CONF<float>("graphics/thought_text_size"),
-                              CONF<float>("graphics/stats_text_size"),
-                              CONF<float>("graphics/weapons_text_size"),
-                              CONF<float>("graphics/achievement_title_text_size"),
-                              CONF<float>("graphics/achievement_text_text_size"),
-                             });
-
     auto draw = [&graphics](auto& list) {
         for (auto& obj : list)
             graphics.drawSorted(*obj);

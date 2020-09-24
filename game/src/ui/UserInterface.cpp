@@ -271,6 +271,8 @@ void UserInterface::draw(graphics::Graphics& graphics)
     }
 
     graphics.draw(crosshair_);
+
+    RM.setFontsSmoothAllowed(false);
 }
 
 inline void UserInterface::handleScrolling(float delta)

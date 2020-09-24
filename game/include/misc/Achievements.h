@@ -5,28 +5,34 @@
 #ifndef RAG3_GAME_INCLUDE_MISC_ACHIEVEMENTS_H
 #define RAG3_GAME_INCLUDE_MISC_ACHIEVEMENTS_H
 
+#include <unordered_set>
 #include <unordered_map>
 #include <string>
 
+#include <common/ResourceManager.h>
+
+#include <misc/Stats.h>
+
+using namespace r3e;
 
 class Achievements {
 public:
-    enum class Type {
-        FirstEnemyKill,
-        FirstCrystalPick,
-        FirstBarrelDestroyed
-    };
+    explicit Achievements(Stats* stats);
 
-    Achievements();
+    void load(const std::string& path);
 
-    const std::string& getAchievementText(Achievements::Type type) const;
-    const std::string& getAchievementTitle(Achievements::Type type) const;
-    const std::string& getAchievementTexture(Achievements::Type type) const;
+    void update(float time_elapsed);
 
 private:
-    std::unordered_map<Achievements::Type, std::string> achievements_texts_;
-    std::unordered_map<Achievements::Type, std::string> achievements_titles_;
-    std::unordered_map<Achievements::Type, std::string> achievements_textures_;
+    void check(const std::string& condition, int data, int delta_data);
+
+    Stats* stats_;
+    Stats saved_stats_;
+
+    float time_elapsed_{};
+
+    std::unordered_map<std::string, std::vector<std::pair<std::string, j3x::Parameters>>> achievements_by_condition_;
+    std::unordered_set<std::string> achievements_unlocked_;
 
 };
 

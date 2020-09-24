@@ -87,7 +87,7 @@ public:
     void spawnEvent(const std::string& name, const sf::Vector2f& pos, float dir = 0.0f, float r = 0.0f);
     void spawnSwirlEvent(const std::string& name, const sf::Vector2f& pos, bool flipped);
     void spawnExplosionForce(const sf::Vector2f& pos, float r);
-    void spawnAchievement(Achievements::Type type);
+    void spawnAchievement(const j3x::Parameters& params);
     void spawnThought(Character* user, const std::string& text);
     void spawnFadeInOut();
 

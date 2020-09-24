@@ -1,0 +1,6 @@
+string title = "Crystal acknowledgement"
+string description = "What a strange object..."
+string texture = "achievements/crystal"
+string condition = "Crystals"
+string compare = "MoreThan"
+int data = 1

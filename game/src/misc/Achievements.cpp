@@ -3,34 +3,74 @@
 //
 
 #include <misc/Achievements.h>
+#include <Game.h>
 
 
-Achievements::Achievements()
+Achievements::Achievements(Stats* stats) : stats_(stats)
 {
-    achievements_titles_[Achievements::Type::FirstEnemyKill] = "First enemy killed";
-    achievements_titles_[Achievements::Type::FirstCrystalPick] = "Crystal acknowledgement";
-    achievements_titles_[Achievements::Type::FirstBarrelDestroyed] = "Master of destruction";
-
-    achievements_texts_[Achievements::Type::FirstEnemyKill] = "First blood! Keep it going!";
-    achievements_texts_[Achievements::Type::FirstCrystalPick] = "What a strange object...";
-    achievements_texts_[Achievements::Type::FirstBarrelDestroyed] = "First barrel destroyed!";
-
-    achievements_textures_[Achievements::Type::FirstEnemyKill] = "achievements/blood";
-    achievements_textures_[Achievements::Type::FirstCrystalPick] = "achievements/crystal";
-    achievements_textures_[Achievements::Type::FirstBarrelDestroyed] = "achievements/barrel";
 }
 
-const std::string& Achievements::getAchievementText(Achievements::Type type) const
+void Achievements::load(const std::string &path)
 {
-    return achievements_texts_.at(type);
+    achievements_by_condition_.clear();
+    auto& achievements = RM.getListOfObjects(path);
+
+    for (auto& achievement : achievements)
+    {
+        auto& params = RM.getObjectParams("achievements", achievement);
+
+        achievements_by_condition_[j3x::get<std::string>(params, "condition")].emplace_back(std::make_pair(achievement, params));
+    }
 }
 
-const std::string& Achievements::getAchievementTitle(Achievements::Type type) const
+void Achievements::update(float time_elapsed)
 {
-    return achievements_titles_.at(type);
+    time_elapsed_ += time_elapsed;
+
+    if (time_elapsed_ >= CONF<float>("achievements_update_time"))
+    {
+        Stats diff_stats = *stats_ - saved_stats_;
+
+        try
+        {
+            if (diff_stats.getEnemiesKilled())
+            {
+                check("Kills", stats_->getEnemiesKilled(), diff_stats.getEnemiesKilled());
+            }
+
+            if (diff_stats.getCrystalsPicked())
+            {
+                check("Crystals", stats_->getCrystalsPicked(), diff_stats.getCrystalsPicked());
+            }
+
+            if (diff_stats.getExplosions())
+            {
+                check("BarrelsExplosions", stats_->getExplosions(), diff_stats.getExplosions());
+            }
+        }
+        catch (const std::out_of_range& e)
+        {
+            LOG.info("[Achievements] No achievements with given condition found.");
+        }
+
+        saved_stats_ = *stats_;
+        time_elapsed_ -= CONF<float>("achievements_update_time");
+    }
 }
 
-const std::string& Achievements::getAchievementTexture(Achievements::Type type) const
+void Achievements::check(const std::string &condition, int data, int delta_data)
 {
-    return achievements_textures_.at(type);
+    for (const auto& achievement : achievements_by_condition_.at(condition))
+    {
+        if (!achievements_unlocked_.count(achievement.first))
+        {
+            int compare_data = j3x::get<std::string>(achievement.second, "compare") == "InTime" ? delta_data : data;
+            if (j3x::get<int>(achievement.second, "data") <= compare_data)
+            {
+                achievements_unlocked_.emplace(achievement.first);
+
+                Game::get().spawnAchievement(achievement.second);
+            }
+        }
+    }
 }

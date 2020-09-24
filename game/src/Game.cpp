@@ -32,7 +32,9 @@ void Game::initialize()
     journal_ = std::make_unique<Journal>(CONF<float>("journal_max_time"), CONF<float>("journal_sampling_rate"));
     special_functions_ = std::make_unique<SpecialFunctions>();
     stats_ = std::make_unique<Stats>();
-    achievements_ = std::make_unique<Achievements>();
+    achievements_ = std::make_unique<Achievements>(stats_.get());
+    achievements_->load(CONF<std::string>("paths/achievements"));
+
     lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                                                                     static_cast<float>(CONF<int>("graphics/window_height_px"))},
                                                                             sf::Color(CONF<int>("graphics/lightning_color")));
@@ -144,6 +146,7 @@ void Game::update(float time_elapsed)
             updateBullets(time_elapsed);
             updateFire(time_elapsed);
 
+            achievements_->update(time_elapsed);
             journal_->update(time_elapsed);
             camera_->update(time_elapsed);
 
@@ -495,12 +498,12 @@ void Game::spawnThought(Character* user, const std::string& text)
     ui_->spawnThought(user, text);
 }
 
-void Game::spawnAchievement(Achievements::Type type)
+void Game::spawnAchievement(const j3x::Parameters& params)
 {
     ui_->spawnAchievement(
-            achievements_->getAchievementTitle(type),
-            achievements_->getAchievementText(type),
-            achievements_->getAchievementTexture(type)
+            j3x::get<std::string>(params, "title"),
+            j3x::get<std::string>(params, "description"),
+            j3x::get<std::string>(params, "texture")
     );
 }
 
@@ -1180,3 +1183,4 @@ void Game::registerLight(Lightable* lightable) const
         lightable->getLightPoint()->registerGraphics(engine_->getGraphics());
     }
 }
+

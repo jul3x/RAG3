@@ -1,0 +1,6 @@
+string title = "Double kill"
+string description = "On fire!"
+string texture = "achievements/blood"
+string condition = "Kills"
+string compare = "InTime"
+int data = 2

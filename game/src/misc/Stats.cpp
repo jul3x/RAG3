@@ -5,7 +5,14 @@
 #include <misc/Stats.h>
 #include <Game.h>
 
-Stats::Stats() : enemies_killed_(0), crystals_picked_(0), explosions_(0)
+
+Stats::Stats() :
+    enemies_killed_(0), crystals_picked_(0), explosions_(0)
+{
+}
+
+Stats::Stats(int kills, int crystals, int explosions) :
+        enemies_killed_(kills), crystals_picked_(crystals), explosions_(explosions)
 {
 }
 
@@ -19,38 +26,30 @@ int Stats::getCrystalsPicked() const
     return crystals_picked_;
 }
 
+int Stats::getExplosions() const
+{
+    return explosions_;
+}
+
 void Stats::killEnemy()
 {
     ++enemies_killed_;
-
-    if (enemies_killed_ == 1)
-    {
-        achievements_.emplace_back(Achievements::Type::FirstEnemyKill);
-
-        Game::get().spawnAchievement(Achievements::Type::FirstEnemyKill);
-    }
 }
 
 void Stats::pickCrystal()
 {
     ++crystals_picked_;
-
-    if (crystals_picked_ == 1)
-    {
-        achievements_.emplace_back(Achievements::Type::FirstCrystalPick);
-
-        Game::get().spawnAchievement(Achievements::Type::FirstCrystalPick);
-    }
 }
 
 void Stats::explode()
 {
     ++explosions_;
+}
 
-    if (explosions_ == 1)
-    {
-        achievements_.emplace_back(Achievements::Type::FirstBarrelDestroyed);
-
-        Game::get().spawnAchievement(Achievements::Type::FirstBarrelDestroyed);
-    }
+Stats Stats::operator-(const Stats &stats) const {
+    return Stats(
+            this->getEnemiesKilled() - stats.getEnemiesKilled(),
+            this->getCrystalsPicked() - stats.getCrystalsPicked(),
+            this->getExplosions() - stats.getExplosions()
+            );
 }

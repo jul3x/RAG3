@@ -35,11 +35,6 @@ target_link_libraries(${R3ENGINE_LIBRARY}
         ${SFML_SYSTEM_LIBRARY_RELEASE}
         ${SFML_AUDIO_LIBRARY_RELEASE})
 
-# j3x Parser test
-file(GLOB_RECURSE J3X_SRC "engine/src/R3E/j3x/*.cpp")
-set(J3X_PARSER "J3XParser")
-add_executable(${J3X_PARSER} ${J3X_SRC})
-
 # Common
 set(LIBRARY_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/build")
 file(GLOB_RECURSE COMMON_SRC "common/src/*.cpp")

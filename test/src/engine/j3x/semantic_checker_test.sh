@@ -9,10 +9,10 @@ ERROR_2=0
 function check()
 {
     ERROR=0
-    for f in $(find tests/$1 -type f -name "*.j3x")
+    for f in $(find $1 -type f -name "*.j3x")
     do
         echo "$f:"
-        ./Testj3x $f >> /dev/null
+        ../../../build_test/J3xTest $f >> /dev/null
         if [[ $? -ne $2 ]] ; then
             echo -e "\e[92mOK!\e[0m"
 	else
@@ -47,10 +47,18 @@ if [[ $# -eq 0 ]] ; then
 
     echo "Good: "
     print $ERROR_2
+
+    if [[ $ERROR_1 -eq 0 ]] && [[ $ERROR_2 -eq 0 ]] ; then
+        exit 0
+    else
+        exit 1
+    fi
+
 else
     echo $1" check:"
     check $1 $2
     ERROR=$?
     echo -e "\nResult:"
     print $ERROR
+    exit $ERROR
 fi

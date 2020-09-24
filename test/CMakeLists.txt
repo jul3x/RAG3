@@ -51,15 +51,17 @@ include_directories(../game/include)
 include_directories(${SFML_INCLUDE_DIR})
 
 set(EXECUTABLE_NAME "Rag3Test")
+set(J3X_TEST "J3xTest")
 set(TEST_MAIN "gtest.cpp")
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/build_test")
 
 file(GLOB_RECURSE TEST_SRC "src/*Test.cpp")
-file(GLOB_RECURSE GAME_SRC "../game/src/*.cpp")
+list(REMOVE_ITEM TEST_SRC "src/engine/j3x/Test.cpp")
 file(GLOB_RECURSE ENGINE_SRC "../engine/src/*.cpp")
-list(FILTER GAME_SRC EXCLUDE REGEX "main")
+list(FILTER TEST_SRC EXCLUDE REGEX "src/engine/j3x/Test.cpp")
 
-add_executable(${EXECUTABLE_NAME} ${TEST_MAIN} ${TEST_SRC} ${MAIN_SRC} ${ENGINE_SRC})
+add_executable(${EXECUTABLE_NAME} ${TEST_MAIN} ${TEST_SRC} ${ENGINE_SRC})
+add_executable(${J3X_TEST} "src/engine/j3x/Test.cpp" ${ENGINE_SRC})
 
 target_link_libraries(${EXECUTABLE_NAME} stdc++fs)
 target_link_libraries(${EXECUTABLE_NAME} gtest
@@ -67,6 +69,15 @@ target_link_libraries(${EXECUTABLE_NAME} gtest
         ${SFML_WINDOW_LIBRARY}
         ${SFML_SYSTEM_LIBRARY}
         ${SFML_AUDIO_LIBRARY})
+
+target_link_libraries(${J3X_TEST} stdc++fs)
+target_link_libraries(${J3X_TEST}
+        ${SFML_GRAPHICS_LIBRARY}
+        ${SFML_WINDOW_LIBRARY}
+        ${SFML_SYSTEM_LIBRARY}
+        ${SFML_AUDIO_LIBRARY})
+
 add_test(NAME ${EXECUTABLE_NAME} COMMAND ${EXECUTABLE_NAME})
+add_test(NAME ${J3X_TEST} COMMAND "src/engine/j3x/semantic_checker_test.sh")
 
 

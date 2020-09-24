@@ -36,17 +36,17 @@ Usage of this tool will be later described in *RAG3Editor* section.
 
 ## Build
 
-Package uses **C++17** language, so you need a compatible compiler. Tested on **g++7** and **MinGW64 6.0**.
+Package uses **C++17** language, so you need a compatible compiler. Tested on **g++9** and **MinGW64 6.0**.
 
 * **Windows**
-    - Download **SFML 2.5** and **TGUI 0.8** from their homepages.
+    - Download **SFML master** and **TGUI 0.8** from their homepages.
     - Change lines below in `CMakeLists.txt`  file to appropriate paths:
         ```
         set(SFML_ROOT "C:/SFML-2.5.1")
         set(TGUI_ROOT "C:/TGUI-0.8")
         ```
     - Copy `*.dll` files for **SFML** and **TGUI** to build directory
-    - Build package using **CMake 3.6** or higher.
+    - Build package using **CMake 3.8** or higher.
     - To build tests, there is another `test/CMakeLists.txt` file where you need change `SFML_ROOT` as well. 
     GTest from the latest commit on master branch required.
     

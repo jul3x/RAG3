@@ -2,7 +2,7 @@
 # Created by jul3x on 26.02.19.
 #
 
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.8)
 project(Rag3)
 
 set(CMAKE_CXX_STANDARD 17)

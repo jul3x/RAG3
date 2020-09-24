@@ -2,7 +2,7 @@
 # Created by jul3x on 16.07.19.
 #
 
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.8)
 set(CMAKE_CXX_STANDARD 17)
 
 # Download and unpack googletest at configure time

@@ -40,7 +40,7 @@ bool PlayerClone::update(float time_elapsed)
     handleActionState();
 
     auto enemy_position = current_enemy_ == nullptr ? sf::Vector2f{} : current_enemy_->getPosition();
-    auto velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") *
+    auto velocity = RMGET<float>("characters", this->getId(), "max_speed") *
                     this->getSpeedFactor() * this->generateVelocityForPath();
 
     switch (action_state_)
@@ -101,7 +101,7 @@ bool PlayerClone::update(float time_elapsed)
     if (utils::num::isNearlyEqual(velocity, {0.0f, 0.0f}) &&
         action_state_ != ActionState::Shot && action_state_ != ActionState::DestroyWall)
     {
-        velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed") *
+        velocity = RMGET<float>("characters", this->getId(), "standby_speed") *
                    this->getSpeedFactor() *
                    this->getWanderingDirection(0.2f, 100.0f, 20);
         this->setWeaponPointing(this->getPosition() + velocity);

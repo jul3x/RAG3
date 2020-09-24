@@ -13,14 +13,13 @@ AbstractWeapon::AbstractWeapon(Character* user,
                                const sf::Vector2f& weapon_offset,
                                const std::string& name) :
         weapon_offset_(weapon_offset),
-        time_elapsed_(0.0f),
         Identifiable(name),
         user_(user),
         AbstractDrawableObject({}, size,
                                name.empty() ? nullptr : &RM.getTexture("weapons/" + name),
-                               name.empty() ? 0 : utils::j3x::get<int>(RM.getObjectParams("weapons", name), "z_index"),
-                               name.empty() ? 1 : utils::j3x::get<int>(RM.getObjectParams("weapons", name), "frames_number"),
-                               name.empty() ? 0.0f : utils::j3x::get<float>(RM.getObjectParams("weapons", name), "frame_duration"))
+                               name.empty() ? 0 : RMGET<int>("weapons", name, "z_index"),
+                               name.empty() ? 1 : RMGET<int>("weapons", name, "frames_number"),
+                               name.empty() ? 0.0f : RMGET<float>("weapons", name, "frame_duration"))
 {
 }
 

@@ -1,25 +1,20 @@
-float recoil=3200.0f
+float recoil=3200.0
 
-float deadly_factor=3.0f
+float deadly_factor=3.0
 
-string spawn_func=Null
-float use_time=0.30f
-float spawn_timeout=1.0f
-string spawn_type=heavy
+string spawn_func="Null"
+float use_time=0.30
+float spawn_timeout=1.0
+string spawn_type="heavy"
 int spawn_quantity=1
-float spawn_angular_diff=0.0f
-float spawn_offset=0.0f
+float spawn_angular_diff=0.0
+float spawn_offset=0.0
 
-float size_x=9.0f
-float size_y=24.0f
-
-float offset_x=15.0f
-float offset_y=0.0f
-
-float map_offset_x=0.0f
-float map_offset_y=0.0f
+vector size=(9.0,24.0)
+vector offset=(15.0,0.0)
+vector map_offset=(0.0,0.0)
 
 int frames_number=6
-float frame_duration=0.05f
+float frame_duration=0.05
 
 int z_index=1

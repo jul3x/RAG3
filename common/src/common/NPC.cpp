@@ -19,23 +19,23 @@
 
 NPC::NPC(const sf::Vector2f& position, const std::string& id, int u_id) :
         NPC(position, id,
-            utils::j3x::get<std::string>(RM.getObjectParams("characters", id), "default_activation"),
-            utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("characters", id), "default_functions"),
-            utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("characters", id), "default_datas"), u_id)
+            RMGET<std::string>("characters", id, "default_activation"),
+            RMGET<j3x::List>("characters", id, "default_functions"),
+            RMGET<j3x::List>("characters", id, "default_datas"), u_id)
 {
 
 }
 
 NPC::NPC(const sf::Vector2f& position, const std::string& id,
-         const std::string& activation, const std::vector<std::string>& functions,
-         const std::vector<std::string>& datas, int u_id) :
+         const std::string& activation, const j3x::List& functions,
+         const j3x::List& datas, int u_id) :
         Character(position, id, activation, functions, datas, u_id)
 {
-    if (utils::j3x::get<std::string>(RM.getObjectParams("characters", id), "ai_type") == "Standard")
+    if (RMGET<std::string>("characters", id, "ai_type") == "Standard")
     {
         ai_function_ = &NPC::standardAI;
     }
-    else if (utils::j3x::get<std::string>(RM.getObjectParams("characters", id), "ai_type") == "MeleeAttack")
+    else if (RMGET<std::string>("characters", id, "ai_type") == "MeleeAttack")
     {
         ai_function_ = &NPC::meleeAttackAI;
     }
@@ -44,6 +44,7 @@ NPC::NPC(const sf::Vector2f& position, const std::string& id,
         ai_function_ = &NPC::noneAI;
     }
 
+    // (sic!) - issues with LightPoints
     AbstractPhysicalObject::setPosition(position);
 }
 
@@ -150,14 +151,14 @@ void NPC::handleVisibilityState()
 
         walls_between += map_blockage_->blockage_.at(rounded_x).at(rounded_y);
 
-        if (walls_between > NPC::WALLS_BETWEEN_FAR_) break;
+        if (walls_between > CONF<float>("characters/walls_between_far_ai")) break;
     }
 
-    if (utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition()) > NPC::MAX_DISTANCE_)
+    if (utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition()) > CONF<float>("characters/max_distance_ai"))
         visibility_state_ = VisibilityState::OutOfRange;
-    else if (walls_between <= NPC::WALLS_BETWEEN_CLOSE_)
+    else if (walls_between <= CONF<float>("characters/walls_between_close_ai"))
         visibility_state_ = VisibilityState::Close;
-    else if (walls_between <= NPC::WALLS_BETWEEN_FAR_)
+    else if (walls_between <= CONF<float>("characters/walls_between_far_ai"))
         visibility_state_ = VisibilityState::Far;
     else
         visibility_state_ = VisibilityState::TooFar;
@@ -330,13 +331,14 @@ void NPC::standardAI(float time_elapsed)
     handleActionState();
 
     auto& enemy_position = current_enemy_->getPosition();
-    auto velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") * this->generateVelocityForPath();
+    auto velocity = RMGET<float>("characters", this->getId(), "max_speed") * this->generateVelocityForPath();
 
     switch (action_state_)
     {
         case ActionState::StandBy:
         {
-            velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed") * this->getWanderingDirection(0.2f, 100.0f, 20);
+            velocity = RMGET<float>("characters", this->getId(), "standby_speed")
+                    * this->getWanderingDirection(0.2f, 100.0f, 20);
 
             this->setNoGoal();
             this->setWeaponPointing(this->getPosition() + velocity);
@@ -388,7 +390,7 @@ void NPC::standardAI(float time_elapsed)
     if (utils::num::isNearlyEqual(velocity, {0.0f, 0.0f}) &&
         action_state_ != ActionState::Shot && action_state_ != ActionState::DestroyWall)
     {
-        velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed") *
+        velocity = RMGET<float>("characters", this->getId(), "standby_speed") *
                    this->getWanderingDirection(0.2f, 100.0f, 20);
         this->setWeaponPointing(this->getPosition() + velocity);
     }
@@ -406,13 +408,14 @@ void NPC::meleeAttackAI(float time_elapsed)
     handleActionMeleeState();
 
     auto& enemy_position = current_enemy_->getPosition();
-    auto velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "max_speed") * this->generateVelocityForPath();
+    auto velocity = RMGET<float>("characters", this->getId(), "max_speed") * this->generateVelocityForPath();
 
     switch (action_state_)
     {
         case ActionState::StandBy:
         {
-            velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed") * this->getWanderingDirection(0.2f, 100.0f, 20);
+            velocity = RMGET<float>("characters", this->getId(), "standby_speed")
+                    * this->getWanderingDirection(0.2f, 100.0f, 20);
 
             this->setNoGoal();
             this->setWeaponPointing(this->getPosition() + velocity);
@@ -441,7 +444,7 @@ void NPC::meleeAttackAI(float time_elapsed)
     if (utils::num::isNearlyEqual(velocity, {0.0f, 0.0f}) &&
         action_state_ != ActionState::Shot && action_state_ != ActionState::DestroyWall)
     {
-        velocity = utils::j3x::get<float>(RM.getObjectParams("characters", this->getId()), "standby_speed") *
+        velocity = RMGET<float>("characters", this->getId(), "standby_speed") *
                    this->getWanderingDirection(0.2f, 100.0f, 20);
         this->setWeaponPointing(this->getPosition() + velocity);
     }
@@ -456,7 +459,7 @@ void NPC::handleActionMeleeState()
         case VisibilityState::Close:
         {
             if (utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition()) <
-                    CFG.get<float>("characters/min_melee_distance_ai"))
+                    CONF<float>("characters/min_melee_distance_ai"))
                 action_state_ = ActionState::Shot;
             else
                 action_state_ = ActionState::Follow;

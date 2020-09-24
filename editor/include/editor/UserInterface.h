@@ -59,6 +59,8 @@ namespace editor {
         int getZIndex() const;
 
     private:
+        static constexpr size_t MIN_VECTORS_TO_MOVE_ = 5;
+
         inline void generateMenuBar(sf::RenderWindow& window);
         inline void handleKeys();
         inline void handleMouse(sf::RenderWindow& graphics_window, float time_elapsed);
@@ -67,15 +69,8 @@ namespace editor {
         inline void
         handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos, float time_elapsed);
 
-        static constexpr float LOGO_OFF_X_ = 240.0f;
-        static constexpr float LOGO_OFF_Y_ = 120.0f;
-        static constexpr float LOGO_SIZE_X_ = 512.0f;
-        static constexpr float LOGO_SIZE_Y_ = 288.0f;
-
         Camera* camera_;
-
         Crosshair crosshair_;
-
         AbstractDrawableObject logo_;
 
         tgui::Gui gui_;
@@ -98,6 +93,7 @@ namespace editor {
 
         bool mouse_on_widget_;
         sf::Vector2f previous_mouse_world_pos_;
+        std::deque<sf::Vector2f> mouse_camera_center_vectors_;
         AbstractDrawableObject* marked_item_;
 
         int max_z_index_;

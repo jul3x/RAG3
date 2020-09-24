@@ -1,15 +1,13 @@
-float size_x=66.0f
-float size_y=66.0f
+vector size=(66.0,66.0)
 
-float map_offset_x=0.0f
-float map_offset_y=0.0f
+vector map_offset=(0.0,0.0)
 
 int frames_number=6
-float frame_duration=0.5f
+float frame_duration=0.5
 
 int z_index=1
 
-bool animation_type_quadratic=0
-bool scale=0
+bool animation_type_quadratic=false
+bool scale=false
 
-bool light_point=1
+bool light_point=true

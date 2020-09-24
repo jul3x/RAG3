@@ -1,25 +1,19 @@
-float size_x=33.0f
-float size_y=32.0f
-
-float map_offset_x=0.0f
-float map_offset_y=-12.0f
-
-float collision_size_x=32.0f
-
-float collision_offset_x=0.0f
-float collision_offset_y=0.0f
+vector size=(33.0,32.0)
+vector map_offset=(0.0,-12.0)
+vector collision_offset=(0.0,0.0)
+float collision_radius=32.0
 
 int frames_number=1
-float frame_duration=0.0f
+float frame_duration=0.0
 
-string default_activation=OnUse
-list[string] default_functions=[OpenDoor;ChangeOpenState]
-list[string] default_datas=[Null;Null]
+string default_activation="OnUse"
+list default_functions=["OpenDoor"; "ChangeOpenState"]
+list default_datas=["Null"; "Null"]
 
-bool is_drawable=1
+bool is_drawable=true
 
 int z_index=1
 
-bool light_point=0
-bool default_active=1
-bool shadow=1
+bool light_point=false
+bool default_active=true
+bool shadow=true

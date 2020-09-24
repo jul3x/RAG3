@@ -1,17 +1,14 @@
-float speed=900.0f
-float life=1.0f
-float deadly_factor=1.0f
-float size_x=5.0f
-float size_y=2.0f
-float burst_size=140.0f
-float map_offset_x=0.0f
-float map_offset_y=0.0f
+float speed=900.0
+float life=1.0
+float deadly_factor=1.0
+vector size=(5.0,2.0)
+float burst_size=140.0
+vector map_offset=(0.0,0.0)
 
-float collision_offset_x=0.0f
-float collision_offset_y=0.0f
+vector collision_offset=(0.0,0.0)
 
 int z_index=1
 
-string default_activation=OnKill
-list[string] default_functions=[Null]
-list[string] default_datas=[Null]
+string default_activation="OnKill"
+list default_functions=["Null"]
+list default_datas=[0]

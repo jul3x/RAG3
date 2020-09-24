@@ -1,0 +1,6 @@
+string a = "some string"
+
+list b = [a; "some other string"; "maybe next"]
+list empty = []
+
+list nonempty = [["one string"]; ["two strings"; a]; empty]

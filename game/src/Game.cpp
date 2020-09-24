@@ -22,47 +22,44 @@ Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal)
 
 void Game::initialize()
 {
-    spawning_func_["bullet"] = std::bind(&Game::spawnBullet, this, std::placeholders::_1, std::placeholders::_2,
-            std::placeholders::_3, std::placeholders::_4);
-    spawning_func_["fire"] = std::bind(&Game::spawnFire, this, std::placeholders::_1, std::placeholders::_2,
-                                       std::placeholders::_3, std::placeholders::_4);
-    spawning_func_["Null"] = std::bind(&Game::spawnNull, this, std::placeholders::_1, std::placeholders::_2,
-                                       std::placeholders::_3, std::placeholders::_4);
+    spawning_func_["bullet"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnBullet(user, name, pos, dir); };
+    spawning_func_["fire"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnFire(user, name, pos, dir); };
+    spawning_func_["Null"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnNull(user, name, pos, dir); };
 
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     ui_ = std::make_unique<UserInterface>();
     camera_ = std::make_unique<Camera>();
-    journal_ = std::make_unique<Journal>(CFG.get<float>("journal_max_time"), CFG.get<float>("journal_sampling_rate"));
+    journal_ = std::make_unique<Journal>(CONF<float>("journal_max_time"), CONF<float>("journal_sampling_rate"));
     special_functions_ = std::make_unique<SpecialFunctions>();
     stats_ = std::make_unique<Stats>();
     achievements_ = std::make_unique<Achievements>();
-    lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CFG.get<int>("graphics/window_width_px")),
-                                                                    static_cast<float>(CFG.get<int>("graphics/window_height_px"))},
-                                                                            sf::Color(CFG.get<int>("graphics/lightning_color")));
+    lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
+                                                                    static_cast<float>(CONF<int>("graphics/window_height_px"))},
+                                                                            sf::Color(CONF<int>("graphics/lightning_color")));
 
     map_ = std::make_unique<Map>();
     agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
-                                                          1000.0f, // max time without recalculation of path in ms
-                                                          20.0f, // min change of goal to trigger recalculation
-                                                          1000); // max search of path
+                                                          CONF<float>("characters/max_time_without_path_recalc"),
+                                                          CONF<float>("characters/min_pos_change_without_path_recalc"),
+                                                          CONF<int>("characters/max_path_search_depth"));
 
     music_manager_ = std::make_unique<audio::MusicManager>();
-    music_manager_->addDirectoryToQueue(CFG.get<std::string>("paths/music_dir"));
+    music_manager_->addDirectoryToQueue(CONF<std::string>("paths/music_dir"));
 
-    music_manager_->setVolume(CFG.get<float>("sound/music_volume"));
+    music_manager_->setVolume(CONF<float>("sound/music_volume"));
     music_manager_->play();
 
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());
 
     engine_->initializeGraphics(
-            sf::Vector2i{CFG.get<int>("graphics/window_width_px"), CFG.get<int>("graphics/window_height_px")},
+            sf::Vector2i{CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_height_px")},
             "Codename: Rag3",
-            CFG.get<int>("graphics/full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
-            sf::Color(CFG.get<int>("graphics/background_color")));
+            CONF<bool>("graphics/full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
+            sf::Color(CONF<int>("graphics/background_color")));
     engine_->setFPSLimit(60);
 
-    engine_->initializeSoundManager(CFG.get<float>("sound/sound_attenuation"));
+    engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
 
     engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
@@ -71,7 +68,7 @@ void Game::initialize()
 
 //    debug_map_blockage_ = std::make_unique<DebugMapBlockage>(&map_->getMapBlockage());
 
-    engine_->initializeCollisions(map_->getSize(), CFG.get<float>("collision_grid_size"));
+    engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
 
     for (auto& obstacle : map_->getList<ObstacleTile>())
         engine_->registerStaticObject(obstacle.get());
@@ -113,8 +110,7 @@ void Game::initialize()
     for (auto& weapon : map_->getList<PlacedWeapon>())
     {
         weapon->registerSpawningFunction(
-                this->getSpawningFunction(utils::j3x::get<std::string>(RM.getObjectParams("weapons",
-                                                                                          weapon->getId()), "spawn_func")));
+                this->getSpawningFunction(RMGET<std::string>("weapons", weapon->getId(), "spawn_func")));
     }
 
     for (auto& special : map_->getList<Special>())
@@ -151,7 +147,7 @@ void Game::update(float time_elapsed)
             journal_->update(time_elapsed);
             camera_->update(time_elapsed);
 
-            if (CFG.get<int>("sound/sound_on"))
+            if (CONF<bool>("sound/sound_on"))
             {
                 Engine::changeSoundListenerPosition(player_->getPosition());
                 music_manager_->update(time_elapsed);
@@ -160,7 +156,7 @@ void Game::update(float time_elapsed)
         }
         case GameState::Reverse:
         {
-            if (!journal_->executeTimeReversal(CFG.get<float>("time_reversal_speed_factor") * time_elapsed))
+            if (!journal_->executeTimeReversal(CONF<float>("time_reversal_speed_factor") * time_elapsed))
             {
                 this->setGameState(GameState::Normal);
             }
@@ -232,10 +228,9 @@ void Game::updateMapObjects(float time_elapsed)
                 (*it)->use(player_.get());
             }
 
-            auto grid_pos = std::make_pair(std::round(((*it)->getPosition().x + utils::j3x::get<float>(
-                    RM.getObjectParams("obstacles", (*it)->getId()), "collision_offset_x")) / DecorationTile::SIZE_X_),
-                                           std::round(((*it)->getPosition().y + utils::j3x::get<float>(
-                    RM.getObjectParams("obstacles", (*it)->getId()), "collision_offset_y")) / DecorationTile::SIZE_Y_));
+            auto grid_vector_pos = (*it)->getPosition() + RMGET<sf::Vector2f>("obstacles", (*it)->getId(), "collision_offset");
+            auto grid_pos = std::make_pair(std::round(grid_vector_pos.x / DecorationTile::SIZE_X_),
+                                           std::round(grid_vector_pos.y / DecorationTile::SIZE_Y_));
             blockage.blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
 
             obstacles.erase(it);
@@ -355,15 +350,6 @@ void Game::killNPC(NPC* npc)
 
 void Game::draw(graphics::Graphics& graphics)
 {
-    RM.setFontSmoothDisabled(RM.getFont(),
-                             {CFG.get<int>("graphics/use_text_size"),
-                              CFG.get<int>("graphics/thought_text_size"),
-                              CFG.get<int>("graphics/stats_text_size"),
-                              CFG.get<int>("graphics/weapons_text_size"),
-                              CFG.get<int>("graphics/achievement_title_text_size"),
-                              CFG.get<int>("graphics/achievement_text_text_size"),
-                             });
-
     auto draw = [&graphics](auto& list) {
         for (auto& obj : list)
             graphics.drawSorted(*obj);
@@ -472,7 +458,7 @@ void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
     auto number = std::to_string(utils::num::getRandom(1, 1));
     spawnEvent("explosion_" + number, pos, 0.0f, r);
 
-    if (CFG.get<int>("sound/sound_on"))
+    if (CONF<bool>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
 }
 
@@ -480,7 +466,7 @@ void Game::spawnTeleportationEvent(const sf::Vector2f& pos)
 {
     spawnEvent("teleportation", pos + sf::Vector2f{0.0f, 10.0f});
 
-    if (CFG.get<int>("sound/sound_on"))
+    if (CONF<bool>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("teleportation"), pos);
 }
 
@@ -498,9 +484,9 @@ void Game::spawnSwirlEvent(const std::string& name, const sf::Vector2f& pos, boo
 void Game::spawnFadeInOut()
 {
     engine_->spawnEffect(std::make_shared<graphics::FadeInOut>(
-            sf::Vector2f{static_cast<float>(CFG.get<int>("graphics/window_width_px")),
-                         static_cast<float>(CFG.get<int>("graphics/window_height_px"))}, sf::Color::Black,
-            CFG.get<float>("graphics/fade_in_out_duration")
+            sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
+                         static_cast<float>(CONF<int>("graphics/window_height_px"))}, sf::Color::Black,
+            CONF<float>("graphics/fade_in_out_duration")
     ));
 }
 
@@ -526,10 +512,9 @@ void Game::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
 
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir)
 {
-    spawnEvent("shot", pos, dir * 180.0f / M_PI, utils::j3x::get<float>(RM.getObjectParams("bullets", name),
-                                                                        "burst_size"));
+    spawnEvent("shot", pos, dir * 180.0f / M_PI, RMGET<float>("bullets", name, "burst_size"));
 
-    if (CFG.get<int>("sound/sound_on"))
+    if (CONF<bool>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
 }
 
@@ -583,17 +568,13 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
             journal_->event<ShotObstacle>(obstacle);
             obstacle->getShot(*bullet);
 
-            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                             static_cast<float>(std::pow(
-                                     CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
 
             bullet->setDead();
         }
         else if (obstacle_tile != nullptr)
         {
-            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f,
-                             static_cast<float>(std::pow(
-                                     CFG.get<float>("graphics/sparks_size_factor") * bullet->getDeadlyFactor(), 0.4f)));
+            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
 
             bullet->setDead();
         }
@@ -744,7 +725,7 @@ Fire* Game::spawnNewFire(Character* user, const sf::Vector2f& pos, float dir)
 
 
 NPC* Game::spawnNewNPC(const std::string& id, int u_id, const std::string& activation,
-                       const std::vector<std::string>& funcs, const std::vector<std::string>& datas)
+                       const j3x::List& funcs, const j3x::List& datas)
 {
     auto ptr = map_->spawn<NPC>({}, 0.0f, id);
 
@@ -785,7 +766,7 @@ NPC* Game::spawnNewPlayerClone(const std::string& weapon_id)
 
     player_clone_ = std::make_unique<PlayerClone>(this->player_->getPosition(), player_.get(),
                                                   journal_->getDurationSaved() *
-                                                  CFG.get<float>("player_clone_time_factor"));
+                                                  CONF<float>("player_clone_time_factor"));
     engine_->registerDynamicObject(player_clone_.get());
     registerLight(player_clone_.get());
 
@@ -835,7 +816,7 @@ ObstacleTile* Game::spawnNewObstacleTile(const std::string& id, const sf::Vector
 
 Obstacle* Game::spawnNewObstacle(const std::string& id, int u_id, const sf::Vector2f& pos,
                                  const std::string& activation,
-                                 const std::vector<std::string>& funcs, const std::vector<std::string>& datas)
+                                 const j3x::List& funcs, const j3x::List& datas)
 {
     auto new_ptr = map_->spawn<Obstacle>(pos, 0.0f, id);
 
@@ -871,7 +852,7 @@ void Game::findAndDeleteBullet(Bullet* ptr)
         }
     }
 
-    std::cerr << "[Game] Warning - bullet to delete not found!" << std::endl;
+    LOG.error("[Game] Warning - bullet to delete not found!");
 }
 
 void Game::findAndDeleteFire(Fire* ptr)
@@ -886,7 +867,7 @@ void Game::findAndDeleteFire(Fire* ptr)
         }
     }
 
-    std::cerr << "[Game] Warning - fire to delete not found!" << std::endl;
+    LOG.error("[Game] Warning - fire to delete not found!");
 }
 
 void Game::findAndDeleteDecoration(Decoration* ptr)
@@ -901,7 +882,7 @@ void Game::findAndDeleteDecoration(Decoration* ptr)
         }
     }
 
-    std::cerr << "[Game] Warning - decoration to delete not found!" << std::endl;
+    LOG.error("[Game] Warning - decoration to delete not found!");
 }
 
 Special* Game::getCurrentSpecialObject() const
@@ -928,8 +909,7 @@ void Game::talk()
     auto curr = player_->getCurrentTalkableCharacter();
     if (curr != nullptr)
     {
-        auto still_talking = curr->talk(std::bind(&Game::spawnThought, this, std::placeholders::_1,
-                std::placeholders::_2),
+        auto still_talking = curr->talk([this](Character* character, const std::string& text) { this->spawnThought(character, text); },
                 player_.get());
 
         if (!still_talking)
@@ -943,11 +923,11 @@ void Game::talk()
 
 void Game::setBulletTime()
 {
-    current_time_factor_ = CFG.get<float>("bullet_time_factor");
+    current_time_factor_ = CONF<float>("bullet_time_factor");
     engine_->setTimeScaleFactor(current_time_factor_);
 
-    if (CFG.get<int>("sound/sound_on"))
-        music_manager_->setPlaybackPitch(CFG.get<float>("sound/bullet_time_music_factor"));
+    if (CONF<bool>("sound/sound_on"))
+        music_manager_->setPlaybackPitch(CONF<float>("sound/bullet_time_music_factor"));
 }
 
 void Game::setNormalTime()
@@ -955,7 +935,7 @@ void Game::setNormalTime()
     current_time_factor_ = 1.0f;
     engine_->setTimeScaleFactor(1.0f);
 
-    if (CFG.get<int>("sound/sound_on"))
+    if (CONF<bool>("sound/sound_on"))
         music_manager_->setPlaybackPitch(1.0f);
 }
 
@@ -968,7 +948,7 @@ void Game::setGameState(Game::GameState state)
             {
                 if (player_clone_ != nullptr)
                     player_clone_->updateLifeTimeDependingOnPrevious(
-                            journal_->getDurationSaved() * CFG.get<float>("player_clone_time_factor"));
+                            journal_->getDurationSaved() * CONF<float>("player_clone_time_factor"));
                 journal_->clear();
             }
 
@@ -999,7 +979,7 @@ Game::GameState Game::getGameState() const
 
 bool Game::isJournalFreezed() const
 {
-    return journal_->getDurationSaved() < CFG.get<float>("journal_min_time");
+    return journal_->getDurationSaved() < CONF<float>("journal_min_time");
 }
 
 void Game::updatePlayerClone(float time_elapsed)
@@ -1117,7 +1097,7 @@ void Game::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
 
 Special* Game::spawnNewSpecial(const std::string& id, int u_id,
                                const sf::Vector2f& pos, const std::string& activation,
-                               const std::vector<std::string>& funcs, const std::vector<std::string>& datas)
+                               const j3x::List& funcs, const j3x::List& datas)
 {
     auto ptr = map_->spawn<Special>(pos, 0.0f, id);
     engine_->registerHoveringObject(ptr);
@@ -1153,7 +1133,7 @@ void Game::findAndDeleteSpecial(Special* ptr)
         }
     }
 
-    std::cerr << "[Game] Warning - special to delete not found!" << std::endl;
+    LOG.error("[Game] Warning - special to delete not found!");
 }
 
 void Game::registerWeapons(Character* character)
@@ -1169,8 +1149,7 @@ void Game::registerWeapon(AbstractWeapon* weapon)
     if (!weapon->getId().empty())
     {
         weapon->registerSpawningFunction(
-                this->getSpawningFunction(utils::j3x::get<std::string>(
-                        RM.getObjectParams("weapons", weapon->getId()), "spawn_func")));
+                this->getSpawningFunction(RMGET<std::string>("weapons", weapon->getId(), "spawn_func")));
 
         auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon);
 
@@ -1187,9 +1166,10 @@ void Game::registerFunctions(Functional* functional) const
 {
     for (const auto& function : functional->getFunctions())
     {
-        functional->bindFunction(special_functions_->bindFunction(function),
-                                 special_functions_->bindTextToUse(function),
-                                 special_functions_->isUsableByNPC(function));
+        auto& function_str = j3x::getObj<std::string>(function);
+        functional->bindFunction(special_functions_->bindFunction(function_str),
+                                 special_functions_->bindTextToUse(function_str),
+                                 special_functions_->isUsableByNPC(function_str));
     }
 }
 

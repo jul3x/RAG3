@@ -2,8 +2,9 @@
 // Created by jul3x on 10.03.20.
 //
 
-#include <common/ResourceManager.h>
+#include <R3E/system/Logger.h>
 
+#include <common/ResourceManager.h>
 #include <common/Map.h>
 
 
@@ -41,7 +42,7 @@ bool Map::loadMap(const std::string& name)
     }
     catch (const std::logic_error& e)
     {
-        std::cerr << e.what() << std::endl;
+        LOG.error(e.what());
     }
 
     return false;
@@ -114,7 +115,8 @@ DecorationTile* Map::spawn(const sf::Vector2f& pos, float direction, const std::
 template<>
 ObstacleTile* Map::spawn(const sf::Vector2f& pos, float direction, const std::string& id, bool check, int max_z_index)
 {
-    if (!check || (!this->checkCollisions(pos, decorations_tiles_, false, max_z_index) && !this->checkCollisions(pos, obstacles_tiles_, false, max_z_index)))
+    if (!check || (!this->checkCollisions(pos, decorations_tiles_, false, max_z_index) &&
+                   !this->checkCollisions(pos, obstacles_tiles_, false, max_z_index)))
     {
         auto grid_pos = std::make_pair(std::round(pos.x / DecorationTile::SIZE_X_),
                                        std::round(pos.y / DecorationTile::SIZE_Y_));
@@ -124,7 +126,7 @@ ObstacleTile* Map::spawn(const sf::Vector2f& pos, float direction, const std::st
             if ((blocked_.blockage_.size() > grid_pos.first && blocked_.blockage_.at(0).size() > grid_pos.second) &&
                 grid_pos.first >= 0 && grid_pos.second >= 0)
                 blocked_.blockage_.at(grid_pos.first).at(grid_pos.second) =
-                        utils::j3x::get<float>(RM.getObjectParams("obstacles_tiles", id), "endurance");
+                        RMGET<float>("obstacles_tiles", id, "endurance");
         }
 
         obstacles_tiles_.emplace_back(std::make_shared<ObstacleTile>(pos, id));
@@ -175,15 +177,16 @@ Obstacle* Map::spawn(const sf::Vector2f& pos, float direction, const std::string
 {
     if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
     {
-        auto grid_pos = std::make_pair(std::round((pos.x + utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_offset_x")) / DecorationTile::SIZE_X_),
-                                       std::round((pos.y + utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "collision_offset_y")) / DecorationTile::SIZE_Y_));
+        auto& collision_offset = RMGET<sf::Vector2f>("obstacles", id, "collision_offset");
+        auto grid_pos = std::make_pair(std::round((pos.x + collision_offset.x) / DecorationTile::SIZE_X_),
+                                       std::round((pos.y + collision_offset.y) / DecorationTile::SIZE_Y_));
 
         if (!blocked_.blockage_.empty())
         {
             if ((blocked_.blockage_.size() > grid_pos.first && blocked_.blockage_.at(0).size() > grid_pos.second) &&
                 grid_pos.first >= 0 && grid_pos.second >= 0)
                 blocked_.blockage_.at(grid_pos.first).at(grid_pos.second) =
-                        utils::j3x::get<float>(RM.getObjectParams("obstacles", id), "endurance");
+                        RMGET<float>("obstacles", id, "endurance");
         }
 
         obstacles_.emplace_back(std::make_shared<Obstacle>(pos, id));

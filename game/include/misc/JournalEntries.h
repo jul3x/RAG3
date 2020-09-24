@@ -69,10 +69,10 @@ private:
     int u_id_;
     std::string id_;
     std::string activation_;
-    std::vector<std::string> funcs_;
-    std::vector<std::string> datas_;
+    j3x::List funcs_;
+    j3x::List datas_;
 
-    std::list<std::string> talk_scenario_;
+    j3x::List talk_scenario_;
 
 };
 
@@ -171,8 +171,8 @@ private:
     std::string id_;
     sf::Vector2f pos_;
     std::string activation_;
-    std::vector<std::string> funcs_;
-    std::vector<std::string> datas_;
+    j3x::List funcs_;
+    j3x::List datas_;
 
 };
 
@@ -239,8 +239,8 @@ private:
     std::string id_;
     sf::Vector2f pos_;
     std::string activation_;
-    std::vector<std::string> funcs_;
-    std::vector<std::string> datas_;
+    j3x::List funcs_;
+    j3x::List datas_;
 
 };
 

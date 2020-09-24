@@ -16,15 +16,15 @@
 using namespace editor;
 
 UserInterface::UserInterface() :
-        logo_(sf::Vector2f{CFG.get<int>("window_width_px") - LOGO_OFF_X_ * CFG.get<float>("user_interface_zoom"),
-                           LOGO_OFF_Y_ * CFG.get<float>("user_interface_zoom")},
-              CFG.get<float>("user_interface_zoom") * sf::Vector2f{LOGO_SIZE_X_, LOGO_SIZE_Y_},
+        logo_(sf::Vector2f{CONF<int>("window_width_px") - CONF<sf::Vector2f>("logo_pos_off").x,
+                           CONF<sf::Vector2f>("logo_pos_off").y},
+              CONF<sf::Vector2f>("logo_size"),
               &RM.getTexture("rag3_logo")),
         gui_theme_("../data/config/gui_theme.txt"),
         tiles_window_(this, &gui_, &gui_theme_, "Tiles",
-                      {CFG.get<float>("tiles_window_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("tiles_window_y") * CFG.get<float>("user_interface_zoom")}, "tiles_window"),
+                      CONF<sf::Vector2f>("tiles_window_pos"), "tiles_window"),
         objects_window_(this, &gui_, &gui_theme_, "Objects",
-                        {CFG.get<float>("objects_window_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("objects_window_y") * CFG.get<float>("user_interface_zoom")}, "objects_window"),
+                        CONF<sf::Vector2f>("objects_window_pos") , "objects_window"),
         menu_window_(this, &gui_, &gui_theme_),
         save_window_(&gui_, &gui_theme_),
         load_window_(&gui_, &gui_theme_),
@@ -45,11 +45,11 @@ UserInterface::UserInterface() :
     gui_.get("character_object_window")->setVisible(false);
     gui_.get("obstacle_object_window")->setVisible(false);
 
-    information_.setPosition(CFG.get<float>("info_x") * CFG.get<float>("user_interface_zoom"), CFG.get<float>("info_y") * CFG.get<float>("user_interface_zoom"));
+    information_.setPosition(CONF<sf::Vector2f>("info_pos"));
     information_.setFillColor(sf::Color(255, 255, 255, 0));
     information_.setFont(RM.getFont("editor"));
     information_.setString("");
-    information_.setCharacterSize(20 * CFG.get<float>("user_interface_zoom"));
+    information_.setCharacterSize(CONF<float>("information_text_size"));
     information_a_ = 0.0f;
 
     gui_.setFont(RM.getFont("editor"));
@@ -59,8 +59,8 @@ void UserInterface::generateMenuBar(sf::RenderWindow& window)
 {
     auto list_menu = tgui::MenuBar::create();
     list_menu->setRenderer(gui_theme_.getRenderer("MenuBar"));
-    list_menu->setSize("100%", 35 * CFG.get<float>("user_interface_zoom"));
-    list_menu->setTextSize(list_menu->getTextSize() * CFG.get<float>("user_interface_zoom"));
+    list_menu->setSize("100%", CONF<float>("menu_bar_height"));
+    list_menu->setTextSize(CONF<float>("label_text_size"));
     list_menu->addMenu("File");
     list_menu->addMenuItem("File", "Clear existing map");
     list_menu->connectMenuItem("File", "Clear existing map", [&]() { Editor::get().clearMap(); });
@@ -96,12 +96,12 @@ void UserInterface::initialize(graphics::Graphics& graphics)
 {
     gui_.setTarget(graphics.getWindow());
     tiles_window_.initialize({"obstacles_tiles", "decorations_tiles"},
-                             {CFG.get<std::string>("paths/obstacles_tiles"),
-                              CFG.get<std::string>("paths/decorations_tiles")});
+                             {CONF<std::string>("paths/obstacles_tiles"),
+                              CONF<std::string>("paths/decorations_tiles")});
     objects_window_.initialize({"characters", "specials", "obstacles", "decorations", "weapons"},
-                               {CFG.get<std::string>("paths/characters"), CFG.get<std::string>("paths/specials"),
-                                CFG.get<std::string>("paths/obstacles"), CFG.get<std::string>("paths/decorations"),
-                                CFG.get<std::string>("paths/weapons")});
+                               {CONF<std::string>("paths/characters"), CONF<std::string>("paths/specials"),
+                                CONF<std::string>("paths/obstacles"), CONF<std::string>("paths/decorations"),
+                                CONF<std::string>("paths/weapons")});
 
 
     generateMenuBar(graphics.getWindow());
@@ -109,7 +109,7 @@ void UserInterface::initialize(graphics::Graphics& graphics)
 
 void UserInterface::resetMapList()
 {
-    load_window_.refreshMapList(RM.getFreshListOfObjects(CFG.get<std::string>("paths/maps_dir")));
+    load_window_.refreshMapList(RM.getFreshListOfObjects(CONF<std::string>("paths/maps_dir")));
     save_window_.refreshMapName(Editor::get().getCurrentMapName());
 }
 
@@ -166,7 +166,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
     handleMouse(graphics.getWindow(), time_elapsed);
     handleKeys();
 
-    information_a_ = std::max(0.0f, information_a_ - time_elapsed * CFG.get<float>("info_fade_speed"));
+    information_a_ = std::max(0.0f, information_a_ - time_elapsed * CONF<float>("info_fade_speed"));
     information_.setFillColor({information_.getFillColor().r, information_.getFillColor().g,
                                information_.getFillColor().b, static_cast<sf::Uint8>(information_a_)});
 
@@ -199,8 +199,8 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 camera_->setViewNormalSize(current_view.getSize());
                 gui_.setView(static_view);
 
-                logo_.setPosition(event.size.width - LOGO_OFF_X_ * CFG.get<float>("user_interface_zoom"),
-                                  LOGO_OFF_Y_ * CFG.get<float>("user_interface_zoom"));
+                logo_.setPosition(event.size.width - CONF<sf::Vector2f>("logo_pos_off").x,
+                                  CONF<sf::Vector2f>("logo_pos_off").y);
 
                 break;
             }
@@ -328,6 +328,7 @@ void UserInterface::draw(graphics::Graphics& graphics)
     graphics.draw(logo_);
     graphics.getWindow().draw(information_);
     gui_.draw();
+    RM.setFontsSmoothAllowed(false);
 }
 
 void UserInterface::spawnInfo(const std::string& msg)
@@ -385,11 +386,31 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window, float 
 inline void UserInterface::handleCameraCenter(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos,
                                               float time_elapsed)
 {
+    static sf::Vector2f previous_mouse_pos = mouse_world_pos;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        sf::Vector2f vec = camera_->getPointingTo() + previous_mouse_world_pos_ - mouse_world_pos;
-        camera_->setPointingTo(vec);
+        mouse_camera_center_vectors_.emplace_back(previous_mouse_pos - mouse_world_pos);
+
+        if (mouse_camera_center_vectors_.size() > MIN_VECTORS_TO_MOVE_)
+        {
+            sf::Vector2f vec = {};
+            for (const auto& vector : mouse_camera_center_vectors_)
+            {
+                vec += vector;
+            }
+
+            vec = vec / static_cast<float>(mouse_camera_center_vectors_.size()) * CFG.get<float>("camera_moving_factor");
+            camera_->setPointingTo(camera_->getPointingTo() + vec);
+
+            mouse_camera_center_vectors_.pop_front();
+        }
     }
+    else
+    {
+        mouse_camera_center_vectors_.clear();
+    }
+
+    previous_mouse_pos = mouse_world_pos;
 }
 
 inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, const sf::Vector2f& mouse_world_pos,
@@ -432,29 +453,13 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
         }
         else
         {
-            crosshair_.setSize(
-                    sf::Vector2f(
-                            utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
-                            utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")));
-            crosshair_.changeOrigin(
-                    sf::Vector2f(
-                            utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_x"),
-                            utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second), "size_y")) /
-                    2.0f +
-                    sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
-                                                        "map_offset_x"),
-                                 utils::j3x::get<float>(RM.getObjectParams(current_item.first, current_item.second),
-                                                        "map_offset_y")));
+            crosshair_.setSize(RMGET<sf::Vector2f>(current_item.first, current_item.second, "size"));
+            crosshair_.changeOrigin(RMGET<sf::Vector2f>(current_item.first, current_item.second, "size") / 2.0f
+                    + RMGET<sf::Vector2f>(current_item.first, current_item.second,"map_offset"));
 
-
-            if (utils::j3x::get<int>(RM.getObjectParams(current_item.first, current_item.second), "frames_number") > 1)
+            if (RMGET<int>(current_item.first, current_item.second, "frames_number") > 1)
                 crosshair_.changeTextureRect({{0, 0},
-                                              sf::Vector2i(utils::j3x::get<float>(
-                                                                   RM.getObjectParams(current_item.first, current_item.second),
-                                                                   "size_x"),
-                                                           utils::j3x::get<float>(RM.getObjectParams(current_item.first,
-                                                                                                     current_item.second),
-                                                                                  "size_y"))});
+                                              static_cast<sf::Vector2i>(RMGET<sf::Vector2f>(current_item.first, current_item.second, "size"))});
 
         }
 

@@ -6,6 +6,7 @@
 #include <utility>
 
 #include <R3E/system/AbstractResourceManager.h>
+#include <R3E/system/Logger.h>
 
 
 namespace r3e {
@@ -19,38 +20,52 @@ namespace r3e {
               sounds_directory_{std::move(sounds_dir)},
               music_directory_{std::move(music_dir)}
     {
-        textures_smooth_allowed_ = false;
     }
 
     void AbstractResourceManager::setTexturesSmoothAllowed(bool allowed)
     {
         textures_smooth_allowed_ = allowed;
+
+        for (auto& texture : textures_)
+        {
+            texture.second.setSmooth(textures_smooth_allowed_);
+        }
     }
 
-    utils::j3x::Parameters& AbstractResourceManager::getParameters(const std::string& key)
+    void AbstractResourceManager::setFontsSmoothAllowed(bool allowed)
     {
-        return getOrLoad(parameters_, std::bind(&AbstractResourceManager::loadJ3XFile, this, std::placeholders::_1), key);
+        fonts_smooth_allowed_ = allowed;
+
+        for (auto& font : fonts_)
+        {
+            font.second.setSmooth(fonts_smooth_allowed_);
+        }
+    }
+
+    j3x::Parameters& AbstractResourceManager::getParameters(const std::string& key)
+    {
+        return *getOrLoad(parameters_, [this](const std::string& key) { this->loadJ3XFile(key); }, key);
     }
 
     sf::Texture& AbstractResourceManager::getTexture(const std::string& key)
     {
-        return getOrLoad(textures_, std::bind(&AbstractResourceManager::loadTexture, this, std::placeholders::_1), key);
+        return getOrLoad(textures_, [this](const std::string& key) { this->loadTexture(key); }, key);
     }
 
     sf::Font& AbstractResourceManager::getFont(const std::string& key)
     {
-        return getOrLoad(fonts_, std::bind(&AbstractResourceManager::loadFont, this, std::placeholders::_1), key);
+        return getOrLoad(fonts_, [this](const std::string& key) { this->loadFont(key); }, key);
     }
 
 
     sf::SoundBuffer& AbstractResourceManager::getSound(const std::string& key)
     {
-        return getOrLoad(sounds_, std::bind(&AbstractResourceManager::loadSound, this, std::placeholders::_1), key);
+        return getOrLoad(sounds_, [this](const std::string& key) { this->loadSound(key); }, key);
     }
 
     sf::Music& AbstractResourceManager::getMusic(const std::string& key)
     {
-        return getOrLoad(music_, std::bind(&AbstractResourceManager::loadMusic, this, std::placeholders::_1), key);
+        return getOrLoad(music_, [this](const std::string& key) { this->loadMusic(key); }, key);
     }
 
     sf::Font& AbstractResourceManager::getFont()
@@ -65,13 +80,11 @@ namespace r3e {
 
     void AbstractResourceManager::loadJ3XFile(const std::string& key)
     {
-        utils::j3x::Parameters params;
-
-        params = utils::j3x::parse(j3x_directory_ + "/" + key + ".j3x");
+        auto params = j3x::parse(j3x_directory_ + "/" + key + ".j3x");
 
         parameters_.emplace(key, params);
 
-        std::cout << "[AbstractResourceManager] Parameters description " << key << " is loaded!" << std::endl;
+        LOG.info("[AbstractResourceManager] Parameters description " + key + " is loaded!");
     }
 
     void AbstractResourceManager::loadTexture(const std::string& key)
@@ -81,10 +94,9 @@ namespace r3e {
             throw std::runtime_error("[AbstractResourceManager] " + key + " texture file not successfully loaded.");
         }
 
-        if (!textures_smooth_allowed_)
-            textures_[key].setSmooth(false);
+        textures_[key].setSmooth(textures_smooth_allowed_);
 
-        std::cout << "[AbstractResourceManager] Texture " << key << " is loaded!" << std::endl;
+        LOG.info("[AbstractResourceManager] Texture " + key + " is loaded!");
     }
 
     void AbstractResourceManager::loadFont(const std::string& key)
@@ -94,7 +106,9 @@ namespace r3e {
             throw std::runtime_error("[AbstractResourceManager] " + key + " font file not successfully loaded.");
         }
 
-        std::cout << "[AbstractResourceManager] Font " << key << " is loaded!" << std::endl;
+        fonts_[key].setSmooth(fonts_smooth_allowed_);
+
+        LOG.info("[AbstractResourceManager] Font " + key + " is loaded!");
     }
 
     void AbstractResourceManager::loadSound(const std::string& key)
@@ -104,7 +118,7 @@ namespace r3e {
             throw std::runtime_error("[AbstractResourceManager] " + key + " sound file not successfully loaded.");
         }
 
-        std::cout << "[AbstractResourceManager] Sound " << key << " is loaded!" << std::endl;
+        LOG.info("[AbstractResourceManager] Sound " + key + " is loaded!");
     }
 
     void AbstractResourceManager::loadMusic(const std::string& key)
@@ -114,16 +128,8 @@ namespace r3e {
             throw std::runtime_error("[AbstractResourceManager] " + key + " music file not successfully loaded.");
         }
 
-        std::cout << "[AbstractResourceManager] Music " << key << " is loaded!" << std::endl;
+        LOG.info("[AbstractResourceManager] Music " + key + " is loaded!");
     }
 
-    void AbstractResourceManager::setFontSmoothDisabled(sf::Font& font, const std::vector<int>& sizes)
-    {
-        for (const auto& size : sizes)
-        {
-            auto& texture = const_cast<sf::Texture&>(font.getTexture(size));
-            texture.setSmooth(false);
-        }
-    }
 
 } // namespace r3e

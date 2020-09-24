@@ -10,29 +10,26 @@
 
 
 ShootingWeapon::ShootingWeapon(Character* user, const std::string& id) :
-        spawn_timeout_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_timeout")),
-        recoil_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "recoil")),
-        ammunition_(utils::j3x::get<int>(RM.getObjectParams("weapons", id), "max_ammo")),
-        max_ammunition_(utils::j3x::get<int>(RM.getObjectParams("weapons", id), "max_ammo")),
-        spawn_type_(utils::j3x::get<std::string>(RM.getObjectParams("weapons", id), "spawn_type")),
-        spawn_quantity_(utils::j3x::get<int>(RM.getObjectParams("weapons", id), "spawn_quantity")),
-        spawn_angular_diff_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_angular_diff")),
-        spawn_offset_(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "spawn_offset")),
+        spawn_timeout_(RMGET<float>("weapons", id, "spawn_timeout")),
+        recoil_(RMGET<float>("weapons", id, "recoil")),
+        ammunition_(RMGET<int>("weapons", id, "max_ammo")),
+        max_ammunition_(RMGET<int>("weapons", id, "max_ammo")),
+        spawn_type_(RMGET<std::string>("weapons", id, "spawn_type")),
+        spawn_quantity_(RMGET<int>("weapons", id, "spawn_quantity")),
+        spawn_angular_diff_(RMGET<float>("weapons", id, "spawn_angular_diff")),
+        spawn_offset_(RMGET<float>("weapons", id, "spawn_offset")),
         spawn_offset_factor_(-1),
         AbstractWeapon(user,
-                       {utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_x"),
-                        utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_y")},
-                       {utils::j3x::get<float>(RM.getObjectParams("weapons", id), "offset_x"),
-                        utils::j3x::get<float>(RM.getObjectParams("weapons", id), "offset_y")},
+                       RMGET<sf::Vector2f>("weapons", id, "size"),
+                       RMGET<sf::Vector2f>("weapons", id, "offset"),
                        id)
 {
     if (max_ammunition_ <= 0 || spawn_timeout_ <= 0.0f)
         throw std::invalid_argument("[ShootingWeapon] Constructor parameters are invalid!");
 
     this->changeOrigin(sf::Vector2f(0.0f,
-                                    utils::j3x::get<float>(RM.getObjectParams("weapons", id), "size_y")) / 2.0f +
-                       sf::Vector2f(utils::j3x::get<float>(RM.getObjectParams("weapons", id), "offset_x"),
-                                    utils::j3x::get<float>(RM.getObjectParams("weapons", id), "offset_y")));
+                                    RMGET<sf::Vector2f>("weapons", id, "size").y) / 2.0f +
+                       RMGET<sf::Vector2f>("weapons", id, "offset"));
 }
 
 sf::Vector2f ShootingWeapon::use()
@@ -42,7 +39,7 @@ sf::Vector2f ShootingWeapon::use()
         auto sine = static_cast<float>(std::sin(this->getRotation() * M_PI / 180.0f));
         auto cosine = static_cast<float>(std::cos(this->getRotation() * M_PI / 180.0f));
         auto offset_position = this->getPosition();
-        auto weapon_size = sf::Vector2f{this->getSize().x - weapon_offset_.x + BULLET_STARTING_OFFSET_,
+        auto weapon_size = sf::Vector2f{this->getSize().x - weapon_offset_.x + CONF<float>("characters/bullet_starting_offset"),
                                         static_cast<float>(spawn_offset_factor_) * spawn_offset_};
         offset_position.x += weapon_size.x * cosine - 2.0f * weapon_size.y * sine;
         offset_position.y += weapon_size.x * sine + 2.0f * weapon_size.y * cosine;

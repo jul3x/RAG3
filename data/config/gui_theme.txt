@@ -98,7 +98,7 @@ MenuBar {
     SelectedBackgroundColor = rgba(200, 40, 40, 130);
     TextColor = rgb(255, 255, 255, 215);
     SelectedTextColor = rgba(255, 255, 255, 245);
-    DistanceToSide = 20.0f;
+    DistanceToSide = 20.0;
 }
 
 MessageBox {

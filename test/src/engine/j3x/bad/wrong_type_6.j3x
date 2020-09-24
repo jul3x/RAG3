@@ -1,0 +1,3 @@
+// wrong name of variable
+
+list list = [1; "a"]

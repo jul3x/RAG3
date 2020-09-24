@@ -15,7 +15,8 @@
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Audio/Music.hpp>
 
-#include <R3E/utils/Parser.h>
+#include <R3E/j3x/J3X.h>
+#include <R3E/system/Logger.h>
 
 
 namespace r3e {
@@ -29,13 +30,13 @@ namespace r3e {
                                 std::string sounds_dir, std::string music_dir);
 
         void setTexturesSmoothAllowed(bool allowed);
-        static void setFontSmoothDisabled(sf::Font& font, const std::vector<int>& sizes);
+        void setFontsSmoothAllowed(bool allowed);
 
         sf::Texture& getTexture(const std::string& key);
         sf::SoundBuffer& getSound(const std::string& key);
         sf::Music& getMusic(const std::string& key);
         sf::Font& getFont(const std::string& key);
-        utils::j3x::Parameters& getParameters(const std::string& key);
+        j3x::Parameters& getParameters(const std::string& key);
         sf::Font& getFont();
 
         // TODO LazyLoad every type of objects
@@ -59,7 +60,7 @@ namespace r3e {
                 }
                 catch (std::runtime_error& e)
                 {
-                    std::cerr << e.what() << std::endl;
+                    LOG.error(e.what());
                 }
             }
 
@@ -77,7 +78,7 @@ namespace r3e {
         std::unordered_map<std::string, sf::SoundBuffer> sounds_;
         std::unordered_map<std::string, sf::Music> music_;
         std::unordered_map<std::string, sf::Font> fonts_;
-        std::unordered_map<std::string, utils::j3x::Parameters> parameters_;
+        std::unordered_map<std::string, std::shared_ptr<j3x::Parameters>> parameters_;
 
         std::string j3x_directory_;
         std::string textures_directory_;
@@ -85,7 +86,8 @@ namespace r3e {
         std::string sounds_directory_;
         std::string music_directory_;
 
-        bool textures_smooth_allowed_;
+        bool textures_smooth_allowed_{false};
+        bool fonts_smooth_allowed_{true};
 
     };
 

@@ -9,8 +9,8 @@
 
 PlacedWeapon::PlacedWeapon(const sf::Vector2f& position, float direction, const std::string& id, int u_id) :
     PlacedWeapon(position, direction, id,
-                 utils::j3x::get<std::string>(RM.getObjectParams("weapons", id), "default_usage"),
-                 utils::j3x::get<float>(RM.getObjectParams("weapons", id), "default_data"), u_id)
+                 RMGET<std::string>("weapons", id, "default_usage"),
+                 RMGET<float>("weapons", id, "default_data"), u_id)
 {
 
 }

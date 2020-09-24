@@ -7,7 +7,6 @@
 
 #include "Geometry.h"
 #include "Numeric.h"
-#include "Parser.h"
 
 
 #endif //RAG3_ENGINE_INCLUDE_R3E_UTILS_UTILS_H

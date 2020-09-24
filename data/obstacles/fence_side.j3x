@@ -1,30 +1,21 @@
-float size_x=32.0f
-float size_y=32.0f
-
-float collision_size_x=8.0f
-float collision_size_y=32.0f
-
-float collision_offset_x=0.0f
-float collision_offset_y=-16.0f
-
-float map_offset_x=0.0f
-float map_offset_y=8.0f
+vector size=(32.0,32.0)
+vector collision_size=(8.0,32.0)
+vector collision_offset=(0.0,-16)
+vector map_offset=(0.0,8.0)
 
 int frames_number=4
-float frame_duration=0.2f
+float frame_duration=0.2
 
-float endurance=9999999.0f
+float endurance=9999999.0
 
-string default_activation=OnKill
-list[string] default_functions=[Null]
-list[string] default_datas=[Null]
+string default_activation="OnKill"
+list default_functions=["Null"]
+list default_datas=[0]
 
 int z_index=1
 
-bool light_point=1
-bool shadow=1
-string shadow_texture_suffix=_sh
-float shadow_offset_x=16.0f
-float shadow_offset_y=-3.0f
-float shadow_size_x=32.0f
-float shadow_size_y=48.0f
+bool light_point=true
+bool shadow=true
+string shadow_texture_suffix="_sh"
+vector shadow_offset=(16.0,-3.0)
+vector shadow_size=(32.0,48.0)

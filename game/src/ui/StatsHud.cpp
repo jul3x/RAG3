@@ -10,21 +10,21 @@
 
 StatsHud::StatsHud(const sf::Vector2f& position) :
         AbstractDrawableObject(position,
-                               {SIZE_X_ * CFG.get<float>("graphics/user_interface_zoom"),
-                                SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom")},
+                               {SIZE_X_ * CONF<float>("graphics/user_interface_zoom"),
+                                SIZE_Y_ * CONF<float>("graphics/user_interface_zoom")},
                                &RM.getTexture("stats_hud")),
-        deaths_(CFG.get<float>("graphics/inertial_states_change_speed")),
-        crystals_(CFG.get<float>("graphics/inertial_states_change_speed")),
-        deaths_text_("0000000", RM.getFont(), CFG.get<int>("graphics/stats_text_size") * CFG.get<float>("graphics/user_interface_zoom")),
-        crystals_text_("0000000", RM.getFont(), CFG.get<int>("graphics/stats_text_size") * CFG.get<float>("graphics/user_interface_zoom"))
+        deaths_(CONF<float>("graphics/inertial_states_change_speed")),
+        crystals_(CONF<float>("graphics/inertial_states_change_speed")),
+        deaths_text_("0000000", RM.getFont(), CONF<float>("graphics/stats_text_size")),
+        crystals_text_("0000000", RM.getFont(), CONF<float>("graphics/stats_text_size"))
 {
     deaths_text_.setFillColor(sf::Color::White);
-    deaths_text_.setPosition(DEATHS_X_ * CFG.get<float>("graphics/user_interface_zoom"),
-            DEATHS_Y_ * CFG.get<float>("graphics/user_interface_zoom"));
+    deaths_text_.setPosition(DEATHS_X_ * CONF<float>("graphics/user_interface_zoom"),
+            DEATHS_Y_ * CONF<float>("graphics/user_interface_zoom"));
 
     crystals_text_.setFillColor(sf::Color::White);
-    crystals_text_.setPosition(CRYSTALS_X_ * CFG.get<float>("graphics/user_interface_zoom"),
-            CRYSTALS_Y_ * CFG.get<float>("graphics/user_interface_zoom"));
+    crystals_text_.setPosition(CRYSTALS_X_ * CONF<float>("graphics/user_interface_zoom"),
+            CRYSTALS_Y_ * CONF<float>("graphics/user_interface_zoom"));
 
     this->changeOrigin({0.0f, 0.0f});
 }

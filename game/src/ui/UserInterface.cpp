@@ -14,19 +14,19 @@
 
 
 UserInterface::UserInterface() :
-        blood_splash_(sf::Vector2f(CFG.get<int>("graphics/window_width_px"), CFG.get<int>("graphics/window_height_px"))),
-        weapons_bar_({static_cast<float>(CFG.get<int>("graphics/window_width_px")),
-                      static_cast<float>(CFG.get<int>("graphics/window_height_px"))}),
-        health_bar_({CFG.get<int>("graphics/window_width_px") - HEALTH_BAR_X_ * CFG.get<float>("graphics/user_interface_zoom"),
-                     CFG.get<int>("graphics/window_height_px") - HEALTH_BAR_Y_ * CFG.get<float>("graphics/user_interface_zoom")}),
-        time_bar_({TIME_BAR_X_ * CFG.get<float>("graphics/user_interface_zoom"),
-                   CFG.get<int>("graphics/window_height_px") - TIME_BAR_Y_ * CFG.get<float>("graphics/user_interface_zoom")}),
+        blood_splash_(sf::Vector2f(CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_height_px"))),
+        weapons_bar_({static_cast<float>(CONF<int>("graphics/window_width_px")),
+                      static_cast<float>(CONF<int>("graphics/window_height_px"))}),
+        health_bar_({CONF<int>("graphics/window_width_px") - HEALTH_BAR_X_ * CONF<float>("graphics/user_interface_zoom"),
+                     CONF<int>("graphics/window_height_px") - HEALTH_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")}),
+        time_bar_({TIME_BAR_X_ * CONF<float>("graphics/user_interface_zoom"),
+                   CONF<int>("graphics/window_height_px") - TIME_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")}),
         fps_text_("FPS: ", RM.getFont("editor"), 12),
-        object_use_text_("[F] Use object", RM.getFont(), CFG.get<int>("graphics/use_text_size")),
-        npc_talk_text_("[T] Talk to NPC", RM.getFont(), CFG.get<int>("graphics/use_text_size")),
-        left_hud_({0.0f, static_cast<float>(CFG.get<int>("graphics/window_height_px"))}),
-        right_hud_({static_cast<float>(CFG.get<int>("graphics/window_width_px")),
-                    static_cast<float>(CFG.get<int>("graphics/window_height_px"))}),
+        object_use_text_("[F] Use object", RM.getFont(), CONF<float>("graphics/use_text_size")),
+        npc_talk_text_("[T] Talk to NPC", RM.getFont(), CONF<float>("graphics/use_text_size")),
+        left_hud_({0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))}),
+        right_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")),
+                    static_cast<float>(CONF<int>("graphics/window_height_px"))}),
         stats_hud_({0.0f, 0.0f}),
         player_(nullptr),
         camera_(nullptr) {}
@@ -38,7 +38,7 @@ void UserInterface::initialize(graphics::Graphics& graphics)
         throw std::runtime_error("[UserInterface] player_ or camera_ is nullptr!");
     }
     health_bar_.setMaxHealth(player_->getMaxHealth());
-    time_bar_.setMaxTime(CFG.get<float>("journal_max_time"));
+    time_bar_.setMaxTime(CONF<float>("journal_max_time"));
 
     fps_text_.setFillColor(sf::Color::White);
     fps_text_.setPosition(FPS_X_, FPS_Y_);
@@ -48,7 +48,7 @@ void UserInterface::initialize(graphics::Graphics& graphics)
 
     graphics.getWindow().setMouseCursorVisible(false);
     graphics.getWindow().setKeyRepeatEnabled(false);
-    graphics.getCurrentView().zoom(1.0f / CFG.get<float>("graphics/global_zoom"));
+    graphics.getCurrentView().zoom(1.0f / CONF<float>("graphics/global_zoom"));
     graphics.setCurrentView();
     camera_->setViewNormalSize(graphics.getWindow().getView().getSize());
 }
@@ -65,8 +65,8 @@ void UserInterface::registerCamera(Camera* camera)
 
 void UserInterface::spawnAchievement(const std::string& title, const std::string& text, const std::string& tex)
 {
-    achievements_.emplace_back(sf::Vector2f{CFG.get<int>("graphics/window_width_px") - ACHIEVEMENTS_MARGIN_,
-                                            (ACHIEVEMENTS_MARGIN_ + Achievement::SIZE_Y_) * (achievements_.size() + 1)},
+    achievements_.emplace_back(sf::Vector2f{CONF<int>("graphics/window_width_px") - ACHIEVEMENTS_MARGIN_,
+                                            (ACHIEVEMENTS_MARGIN_ + CONF<sf::Vector2f>("graphics/achievement_size").y) * (achievements_.size() + 1)},
                                title, text, &RM.getTexture(tex));
 }
 
@@ -141,7 +141,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 
                 auto current_view = graphics.getCurrentView();
                 current_view.setSize(visible_area);
-                current_view.zoom(1.0f / CFG.get<float>("graphics/global_zoom"));
+                current_view.zoom(1.0f / CONF<float>("graphics/global_zoom"));
                 graphics.modifyCurrentView(current_view);
 
                 auto static_view = graphics.getStaticView();
@@ -149,11 +149,11 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                 static_view.setCenter(visible_area / 2.0f);
                 graphics.modifyStaticView(static_view);
 
-                health_bar_.setPosition(event.size.width - HEALTH_BAR_X_ * CFG.get<float>("graphics/user_interface_zoom"),
-                                        event.size.height - HEALTH_BAR_Y_ * CFG.get<float>("graphics/user_interface_zoom"));
+                health_bar_.setPosition(event.size.width - HEALTH_BAR_X_ * CONF<float>("graphics/user_interface_zoom"),
+                                        event.size.height - HEALTH_BAR_Y_ * CONF<float>("graphics/user_interface_zoom"));
 
-                time_bar_.setPosition(TIME_BAR_X_ * CFG.get<float>("graphics/user_interface_zoom"),
-                                        event.size.height - TIME_BAR_Y_ * CFG.get<float>("graphics/user_interface_zoom"));
+                time_bar_.setPosition(TIME_BAR_X_ * CONF<float>("graphics/user_interface_zoom"),
+                                        event.size.height - TIME_BAR_Y_ * CONF<float>("graphics/user_interface_zoom"));
 
                 weapons_bar_.setPosition(event.size.width, event.size.height);
 
@@ -271,6 +271,8 @@ void UserInterface::draw(graphics::Graphics& graphics)
     }
 
     graphics.draw(crosshair_);
+
+    RM.setFontsSmoothAllowed(false);
 }
 
 inline void UserInterface::handleScrolling(float delta)
@@ -288,9 +290,9 @@ inline void UserInterface::handleKeys()
     float max_speed;
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
-        max_speed = utils::j3x::get<float>(RM.getObjectParams("characters", "player"), "max_running_speed");
+        max_speed = RMGET<float>("characters", "player", "max_running_speed");
     else
-        max_speed = utils::j3x::get<float>(RM.getObjectParams("characters", "player"), "max_speed");
+        max_speed = RMGET<float>("characters", "player", "max_speed");
 
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
@@ -335,8 +337,8 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
         {
             camera_->setPointingTo(player_->getPosition() +
                                    utils::geo::getNormalized(mouse_world_pos - player_->getPosition()) *
-                                   CFG.get<float>("graphics/camera_right_click_distance_factor"));
-            camera_->setZoomTo(CFG.get<float>("graphics/camera_right_click_zoom_factor"));
+                                   CONF<float>("graphics/camera_right_click_distance_factor"));
+            camera_->setZoomTo(CONF<float>("graphics/camera_right_click_zoom_factor"));
             Game::get().setBulletTime();
         }
         else
@@ -387,5 +389,5 @@ void UserInterface::spawnThought(Character* user, const std::string& text)
         }
     }
 
-    thoughts_.emplace_back(user, text, CFG.get<float>("thought_duration"));
+    thoughts_.emplace_back(user, text, CONF<float>("thought_duration"));
 }

@@ -1,0 +1,7 @@
+vector a = (5, 6)
+
+vector b = (5.0, 6.0)
+
+vector c = a
+
+list d = [(5,6); c; a; b; (0.0, 0.0)]

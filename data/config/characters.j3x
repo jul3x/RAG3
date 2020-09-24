@@ -1,10 +1,24 @@
-float max_acceleration=1200.0f
-float mouse_reaction_speed=100.0f
+// STEERING
+float max_acceleration = 1200.0
+float mouse_reaction_speed = 100.0
+float rotating_hysteresis = 10.0
 
-int ammo_dropped=3
-float ammo_drop_offset=14.0f
+// IT SHOULD PROBABLY BE IN PARTICULAR CHARACTER DESCRIPTION
+int ammo_dropped = 3
+float ammo_drop_offset = 14.0
+float bullet_starting_offset = 10.0
 
-float talkable_distance=64.0f
-float talking_respond_time=1.5f
+// TALKING
+float talkable_distance = 64.0
+float talking_respond_time = 1.5
 
-float min_melee_distance_ai=48.0f
+// AI
+float min_melee_distance_ai = 48.0
+float max_distance_ai = 1500.0
+float walls_between_close_ai = 0.0
+float walls_between_far_ai = 1.0
+float max_time_without_path_recalc = 1000.0
+float min_pos_change_without_path_recalc = 20.0
+int max_path_search_depth = 1000
+
+

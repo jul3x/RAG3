@@ -12,29 +12,26 @@ Bullet::Bullet(Character* user,
                const sf::Vector2f& position,
                const std::string& id,
                const float direction) :
-        Functional(utils::j3x::get<std::string>(RM.getObjectParams("bullets", id), "default_activation"),
-                   utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("bullets", id), "default_functions"),
-                   utils::j3x::get<std::vector<std::string>>(RM.getObjectParams("bullets", id), "default_datas"),
+        Functional(RMGET<std::string>("bullets", id, "default_activation"),
+                   RMGET<j3x::List>("bullets", id, "default_functions"),
+                   RMGET<j3x::List>("bullets", id, "default_datas"),
                    id, -2),
         HoveringObject(position,
-                       utils::j3x::get<float>(RM.getObjectParams("bullets", id), "speed") *
+                       RMGET<float>("bullets", id, "speed") *
                                sf::Vector2f(std::cos(direction), std::sin(direction)),
-                       {utils::j3x::get<float>(RM.getObjectParams("bullets", id), "size_x"),
-                        utils::j3x::get<float>(RM.getObjectParams("bullets", id), "size_y")},
-                       collision::Box(utils::j3x::get<float>(RM.getObjectParams("bullets", id), "size_x"),
-                                      utils::j3x::get<float>(RM.getObjectParams("bullets", id), "size_y"),
-                                      {utils::j3x::get<float>(RM.getObjectParams("bullets", id), "collision_offset_x"),
-                                       utils::j3x::get<float>(RM.getObjectParams("bullets", id),
-                                               "collision_offset_y")}),
+                       RMGET<sf::Vector2f>("bullets", id, "size"),
+                       collision::Box(RMGET<sf::Vector2f>("bullets", id, "collision_offset").x,
+                                      RMGET<sf::Vector2f>("bullets", id, "collision_offset").y,
+                                      RMGET<sf::Vector2f>("bullets", id, "collision_offset")),
                        &RM.getTexture("bullets/" + id),
-                       utils::j3x::get<int>(RM.getObjectParams("bullets", id), "z_index"),
+                       RMGET<int>("bullets", id, "z_index"),
                        0, 0.0f, 0.0f),
         user_(user),
-        trail_color_(sf::Color(CFG.get<int>("graphics/trail_color"))),
+        trail_color_(sf::Color(CONF<int>("graphics/trail_color"))),
         trail_time_elapsed_(0.0f),
-        life_(utils::j3x::get<float>(RM.getObjectParams("bullets", id), "life")),
-        deadly_factor_(utils::j3x::get<float>(RM.getObjectParams("bullets", id), "deadly_factor")),
-        TRAIL_TIME_STEP_(CFG.get<float>("graphics/full_trail_time") / Bullet::TRAIL_COUNT_)
+        life_(RMGET<float>("bullets", id, "life")),
+        deadly_factor_(RMGET<float>("bullets", id, "deadly_factor")),
+        TRAIL_TIME_STEP_(CONF<float>("graphics/full_trail_time") / CONF<int>("graphics/bullet_trail_vertices"))
 {
     this->setRotation(direction * 180.0f / static_cast<float>(M_PI));
 }
@@ -61,7 +58,7 @@ bool Bullet::update(float time_elapsed)
 
         trail_.push_back(this->getPosition());
 
-        if (trail_.size() > TRAIL_COUNT_)
+        if (trail_.size() > CONF<int>("graphics/bullet_trail_vertices"))
         {
             trail_.pop_front();
         }

@@ -37,8 +37,8 @@ public:
     NPC(const sf::Vector2f& position, const std::string& id, int u_id = -1);
 
     NPC(const sf::Vector2f& position, const std::string& id,
-        const std::string& activation, const std::vector<std::string>& functions,
-        const std::vector<std::string>& datas, int u_id = -1);
+        const std::string& activation, const j3x::List& functions,
+        const j3x::List& datas, int u_id = -1);
 
     void registerEnemy(const Character* enemy);
     void removeEnemy(const Character* enemy);
@@ -61,10 +61,6 @@ protected:
     void meleeAttackAI(float time_elapsed);
 
     sf::Vector2f findNearestSafeSpot(const sf::Vector2f& direction) const;
-
-    static constexpr float MAX_DISTANCE_ = 1500.0f;
-    static constexpr float WALLS_BETWEEN_CLOSE_ = 0.0f;
-    static constexpr float WALLS_BETWEEN_FAR_ = 1.0f;
 
     std::list<const Character*> enemies_;
     const Character* current_enemy_;

@@ -1,36 +1,26 @@
-float max_speed=64.0f
-
-float standby_speed=32.0f
+float max_speed=64.0
+float standby_speed=32.0
 
 float max_health=4
 
-float size_x=25.0f
-float size_y=60.0f
+vector size=(25.0,60.0)
+vector collision_size=(20.0,40.0)
+vector collision_offset=(0.0,0.0)
+vector map_offset=(0.0,8.0)
 
-float collision_size_x=20.0f
-float collision_size_y=40.0f
-
-float collision_offset_x=0.0f
-float collision_offset_y=0.0f
-
-float map_offset_x=0.0f
-float map_offset_y=8.0f
-
-list[float] gun_offset_x=[9.0f;9.0f;9.0f;9.0f]
-list[float] gun_offset_y=[-8.0f;-9.0f;-8.0f;-9.0f]
-
+list gun_offset=[(9.0,-8.0);(9.0,-9.0);(9.0,-8.0);(9.0,-9.0)]
 int frames_number=4
-float frame_duration=0.07f
+float frame_duration=0.07
 
-string default_activation=OnKill
-list[string] default_functions=[Null]
-list[string] default_datas=[Null]
+string default_activation="OnKill"
+list default_functions=["Null"]
+list default_datas=[0]
 
-string ai_type=MeleeAttack
+string ai_type="MeleeAttack"
 
 int z_index=1
 
-list[string] weapons=[melee_claw]
+list weapons=["melee_claw"]
 
-bool is_talkable=0
-bool light_point=0
+bool is_talkable=false
+bool light_point=false

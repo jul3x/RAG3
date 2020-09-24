@@ -3,25 +3,25 @@
 //
 
 #include <string>
+#include <utility>
 
 #include <common/ResourceManager.h>
 #include <common/Functional.h>
 #include <common/Character.h>
 
 
-Functional::Functional(const std::string& activation, const std::vector<std::string>& functions,
-                       const std::vector<std::string>& datas, const std::string& id, int u_id) :
+Functional::Functional(std::string activation, const j3x::List& functions,
+                       const j3x::List& datas, const std::string& id, int u_id) :
         Identifiable(id),
         Unique(u_id),
-        activation_(activation),
-        functions_(functions),
-        datas_(datas),
+        activation_(std::move(activation)),
         is_active_(true),
         is_destroyed_(false),
         text_to_use_(nullptr),
-        is_usable_by_npc_(true)
+        is_usable_by_npc_(true),
+        functions_(functions),
+        datas_(datas)
 {
-
 }
 
 const std::string& Functional::getActivation() const
@@ -34,13 +34,7 @@ const std::string& Functional::getFunctionsStr() const
     static std::string result;
     result.clear();
 
-    for (auto& function : functions_)
-    {
-        result += function + utils::j3x::DELIMITER_;
-    }
-
-    if (result.length() >= 1)
-        result.pop_back();
+    j3x::serialize(functions_, result);
 
     return result;
 }
@@ -50,13 +44,7 @@ const std::string& Functional::getDatasStr() const
     static std::string result;
     result.clear();
 
-    for (auto& data : datas_)
-    {
-        result += data + utils::j3x::DELIMITER_;
-    }
-
-    if (result.length() >= 1)
-        result.pop_back();
+    j3x::serialize(datas_, result);
 
     return result;
 }
@@ -66,12 +54,12 @@ const std::string& Functional::getTextToUse() const
     return *text_to_use_;
 }
 
-const std::vector<std::string>& Functional::getFunctions() const
+const j3x::List& Functional::getFunctions() const
 {
     return functions_;
 }
 
-const std::vector<std::string>& Functional::getDatas() const
+const j3x::List& Functional::getDatas() const
 {
     return datas_;
 }
@@ -81,24 +69,24 @@ void Functional::setActivation(const std::string& str)
     activation_ = str;
 }
 
-void Functional::setFunctions(const std::vector<std::string>& func)
+void Functional::setFunctions(const j3x::List& func)
 {
     functions_ = func;
 }
 
-void Functional::setDatas(const std::vector<std::string>& data)
+void Functional::setDatas(const j3x::List& data)
 {
     datas_ = data;
 }
 
 void Functional::setFunctionsStr(const std::string& str)
 {
-    utils::j3x::tokenize(str, utils::j3x::DELIMITER_, functions_);
+    functions_ = j3x::parseObj<j3x::List>("list", str);
 }
 
 void Functional::setDatasStr(const std::string& str)
 {
-    utils::j3x::tokenize(str, utils::j3x::DELIMITER_, datas_);
+    datas_ = j3x::parseObj<j3x::List>("list", str);
 }
 
 bool Functional::isActive() const
@@ -121,7 +109,8 @@ void Functional::activate()
     is_active_ = true;
 }
 
-void Functional::bindFunction(std::function<void(Functional*, const std::string&, Character*)> func, const std::string& text, bool is_usable_by_npc)
+void Functional::bindFunction(const std::function<void(Functional*, const j3x::Obj&, Character*)>& func,
+                              const std::string& text, bool is_usable_by_npc)
 {
     funcs_.emplace_back(func);
 

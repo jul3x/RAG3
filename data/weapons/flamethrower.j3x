@@ -1,26 +1,22 @@
-float recoil=0.0f
+float recoil=0.0
 int max_ammo=2000
 int ammo_portion=2
 
-string spawn_func=fire
-float spawn_timeout=0.1f
-string spawn_type=heavy
+string spawn_func="fire"
+float spawn_timeout=0.1
+string spawn_type="heavy"
 int spawn_quantity=3
-float spawn_angular_diff=15.0f
-float spawn_offset=0.0f
+float spawn_angular_diff=15.0
+float spawn_offset=0.0
 
-float size_x=40.0f
-float size_y=25.0f
-float offset_x=3.0f
-float offset_y=0.0f
-
-float map_offset_x=0.0f
-float map_offset_y=0.0f
+vector size=(40.0,25.0)
+vector offset=(3.0,0.0)
+vector map_offset=(0.0,0.0)
 
 int frames_number=1
-float frame_duration=0.0f
+float frame_duration=0.0
 
 int z_index=1
 
-string default_usage=Const
-float default_data=0.0f
+string default_usage="Const"
+float default_data=0.0

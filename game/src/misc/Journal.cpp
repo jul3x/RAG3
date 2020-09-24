@@ -2,10 +2,13 @@
 // Created by jul3x on 24.03.2020.
 //
 
+#include <R3E/system/Logger.h>
+
 #include <Game.h>
 
 #include <misc/JournalEntries.h>
 #include <misc/Journal.h>
+
 
 
 Journal::Journal(float max_time_back, float sampling_rate) : time_elapsed_(0.0f)
@@ -79,7 +82,7 @@ bool Journal::executeTimeReversal(float time_elapsed)
 {
     if (journal_.size() < MIN_JOURNAL_SIZE_)
     {
-        std::cout << "[Journal] Warning - could not execute time reversal" << std::endl;
+        LOG.info("[Journal] Warning - could not exectue time reversal!");
         return false;
     }
 

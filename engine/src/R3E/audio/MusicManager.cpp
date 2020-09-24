@@ -6,6 +6,7 @@
 #include <experimental/filesystem>
 
 #include <R3E/audio/MusicManager.h>
+#include <R3E/system/Logger.h>
 
 
 namespace r3e {
@@ -29,12 +30,12 @@ namespace r3e {
             music_owned_.emplace_back();
             if (!music_owned_.back().openFromFile(name))
             {
-                std::cerr << "[MusicManager] " << name << " music file not successfully loaded." << std::endl;
+                LOG.error("[MusicManager] " + name + " music file not successfully loaded.");
             }
             else
             {
                 addToQueue(&music_owned_.back());
-                std::cout << "[MusicManager] Music " << name << " is loaded!" << std::endl;
+                LOG.info("[MusicManager] Music " + name + " is loaded!");
             }
         }
 

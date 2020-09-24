@@ -32,21 +32,21 @@ void Grid::draw(graphics::Graphics& graphics)
 
     for (size_t i = 2 * diff_x; i < 4 * diff_x; i += 2)
     {
-        auto current_increment = (i - 2*diff_x) / 2.0f * DecorationTile::SIZE_X_;
+        auto current_increment = (i - 2 * diff_x) / 2.0f * DecorationTile::SIZE_X_;
         array_[i].position = sf::Vector2f(size_x_2 - current_increment, size_y_2 - size_.y);
         array_[i+1].position = sf::Vector2f(size_x_2 - current_increment, size_y_2 + size_.y);
     }
 
     for (size_t i = 4 * diff_x; i < 4 * diff_x + 2 * diff_y; i += 2)
     {
-        auto current_increment = (i - 4*diff_x) / 2.0f * DecorationTile::SIZE_Y_;
+        auto current_increment = (i - 4 * diff_x) / 2.0f * DecorationTile::SIZE_Y_;
         array_[i].position = sf::Vector2f(size_x_2 - size_.x, size_y_2 + current_increment);
         array_[i+1].position = sf::Vector2f(size_x_2 + size_.x, size_y_2 + current_increment);
     }
 
     for (size_t i = 4 * diff_x + 2 * diff_y; i < 4 * diff_x + 4 * diff_y; i += 2)
     {
-        auto current_increment = (i - 4*diff_x - 2*diff_y) / 2.0f * DecorationTile::SIZE_Y_;
+        auto current_increment = (i - 4 * diff_x - 2 * diff_y) / 2.0f * DecorationTile::SIZE_Y_;
         array_[i].position = sf::Vector2f(size_x_2 - size_.x, size_y_2 - current_increment);
         array_[i+1].position = sf::Vector2f(size_x_2 + size_.x, size_y_2 - current_increment);
     }

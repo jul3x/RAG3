@@ -13,40 +13,39 @@ Achievement::Achievement(const sf::Vector2f& position,
                          const std::string& title,
                          const std::string& text,
                          sf::Texture* tex) :
-        AbstractDrawableObject({position.x + IMG_X_ * CFG.get<float>("graphics/user_interface_zoom"),
-                (-SIZE_Y_ + IMG_Y_) * CFG.get<float>("graphics/user_interface_zoom")},
-                               {IMG_SIZE_X_ * CFG.get<float>("graphics/user_interface_zoom"),
-                                IMG_SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom")},
+        AbstractDrawableObject(sf::Vector2f{position.x, -CONF<sf::Vector2f>("graphics/achievement_size").y} +
+                               CONF<sf::Vector2f>("graphics/achievement_img_pos"),
+                               CONF<sf::Vector2f>("graphics/achievement_img_size"),
                                tex),
-        position_(CFG.get<float>("graphics/achievement_show_speed")),
-        title_text_(title, RM.getFont(), static_cast<int>(CFG.get<int>("graphics/achievement_title_text_size") * CFG.get<float>("graphics/user_interface_zoom"))),
-        text_text_(text, RM.getFont(), static_cast<int>(CFG.get<int>("graphics/achievement_text_text_size") * CFG.get<float>("graphics/user_interface_zoom"))),
+        position_(CONF<float>("graphics/achievement_show_speed")),
+        title_text_(title, RM.getFont(), static_cast<int>(CONF<float>("graphics/achievement_title_text_size"))),
+        text_text_(text, RM.getFont(), static_cast<int>(CONF<float>("graphics/achievement_text_text_size"))),
         bg_(sf::Quads, 4),
-        time_elapsed_(CFG.get<float>("graphics/achievement_show_time"))
+        time_elapsed_(CONF<float>("graphics/achievement_show_time"))
 {
-    bg_[0].position = sf::Vector2f(position.x, -SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom"));
-    bg_[1].position = sf::Vector2f(position.x - SIZE_X_ * CFG.get<float>("graphics/user_interface_zoom"), -SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom"));
-    bg_[2].position = sf::Vector2f(position.x - SIZE_X_ * CFG.get<float>("graphics/user_interface_zoom"), -SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom"));
-    bg_[3].position = sf::Vector2f(position.x, -SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom"));
+    bg_[0].position = sf::Vector2f(position.x, - CONF<sf::Vector2f>("graphics/achievement_size").y);
+    bg_[1].position = sf::Vector2f(position.x - CONF<sf::Vector2f>("graphics/achievement_size").x, - CONF<sf::Vector2f>("graphics/achievement_size").y);
+    bg_[2].position = sf::Vector2f(position.x - CONF<sf::Vector2f>("graphics/achievement_size").x, - CONF<sf::Vector2f>("graphics/achievement_size").y);
+    bg_[3].position = sf::Vector2f(position.x, - CONF<sf::Vector2f>("graphics/achievement_size").y);
 
-    bg_[0].color = sf::Color(60, 60, 60, 255);
-    bg_[1].color = sf::Color(60, 60, 60, 255);
-    bg_[2].color = sf::Color(36, 36, 36, 255);
-    bg_[3].color = sf::Color(36, 36, 36, 255);
+    bg_[0].color = sf::Color(CONF<int>("graphics/achievement_top_color"));
+    bg_[1].color = sf::Color(CONF<int>("graphics/achievement_top_color"));
+    bg_[2].color = sf::Color(CONF<int>("graphics/achievement_bottom_color"));
+    bg_[3].color = sf::Color(CONF<int>("graphics/achievement_bottom_color"));
 
-    position_.setForcedState({position.x, -SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom")});
-    position_.setState({position.x, position.y * CFG.get<float>("graphics/user_interface_zoom")});
+    position_.setForcedState({position.x,  - CONF<sf::Vector2f>("graphics/achievement_size").y});
+    position_.setState({position.x, position.y});
 
-    title_text_.setFillColor(sf::Color(TITLE_COLOR_));
+    title_text_.setFillColor(sf::Color(CONF<int>("graphics/achievement_title_color")));
     title_bounds_ = title_text_.getLocalBounds();
-    title_text_.setPosition(position.x + TITLE_X_ * CFG.get<float>("graphics/user_interface_zoom"),
-            (-SIZE_Y_ + TITLE_Y_) * CFG.get<float>("graphics/user_interface_zoom"));
+    title_text_.setPosition(sf::Vector2f(position.x, - CONF<sf::Vector2f>("graphics/achievement_size").y)
+            + CONF<sf::Vector2f>("graphics/achievement_title_pos"));
 
-    text_text_.setFillColor(sf::Color(TEXT_COLOR_));
-    text_text_.setPosition(position.x + TEXT_X_ * CFG.get<float>("graphics/user_interface_zoom"),
-            (-SIZE_Y_ + TEXT_Y_) * CFG.get<float>("graphics/user_interface_zoom"));
+    text_text_.setFillColor(sf::Color(CONF<int>("graphics/achievement_text_color")));
+    title_text_.setPosition(sf::Vector2f(position.x, - CONF<sf::Vector2f>("graphics/achievement_size").y)
+                            + CONF<sf::Vector2f>("graphics/achievement_text_pos"));
 
-    this->changeOrigin({SIZE_X_ * CFG.get<float>("graphics/user_interface_zoom"), 0.0f});
+    this->changeOrigin({CONF<sf::Vector2f>("graphics/achievement_size").x, 0.0f});
 }
 
 bool Achievement::update(float time_elapsed)
@@ -57,15 +56,13 @@ bool Achievement::update(float time_elapsed)
 
     bg_[0].position.y = 0.0f + curr_pos.y;
     bg_[1].position.y = 0.0f + curr_pos.y;
-    bg_[2].position.y = -SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom") + curr_pos.y;
-    bg_[3].position.y = -SIZE_Y_ * CFG.get<float>("graphics/user_interface_zoom") + curr_pos.y;
+    bg_[2].position.y = - CONF<sf::Vector2f>("graphics/achievement_size").y + curr_pos.y;
+    bg_[3].position.y = - CONF<sf::Vector2f>("graphics/achievement_size").y + curr_pos.y;
 
-    title_text_.setPosition(curr_pos + sf::Vector2f{TITLE_X_ * CFG.get<float>("graphics/user_interface_zoom") - title_bounds_.width / 2.0f, TITLE_Y_ * CFG.get<float>("graphics/user_interface_zoom")});
+    title_text_.setPosition(curr_pos + CONF<sf::Vector2f>("graphics/achievement_title_pos") - sf::Vector2f{title_bounds_.width / 2.0f, 0});
 
-    sf::Vector2i new_text_text_pos = {static_cast<int>(curr_pos.x + TEXT_X_ * CFG.get<float>("graphics/user_interface_zoom")),
-                                      static_cast<int>(curr_pos.y + TEXT_Y_ * CFG.get<float>("graphics/user_interface_zoom"))};
-    text_text_.setPosition(new_text_text_pos.x, new_text_text_pos.y);
-    shape_.setPosition(curr_pos + sf::Vector2f{IMG_X_, IMG_Y_} * CFG.get<float>("graphics/user_interface_zoom"));
+    text_text_.setPosition(curr_pos + CONF<sf::Vector2f>("graphics/achievement_text_pos"));
+    shape_.setPosition(curr_pos + CONF<sf::Vector2f>("graphics/achievement_img_pos"));
 
     if (time_elapsed_ < 0.0f)
     {

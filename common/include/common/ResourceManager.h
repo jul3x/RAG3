@@ -25,8 +25,16 @@ public:
 
     std::vector<std::string>& getListOfObjects(const std::string& dir);
     std::vector<std::string>& getFreshListOfObjects(const std::string& dir);
-    const utils::j3x::Parameters& getObjectParams(const std::string& category, const std::string& id);
-    static std::tuple<Map::Data, Map::TileMap> getMap(const std::string& key);
+    const j3x::Parameters& getObjectParams(const std::string& category, const std::string& id);
+
+    template<class T>
+    const T& getParam(const std::string& category, const std::string& id, const std::string& param,
+                      float ignore_warn = false)
+    {
+        return j3x::get<T>(this->getObjectParams(category, id), param, ignore_warn);
+    }
+
+    static std::tuple<Map::Data, Map::TileMap>& getMap(const std::string& key);
     static std::string getConfigContent(const std::string& category, const std::string& id);
 
     static bool saveMap(const std::string& name, Map& map);
@@ -41,5 +49,6 @@ private:
 };
 
 #define RM ResourceManager::getInstance()
+#define RMGET RM.getParam
 
 #endif //RAG3_COMMON_INCLUDE_COMMON_RESOURCEMANAGER_H

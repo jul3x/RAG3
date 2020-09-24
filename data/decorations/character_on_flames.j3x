@@ -1,12 +1,10 @@
-float size_x=34.0f
-float size_y=42.0f
+vector size=(34.0,42.0)
 
-float map_offset_x=0.0f
-float map_offset_y=20.0f
+vector map_offset=(0.0,20.0)
 
 int frames_number=6
-float frame_duration=0.1f
+float frame_duration=0.1
 
 int z_index=1
 
-bool light_point=0
+bool light_point=false

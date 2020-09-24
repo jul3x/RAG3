@@ -52,8 +52,8 @@ public:
               int u_id = -1);
 
     Character(const sf::Vector2f& position, const std::string& id,
-              const std::string& activation, const std::vector<std::string>& functions,
-              const std::vector<std::string>& datas, int u_id = -1);
+              const std::string& activation, const j3x::List& functions,
+              const j3x::List& datas, int u_id = -1);
 
     // Weapon manipulation
     bool shot();
@@ -76,7 +76,7 @@ public:
     bool isTalkable() const;
     TalkableArea* getTalkableArea() const;
     const std::string& getTalkScenarioStr() const;
-    const std::list<std::string>& getTalkScenario() const;
+    const j3x::List& getTalkScenario() const;
     graphics::StaticShadow* getShadow() const;
     float getRotateTo() const;
 
@@ -94,7 +94,7 @@ public:
     void setCurrentFrame(short int frame) override;
     void setCurrentTalkableCharacter(Character* obj);
     void setTalkScenarioStr(const std::string& str);
-    void setTalkScenario(const std::list<std::string>& str);
+    void setTalkScenario(const j3x::List& str);
     void changeTexture(sf::Texture* texture, bool reset = false) override;
 
     bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f) override;
@@ -130,15 +130,14 @@ protected:
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    static constexpr float ROTATING_HYSTERESIS_ = 10.0f;
-
     sf::Vector2f gun_offset_;
     float rotate_to_;
     float speed_factor_;
 
     Special* current_special_object_;
     Character* current_talkable_character_;
-    std::list<std::string> talk_scenario_;
+    j3x::List talk_scenario_;
+    size_t talk_moment_;
 
     float talking_time_elapsed_;
 

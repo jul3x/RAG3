@@ -22,14 +22,16 @@ public:
     Obstacle(const sf::Vector2f& position, const std::string& id, int u_id = -1);
 
     Obstacle(const sf::Vector2f& position, const std::string& id,
-             const std::string& activation, const std::vector<std::string>& functions,
-             const std::vector<std::string>& datas, int u_id = -1);
+             const std::string& activation, const j3x::List& functions,
+             const j3x::List& datas, int u_id = -1);
 
     graphics::StaticShadow* getShadow() const;
 
     bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f) override;
     void setCurrentFrame(short int frame) override;
     void changeTexture(sf::Texture* texture, bool reset = false) override;
+
+    void setPosition(const sf::Vector2f& pos) override;
 
     bool update(float time_elapsed) override;
 

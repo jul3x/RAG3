@@ -14,12 +14,11 @@ ObstacleTile::ObstacleTile(const sf::Vector2f& position, const std::string& id) 
         StaticObject(position,
                      {DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_},
                      collision::Box(
-                             utils::j3x::get<float>(RM.getObjectParams("obstacles_tiles", id), "collision_size_x"),
-                             utils::j3x::get<float>(RM.getObjectParams("obstacles_tiles", id), "collision_size_y"),
-                             {utils::j3x::get<float>(RM.getObjectParams("obstacles_tiles", id), "collision_offset_x"),
-                              utils::j3x::get<float>(RM.getObjectParams("obstacles_tiles", id), "collision_offset_y")}),
+                             RMGET<sf::Vector2f>("obstacles_tiles", id, "collision_size").x,
+                             RMGET<sf::Vector2f>("obstacles_tiles", id, "collision_size").y,
+                             RMGET<sf::Vector2f>("obstacles_tiles", id, "collision_offset")),
                      &RM.getTexture("obstacles_tiles/" + id),
-                     utils::j3x::get<int>(RM.getObjectParams("obstacles_tiles", id), "z_index"),
+                     RMGET<int>("obstacles_tiles", id, "z_index"),
                      0, 0.0f)
 {
     this->changeOrigin(sf::Vector2f(DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_) / 2.0f);

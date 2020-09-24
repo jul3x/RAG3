@@ -1,25 +1,19 @@
-float size_x=24.0f
-float size_y=24.0f
-
-float collision_size_x=15.0f
-
-float collision_offset_x=0.0f
-float collision_offset_y=0.0f
-
-float map_offset_x=0.0f
-float map_offset_y=0.0f
+vector size=(24.0,24.0)
+vector collision_offset=(0.0,0.0)
+vector map_offset=(0.0,0.0)
+float collision_radius=15.0
 
 int frames_number=1
-float frame_duration=0.0f
+float frame_duration=0.0
 
-string default_activation=OnEnter
-list[string] default_functions=[AddAmmo;Destroy]
-list[string] default_datas=[m4;Null]
+string default_activation="OnEnter"
+list default_functions=["AddAmmo"; "Destroy"]
+list default_datas=["m4"; "Null"]
 
-bool is_drawable=1
+bool is_drawable=true
 
 int z_index=0
 
-bool light_point=0
-bool default_active=1
-bool shadow=0
+bool light_point=false
+bool default_active=true
+bool shadow=false

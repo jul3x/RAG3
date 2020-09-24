@@ -1,26 +1,19 @@
-float size_x=32.0f
-float size_y=32.0f
-
-float map_offset_x=0.0f
-float map_offset_y=0.0f
-
-float collision_size_x=32.0f
-float collision_size_y=32.0f
-
-float collision_offset_x=0.0f
-float collision_offset_y=0.0f
+vector size=(32.0,32.0)
+vector collision_offset=(0.0,0.0)
+vector map_offset=(0.0,0.0)
+float collision_radius=32.0
 
 int frames_number=1
-float frame_duration=0.0f
+float frame_duration=0.0
 
-string default_activation=OnEnter
-list[string] default_functions=[MapStart]
-list[string] default_datas=[Null]
+string default_activation="OnEnter"
+list default_functions=["MapStart"]
+list default_datas=["Null"]
 
-bool is_drawable=0
+bool is_drawable=false
 
 int z_index=0
 
-bool light_point=0
-bool shadow=0
-bool default_active=1
+bool light_point=false
+bool shadow=false
+bool default_active=true

@@ -20,8 +20,8 @@ matrix:
       addons:
        apt:
          packages: &precise_latest_boost_packages
-           - gcc-7
-           - g++-7
+           - gcc-9
+           - g++-9
          sources: &precise_latest_boost_sources
            - ubuntu-toolchain-r-test
 
@@ -32,7 +32,7 @@ before_install:
     - sudo apt-get update -qq
 
 install:
-    - export CXX="g++-7"
+    - export CXX="g++-9"
 
     # Download and install recent cmake
     - |

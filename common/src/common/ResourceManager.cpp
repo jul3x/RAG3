@@ -8,6 +8,7 @@
 #include <R3E/system/Config.h>
 #include <R3E/utils/Utils.h>
 #include <R3E/j3x/J3X.h>
+#include <R3E/system/Logger.h>
 
 #include <common/ResourceManager.h>
 
@@ -171,7 +172,7 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
     set_random_initial_frame(decorations);
     set_random_initial_frame(weapons);
 
-    std::cout << "[ResourceManager] Map " << key << " is loaded!" << std::endl;
+    LOG.info("[ResourceManager] Map " + key + " is loaded!");
 
     return map;
 }
@@ -182,7 +183,7 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
 
     if (!file)
     {
-        std::cerr << "[ResourceManager] Map saving failed";
+        LOG.error("[ResourceManager] Map saving failed");
 
         return false;
     }
@@ -302,7 +303,7 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
 
     file << out;
 
-    std::cout << "[ResourceManager] Map file " << CONF<std::string>("paths/maps_dir") + "/" + name + ".j3x" << " is saved!" << std::endl;
+    LOG.info("[ResourceManager] Map file " + CONF<std::string>("paths/maps_dir") + "/" + name + ".j3x" + " is saved!");
 
     return true;
 }
@@ -313,14 +314,14 @@ std::string ResourceManager::getConfigContent(const std::string& category, const
 
     if (!file)
     {
-        std::cerr << "[ResourceManager] Config file not found! This should not happen during standard runtime.";
+        LOG.error("[ResourceManager] Config file not found! This should not happen during standard runtime.");
 
         return "";
     }
 
     std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
-    std::cout << "[ResourceManager] Config file " << CONF<std::string>("paths/" + category) + "/" + id + ".j3x" << " is loaded!" << std::endl;
+    LOG.info("[ResourceManager] Config file " + CONF<std::string>("paths/" + category) + "/" + id + ".j3x" + " is loaded!");
 
     return str;
 }
@@ -331,14 +332,14 @@ bool ResourceManager::saveConfigFile(const std::string& category, const std::str
 
     if (!file)
     {
-        std::cerr << "[ResourceManager] Config file saving failed";
+        LOG.error("[ResourceManager] Config file saving failed!");
 
         return false;
     }
 
     file << content;
 
-    std::cout << "[ResourceManager] Config file " << CONF<std::string>("paths/" + category) + "/" + id + ".j3x" << " is saved!" << std::endl;
+    LOG.info("[ResourceManager] Config file " + CONF<std::string>("paths/" + category) + "/" + id + ".j3x" + " is saved!");
 
     return true;
 }
@@ -359,7 +360,7 @@ std::vector<std::string>& ResourceManager::getFreshListOfObjects(const std::stri
     }
     catch (std::runtime_error& e)
     {
-        std::cerr << "[ResourceManager] " << e.what() << std::endl;
+        LOG.error("[ResourceManager] " + std::string(e.what()));
     }
 
     return ERROR_OBJECT;

@@ -16,6 +16,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include <R3E/system/Logger.h>
 #include "Parser.h"
 #include "J3XVisitor.h"
 
@@ -73,7 +74,7 @@ namespace r3e::j3x {
         if (it == params.end())
         {
             if (!ignore_warn)
-                std::cerr << "[J3X] Param " << key << " not found!" << std::endl;
+                LOG.error("[J3X] Param " + key + " not found!");
 
             return ERR;
         }
@@ -83,8 +84,7 @@ namespace r3e::j3x {
         }
         catch (const std::bad_any_cast& exception) {
             if (!ignore_warn)
-                std::cerr << "[J3X] Param " << key << " not matching return type! It should be \""
-                    << it->second.type().name() << "\"." << std::endl;
+                LOG.error("[J3X] Param " + key + " not matching return type! It should be \"" + it->second.type().name() + "\".");
 
             return ERR;
         }
@@ -102,8 +102,8 @@ namespace r3e::j3x {
         {
             if (!ignore_warn)
             {
-                std::cerr << "[J3X] Param of type " + std::string(param.type().name()) + " not matching " +
-                             std::string(typeid(T).name()) + " return type!" << std::endl;
+                LOG.error("[J3X] Param of type " + std::string(param.type().name()) + " not matching " +
+                          std::string(typeid(T).name()) + " return type!");
             }
 
             return ERR;
@@ -145,7 +145,7 @@ namespace r3e::j3x {
         }
         catch (const std::exception& e)
         {
-            std::cerr << "[J3X] Error while reading " + str + ".\nError message: " + e.what() + "!\n";
+            LOG.error("[J3X] Error while reading " + str + ".\nError message: " + e.what() + "!\n");
             return {};
         }
 

@@ -9,6 +9,7 @@
 #include <R3E/ai/AgentsManager.h>
 #include <R3E/ai/AStar.h>
 #include <R3E/utils/Numeric.h>
+#include <R3E/system/Logger.h>
 
 
 namespace r3e {
@@ -46,7 +47,6 @@ namespace r3e {
 
             if (agents_to_update_.empty()) return;
 
-            //std::cout << "[AgentsManager] Calculating new path!" << std::endl;
             auto& agent = agents_to_update_.front();
 
             try
@@ -59,7 +59,7 @@ namespace r3e {
             }
             catch (const std::runtime_error& e)
             {
-                std::cout << "[AgentsManager] Agent removed while processing the path!" << std::endl;
+                LOG.info("[AgentsManager] Agent removed while processing the path!");
             }
 
             agents_to_update_set_.erase(agents_to_update_set_.find(agent));
@@ -82,7 +82,6 @@ namespace r3e {
                 }
 
                 std::get<1>(this->getAgentData(agent)) = new_goal;
-                //std::cout << "[AgentsManager] Goal set to " << new_goal.x << ", " << new_goal.y << "!" << std::endl;
             }
         }
 
@@ -92,13 +91,12 @@ namespace r3e {
 
             auto& data = AgentsManager::getAgentData(agent);
             std::get<0>(data) = {};
-            //std::cout << "[AgentsManager] Goal set to 0!" << std::endl;
         }
 
         void AgentsManager::registerAgent(AbstractAgent* agent)
         {
             agents_map_.emplace(agent, std::tuple<ai::Path, ai::Goal, ai::Timestamp>());
-            std::cout << "[AgentsManager] Agent registered!" << std::endl;
+            LOG.info("[AgentsManager] Agent registered!");
         }
 
         void AgentsManager::deleteAgent(AbstractAgent* agent)
@@ -107,7 +105,7 @@ namespace r3e {
 
             if (it == agents_map_.end()) throw std::runtime_error("[AgentsManager] Agent to delete not found!");
             agents_map_.erase(agent);
-            std::cout << "[AgentsManager] Agent deleted!" << std::endl;
+            LOG.info("[AgentsManager] Agent deleted!");
         }
 
         const ai::Goal& AgentsManager::getCurrentGoal(const AbstractAgent* agent) const

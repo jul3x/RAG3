@@ -852,7 +852,7 @@ void Game::findAndDeleteBullet(Bullet* ptr)
         }
     }
 
-    std::cerr << "[Game] Warning - bullet to delete not found!" << std::endl;
+    LOG.error("[Game] Warning - bullet to delete not found!");
 }
 
 void Game::findAndDeleteFire(Fire* ptr)
@@ -867,7 +867,7 @@ void Game::findAndDeleteFire(Fire* ptr)
         }
     }
 
-    std::cerr << "[Game] Warning - fire to delete not found!" << std::endl;
+    LOG.error("[Game] Warning - fire to delete not found!");
 }
 
 void Game::findAndDeleteDecoration(Decoration* ptr)
@@ -882,7 +882,7 @@ void Game::findAndDeleteDecoration(Decoration* ptr)
         }
     }
 
-    std::cerr << "[Game] Warning - decoration to delete not found!" << std::endl;
+    LOG.error("[Game] Warning - decoration to delete not found!");
 }
 
 Special* Game::getCurrentSpecialObject() const
@@ -1133,7 +1133,7 @@ void Game::findAndDeleteSpecial(Special* ptr)
         }
     }
 
-    std::cerr << "[Game] Warning - special to delete not found!" << std::endl;
+    LOG.error("[Game] Warning - special to delete not found!");
 }
 
 void Game::registerWeapons(Character* character)

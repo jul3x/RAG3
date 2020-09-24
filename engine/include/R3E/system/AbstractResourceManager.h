@@ -16,6 +16,7 @@
 #include <SFML/Audio/Music.hpp>
 
 #include <R3E/j3x/J3X.h>
+#include <R3E/system/Logger.h>
 
 
 namespace r3e {
@@ -59,7 +60,7 @@ namespace r3e {
                 }
                 catch (std::runtime_error& e)
                 {
-                    std::cerr << e.what() << std::endl;
+                    LOG.error(e.what());
                 }
             }
 

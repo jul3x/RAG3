@@ -6,6 +6,7 @@
 #include <utility>
 
 #include <R3E/system/AbstractResourceManager.h>
+#include <R3E/system/Logger.h>
 
 
 namespace r3e {
@@ -83,7 +84,7 @@ namespace r3e {
 
         parameters_.emplace(key, params);
 
-        std::cout << "[AbstractResourceManager] Parameters description " << key << " is loaded!" << std::endl;
+        LOG.info("[AbstractResourceManager] Parameters description " + key + " is loaded!");
     }
 
     void AbstractResourceManager::loadTexture(const std::string& key)
@@ -95,7 +96,7 @@ namespace r3e {
 
         textures_[key].setSmooth(textures_smooth_allowed_);
 
-        std::cout << "[AbstractResourceManager] Texture " << key << " is loaded!" << std::endl;
+        LOG.info("[AbstractResourceManager] Texture " + key + " is loaded!");
     }
 
     void AbstractResourceManager::loadFont(const std::string& key)
@@ -107,7 +108,7 @@ namespace r3e {
 
         fonts_[key].setSmooth(fonts_smooth_allowed_);
 
-        std::cout << "[AbstractResourceManager] Font " << key << " is loaded!" << std::endl;
+        LOG.info("[AbstractResourceManager] Font " + key + " is loaded!");
     }
 
     void AbstractResourceManager::loadSound(const std::string& key)
@@ -117,7 +118,7 @@ namespace r3e {
             throw std::runtime_error("[AbstractResourceManager] " + key + " sound file not successfully loaded.");
         }
 
-        std::cout << "[AbstractResourceManager] Sound " << key << " is loaded!" << std::endl;
+        LOG.info("[AbstractResourceManager] Sound " + key + " is loaded!");
     }
 
     void AbstractResourceManager::loadMusic(const std::string& key)
@@ -127,7 +128,7 @@ namespace r3e {
             throw std::runtime_error("[AbstractResourceManager] " + key + " music file not successfully loaded.");
         }
 
-        std::cout << "[AbstractResourceManager] Music " << key << " is loaded!" << std::endl;
+        LOG.info("[AbstractResourceManager] Music " + key + " is loaded!");
     }
 
 

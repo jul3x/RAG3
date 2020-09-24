@@ -2,8 +2,9 @@
 // Created by jul3x on 10.03.20.
 //
 
-#include <common/ResourceManager.h>
+#include <R3E/system/Logger.h>
 
+#include <common/ResourceManager.h>
 #include <common/Map.h>
 
 
@@ -41,7 +42,7 @@ bool Map::loadMap(const std::string& name)
     }
     catch (const std::logic_error& e)
     {
-        std::cerr << e.what() << std::endl;
+        LOG.error(e.what());
     }
 
     return false;

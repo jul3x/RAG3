@@ -9,6 +9,7 @@
 #include <R3E/utils/Geometry.h>
 #include <R3E/system/Engine.h>
 #include <R3E/system/Collisions.h>
+#include <R3E/system/Logger.h>
 
 
 namespace r3e {
@@ -100,7 +101,7 @@ namespace r3e {
 
             if (frame_time_ > 1.0f / static_cast<float>(MINIMUM_FPS_))
             {
-                std::cerr << "[Engine] Warning - minimum FPS limit exceeded" << std::endl;
+                LOG.error("[Engine] Warning - minimum FPS limit exceeded");
                 continue;
             }
 
@@ -125,7 +126,7 @@ namespace r3e {
         int res_x = static_cast<int>(sf::VideoMode::getDesktopMode().width);
         int res_y = static_cast<int>(sf::VideoMode::getDesktopMode().height);
 
-        std::cout << "[Engine] Screen resolution is: " << res_x << "px, " << res_y << "px." << std::endl;
+        LOG.info("[Engine] Screen resolution is: " + std::to_string(res_x) + "px, " + std::to_string(res_y) + "px.");
 
         return {res_x, res_y};
     }

@@ -2,7 +2,7 @@
 // Created by jul3x on 21.04.20.
 //
 
-#include <utility>
+#include <R3E/system/Logger.h>
 
 #include <R3E/j3x/Parser.h>
 #include <R3E/j3x/J3XVisitor.h>
@@ -18,7 +18,7 @@ namespace r3e::j3x {
 
         if (input)
         {
-            std::cout << "[J3X] Started parsing of " + filename + " file." << std::endl;
+            LOG.info("[J3X] Started parsing of " + filename + " file.");
 
             try
             {

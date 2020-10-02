@@ -91,6 +91,11 @@ namespace r3e::graphics {
             window_.draw(object, states);
     }
 
+    void Graphics::draw(sf::Drawable& object, sf::RenderStates states)
+    {
+        window_.draw(object, states);
+    }
+
     void Graphics::drawSorted(AbstractDrawableObject& object)
     {
         object.setVisibility(window_.getView());

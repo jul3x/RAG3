@@ -2,5 +2,5 @@ string title = "First enemy killed"
 string description = "First blood! Keep it going!"
 string texture = "achievements/blood"
 string condition = "Kills"
-string compare = "MoreThan"
+string compare = "InTime"
 int data = 1

@@ -12,7 +12,7 @@
 
 int main()
 {
-    LOG.setLogStatus(Logger::LogStatus::Full);
+    LOG.setLogStatus(Logger::LogStatus::ErrorOnly);
 
     CFG.initialize("../data/config/config.j3x");
     CFG.appendConfig("../data/config/graphics.j3x", "graphics");

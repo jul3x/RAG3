@@ -89,6 +89,7 @@ public:
     void spawnExplosionForce(const sf::Vector2f& pos, float r);
     void spawnAchievement(const j3x::Parameters& params);
     void spawnThought(Character* user, const std::string& text);
+    void spawnBonusText(const sf::Vector2f& pos, const std::string& text);
     void spawnFadeInOut();
 
     // Spawn objects for journal

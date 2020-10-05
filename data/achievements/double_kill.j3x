@@ -4,3 +4,6 @@ string texture = "achievements/blood"
 string condition = "Kills"
 string compare = "InTime"
 int data = 2
+int exp = 500
+
+string bonus_text = "Combo!"

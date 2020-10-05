@@ -2,5 +2,5 @@ string title = "Master of destruction"
 string description = "First barrel destroyed!"
 string texture = "achievements/barrel"
 string condition = "BarrelsExplosions"
-string compare = "MoreThan"
+string compare = "InTime"
 int data = 1

@@ -37,6 +37,7 @@ namespace r3e::graphics {
 
         void clear();
         void draw(AbstractDrawableObject& object, sf::RenderStates states = sf::RenderStates::Default);
+        void draw(sf::Drawable& object, sf::RenderStates states = sf::RenderStates::Default);
         void draw(StaticShadow& object, sf::RenderStates states = sf::RenderStates::Default);
         void drawSorted(AbstractDrawableObject& object);
         void drawAlreadySorted(sf::RenderStates states = sf::RenderStates::Default);

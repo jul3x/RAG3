@@ -7,12 +7,12 @@
 
 
 Stats::Stats() :
-    enemies_killed_(0), crystals_picked_(0), explosions_(0)
+    enemies_killed_(0), crystals_picked_(0), explosions_(0), exp_(0)
 {
 }
 
-Stats::Stats(int kills, int crystals, int explosions) :
-        enemies_killed_(kills), crystals_picked_(crystals), explosions_(explosions)
+Stats::Stats(int kills, int crystals, int explosions, int exp) :
+        enemies_killed_(kills), crystals_picked_(crystals), explosions_(explosions), exp_(exp)
 {
 }
 
@@ -31,25 +31,44 @@ int Stats::getExplosions() const
     return explosions_;
 }
 
-void Stats::killEnemy()
+int Stats::getExp() const
+{
+    return exp_;
+}
+
+void Stats::killEnemy(const sf::Vector2f& pos)
 {
     ++enemies_killed_;
+    this->addExp(CONF<int>("enemy_kill_exp"), pos);
 }
 
-void Stats::pickCrystal()
+void Stats::pickCrystal(const sf::Vector2f& pos)
 {
     ++crystals_picked_;
+    this->addExp(CONF<int>("crystal_pick_exp"), pos);
 }
 
-void Stats::explode()
+void Stats::explode(const sf::Vector2f& pos)
 {
     ++explosions_;
+}
+
+void Stats::addExp(int exp, const sf::Vector2f& info_pos, bool bonus_text)
+{
+    if (exp > 0)
+    {
+        exp_ += exp;
+
+        if (bonus_text)
+            Game::get().spawnBonusText(info_pos, std::to_string(exp));
+    }
 }
 
 Stats Stats::operator-(const Stats &stats) const {
     return Stats(
             this->getEnemiesKilled() - stats.getEnemiesKilled(),
             this->getCrystalsPicked() - stats.getCrystalsPicked(),
-            this->getExplosions() - stats.getExplosions()
+            this->getExplosions() - stats.getExplosions(),
+            this->getExp() - stats.getExp()
             );
 }

@@ -210,8 +210,9 @@ void SpecialFunctions::addSpeed(Functional* obj, const j3x::Obj& data, Character
 void SpecialFunctions::pickCrystal(Functional* obj, const j3x::Obj& data, Character* user)
 {
     LOG.info("[SpecialFunction] Picking crystal.");
+    auto& pos = dynamic_cast<AbstractPhysicalObject*>(obj)->getPosition();
 
-    Game::get().getStats().pickCrystal();
+    Game::get().getStats().pickCrystal(pos);
 
     Game::get().spawnThought(user, "I need more of them!");
 }
@@ -260,7 +261,7 @@ void SpecialFunctions::explode(Functional* obj, const j3x::Obj& data, Character*
 
     Game::get().spawnExplosionForce(obs->getPosition(), j3x::getObj<float>(data));
 
-    Game::get().getStats().explode();
+    Game::get().getStats().explode(obs->getPosition());
 }
 
 void SpecialFunctions::removeDecoration(Functional* obj, const j3x::Obj& data, Character* user)

@@ -90,6 +90,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 
     updatePlayerStates(time_elapsed);
     updateThoughts(time_elapsed);
+    updateBonusTexts(time_elapsed);
     handleMouse(graphics.getWindow());
     handleKeys();
 
@@ -253,6 +254,11 @@ void UserInterface::draw(graphics::Graphics& graphics)
         graphics.draw(thought);
     }
 
+    for (auto& bonus_text : bonus_texts_)
+    {
+        graphics.draw(bonus_text);
+    }
+
     graphics.setStaticView();
 
     graphics.draw(blood_splash_);
@@ -378,6 +384,19 @@ inline void UserInterface::updateThoughts(float time_elapsed)
     }
 }
 
+inline void UserInterface::updateBonusTexts(float time_elapsed)
+{
+    for (auto it = bonus_texts_.begin(); it != bonus_texts_.end(); ++it)
+    {
+        if (!it->update(time_elapsed))
+        {
+            auto next_it = std::next(it);
+            bonus_texts_.erase(it);
+            it = next_it;
+        }
+    }
+}
+
 void UserInterface::spawnThought(Character* user, const std::string& text)
 {
     for (auto it = thoughts_.begin(); it != thoughts_.end(); ++it)
@@ -390,4 +409,9 @@ void UserInterface::spawnThought(Character* user, const std::string& text)
     }
 
     thoughts_.emplace_back(user, text, CONF<float>("thought_duration"));
+}
+
+void UserInterface::spawnBonusText(const sf::Vector2f& pos, const std::string& text)
+{
+    bonus_texts_.emplace_back(pos, text);
 }

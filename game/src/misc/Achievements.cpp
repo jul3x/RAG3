@@ -62,15 +62,23 @@ void Achievements::check(const std::string &condition, int data, int delta_data)
 {
     for (const auto& achievement : achievements_by_condition_.at(condition))
     {
-        if (!achievements_unlocked_.count(achievement.first))
+        int compare_data = j3x::get<std::string>(achievement.second, "compare") == "InTime" ? delta_data : data;
+        if (j3x::get<int>(achievement.second, "data") <= compare_data)
         {
-            int compare_data = j3x::get<std::string>(achievement.second, "compare") == "InTime" ? delta_data : data;
-            if (j3x::get<int>(achievement.second, "data") <= compare_data)
-            {
-                achievements_unlocked_.emplace(achievement.first);
+            achievements_unlocked_.emplace(achievement.first);
 
+            if (!achievements_unlocked_.count(achievement.first))
+            {
                 Game::get().spawnAchievement(achievement.second);
             }
+
+            auto& bonus_text = j3x::get<std::string>(achievement.second, "bonus_text", true);
+            auto& exp = j3x::get<int>(achievement.second, "exp", true);
+
+            if (!bonus_text.empty())
+                Game::get().spawnBonusText(Game::get().getPlayer().getPosition(), bonus_text);
+
+            stats_->addExp(exp, Game::get().getPlayer().getPosition(), false);
         }
     }
 }

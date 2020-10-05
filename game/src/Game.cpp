@@ -316,7 +316,7 @@ void Game::updateMapObjects(float time_elapsed)
 void Game::killNPC(NPC* npc)
 {
     journal_->event<DestroyCharacter>(npc);
-    stats_->killEnemy();
+    stats_->killEnemy(npc->getPosition());
 
     if (player_clone_ != nullptr)
     {
@@ -496,6 +496,11 @@ void Game::spawnFadeInOut()
 void Game::spawnThought(Character* user, const std::string& text)
 {
     ui_->spawnThought(user, text);
+}
+
+void Game::spawnBonusText(const sf::Vector2f& pos, const std::string& text)
+{
+    ui_->spawnBonusText(pos, text);
 }
 
 void Game::spawnAchievement(const j3x::Parameters& params)

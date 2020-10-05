@@ -19,6 +19,7 @@
 #include <ui/Achievement.h>
 
 #include <misc/Thought.h>
+#include <misc/BonusText.h>
 #include <characters/Player.h>
 #include <misc/Camera.h>
 
@@ -42,6 +43,7 @@ public:
 
     void spawnAchievement(const std::string& title, const std::string& text, const std::string& tex);
     void spawnThought(Character* user, const std::string& text);
+    void spawnBonusText(const sf::Vector2f& pos, const std::string& text);
 
     void draw(graphics::Graphics& graphics) override;
 
@@ -52,6 +54,7 @@ private:
     inline void updatePlayerStates(float time_elapsed);
 
     inline void updateThoughts(float time_elapsed);
+    inline void updateBonusTexts(float time_elapsed);
 
     static constexpr float WEAPONS_BAR_OFF_Y_ = 70.0f;
 
@@ -81,6 +84,7 @@ private:
 
     std::list<Achievement> achievements_;
     std::list<Thought> thoughts_;
+    std::list<BonusText> bonus_texts_;
 
     sf::Text fps_text_;
     sf::Text object_use_text_;

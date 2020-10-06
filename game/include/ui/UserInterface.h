@@ -18,6 +18,7 @@
 #include <ui/StatsHud.h>
 #include <ui/SmallBackpackHud.h>
 #include <ui/LevelHud.h>
+#include <ui/FullHud.h>
 #include <ui/Achievement.h>
 
 #include <misc/Thought.h>
@@ -81,6 +82,7 @@ private:
     StatsHud stats_hud_;
     SmallBackpackHud small_backpack_hud_;
     LevelHud level_hud_;
+    FullHud full_hud_;
 
     std::list<Achievement> achievements_;
     std::list<Thought> thoughts_;

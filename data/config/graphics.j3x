@@ -89,3 +89,5 @@ vector bonus_text_velocity = (0.0, -40.0)
 
 // HUD
 vector health_size = (250.0 * user_interface_zoom, 250.0 * user_interface_zoom)
+float full_hud_show_duration = 0.2
+int full_hud_max_opacity = 140

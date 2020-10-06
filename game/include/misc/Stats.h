@@ -11,7 +11,7 @@
 class Stats {
 public:
     explicit Stats();
-    Stats(int kills, int crystals, int explosions, int exp);
+    Stats(int kills, int crystals, int explosions, int exp, int level);
 
     void killEnemy(const sf::Vector2f& pos);
     void pickCrystal(const sf::Vector2f& pos);
@@ -22,6 +22,7 @@ public:
     [[nodiscard]] int getCrystalsPicked() const;
     [[nodiscard]] int getExplosions() const;
     [[nodiscard]] int getExp() const;
+    [[nodiscard]] int getLevel() const;
 
     Stats operator-(const Stats& stats) const;
 
@@ -31,6 +32,7 @@ private:
     int explosions_;
 
     int exp_;
+    int level_;
 
 };
 

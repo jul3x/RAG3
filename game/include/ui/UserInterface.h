@@ -16,6 +16,8 @@
 #include <ui/LeftHud.h>
 #include <ui/RightHud.h>
 #include <ui/StatsHud.h>
+#include <ui/SmallBackpackHud.h>
+#include <ui/LevelHud.h>
 #include <ui/Achievement.h>
 
 #include <misc/Thought.h>
@@ -56,11 +58,7 @@ private:
     inline void updateThoughts(float time_elapsed);
     inline void updateBonusTexts(float time_elapsed);
 
-    static constexpr float WEAPONS_BAR_OFF_Y_ = 70.0f;
-
     static constexpr float ACHIEVEMENTS_MARGIN_ = 20.0f;
-    static constexpr float LOGO_SIZE_X_ = 512.0f;
-    static constexpr float LOGO_SIZE_Y_ = 288.0f;
 
     static constexpr float HEALTH_BAR_X_ = 163.0f;
     static constexpr float HEALTH_BAR_Y_ = 161.0f;
@@ -81,6 +79,8 @@ private:
     HealthBar health_bar_;
     TimeBar time_bar_;
     StatsHud stats_hud_;
+    SmallBackpackHud small_backpack_hud_;
+    LevelHud level_hud_;
 
     std::list<Achievement> achievements_;
     std::list<Thought> thoughts_;

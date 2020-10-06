@@ -28,6 +28,8 @@ UserInterface::UserInterface() :
         right_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")),
                     static_cast<float>(CONF<int>("graphics/window_height_px"))}),
         stats_hud_({0.0f, 0.0f}),
+        small_backpack_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")), 0.0f}),
+        level_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")) / 2.0f, 0.0f}),
         player_(nullptr),
         camera_(nullptr) {}
 
@@ -270,6 +272,8 @@ void UserInterface::draw(graphics::Graphics& graphics)
     graphics.draw(time_bar_);
     graphics.draw(weapons_bar_);
     graphics.draw(stats_hud_);
+    graphics.draw(small_backpack_hud_);
+    graphics.draw(level_hud_);
 
     for (auto& achievement : achievements_)
     {
@@ -369,6 +373,8 @@ inline void UserInterface::updatePlayerStates(float time_elapsed)
 
     auto& stats = Game::get().getStats();
     stats_hud_.update(stats.getEnemiesKilled(), stats.getCrystalsPicked(), time_elapsed);
+    small_backpack_hud_.update(time_elapsed);
+    level_hud_.update(stats.getLevel(), stats.getExp(), time_elapsed);
 }
 
 inline void UserInterface::updateThoughts(float time_elapsed)

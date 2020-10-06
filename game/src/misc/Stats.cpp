@@ -7,12 +7,12 @@
 
 
 Stats::Stats() :
-    enemies_killed_(0), crystals_picked_(0), explosions_(0), exp_(0)
+    enemies_killed_(0), crystals_picked_(0), explosions_(0), exp_(0), level_(0)
 {
 }
 
-Stats::Stats(int kills, int crystals, int explosions, int exp) :
-        enemies_killed_(kills), crystals_picked_(crystals), explosions_(explosions), exp_(exp)
+Stats::Stats(int kills, int crystals, int explosions, int exp, int level) :
+        enemies_killed_(kills), crystals_picked_(crystals), explosions_(explosions), exp_(exp), level_(level)
 {
 }
 
@@ -34,6 +34,11 @@ int Stats::getExplosions() const
 int Stats::getExp() const
 {
     return exp_;
+}
+
+int Stats::getLevel() const
+{
+    return level_;
 }
 
 void Stats::killEnemy(const sf::Vector2f& pos)
@@ -69,6 +74,7 @@ Stats Stats::operator-(const Stats &stats) const {
             this->getEnemiesKilled() - stats.getEnemiesKilled(),
             this->getCrystalsPicked() - stats.getCrystalsPicked(),
             this->getExplosions() - stats.getExplosions(),
-            this->getExp() - stats.getExp()
+            this->getExp() - stats.getExp(),
+            this->getLevel() - stats.getLevel()
             );
 }

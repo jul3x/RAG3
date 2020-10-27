@@ -3,7 +3,7 @@ bool auto_resolution = true
 bool full_screen = false
 int window_width_px = 3000
 int window_height_px = 1500
-float global_zoom = 4.0
+float global_zoom = 2.0
 float user_interface_zoom = global_zoom / 2.0
 
 // COLORS
@@ -24,6 +24,7 @@ float level_text_size = 54 * user_interface_zoom
 float weapons_text_size = 30 * user_interface_zoom
 float achievement_title_text_size = 24 * user_interface_zoom
 float achievement_text_text_size = 20 * user_interface_zoom
+float skills_text_size = 28 * user_interface_zoom
 
 // FIRE GRAPHICS
 int fire_color = -1
@@ -89,3 +90,20 @@ vector bonus_text_velocity = (0.0, -40.0)
 
 // HUD
 vector health_size = (250.0 * user_interface_zoom, 250.0 * user_interface_zoom)
+float full_hud_show_duration = 0.2
+int full_hud_max_opacity = 140
+vector huge_player_size = (180.0 * user_interface_zoom, 400.0 * user_interface_zoom)
+vector huge_player_offset = (-200.0 * user_interface_zoom, 0.0)
+float backpack_placeholder_diff = 90.0 * user_interface_zoom
+vector backpack_placeholder_size = (82.0 * user_interface_zoom, 82.0 * user_interface_zoom)
+vector backpack_offset = (0.0, -175.0 * user_interface_zoom)
+vector skills_offset = (-200.0 * user_interface_zoom, 175.0 * user_interface_zoom)
+list skills_lines = [(-50.0 * user_interface_zoom, -300.0 * user_interface_zoom);
+                     (-100.0 * user_interface_zoom, -200.0 * user_interface_zoom);
+                     (-80.0 * user_interface_zoom, -100.0 * user_interface_zoom);
+                     (-70.0 * user_interface_zoom, 0.0);]
+float skills_lines_length = 200.0 * user_interface_zoom
+vector skills_text_offset = (-skills_lines_length + 10.0 * user_interface_zoom, -40.0 * user_interface_zoom)
+int backpack_placeholders_x = 3
+int backpack_placeholders_y = 5
+float lines_thickness = 2.0 * user_interface_zoom

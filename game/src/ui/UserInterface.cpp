@@ -30,6 +30,8 @@ UserInterface::UserInterface() :
         stats_hud_({0.0f, 0.0f}),
         small_backpack_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")), 0.0f}),
         level_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")) / 2.0f, 0.0f}),
+        full_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")),
+                   static_cast<float>(CONF<int>("graphics/window_height_px"))}),
         player_(nullptr),
         camera_(nullptr) {}
 
@@ -170,16 +172,19 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
             }
             case sf::Event::MouseWheelScrolled:
             {
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+                if (Game::get().getGameState() == Game::GameState::Normal)
                 {
-                    auto current_view = graphics.getCurrentView();
-                    current_view.zoom(1.0f - (event.mouseWheelScroll.delta > 0 ? 0.1f : -0.1f));
-                    graphics.modifyCurrentView(current_view);
-                    camera_->setViewNormalSize(graphics.getCurrentView().getSize());
-                }
-                else
-                {
-                    handleScrolling(event.mouseWheelScroll.delta);
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+                    {
+                        auto current_view = graphics.getCurrentView();
+                        current_view.zoom(1.0f - (event.mouseWheelScroll.delta > 0 ? 0.1f : -0.1f));
+                        graphics.modifyCurrentView(current_view);
+                        camera_->setViewNormalSize(graphics.getCurrentView().getSize());
+                    }
+                    else
+                    {
+                        handleScrolling(event.mouseWheelScroll.delta);
+                    }
                 }
                 break;
             }
@@ -210,9 +215,16 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                     case sf::Keyboard::Escape:
                     {
                         if (Game::get().getGameState() == Game::GameState::Paused)
+                        {
                             Game::get().setGameState(Game::GameState::Normal);
+                            full_hud_.show(false);
+                        }
                         else
+                        {
                             Game::get().setGameState(Game::GameState::Paused);
+                            full_hud_.show(true);
+                        }
+
                         break;
                     }
                     case sf::Keyboard::R:
@@ -271,6 +283,7 @@ void UserInterface::draw(graphics::Graphics& graphics)
     graphics.draw(health_bar_);
     graphics.draw(time_bar_);
     graphics.draw(weapons_bar_);
+    graphics.draw(full_hud_);
     graphics.draw(stats_hud_);
     graphics.draw(small_backpack_hud_);
     graphics.draw(level_hud_);
@@ -375,6 +388,7 @@ inline void UserInterface::updatePlayerStates(float time_elapsed)
     stats_hud_.update(stats.getEnemiesKilled(), stats.getCrystalsPicked(), time_elapsed);
     small_backpack_hud_.update(time_elapsed);
     level_hud_.update(stats.getLevel(), stats.getExp(), time_elapsed);
+    full_hud_.update(time_elapsed);
 }
 
 inline void UserInterface::updateThoughts(float time_elapsed)

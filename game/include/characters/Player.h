@@ -2,7 +2,6 @@
 // Created by jul3x on 03.11.19.
 //
 
-
 #ifndef RAG3_GAME_INCLUDE_CHARACTERS_PLAYER_H
 #define RAG3_GAME_INCLUDE_CHARACTERS_PLAYER_H
 
@@ -25,7 +24,9 @@ public:
     void getShot(const Bullet& bullet) override;
     void getCut(const MeleeWeapon& weapon) override;
     float getMaxTimeManipulation() const;
+    std::vector<std::pair<Special, int>>& getBackpack();
 
+    void addSpecialToBackpack(Special* special);
     bool sideStep(Player::SideStepDir dir);
     bool update(float time_elapsed) override;
 
@@ -36,6 +37,8 @@ private:
     float side_stepping_freeze_time_;
 
     bool is_alive_;
+
+    std::vector<std::pair<Special, int>> backpack_;
 
 };
 

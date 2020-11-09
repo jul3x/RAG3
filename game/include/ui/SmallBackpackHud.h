@@ -24,6 +24,9 @@ private:
     static constexpr float SIZE_X_ = 540.0f;
     static constexpr float SIZE_Y_ = 200.0f;
 
+    std::vector<Special> objects_;
+    std::vector<sf::Text> numbers_;
+
 };
 
 #endif //RAG3_GAME_INCLUDE_UI_STATSHUD_H

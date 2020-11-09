@@ -6,18 +6,20 @@
 #include <common/ResourceManager.h>
 
 #include <ui/FullHud.h>
+#include <Game.h>
 
 
 BackpackHud::BackpackHud(const sf::Vector2f& pos, int x, int y)
 {
-    for (int i = 0; i < x; ++i)
+    for (int i = 0; i < y; ++i)
     {
-        for (int j = 0; j < y; ++j)
+        for (int j = 0; j < x; ++j)
         {
-            placeholders_.emplace_back(pos + sf::Vector2f{static_cast<float>(i), static_cast<float>(j)} *
+            placeholders_.emplace_back(pos + sf::Vector2f{static_cast<float>(j), static_cast<float>(i)} *
                                              CONF<float>("graphics/backpack_placeholder_diff"),
                                        CONF<sf::Vector2f>("graphics/backpack_placeholder_size"),
                                        &RM.getTexture("backpack_place"));
+            numbers_.emplace_back("", RM.getFont(), CONF<float>("graphics/backpack_text_size"));
         }
     }
 }
@@ -28,6 +30,33 @@ void BackpackHud::setOpacity(sf::Uint8 a)
     {
         placeholder.setColor(255, 255, 255, a);
     }
+
+    for (auto& number : numbers_)
+    {
+        number.setFillColor({255, 255, 255, a});
+    }
+
+    for (auto& special : Game::get().getPlayer().getBackpack())
+    {
+        special.first.setColor(255, 255, 255, a);
+    }
+}
+
+void BackpackHud::update(float time_elapsed)
+{
+    size_t i = 0;
+    for (auto& special : Game::get().getPlayer().getBackpack())
+    {
+        special.first.setPosition(placeholders_[i].getPosition());
+
+        if (special.second > 1)
+        {
+            numbers_[i].setString(std::to_string(special.second));
+            numbers_[i].setPosition(placeholders_[i].getPosition() + CONF<sf::Vector2f>("graphics/backpack_number_diff"));
+        }
+
+        ++i;
+    }
 }
 
 void BackpackHud::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -35,6 +64,18 @@ void BackpackHud::draw(sf::RenderTarget& target, sf::RenderStates states) const
     for (auto& placeholder : placeholders_)
     {
         target.draw(placeholder, states);
+    }
+
+    size_t i = 0;
+    for (auto& special : Game::get().getPlayer().getBackpack())
+    {
+        target.draw(special.first, states);
+        if (special.second > 1)
+        {
+            target.draw(numbers_[i]);
+        }
+
+        ++i;
     }
 }
 
@@ -94,7 +135,7 @@ void SkillsHud::setColor(const sf::Color &color)
     {
         line.setColor(color);
     }
-    
+
     for (auto& text : texts_)
     {
         text.setFillColor(color);
@@ -151,6 +192,7 @@ void FullHud::update(float time_elapsed)
     backpack_hud_.setOpacity(static_cast<sf::Uint8>(bg_color_.a * 255.0f / CONF<int>("graphics/full_hud_max_opacity")));
     skills_hud_.setColor({255, 255, 255, static_cast<sf::Uint8>(bg_color_.a * 255.0f / CONF<int>("graphics/full_hud_max_opacity"))});
     skills_hud_.update(time_elapsed);
+    backpack_hud_.update(time_elapsed);
 
     time_elapsed_ = std::max(0.0f, time_elapsed_ - time_elapsed);
 }

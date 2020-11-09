@@ -17,11 +17,13 @@ class BackpackHud : public sf::Drawable {
 public:
     explicit BackpackHud(const sf::Vector2f& pos, int x, int y);
 
+    void update(float time_elapsed);
     void setOpacity(sf::Uint8 a);
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    std::list<AbstractDrawableObject> placeholders_;
+    std::vector<AbstractDrawableObject> placeholders_;
+    std::vector<sf::Text> numbers_;
 };
 
 class SkillsHud : public sf::Drawable {

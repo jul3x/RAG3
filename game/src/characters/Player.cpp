@@ -54,7 +54,6 @@ bool Player::update(float time_elapsed)
 {
     side_stepping_freeze_time_ -= time_elapsed;
     bool alive = Character::update(time_elapsed);
-
     return alive;
 }
 
@@ -100,4 +99,26 @@ void Player::getCut(const MeleeWeapon& weapon)
     {
         Character::getCut(weapon);
     }
+}
+
+void Player::addSpecialToBackpack(Special* special)
+{
+    for (auto& item : backpack_)
+    {
+        if (item.first.getId() == special->getId())
+        {
+            item.second++;
+            return;
+        }
+    }
+
+    backpack_.emplace_back(std::make_pair(Special({}, special->getId()), 1));
+    backpack_.back().first.setSize(2.0f * RMGET<sf::Vector2f>("specials", special->getId(), "size"));
+    backpack_.back().first.changeOrigin(RMGET<sf::Vector2f>("specials", special->getId(), "size"));
+    backpack_.back().first.removeShadow();
+}
+
+std::vector<std::pair<Special, int>>& Player::getBackpack()
+{
+    return backpack_;
 }

@@ -26,6 +26,7 @@ float achievement_title_text_size = 24 * user_interface_zoom
 float achievement_text_text_size = 20 * user_interface_zoom
 float skills_text_size = 28 * user_interface_zoom
 float backpack_text_size = 24 * user_interface_zoom
+float tooltip_text_size = 14 * user_interface_zoom
 
 // FIRE GRAPHICS
 int fire_color = -1
@@ -109,6 +110,6 @@ vector skills_text_offset = (-skills_lines_length + 10.0 * user_interface_zoom, 
 int backpack_placeholders_x = 3
 int backpack_placeholders_y = 5
 float lines_thickness = 2.0 * user_interface_zoom
-list small_backpack_pos = [(-277.0 * user_interface_zoom, 70.0 * user_interface_zoom);
-                           (-185.0 * user_interface_zoom, 70.0 * user_interface_zoom);
-                           (-90.0 * user_interface_zoom, 70.0 * user_interface_zoom);]
+list small_backpack_pos = [(-277.0 * user_interface_zoom, 68.0 * user_interface_zoom);
+                           (-185.0 * user_interface_zoom, 68.0 * user_interface_zoom);
+                           (-90.0 * user_interface_zoom, 68.0 * user_interface_zoom);]

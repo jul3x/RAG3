@@ -17,3 +17,6 @@ int z_index=1
 bool light_point=false
 bool shadow=false
 bool default_active=true
+
+string tooltip_header = "Drug"
+string tooltip = "Adds more speed...\nUse wisely!"

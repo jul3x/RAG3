@@ -124,7 +124,9 @@ void Functional::bindFunction(const std::function<void(Functional*, const j3x::O
 void Functional::use(Character* user)
 {
     for (size_t i = 0; i < funcs_.size(); ++i)
+    {
         funcs_.at(i)(this, datas_.at(i), user);
+    }
 }
 
 bool Functional::isUsableByNPC() const

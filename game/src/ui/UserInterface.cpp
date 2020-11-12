@@ -33,7 +33,8 @@ UserInterface::UserInterface() :
         full_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")),
                    static_cast<float>(CONF<int>("graphics/window_height_px"))}),
         player_(nullptr),
-        camera_(nullptr) {}
+        camera_(nullptr),
+        theme_("../data/config/gui_theme.txt") {}
 
 void UserInterface::initialize(graphics::Graphics& graphics)
 {
@@ -55,6 +56,11 @@ void UserInterface::initialize(graphics::Graphics& graphics)
     graphics.getCurrentView().zoom(1.0f / CONF<float>("graphics/global_zoom"));
     graphics.setCurrentView();
     camera_->setViewNormalSize(graphics.getWindow().getView().getSize());
+
+    gui_ = std::make_unique<tgui::Gui>(graphics.getWindow());
+//    gui_->setFont(RM.getFont());
+    small_backpack_hud_.registerGui(gui_.get(), &theme_);
+    tgui::ToolTip::setInitialDelay({});
 }
 
 void UserInterface::registerPlayer(Player* player)
@@ -133,6 +139,8 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 
     while (graphics.getWindow().pollEvent(event))
     {
+        gui_->handleEvent(event);
+
         switch (event.type)
         {
             case sf::Event::Closed:
@@ -192,6 +200,21 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
             {
                 switch (event.key.code)
                 {
+                    case sf::Keyboard::Num1:
+                    {
+                        Game::get().getPlayer().useItem("health");
+                        break;
+                    }
+                    case sf::Keyboard::Num2:
+                    {
+                        Game::get().getPlayer().useItem("more_speed");
+                        break;
+                    }
+                    case sf::Keyboard::Num3:
+                    {
+//                        Game::get().getPlayer().useItem("health");
+                        break;
+                    }
                     case sf::Keyboard::Q:
                     {
                         Game::get().getPlayer().sideStep(Player::SideStepDir::Left);
@@ -293,6 +316,7 @@ void UserInterface::draw(graphics::Graphics& graphics)
         graphics.draw(achievement);
     }
 
+    gui_->draw();
     graphics.draw(crosshair_);
 
     RM.setFontsSmoothAllowed(false);
@@ -347,16 +371,27 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
 
     crosshair_.setPosition(mouse_pos.x, mouse_pos.y);
 
+    bool is_gui = false;
+
+    for (const auto& widget : gui_->getWidgets())
+    {
+        if (widget->mouseOnWidget({static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y)}))
+        {
+            is_gui = true;
+            break;
+        }
+    }
+
     if (player_->isAlive() && Game::get().getGameState() == Game::GameState::Normal)
     {
         player_->setWeaponPointing(mouse_world_pos);
 
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player_->shot())
+        if (!is_gui && sf::Mouse::isButtonPressed(sf::Mouse::Left) && player_->shot())
         {
             camera_->setShaking();
         }
 
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+        if (!is_gui && sf::Mouse::isButtonPressed(sf::Mouse::Right))
         {
             camera_->setPointingTo(player_->getPosition() +
                                    utils::geo::getNormalized(mouse_world_pos - player_->getPosition()) *

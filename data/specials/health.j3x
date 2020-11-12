@@ -16,3 +16,6 @@ int z_index=1
 bool light_point=false
 bool default_active=true
 bool shadow=true
+
+string tooltip_header = "Health"
+string tooltip = "Use this to heal yourself!"

@@ -10,7 +10,7 @@
 
 #include <characters/Player.h>
 #include <common/ShootingWeapon.h>
-
+#include <Game.h>
 
 
 Player::Player(const sf::Vector2f& position) :
@@ -116,9 +116,28 @@ void Player::addSpecialToBackpack(Special* special)
     backpack_.back().first.setSize(2.0f * RMGET<sf::Vector2f>("specials", special->getId(), "size"));
     backpack_.back().first.changeOrigin(RMGET<sf::Vector2f>("specials", special->getId(), "size"));
     backpack_.back().first.removeShadow();
+    Game::get().registerFunctions(&backpack_.back().first);
 }
 
-std::vector<std::pair<Special, int>>& Player::getBackpack()
+void Player::useItem(const std::string& name)
+{
+    for (auto it = backpack_.begin(); it != backpack_.end(); ++it)
+    {
+        if (it->first.getId() == name)
+        {
+            it->first.use(this);
+            --(it->second);
+
+            if (it->second <= 0)
+            {
+                backpack_.erase(it);
+                return;
+            }
+        }
+    }
+}
+
+std::list<std::pair<Special, int>>& Player::getBackpack()
 {
     return backpack_;
 }

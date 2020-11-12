@@ -5,6 +5,8 @@
 #ifndef RAG3_GAME_INCLUDE_UI_USERINTERFACE_H
 #define RAG3_GAME_INCLUDE_UI_USERINTERFACE_H
 
+#include <TGUI/TGUI.hpp>
+
 #include <R3E/system/Config.h>
 #include <R3E/system/AbstractUserInterface.h>
 
@@ -71,6 +73,9 @@ private:
     static constexpr float FPS_Y_ = 300.0f;
 
     static constexpr float OBJECT_USE_TEXT_OFFSET_Y_ = 32.0f;
+
+    std::unique_ptr<tgui::Gui> gui_;
+    tgui::Theme theme_;
 
     WeaponsBar weapons_bar_;
     Crosshair crosshair_;

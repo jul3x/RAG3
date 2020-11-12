@@ -24,9 +24,10 @@ public:
     void getShot(const Bullet& bullet) override;
     void getCut(const MeleeWeapon& weapon) override;
     float getMaxTimeManipulation() const;
-    std::vector<std::pair<Special, int>>& getBackpack();
+    std::list<std::pair<Special, int>>& getBackpack();
 
     void addSpecialToBackpack(Special* special);
+    void useItem(const std::string& name);
     bool sideStep(Player::SideStepDir dir);
     bool update(float time_elapsed) override;
 
@@ -38,7 +39,7 @@ private:
 
     bool is_alive_;
 
-    std::vector<std::pair<Special, int>> backpack_;
+    std::list<std::pair<Special, int>> backpack_;
 
 };
 

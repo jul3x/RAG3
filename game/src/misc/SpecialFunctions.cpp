@@ -200,9 +200,9 @@ void SpecialFunctions::addHealth(Functional* obj, const j3x::Obj& data, Characte
 void SpecialFunctions::addSpeed(Functional* obj, const j3x::Obj& data, Character* user)
 {
     LOG.info("[SpecialFunction] Adding speed.");
-    auto data_parsed = j3x::getObj<float>(data);
+    auto data_parsed = j3x::getObj<sf::Vector2f>(data);
 
-    user->setSpeedFactor(user->getSpeedFactor() + data_parsed);
+    user->setSpeedFactor(data_parsed.x, data_parsed.y);
 
     Game::get().spawnThought(user, "Woah!\nI feel... faster...");
 }

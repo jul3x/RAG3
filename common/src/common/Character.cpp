@@ -43,7 +43,6 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
         gun_offset_(j3x::getObj<sf::Vector2f>(
                 RMGET<j3x::List>("characters", id, "gun_offset").front())),
         current_rotation_quarter_(1),
-        speed_factor_(1.0f),
         rotate_to_(0.0f),
         current_special_object_(nullptr),
         current_talkable_character_(nullptr),
@@ -56,8 +55,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
     this->changeOrigin(RMGET<sf::Vector2f>("characters", id, "size") / 2.0f +
                        RMGET<sf::Vector2f>("characters", id, "map_offset"));
 
-    for (const auto& weapon :
-            RMGET<j3x::List>("characters", id, "weapons"))
+    for (const auto& weapon : RMGET<j3x::List>("characters", id, "weapons"))
     {
         auto& weapon_str = j3x::getObj<std::string>(weapon);
         if (weapon_str == "Null")
@@ -220,6 +218,8 @@ bool Character::update(float time_elapsed)
 {
     bool is_alive = life_ > 0;
     DynamicObject::update(time_elapsed);
+
+    auto speed_factor = this->getSpeedFactor();
     auto vel = std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
     if (!utils::num::isNearlyEqual(vel, 0.0f, RMGET<float>("characters", this->getId(), "max_speed") / 3.0f))
     {
@@ -249,7 +249,7 @@ bool Character::update(float time_elapsed)
     auto is_negative = std::signbit(rotation_diff);
     auto rotation_sqrt = std::sqrt(std::abs(rotation_diff)) * (is_negative ? -1.0f : 1.0f);
     auto new_rotation = this->getRotation() -
-                        rotation_sqrt * CONF<float>("characters/mouse_reaction_speed") * speed_factor_ * time_elapsed;
+                        rotation_sqrt * CONF<float>("characters/mouse_reaction_speed") * speed_factor * time_elapsed;
 
     auto new_rotation_diff = utils::geo::getAngleBetweenDegree(new_rotation, rotate_to_);
 
@@ -270,6 +270,13 @@ bool Character::update(float time_elapsed)
             should_respond_ = false;
             talking_time_elapsed_ = 10.0f;
         }
+    }
+
+    speed_factor_with_time_.second -= time_elapsed;
+
+    if (speed_factor_with_time_.second < 0.0f && speed_factor_with_time_.first > 10.0f)
+    {
+        this->setSpeedFactor(1.0f, -100.0f);
     }
 
     return is_alive;
@@ -492,15 +499,16 @@ bool Character::isAlreadyRotated() const
     return utils::num::isNearlyEqual(utils::geo::getAngleBetweenDegree(this->getRotation(), rotate_to_), 0.0f, ERROR);
 }
 
-void Character::setSpeedFactor(float factor)
+void Character::setSpeedFactor(float factor, float time)
 {
-    speed_factor_ = factor;
-    this->setAcceleration(speed_factor_ * CONF<float>("characters/max_acceleration"));
+    speed_factor_with_time_.first = factor;
+    speed_factor_with_time_.second = time;
+    this->setAcceleration(speed_factor_with_time_.first * CONF<float>("characters/max_acceleration"));
 }
 
 float Character::getSpeedFactor() const
 {
-    return speed_factor_;
+    return speed_factor_with_time_.second > 0.0f ? speed_factor_with_time_.first : 1.0f;
 }
 
 void Character::setCurrentSpecialObject(Special* obj)

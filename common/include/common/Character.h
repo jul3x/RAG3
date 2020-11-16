@@ -89,7 +89,7 @@ public:
     void setPositionY(float y) override;
     void setRotation(float theta) override;
     void setWeaponPointing(const sf::Vector2f& point);
-    void setSpeedFactor(float factor);
+    void setSpeedFactor(float factor, float time);
     void setCurrentSpecialObject(Special* obj);
     void setCurrentFrame(short int frame) override;
     void setCurrentTalkableCharacter(Character* obj);
@@ -132,7 +132,6 @@ private:
 
     sf::Vector2f gun_offset_;
     float rotate_to_;
-    float speed_factor_;
 
     Special* current_special_object_;
     Character* current_talkable_character_;
@@ -140,6 +139,8 @@ private:
     size_t talk_moment_;
 
     float talking_time_elapsed_;
+
+    std::pair<float, float> speed_factor_with_time_;
 
 };
 

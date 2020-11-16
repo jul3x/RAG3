@@ -214,3 +214,15 @@ TooltipButton {
     Borders = (0, 0, 0, 0);
     BorderColorHover = rgba(200, 40, 40, 215);
 }
+
+AddSkillButton {
+    BackgroundColor = rgba(90, 90, 90, 0);
+    BackgroundColorHover = rgba(200, 40, 40, 215);
+    BackgroundColorDown = rgba(150, 20, 20, 255);
+    TextColor = rgba(255, 255, 255, 215);
+    TextColorHover = rgba(255, 255, 255, 235);
+    TextColorDown = rgba(255, 255, 255, 235);
+    BorderColor = rgba(255, 255, 255, 215);
+    Borders = (1, 1, 1, 1);
+    BorderColorHover = rgba(200, 40, 40, 215);
+}

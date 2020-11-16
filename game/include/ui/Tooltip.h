@@ -45,6 +45,8 @@ public:
 
         if (header.empty() && text.empty())
             button_->setToolTip(nullptr);
+        else
+            button_->setToolTip(layout_);
     }
 
     void bindFunction(const std::function<void()>& func)
@@ -55,6 +57,11 @@ public:
     void bindGui(tgui::Gui* gui)
     {
         gui->add(button_);
+    }
+
+    void show(bool hide = false)
+    {
+        button_->setVisible(!hide);
     }
 
 private:

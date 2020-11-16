@@ -6,43 +6,56 @@
 #define RAG3_GAME_INCLUDE_UI_FULLHUD_H
 
 #include <SFML/Graphics/Text.hpp>
+#include <TGUI/TGUI.hpp>
 
 #include <R3E/objects/AbstractDrawableObject.h>
 #include <R3E/graphics/LineEffect.h>
+
+#include <characters/Player.h>
+#include <ui/Tooltip.h>
 
 
 using namespace r3e;
 
 class BackpackHud : public sf::Drawable {
 public:
-    explicit BackpackHud(const sf::Vector2f& pos, int x, int y);
+    explicit BackpackHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f& pos, int x, int y);
 
     void update(float time_elapsed);
+    void show(bool hide = false);
     void setOpacity(sf::Uint8 a);
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     std::vector<AbstractDrawableObject> placeholders_;
+    std::vector<Tooltip> tooltips_;
     std::vector<sf::Text> numbers_;
 };
 
 class SkillsHud : public sf::Drawable {
 public:
-    explicit SkillsHud(const sf::Vector2f& pos);
+    explicit SkillsHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f& pos);
 
     void update(float time_elapsed);
-    void show(bool no = false);
+    void show(bool hide = false);
     void setColor(const sf::Color& color);
+
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
+    std::string texts_placeholders_[4] = {"Intelligence: ", "Heart: ", "Strength: ", "Agility: "};
+    Player::Skills skills_[4] = {Player::Skills::Intelligence, Player::Skills::Heart, Player::Skills::Strength, Player::Skills::Agility};
+
     std::list<graphics::LineEffect> lines_;
     std::list<sf::Text> texts_;
+    sf::Text points_text_;
+    std::list<tgui::Button::Ptr> buttons_;
+
 };
 
 class FullHud : public sf::Drawable {
 public:
-    explicit FullHud(const sf::Vector2f& size);
+    explicit FullHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f& size);
 
     void update(float time_elapsed);
     void show(bool show);

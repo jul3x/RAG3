@@ -17,6 +17,7 @@ public:
     void pickCrystal(const sf::Vector2f& pos);
     void explode(const sf::Vector2f& pos);
     void addExp(int exp, const sf::Vector2f& pos, bool bonus_text = true);
+    void checkLevel();
 
     [[nodiscard]] int getEnemiesKilled() const;
     [[nodiscard]] int getCrystalsPicked() const;

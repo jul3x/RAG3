@@ -30,8 +30,6 @@ UserInterface::UserInterface() :
         stats_hud_({0.0f, 0.0f}),
         small_backpack_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")), 0.0f}),
         level_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")) / 2.0f, 0.0f}),
-        full_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")),
-                   static_cast<float>(CONF<int>("graphics/window_height_px"))}),
         player_(nullptr),
         camera_(nullptr),
         theme_("../data/config/gui_theme.txt") {}
@@ -60,6 +58,9 @@ void UserInterface::initialize(graphics::Graphics& graphics)
     gui_ = std::make_unique<tgui::Gui>(graphics.getWindow());
 //    gui_->setFont(RM.getFont());
     small_backpack_hud_.registerGui(gui_.get(), &theme_);
+    full_hud_ = std::make_unique<FullHud>(gui_.get(), &theme_,
+                                          sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
+                                                       static_cast<float>(CONF<int>("graphics/window_height_px"))});
     tgui::ToolTip::setInitialDelay({});
 }
 
@@ -240,12 +241,12 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                         if (Game::get().getGameState() == Game::GameState::Paused)
                         {
                             Game::get().setGameState(Game::GameState::Normal);
-                            full_hud_.show(false);
+                            full_hud_->show(false);
                         }
                         else
                         {
                             Game::get().setGameState(Game::GameState::Paused);
-                            full_hud_.show(true);
+                            full_hud_->show(true);
                         }
 
                         break;
@@ -306,7 +307,7 @@ void UserInterface::draw(graphics::Graphics& graphics)
     graphics.draw(health_bar_);
     graphics.draw(time_bar_);
     graphics.draw(weapons_bar_);
-    graphics.draw(full_hud_);
+    graphics.draw(*full_hud_);
     graphics.draw(stats_hud_);
     graphics.draw(small_backpack_hud_);
     graphics.draw(level_hud_);
@@ -375,7 +376,7 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
 
     for (const auto& widget : gui_->getWidgets())
     {
-        if (widget->mouseOnWidget({static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y)}))
+        if (widget->mouseOnWidget({static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y)}) && widget->isVisible())
         {
             is_gui = true;
             break;
@@ -423,7 +424,7 @@ inline void UserInterface::updatePlayerStates(float time_elapsed)
     stats_hud_.update(stats.getEnemiesKilled(), stats.getCrystalsPicked(), time_elapsed);
     small_backpack_hud_.update(time_elapsed);
     level_hud_.update(stats.getLevel(), stats.getExp(), time_elapsed);
-    full_hud_.update(time_elapsed);
+    full_hud_->update(time_elapsed);
 }
 
 inline void UserInterface::updateThoughts(float time_elapsed)

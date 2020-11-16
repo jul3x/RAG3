@@ -9,7 +9,7 @@
 #include <Game.h>
 
 
-BackpackHud::BackpackHud(const sf::Vector2f& pos, int x, int y)
+BackpackHud::BackpackHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f& pos, int x, int y)
 {
     for (int i = 0; i < y; ++i)
     {
@@ -20,6 +20,13 @@ BackpackHud::BackpackHud(const sf::Vector2f& pos, int x, int y)
                                        CONF<sf::Vector2f>("graphics/backpack_placeholder_size"),
                                        &RM.getTexture("backpack_place"));
             numbers_.emplace_back("", RM.getFont(), CONF<float>("graphics/backpack_text_size"));
+
+            tooltips_.emplace_back(theme, pos + sf::Vector2f{static_cast<float>(j), static_cast<float>(i)}
+                * CONF<float>("graphics/backpack_placeholder_diff")
+                - CONF<sf::Vector2f>("graphics/backpack_placeholder_size") / 2.0f);
+
+            tooltips_.back().bindGui(gui);
+            tooltips_.back().show(true);
         }
     }
 }
@@ -45,9 +52,18 @@ void BackpackHud::setOpacity(sf::Uint8 a)
 void BackpackHud::update(float time_elapsed)
 {
     size_t i = 0;
+
+    for (auto& tooltip : tooltips_)
+    {
+        tooltip.bindText("", "");
+    }
+
     for (auto& special : Game::get().getPlayer().getBackpack())
     {
         special.first.setPosition(placeholders_[i].getPosition());
+
+        tooltips_[i].bindText(RMGET<std::string>("specials", special.first.getId(), "tooltip_header"),
+                              RMGET<std::string>("specials", special.first.getId(), "tooltip"));
 
         if (special.second > 1)
         {
@@ -56,6 +72,14 @@ void BackpackHud::update(float time_elapsed)
         }
 
         ++i;
+    }
+}
+
+void BackpackHud::show(bool hide)
+{
+    for (auto& tooltip : tooltips_)
+    {
+        tooltip.show(hide);
     }
 }
 
@@ -80,9 +104,9 @@ void BackpackHud::draw(sf::RenderTarget& target, sf::RenderStates states) const
 }
 
 
-SkillsHud::SkillsHud(const sf::Vector2f& pos)
+SkillsHud::SkillsHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f& pos) :
+        points_text_("", RM.getFont(), CONF<float>("graphics/skills_text_size"))
 {
-    static std::string texts[] = {"Intelligence: 0", "Heart: 0", "Strength: 0", "Agility: 0"};
     int i = 0;
     for (const auto& line : CONF<j3x::List>("graphics/skills_lines"))
     {
@@ -93,27 +117,56 @@ SkillsHud::SkillsHud(const sf::Vector2f& pos)
         lines_.back().setThickness(CONF<float>("graphics/lines_thickness"));
         lines_.back().forceSet();
 
-        texts_.emplace_back(texts[i], RM.getFont(), CONF<float>("graphics/skills_text_size"));
+        texts_.emplace_back(texts_placeholders_[i], RM.getFont(), CONF<float>("graphics/skills_text_size"));
         texts_.back().setFillColor(sf::Color::White);
         texts_.back().setPosition(lines_.back().getStart() + CONF<sf::Vector2f>("graphics/skills_text_offset"));
+
+        auto button_pos = texts_.back().getPosition() + sf::Vector2f(texts_.back().getLocalBounds().width, 0)
+            + CONF<sf::Vector2f>("graphics/skills_button_offset");
+        buttons_.emplace_back(tgui::Button::create("+"));
+        buttons_.back()->setRenderer(theme->getRenderer("AddSkillButton"));
+        buttons_.back()->setPosition(button_pos);
+        buttons_.back()->setSize(CONF<sf::Vector2f>("graphics/skills_button_size"));
+        buttons_.back()->setVisible(false);
+        buttons_.back()->connect("pressed", [&](Player::Skills skill) {
+            if (!Game::get().getPlayer().addSkill(skill)) {
+                for (auto& button : buttons_)
+                    button->setVisible(false);
+            }
+        }, skills_[i]);
+        gui->add(buttons_.back());
 
         ++i;
         if (i >= 4)
             break;
     }
+
+    points_text_.setFillColor(sf::Color::White);
+    points_text_.setPosition(pos + CONF<sf::Vector2f>("graphics/skill_points_offset"));
 }
 
 void SkillsHud::update(float time_elapsed)
 {
+    static auto& player = Game::get().getPlayer();
+
     for (auto& line : lines_)
     {
         line.update(time_elapsed);
     }
+
+    size_t i = 0;
+    for (auto &text : texts_)
+    {
+        text.setString(texts_placeholders_[i] + std::to_string(player.getSkill(skills_[i])));
+        ++i;
+    }
+
+    points_text_.setString("Points: " + std::to_string(player.getSkillPoints()));
 }
 
-void SkillsHud::show(bool no)
+void SkillsHud::show(bool hide)
 {
-    if (!no)
+    if (!hide)
     {
         for (auto& line : lines_)
         {
@@ -125,6 +178,21 @@ void SkillsHud::show(bool no)
         for (auto& line : lines_)
         {
             line.setEnd(line.getStart());
+        }
+    }
+
+    for (auto& button : buttons_)
+    {
+        if (Game::get().getPlayer().getSkillPoints() > 0)
+        {
+            if (hide)
+            {
+                button->hideWithEffect(tgui::ShowAnimationType::Fade, sf::seconds(CONF<float>("graphics/full_hud_show_duration") / 2.0f));
+            }
+            else
+            {
+                button->showWithEffect(tgui::ShowAnimationType::Fade, sf::seconds(CONF<float>("graphics/full_hud_show_duration")));
+            }
         }
     }
 }
@@ -140,6 +208,8 @@ void SkillsHud::setColor(const sf::Color &color)
     {
         text.setFillColor(color);
     }
+
+    points_text_.setFillColor(color);
 }
 
 void SkillsHud::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -153,20 +223,23 @@ void SkillsHud::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         target.draw(text, states);
     }
+
+    target.draw(points_text_, states);
 }
 
 
-FullHud::FullHud(const sf::Vector2f& size) :
+FullHud::FullHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f& size) :
         show_(false),
         bg_color_(sf::Color(0, 0, 0, 0)),
         bg_(size),
         player_(size / 2.0f + CONF<sf::Vector2f>("graphics/huge_player_offset"),
                 CONF<sf::Vector2f>("graphics/huge_player_size"),
                 &RM.getTexture("huge_player")),
-        backpack_hud_(size / 2.0f + CONF<sf::Vector2f>("graphics/backpack_offset"),
+        backpack_hud_(gui, theme,
+                      size / 2.0f + CONF<sf::Vector2f>("graphics/backpack_offset"),
                       CONF<int>("graphics/backpack_placeholders_x"),
                       CONF<int>("graphics/backpack_placeholders_y")),
-        skills_hud_(size / 2.0f + CONF<sf::Vector2f>("graphics/skills_offset"))
+        skills_hud_(gui, theme, size / 2.0f + CONF<sf::Vector2f>("graphics/skills_offset"))
 {
     bg_.setPosition(0.0f, 0.0f);
     bg_.setFillColor(bg_color_);
@@ -206,6 +279,7 @@ void FullHud::show(bool show)
     }
 
     skills_hud_.show(!show_);
+    backpack_hud_.show(!show_);
 }
 
 void FullHud::draw(sf::RenderTarget& target, sf::RenderStates states) const

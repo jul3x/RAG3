@@ -64,8 +64,22 @@ void Stats::addExp(int exp, const sf::Vector2f& info_pos, bool bonus_text)
     {
         exp_ += exp;
 
+        this->checkLevel();
+
         if (bonus_text)
             Game::get().spawnBonusText(info_pos, std::to_string(exp));
+    }
+}
+
+void Stats::checkLevel()
+{
+    static auto& experience_list = CONF<j3x::List>("characters/levels_experience");
+
+    if (level_ < experience_list.size() && exp_ >= j3x::getObj<int>(experience_list, static_cast<size_t>(level_), false))
+    {
+        ++level_;
+
+        Game::get().getPlayer().addSkillPoints(CONF<int>("characters/skill_points_per_level"));
     }
 }
 

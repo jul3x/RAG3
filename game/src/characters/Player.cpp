@@ -16,12 +16,18 @@
 Player::Player(const sf::Vector2f& position) :
         Character(position, "player"),
         is_alive_(true),
-        side_stepping_freeze_time_(-1.0f)
+        side_stepping_freeze_time_(-1.0f),
+        skill_points_(0)
 {
     if (CONF<bool>("no_clip_mode"))
     {
         this->changeCollisionArea(collision::None());
     }
+
+    skills_.emplace(std::make_pair(Skills::Intelligence, 0));
+    skills_.emplace(std::make_pair(Skills::Heart, 0));
+    skills_.emplace(std::make_pair(Skills::Strength, 0));
+    skills_.emplace(std::make_pair(Skills::Agility, 0));
 }
 
 void Player::setDead()
@@ -117,6 +123,32 @@ void Player::addSpecialToBackpack(Special* special)
     backpack_.back().first.changeOrigin(RMGET<sf::Vector2f>("specials", special->getId(), "size"));
     backpack_.back().first.removeShadow();
     Game::get().registerFunctions(&backpack_.back().first);
+}
+
+void Player::addSkillPoints(int skill_points)
+{
+    skill_points_ += skill_points;
+}
+
+bool Player::addSkill(Player::Skills skill)
+{
+    if (skill_points_ > 0)
+    {
+        skills_[skill] = skills_.at(skill) + 1;
+        --skill_points_;
+    }
+
+    return skill_points_ > 0;
+}
+
+int Player::getSkillPoints() const
+{
+    return skill_points_;
+}
+
+int Player::getSkill(Skills skill) const
+{
+    return skills_.at(skill);
 }
 
 void Player::useItem(const std::string& name)

@@ -87,7 +87,8 @@ private:
     StatsHud stats_hud_;
     SmallBackpackHud small_backpack_hud_;
     LevelHud level_hud_;
-    FullHud full_hud_;
+
+    std::unique_ptr<FullHud> full_hud_;
 
     std::list<Achievement> achievements_;
     std::list<Thought> thoughts_;

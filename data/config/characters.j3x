@@ -21,4 +21,8 @@ float max_time_without_path_recalc = 1000.0
 float min_pos_change_without_path_recalc = 20.0
 int max_path_search_depth = 1000
 
+// LEVELS
+list levels_experience = [100; 250; 500; 1000; 2000; 5000; 10000; 25000; 50000; 100000; 250000]
+int skill_points_per_level = 10
+
 

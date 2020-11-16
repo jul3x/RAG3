@@ -65,12 +65,11 @@ void Achievements::check(const std::string &condition, int data, int delta_data)
         int compare_data = j3x::get<std::string>(achievement.second, "compare") == "InTime" ? delta_data : data;
         if (j3x::get<int>(achievement.second, "data") <= compare_data)
         {
-            achievements_unlocked_.emplace(achievement.first);
-
             if (!achievements_unlocked_.count(achievement.first))
             {
                 Game::get().spawnAchievement(achievement.second);
             }
+            achievements_unlocked_.emplace(achievement.first);
 
             auto& bonus_text = j3x::get<std::string>(achievement.second, "bonus_text", true);
             auto& exp = j3x::get<int>(achievement.second, "exp", true);

@@ -6,7 +6,7 @@ float collision_radius=16.0
 int frames_number=1
 float frame_duration=0.0
 
-string default_activation="OnEnter"
+string default_activation="OnPick"
 list default_functions=["AddHealth"; "Destroy"]
 list default_datas=[30; "Null"]
 
@@ -16,3 +16,6 @@ int z_index=1
 bool light_point=false
 bool default_active=true
 bool shadow=true
+
+string tooltip_header = "Health"
+string tooltip = "Use this to heal yourself!"

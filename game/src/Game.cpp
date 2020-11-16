@@ -634,9 +634,18 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
                 special->use(player);
             }
         }
-        else
+        else if (special->getActivation() == "OnUse")
         {
             character->setCurrentSpecialObject(special);
+        }
+        else
+        {
+            auto player = dynamic_cast<Player*>(d_obj);
+            if (player != nullptr)
+            {
+                player->addSpecialToBackpack(special);
+                special_functions_->destroy(special, {}, player);
+            }
         }
     }
 

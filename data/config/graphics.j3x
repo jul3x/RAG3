@@ -25,6 +25,8 @@ float weapons_text_size = 30 * user_interface_zoom
 float achievement_title_text_size = 24 * user_interface_zoom
 float achievement_text_text_size = 20 * user_interface_zoom
 float skills_text_size = 28 * user_interface_zoom
+float backpack_text_size = 24 * user_interface_zoom
+float tooltip_text_size = 14 * user_interface_zoom
 
 // FIRE GRAPHICS
 int fire_color = -1
@@ -95,15 +97,22 @@ int full_hud_max_opacity = 140
 vector huge_player_size = (180.0 * user_interface_zoom, 400.0 * user_interface_zoom)
 vector huge_player_offset = (-200.0 * user_interface_zoom, 0.0)
 float backpack_placeholder_diff = 90.0 * user_interface_zoom
+vector backpack_number_diff = (25.0 * user_interface_zoom, 10.0 * user_interface_zoom)
 vector backpack_placeholder_size = (82.0 * user_interface_zoom, 82.0 * user_interface_zoom)
 vector backpack_offset = (0.0, -175.0 * user_interface_zoom)
 vector skills_offset = (-200.0 * user_interface_zoom, 175.0 * user_interface_zoom)
+vector skills_button_size = (20.0 * user_interface_zoom, 20.0 * user_interface_zoom)
+vector skills_button_offset = (35.0 * user_interface_zoom, 12.0 * user_interface_zoom)
+vector skill_points_offset = (-200.0 * user_interface_zoom, 20.0 * user_interface_zoom)
 list skills_lines = [(-50.0 * user_interface_zoom, -300.0 * user_interface_zoom);
                      (-100.0 * user_interface_zoom, -200.0 * user_interface_zoom);
                      (-80.0 * user_interface_zoom, -100.0 * user_interface_zoom);
                      (-70.0 * user_interface_zoom, 0.0);]
-float skills_lines_length = 200.0 * user_interface_zoom
-vector skills_text_offset = (-skills_lines_length + 10.0 * user_interface_zoom, -40.0 * user_interface_zoom)
+float skills_lines_length = 210.0 * user_interface_zoom
+vector skills_text_offset = (-skills_lines_length + 5.0 * user_interface_zoom, -40.0 * user_interface_zoom)
 int backpack_placeholders_x = 3
 int backpack_placeholders_y = 5
 float lines_thickness = 2.0 * user_interface_zoom
+list small_backpack_pos = [(-277.0 * user_interface_zoom, 68.0 * user_interface_zoom);
+                           (-185.0 * user_interface_zoom, 68.0 * user_interface_zoom);
+                           (-90.0 * user_interface_zoom, 68.0 * user_interface_zoom);]

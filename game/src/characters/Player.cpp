@@ -10,18 +10,24 @@
 
 #include <characters/Player.h>
 #include <common/ShootingWeapon.h>
-
+#include <Game.h>
 
 
 Player::Player(const sf::Vector2f& position) :
         Character(position, "player"),
         is_alive_(true),
-        side_stepping_freeze_time_(-1.0f)
+        side_stepping_freeze_time_(-1.0f),
+        skill_points_(0)
 {
     if (CONF<bool>("no_clip_mode"))
     {
         this->changeCollisionArea(collision::None());
     }
+
+    skills_.emplace(std::make_pair(Skills::Intelligence, 0));
+    skills_.emplace(std::make_pair(Skills::Heart, 0));
+    skills_.emplace(std::make_pair(Skills::Strength, 0));
+    skills_.emplace(std::make_pair(Skills::Agility, 0));
 }
 
 void Player::setDead()
@@ -54,7 +60,6 @@ bool Player::update(float time_elapsed)
 {
     side_stepping_freeze_time_ -= time_elapsed;
     bool alive = Character::update(time_elapsed);
-
     return alive;
 }
 
@@ -100,4 +105,71 @@ void Player::getCut(const MeleeWeapon& weapon)
     {
         Character::getCut(weapon);
     }
+}
+
+void Player::addSpecialToBackpack(Special* special)
+{
+    for (auto& item : backpack_)
+    {
+        if (item.first.getId() == special->getId())
+        {
+            item.second++;
+            return;
+        }
+    }
+
+    backpack_.emplace_back(std::make_pair(Special({}, special->getId()), 1));
+    backpack_.back().first.setSize(2.0f * RMGET<sf::Vector2f>("specials", special->getId(), "size"));
+    backpack_.back().first.changeOrigin(RMGET<sf::Vector2f>("specials", special->getId(), "size"));
+    backpack_.back().first.removeShadow();
+    Game::get().registerFunctions(&backpack_.back().first);
+}
+
+void Player::addSkillPoints(int skill_points)
+{
+    skill_points_ += skill_points;
+}
+
+bool Player::addSkill(Player::Skills skill)
+{
+    if (skill_points_ > 0)
+    {
+        skills_[skill] = skills_.at(skill) + 1;
+        --skill_points_;
+    }
+
+    return skill_points_ > 0;
+}
+
+int Player::getSkillPoints() const
+{
+    return skill_points_;
+}
+
+int Player::getSkill(Skills skill) const
+{
+    return skills_.at(skill);
+}
+
+void Player::useItem(const std::string& name)
+{
+    for (auto it = backpack_.begin(); it != backpack_.end(); ++it)
+    {
+        if (it->first.getId() == name)
+        {
+            it->first.use(this);
+            --(it->second);
+
+            if (it->second <= 0)
+            {
+                backpack_.erase(it);
+                return;
+            }
+        }
+    }
+}
+
+std::list<std::pair<Special, int>>& Player::getBackpack()
+{
+    return backpack_;
 }

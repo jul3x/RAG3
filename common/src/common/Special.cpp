@@ -33,8 +33,7 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
         is_drawable_(RMGET<bool>("specials", id, "is_drawable")),
         additional_boolean_data_(false)
 {
-    this->changeOrigin(RMGET<sf::Vector2f>("specials", id, "size") / 2.0f +
-                               RMGET<sf::Vector2f>("specials", id, "map_offset"));
+    this->changeOrigin(RMGET<sf::Vector2f>("specials", id, "size") / 2.0f + RMGET<sf::Vector2f>("specials", id, "map_offset"));
 
     if (is_active)
         this->activate();
@@ -95,6 +94,11 @@ void Special::setCurrentFrame(short int frame)
     AbstractDrawableObject::setCurrentFrame(frame);
     if (static_shadow_ != nullptr)
         static_shadow_->setCurrentFrame(frame);
+}
+
+void Special::removeShadow()
+{
+    static_shadow_.reset();
 }
 
 void Special::changeTexture(sf::Texture* texture, bool reset)

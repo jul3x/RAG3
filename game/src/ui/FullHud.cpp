@@ -47,6 +47,11 @@ void BackpackHud::setOpacity(sf::Uint8 a)
     {
         special.first.setColor(255, 255, 255, a);
     }
+
+    for (auto& weapon : weapons_)
+    {
+        weapon.setColor(255, 255, 255, a);
+    }
 }
 
 void BackpackHud::update(float time_elapsed)
@@ -71,6 +76,17 @@ void BackpackHud::update(float time_elapsed)
             numbers_[i].setPosition(placeholders_[i].getPosition() + CONF<sf::Vector2f>("graphics/backpack_number_diff"));
         }
 
+        ++i;
+    }
+
+    weapons_.clear();
+    for (auto& weapon : Game::get().getPlayer().getWeapons())
+    {
+        weapons_.emplace_back(placeholders_[i].getPosition(),
+                              RMGET<sf::Vector2f>("specials", weapon->getId(), "size") * CONF<float>("graphics/global_zoom"),
+                              &RM.getTexture("specials/" +  weapon->getId()));
+        tooltips_[i].bindText(RMGET<std::string>("specials", weapon->getId(), "tooltip_header"),
+                              RMGET<std::string>("specials", weapon->getId(), "tooltip"));
         ++i;
     }
 }
@@ -100,6 +116,11 @@ void BackpackHud::draw(sf::RenderTarget& target, sf::RenderStates states) const
         }
 
         ++i;
+    }
+
+    for (auto& weapon : weapons_)
+    {
+        target.draw(weapon);
     }
 }
 
@@ -260,12 +281,17 @@ void FullHud::update(float time_elapsed)
     {
         bg_color_.a = static_cast<sf::Uint8>(std::min(std::max(bg_color_.a + delta, 0), CONF<int>("graphics/full_hud_max_opacity")));
     }
+
+    if (show_ || time_elapsed_ > 0)
+    {
+        skills_hud_.update(time_elapsed);
+        backpack_hud_.update(time_elapsed);
+    }
+
     bg_.setFillColor(bg_color_);
     player_.setColor(255, 255, 255, static_cast<sf::Uint8>(bg_color_.a * 255.0f / CONF<int>("graphics/full_hud_max_opacity")));
     backpack_hud_.setOpacity(static_cast<sf::Uint8>(bg_color_.a * 255.0f / CONF<int>("graphics/full_hud_max_opacity")));
     skills_hud_.setColor({255, 255, 255, static_cast<sf::Uint8>(bg_color_.a * 255.0f / CONF<int>("graphics/full_hud_max_opacity"))});
-    skills_hud_.update(time_elapsed);
-    backpack_hud_.update(time_elapsed);
 
     time_elapsed_ = std::max(0.0f, time_elapsed_ - time_elapsed);
 }

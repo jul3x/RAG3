@@ -28,6 +28,7 @@ private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     std::vector<AbstractDrawableObject> placeholders_;
+    std::list<AbstractDrawableObject> weapons_;
     std::vector<Tooltip> tooltips_;
     std::vector<sf::Text> numbers_;
 };

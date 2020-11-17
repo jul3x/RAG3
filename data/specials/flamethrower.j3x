@@ -17,3 +17,6 @@ int z_index=1
 bool light_point=false
 bool default_active=true
 bool shadow=true
+
+string tooltip_header = "Flamethrower"
+string tooltip = "Pretty hot stuff."

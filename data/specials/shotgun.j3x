@@ -17,3 +17,6 @@ int z_index=1
 bool light_point=false
 bool shadow=true
 bool default_active=true
+
+string tooltip_header = "Shotgun"
+string tooltip = "You talkin' to me?"

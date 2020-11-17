@@ -17,3 +17,6 @@ int z_index=1
 bool light_point=false
 bool shadow=true
 bool default_active=true
+
+string tooltip_header = "Desert Eagle"
+string tooltip = "Boom, headshot!"

@@ -7,6 +7,7 @@
 #define RAG3_COMMON_INCLUDE_COMMON_ABSTRACTWEAPON_H
 
 #include <string>
+#include <memory>
 #include <functional>
 
 #include <R3E/objects/AbstractDrawableObject.h>
@@ -35,6 +36,8 @@ public:
     const sf::Vector2f& getWeaponOffset() const;
     Character* getUser() const;
     virtual void update(float time_elapsed);
+
+    static std::shared_ptr<AbstractWeapon> create(Character* user, const std::string& name);
 
 protected:
     Character* user_;

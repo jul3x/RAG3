@@ -110,13 +110,13 @@ void SpecialObjectWindow::setObjectContent(const std::string& category, Special*
     special_ = obj;
     child_->setTitle(category + "/" + special_->getId());
     id_box_->setText(std::to_string(special_->getUniqueId()));
-    act_box_->setText(special_->getActivation());
+    act_box_->setText(special_->getActivationStr());
     fun_box_->setText(special_->getFunctionsStr());
     data_box_->setText(special_->getDatasStr());
     already_active_->setText(std::to_string(special_->isActive()));
 
     button_->connect("pressed", [this]() {
-        this->special_->setActivation(this->act_box_->getText());
+        this->special_->setActivationStr(this->act_box_->getText());
         this->special_->setFunctionsStr(this->fun_box_->getText());
         this->special_->setDatasStr(this->data_box_->getText());
 

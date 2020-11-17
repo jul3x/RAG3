@@ -6,6 +6,7 @@
 
 #include <R3E/system/Engine.h>
 #include <R3E/utils/Geometry.h>
+#include <R3E/utils/Misc.h>
 
 #include <common/ResourceManager.h>
 
@@ -85,23 +86,11 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 {
     static sf::Event event;
 
-    for (auto it = achievements_.begin(); it != achievements_.end();)
-    {
-        bool do_increment = true;
-        if (!(it)->update(time_elapsed))
-        {
-            auto next_it = std::next(it);
-            achievements_.erase(it);
-            it = next_it;
-            do_increment = false;
-        }
-
-        if (do_increment) ++it;
-    }
+    utils::eraseIf<Achievement>(achievements_, [time_elapsed](Achievement& a) { return !a.update(time_elapsed); });
+    utils::eraseIf<Thought>(thoughts_, [time_elapsed](Thought& thought) { return !thought.update(time_elapsed); });
+    utils::eraseIf<BonusText>(bonus_texts_, [time_elapsed](BonusText& text) { return !text.update(time_elapsed); });
 
     updatePlayerStates(time_elapsed);
-    updateThoughts(time_elapsed);
-    updateBonusTexts(time_elapsed);
     handleMouse(graphics.getWindow());
     handleKeys();
 
@@ -427,42 +416,9 @@ inline void UserInterface::updatePlayerStates(float time_elapsed)
     full_hud_->update(time_elapsed);
 }
 
-inline void UserInterface::updateThoughts(float time_elapsed)
-{
-    for (auto it = thoughts_.begin(); it != thoughts_.end(); ++it)
-    {
-        if (!it->update(time_elapsed))
-        {
-            auto next_it = std::next(it);
-            thoughts_.erase(it);
-            it = next_it;
-        }
-    }
-}
-
-inline void UserInterface::updateBonusTexts(float time_elapsed)
-{
-    for (auto it = bonus_texts_.begin(); it != bonus_texts_.end(); ++it)
-    {
-        if (!it->update(time_elapsed))
-        {
-            auto next_it = std::next(it);
-            bonus_texts_.erase(it);
-            it = next_it;
-        }
-    }
-}
-
 void UserInterface::spawnThought(Character* user, const std::string& text)
 {
-    for (auto it = thoughts_.begin(); it != thoughts_.end(); ++it)
-    {
-        if (it->getFather() == user)
-        {
-            thoughts_.erase(it);
-            break;
-        }
-    }
+    utils::eraseIf<Thought>(thoughts_, [user](Thought& thought) { return thought.getFather() == user; });
 
     thoughts_.emplace_back(user, text, CONF<float>("thought_duration"));
 }

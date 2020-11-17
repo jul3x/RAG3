@@ -58,9 +58,6 @@ private:
     inline void handleMouse(sf::RenderWindow& graphics_window);
     inline void updatePlayerStates(float time_elapsed);
 
-    inline void updateThoughts(float time_elapsed);
-    inline void updateBonusTexts(float time_elapsed);
-
     static constexpr float ACHIEVEMENTS_MARGIN_ = 20.0f;
 
     static constexpr float HEALTH_BAR_X_ = 163.0f;

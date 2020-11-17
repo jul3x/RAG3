@@ -3,6 +3,9 @@
 //
 
 #include <common/AbstractWeapon.h>
+#include <common/ShootingWeapon.h>
+#include <common/NoWeapon.h>
+#include <common/MeleeWeapon.h>
 #include <common/ResourceManager.h>
 
 #include <utility>
@@ -48,4 +51,18 @@ Character* AbstractWeapon::getUser() const
 void AbstractWeapon::setPosition(const sf::Vector2f& pos, const sf::Vector2f& offset)
 {
     AbstractDrawableObject::setPosition(pos + offset);
+}
+
+std::shared_ptr<AbstractWeapon> AbstractWeapon::create(Character* user, const std::string& name)
+{
+    if (name.length() > 5 && name.substr(0, 5) == "melee")
+    {
+        return std::make_shared<MeleeWeapon>(user, name);
+    }
+    else if (name != "Null" && !name.empty())
+    {
+        return std::make_shared<ShootingWeapon>(user, name);
+    }
+
+    return std::make_shared<NoWeapon>();
 }

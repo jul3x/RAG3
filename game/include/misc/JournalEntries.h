@@ -68,7 +68,7 @@ private:
 
     int u_id_;
     std::string id_;
-    std::string activation_;
+    Functional::Activation activation_;
     j3x::List funcs_;
     j3x::List datas_;
 
@@ -170,7 +170,7 @@ private:
     int u_id_;
     std::string id_;
     sf::Vector2f pos_;
-    std::string activation_;
+    Functional::Activation activation_;
     j3x::List funcs_;
     j3x::List datas_;
 
@@ -238,7 +238,7 @@ private:
     int u_id_;
     std::string id_;
     sf::Vector2f pos_;
-    std::string activation_;
+    Functional::Activation activation_;
     j3x::List funcs_;
     j3x::List datas_;
 

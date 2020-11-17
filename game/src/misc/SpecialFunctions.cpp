@@ -164,15 +164,7 @@ void SpecialFunctions::addWeapon(Functional* obj, const j3x::Obj& data, Characte
     LOG.info("[SpecialFunction] Adding weapon.");
 
     auto& data_parsed = j3x::getObj<std::string>(data);
-    std::shared_ptr<AbstractWeapon> weapon;
-    if (data_parsed.length() > 5 && data_parsed.substr(0, 5) == "melee")
-    {
-        weapon = std::make_shared<MeleeWeapon>(user, data_parsed);
-    }
-    else
-    {
-        weapon = std::make_shared<ShootingWeapon>(user, data_parsed);
-    }
+    std::shared_ptr<AbstractWeapon> weapon = AbstractWeapon::create(user, data_parsed);
 
     if (user->addWeaponToBackpack(weapon))
     {

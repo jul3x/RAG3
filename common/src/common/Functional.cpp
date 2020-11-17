@@ -14,7 +14,6 @@ Functional::Functional(std::string activation, const j3x::List& functions,
                        const j3x::List& datas, const std::string& id, int u_id) :
         Identifiable(id),
         Unique(u_id),
-        activation_(std::move(activation)),
         is_active_(true),
         is_destroyed_(false),
         text_to_use_(nullptr),
@@ -22,10 +21,28 @@ Functional::Functional(std::string activation, const j3x::List& functions,
         functions_(functions),
         datas_(datas)
 {
+    this->setActivationStr(activation);
 }
 
-const std::string& Functional::getActivation() const
+const std::string& Functional::getActivationStr() const
 {
+    static std::string result;
+    if (activation_ == Activation::OnKill)
+        result = "OnKill";
+    else if (activation_ == Activation::OnCollect)
+        result = "OnCollect";
+    else if (activation_ == Activation::OnEnter)
+        result = "OnEnter";
+    else if (activation_ == Activation::OnUse)
+        result = "OnUse";
+    else
+        result = "None";
+    return result;
+}
+
+Functional::Activation Functional::getActivation() const
+{
+
     return activation_;
 }
 
@@ -64,9 +81,23 @@ const j3x::List& Functional::getDatas() const
     return datas_;
 }
 
-void Functional::setActivation(const std::string& str)
+void Functional::setActivationStr(const std::string& str)
 {
-    activation_ = str;
+    if (str == "OnKill")
+        activation_ = Activation::OnKill;
+    else if (str == "OnCollect")
+        activation_ = Activation::OnCollect;
+    else if (str ==  "OnEnter")
+        activation_ = Activation::OnEnter;
+    else if (str == "OnUse")
+        activation_ = Activation::OnUse;
+    else
+        activation_ = Activation::None;
+}
+
+void Functional::setActivation(Functional::Activation activation)
+{
+    activation_ = activation;
 }
 
 void Functional::setFunctions(const j3x::List& func)

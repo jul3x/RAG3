@@ -226,7 +226,7 @@ void Game::updateMapObjects(float time_elapsed)
             auto next_it = std::next(it);
             engine_->deleteStaticObject(it->get());
 
-            if ((*it)->getActivation() == "OnKill")
+            if ((*it)->getActivation() == Functional::Activation::OnKill)
             {
                 (*it)->use(player_.get());
             }
@@ -345,7 +345,7 @@ void Game::killNPC(NPC* npc)
         }
     }
 
-    if (npc->getActivation() == "OnKill" && npc->isActive())
+    if (npc->getActivation() == Functional::Activation::OnKill && npc->isActive())
     {
         npc->use(npc);
     }
@@ -514,7 +514,7 @@ void Game::spawnAchievement(const j3x::Parameters& params)
 
 void Game::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
 {
-    auto ptr = this->spawnNewSpecial(name, -1, pos, "", {}, {});
+    auto ptr = this->spawnNewSpecial(name, -1, pos, Functional::Activation::None, {}, {});
     journal_->event<SpawnSpecial>(ptr);
 }
 
@@ -622,7 +622,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
 
     if (special != nullptr && character != nullptr && special->isActive())
     {
-        if (special->getActivation() == "OnEnter")
+        if (special->getActivation() == Functional::Activation::OnEnter)
         {
             auto player = dynamic_cast<Player*>(d_obj);
             if (special->isUsableByNPC())
@@ -634,7 +634,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
                 special->use(player);
             }
         }
-        else if (special->getActivation() == "OnUse")
+        else if (special->getActivation() == Functional::Activation::OnUse)
         {
             character->setCurrentSpecialObject(special);
         }
@@ -741,7 +741,7 @@ Fire* Game::spawnNewFire(Character* user, const sf::Vector2f& pos, float dir)
 }
 
 
-NPC* Game::spawnNewNPC(const std::string& id, int u_id, const std::string& activation,
+NPC* Game::spawnNewNPC(const std::string& id, int u_id, Functional::Activation activation,
                        const j3x::List& funcs, const j3x::List& datas)
 {
     auto ptr = map_->spawn<NPC>({}, 0.0f, id);
@@ -832,7 +832,7 @@ ObstacleTile* Game::spawnNewObstacleTile(const std::string& id, const sf::Vector
 }
 
 Obstacle* Game::spawnNewObstacle(const std::string& id, int u_id, const sf::Vector2f& pos,
-                                 const std::string& activation,
+                                 Functional::Activation activation,
                                  const j3x::List& funcs, const j3x::List& datas)
 {
     auto new_ptr = map_->spawn<Obstacle>(pos, 0.0f, id);
@@ -842,7 +842,7 @@ Obstacle* Game::spawnNewObstacle(const std::string& id, int u_id, const sf::Vect
         new_ptr->setUniqueId(u_id);
     }
 
-    if (!activation.empty())
+    if (activation != Functional::Activation::None)
     {
         new_ptr->setActivation(activation);
         new_ptr->setFunctions(funcs);
@@ -1058,7 +1058,7 @@ void Game::updateBullets(float time_elapsed)
     {
         if (!(*it)->update(time_elapsed))
         {
-            if ((*it)->getActivation() == "OnKill")
+            if ((*it)->getActivation() == Functional::Activation::OnKill)
             {
                 (*it)->use(player_.get());
             }
@@ -1113,7 +1113,7 @@ void Game::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
 }
 
 Special* Game::spawnNewSpecial(const std::string& id, int u_id,
-                               const sf::Vector2f& pos, const std::string& activation,
+                               const sf::Vector2f& pos, Functional::Activation activation,
                                const j3x::List& funcs, const j3x::List& datas)
 {
     auto ptr = map_->spawn<Special>(pos, 0.0f, id);
@@ -1124,7 +1124,7 @@ Special* Game::spawnNewSpecial(const std::string& id, int u_id,
         ptr->setUniqueId(u_id);
     }
 
-    if (!activation.empty())
+    if (activation != Functional::Activation::None)
     {
         ptr->setActivation(activation);
         ptr->setFunctions(funcs);

@@ -19,19 +19,29 @@ class Character;
 
 class Functional : public Identifiable, public Unique {
 public:
+    enum class Activation {
+        None = 0,
+        OnKill = 1,
+        OnUse = 2,
+        OnEnter = 3,
+        OnCollect = 4
+    };
+
     Functional(std::string  activation, const j3x::List& functions,
                const j3x::List& datas, const std::string& id, int u_id = -1);
 
-    [[nodiscard]] const std::string& getActivation() const;
+    [[nodiscard]] const std::string& getActivationStr() const;
     [[nodiscard]] const std::string& getFunctionsStr() const;
     [[nodiscard]] const std::string& getDatasStr() const;
+    [[nodiscard]] Activation getActivation() const;
     [[nodiscard]] const j3x::List& getFunctions() const;
     [[nodiscard]] const j3x::List& getDatas() const;
     [[nodiscard]] const std::string& getTextToUse() const;
 
     void setFunctions(const j3x::List& func);
     void setDatas(const j3x::List& data);
-    void setActivation(const std::string& str);
+    void setActivation(Activation activation);
+    void setActivationStr(const std::string& str);
     void setFunctionsStr(const std::string& str);
     void setDatasStr(const std::string& str);
 
@@ -50,7 +60,7 @@ private:
     bool is_active_;
     bool is_destroyed_;
 
-    std::string activation_;
+    Activation activation_;
     j3x::List functions_, datas_;
 
     std::vector<std::function<void(Functional*, const j3x::Obj&, Character*)>> funcs_;

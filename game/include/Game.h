@@ -113,16 +113,16 @@ public:
     void findAndDeleteDecoration(Decoration* ptr);
     void findAndDeleteSpecial(Special* ptr);
 
-    Special* spawnNewSpecial(const std::string& id, int u_id, const sf::Vector2f& pos, const std::string& activation,
+    Special* spawnNewSpecial(const std::string& id, int u_id, const sf::Vector2f& pos, Functional::Activation activation,
                              const j3x::List& funcs, const j3x::List& datas);
     Fire* spawnNewFire(Character* user, const sf::Vector2f& pos, float dir);
     Bullet* spawnNewBullet(Character* user, const std::string& id, const sf::Vector2f& pos, float dir);
-    Obstacle* spawnNewObstacle(const std::string& id, int u_id, const sf::Vector2f& pos, const std::string& activation,
+    Obstacle* spawnNewObstacle(const std::string& id, int u_id, const sf::Vector2f& pos, Functional::Activation activation,
                                const j3x::List& funcs, const j3x::List& datas);
     ObstacleTile* spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos);
     Decoration* spawnNewDecoration(const std::string& id, int u_id, const sf::Vector2f& pos);
 
-    NPC* spawnNewNPC(const std::string &id, int u_id, const std::string& activation,
+    NPC* spawnNewNPC(const std::string &id, int u_id, Functional::Activation activation,
                      const j3x::List& funcs, const j3x::List& datas);
     NPC* spawnNewPlayerClone(const std::string &weapon_id);
 

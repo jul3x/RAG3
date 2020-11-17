@@ -98,12 +98,12 @@ void ObstacleObjectWindow::setObjectContent(const std::string &category, Obstacl
     obstacle_ = obj;
     child_->setTitle(category + "/" + obstacle_->getId());
     id_box_->setText(std::to_string(obstacle_->getUniqueId()));
-    act_box_->setText(obstacle_->getActivation());
+    act_box_->setText(obstacle_->getActivationStr());
     fun_box_->setText(obstacle_->getFunctionsStr());
     data_box_->setText(obstacle_->getDatasStr());
 
     button_->connect("pressed", [this]() {
-        this->obstacle_->setActivation(this->act_box_->getText());
+        this->obstacle_->setActivationStr(this->act_box_->getText());
         this->obstacle_->setFunctionsStr(this->fun_box_->getText());
         this->obstacle_->setDatasStr(this->data_box_->getText());
         child_->close();

@@ -116,7 +116,7 @@ void CharacterObjectWindow::setObjectContent(const std::string &category, Charac
     character_ = obj;
     child_->setTitle(category + "/" + character_->getId());
     id_box_->setText(std::to_string(character_->getUniqueId()));
-    act_box_->setText(character_->getActivation());
+    act_box_->setText(character_->getActivationStr());
     fun_box_->setText(character_->getFunctionsStr());
     data_box_->setText(character_->getDatasStr());
 
@@ -129,7 +129,7 @@ void CharacterObjectWindow::setObjectContent(const std::string &category, Charac
     }
 
     button_->connect("pressed", [this]() {
-        this->character_->setActivation(this->act_box_->getText());
+        this->character_->setActivationStr(this->act_box_->getText());
         this->character_->setFunctionsStr(this->fun_box_->getText());
         this->character_->setDatasStr(this->data_box_->getText());
 

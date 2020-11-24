@@ -2,11 +2,14 @@
 // Created by jul3x on 08.04.20.
 //
 
+#include <functional>
+
 #include <R3E/system/Config.h>
 #include <common/ResourceManager.h>
 
 #include <ui/FullHud.h>
 #include <Game.h>
+
 
 
 BackpackHud::BackpackHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f& pos, int x, int y)
@@ -24,9 +27,67 @@ BackpackHud::BackpackHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f&
             tooltips_.emplace_back(theme, pos + sf::Vector2f{static_cast<float>(j), static_cast<float>(i)}
                 * CONF<float>("graphics/backpack_placeholder_diff")
                 - CONF<sf::Vector2f>("graphics/backpack_placeholder_size") / 2.0f);
+        }
+    }
 
-            tooltips_.back().bindGui(gui);
-            tooltips_.back().show(true);
+    for (auto& tooltip : tooltips_)
+    {
+        tooltip.bindFunction(std::bind(BackpackHud::clickPlaceholder, this, std::ref(tooltip)));
+        tooltip.bindGui(gui);
+        tooltip.show(true);
+    }
+}
+
+void BackpackHud::clickPlaceholder(Tooltip& tooltip)
+{
+    tooltip.setActive(true);
+    auto& active = this->getActiveTooltips();
+
+    if (active.size() >= 2)
+    {
+        this->combineBackpackItems(active[0], active[1]);
+        this->resetActiveTooltips();
+    }
+}
+
+void BackpackHud::combineBackpackItems(size_t first, size_t second)
+{
+    size_t i = 0;
+    std::string special_id{}, weapon_id{};
+    for (auto& special : Game::get().getPlayer().getBackpack())
+    {
+        if (i == first) special_id = special.first.getId();
+        if (i == second) special_id = special.first.getId();
+        ++i;
+    }
+
+    for (auto& weapon : weapons_)
+    {
+        if (i == first) weapon_id = weapon.second;
+        if (i == second) weapon_id = weapon.second;
+        ++i;
+    }
+
+    if (!special_id.empty() && !weapon_id.empty())
+    {
+        auto& upgrade = RMGET<j3x::List>("specials", special_id, "can_upgrade", true);
+        bool can_upgrade = false;
+        for (auto& weapon_to_upgrade : upgrade)
+        {
+            if (j3x::getObj<std::string>(weapon_to_upgrade) == weapon_id)
+            {
+                can_upgrade = true;
+            }
+        }
+
+        if (can_upgrade)
+        {
+            Game::get().getUI().spawnAcceptWindow(
+                    "Do you want to upgrade \"" +
+                    RMGET<std::string>("specials", weapon_id, "tooltip_header") + "\" with \"" +
+                    RMGET<std::string>("specials", special_id, "tooltip_header") + "\"?",
+                    std::bind([&](const std::string& w, const std::string& s) {
+                        Game::get().getPlayer().upgradeWeapon(w, s); }, weapon_id, special_id));
         }
     }
 }
@@ -50,8 +111,30 @@ void BackpackHud::setOpacity(sf::Uint8 a)
 
     for (auto& weapon : weapons_)
     {
-        weapon.setColor(255, 255, 255, a);
+        weapon.first.setColor(255, 255, 255, a);
     }
+}
+
+const std::vector<size_t>& BackpackHud::getActiveTooltips()
+{
+    static std::vector<size_t> result;
+    result.clear();
+
+    size_t i = 0;
+    for (auto& tooltip : tooltips_)
+    {
+        if (tooltip.isActive())
+            result.emplace_back(i);
+        ++i;
+    }
+
+    return result;
+}
+
+void BackpackHud::resetActiveTooltips()
+{
+    for (auto& tooltip : tooltips_)
+        tooltip.setActive(false);
 }
 
 void BackpackHud::update(float time_elapsed)
@@ -82,9 +165,9 @@ void BackpackHud::update(float time_elapsed)
     weapons_.clear();
     for (auto& weapon : Game::get().getPlayer().getWeapons())
     {
-        weapons_.emplace_back(placeholders_[i].getPosition(),
+        weapons_.emplace_back(AbstractDrawableObject{placeholders_[i].getPosition(),
                               RMGET<sf::Vector2f>("specials", weapon->getId(), "size") * CONF<float>("graphics/global_zoom"),
-                              &RM.getTexture("specials/" +  weapon->getId()));
+                              &RM.getTexture("specials/" +  weapon->getId())}, weapon->getId());
         tooltips_[i].bindText(RMGET<std::string>("specials", weapon->getId(), "tooltip_header"),
                               RMGET<std::string>("specials", weapon->getId(), "tooltip"));
         ++i;
@@ -120,7 +203,7 @@ void BackpackHud::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
     for (auto& weapon : weapons_)
     {
-        target.draw(weapon);
+        target.draw(weapon.first);
     }
 }
 

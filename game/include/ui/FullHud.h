@@ -24,11 +24,16 @@ public:
     void update(float time_elapsed);
     void show(bool hide = false);
     void setOpacity(sf::Uint8 a);
+
+    void clickPlaceholder(Tooltip& tooltip);
+    const std::vector<size_t>& getActiveTooltips();
+    void resetActiveTooltips();
+    void combineBackpackItems(size_t first, size_t second);
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     std::vector<AbstractDrawableObject> placeholders_;
-    std::list<AbstractDrawableObject> weapons_;
+    std::list<std::pair<AbstractDrawableObject, std::string>> weapons_;
     std::vector<Tooltip> tooltips_;
     std::vector<sf::Text> numbers_;
 };

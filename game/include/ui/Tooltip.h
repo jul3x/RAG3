@@ -14,7 +14,7 @@ using namespace r3e;
 
 class Tooltip {
 public:
-    explicit Tooltip(tgui::Theme* theme, const sf::Vector2f& position)
+    explicit Tooltip(tgui::Theme* theme, const sf::Vector2f& position) : theme_(theme)
     {
         button_ = tgui::Button::create();
         button_->setRenderer(theme->getRenderer("TooltipButton"));
@@ -64,10 +64,24 @@ public:
         button_->setVisible(!hide);
     }
 
+    void setActive(bool active)
+    {
+        active_ = active;
+        button_->setRenderer(theme_->getRenderer(active ? "TooltipButtonActive" : "TooltipButton"));
+    }
+
+    bool isActive() const
+    {
+        return active_;
+    }
+
 private:
+    tgui::Theme* theme_;
     tgui::Button::Ptr button_;
     tgui::Label::Ptr tooltip_, tooltip_header_;
     tgui::Panel::Ptr layout_;
+
+    bool active_{false};
 
 };
 

@@ -11,7 +11,7 @@
 
 using namespace editor;
 
-Editor::Editor() : grid_(CONF<int>("window_width_px"), CONF<int>("window_height_px")),
+Editor::Editor() : grid_(CONF<int>("window_width_px"), CONF<int>("window_heigth_px")),
                    is_lightning_on_(true), randomizing_value_(0), marked_item_(nullptr)
 {
     engine_ = std::make_unique<Engine>();
@@ -25,10 +25,10 @@ void Editor::initialize()
     map_ = std::make_unique<Map>();
 
     ui_->registerCamera(camera_.get());
-    camera_->setViewNormalSize({static_cast<float>(CONF<int>("window_width_px")), static_cast<float>(CONF<int>("window_height_px"))});
+    camera_->setViewNormalSize({static_cast<float>(CONF<int>("window_width_px")), static_cast<float>(CONF<int>("window_heigth_px"))});
 
     engine_->initializeGraphics(
-            sf::Vector2i{CONF<int>("window_width_px"), CONF<int>("window_height_px")}, "RAG3 Editor",
+            sf::Vector2i{CONF<int>("window_width_px"), CONF<int>("window_heigth_px")}, "RAG3 Editor",
             CONF<bool>("full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
             sf::Color(CONF<int>("background_color")));
 
@@ -36,7 +36,7 @@ void Editor::initialize()
     engine_->registerUI(ui_.get());
 
     lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CONF<int>("window_width_px")),
-                                                                    static_cast<float>(CONF<int>("window_height_px"))},
+                                                                    static_cast<float>(CONF<int>("window_heigth_px"))},
                                                        sf::Color(CONF<int>("graphics/lightning_color")));
 
 }

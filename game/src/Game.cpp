@@ -36,7 +36,7 @@ void Game::initialize()
     achievements_->load(CONF<std::string>("paths/achievements"));
 
     lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                                                                    static_cast<float>(CONF<int>("graphics/window_height_px"))},
+                                                                    static_cast<float>(CONF<int>("graphics/window_heigth_px"))},
                                                                             sf::Color(CONF<int>("graphics/lightning_color")));
 
     map_ = std::make_unique<Map>();
@@ -55,7 +55,7 @@ void Game::initialize()
     ui_->registerPlayer(player_.get());
 
     engine_->initializeGraphics(
-            sf::Vector2i{CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_height_px")},
+            sf::Vector2i{CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_heigth_px")},
             "Codename: Rag3",
             CONF<bool>("graphics/full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
             sf::Color(CONF<int>("graphics/background_color")));
@@ -438,6 +438,11 @@ Journal& Game::getJournal() const
     return *journal_;
 }
 
+UserInterface& Game::getUI()
+{
+    return *ui_;
+}
+
 const std::list<std::unique_ptr<Bullet>>& Game::getBullets() const
 {
     return bullets_;
@@ -488,7 +493,7 @@ void Game::spawnFadeInOut()
 {
     engine_->spawnEffect(std::make_shared<graphics::FadeInOut>(
             sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                         static_cast<float>(CONF<int>("graphics/window_height_px"))}, sf::Color::Black,
+                         static_cast<float>(CONF<int>("graphics/window_heigth_px"))}, sf::Color::Black,
             CONF<float>("graphics/fade_in_out_duration")
     ));
 }

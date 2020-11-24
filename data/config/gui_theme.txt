@@ -203,6 +203,18 @@ TooltipHeader {
     TextStyle       = Bold;
 }
 
+TooltipButtonActive {
+    BackgroundColor = rgba(200, 40, 40, 40);
+    BackgroundColorHover = rgba(200, 40, 40, 40);
+    BackgroundColorDown = rgba(200, 40, 40, 40);
+    TextColor = rgba(255, 255, 255, 215);
+    TextColorHover = rgba(255, 255, 255, 235);
+    TextColorDown = rgba(255, 255, 255, 235);
+    BorderColor = rgba(200, 40, 40, 215);
+    Borders = (0, 0, 0, 0);
+    BorderColorHover = rgba(200, 40, 40, 215);
+}
+
 TooltipButton {
     BackgroundColor = rgba(90, 90, 90, 0);
     BackgroundColorHover = rgba(200, 40, 40, 20);

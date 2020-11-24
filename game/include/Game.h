@@ -71,6 +71,7 @@ public:
     Player& getPlayer();
     Camera& getCamera();
     Stats& getStats();
+    UserInterface& getUI();
     [[nodiscard]] Journal& getJournal() const;
     [[nodiscard]] const std::list<std::unique_ptr<Bullet>>& getBullets() const;
     [[nodiscard]] const std::list<std::unique_ptr<Fire>>& getFires() const;

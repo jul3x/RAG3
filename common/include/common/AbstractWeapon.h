@@ -8,6 +8,7 @@
 
 #include <string>
 #include <memory>
+#include <list>
 #include <functional>
 
 #include <R3E/objects/AbstractDrawableObject.h>
@@ -37,11 +38,14 @@ public:
     Character* getUser() const;
     virtual void update(float time_elapsed);
 
+    void upgrade(const std::string& id);
+
     static std::shared_ptr<AbstractWeapon> create(Character* user, const std::string& name);
 
 protected:
     Character* user_;
 
+    std::list<std::string> upgrades_;
     sf::Vector2f weapon_offset_;
     float time_elapsed_{0.0f};
 

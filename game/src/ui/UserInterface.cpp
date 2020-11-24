@@ -15,19 +15,19 @@
 
 
 UserInterface::UserInterface() :
-        blood_splash_(sf::Vector2f(CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_height_px"))),
+        blood_splash_(sf::Vector2f(CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_heigth_px"))),
         weapons_bar_({static_cast<float>(CONF<int>("graphics/window_width_px")),
-                      static_cast<float>(CONF<int>("graphics/window_height_px"))}),
+                      static_cast<float>(CONF<int>("graphics/window_heigth_px"))}),
         health_bar_({CONF<int>("graphics/window_width_px") - HEALTH_BAR_X_ * CONF<float>("graphics/user_interface_zoom"),
-                     CONF<int>("graphics/window_height_px") - HEALTH_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")}),
+                     CONF<int>("graphics/window_heigth_px") - HEALTH_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")}),
         time_bar_({TIME_BAR_X_ * CONF<float>("graphics/user_interface_zoom"),
-                   CONF<int>("graphics/window_height_px") - TIME_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")}),
+                   CONF<int>("graphics/window_heigth_px") - TIME_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")}),
         fps_text_("FPS: ", RM.getFont("editor"), 12),
         object_use_text_("[F] Use object", RM.getFont(), CONF<float>("graphics/use_text_size")),
         npc_talk_text_("[T] Talk to NPC", RM.getFont(), CONF<float>("graphics/use_text_size")),
-        left_hud_({0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))}),
+        left_hud_({0.0f, static_cast<float>(CONF<int>("graphics/window_heigth_px"))}),
         right_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")),
-                    static_cast<float>(CONF<int>("graphics/window_height_px"))}),
+                    static_cast<float>(CONF<int>("graphics/window_heigth_px"))}),
         stats_hud_({0.0f, 0.0f}),
         small_backpack_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")), 0.0f}),
         level_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")) / 2.0f, 0.0f}),
@@ -61,7 +61,7 @@ void UserInterface::initialize(graphics::Graphics& graphics)
     small_backpack_hud_.registerGui(gui_.get(), &theme_);
     full_hud_ = std::make_unique<FullHud>(gui_.get(), &theme_,
                                           sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                                                       static_cast<float>(CONF<int>("graphics/window_height_px"))});
+                                                       static_cast<float>(CONF<int>("graphics/window_heigth_px"))});
     tgui::ToolTip::setInitialDelay({});
 }
 
@@ -426,4 +426,17 @@ void UserInterface::spawnThought(Character* user, const std::string& text)
 void UserInterface::spawnBonusText(const sf::Vector2f& pos, const std::string& text)
 {
     bonus_texts_.emplace_back(pos, text);
+}
+
+void UserInterface::spawnAcceptWindow(const std::string& text, const std::function<void()>& func)
+{
+    accept_windows_.emplace_back(gui_.get(), &theme_, text,
+            sf::Vector2f(CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_heigth_px")) / 2.0f,
+            CONF<sf::Vector2f>("graphics/popup_size"));
+    accept_windows_.back().bindFunction(func);
+}
+
+void UserInterface::closeAcceptWindow(AcceptWindow* window)
+{
+    utils::eraseIf<AcceptWindow>(accept_windows_, [window](AcceptWindow& window_) { return &window_ == window; });
 }

@@ -2,7 +2,7 @@
 bool auto_resolution = true
 bool full_screen = false
 int window_width_px = 3000
-int window_height_px = 1500
+int window_heigth_px = 1500
 float global_zoom = 2.0
 float user_interface_zoom = global_zoom / 2.0
 
@@ -27,6 +27,7 @@ float achievement_text_text_size = 20 * user_interface_zoom
 float skills_text_size = 28 * user_interface_zoom
 float backpack_text_size = 24 * user_interface_zoom
 float tooltip_text_size = 14 * user_interface_zoom
+float popup_text_size = 12 * user_interface_zoom
 
 // FIRE GRAPHICS
 int fire_color = -1
@@ -116,3 +117,6 @@ float lines_thickness = 2.0 * user_interface_zoom
 list small_backpack_pos = [(-277.0 * user_interface_zoom, 68.0 * user_interface_zoom);
                            (-185.0 * user_interface_zoom, 68.0 * user_interface_zoom);
                            (-90.0 * user_interface_zoom, 68.0 * user_interface_zoom);]
+float popup_button_relative_valign = 40.0 * user_interface_zoom
+vector popup_button_size = (50.0, 20.0)
+vector popup_size = (400.0, 200.0)

@@ -141,6 +141,37 @@ bool Player::addSkill(Player::Skills skill)
     return skill_points_ > 0;
 }
 
+void Player::upgradeWeapon(const std::string& weapon, const std::string& special)
+{
+    bool has_special = false;
+    for (auto it = backpack_.begin(); it != backpack_.end(); ++it)
+    {
+        std::cout << special << std::endl;
+        if (it->first.getId() == special && it->second > 0)
+        {
+            has_special = true;
+            --(it->second);
+
+            if (it->second <= 0)
+            {
+                backpack_.erase(it);
+                return;
+            }
+        }
+    }
+
+    if (!has_special) return;
+
+    for (auto& obj : weapons_in_backpack_)
+    {
+        if (obj->getId() == weapon)
+        {
+            obj->upgrade(special);
+        }
+    }
+}
+
+
 int Player::getSkillPoints() const
 {
     return skill_points_;

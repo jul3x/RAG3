@@ -22,6 +22,7 @@
 #include <ui/LevelHud.h>
 #include <ui/FullHud.h>
 #include <ui/Achievement.h>
+#include <ui/AcceptWindow.h>
 
 #include <misc/Thought.h>
 #include <misc/BonusText.h>
@@ -49,6 +50,8 @@ public:
     void spawnAchievement(const std::string& title, const std::string& text, const std::string& tex);
     void spawnThought(Character* user, const std::string& text);
     void spawnBonusText(const sf::Vector2f& pos, const std::string& text);
+    void spawnAcceptWindow(const std::string& text, const std::function<void()>& func);
+    void closeAcceptWindow(AcceptWindow* window);
 
     void draw(graphics::Graphics& graphics) override;
 
@@ -90,6 +93,7 @@ private:
     std::list<Achievement> achievements_;
     std::list<Thought> thoughts_;
     std::list<BonusText> bonus_texts_;
+    std::list<AcceptWindow> accept_windows_;
 
     sf::Text fps_text_;
     sf::Text object_use_text_;

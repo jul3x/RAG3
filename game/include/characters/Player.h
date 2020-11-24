@@ -39,6 +39,7 @@ public:
     bool addSkill(Skills skill);
     void addSpecialToBackpack(Special* special);
     void useItem(const std::string& name);
+    void upgradeWeapon(const std::string& weapon, const std::string& special);
     bool sideStep(Player::SideStepDir dir);
     bool update(float time_elapsed) override;
 

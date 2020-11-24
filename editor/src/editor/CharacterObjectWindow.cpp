@@ -13,7 +13,7 @@ using namespace editor;
 
 CharacterObjectWindow::CharacterObjectWindow(tgui::Gui *gui, tgui::Theme *theme) :
         ChildWindow(gui, theme, "Character editor",
-                    (sf::Vector2f(CONF<int>("window_width_px"), CONF<int>("window_height_px")) -
+                    (sf::Vector2f(CONF<int>("window_width_px"), CONF<int>("window_heigth_px")) -
                      CONF<sf::Vector2f>("character_window_size")) / 2.0f,
                     CONF<sf::Vector2f>("character_window_size"),
                     "character_object_window"),

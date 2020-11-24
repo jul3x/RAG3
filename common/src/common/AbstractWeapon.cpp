@@ -66,3 +66,8 @@ std::shared_ptr<AbstractWeapon> AbstractWeapon::create(Character* user, const st
 
     return std::make_shared<NoWeapon>();
 }
+
+void AbstractWeapon::upgrade(const std::string& id)
+{
+    upgrades_.emplace_back(id);
+}

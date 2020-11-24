@@ -119,4 +119,4 @@ list small_backpack_pos = [(-277.0 * user_interface_zoom, 68.0 * user_interface_
                            (-90.0 * user_interface_zoom, 68.0 * user_interface_zoom);]
 float popup_button_relative_valign = 40.0 * user_interface_zoom
 vector popup_button_size = (50.0, 20.0)
-vector popup_size = (400.0, 200.0)
+vector popup_size = (450.0, 200.0)

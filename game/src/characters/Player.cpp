@@ -146,7 +146,6 @@ void Player::upgradeWeapon(const std::string& weapon, const std::string& special
     bool has_special = false;
     for (auto it = backpack_.begin(); it != backpack_.end(); ++it)
     {
-        std::cout << special << std::endl;
         if (it->first.getId() == special && it->second > 0)
         {
             has_special = true;
@@ -155,8 +154,8 @@ void Player::upgradeWeapon(const std::string& weapon, const std::string& special
             if (it->second <= 0)
             {
                 backpack_.erase(it);
-                return;
             }
+            break;
         }
     }
 

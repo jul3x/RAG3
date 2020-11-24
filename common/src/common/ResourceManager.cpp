@@ -245,7 +245,7 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
 
         for (const auto& obj : objects)
         {
-            activation.emplace_back(obj->getActivation());
+            activation.emplace_back(obj->getActivationStr());
             funcs.emplace_back(obj->getFunctions());
             datas.emplace_back(obj->getDatas());
         }

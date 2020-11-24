@@ -18,6 +18,8 @@ public:
     float getState() const override;
 
     void setState(float state) override;
+
+    void recalculate() override;
 };
 
 #endif //RAG3_COMMON_INCLUDE_COMMON_NOWEAPON_H

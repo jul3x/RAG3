@@ -20,11 +20,12 @@ public:
 
     int getAmmunition() const;
     float getState() const override;
-
+    void addAmmo(int ammo) override;
     void setState(float state) override;
 
     void setFlipY(bool flip) override;
 
+    void recalculate() override;
 
 private:
     // weapon parameters

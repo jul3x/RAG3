@@ -33,12 +33,14 @@ public:
     virtual float getState() const = 0;
     virtual void setState(float state) = 0;
     virtual void setPosition(const sf::Vector2f& pos, const sf::Vector2f& offset);
-
+    virtual void addAmmo(int ammo);
     const sf::Vector2f& getWeaponOffset() const;
     Character* getUser() const;
     virtual void update(float time_elapsed);
 
+    const std::list<std::string>& getUpgrades() const;
     void upgrade(const std::string& id);
+    virtual void recalculate() = 0;
 
     static std::shared_ptr<AbstractWeapon> create(Character* user, const std::string& name);
 

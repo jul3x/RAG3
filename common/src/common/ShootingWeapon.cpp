@@ -78,8 +78,30 @@ void ShootingWeapon::setState(float state)
     ammunition_ = static_cast<int>(state * max_ammunition_);
 }
 
+void ShootingWeapon::addAmmo(int ammo)
+{
+    ammunition_ = std::min(ammunition_ + ammo, max_ammunition_);
+}
+
 void ShootingWeapon::setFlipY(bool flip)
 {
     AbstractDrawableObject::setFlipY(flip);
     spawn_offset_factor_ = flip ? 1 : -1;
+}
+
+void ShootingWeapon::recalculate()
+{
+    recoil_ = (RMGET<float>("weapons", this->getId(), "recoil"));
+    spawn_timeout_ = (RMGET<float>("weapons", this->getId(), "spawn_timeout"));
+    max_ammunition_ = (RMGET<int>("weapons", this->getId(), "max_ammo"));
+    spawn_quantity_ = (RMGET<int>("weapons", this->getId(), "spawn_quantity"));
+    spawn_angular_diff_ = (RMGET<float>("weapons", this->getId(), "spawn_angular_diff"));
+    for (const auto& id : upgrades_)
+    {
+        recoil_ *= RMGET<float>("specials", id, "recoil_factor");
+        spawn_timeout_ *= RMGET<float>("specials", id, "spawn_timeout_factor");
+        max_ammunition_ *= RMGET<float>("specials", id, "max_ammo_factor");
+        spawn_quantity_ = std::max(spawn_quantity_, RMGET<int>("specials", id, "spawn_quantity"));
+        spawn_angular_diff_ = std::max(spawn_angular_diff_, RMGET<float>("specials", id, "spawn_angular_diff"));
+    }
 }

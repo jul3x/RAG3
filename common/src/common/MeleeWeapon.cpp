@@ -214,3 +214,17 @@ void MeleeWeapon::registerAnimationSpawningFunction(std::function<void(const std
 {
     animation_spawning_function_ = std::move(func);
 }
+
+void MeleeWeapon::recalculate()
+{
+    reversed_recoil_ = (RMGET<float>("weapons", this->getId(), "recoil"));
+    use_timeout_ = (RMGET<float>("weapons", this->getId(), "spawn_timeout"));
+    deadly_factor_ = (RMGET<float>("weapons", this->getId(), "deadly_factor"));
+
+    for (const auto& id : upgrades_)
+    {
+        reversed_recoil_ *= RMGET<float>("specials", id, "recoil_factor");
+        use_timeout_ *= RMGET<float>("specials", id, "spawn_timeout_factor");
+        deadly_factor_ *= RMGET<float>("specials", id, "deadly_factor");
+    }
+}

@@ -37,6 +37,8 @@ public:
     void setFlipY(bool flip) override;
     void setFlipX(bool flip) override;
 
+    void recalculate() override;
+
     void update(float time_elapsed) override;
 
 private:

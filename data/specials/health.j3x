@@ -19,5 +19,3 @@ bool shadow=true
 
 string tooltip_header = "Health"
 string tooltip = "Use this to heal yourself!"
-
-list can_upgrade = ["m4"; "desert_eagle"]

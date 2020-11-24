@@ -53,6 +53,16 @@ void AbstractWeapon::setPosition(const sf::Vector2f& pos, const sf::Vector2f& of
     AbstractDrawableObject::setPosition(pos + offset);
 }
 
+void AbstractWeapon::addAmmo(int ammo)
+{
+
+}
+
+const std::list<std::string>& AbstractWeapon::getUpgrades() const
+{
+    return upgrades_;
+}
+
 std::shared_ptr<AbstractWeapon> AbstractWeapon::create(Character* user, const std::string& name)
 {
     if (name.length() > 5 && name.substr(0, 5) == "melee")
@@ -70,4 +80,5 @@ std::shared_ptr<AbstractWeapon> AbstractWeapon::create(Character* user, const st
 void AbstractWeapon::upgrade(const std::string& id)
 {
     upgrades_.emplace_back(id);
+    this->recalculate();
 }

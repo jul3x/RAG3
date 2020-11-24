@@ -1,0 +1,29 @@
+vector size=(18.0,20.0)
+vector collision_offset=(0.0,0.0)
+vector map_offset=(0.0,0.0)
+float collision_radius=10.0
+
+int frames_number=1
+float frame_duration=0.0
+
+string default_activation="OnPick"
+list default_functions=["Null"]
+list default_datas=["Null"]
+
+bool is_drawable=true
+int z_index=1
+
+bool light_point=false
+bool default_active=true
+bool shadow=true
+
+string tooltip_header = "Bigger Magazine"
+string tooltip = "Increases your weapon's max ammo amount."
+
+list can_upgrade = ["m4"; "desert_eagle"; "shotgun"]
+
+float max_ammo_factor = 1.5
+float spawn_timeout_factor = 1.0
+float recoil_factor = 1.0
+int spawn_quantity = 1
+float spawn_angular_diff = 0.0

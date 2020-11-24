@@ -161,9 +161,7 @@ void Character::addAmmoToWeapon(const std::string& id)
     {
         if (weapon->getId() == id)
         {
-            weapon->setState(std::min(1.0f, weapon->getState() +
-                                            static_cast<float>(RMGET<int>("weapons", id, "ammo_portion")) /
-                                            static_cast<float>(RMGET<int>("weapons", id, "max_ammo"))));
+            weapon->addAmmo(RMGET<int>("weapons", id, "ammo_portion"));
 
             return;
         }

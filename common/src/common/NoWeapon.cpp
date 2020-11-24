@@ -21,3 +21,7 @@ float NoWeapon::getState() const
 void NoWeapon::setState(float state)
 {
 }
+
+void NoWeapon::recalculate()
+{
+}

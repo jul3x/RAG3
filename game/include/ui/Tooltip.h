@@ -35,6 +35,7 @@ public:
         layout_->add(tooltip_header_);
 
         layout_->setSize(tgui::bindWidth(tooltip_) + 20.0f, tgui::bindHeight(tooltip_) + 1.5f * tgui::bindHeight(tooltip_header_) + 20.0f);
+        layout_->setPosition(- tgui::bindWidth(tooltip_) - 20.0f, 0);
         button_->setToolTip(layout_);
     }
 
@@ -70,7 +71,7 @@ public:
         button_->setRenderer(theme_->getRenderer(active ? "TooltipButtonActive" : "TooltipButton"));
     }
 
-    bool isActive() const
+    [[nodiscard]] bool isActive() const
     {
         return active_;
     }

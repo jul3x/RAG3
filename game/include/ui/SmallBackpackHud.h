@@ -25,7 +25,7 @@ private:
 
     static constexpr float SIZE_X_ = 540.0f;
     static constexpr float SIZE_Y_ = 200.0f;
-    const std::string NAMES_[3] = {"health", "more_speed", "crystal"};
+    const std::string NAMES_[3] = {"health", "more_speed", "rag3"};
 
     std::vector<Special> objects_;
     std::vector<sf::Text> numbers_;

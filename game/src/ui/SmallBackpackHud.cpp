@@ -37,7 +37,7 @@ void SmallBackpackHud::update(float time_elapsed)
 {
     auto& backpack = Game::get().getPlayer().getBackpack();
 
-    int health = 0, speed = 0, crystal = 0;
+    int health = 0, speed = 0, rag3 = 0;
     for (auto& object : backpack)
     {
         if (object.first.getId() == NAMES_[0])
@@ -50,17 +50,17 @@ void SmallBackpackHud::update(float time_elapsed)
         }
         else if (object.first.getId() == NAMES_[2])
         {
-            crystal = object.second;
+            rag3 = object.second;
         }
     }
 
     objects_[0].setColor(255, 255, 255, health ? 255 : 80);
     objects_[1].setColor(255, 255, 255, speed ? 255 : 80);
-    objects_[2].setColor(255, 255, 255, crystal ? 255 : 80);
+    objects_[2].setColor(255, 255, 255, rag3 ? 255 : 80);
 
     numbers_[0].setString(health > 1 ? std::to_string(health) : "");
     numbers_[1].setString(speed > 1 ? std::to_string(speed) : "");
-    numbers_[2].setString(crystal > 1 ? std::to_string(crystal) : "");
+    numbers_[2].setString(rag3 > 1 ? std::to_string(rag3) : "");
 }
 
 void SmallBackpackHud::registerGui(tgui::Gui* gui, tgui::Theme* theme)

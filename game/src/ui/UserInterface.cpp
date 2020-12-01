@@ -63,6 +63,7 @@ void UserInterface::initialize(graphics::Graphics& graphics)
                                           sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                                                        static_cast<float>(CONF<int>("graphics/window_heigth_px"))});
     tgui::ToolTip::setInitialDelay({});
+    tgui::ToolTip::setDistanceToMouse({-tgui::ToolTip::getDistanceToMouse().x, tgui::ToolTip::getDistanceToMouse().y});
 }
 
 void UserInterface::registerPlayer(Player* player)
@@ -202,7 +203,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                     }
                     case sf::Keyboard::Num3:
                     {
-//                        Game::get().getPlayer().useItem("health");
+                        Game::get().getPlayer().useItem("rag3");
                         break;
                     }
                     case sf::Keyboard::Q:

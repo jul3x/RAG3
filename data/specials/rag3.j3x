@@ -1,0 +1,22 @@
+vector size=(32.0,22.0)
+vector collision_offset=(0.0,0.0)
+vector map_offset=(0.0,0.0)
+float collision_radius=16.0
+
+int frames_number=1
+float frame_duration=0.0
+
+string default_activation="OnPick"
+list default_functions=["AddSpeed"; "Destroy"]
+list default_datas=[(1.25, 15.0); "Null"]
+
+bool is_drawable=true
+
+int z_index=1
+
+bool light_point=true
+bool shadow=false
+bool default_active=true
+
+string tooltip_header = "RAG3"
+string tooltip = "I don't know if I should..."

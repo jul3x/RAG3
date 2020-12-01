@@ -89,8 +89,12 @@ void J3XVisitor::visitEAdd(EAdd *eadd)
         eadd->value_ = std::any_cast<float>(eadd->expr_1->value_) + std::any_cast<float>(eadd->expr_2->value_);
         eadd->strtype_ = "float";
     }
+    else if (eadd->expr_1->strtype_ == "vector" and eadd->expr_2->strtype_ == "vector") {
+        eadd->value_ = std::any_cast<sf::Vector2f>(eadd->expr_1->value_) + std::any_cast<sf::Vector2f>(eadd->expr_2->value_);
+        eadd->strtype_ = "vector";
+    }
     else {
-        throw std::invalid_argument("line number " + std::to_string(eadd->line_number_) + " - Addition can be performed only on numbers!");
+        throw std::invalid_argument("line number " + std::to_string(eadd->line_number_) + " - Addition can be performed only on numbers and vectors!");
     }
 }
 
@@ -115,8 +119,12 @@ void J3XVisitor::visitESub(ESub *esub)
         esub->value_ = std::any_cast<float>(esub->expr_1->value_) - std::any_cast<float>(esub->expr_2->value_);
         esub->strtype_ = "float";
     }
+    else if (esub->expr_1->strtype_ == "vector" and esub->expr_2->strtype_ == "vector") {
+        esub->value_ = std::any_cast<sf::Vector2f>(esub->expr_1->value_) - std::any_cast<sf::Vector2f>(esub->expr_2->value_);
+        esub->strtype_ = "vector";
+    }
     else {
-        throw std::invalid_argument("line number " + std::to_string(esub->line_number_) + " - Subtraction can be performed only on numbers!");
+        throw std::invalid_argument("line number " + std::to_string(esub->line_number_) + " - Subtraction can be performed only on numbers and vectors!");
     }
 }
 
@@ -141,8 +149,16 @@ void J3XVisitor::visitEMul(EMul *emul)
         emul->value_ = std::any_cast<float>(emul->expr_1->value_) * std::any_cast<float>(emul->expr_2->value_);
         emul->strtype_ = "float";
     }
+    else if (emul->expr_1->strtype_ == "float" and emul->expr_2->strtype_ == "vector") {
+        emul->value_ = std::any_cast<float>(emul->expr_1->value_) * std::any_cast<sf::Vector2f>(emul->expr_2->value_);
+        emul->strtype_ = "vector";
+    }
+    else if (emul->expr_1->strtype_ == "vector" and emul->expr_2->strtype_ == "float") {
+        emul->value_ = std::any_cast<sf::Vector2f>(emul->expr_1->value_) * std::any_cast<float>(emul->expr_2->value_);
+        emul->strtype_ = "vector";
+    }
     else {
-        throw std::invalid_argument("line number " + std::to_string(emul->line_number_) + " - Multiplication can be performed only on numbers!");
+        throw std::invalid_argument("line number " + std::to_string(emul->line_number_) + " - Multiplication can be performed only on numbers or with scalar and vector!");
     }
 }
 
@@ -167,8 +183,12 @@ void J3XVisitor::visitEDiv(EDiv *ediv)
         ediv->value_ = std::any_cast<float>(ediv->expr_1->value_) / std::any_cast<float>(ediv->expr_2->value_);
         ediv->strtype_ = "float";
     }
+    else if (ediv->expr_1->strtype_ == "vector" and ediv->expr_2->strtype_ == "float") {
+        ediv->value_ = std::any_cast<sf::Vector2f>(ediv->expr_1->value_) / std::any_cast<float>(ediv->expr_2->value_);
+        ediv->strtype_ = "vector";
+    }
     else {
-        throw std::invalid_argument("line number " + std::to_string(ediv->line_number_) + " - Division can be performed only on numbers!");
+        throw std::invalid_argument("line number " + std::to_string(ediv->line_number_) + " - Division can be performed only on numbers or with vector and scalar!");
     }
 }
 
@@ -184,8 +204,12 @@ void J3XVisitor::visitENeg(ENeg *eneg)
         eneg->value_ = -std::any_cast<float>(eneg->expr_->value_);
         eneg->strtype_ = "float";
     }
+    else if (eneg->expr_->strtype_ == "vector") {
+        eneg->value_ = -std::any_cast<sf::Vector2f>(eneg->expr_->value_);
+        eneg->strtype_ = "vector";
+    }
     else {
-        throw std::invalid_argument("line number " + std::to_string(eneg->line_number_) + " - Negation can be performed only on numbers!");
+        throw std::invalid_argument("line number " + std::to_string(eneg->line_number_) + " - Negation can be performed only on numbers or vectors!");
     }
 }
 

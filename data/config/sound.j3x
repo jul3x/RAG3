@@ -1,4 +1,4 @@
-bool sound_on=true
+bool sound_on=false
 float music_volume=25.0
 float sound_attenuation=0.005
 float bullet_time_music_factor=1.0

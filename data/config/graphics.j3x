@@ -52,16 +52,16 @@ float camera_right_click_zoom_factor = 0.6
 // MISC
 float blood_pulsating_time = 5.0
 float inertial_states_change_speed = 4.0
-vector crosshair_size = (25.0 * user_interface_zoom, 25.0 * user_interface_zoom)
+vector crosshair_size = (25.0, 25.0) * user_interface_zoom
 
 // ACHIEVEMENT POPUPS
 float achievement_show_speed = 4.0
 float achievement_show_time = 10.0
-vector achievement_size = (350.0 * user_interface_zoom, 100.0 * user_interface_zoom)
-vector achievement_img_size = (70.0 * user_interface_zoom, 70.0 * user_interface_zoom)
-vector achievement_img_pos = (15.0 * user_interface_zoom, -85.0 * user_interface_zoom)
-vector achievement_title_pos = (-140.0 * user_interface_zoom, -90.0 * user_interface_zoom)
-vector achievement_text_pos = (-250.0 * user_interface_zoom, -50.0 * user_interface_zoom)
+vector achievement_size = (350.0, 100.0) * user_interface_zoom
+vector achievement_img_size = (70.0, 70.0) * user_interface_zoom
+vector achievement_img_pos = (15.0, -85.0) * user_interface_zoom
+vector achievement_title_pos = (-140.0, -90.0) * user_interface_zoom
+vector achievement_text_pos = (-250.0, -50.0) * user_interface_zoom
 int achievement_title_color = -1
 int achievement_text_color = -858993409
 int achievement_top_color = 1010580735
@@ -92,31 +92,31 @@ vector bonus_text_offset = (0.0, -30.0)
 vector bonus_text_velocity = (0.0, -40.0)
 
 // HUD
-vector health_size = (250.0 * user_interface_zoom, 250.0 * user_interface_zoom)
+vector health_size = (250.0, 250.0) * user_interface_zoom
 float full_hud_show_duration = 0.2
 int full_hud_max_opacity = 140
-vector huge_player_size = (180.0 * user_interface_zoom, 400.0 * user_interface_zoom)
-vector huge_player_offset = (-200.0 * user_interface_zoom, 0.0)
+vector huge_player_size = (180.0, 400.0) * user_interface_zoom
+vector huge_player_offset = (-200.0, 0.0) * user_interface_zoom
 float backpack_placeholder_diff = 90.0 * user_interface_zoom
-vector backpack_number_diff = (25.0 * user_interface_zoom, 10.0 * user_interface_zoom)
-vector backpack_placeholder_size = (82.0 * user_interface_zoom, 82.0 * user_interface_zoom)
+vector backpack_number_diff = (25.0, 10.0) * user_interface_zoom
+vector backpack_placeholder_size = (82.0, 82.0) * user_interface_zoom
 vector backpack_offset = (0.0, -175.0 * user_interface_zoom)
-vector skills_offset = (-200.0 * user_interface_zoom, 175.0 * user_interface_zoom)
-vector skills_button_size = (20.0 * user_interface_zoom, 20.0 * user_interface_zoom)
-vector skills_button_offset = (35.0 * user_interface_zoom, 12.0 * user_interface_zoom)
-vector skill_points_offset = (-200.0 * user_interface_zoom, 20.0 * user_interface_zoom)
-list skills_lines = [(-50.0 * user_interface_zoom, -300.0 * user_interface_zoom);
-                     (-100.0 * user_interface_zoom, -200.0 * user_interface_zoom);
-                     (-80.0 * user_interface_zoom, -100.0 * user_interface_zoom);
-                     (-70.0 * user_interface_zoom, 0.0);]
+vector skills_offset = (-200.0, 175.0) * user_interface_zoom
+vector skills_button_size = (20.0, 20.0) * user_interface_zoom
+vector skills_button_offset = (35.0, 12.0) * user_interface_zoom
+vector skill_points_offset = (-200.0, 20.0) * user_interface_zoom
+list skills_lines = [(-50.0, -300.0) * user_interface_zoom;
+                     (-100.0, -200.0) * user_interface_zoom;
+                     (-80.0, -100.0) * user_interface_zoom;
+                     (-70.0, 0.0) * user_interface_zoom;]
 float skills_lines_length = 210.0 * user_interface_zoom
 vector skills_text_offset = (-skills_lines_length + 5.0 * user_interface_zoom, -40.0 * user_interface_zoom)
 int backpack_placeholders_x = 3
 int backpack_placeholders_y = 5
 float lines_thickness = 2.0 * user_interface_zoom
-list small_backpack_pos = [(-277.0 * user_interface_zoom, 68.0 * user_interface_zoom);
-                           (-185.0 * user_interface_zoom, 68.0 * user_interface_zoom);
-                           (-90.0 * user_interface_zoom, 68.0 * user_interface_zoom);]
+list small_backpack_pos = [(-277.0, 68.0) * user_interface_zoom;
+                           (-185.0, 68.0) * user_interface_zoom;
+                           (-90.0, 68.0) * user_interface_zoom;]
 float popup_button_relative_valign = 40.0 * user_interface_zoom
-vector popup_button_size = (50.0 * user_interface_zoom, 20.0 * user_interface_zoom)
-vector popup_size = (450.0 * user_interface_zoom, 200.0 * user_interface_zoom)
+vector popup_button_size = (50.0, 20.0) * user_interface_zoom
+vector popup_size = (450.0, 200.0) * user_interface_zoom

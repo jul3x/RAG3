@@ -1,0 +1,8 @@
+vector a = (1, 2)
+vector b = (2, 4)
+vector c = 2.0 * a
+vector d = a * 2.0
+vector e = a / 2.0
+vector f = -a
+vector h = a + b
+vector i = a - b

@@ -3,13 +3,13 @@ bool auto_resolution = true
 bool full_screen = false
 int window_width_px = 3000
 int window_heigth_px = 1500
-float global_zoom = 2.0
+float global_zoom = 4.0
 float user_interface_zoom = global_zoom / 2.0
 
 // COLORS
 int background_color = 286331136
 int trail_color = -208
-int font_color = -86
+int font_color = -1
 
 // BULLET TRAILS
 float full_trail_time = 0.2
@@ -118,5 +118,5 @@ list small_backpack_pos = [(-277.0 * user_interface_zoom, 68.0 * user_interface_
                            (-185.0 * user_interface_zoom, 68.0 * user_interface_zoom);
                            (-90.0 * user_interface_zoom, 68.0 * user_interface_zoom);]
 float popup_button_relative_valign = 40.0 * user_interface_zoom
-vector popup_button_size = (50.0, 20.0)
-vector popup_size = (450.0, 200.0)
+vector popup_button_size = (50.0 * user_interface_zoom, 20.0 * user_interface_zoom)
+vector popup_size = (450.0 * user_interface_zoom, 200.0 * user_interface_zoom)

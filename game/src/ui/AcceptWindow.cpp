@@ -13,9 +13,10 @@ AcceptWindow::AcceptWindow(tgui::Gui *gui, tgui::Theme *theme, const std::string
     child_->setRenderer(theme_->getRenderer("ChildWindow"));
     child_->setSize(size);
     child_->setPosition(pos - size / 2.0f);
+    child_->setTitleTextSize(child_->getTitleTextSize() * CONF<float>("graphics/user_interface_zoom"));
     child_->setTitle("Warning");
     child_->setResizable(false);
-    child_->setTitleTextSize(child_->getTitleTextSize() * CONF<float>("graphics/user_interface_zoom"));
+    child_->getRenderer()->setTitleBarHeight(child_->getRenderer()->getTitleBarHeight() * CONF<float>("graphics/user_interface_zoom"));
     child_->connect("closed", [&](){ Game::get().getUI().closeAcceptWindow(this); });
     gui_->add(child_);
 

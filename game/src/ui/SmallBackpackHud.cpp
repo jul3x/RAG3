@@ -24,8 +24,8 @@ SmallBackpackHud::SmallBackpackHud(const sf::Vector2f& position) :
 
     for (auto& object : objects_)
     {
-        object.setSize(2.0f * RMGET<sf::Vector2f>("specials", object.getId(), "size"));
-        object.changeOrigin(RMGET<sf::Vector2f>("specials", object.getId(), "size"));
+        object.setSize(CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", object.getId(), "size"));
+        object.changeOrigin(CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", object.getId(), "size") / 2.0f);
         object.removeShadow();
         object.setColor(255, 255, 255, 80);
         numbers_.emplace_back("", RM.getFont(), CONF<float>("graphics/backpack_text_size"));
@@ -65,7 +65,7 @@ void SmallBackpackHud::update(float time_elapsed)
 
 void SmallBackpackHud::registerGui(tgui::Gui* gui, tgui::Theme* theme)
 {
-    auto placeholder_size = CONF<float>("graphics/user_interface_zoom") * CONF<sf::Vector2f>("graphics/backpack_placeholder_size");
+    auto placeholder_size = CONF<sf::Vector2f>("graphics/backpack_placeholder_size");
     auto pos_offset = this->getPosition() - placeholder_size / 2.0f;
 
     for (size_t i = 0; i < 3; ++i)

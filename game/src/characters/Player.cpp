@@ -119,8 +119,8 @@ void Player::addSpecialToBackpack(Special* special)
     }
 
     backpack_.emplace_back(std::make_pair(Special({}, special->getId()), 1));
-    backpack_.back().first.setSize(2.0f * RMGET<sf::Vector2f>("specials", special->getId(), "size"));
-    backpack_.back().first.changeOrigin(RMGET<sf::Vector2f>("specials", special->getId(), "size"));
+    backpack_.back().first.setSize(CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", special->getId(), "size"));
+    backpack_.back().first.changeOrigin(CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", special->getId(), "size") / 2.0f);
     backpack_.back().first.removeShadow();
     Game::get().registerFunctions(&backpack_.back().first);
 }

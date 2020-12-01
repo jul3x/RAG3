@@ -19,7 +19,7 @@ public:
         button_ = tgui::Button::create();
         button_->setRenderer(theme->getRenderer("TooltipButton"));
         button_->setPosition(position);
-        button_->setSize(CONF<float>("graphics/user_interface_zoom") * CONF<sf::Vector2f>("graphics/backpack_placeholder_size"));
+        button_->setSize(CONF<sf::Vector2f>("graphics/backpack_placeholder_size"));
 
         layout_ = tgui::Panel::create();
         layout_->setRenderer(theme->getRenderer("Tooltip"));

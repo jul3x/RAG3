@@ -200,6 +200,9 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
     auto map_constraints = map.getTileConstraints();
 
     j3x::serializeAssign("map_size", static_cast<sf::Vector2f>(map_constraints.first), out);
+    j3x::serializeAssign("shader", j3x::get<std::string>(map.getParams(), "shader"), out);
+    j3x::serializeAssign("background_color", j3x::get<int>(map.getParams(), "background_color"), out);
+    j3x::serializeAssign("lightning_color", j3x::get<int>(map.getParams(), "lightning_color"), out);
 
     std::vector<std::vector<int>> matrix;
     matrix.resize(map_constraints.first.y);

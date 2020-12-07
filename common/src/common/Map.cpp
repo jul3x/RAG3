@@ -10,6 +10,9 @@
 
 Map::Map()
 {
+    params_["shader"] = "normal.frag";
+    params_["background_color"] = CONF<int>("graphics/background_color");
+    params_["lightning_color"] = CONF<int>("graphics/lightning_color");
 }
 
 bool Map::clearMap()
@@ -19,6 +22,7 @@ bool Map::clearMap()
     characters_.clear();
     specials_.clear();
     obstacles_.clear();
+    weapons_.clear();
     decorations_.clear();
 
     return true;

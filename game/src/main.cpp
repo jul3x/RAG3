@@ -24,7 +24,7 @@ int main()
     {
         sf::Vector2i res = Engine::detectResolution();
         CFG.set<int>("graphics/window_width_px", res.x);
-        CFG.set<int>("graphics/window_heigth_px", res.y);
+        CFG.set<int>("graphics/window_height_px", res.y);
     }
 
     RM.lazyLoadTexture("animations/shot");

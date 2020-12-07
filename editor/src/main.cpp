@@ -22,7 +22,7 @@ int main()
     {
         sf::Vector2i res = Engine::detectResolution();
         CFG.set<int>("window_width_px", res.x);
-        CFG.set<int>("window_heigth_px", res.y);
+        CFG.set<int>("window_height_px", res.y);
     }
 
     Editor::get().start();

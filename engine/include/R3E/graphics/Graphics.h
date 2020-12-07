@@ -28,6 +28,7 @@ namespace r3e::graphics {
         [[nodiscard]] sf::View& getCurrentView();
         [[nodiscard]] sf::View& getStaticView();
 
+        void setBgColor(const sf::Color& bg_color);
         void setStaticView();
         void setCurrentView();
         void setViewCenter(const sf::Vector3f& view);

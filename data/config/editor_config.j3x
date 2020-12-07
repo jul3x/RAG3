@@ -2,7 +2,7 @@
 bool auto_resolution = true
 bool full_screen = false
 int window_width_px = 3800
-int window_heigth_px = 2000
+int window_height_px = 2000
 int background_color = 858993408
 float user_interface_zoom = 0.75
 

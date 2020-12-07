@@ -120,4 +120,9 @@ namespace r3e::graphics {
             window_.draw(object, states);
     }
 
+    void Graphics::setBgColor(const sf::Color& bg_color)
+    {
+        bg_color_ = bg_color;
+    }
+
 } // namespace r3e::graphics

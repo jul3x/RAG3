@@ -27,6 +27,7 @@ const j3x::Parameters& ResourceManager::getObjectParams(const std::string& categ
 std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& key)
 {
     static std::tuple<Map::Data, Map::TileMap> map;
+
     auto map_description = j3x::parse(CONF<std::string>("paths/maps_dir") + "/" + key + ".j3x");
     auto get_param = [&map_description](const std::string& param) -> const j3x::List& {
         return j3x::get<j3x::List>(*map_description, param);
@@ -39,6 +40,7 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
     auto& obstacles = std::get<4>(std::get<0>(map));
     auto& decorations = std::get<5>(std::get<0>(map));
     auto& weapons = std::get<6>(std::get<0>(map));
+    auto& params = std::get<2>(std::get<1>(map));
 
     auto map_size = static_cast<sf::Vector2i>(j3x::get<sf::Vector2f>(*map_description, "map_size"));
     if (map_size.x <= 0 || map_size.y <= 0)
@@ -49,11 +51,16 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
     for (auto& column : blocked)
         column.resize(map_size.y);
     std::get<0>(std::get<1>(map)) = {DecorationTile::SIZE_X_ * blocked.size(),
-                                           DecorationTile::SIZE_Y_ * blocked.at(0).size()};
+                                     DecorationTile::SIZE_Y_ * blocked.at(0).size()};
+
+
+    params["shader"] = j3x::get<std::string>(*map_description, "shader");
+    params["background_color"] = j3x::get<int>(*map_description, "background_color");
+    params["lightning_color"] = j3x::get<int>(*map_description, "lightning_color");
 
     auto tile_number = 0;
     obstacles_tiles.clear();
-    for (auto& tile : get_param( "tile_map"))
+    for (auto& tile : get_param("tile_map"))
     {
         auto tile_id = j3x::getObj<int>(tile);
         auto column = tile_number % map_size.x;

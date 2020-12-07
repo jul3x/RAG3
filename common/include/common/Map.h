@@ -27,7 +27,7 @@ public:
             std::list<std::shared_ptr<NPC>>, std::list<std::shared_ptr<Special>>,
             std::list<std::shared_ptr<Obstacle>>, std::list<std::shared_ptr<Decoration>>,
             std::list<std::shared_ptr<PlacedWeapon>>>;
-    using TileMap = std::tuple<sf::Vector2f, std::vector<std::vector<float>>>;
+    using TileMap = std::tuple<sf::Vector2f, std::vector<std::vector<float>>, j3x::Parameters>;
 
     Map();
 
@@ -57,6 +57,7 @@ public:
     T* getObjectById(int id);
 
     [[nodiscard]] std::pair<sf::Vector2<size_t>, sf::Vector2f> getTileConstraints() const;
+    [[nodiscard]] const j3x::Parameters& getParams() const;
 
 private:
     template<class T>
@@ -141,6 +142,7 @@ private:
 
     ai::MapBlockage blocked_;
 
+    j3x::Parameters params_;
     sf::Vector2f size_;
 
 };

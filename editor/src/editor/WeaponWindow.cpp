@@ -12,7 +12,7 @@ using namespace editor;
 
 WeaponWindow::WeaponWindow(tgui::Gui* gui, tgui::Theme* theme) :
         ChildWindow(gui, theme, "Special editor",
-                    (sf::Vector2f(CONF<int>("window_width_px"), CONF<int>("window_heigth_px")) -
+                    (sf::Vector2f(CONF<int>("window_width_px"), CONF<int>("window_height_px")) -
                      CONF<sf::Vector2f>("popup_window_size")) / 2.0f,
                     CONF<sf::Vector2f>("popup_window_size"),
                     "weapon_window"),

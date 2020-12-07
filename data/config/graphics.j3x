@@ -2,7 +2,7 @@
 bool auto_resolution = true
 bool full_screen = false
 int window_width_px = 3000
-int window_heigth_px = 1500
+int window_height_px = 1500
 float global_zoom = 4.0
 float user_interface_zoom = global_zoom / 2.0
 

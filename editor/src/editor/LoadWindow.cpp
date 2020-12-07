@@ -12,7 +12,7 @@ using namespace editor;
 
 LoadWindow::LoadWindow(tgui::Gui *gui, tgui::Theme *theme) :
         ChildWindow(gui, theme, "Load map",
-                    (sf::Vector2f(CONF<int>("window_width_px"), CONF<int>("window_heigth_px")) -
+                    (sf::Vector2f(CONF<int>("window_width_px"), CONF<int>("window_height_px")) -
                      CONF<sf::Vector2f>("popup_window_size")) / 2.0f,
                     CONF<sf::Vector2f>("popup_window_size"),
                     "load_window") {

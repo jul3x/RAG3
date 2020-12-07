@@ -35,10 +35,6 @@ void Game::initialize()
     achievements_ = std::make_unique<Achievements>(stats_.get());
     achievements_->load(CONF<std::string>("paths/achievements"));
 
-    lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                                                                    static_cast<float>(CONF<int>("graphics/window_heigth_px"))},
-                                                                            sf::Color(CONF<int>("graphics/lightning_color")));
-
     map_ = std::make_unique<Map>();
     agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
                                                           CONF<float>("characters/max_time_without_path_recalc"),
@@ -55,7 +51,7 @@ void Game::initialize()
     ui_->registerPlayer(player_.get());
 
     engine_->initializeGraphics(
-            sf::Vector2i{CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_heigth_px")},
+            sf::Vector2i{CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_height_px")},
             "Codename: Rag3",
             CONF<bool>("graphics/full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
             sf::Color(CONF<int>("graphics/background_color")));
@@ -67,6 +63,10 @@ void Game::initialize()
     engine_->registerUI(ui_.get());
 
     map_->loadMap("first_new_map");
+    engine_->getGraphics().setBgColor(sf::Color(j3x::get<int>(map_->getParams(), "background_color")));
+    lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
+                                                                    static_cast<float>(CONF<int>("graphics/window_height_px"))},
+                                                       sf::Color(j3x::get<int>(map_->getParams(), "lightning_color")));
 
 //    debug_map_blockage_ = std::make_unique<DebugMapBlockage>(&map_->getMapBlockage());
 
@@ -362,7 +362,7 @@ void Game::draw(graphics::Graphics& graphics)
 {
     static sf::RenderStates states;
 
-    sf::Shader* curr_shader = &RM.getShader("normal.frag");
+    sf::Shader* curr_shader = &RM.getShader(j3x::get<std::string>(map_->getParams(), "shader"));
 
     if (rag3_time_elapsed_ > 0.0f)
     {
@@ -517,7 +517,7 @@ void Game::spawnFadeInOut()
 {
     engine_->spawnEffect(std::make_shared<graphics::FadeInOut>(
             sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                         static_cast<float>(CONF<int>("graphics/window_heigth_px"))}, sf::Color::Black,
+                         static_cast<float>(CONF<int>("graphics/window_height_px"))}, sf::Color::Black,
             CONF<float>("graphics/fade_in_out_duration")
     ));
 }

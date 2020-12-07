@@ -33,7 +33,7 @@ bool Map::loadMap(const std::string& name)
                          characters_, specials_,
                          obstacles_, decorations_,
                          weapons_),
-                std::tie(size_, blocked_.blockage_)) = ResourceManager::getMap(name);
+                std::tie(size_, blocked_.blockage_, params_)) = ResourceManager::getMap(name);
 
         blocked_.scale_x_ = DecorationTile::SIZE_X_;
         blocked_.scale_y_ = DecorationTile::SIZE_X_;
@@ -339,4 +339,9 @@ std::pair<sf::Vector2<size_t>, sf::Vector2f> Map::getTileConstraints() const
     return {sf::Vector2<size_t>(static_cast<size_t>((max.x - min.x) / DecorationTile::SIZE_X_) + 1,
                                 static_cast<size_t>((max.y - min.y) / DecorationTile::SIZE_Y_) + 1),
             min};
+}
+
+const j3x::Parameters& Map::getParams() const
+{
+    return params_;
 }

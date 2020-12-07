@@ -11,7 +11,7 @@ using namespace editor;
 
 UniqueObjectWindow::UniqueObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
         ChildWindow(gui, theme, "Unique identifier of object",
-                    (sf::Vector2f(CONF<int>("window_width_px"), CONF<int>("window_heigth_px")) -
+                    (sf::Vector2f(CONF<int>("window_width_px"), CONF<int>("window_height_px")) -
                      CONF<sf::Vector2f>("unique_object_window_size")) / 2.0f,
                     CONF<sf::Vector2f>("unique_object_window_size"),
                     "unique_object_window")

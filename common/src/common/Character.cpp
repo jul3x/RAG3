@@ -99,20 +99,20 @@ bool Character::shot()
     return false;
 }
 
-void Character::getShot(const Bullet& bullet)
+void Character::getShot(const Bullet& bullet, float factor)
 {
-    Shootable::getShot(bullet);
+    Shootable::getShot(bullet, factor);
     //Engine::spawnBloodAnimation();
     this->addSteeringForce(utils::geo::getNormalized(bullet.getVelocity()) *
                            static_cast<float>(bullet.getDeadlyFactor()) *
-                           CONF<float>("get_shot_factor"), CONF<float>("shot_force_duration"));
+                           CONF<float>("get_shot_factor") * factor, CONF<float>("shot_force_duration"));
 
 }
 
-void Character::getCut(const MeleeWeapon& weapon)
+void Character::getCut(const MeleeWeapon& weapon, float factor)
 {
     //Engine::spawnBloodAnimation();
-    life_ -= weapon.getDeadlyFactor();
+    life_ -= weapon.getDeadlyFactor() * factor;
     life_ = life_ < 0 ? 0 : life_;
 }
 
@@ -220,9 +220,7 @@ bool Character::update(float time_elapsed)
         this->setCurrentFrame(0);
     }
 
-    this->updateAnimation(time_elapsed,
-                          vel /
-                          RMGET<float>("characters", this->getId(), "max_speed"));
+    this->updateAnimation(time_elapsed, vel / RMGET<float>("characters", this->getId(), "max_speed"));
 
     weapons_in_backpack_.at(current_weapon_)->update(time_elapsed);
 
@@ -262,7 +260,7 @@ bool Character::update(float time_elapsed)
 
     speed_factor_with_time_.second -= time_elapsed;
 
-    if (speed_factor_with_time_.second < 0.0f && speed_factor_with_time_.first > 10.0f)
+    if (speed_factor_with_time_.second < 0.0f && speed_factor_with_time_.second > -10.0f)
     {
         this->setSpeedFactor(1.0f, -100.0f);
     }

@@ -6,7 +6,6 @@
 
 
 namespace r3e::graphics {
-
     Graphics::Graphics(const sf::Vector2i& size,
                        const std::string& title,
                        int style,

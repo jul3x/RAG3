@@ -99,8 +99,8 @@ public:
 
     bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f) override;
     bool update(float time_elapsed) override;
-    void getShot(const Bullet& bullet) override;
-    virtual void getCut(const MeleeWeapon& weapon);
+    void getShot(const Bullet& bullet, float factor = 1.0f) override;
+    virtual void getCut(const MeleeWeapon& weapon, float factor = 1.0f);
     bool talk(const std::function<void(Character*, const std::string&)>& talking_func, Character* character);
 
 protected:

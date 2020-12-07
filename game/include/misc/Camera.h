@@ -19,6 +19,7 @@ public:
     void setZoomInOut();
     void setNormal();
     void setReverse();
+    void setRag3();
 
     void update(float time_elapsed) override;
 
@@ -26,7 +27,8 @@ private:
     enum class State {
         Normal,
         ZoomInOut,
-        Reverse
+        Reverse,
+        Rag3,
     };
 
     std::unordered_map<float, float> shaking_map_;

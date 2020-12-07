@@ -25,4 +25,5 @@ int max_path_search_depth = 1000
 list levels_experience = [100; 250; 500; 1000; 2000; 5000; 10000; 25000; 50000; 100000; 250000]
 int skill_points_per_level = 10
 
-
+// RAG3
+float rag3_factor = 2.0

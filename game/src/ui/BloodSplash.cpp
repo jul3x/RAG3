@@ -7,6 +7,8 @@
 #include <common/ResourceManager.h>
 #include <ui/BloodSplash.h>
 
+#include <Game.h>
+
 
 BloodSplash::BloodSplash(const sf::Vector2f& size) :
         dead_(size / 2.0f, size, &RM.getTexture("blood_hud_3")),
@@ -41,12 +43,16 @@ void BloodSplash::resizeWindow(const sf::Vector2f& new_size)
 bool BloodSplash::update(float time_elapsed)
 {
     time_elapsed_ += time_elapsed;
-    transparency_ = std::abs(255.0f * std::cos(time_elapsed_ / CONF<float>("graphics/blood_pulsating_time") * M_PI * 2.0f));
+    auto period = Game::get().getRag3Time() > 0.0f ? CONF<float>("rag3_time") / 5.0f : CONF<float>("graphics/blood_pulsating_time");
+    transparency_ = std::abs(255.0f * std::sin(time_elapsed_ / period * M_PI * 2.0f));
 
-    if (time_elapsed_ > CONF<float>("graphics/blood_pulsating_time")) time_elapsed_ -= CONF<float>("graphics/blood_pulsating_time");
+    if (time_elapsed_ > period) time_elapsed_ -= period;
 
     critical_.setColor(255, 255, 255, transparency_);
     low_.setColor(255, 255, 255, transparency_);
+
+    if (Game::get().getRag3Time() <= 0.0f && player_life_state_ != Player::LifeState::Critical && player_life_state_ != Player::LifeState::Dead)
+        time_elapsed_ = 0.0f;
 
     return true;
 }
@@ -54,26 +60,28 @@ bool BloodSplash::update(float time_elapsed)
 
 void BloodSplash::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    switch (player_life_state_)
+    if (Game::get().getRag3Time() > 0.0f)
     {
-        case Player::LifeState::Low:
+        target.draw(low_, states);
+    }
+    else
+    {
+        switch (player_life_state_)
         {
-            target.draw(low_, states);
-            break;
-        }
-        case Player::LifeState::Critical:
-        {
-            target.draw(critical_, states);
-            break;
-        }
-        case Player::LifeState::Dead:
-        {
-            target.draw(dead_, states);
-            break;
-        }
-        default:
-        {
-            break;
+            case Player::LifeState::Critical:
+            {
+                target.draw(critical_, states);
+                break;
+            }
+            case Player::LifeState::Dead:
+            {
+                target.draw(dead_, states);
+                break;
+            }
+            default:
+            {
+                break;
+            }
         }
     }
 }

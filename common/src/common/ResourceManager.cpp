@@ -378,7 +378,7 @@ void ResourceManager::loadListOfObjects(const std::string& dir)
 }
 
 ResourceManager::ResourceManager() : AbstractResourceManager(CONF<std::string>("paths/j3x_dir"), CONF<std::string>("paths/textures_dir"), CONF<std::string>("paths/fonts_dir"),
-                                                             CONF<std::string>("paths/sounds_dir"), CONF<std::string>("paths/music_dir"))
+                                                             CONF<std::string>("paths/sounds_dir"), CONF<std::string>("paths/music_dir"), CONF<std::string>("paths/shaders_dir"))
 {
 
 }

@@ -10,6 +10,8 @@ float obstacles_endurance_factor = 3
 float get_shot_factor = 640.0
 
 // TIME MANIPULATION MECHANICS
+float rag3_time = 15.0
+float rag3_speed_factor = 1.25
 float bullet_time_factor = 0.3
 float journal_sampling_rate = 30.0
 float journal_max_time = 10.0

@@ -17,6 +17,10 @@ namespace r3e {
             return light_.get();
         }
 
+        void lightOff() {
+            light_.reset();
+        }
+
     protected:
         std::unique_ptr<graphics::LightPoint> light_;
 

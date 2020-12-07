@@ -30,6 +30,7 @@ public:
     static void addAmmo(Functional* obj, const j3x::Obj& data, Character* user);
     static void addHealth(Functional* obj, const j3x::Obj& data, Character* user);
     static void addSpeed(Functional* obj, const j3x::Obj& data, Character* user);
+    static void takeRag3(Functional* obj, const j3x::Obj& data, Character* user);
     static void pickCrystal(Functional* obj, const j3x::Obj& data, Character* user);
 
     static void activateSpecial(Functional* obj, const j3x::Obj& data, Character* user);

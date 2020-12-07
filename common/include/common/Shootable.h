@@ -14,9 +14,9 @@ public:
 
     explicit Shootable(float life) : life_(life) {}
 
-    virtual void getShot(const Bullet& bullet)
+    virtual void getShot(const Bullet& bullet, float factor = 1.0f)
     {
-        life_ -= bullet.getDeadlyFactor();
+        life_ -= bullet.getDeadlyFactor() * factor;
         life_ = life_ < 0 ? 0 : life_;
     }
 

@@ -12,6 +12,7 @@
 
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Shader.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Audio/Music.hpp>
 
@@ -27,7 +28,7 @@ namespace r3e {
         AbstractResourceManager() = default;
 
         AbstractResourceManager(std::string j3x_dir, std::string textures_dir, std::string fonts_dir,
-                                std::string sounds_dir, std::string music_dir);
+                                std::string sounds_dir, std::string music_dir, std::string shader_dir);
 
         void setTexturesSmoothAllowed(bool allowed);
         void setFontsSmoothAllowed(bool allowed);
@@ -37,6 +38,7 @@ namespace r3e {
         sf::Music& getMusic(const std::string& key);
         sf::Font& getFont(const std::string& key);
         j3x::Parameters& getParameters(const std::string& key);
+        sf::Shader& getShader(const std::string& key);
         sf::Font& getFont();
 
         // TODO LazyLoad every type of objects
@@ -73,11 +75,13 @@ namespace r3e {
         void loadSound(const std::string& key);
         void loadMusic(const std::string& key);
         void loadFont(const std::string& key);
+        void loadShader(const std::string& key);
 
         std::unordered_map<std::string, sf::Texture> textures_;
         std::unordered_map<std::string, sf::SoundBuffer> sounds_;
         std::unordered_map<std::string, sf::Music> music_;
         std::unordered_map<std::string, sf::Font> fonts_;
+        std::unordered_map<std::string, sf::Shader> shaders_;
         std::unordered_map<std::string, std::shared_ptr<j3x::Parameters>> parameters_;
 
         std::string j3x_directory_;
@@ -85,6 +89,7 @@ namespace r3e {
         std::string fonts_directory_;
         std::string sounds_directory_;
         std::string music_directory_;
+        std::string shader_directory_;
 
         bool textures_smooth_allowed_{false};
         bool fonts_smooth_allowed_{true};

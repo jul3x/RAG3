@@ -7,8 +7,8 @@ int frames_number=1
 float frame_duration=0.0
 
 string default_activation="OnPick"
-list default_functions=["AddSpeed"; "Destroy"]
-list default_datas=[(1.25, 15.0); "Null"]
+list default_functions=["TakeRag3"; "Destroy"]
+list default_datas=["Null"; "Null"]
 
 bool is_drawable=true
 

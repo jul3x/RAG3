@@ -28,8 +28,8 @@ public:
     void setHealth(float life) override;
 
     bool isAlive() const;
-    void getShot(const Bullet& bullet) override;
-    void getCut(const MeleeWeapon& weapon) override;
+    void getShot(const Bullet& bullet, float factor) override;
+    void getCut(const MeleeWeapon& weapon, float factor) override;
     int getSkillPoints() const;
     int getSkill(Skills skill) const;
     float getMaxTimeManipulation() const;

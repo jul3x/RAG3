@@ -20,7 +20,7 @@ public:
 
     bool update(float time_elapsed) override;
 
-    void applyForce(Character* obj) const;
+    void applyForce(Character* obj, float factor) const;
     void applyForce(Obstacle* obj) const;
 
 private:

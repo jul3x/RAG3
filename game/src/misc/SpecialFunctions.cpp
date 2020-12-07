@@ -23,6 +23,7 @@ SpecialFunctions::SpecialFunctions()
     functions_["AddAmmo"] = std::make_tuple(&addAmmo, "[F] Pick ammunition", false);
     functions_["AddHealth"] = std::make_tuple(&addHealth, "[F] Pick to heal yourself", false);
     functions_["AddSpeed"] = std::make_tuple(&addSpeed, "[F] Pick to inject", false);
+    functions_["TakeRag3"] = std::make_tuple(&takeRag3, "[F] Pick to take", false);
     functions_["PickCrystal"] = std::make_tuple(&pickCrystal, "[F] Pick crystal", false);
     functions_["SpawnThought"] = std::make_tuple(&spawnThought, "", true);
     functions_["SpawnPlayerThought"] = std::make_tuple(&spawnPlayerThought, "", true);
@@ -379,4 +380,13 @@ void SpecialFunctions::spawnDestruction(Functional* obj, const j3x::Obj& data, C
     LOG.info("[SpecialFunction] Spawning destruction.");
     auto object = dynamic_cast<AbstractPhysicalObject*>(obj);
     Game::get().spawnDecoration(object->getPosition(), "destroyed_wall_" + std::to_string(utils::num::getRandom(1, 3)));
+}
+
+void SpecialFunctions::takeRag3(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Taking Rag3.");
+
+    Game::get().setRag3Time(CONF<float>("rag3_time"));
+    user->setSpeedFactor(CONF<float>("rag3_speed_factor"), CONF<float>("rag3_time"));
+    Game::get().spawnThought(user, "RAG3!");
 }

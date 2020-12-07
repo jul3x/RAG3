@@ -33,7 +33,8 @@ target_link_libraries(${R3ENGINE_LIBRARY}
         ${SFML_GRAPHICS_LIBRARY_RELEASE}
         ${SFML_WINDOW_LIBRARY_RELEASE}
         ${SFML_SYSTEM_LIBRARY_RELEASE}
-        ${SFML_AUDIO_LIBRARY_RELEASE})
+        ${SFML_AUDIO_LIBRARY_RELEASE}
+        ${TGUI_LIBRARY_RELEASE})
 
 # Common
 set(LIBRARY_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/build")
@@ -41,12 +42,6 @@ file(GLOB_RECURSE COMMON_SRC "common/src/*.cpp")
 set(COMMON_LIBRARY "Common")
 
 add_library(${COMMON_LIBRARY} STATIC ${COMMON_SRC})
-target_link_libraries(${COMMON_LIBRARY}
-        stdc++fs
-        ${SFML_GRAPHICS_LIBRARY_RELEASE}
-        ${SFML_WINDOW_LIBRARY_RELEASE}
-        ${SFML_SYSTEM_LIBRARY_RELEASE}
-        ${SFML_AUDIO_LIBRARY_RELEASE})
 
 # R3Editor
 set(EDITOR_NAME "Rag3Editor")
@@ -55,15 +50,9 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/build")
 file(GLOB_RECURSE EDITOR_SRC "editor/src/*.cpp")
 add_executable(${EDITOR_NAME} ${EDITOR_SRC})
 
-target_link_libraries(${EDITOR_NAME} stdc++fs)
 target_link_libraries(${EDITOR_NAME}
         ${COMMON_LIBRARY}
-        ${R3ENGINE_LIBRARY}
-        ${SFML_GRAPHICS_LIBRARY_RELEASE}
-        ${SFML_WINDOW_LIBRARY_RELEASE}
-        ${SFML_SYSTEM_LIBRARY_RELEASE}
-        ${SFML_AUDIO_LIBRARY_RELEASE}
-        ${TGUI_LIBRARY_RELEASE})
+        ${R3ENGINE_LIBRARY})
 
 # RAG3
 set(EXECUTABLE_NAME "Rag3")
@@ -72,13 +61,7 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/build")
 file(GLOB_RECURSE GAME_SRC "game/src/*.cpp")
 add_executable(${EXECUTABLE_NAME} ${GAME_SRC})
 
-target_link_libraries(${EXECUTABLE_NAME} stdc++fs)
 target_link_libraries(${EXECUTABLE_NAME}
         ${COMMON_LIBRARY}
-        ${R3ENGINE_LIBRARY}
-        ${SFML_GRAPHICS_LIBRARY_RELEASE}
-        ${SFML_WINDOW_LIBRARY_RELEASE}
-        ${SFML_SYSTEM_LIBRARY_RELEASE}
-        ${SFML_AUDIO_LIBRARY_RELEASE}
-        ${TGUI_LIBRARY_RELEASE})
+        ${R3ENGINE_LIBRARY})
 

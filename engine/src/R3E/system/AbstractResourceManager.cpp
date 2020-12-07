@@ -2,6 +2,8 @@
 // Created by jul3x on 26.06.2019.
 //
 
+#include <SFML/Graphics.hpp>
+
 #include <iostream>
 #include <utility>
 
@@ -13,12 +15,13 @@ namespace r3e {
 
     AbstractResourceManager::AbstractResourceManager(std::string j3x_dir, std::string textures_dir,
                                                      std::string fonts_dir, std::string sounds_dir,
-                                                     std::string music_dir)
+                                                     std::string music_dir, std::string shader_dir)
             : j3x_directory_{std::move(j3x_dir)},
               textures_directory_{std::move(textures_dir)},
               fonts_directory_{std::move(fonts_dir)},
               sounds_directory_{std::move(sounds_dir)},
-              music_directory_{std::move(music_dir)}
+              music_directory_{std::move(music_dir)},
+              shader_directory_{std::move(shader_dir)}
     {
     }
 
@@ -66,6 +69,11 @@ namespace r3e {
     sf::Music& AbstractResourceManager::getMusic(const std::string& key)
     {
         return getOrLoad(music_, [this](const std::string& key) { this->loadMusic(key); }, key);
+    }
+
+    sf::Shader& AbstractResourceManager::getShader(const std::string& key)
+    {
+        return getOrLoad(shaders_, [this](const std::string& key) { this->loadShader(key); }, key);
     }
 
     sf::Font& AbstractResourceManager::getFont()
@@ -129,6 +137,16 @@ namespace r3e {
         }
 
         LOG.info("[AbstractResourceManager] Music " + key + " is loaded!");
+    }
+
+    void AbstractResourceManager::loadShader(const std::string& key)
+    {
+        if (!shaders_[key].loadFromFile(shader_directory_ + "/" + key, sf::Shader::Fragment))
+        {
+            throw std::runtime_error("[AbstractResourceManager] " + key + " shader file not successfully loaded.");
+        }
+
+        LOG.info("[AbstractResourceManager] Shader " + key + " is loaded!");
     }
 
 

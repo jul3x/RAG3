@@ -78,6 +78,7 @@ public:
     [[nodiscard]] Special* getCurrentSpecialObject() const;
     [[nodiscard]] Character* getCurrentTalkableCharacter() const;
     [[nodiscard]] const SpawningFunction& getSpawningFunction(const std::string& name) const;
+    [[nodiscard]] float getRag3Time() const;
 
     // Spawn events
     void spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);
@@ -105,6 +106,7 @@ public:
     void useSpecialObject();
     void setBulletTime();
     void setNormalTime();
+    void setRag3Time(float time_elapsed);
 
     // Journal methods
     [[nodiscard]] bool isJournalFreezed() const;
@@ -174,6 +176,9 @@ private:
     std::unordered_map<std::string, SpawningFunction> spawning_func_;
 
     Game::GameState state_;
+
+    float time_elapsed_;
+    float rag3_time_elapsed_;
     float current_time_factor_;
 
 };

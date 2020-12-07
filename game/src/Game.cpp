@@ -14,7 +14,7 @@
 
 
 
-Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal)
+Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal), rag3_time_elapsed_(-10.0f), time_elapsed_(0.0f)
 {
     engine_ = std::make_unique<Engine>();
     engine_->registerGame(this);
@@ -150,11 +150,18 @@ void Game::update(float time_elapsed)
             journal_->update(time_elapsed);
             camera_->update(time_elapsed);
 
+            if (rag3_time_elapsed_ > 0.0f)
+                rag3_time_elapsed_ -= time_elapsed;
+            else if (rag3_time_elapsed_ > -1.0f)
+                setRag3Time(-10.0f);
+
             if (CONF<bool>("sound/sound_on"))
             {
                 Engine::changeSoundListenerPosition(player_->getPosition());
                 music_manager_->update(time_elapsed);
             }
+
+            time_elapsed_ += time_elapsed;
             break;
         }
         case GameState::Reverse:
@@ -353,6 +360,23 @@ void Game::killNPC(NPC* npc)
 
 void Game::draw(graphics::Graphics& graphics)
 {
+    static sf::RenderStates states;
+
+    sf::Shader* curr_shader = &RM.getShader("normal.frag");
+
+    if (rag3_time_elapsed_ > 0.0f)
+    {
+        curr_shader = &RM.getShader("rag3.frag");
+        curr_shader->setUniform("time", rag3_time_elapsed_);
+        curr_shader->setUniform("rag3_time", CONF<float>("rag3_time"));
+    }
+    else
+    {
+        curr_shader->setUniform("time", this->time_elapsed_);
+    }
+
+    states.shader = curr_shader;
+
     auto draw = [&graphics](auto& list) {
         for (auto& obj : list)
             graphics.drawSorted(*obj);
@@ -389,7 +413,7 @@ void Game::draw(graphics::Graphics& graphics)
 
     engine_->drawSortedAnimationEvents();
 
-    graphics.drawAlreadySorted();
+    graphics.drawAlreadySorted(states.shader);
 
     lightning_->clear();
 
@@ -611,11 +635,18 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     auto bullet = dynamic_cast<Bullet*>(h_obj);
     auto character = dynamic_cast<Character*>(d_obj);
 
+    auto factor = rag3_time_elapsed_ > 0.0f ? CONF<float>("characters/rag3_factor") : 1.0f;
+
     if (bullet != nullptr && character != nullptr)
     {
         if (bullet->getUser() != character)
         {
-            character->getShot(*bullet);
+            if (bullet->getUser() != player_.get())
+            {
+                factor = 1.0f;
+            }
+
+            character->getShot(*bullet, factor);
             spawnBloodEvent(character->getPosition() - sf::Vector2f(0.0f, 10.0f), bullet->getRotation() + 180.0f);
 
             bullet->setDead();
@@ -665,7 +696,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
 
     if (character != nullptr && explosion != nullptr)
     {
-        explosion->applyForce(character);
+        explosion->applyForce(character, 1.0f);
     }
 
     auto fire = dynamic_cast<Fire*>(h_obj);
@@ -683,9 +714,14 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         //character->setGlobalState(Character::GlobalState::OnFire);
         if (character != melee_weapon_area->getFather()->getUser())
         {
+            if (melee_weapon_area->getFather()->getUser() != player_.get())
+            {
+                factor = 1.0f;
+            }
+
             spawnBloodEvent(character->getPosition(), character->getRotation());
             melee_weapon_area->setActive(false);
-            character->getCut(*melee_weapon_area->getFather());
+            character->getCut(*melee_weapon_area->getFather(), factor);
         }
     }
 }
@@ -1201,5 +1237,20 @@ void Game::registerLight(Lightable* lightable) const
     {
         lightable->getLightPoint()->registerGraphics(engine_->getGraphics());
     }
+}
+
+void Game::setRag3Time(float time_elapsed)
+{
+    rag3_time_elapsed_ = time_elapsed;
+
+    if (time_elapsed > 0.0f)
+        camera_->setRag3();
+    else
+        camera_->setNormal();
+}
+
+float Game::getRag3Time() const
+{
+    return rag3_time_elapsed_;
 }
 

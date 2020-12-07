@@ -71,11 +71,11 @@ void Player::setHealth(float life)
     }
 }
 
-void Player::getShot(const Bullet& bullet)
+void Player::getShot(const Bullet& bullet, float factor)
 {
     if (!CONF<bool>("god_mode"))
     {
-        Character::getShot(bullet);
+        Character::getShot(bullet, 1.0f);
     }
 }
 
@@ -99,11 +99,11 @@ void Player::handleGlobalState(float time_elapsed)
     }
 }
 
-void Player::getCut(const MeleeWeapon& weapon)
+void Player::getCut(const MeleeWeapon& weapon, float factor)
 {
-    if (!CONF<int>("bool"))
+    if (!CONF<bool>("god_mode"))
     {
-        Character::getCut(weapon);
+        Character::getCut(weapon, 1.0f);
     }
 }
 
@@ -122,6 +122,7 @@ void Player::addSpecialToBackpack(Special* special)
     backpack_.back().first.setSize(CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", special->getId(), "size"));
     backpack_.back().first.changeOrigin(CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", special->getId(), "size") / 2.0f);
     backpack_.back().first.removeShadow();
+    backpack_.back().first.lightOff();
     Game::get().registerFunctions(&backpack_.back().first);
 }
 

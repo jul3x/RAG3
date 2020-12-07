@@ -22,10 +22,10 @@ bool Explosion::update(float time_elapsed)
     return false;
 }
 
-void Explosion::applyForce(Character* obj) const
+void Explosion::applyForce(Character* obj, float factor_) const
 {
     auto vector = utils::geo::cartesianToPolar(obj->getPosition() - this->getPosition());
-    auto factor = r_ / std::get<0>(vector);
+    auto factor = factor_ * r_ / std::get<0>(vector);
     auto& theta = std::get<1>(vector);
     obj->setHealth(obj->getHealth() - CONF<float>("explosion_hurt_factor") * factor);
 
@@ -38,4 +38,3 @@ void Explosion::applyForce(Obstacle* obj) const
     auto distance = utils::geo::getDistance(obj->getPosition(), this->getPosition());
     obj->setHealth(obj->getHealth() - CONF<float>("explosion_hurt_factor") * r_ / distance);
 }
-

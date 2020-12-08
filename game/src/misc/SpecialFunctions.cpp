@@ -157,7 +157,7 @@ void SpecialFunctions::readNote(Functional* obj, const j3x::Obj& data, Character
 {
     LOG.info("[SpecialFunction] Reading note.");
 
-    Game::get().spawnThought(user, j3x::getObj<std::string>(data));
+    Game::get().getUI().spawnNoteWindow(j3x::getObj<std::string>(data));
 }
 
 void SpecialFunctions::addWeapon(Functional* obj, const j3x::Obj& data, Character* user)

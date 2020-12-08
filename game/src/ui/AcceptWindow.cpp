@@ -7,18 +7,9 @@
 
 
 AcceptWindow::AcceptWindow(tgui::Gui *gui, tgui::Theme *theme, const std::string& text,
-                           const sf::Vector2f& pos, const sf::Vector2f& size) : gui_(gui), theme_(theme)
+                           const sf::Vector2f& pos, const sf::Vector2f& size) : Window(gui, theme, pos, size)
 {
-    child_ = tgui::ChildWindow::create();
-    child_->setRenderer(theme_->getRenderer("ChildWindow"));
-    child_->setSize(size);
-    child_->setPosition(pos - size / 2.0f);
-    child_->setTitleTextSize(child_->getTitleTextSize() * CONF<float>("graphics/user_interface_zoom"));
     child_->setTitle("Warning");
-    child_->setResizable(false);
-    child_->getRenderer()->setTitleBarHeight(child_->getRenderer()->getTitleBarHeight() * CONF<float>("graphics/user_interface_zoom"));
-    child_->connect("closed", [&](){ Game::get().getUI().closeAcceptWindow(this); });
-    gui_->add(child_);
 
     auto label = tgui::Label::create();
     label->setRenderer(theme_->getRenderer("Label"));
@@ -42,7 +33,7 @@ AcceptWindow::AcceptWindow(tgui::Gui *gui, tgui::Theme *theme, const std::string
     no_->setTextSize(CONF<float>("graphics/popup_text_size"));
     no_->setSize(CONF<sf::Vector2f>("graphics/popup_button_size"));
     no_->setPosition("66% - width/2", "100% - " + std::to_string(CONF<float>("graphics/popup_button_relative_valign")));
-    no_->connect("pressed", [&](){ Game::get().getUI().closeAcceptWindow(this); });
+    no_->connect("pressed", [&](){ Game::get().getUI().closeWindow(this); });
 
     child_->add(no_);
 }
@@ -50,10 +41,5 @@ AcceptWindow::AcceptWindow(tgui::Gui *gui, tgui::Theme *theme, const std::string
 void AcceptWindow::bindFunction(const std::function<void()>& yes)
 {
     yes_->connect("pressed", yes);
-    yes_->connect("pressed", [&]() {Game::get().getUI().closeAcceptWindow(this);});
-}
-
-AcceptWindow::~AcceptWindow()
-{
-    gui_->remove(child_);
+    yes_->connect("pressed", [&]() {Game::get().getUI().closeWindow(this);});
 }

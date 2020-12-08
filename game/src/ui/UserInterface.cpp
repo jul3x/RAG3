@@ -11,6 +11,7 @@
 #include <common/ResourceManager.h>
 
 #include <ui/UserInterface.h>
+#include <ui/NoteWindow.h>
 #include <Game.h>
 
 
@@ -218,12 +219,14 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                     }
                     case sf::Keyboard::F:
                     {
-                        Game::get().useSpecialObject();
+                        if (Game::get().getGameState() == Game::GameState::Normal)
+                            Game::get().useSpecialObject();
                         break;
                     }
                     case sf::Keyboard::T:
                     {
-                        Game::get().talk();
+                        if (Game::get().getGameState() == Game::GameState::Normal)
+                            Game::get().talk();
                         break;
                     }
                     case sf::Keyboard::Escape:
@@ -232,6 +235,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                         {
                             Game::get().setGameState(Game::GameState::Normal);
                             full_hud_->show(false);
+                            windows_.clear();
                         }
                         else
                         {
@@ -431,13 +435,24 @@ void UserInterface::spawnBonusText(const sf::Vector2f& pos, const std::string& t
 
 void UserInterface::spawnAcceptWindow(const std::string& text, const std::function<void()>& func)
 {
-    accept_windows_.emplace_back(gui_.get(), &theme_, text,
-            sf::Vector2f(CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_height_px")) / 2.0f,
-            CONF<sf::Vector2f>("graphics/popup_size"));
-    accept_windows_.back().bindFunction(func);
+    std::shared_ptr<AcceptWindow> window = std::make_shared<AcceptWindow>(gui_.get(), &theme_, text,
+                                                                          sf::Vector2f(CONF<int>("graphics/window_width_px"),
+                                                                                       CONF<int>("graphics/window_height_px")) / 2.0f,
+                                                                          CONF<sf::Vector2f>("graphics/popup_size"));
+    window->bindFunction(func);
+    windows_.emplace_back(window);
 }
 
-void UserInterface::closeAcceptWindow(AcceptWindow* window)
+void UserInterface::closeWindow(Window* window)
 {
-    utils::eraseIf<AcceptWindow>(accept_windows_, [window](AcceptWindow& window_) { return &window_ == window; });
+    utils::eraseIf<std::shared_ptr<Window>>(windows_, [window](std::shared_ptr<Window>& window_) { return window_.get() == window; });
+}
+
+void UserInterface::spawnNoteWindow(const std::string& text)
+{
+    windows_.emplace_back(std::make_shared<NoteWindow>(gui_.get(), &theme_, text,
+                          sf::Vector2f(CONF<int>("graphics/window_width_px"),
+                                       CONF<int>("graphics/window_height_px")) / 2.0f,
+                          CONF<sf::Vector2f>("graphics/popup_size")));
+    Game::get().setGameState(Game::GameState::Paused);
 }

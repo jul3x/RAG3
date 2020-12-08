@@ -141,11 +141,6 @@ void BackpackHud::update(float time_elapsed)
 {
     size_t i = 0;
 
-    for (auto& tooltip : tooltips_)
-    {
-        tooltip.bindText("", "");
-    }
-
     for (auto& special : Game::get().getPlayer().getBackpack())
     {
         special.first.setPosition(placeholders_[i].getPosition());
@@ -185,6 +180,11 @@ void BackpackHud::update(float time_elapsed)
         tooltips_[i].bindText(RMGET<std::string>("specials", weapon->getId(), "tooltip_header"),
                               tooltip_text);
         ++i;
+    }
+
+    for (; i < tooltips_.size(); ++i)
+    {
+        tooltips_[i].bindText("", "");
     }
 }
 

@@ -34,13 +34,16 @@ public:
         tooltip_header_->setTextSize(CONF<float>("graphics/tooltip_text_size"));
         layout_->add(tooltip_header_);
 
-        layout_->setSize(tgui::bindWidth(tooltip_) + 20.0f, tgui::bindHeight(tooltip_) + 1.5f * tgui::bindHeight(tooltip_header_) + 20.0f);
         layout_->setPosition(- tgui::bindWidth(tooltip_) - 20.0f, 0);
+        layout_->setSize(tgui::bindWidth(tooltip_) + 20.0f, tgui::bindHeight(tooltip_) + 1.5f * tgui::bindHeight(tooltip_header_) + 20.0f);
         button_->setToolTip(layout_);
     }
 
     void bindText(const std::string& header, const std::string& text)
     {
+        if (header != tooltip_header_->getText())
+            layout_->setPosition(- tgui::bindWidth(tooltip_) - 20.0f, 0);
+
         tooltip_header_->setText(header);
         tooltip_->setText(text);
 

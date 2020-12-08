@@ -1022,7 +1022,9 @@ void Game::setGameState(Game::GameState state)
                 journal_->clear();
             }
 
-            camera_->setNormal();
+            if (rag3_time_elapsed_ < 0.0f)
+                camera_->setNormal();
+
             engine_->turnOnCollisions();
             break;
         case GameState::Reverse:

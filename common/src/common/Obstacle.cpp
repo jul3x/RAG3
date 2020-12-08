@@ -35,13 +35,9 @@ Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id, const st
     this->changeOrigin(RMGET<sf::Vector2f>("obstacles", id, "size") / 2.0f +
                                RMGET<sf::Vector2f>("obstacles", id, "map_offset"));
 
-    if (RMGET<bool>("obstacles", id, "light_point"))
-    {
-        float light_size = CONF<float>("graphics/obstacles_light_point_size") * CONF<float>("graphics/global_zoom");
-        light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
-                                                        sf::Vector2f{light_size, light_size},
-                                                        &RM.getTexture("lightpoint"));
-    }
+    this->makeLightPoint(this->getPosition(),
+                         CONF<float>("graphics/obstacles_light_point_size") * CONF<float>("graphics/global_zoom"),
+                         &RM.getTexture("lightpoint"), RMGET<std::string>("obstacles", id, "light_point"));
 
     auto shadow_pos = this->getPosition() - RMGET<sf::Vector2f>("obstacles", id, "map_offset");
 

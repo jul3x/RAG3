@@ -33,11 +33,7 @@ Event::Event(const sf::Vector2f& position, const std::string& id,
     this->changeOrigin(RMGET<sf::Vector2f>("animations", id, "size") / 2.0f +
                                RMGET<sf::Vector2f>("animations", id, "map_offset"));
 
-    if (RMGET<bool>("animations", id, "light_point"))
-    {
-        light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
-                                                        sf::Vector2f{CONF<float>("graphics/animations_light_point_size"),
-                                                                     CONF<float>("graphics/animations_light_point_size")},
-                                                        &RM.getTexture("lightpoint"));
-    }
+    this->makeLightPoint(this->getPosition(),
+                         CONF<float>("graphics/animations_light_point_size") * CONF<float>("graphics/global_zoom"),
+                         &RM.getTexture("lightpoint"), RMGET<std::string>("animations", id, "light_point"));
 }

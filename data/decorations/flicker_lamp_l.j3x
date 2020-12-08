@@ -1,11 +1,12 @@
 vector size=(12.0,16.0)
 
-vector map_offset=(-2.0,0.0)
+vector map_offset=(2.0,0.0)
 
 int frames_number=1
 float frame_duration=0.0
 
 int z_index=2
 
-string light_point="const"
+string light_point="flicker"
+float light_point_data=10.0
 float light_point_radius=192.0

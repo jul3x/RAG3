@@ -7,4 +7,4 @@ float frame_duration=0.1
 
 int z_index=1
 
-bool light_point=false
+string light_point=""

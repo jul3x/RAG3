@@ -20,13 +20,10 @@ Decoration::Decoration(const sf::Vector2f& position, const std::string& id, int 
     this->changeOrigin(RMGET<sf::Vector2f>("decorations", id, "size") / 2.0f +
                        RMGET<sf::Vector2f>("decorations", id, "map_offset"));
 
-    if (RMGET<bool>("decorations", id, "light_point"))
-    {
-        float light_size = CONF<float>("graphics/decorations_light_point_size") * CONF<float>("graphics/global_zoom");
-        light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
-                                                        sf::Vector2f{light_size, light_size},
-                                                        &RM.getTexture("lightpoint"));
-    }
+    this->makeLightPoint(this->getPosition(),
+                         RMGET<float>("decorations", id, "light_point_radius") * CONF<float>("graphics/global_zoom"),
+                         &RM.getTexture("lightpoint"), RMGET<std::string>("decorations", id, "light_point"),
+                         RMGET<float>("decorations", id, "light_point_data", true));
 }
 
 bool Decoration::isActive() const

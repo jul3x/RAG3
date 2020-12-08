@@ -7,4 +7,5 @@ float frame_duration=0.0
 
 int z_index=2
 
-bool light_point=true
+string light_point="const"
+float light_point_radius=192.0

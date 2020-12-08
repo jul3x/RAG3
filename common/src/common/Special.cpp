@@ -40,13 +40,10 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
     else
         this->deactivate();
 
-    if (RMGET<bool>("specials", id, "light_point"))
-    {
-        float light_size = CONF<float>("graphics/specials_light_point_size") * CONF<float>("graphics/global_zoom");
-        light_ = std::make_unique<graphics::LightPoint>(this->getPosition(),
-                                                        sf::Vector2f{light_size, light_size},
-                                                        &RM.getTexture("lightpoint"));
-    }
+    this->makeLightPoint(this->getPosition(),
+                         CONF<float>("graphics/specials_light_point_size") * CONF<float>("graphics/global_zoom"),
+                         &RM.getTexture("lightpoint"), RMGET<std::string>("specials", id, "light_point"),
+                         RMGET<float>("specials", id, "light_point_data", true));
 
     auto shadow_pos = this->getPosition() - RMGET<sf::Vector2f>("specials", id, "map_offset");
 

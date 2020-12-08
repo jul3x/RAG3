@@ -22,4 +22,4 @@ int z_index=1
 list weapons=["Null"]
 
 bool is_talkable=true
-bool light_point=false
+string light_point=""

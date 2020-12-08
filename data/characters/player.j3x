@@ -26,4 +26,4 @@ int z_index=1
 list weapons=["flamethrower";"m4";"desert_eagle";"shotgun";"melee_axe";"rocket_launcher"]
 
 bool is_talkable=false
-bool light_point=true
+string light_point="const"

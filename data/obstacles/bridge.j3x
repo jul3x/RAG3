@@ -14,5 +14,5 @@ list default_datas=[0]
 
 int z_index=1
 
-bool light_point=false
+string light_point=""
 bool shadow=true

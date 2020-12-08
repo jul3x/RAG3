@@ -14,7 +14,7 @@ bool is_drawable=true
 
 int z_index=1
 
-bool light_point=false
+string light_point=""
 bool default_active=true
 bool shadow=true
 

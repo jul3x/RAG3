@@ -249,7 +249,7 @@ DoorOpen::DoorOpen(Journal* father, Obstacle* ptr) : JournalEntry(father), ptr_(
 void DoorOpen::executeEntryReversal()
 {
     auto new_ptr = father_->getUpdatedPtr(ptr_);
-    SpecialFunctions::openDoor(nullptr, std::to_string(new_ptr->getUniqueId()), nullptr);
+    SpecialFunctions::openDoor(nullptr, new_ptr->getUniqueId(), nullptr);
 }
 
 ObjectDeactivated::ObjectDeactivated(Journal* father, Special* ptr) : JournalEntry(father), ptr_(ptr)

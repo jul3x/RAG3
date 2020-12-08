@@ -16,6 +16,6 @@ list default_datas=["Null"]
 
 bool is_drawable=true
 
-bool light_point=true
+string light_point="const"
 bool default_active=true
 bool shadow=false

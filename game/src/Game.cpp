@@ -223,7 +223,11 @@ void Game::updateMapObjects(float time_elapsed)
         auto light = (*it)->getLightPoint();
 
         if (light != nullptr)
+        {
             light->setPosition((*it)->getPosition());
+            light->update(time_elapsed);
+        }
+
         if (!(*it)->update(time_elapsed))
         {
             journal_->event<DestroyObstacle>(it->get());
@@ -277,7 +281,11 @@ void Game::updateMapObjects(float time_elapsed)
         auto light = (*it)->getLightPoint();
 
         if (light != nullptr)
+        {
             light->setPosition((*it)->getPosition());
+            light->update(time_elapsed);
+        }
+
         if ((*it)->isDestroyed())
         {
             journal_->event<DestroySpecial>(it->get());
@@ -300,7 +308,11 @@ void Game::updateMapObjects(float time_elapsed)
         auto light = (*it)->getLightPoint();
 
         if (light != nullptr)
+        {
             light->setPosition((*it)->getPosition());
+            light->update(time_elapsed);
+        }
+        
         if (!(*it)->isActive())
         {
             journal_->event<DestroyDecoration>(it->get());

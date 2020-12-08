@@ -9,4 +9,4 @@ int z_index=1
 bool animation_type_quadratic=false
 bool scale=false
 
-bool light_point=false
+string light_point=""

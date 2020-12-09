@@ -32,7 +32,7 @@ BackpackHud::BackpackHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f&
 
     for (auto& tooltip : tooltips_)
     {
-        tooltip.bindFunction(std::bind(BackpackHud::clickPlaceholder, this, std::ref(tooltip)));
+        tooltip.bindFunction([this, &tooltip]() { this->clickPlaceholder(tooltip); });
         tooltip.bindGui(gui);
         tooltip.show(true);
     }

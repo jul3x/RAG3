@@ -180,7 +180,7 @@ private:
     std::list<std::pair<sf::Vector2f, float>> desired_explosions_;
     std::list<std::unique_ptr<DestructionSystem>> destruction_systems_;
 
-    DestructionParams blood_params_, debris_params_;
+    std::unordered_map<std::string, DestructionParams> destruction_params_;
 
     std::unordered_map<std::string, SpawningFunction> spawning_func_;
 

@@ -499,7 +499,7 @@ void Game::spawnEvent(const std::string& name, const sf::Vector2f& pos, float di
 void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const float r)
 {
     spawnEvent("sparks", pos, dir, r);
-    auto ptr = spawnNewDestructionSystem(pos, dir - 90.0f, debris_params_);
+    auto ptr = spawnNewDestructionSystem(pos, dir - 90.0f, destruction_params_["debris"]);
     journal_->event<SpawnDestructionSystem>(ptr);
 }
 
@@ -576,13 +576,17 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, floa
 void Game::spawnBloodEvent(const sf::Vector2f& pos, float dir)
 {
     spawnEvent("blood", pos, dir, 0.0f);
-    auto ptr = spawnNewDestructionSystem(pos, dir, blood_params_);
+    auto ptr = spawnNewDestructionSystem(pos, dir, destruction_params_["blood"]);
     journal_->event<SpawnDestructionSystem>(ptr);
 }
 
 void Game::spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
     auto ptr = this->spawnNewBullet(user, name, pos, dir);
+
+    auto vector = sf::Vector2f{static_cast<float>(std::cos(dir)), static_cast<float>(std::sin(dir))};
+
+    spawnNewDestructionSystem(pos - 30.0f * vector, dir * 180.0f / M_PI + 90.0f, destruction_params_["husk"]);
     journal_->event<SpawnBullet>(ptr);
     this->spawnShotEvent(name, pos, dir);
 }
@@ -1312,50 +1316,35 @@ void Game::updateDestructionSystems(float time_elapsed)
 void Game::initDestructionParams()
 {
     /* blood */
-    blood_params_.vel = CONF<float>("graphics/blood_system_vel");
-    blood_params_.acc = CONF<float>("graphics/blood_system_acc");
-    blood_params_.time = CONF<float>("graphics/blood_system_time");
-    blood_params_.count = CONF<int>("graphics/blood_system_count");
-    blood_params_.base_color = sf::Color(CONF<int>("graphics/blood_system_base_color"));
+    destruction_params_["blood"] = {};
+    destruction_params_["debris"] = {};
+    destruction_params_["husk"] = {};
 
-    blood_params_.spread_degree = CONF<float>("graphics/blood_system_spread_degree");
-    blood_params_.acceleration_spread = CONF<float>("graphics/blood_system_acceleration_spread");
+    for (auto& param : destruction_params_)
+    {
+        param.second.vel = CONF<float>("graphics/" + param.first + "_system_vel");
+        param.second.acc = CONF<float>("graphics/" + param.first + "_system_acc");
+        param.second.time = CONF<float>("graphics/" + param.first + "_system_time");
+        param.second.count = CONF<int>("graphics/" + param.first + "_system_count");
+        param.second.base_color = sf::Color(CONF<int>("graphics/" + param.first + "_system_base_color"));
 
-    blood_params_.vel_fac = CONF<float>("graphics/blood_system_vel_fac");
-    blood_params_.acc_fac = CONF<float>("graphics/blood_system_acc_fac");
-    blood_params_.time_fac = CONF<float>("graphics/blood_system_time_fac");
+        param.second.spread_degree = CONF<float>("graphics/" + param.first + "_system_spread_degree");
+        param.second.acceleration_spread = CONF<float>("graphics/" + param.first + "_system_acceleration_spread");
 
-    blood_params_.min_size = CONF<float>("graphics/blood_system_min_size");
-    blood_params_.max_size = CONF<float>("graphics/blood_system_max_size");
+        param.second.vel_fac = CONF<float>("graphics/" + param.first + "_system_vel_fac");
+        param.second.acc_fac = CONF<float>("graphics/" + param.first + "_system_acc_fac");
+        param.second.time_fac = CONF<float>("graphics/" + param.first + "_system_time_fac");
 
-    blood_params_.shader = CONF<std::string>("graphics/blood_system_shader");
-    blood_params_.full_color_fac = CONF<float>("graphics/blood_system_full_color_fac");
-    blood_params_.r_fac = CONF<float>("graphics/blood_system_r_fac");
-    blood_params_.g_fac = CONF<float>("graphics/blood_system_g_fac");
-    blood_params_.b_fac = CONF<float>("graphics/blood_system_b_fac");
+        param.second.min_size = CONF<float>("graphics/" + param.first + "_system_min_size");
+        param.second.max_size = CONF<float>("graphics/" + param.first + "_system_max_size");
 
-    /* debris */
-    debris_params_.vel = CONF<float>("graphics/debris_system_vel");
-    debris_params_.acc = CONF<float>("graphics/debris_system_acc");
-    debris_params_.time = CONF<float>("graphics/debris_system_time");
-    debris_params_.count = CONF<int>("graphics/debris_system_count");
-    debris_params_.base_color = sf::Color(CONF<int>("graphics/debris_system_base_color"));
+        param.second.shader = CONF<std::string>("graphics/" + param.first + "_system_shader");
+        param.second.full_color_fac = CONF<float>("graphics/" + param.first + "_system_full_color_fac");
+        param.second.r_fac = CONF<float>("graphics/" + param.first + "_system_r_fac");
+        param.second.g_fac = CONF<float>("graphics/" + param.first + "_system_g_fac");
+        param.second.b_fac = CONF<float>("graphics/" + param.first + "_system_b_fac");
 
-    debris_params_.spread_degree = CONF<float>("graphics/debris_system_spread_degree");
-    debris_params_.acceleration_spread = CONF<float>("graphics/debris_system_acceleration_spread");
-
-    debris_params_.vel_fac = CONF<float>("graphics/debris_system_vel_fac");
-    debris_params_.acc_fac = CONF<float>("graphics/debris_system_acc_fac");
-    debris_params_.time_fac = CONF<float>("graphics/debris_system_time_fac");
-
-    debris_params_.min_size = CONF<float>("graphics/debris_system_min_size");
-    debris_params_.max_size = CONF<float>("graphics/debris_system_max_size");
-
-    debris_params_.shader = CONF<std::string>("graphics/debris_system_shader");
-    debris_params_.full_color_fac = CONF<float>("graphics/debris_system_full_color_fac");
-    debris_params_.r_fac = CONF<float>("graphics/debris_system_r_fac");
-    debris_params_.g_fac = CONF<float>("graphics/debris_system_g_fac");
-    debris_params_.b_fac = CONF<float>("graphics/debris_system_b_fac");
+    }
 }
 
 DestructionSystem* Game::spawnNewDestructionSystem(const sf::Vector2f& pos, float dir, const DestructionParams& params)

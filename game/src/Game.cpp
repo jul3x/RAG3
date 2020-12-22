@@ -62,6 +62,8 @@ void Game::initialize()
     engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
 
+    this->initDestructionParams();
+
     map_->loadMap("first_new_map");
     engine_->getGraphics().setBgColor(sf::Color(j3x::get<int>(map_->getParams(), "background_color")));
     lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
@@ -145,6 +147,7 @@ void Game::update(float time_elapsed)
             updatePlayer(time_elapsed);
             updateBullets(time_elapsed);
             updateFire(time_elapsed);
+            updateDestructionSystems(time_elapsed);
 
             achievements_->update(time_elapsed);
             journal_->update(time_elapsed);
@@ -410,6 +413,7 @@ void Game::draw(graphics::Graphics& graphics)
     draw(map_->getList<ObstacleTile>());
     draw(map_->getList<NPC>());
     draw(map_->getList<PlacedWeapon>());
+    draw(destruction_systems_);
     draw(bullets_);
     draw(fire_);
 
@@ -570,6 +574,7 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, floa
 void Game::spawnBloodEvent(const sf::Vector2f& pos, float dir)
 {
     spawnEvent("blood", pos, dir, 0.0f);
+    destruction_systems_.emplace_back(std::make_unique<DestructionSystem>(pos, dir, blood_params_));
 }
 
 void Game::spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
@@ -624,9 +629,10 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
         else if (obstacle_tile != nullptr)
         {
             spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
-
             bullet->setDead();
         }
+
+        destruction_systems_.emplace_back(std::make_unique<DestructionSystem>(bullet->getPosition(), bullet->getRotation() - 180.0f, debris_params_));
     }
     else if (explosion != nullptr)
     {
@@ -659,7 +665,9 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             }
 
             character->getShot(*bullet, factor);
-            spawnBloodEvent(character->getPosition() - sf::Vector2f(0.0f, 10.0f), bullet->getRotation() + 180.0f);
+
+            float offset = bullet->getRotation() > 0.0f && bullet->getRotation() < 180.0f ? -5.0f : 5.0f;
+            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, offset), bullet->getRotation() + 180.0f);
 
             bullet->setDead();
         }
@@ -1266,5 +1274,59 @@ void Game::setRag3Time(float time_elapsed)
 float Game::getRag3Time() const
 {
     return rag3_time_elapsed_;
+}
+
+void Game::updateDestructionSystems(float time_elapsed)
+{
+    utils::eraseIf<std::unique_ptr<DestructionSystem>>(destruction_systems_, [&time_elapsed](std::unique_ptr<DestructionSystem>& system) { return !system->update(time_elapsed); });
+}
+
+void Game::initDestructionParams()
+{
+    /* blood */
+    blood_params_.vel = CONF<float>("graphics/blood_system_vel");
+    blood_params_.acc = CONF<float>("graphics/blood_system_acc");
+    blood_params_.time = CONF<float>("graphics/blood_system_time");
+    blood_params_.count = CONF<int>("graphics/blood_system_count");
+    blood_params_.base_color = sf::Color(CONF<int>("graphics/blood_system_base_color"));
+
+    blood_params_.spread_degree = CONF<float>("graphics/blood_system_spread_degree");
+    blood_params_.acceleration_spread = CONF<float>("graphics/blood_system_acceleration_spread");
+
+    blood_params_.vel_fac = CONF<float>("graphics/blood_system_vel_fac");
+    blood_params_.acc_fac = CONF<float>("graphics/blood_system_acc_fac");
+    blood_params_.time_fac = CONF<float>("graphics/blood_system_time_fac");
+
+    blood_params_.min_size = CONF<float>("graphics/blood_system_min_size");
+    blood_params_.max_size = CONF<float>("graphics/blood_system_max_size");
+
+    blood_params_.shader = CONF<std::string>("graphics/blood_system_shader");
+    blood_params_.full_color_fac = CONF<float>("graphics/blood_system_full_color_fac");
+    blood_params_.r_fac = CONF<float>("graphics/blood_system_r_fac");
+    blood_params_.g_fac = CONF<float>("graphics/blood_system_g_fac");
+    blood_params_.b_fac = CONF<float>("graphics/blood_system_b_fac");
+
+    /* debris */
+    debris_params_.vel = CONF<float>("graphics/debris_system_vel");
+    debris_params_.acc = CONF<float>("graphics/debris_system_acc");
+    debris_params_.time = CONF<float>("graphics/debris_system_time");
+    debris_params_.count = CONF<int>("graphics/debris_system_count");
+    debris_params_.base_color = sf::Color(CONF<int>("graphics/debris_system_base_color"));
+
+    debris_params_.spread_degree = CONF<float>("graphics/debris_system_spread_degree");
+    debris_params_.acceleration_spread = CONF<float>("graphics/debris_system_acceleration_spread");
+
+    debris_params_.vel_fac = CONF<float>("graphics/debris_system_vel_fac");
+    debris_params_.acc_fac = CONF<float>("graphics/debris_system_acc_fac");
+    debris_params_.time_fac = CONF<float>("graphics/debris_system_time_fac");
+
+    debris_params_.min_size = CONF<float>("graphics/debris_system_min_size");
+    debris_params_.max_size = CONF<float>("graphics/debris_system_max_size");
+
+    debris_params_.shader = CONF<std::string>("graphics/debris_system_shader");
+    debris_params_.full_color_fac = CONF<float>("graphics/debris_system_full_color_fac");
+    debris_params_.r_fac = CONF<float>("graphics/debris_system_r_fac");
+    debris_params_.g_fac = CONF<float>("graphics/debris_system_g_fac");
+    debris_params_.b_fac = CONF<float>("graphics/debris_system_b_fac");
 }
 

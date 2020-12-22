@@ -12,6 +12,7 @@
 #include <R3E/ai/AgentsManager.h>
 #include <R3E/audio/MusicManager.h>
 #include <R3E/graphics/Lightning.h>
+#include <misc/Destruction.h>
 
 #include <common/Map.h>
 #include <common/Bullet.h>
@@ -142,12 +143,15 @@ public:
 private:
     Game();
 
+    void initDestructionParams();
+
     void updateMapObjects(float time_elapsed);
     void updatePlayerClone(float time_elapsed);
     void updatePlayer(float time_elapsed);
     void updateBullets(float time_elapsed);
     void updateFire(float time_elapsed);
     void updateExplosions();
+    void updateDestructionSystems(float time_elapsed);
 
     void killNPC(NPC* npc);
     void cleanPlayerClone();
@@ -172,6 +176,9 @@ private:
     std::list<std::unique_ptr<Fire>> fire_;
     std::list<std::unique_ptr<Explosion>> explosions_;
     std::list<std::pair<sf::Vector2f, float>> desired_explosions_;
+    std::list<std::unique_ptr<DestructionSystem>> destruction_systems_;
+
+    DestructionParams blood_params_, debris_params_;
 
     std::unordered_map<std::string, SpawningFunction> spawning_func_;
 

@@ -3,7 +3,7 @@ bool auto_resolution = true
 bool full_screen = false
 int window_width_px = 3000
 int window_height_px = 1500
-float global_zoom = 4.0
+float global_zoom = 2.0
 float user_interface_zoom = global_zoom / 2.0
 
 // COLORS
@@ -121,3 +121,40 @@ list small_backpack_pos = [(-277.0, 68.0) * user_interface_zoom;
 float popup_button_relative_valign = 40.0 * user_interface_zoom
 vector popup_button_size = (50.0, 20.0) * user_interface_zoom
 vector popup_size = (450.0, 200.0) * user_interface_zoom
+
+// DESTRUCTION SYSTEM
+float blood_system_vel = 400.0
+float blood_system_acc = 4000.0
+float blood_system_time = 10.0
+int blood_system_count = 400
+int blood_system_base_color = 2517898495
+float blood_system_spread_degree = 10.0
+float blood_system_acceleration_spread = 0.6
+float blood_system_vel_fac = 0.5
+float blood_system_acc_fac = 0.5
+float blood_system_time_fac = 0.6
+float blood_system_min_size = 0.0
+float blood_system_max_size = 3.0
+string blood_system_shader = "debris.frag"
+float blood_system_full_color_fac = 0.0
+float blood_system_r_fac = 0.4
+float blood_system_g_fac = 0.0
+float blood_system_b_fac = 1.5
+
+float debris_system_vel = 300.0
+float debris_system_acc = 2000.0
+float debris_system_time = 1.0
+int debris_system_count = 100
+int debris_system_base_color = 2155905279
+float debris_system_spread_degree = 10.0
+float debris_system_acceleration_spread = 0.6
+float debris_system_vel_fac = 0.5
+float debris_system_acc_fac = 0.2
+float debris_system_time_fac = 0.2
+float debris_system_min_size = 0.0
+float debris_system_max_size = 2.0
+string debris_system_shader = "debris.frag"
+float debris_system_full_color_fac = 0.3
+float debris_system_r_fac = 0.0
+float debris_system_g_fac = 0.0
+float debris_system_b_fac = 1.0

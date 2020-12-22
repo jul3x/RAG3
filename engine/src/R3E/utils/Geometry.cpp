@@ -263,7 +263,7 @@ namespace r3e {
                 return angle;
             }
 
-            float wrapAngle0_2PI(float angle)
+            double wrapAngle0_2PI(double angle)
             {
                 angle = std::fmod(angle, 2 * M_PI);
 

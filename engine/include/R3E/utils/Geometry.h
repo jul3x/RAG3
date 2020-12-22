@@ -46,7 +46,7 @@ namespace r3e::utils::geo {
 
     float wrapAngle0_360(float angle);
 
-    float wrapAngle0_2PI(float angle);
+    double wrapAngle0_2PI(double angle);
 
     float getAngleBetweenDegree(float angle_1, float angle_2);
 

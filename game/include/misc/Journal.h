@@ -31,6 +31,7 @@ public:
 
     void update(float time_elapsed);
     bool executeTimeReversal(float time_elapsed);
+    float getTimeReversed() const;
 
     float getDurationSaved() const;
     Character* getUpdatedPtr(Character* ptr);
@@ -40,6 +41,7 @@ public:
     Obstacle* getUpdatedPtr(Obstacle* ptr);
     ObstacleTile* getUpdatedPtr(ObstacleTile* ptr);
     Special* getUpdatedPtr(Special* ptr);
+    DestructionSystem* getUpdatedPtr(DestructionSystem* ptr);
 
     void setUpdatedPtr(Character* ptr, Character* new_ptr);
     void setUpdatedPtr(Bullet* ptr, Bullet* new_ptr);
@@ -48,6 +50,7 @@ public:
     void setUpdatedPtr(Fire* ptr, Fire* new_ptr);
     void setUpdatedPtr(Decoration* ptr, Decoration* new_ptr);
     void setUpdatedPtr(Special* ptr, Special* new_ptr);
+    void setUpdatedPtr(DestructionSystem* ptr, DestructionSystem* new_ptr);
 
 private:
     static constexpr size_t MIN_JOURNAL_SIZE_ = 10;
@@ -62,9 +65,11 @@ private:
     std::unordered_map<Obstacle*, Obstacle*> obstacle_ptr_map_;
     std::unordered_map<Decoration*, Decoration*> decoration_ptr_map_;
     std::unordered_map<Special*, Special*> special_ptr_map_;
+    std::unordered_map<DestructionSystem*, DestructionSystem*> destruction_ptr_map_;
 
     float time_elapsed_;
     float frame_time_;
+    float time_reversed_;
 };
 
 

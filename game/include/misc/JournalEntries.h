@@ -7,6 +7,7 @@
 
 #include <common/Map.h>
 #include <common/Fire.h>
+#include <misc/Destruction.h>
 
 
 using namespace r3e;
@@ -241,6 +242,32 @@ private:
     Functional::Activation activation_;
     j3x::List funcs_;
     j3x::List datas_;
+
+};
+
+class SpawnDestructionSystem : public JournalEntry {
+public:
+    SpawnDestructionSystem(Journal* father, DestructionSystem* ptr);
+
+    void executeEntryReversal() override;
+
+private:
+    DestructionSystem* ptr_;
+
+};
+
+class DestroyDestructionSystem : public JournalEntry {
+public:
+    DestroyDestructionSystem(Journal* father, DestructionSystem* ptr);
+
+    void executeEntryReversal() override;
+
+private:
+    DestructionSystem* ptr_;
+
+    sf::Vector2f pos_;
+    float dir_;
+    const DestructionParams& params_;
 
 };
 

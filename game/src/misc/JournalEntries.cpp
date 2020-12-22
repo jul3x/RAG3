@@ -221,6 +221,35 @@ void DestroySpecial::executeEntryReversal()
     father_->setUpdatedPtr(ptr_, new_ptr);
 }
 
+SpawnDestructionSystem::SpawnDestructionSystem(Journal* father, DestructionSystem* ptr) : JournalEntry(father), ptr_(ptr)
+{
+
+}
+
+void SpawnDestructionSystem::executeEntryReversal()
+{
+    auto new_ptr = father_->getUpdatedPtr(ptr_);
+    Game::get().findAndDeleteDestructionSystem(new_ptr);
+}
+
+DestroyDestructionSystem::DestroyDestructionSystem(Journal* father, DestructionSystem* ptr) :
+    JournalEntry(father), ptr_(ptr), params_(ptr->getDestructionParams()), dir_(ptr->getDestructionDir()), pos_(ptr->getPosition())
+{
+}
+
+void DestroyDestructionSystem::executeEntryReversal()
+{
+    auto new_ptr = Game::get().spawnNewDestructionSystem(pos_, dir_, params_);
+
+    // simulate blood
+    for (int i = 0; i < 30; ++i)
+    {
+        new_ptr->update(1.0f / 30.0f);
+    }
+
+    father_->setUpdatedPtr(ptr_, new_ptr);
+}
+
 WeaponActivation::WeaponActivation(Journal* father, PlacedWeapon* ptr) : JournalEntry(father), ptr_(ptr)
 {
     activate_ = ptr->getActive();

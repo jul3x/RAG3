@@ -40,6 +40,8 @@ public:
     [[nodiscard]] const sf::Color& getColor() const;
     [[nodiscard]] float getSize() const;
 
+    void addToLife(float time);
+
 private:
     sf::Vector2f pos_, vel_, acc_;
     sf::Color color_;
@@ -55,6 +57,10 @@ public:
     DestructionSystem(const sf::Vector2f& position, float dir, const DestructionParams& params);
 
     bool update(float time_elapsed);
+    [[nodiscard]] float getDestructionDir() const;
+    [[nodiscard]] const DestructionParams& getDestructionParams() const;
+
+    void addToLife(float time);
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -64,7 +70,7 @@ private:
     const DestructionParams& params_;
     std::list<std::unique_ptr<DestructionParticle>> particles_;
     sf::VertexArray drawables_;
-    float time_elapsed_;
+    float time_elapsed_, dir_;
 
 };
 

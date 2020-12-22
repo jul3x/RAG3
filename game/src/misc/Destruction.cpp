@@ -38,8 +38,8 @@ DestructionParticle::DestructionParticle(const sf::Vector2f& position, float dir
 
 bool DestructionParticle::update(float time_elapsed)
 {
-    pos_ += time_elapsed * vel_;
     vel_ += acc_ * time_elapsed;
+    pos_ += time_elapsed * vel_;
 
     time_alive_ -= time_elapsed;
 
@@ -72,12 +72,18 @@ bool DestructionParticle::update(float time_elapsed)
     return color_;
 }
 
+void DestructionParticle::addToLife(float time)
+{
+    time_alive_ += time;
+}
+
 DestructionSystem::DestructionSystem(const sf::Vector2f& position, float dir, const DestructionParams& params) :
         AbstractDrawableObject(position, {1.0f, 1.0f}, nullptr, 1),
         particles_(params.count),
         drawables_(sf::Quads, 4 * params.count),
         time_elapsed_(0.0f),
-        params_(params)
+        params_(params),
+        dir_(dir)
 {
     size_t i = 0;
     for (auto& particle : particles_)
@@ -132,5 +138,24 @@ void DestructionSystem::updateParticle(std::unique_ptr<DestructionParticle>& par
     drawables_[4 * i + 1].position += {particle->getSize(), 0};
     drawables_[4 * i + 2].position += {particle->getSize(), particle->getSize()};
     drawables_[4 * i + 3].position += {0, particle->getSize()};
+}
+
+float DestructionSystem::getDestructionDir() const
+{
+    return dir_;
+}
+
+const DestructionParams& DestructionSystem::getDestructionParams() const
+{
+    return params_;
+}
+
+void DestructionSystem::addToLife(float time)
+{
+    time_elapsed_ -= time;
+    for (auto& particle : particles_)
+    {
+        particle->addToLife(time);
+    }
 }
 

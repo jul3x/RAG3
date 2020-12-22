@@ -11,7 +11,7 @@
 
 
 
-Journal::Journal(float max_time_back, float sampling_rate) : time_elapsed_(0.0f)
+Journal::Journal(float max_time_back, float sampling_rate) : time_elapsed_(0.0f), time_reversed_(0.0f)
 {
     frame_time_ = 1.0f / sampling_rate;
     journal_max_size_ = static_cast<size_t>(max_time_back * sampling_rate);
@@ -32,6 +32,7 @@ void Journal::clear()
     journal_.emplace_back();
 
     time_elapsed_ = 0.0f;
+    time_reversed_ = 0.0f;
 }
 
 float Journal::getDurationSaved() const
@@ -42,7 +43,7 @@ float Journal::getDurationSaved() const
 void Journal::update(float time_elapsed)
 {
     time_elapsed_ += time_elapsed;
-
+    time_reversed_ = 0.0f;
     if (time_elapsed_ > frame_time_)
     {
         time_elapsed_ -= frame_time_;
@@ -82,7 +83,7 @@ bool Journal::executeTimeReversal(float time_elapsed)
 {
     if (journal_.size() < MIN_JOURNAL_SIZE_)
     {
-        LOG.info("[Journal] Warning - could not exectue time reversal!");
+        LOG.info("[Journal] Warning - could not execute time reversal!");
         return false;
     }
 
@@ -108,6 +109,7 @@ bool Journal::executeTimeReversal(float time_elapsed)
         journal_.pop_back();
 
         --frames_elapsed;
+        time_reversed_ += frame_time_;
     }
 
     return true;
@@ -197,3 +199,19 @@ void Journal::setUpdatedPtr(Special* ptr, Special* new_ptr)
     special_ptr_map_[ptr] = new_ptr;
 }
 
+DestructionSystem* Journal::getUpdatedPtr(DestructionSystem* ptr)
+{
+    auto it = destruction_ptr_map_.find(ptr);
+
+    return it != destruction_ptr_map_.end() ? it->second : ptr;
+}
+
+void Journal::setUpdatedPtr(DestructionSystem* ptr, DestructionSystem* new_ptr)
+{
+    destruction_ptr_map_[ptr] = new_ptr;
+}
+
+float Journal::getTimeReversed() const
+{
+    return time_reversed_;
+}

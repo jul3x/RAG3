@@ -499,6 +499,8 @@ void Game::spawnEvent(const std::string& name, const sf::Vector2f& pos, float di
 void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const float r)
 {
     spawnEvent("sparks", pos, dir, r);
+    auto ptr = spawnNewDestructionSystem(pos, dir - 90.0f, debris_params_);
+    journal_->event<SpawnDestructionSystem>(ptr);
 }
 
 void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
@@ -574,7 +576,8 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, floa
 void Game::spawnBloodEvent(const sf::Vector2f& pos, float dir)
 {
     spawnEvent("blood", pos, dir, 0.0f);
-    destruction_systems_.emplace_back(std::make_unique<DestructionSystem>(pos, dir, blood_params_));
+    auto ptr = spawnNewDestructionSystem(pos, dir, blood_params_);
+    journal_->event<SpawnDestructionSystem>(ptr);
 }
 
 void Game::spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
@@ -631,8 +634,6 @@ void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
             spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
             bullet->setDead();
         }
-
-        destruction_systems_.emplace_back(std::make_unique<DestructionSystem>(bullet->getPosition(), bullet->getRotation() - 180.0f, debris_params_));
     }
     else if (explosion != nullptr)
     {
@@ -1027,6 +1028,12 @@ void Game::setGameState(Game::GameState state)
                 if (player_clone_ != nullptr)
                     player_clone_->updateLifeTimeDependingOnPrevious(
                             journal_->getDurationSaved() * CONF<float>("player_clone_time_factor"));
+
+                for (auto& system : destruction_systems_)
+                {
+                    system->addToLife(journal_->getTimeReversed());
+                }
+
                 journal_->clear();
             }
 
@@ -1216,6 +1223,20 @@ void Game::findAndDeleteSpecial(Special* ptr)
     LOG.error("[Game] Warning - special to delete not found!");
 }
 
+void Game::findAndDeleteDestructionSystem(DestructionSystem* ptr)
+{
+    for (auto it = destruction_systems_.rbegin(); it != destruction_systems_.rend(); ++it)
+    {
+        if (it->get() == ptr)
+        {
+            destruction_systems_.erase((++it).base());
+            return;
+        }
+    }
+
+    LOG.error("[Game] Warning - destruction system to delete not found!");
+}
+
 void Game::registerWeapons(Character* character)
 {
     for (auto& weapon : character->getWeapons())
@@ -1278,7 +1299,14 @@ float Game::getRag3Time() const
 
 void Game::updateDestructionSystems(float time_elapsed)
 {
-    utils::eraseIf<std::unique_ptr<DestructionSystem>>(destruction_systems_, [&time_elapsed](std::unique_ptr<DestructionSystem>& system) { return !system->update(time_elapsed); });
+    utils::eraseIf<std::unique_ptr<DestructionSystem>>(destruction_systems_, [&time_elapsed, this](std::unique_ptr<DestructionSystem>& system) {
+        if (!system->update(time_elapsed))
+        {
+            journal_->event<DestroyDestructionSystem>(system.get());
+            return true;
+        }
+        return false;
+    });
 }
 
 void Game::initDestructionParams()
@@ -1328,5 +1356,11 @@ void Game::initDestructionParams()
     debris_params_.r_fac = CONF<float>("graphics/debris_system_r_fac");
     debris_params_.g_fac = CONF<float>("graphics/debris_system_g_fac");
     debris_params_.b_fac = CONF<float>("graphics/debris_system_b_fac");
+}
+
+DestructionSystem* Game::spawnNewDestructionSystem(const sf::Vector2f& pos, float dir, const DestructionParams& params)
+{
+    destruction_systems_.emplace_back(std::make_unique<DestructionSystem>(pos, dir, params));
+    return destruction_systems_.back().get();
 }
 

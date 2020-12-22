@@ -116,6 +116,7 @@ public:
     void findAndDeleteFire(Fire* ptr);
     void findAndDeleteDecoration(Decoration* ptr);
     void findAndDeleteSpecial(Special* ptr);
+    void findAndDeleteDestructionSystem(DestructionSystem* ptr);
 
     Special* spawnNewSpecial(const std::string& id, int u_id, const sf::Vector2f& pos, Functional::Activation activation,
                              const j3x::List& funcs, const j3x::List& datas);
@@ -129,6 +130,7 @@ public:
     NPC* spawnNewNPC(const std::string &id, int u_id, Functional::Activation activation,
                      const j3x::List& funcs, const j3x::List& datas);
     NPC* spawnNewPlayerClone(const std::string &weapon_id);
+    DestructionSystem* spawnNewDestructionSystem(const sf::Vector2f& pos, float dir, const DestructionParams& params);
 
     // Registering methods
     void registerWeapons(Character* character);

@@ -1035,6 +1035,7 @@ void Game::setGameState(Game::GameState state)
 
                 for (auto& system : destruction_systems_)
                 {
+                    // TODO This is bug for those systems that were added by journal
                     system->addToLife(journal_->getTimeReversed());
                 }
 

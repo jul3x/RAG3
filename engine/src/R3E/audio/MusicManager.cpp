@@ -27,14 +27,20 @@ namespace r3e {
 
         void MusicManager::addToQueue(const std::string& name)
         {
-            music_owned_.emplace_back();
-            if (!music_owned_.back().openFromFile(name))
+            if (music_owned_.find(name) != music_owned_.end())
+            {
+                addToQueue(music_owned_[name].get());
+                return;
+            }
+
+            music_owned_[name] = std::make_unique<sf::Music>();
+            if (!music_owned_[name]->openFromFile(name))
             {
                 LOG.error("[MusicManager] " + name + " music file not successfully loaded.");
             }
             else
             {
-                addToQueue(&music_owned_.back());
+                addToQueue(music_owned_[name].get());
                 LOG.info("[MusicManager] Music " + name + " is loaded!");
             }
         }
@@ -53,6 +59,13 @@ namespace r3e {
 
         void MusicManager::play()
         {
+            if (status_ == Status::Paused)
+            {
+                if (music_list_.empty()) return;
+
+                if (current_song_ == music_list_.begin()) current_song_ = music_list_.end();
+                --current_song_;
+            }
             status_ = Status::Playing;
         }
 
@@ -104,6 +117,23 @@ namespace r3e {
             if (music_list_.empty()) return;
 
             (*current_song_)->setVolume(current_volume_);
+        }
+
+        void MusicManager::clearQueue()
+        {
+            if (!music_list_.empty())
+                (*current_song_)->stop();
+
+            music_list_.clear();
+            status_ = Status::Stopped;
+        }
+
+        void MusicManager::pause()
+        {
+            if (music_list_.empty()) return;
+
+            (*current_song_)->pause();
+            status_ = Status::Paused;
         }
 
     } // namespace audio

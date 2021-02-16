@@ -3,8 +3,22 @@ bool auto_resolution = true
 bool full_screen = false
 int window_width_px = 3000
 int window_height_px = 1500
-float global_zoom = 2.0
+float global_zoom = 4.0
 float user_interface_zoom = global_zoom / 2.0
+
+// MENU
+float menu_bar_width_px = 700.0 * user_interface_zoom
+vector menu_logo_size = (600.0, 400.0) * user_interface_zoom
+vector menu_logo_pos = menu_logo_size * 0.5 + (10.0, 0.0) * user_interface_zoom
+float menu_button_pos_x = 120.0 * user_interface_zoom
+float menu_button_pos_y = 350.0 * user_interface_zoom
+float menu_button_offset_y = 70.0 * user_interface_zoom
+vector menu_year_pos = (menu_button_pos_x, -200.0 * user_interface_zoom)
+vector menu_copyright_pos = (-2.0 * menu_button_pos_x, -200.0 * user_interface_zoom)
+float menu_show_duration = 2.5
+float menu_explosion_period = 4.0
+float menu_logo_rotation_duration = 2.0
+vector back_to_menu_pos = (0.0, -200.0 * user_interface_zoom)
 
 // COLORS
 int background_color = 286331136
@@ -28,6 +42,7 @@ float skills_text_size = 28 * user_interface_zoom
 float backpack_text_size = 24 * user_interface_zoom
 float tooltip_text_size = 14 * user_interface_zoom
 float popup_text_size = 12 * user_interface_zoom
+float menu_button_text_size = 44 * user_interface_zoom
 
 // FIRE GRAPHICS
 int fire_color = -1

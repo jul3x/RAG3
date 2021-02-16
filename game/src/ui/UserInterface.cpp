@@ -63,8 +63,12 @@ void UserInterface::initialize(graphics::Graphics& graphics)
     full_hud_ = std::make_unique<FullHud>(gui_.get(), &theme_,
                                           sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                                                        static_cast<float>(CONF<int>("graphics/window_height_px"))});
+    menu_ = std::make_unique<Menu>(gui_.get(), &theme_);
+
     tgui::ToolTip::setInitialDelay({});
     tgui::ToolTip::setDistanceToMouse({-tgui::ToolTip::getDistanceToMouse().x, tgui::ToolTip::getDistanceToMouse().y});
+
+    menu_->doShow(true);
 }
 
 void UserInterface::registerPlayer(Player* player)
@@ -237,7 +241,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
                             full_hud_->show(false);
                             windows_.clear();
                         }
-                        else
+                        else if (Game::get().getGameState() != Game::GameState::Menu)
                         {
                             Game::get().setGameState(Game::GameState::Paused);
                             full_hud_->show(true);
@@ -263,7 +267,8 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
             {
                 if (event.key.code == sf::Keyboard::R)
                 {
-                    Game::get().setGameState(Game::GameState::Normal);
+                    if (Game::get().getGameState() == Game::GameState::Reverse)
+                        Game::get().setGameState(Game::GameState::Normal);
                 }
                 break;
             }
@@ -277,34 +282,44 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
 
 void UserInterface::draw(graphics::Graphics& graphics)
 {
-    graphics.setCurrentView();
-    graphics.getWindow().draw(object_use_text_);
-    graphics.getWindow().draw(npc_talk_text_);
-
-    for (auto& thought : thoughts_)
+    if (Game::get().getGameState() != Game::GameState::Menu)
     {
-        graphics.draw(thought);
-    }
+        graphics.setCurrentView();
+        graphics.getWindow().draw(object_use_text_);
+        graphics.getWindow().draw(npc_talk_text_);
 
-    for (auto& bonus_text : bonus_texts_)
-    {
-        graphics.draw(bonus_text);
+        for (auto& thought : thoughts_)
+        {
+            graphics.draw(thought);
+        }
+
+        for (auto& bonus_text : bonus_texts_)
+        {
+            graphics.draw(bonus_text);
+        }
     }
 
     graphics.setStaticView();
 
-    graphics.draw(blood_splash_);
+    if (Game::get().getGameState() != Game::GameState::Menu)
+    {
+        graphics.draw(blood_splash_);
 
-    //graphics.draw(fps_text_);
-    graphics.draw(left_hud_);
-    graphics.draw(right_hud_);
-    graphics.draw(health_bar_);
-    graphics.draw(time_bar_);
-    graphics.draw(weapons_bar_);
-    graphics.draw(*full_hud_);
-    graphics.draw(stats_hud_);
-    graphics.draw(small_backpack_hud_);
-    graphics.draw(level_hud_);
+        //graphics.draw(fps_text_);
+        graphics.draw(left_hud_);
+        graphics.draw(right_hud_);
+        graphics.draw(health_bar_);
+        graphics.draw(time_bar_);
+        graphics.draw(weapons_bar_);
+        graphics.draw(*full_hud_);
+        graphics.draw(stats_hud_);
+        graphics.draw(small_backpack_hud_);
+        graphics.draw(level_hud_);
+    }
+    else
+    {
+        graphics.draw(*menu_);
+    }
 
     for (auto& achievement : achievements_)
     {
@@ -419,6 +434,7 @@ inline void UserInterface::updatePlayerStates(float time_elapsed)
     small_backpack_hud_.update(time_elapsed);
     level_hud_.update(stats.getLevel(), stats.getExp(), time_elapsed);
     full_hud_->update(time_elapsed);
+    menu_->update(time_elapsed);
 }
 
 void UserInterface::spawnThought(Character* user, const std::string& text)
@@ -455,4 +471,19 @@ void UserInterface::spawnNoteWindow(const std::string& text)
                                        CONF<int>("graphics/window_height_px")) / 2.0f,
                           CONF<sf::Vector2f>("graphics/popup_size")));
     Game::get().setGameState(Game::GameState::Paused);
+}
+
+void UserInterface::startGame()
+{
+    menu_->doShow(false);
+    Game::get().setGameState(Game::GameState::Normal);
+    small_backpack_hud_.doShow(false);
+}
+
+void UserInterface::openMenu()
+{
+    menu_->doShow(true);
+    Game::get().setGameState(Game::GameState::Menu);
+    full_hud_->show(false);
+    small_backpack_hud_.doShow(true);
 }

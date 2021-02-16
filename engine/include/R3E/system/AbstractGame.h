@@ -16,6 +16,7 @@ namespace r3e {
         virtual void initialize() = 0;
         virtual void update(float time_elapsed) = 0;
         virtual void draw(graphics::Graphics& graphics) = 0;
+        virtual void close() = 0;
 
         virtual void alertCollision(HoveringObject* h_obj, StaticObject* s_obj) = 0;
         virtual void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) = 0;

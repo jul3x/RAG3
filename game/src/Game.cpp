@@ -14,7 +14,7 @@
 
 
 
-Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal), rag3_time_elapsed_(-10.0f), time_elapsed_(0.0f)
+Game::Game() : current_time_factor_(1.0f), state_(GameState::Menu), rag3_time_elapsed_(-10.0f), time_elapsed_(0.0f)
 {
     engine_ = std::make_unique<Engine>();
     engine_->registerGame(this);
@@ -22,6 +22,15 @@ Game::Game() : current_time_factor_(1.0f), state_(GameState::Normal), rag3_time_
 
 void Game::initialize()
 {
+    engine_->initializeGraphics(
+            sf::Vector2i{CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_height_px")},
+            "Codename: Rag3",
+            CONF<bool>("graphics/full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
+            sf::Color(CONF<int>("graphics/background_color")));
+    engine_->setFPSLimit(60);
+
+    engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
+
     spawning_func_["bullet"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnBullet(user, name, pos, dir); };
     spawning_func_["fire"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnFire(user, name, pos, dir); };
     spawning_func_["Null"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnNull(user, name, pos, dir); };
@@ -42,22 +51,12 @@ void Game::initialize()
                                                           CONF<int>("characters/max_path_search_depth"));
 
     music_manager_ = std::make_unique<audio::MusicManager>();
-    music_manager_->addDirectoryToQueue(CONF<std::string>("paths/music_dir"));
-
+    music_manager_->addToQueue(CONF<std::string>("paths/music_dir") + "/menu.ogg");
     music_manager_->setVolume(CONF<float>("sound/music_volume"));
     music_manager_->play();
 
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());
-
-    engine_->initializeGraphics(
-            sf::Vector2i{CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_height_px")},
-            "Codename: Rag3",
-            CONF<bool>("graphics/full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
-            sf::Color(CONF<int>("graphics/background_color")));
-    engine_->setFPSLimit(60);
-
-    engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
 
     engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
@@ -130,8 +129,15 @@ void Game::initialize()
 
 void Game::update(float time_elapsed)
 {
+    if (CONF<bool>("sound/sound_on"))
+    {
+        Engine::changeSoundListenerPosition(player_->getPosition());
+        music_manager_->update(time_elapsed);
+    }
+
     switch (state_)
     {
+        case GameState::Menu:
         case GameState::Paused:
         {
             break;
@@ -157,12 +163,6 @@ void Game::update(float time_elapsed)
                 rag3_time_elapsed_ -= time_elapsed;
             else if (rag3_time_elapsed_ > -1.0f)
                 setRag3Time(-10.0f);
-
-            if (CONF<bool>("sound/sound_on"))
-            {
-                Engine::changeSoundListenerPosition(player_->getPosition());
-                music_manager_->update(time_elapsed);
-            }
 
             time_elapsed_ += time_elapsed;
             break;
@@ -235,7 +235,7 @@ void Game::updateMapObjects(float time_elapsed)
         {
             journal_->event<DestroyObstacle>(it->get());
 
-            this->spawnExplosionEvent((*it)->getPosition(), 250.0f);
+            this->spawnExplosionEvent((*it)->getPosition());
 
             auto next_it = std::next(it);
             engine_->deleteStaticObject(it->get());
@@ -348,7 +348,7 @@ void Game::killNPC(NPC* npc)
     // draw on this place destruction
     spawnDecoration(npc->getPosition(), "blood");
 
-    this->spawnExplosionEvent(npc->getPosition(), 250.0f);
+    this->spawnExplosionEvent(npc->getPosition());
 
     engine_->deleteDynamicObject(npc);
     auto talkable_area = npc->getTalkableArea();
@@ -375,77 +375,80 @@ void Game::killNPC(NPC* npc)
 
 void Game::draw(graphics::Graphics& graphics)
 {
-    static sf::RenderStates states;
-
-    sf::Shader* curr_shader = &RM.getShader(j3x::get<std::string>(map_->getParams(), "shader"));
-
-    if (rag3_time_elapsed_ > 0.0f)
+    if (state_ != GameState::Menu)
     {
-        curr_shader = &RM.getShader("rag3.frag");
-        curr_shader->setUniform("time", rag3_time_elapsed_);
-        curr_shader->setUniform("rag3_time", CONF<float>("rag3_time"));
-    }
-    else
-    {
-        curr_shader->setUniform("time", this->time_elapsed_);
-    }
+        static sf::RenderStates states;
 
-    states.shader = curr_shader;
+        sf::Shader* curr_shader = &RM.getShader(j3x::get<std::string>(map_->getParams(), "shader"));
 
-    auto draw = [&graphics](auto& list) {
-        for (auto& obj : list)
-            graphics.drawSorted(*obj);
-    };
-
-    auto draw_light = [&graphics, this](auto& list) {
-        for (const auto& obj : list)
+        if (rag3_time_elapsed_ > 0.0f)
         {
-            auto light = obj->getLightPoint();
-            if (light != nullptr)
-                this->lightning_->add(*light);
+            curr_shader = &RM.getShader("rag3.frag");
+            curr_shader->setUniform("time", rag3_time_elapsed_);
+            curr_shader->setUniform("rag3_time", CONF<float>("rag3_time"));
         }
-    };
+        else
+        {
+            curr_shader->setUniform("time", this->time_elapsed_);
+        }
+
+        states.shader = curr_shader;
+
+        auto draw = [&graphics](auto& list) {
+            for (auto& obj : list)
+                graphics.drawSorted(*obj);
+        };
+
+        auto draw_light = [&graphics, this](auto& list) {
+            for (const auto& obj : list)
+            {
+                auto light = obj->getLightPoint();
+                if (light != nullptr)
+                    this->lightning_->add(*light);
+            }
+        };
 
 //    debug_map_blockage_->draw(graphics);
-    draw(map_->getList<DecorationTile>());
-    draw(map_->getList<Decoration>());
-    draw(map_->getList<Obstacle>());
-    draw(map_->getList<ObstacleTile>());
-    draw(map_->getList<NPC>());
-    draw(map_->getList<PlacedWeapon>());
-    draw(destruction_systems_);
-    draw(bullets_);
-    draw(fire_);
+        draw(map_->getList<DecorationTile>());
+        draw(map_->getList<Decoration>());
+        draw(map_->getList<Obstacle>());
+        draw(map_->getList<ObstacleTile>());
+        draw(map_->getList<NPC>());
+        draw(map_->getList<PlacedWeapon>());
+        draw(destruction_systems_);
+        draw(bullets_);
+        draw(fire_);
 
-    for (auto& special : map_->getList<Special>())
-        if (special->isDrawable())
-            graphics.drawSorted(*special);
+        for (auto& special : map_->getList<Special>())
+            if (special->isDrawable())
+                graphics.drawSorted(*special);
 
-    if (player_->isAlive())
-        graphics.drawSorted(*player_);
+        if (player_->isAlive())
+            graphics.drawSorted(*player_);
 
-    if (player_clone_ != nullptr)
-        graphics.drawSorted(*player_clone_);
+        if (player_clone_ != nullptr)
+            graphics.drawSorted(*player_clone_);
 
-    engine_->drawSortedAnimationEvents();
+        engine_->drawSortedAnimationEvents();
 
-    graphics.drawAlreadySorted(states.shader);
+        graphics.drawAlreadySorted(states.shader);
 
-    lightning_->clear();
+        lightning_->clear();
 
-    draw_light(map_->getList<NPC>());
-    draw_light(map_->getList<Obstacle>());
-    draw_light(map_->getList<Decoration>());
-    draw_light(map_->getList<Special>());
-    draw_light(fire_);
-    draw_light(engine_->getAnimationEvents());
+        draw_light(map_->getList<NPC>());
+        draw_light(map_->getList<Obstacle>());
+        draw_light(map_->getList<Decoration>());
+        draw_light(map_->getList<Special>());
+        draw_light(fire_);
+        draw_light(engine_->getAnimationEvents());
 
-    lightning_->add(*player_->getLightPoint());
-    if (player_clone_ != nullptr)
-        lightning_->add(*player_clone_->getLightPoint());
+        lightning_->add(*player_->getLightPoint());
+        if (player_clone_ != nullptr)
+            lightning_->add(*player_clone_->getLightPoint());
 
-    graphics.setStaticView();
-    graphics.draw(*lightning_);
+        graphics.setStaticView();
+        graphics.draw(*lightning_);
+    }
 }
 
 void Game::start()
@@ -503,10 +506,10 @@ void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const floa
     journal_->event<SpawnDestructionSystem>(ptr);
 }
 
-void Game::spawnExplosionEvent(const sf::Vector2f& pos, const float r)
+void Game::spawnExplosionEvent(const sf::Vector2f& pos)
 {
     auto number = std::to_string(utils::num::getRandom(1, 1));
-    spawnEvent("explosion_" + number, pos, 0.0f, r);
+    spawnEvent("explosion_" + number, pos, 0.0f, RMGET<sf::Vector2f>("animations", "explosion_" + number, "size").x);
 
     if (CONF<bool>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
@@ -1041,11 +1044,20 @@ void Game::setGameState(Game::GameState state)
 
                 journal_->clear();
             }
+            else if (state_ == GameState::Menu)
+            {
+                music_manager_->clearQueue();
+                music_manager_->addDirectoryToQueue(CONF<std::string>("paths/music_dir"));
+
+                camera_->setZoomTo(1.0f);
+                camera_->setCenter({player_->getPosition().x, player_->getPosition().y, 0.0f});
+            }
 
             if (rag3_time_elapsed_ < 0.0f)
                 camera_->setNormal();
 
             engine_->turnOnCollisions();
+            music_manager_->play();
             break;
         case GameState::Reverse:
             if (this->isJournalFreezed())
@@ -1057,7 +1069,13 @@ void Game::setGameState(Game::GameState state)
             engine_->turnOffCollisions();
             journal_->event<TimeReversal, void*>();
             break;
+        case GameState::Menu:
+            music_manager_->clearQueue();
+            music_manager_->addToQueue(CONF<std::string>("paths/music_dir") + "/menu.ogg");
+            music_manager_->play();
+            break;
         case GameState::Paused:
+            music_manager_->pause();
             break;
     }
 
@@ -1085,7 +1103,7 @@ void Game::updatePlayerClone(float time_elapsed)
             // draw on this place destruction
             spawnDecoration(player_clone_->getPosition(), "blood");
 
-            this->spawnExplosionEvent(player_clone_->getPosition(), 250.0f);
+            this->spawnExplosionEvent(player_clone_->getPosition());
             this->cleanPlayerClone();
 
             player_->setHealth(0); // player clone is dead - so do player
@@ -1120,7 +1138,7 @@ void Game::updatePlayer(float time_elapsed)
     if (player_->isAlive() && !player_->update(time_elapsed))
     {
         spawnDecoration(player_->getPosition(), "blood");
-        spawnExplosionEvent(player_->getPosition(), 25.0f);
+        spawnExplosionEvent(player_->getPosition());
         player_->setDead();
         engine_->deleteDynamicObject(player_.get());
         music_manager_->stop();
@@ -1352,5 +1370,10 @@ DestructionSystem* Game::spawnNewDestructionSystem(const sf::Vector2f& pos, floa
 {
     destruction_systems_.emplace_back(std::make_unique<DestructionSystem>(pos, dir, params));
     return destruction_systems_.back().get();
+}
+
+void Game::close()
+{
+    this->engine_->getGraphics().getWindow().close();
 }
 

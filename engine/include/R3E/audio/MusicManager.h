@@ -6,6 +6,7 @@
 #define RAG3_ENGINE_INCLUDE_R3E_AUDIO_MUSICMANAGER_H
 
 #include <list>
+#include <unordered_map>
 
 #include <SFML/Audio/Music.hpp>
 
@@ -16,11 +17,13 @@ namespace r3e::audio {
     public:
         enum class Status {
             Playing,
+            Paused,
             Stopped
         };
 
         MusicManager();
 
+        void clearQueue();
         void addToQueue(sf::Music* music);
         void addToQueue(const std::string& name);
         void addDirectoryToQueue(const std::string& dir);
@@ -29,6 +32,7 @@ namespace r3e::audio {
         void setPlaybackPitch(float pitch);
 
         void play();
+        void pause();
         void stop();
 
         void update(float time_elapsed);
@@ -37,7 +41,7 @@ namespace r3e::audio {
         std::list<sf::Music*> music_list_;
         std::list<sf::Music*>::iterator current_song_;
 
-        std::list<sf::Music> music_owned_;
+        std::unordered_map<std::string, std::unique_ptr<sf::Music>> music_owned_;
 
         Status status_;
         float current_pitch_, current_volume_;

@@ -10,17 +10,18 @@
 #include <R3E/system/Config.h>
 #include <R3E/system/AbstractUserInterface.h>
 
-#include <ui/WeaponsBar.h>
-#include <ui/HealthBar.h>
-#include <ui/TimeBar.h>
+#include <ui/menu/Menu.h>
+#include <ui/hud/WeaponsBar.h>
+#include <ui/hud/HealthBar.h>
+#include <ui/hud/TimeBar.h>
 #include <ui/Crosshair.h>
 #include <ui/BloodSplash.h>
-#include <ui/LeftHud.h>
-#include <ui/RightHud.h>
-#include <ui/StatsHud.h>
-#include <ui/SmallBackpackHud.h>
-#include <ui/LevelHud.h>
-#include <ui/FullHud.h>
+#include <ui/hud/LeftHud.h>
+#include <ui/hud/RightHud.h>
+#include <ui/hud/StatsHud.h>
+#include <ui/hud/SmallBackpackHud.h>
+#include <ui/hud/LevelHud.h>
+#include <ui/hud/FullHud.h>
 #include <ui/Achievement.h>
 #include <ui/AcceptWindow.h>
 #include <ui/Window.h>
@@ -54,6 +55,8 @@ public:
     void spawnAcceptWindow(const std::string& text, const std::function<void()>& func);
     void spawnNoteWindow(const std::string& text);
     void closeWindow(Window* window);
+    void startGame();
+    void openMenu();
 
     void draw(graphics::Graphics& graphics) override;
 
@@ -79,6 +82,7 @@ private:
     std::unique_ptr<tgui::Gui> gui_;
     tgui::Theme theme_;
 
+    // NORMAL HUD - maybe should be refactored
     WeaponsBar weapons_bar_;
     Crosshair crosshair_;
     BloodSplash blood_splash_;
@@ -90,19 +94,21 @@ private:
     SmallBackpackHud small_backpack_hud_;
     LevelHud level_hud_;
 
+    // MENUS
     std::unique_ptr<FullHud> full_hud_;
+    std::unique_ptr<Menu> menu_;
 
+    // MISC
     std::list<Achievement> achievements_;
     std::list<Thought> thoughts_;
     std::list<BonusText> bonus_texts_;
     std::list<std::shared_ptr<Window>> windows_;
-
     sf::Text fps_text_;
     sf::Text object_use_text_;
     sf::Text npc_talk_text_;
-
     Player* player_;
     Camera* camera_;
+
 };
 
 

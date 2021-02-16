@@ -41,6 +41,7 @@ public:
 
     enum class GameState
     {
+        Menu,
         Paused,
         Normal,
         Reverse
@@ -61,6 +62,7 @@ public:
     void initialize() override;
     void update(float time_elapsed) override;
     void draw(graphics::Graphics& graphics) override;
+    void close() override;
 
     void alertCollision(HoveringObject* h_obj, StaticObject* s_obj) override;
     void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) override;
@@ -85,7 +87,7 @@ public:
     void spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);
     void spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir);
     void spawnBloodEvent(const sf::Vector2f& pos, float dir);
-    void spawnExplosionEvent(const sf::Vector2f& pos, float r);
+    void spawnExplosionEvent(const sf::Vector2f& pos);
     void spawnTeleportationEvent(const sf::Vector2f& pos);
     void spawnEvent(const std::string& name, const sf::Vector2f& pos, float dir = 0.0f, float r = 0.0f);
     void spawnSwirlEvent(const std::string& name, const sf::Vector2f& pos, bool flipped);

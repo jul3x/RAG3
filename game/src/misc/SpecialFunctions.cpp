@@ -269,14 +269,14 @@ void SpecialFunctions::spawnExplosionEvent(Functional* obj, const j3x::Obj& data
 {
     LOG.info("[SpecialFunction] Spawning explosion event.");
     auto obs = dynamic_cast<AbstractPhysicalObject*>(obj);
-    Game::get().spawnExplosionEvent(obs->getPosition(), j3x::getObj<float>(data));
+    Game::get().spawnExplosionEvent(obs->getPosition());
 }
 
 void SpecialFunctions::spawnExplosionEventByPos(Functional* obj, const j3x::Obj& data, Character* user)
 {
     LOG.info("[SpecialFunction] Spawning explosion event by position.");
     auto pos = j3x::getObj<sf::Vector2f>(data);
-    Game::get().spawnExplosionEvent(pos, 250.0f);
+    Game::get().spawnExplosionEvent(pos);
 }
 
 void SpecialFunctions::spawnLava(Functional* obj, const j3x::Obj& data, Character* user)
@@ -313,7 +313,7 @@ void SpecialFunctions::spawnFlame(Functional* obj, const j3x::Obj& data, Charact
     LOG.info("[SpecialFunction] Spawning flame.");
     auto pos = j3x::getObj<sf::Vector2f>(data);
     Game::get().spawnSpecial(pos, "flame");
-    Game::get().spawnExplosionEvent(pos, 250.0f);
+    Game::get().spawnExplosionEvent(pos);
 }
 
 void SpecialFunctions::kill(Functional* obj, const j3x::Obj& data, Character* user)

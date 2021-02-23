@@ -34,6 +34,12 @@ public:
         return j3x::get<T>(this->getObjectParams(category, id), param, ignore_warn);
     }
 
+    template<class T>
+    bool hasParam(const std::string& category, const std::string& id, const std::string& param)
+    {
+        return j3x::has<T>(this->getObjectParams(category, id), param);
+    }
+
     static std::tuple<Map::Data, Map::TileMap>& getMap(const std::string& key);
     static std::string getConfigContent(const std::string& category, const std::string& id);
 
@@ -50,5 +56,6 @@ private:
 
 #define RM ResourceManager::getInstance()
 #define RMGET RM.getParam
+#define RMHAS RM.hasParam
 
 #endif //RAG3_COMMON_INCLUDE_COMMON_RESOURCEMANAGER_H

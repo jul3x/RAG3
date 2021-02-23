@@ -62,9 +62,7 @@ namespace r3e {
             if (status_ == Status::Paused)
             {
                 if (music_list_.empty()) return;
-
-                if (current_song_ == music_list_.begin()) current_song_ = music_list_.end();
-                --current_song_;
+                (*current_song_)->play();
             }
             status_ = Status::Playing;
         }
@@ -75,7 +73,7 @@ namespace r3e {
 
             if (status_ == Status::Playing)
             {
-                if ((*current_song_)->getStatus() != sf::Music::Status::Playing)
+                if ((*current_song_)->getStatus() != sf::Music::Status::Playing and (*current_song_)->getStatus() != sf::Music::Status::Paused)
                 {
                     (*current_song_)->stop();
                     ++current_song_;

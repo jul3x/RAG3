@@ -374,3 +374,8 @@ void Editor::setRandomizing(int n)
 {
     randomizing_value_ = n;
 }
+
+void Editor::close()
+{
+    this->engine_->getGraphics().getWindow().close();
+}

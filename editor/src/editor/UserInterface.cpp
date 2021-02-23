@@ -444,7 +444,9 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
     {
         crosshair_.setColor(255, 255, 255, 120);
 
-        crosshair_.changeTexture(&RM.getTexture(current_item.first + "/" + current_item.second), true);
+        auto crosshair_texture_name = !RMHAS<bool>(current_item.first, current_item.second, "is_drawable") || RMGET<bool>(current_item.first, current_item.second, "is_drawable", false) ?
+                         current_item.first + "/" + current_item.second : "specials/special_event";
+        crosshair_.changeTexture(&RM.getTexture(crosshair_texture_name), true);
 
         if (is_tile)
         {

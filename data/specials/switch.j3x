@@ -1,0 +1,19 @@
+vector size=(8.0,10.0)
+vector map_offset=(0.0,0.0)
+vector collision_offset=(0.0,8.0)
+float collision_radius=24.0
+
+int frames_number=1
+float frame_duration=0.0
+
+string default_activation="OnUse"
+list default_functions=["TurnLight"]
+list default_datas=["Null"]
+
+bool is_drawable=true
+
+int z_index=1
+
+string light_point=""
+bool default_active=true
+bool shadow=false

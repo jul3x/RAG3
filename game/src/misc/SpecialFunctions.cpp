@@ -17,6 +17,8 @@ SpecialFunctions::SpecialFunctions()
 {
     functions_["MapStart"] = std::make_tuple(&mapStart, "[F] Start new map", false);
     functions_["MapEnd"]= std::make_tuple(&mapEnd, "[F] End this map", false);
+    functions_["TurnLight"] = std::make_tuple(&turnLight, "[F] Press", true);
+    functions_["PourWater"] = std::make_tuple(&pourWater, "[F] Pour water on yourself", true);
     functions_["OpenDoor"] = std::make_tuple(&openDoor, "", true);
     functions_["ReadNote"] = std::make_tuple(&readNote, "[F] Read note", true);
     functions_["AddWeapon"] = std::make_tuple(&addWeapon, "[F} Pick weapon", false);
@@ -150,6 +152,34 @@ void SpecialFunctions::changeOpenState(Functional* obj, const j3x::Obj& data, Ch
     {
         Game::get().spawnEvent("dust", special_obj->getPosition() + sf::Vector2f{0.0f, 10.0f});
         Game::get().getJournal().event<ChangeOpenState>(special_obj);
+    }
+}
+
+void SpecialFunctions::pourWater(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Pouring water.");
+
+    Game::get().spawnThought(user, "Feels good man...");
+    user->setGlobalState(Character::GlobalState::Normal);
+}
+
+void SpecialFunctions::turnLight(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Turn light.");
+
+    auto light_obj = Game::get().getMap().getObjectById<Decoration>(j3x::getObj<int>(data));
+
+    if (light_obj->getLightPoint() != nullptr)
+    {
+        light_obj->lightOff();
+    }
+    else
+    {
+        light_obj->makeLightPoint(light_obj->getPosition(),
+                                  RMGET<float>("decorations", light_obj->getId(), "light_point_radius", true) * CONF<float>("graphics/global_zoom"),
+                                  &RM.getTexture("lightpoint"), RMGET<std::string>("decorations", light_obj->getId(), "light_point"),
+                                  RMGET<float>("decorations", light_obj->getId(), "light_point_data", true));
+        Game::get().registerLight(light_obj);
     }
 }
 

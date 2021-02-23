@@ -67,6 +67,13 @@ namespace r3e::j3x {
     }
 
     template <class T>
+    bool has(const Parameters& params, const std::string& key)
+    {
+        auto it = params.find(key);
+        return (it != params.end());
+    }
+
+    template <class T>
     const T& get(const Parameters& params, const std::string& key, bool ignore_warn = false)
     {
         static T ERR = {};

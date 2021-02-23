@@ -63,7 +63,7 @@ void Game::initialize()
 
     this->initDestructionParams();
 
-    map_->loadMap("first_new_map");
+    map_->loadMap("map_new");
     engine_->getGraphics().setBgColor(sf::Color(j3x::get<int>(map_->getParams(), "background_color")));
     lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                                                                     static_cast<float>(CONF<int>("graphics/window_height_px"))},
@@ -1047,7 +1047,7 @@ void Game::setGameState(Game::GameState state)
             else if (state_ == GameState::Menu)
             {
                 music_manager_->clearQueue();
-                music_manager_->addDirectoryToQueue(CONF<std::string>("paths/music_dir"));
+                music_manager_->addDirectoryToQueue(CONF<std::string>("paths/music_dir") + "/1/");
 
                 camera_->setZoomTo(1.0f);
                 camera_->setCenter({player_->getPosition().x, player_->getPosition().y, 0.0f});

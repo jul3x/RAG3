@@ -1,8 +1,8 @@
 // GRAPHICS SETTINGS
 bool auto_resolution = true
-bool full_screen = false
-int window_width_px = 3000
-int window_height_px = 1500
+bool full_screen = true
+int window_width_px = 1920
+int window_height_px = 1080
 float global_zoom = 4.0
 float user_interface_zoom = global_zoom / 2.0
 

@@ -1,6 +1,6 @@
-vector size=(32.0,8.0)
+vector size=(32.0,16.0)
 
-vector map_offset=(0.0,-4.0)
+vector map_offset=(0.0,0.0)
 
 int frames_number=1
 float frame_duration=0.0

@@ -22,8 +22,7 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
                  const j3x::List& datas, bool is_active, int u_id) :
         HoveringObject(position, {},
                        RMGET<sf::Vector2f>("specials", id, "size"),
-                       collision::Circle(RMGET<float>("specials", id, "collision_radius"),
-                                         RMGET<sf::Vector2f>("specials", id, "collision_offset")),
+                       collision::None(),
                        &RM.getTexture("specials/" + (RMGET<bool>("specials", id, "is_drawable") ? id : "special_event")),
                        RMGET<int>("specials", id, "z_index"),
                        RMGET<int>("specials", id, "frames_number"),
@@ -34,6 +33,11 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
         additional_boolean_data_(false)
 {
     this->changeOrigin(RMGET<sf::Vector2f>("specials", id, "size") / 2.0f + RMGET<sf::Vector2f>("specials", id, "map_offset"));
+    if (RMHAS<float>("specials", id, "collision_radius"))
+        this->changeCollisionArea(collision::Circle(RMGET<float>("specials", id, "collision_radius"), RMGET<sf::Vector2f>("specials", id, "collision_offset")));
+    else
+        this->changeCollisionArea(collision::Box(RMGET<float>("specials", id, "collision_size_x"), RMGET<float>("specials", id, "collision_size_y"), RMGET<sf::Vector2f>("specials", id, "collision_offset")));
+
 
     if (is_active)
         this->activate();

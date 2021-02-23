@@ -2,7 +2,7 @@ string default_activation="OnUse"
 list default_functions=["ReadNote"]
 list default_datas=["Example text"]
 
-vector size=(20.0,21.0)
+vector size=(37.0,21.0)
 vector collision_offset=(0.0,0.0)
 vector map_offset=(0.0,0.0)
 float collision_radius=32.0
@@ -12,7 +12,7 @@ float frame_duration=0.0
 
 bool is_drawable=true
 
-int z_index=0
+int z_index=1
 
 string light_point=""
 bool shadow=false

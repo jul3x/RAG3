@@ -1,7 +1,8 @@
-vector size=(32.0,8.0)
-vector collision_offset=(0.0,10.0)
-vector map_offset=(0.0,-4)
-float collision_radius=5.0
+vector size=(32.0,16.0)
+vector collision_offset=(0.0,-24.0)
+vector map_offset=(0.0,-8.0)
+float collision_size_x=20.0
+float collision_size_y=5.0
 
 int frames_number=4
 float frame_duration=0.2

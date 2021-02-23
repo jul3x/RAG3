@@ -27,6 +27,7 @@ SpecialFunctions::SpecialFunctions()
     functions_["AddSpeed"] = std::make_tuple(&addSpeed, "[F] Pick to inject", false);
     functions_["TakeRag3"] = std::make_tuple(&takeRag3, "[F] Pick to take", false);
     functions_["PickCrystal"] = std::make_tuple(&pickCrystal, "[F] Pick crystal", false);
+    functions_["PayRespect"] = std::make_tuple(&payRespect, "[F] Pay respect", false);
     functions_["SpawnThought"] = std::make_tuple(&spawnThought, "", true);
     functions_["SpawnPlayerThought"] = std::make_tuple(&spawnPlayerThought, "", true);
     functions_["ChangeOpenState"] = std::make_tuple(&changeOpenState, "[F] Pull the trigger", true);
@@ -348,10 +349,9 @@ void SpecialFunctions::spawnFlame(Functional* obj, const j3x::Obj& data, Charact
 
 void SpecialFunctions::kill(Functional* obj, const j3x::Obj& data, Character* user)
 {
-    LOG.info("[SpecialFunction] Killing.");
-    user->setHealth(0);
-
-    // Game::get().spawnAnimationEvent(data);
+     LOG.info("[SpecialFunction] Killing.");
+     user->setHealth(0);
+//     Game::get().spawnAnimationEvent(data);
 }
 
 void SpecialFunctions::nullFunc(Functional *obj, const j3x::Obj &data, Character* user)
@@ -370,6 +370,7 @@ void SpecialFunctions::destroy(Functional *obj, const j3x::Obj &data, Character*
 {
     LOG.info("[SpecialFunction] Destroying " + std::to_string(obj->getUniqueId()) + ".");
     Game::get().spawnEvent("dust", dynamic_cast<AbstractPhysicalObject*>(obj)->getPosition());
+    user->setCurrentSpecialObject(nullptr);
     obj->destroy();
 }
 
@@ -419,4 +420,9 @@ void SpecialFunctions::takeRag3(Functional* obj, const j3x::Obj& data, Character
     Game::get().setRag3Time(CONF<float>("rag3_time"));
     user->setSpeedFactor(CONF<float>("rag3_speed_factor"), CONF<float>("rag3_time"));
     Game::get().spawnThought(user, "RAG3!");
+}
+
+void SpecialFunctions::payRespect(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    Game::get().spawnThought(user, "Respect BRO!");
 }

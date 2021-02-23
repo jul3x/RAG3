@@ -22,6 +22,7 @@ public:
     static void mapStart(Functional* obj, const j3x::Obj& data, Character* user);
     static void mapEnd(Functional* obj, const j3x::Obj& data, Character* user);
 
+    static void payRespect(Functional* obj, const j3x::Obj& data, Character* user);
     static void turnLight(Functional* obj, const j3x::Obj& data, Character* user);
     static void pourWater(Functional* obj, const j3x::Obj& data, Character* user);
     static void openDoor(Functional* obj, const j3x::Obj& data, Character* user);

@@ -44,7 +44,7 @@ namespace r3e::collision {
 
     class Box : public Area {
     public:
-        Box(float a, float b, const sf::Vector2f& offset = {});
+        explicit Box(float a, float b, const sf::Vector2f& offset = {});
 
     };
 

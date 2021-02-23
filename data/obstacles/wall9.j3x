@@ -1,0 +1,18 @@
+vector size=(32.0,64.0)
+vector collision_size=(32.0,32.0)
+vector collision_offset=(0.0,0.0)
+vector map_offset=(0.0,16.0)
+
+int frames_number=1
+float frame_duration=1.0
+
+float endurance=1.0
+
+string default_activation="OnKill"
+list default_functions=["SpawnDestruction"]
+list default_datas=[0]
+
+int z_index=1
+
+string light_point=""
+bool shadow=false

@@ -1,0 +1,4 @@
+vector collision_size=(32.0,32.0)
+vector collision_offset=(0.0,0.0)
+
+int z_index=1

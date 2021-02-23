@@ -42,15 +42,24 @@ sf::Vector2f MeleeWeapon::use()
 {
     if (time_elapsed_ < 0.0f)
     {
-        auto added_str = "";
+        auto texture_name = "weapons/" + user_->getId() + "_" + this->getId();
         bool flipped = saved_rotation_ > 90.0f && saved_rotation_ <= 270.0f;
+        bool front = saved_rotation_ > 0.0f && saved_rotation_ <= 180.0f;
         if (flipped)
         {
-//            added_str = "_2";
             this->setFlipX(true);
         }
-        auto texture = &RM.getTexture("weapons/" + user_->getId() + "_" + this->getId() + added_str);
+
+        if (!front)
+        {
+            texture_name += "_back";
+        }
+
+        auto texture = &RM.getTexture(texture_name);
+
         this->changeTexture(texture, true);
+
+        static_shadow_->setSize(RMGET<sf::Vector2f>("weapons", this->getId(), front ? "use_size" : "use_size_back"));
         static_shadow_->changeTexture(texture, true);
 
         this->setSize(static_shadow_->getSize());
@@ -97,9 +106,10 @@ void MeleeWeapon::setPosition(const sf::Vector2f& position, const sf::Vector2f& 
     }
     else
     {
-        auto& use_offset = RMGET<sf::Vector2f>("weapons", this->getId(), "use_offset");
+        bool front = saved_rotation_ > 0.0f && saved_rotation_ <= 180.0f;
+        auto& use_offset = RMGET<sf::Vector2f>("weapons", this->getId(), front ? "use_offset" : "use_offset_back");
 
-        auto& shadow_offset = RMGET<sf::Vector2f>("weapons", this->getId(), "shadow_offset");
+        auto& shadow_offset = RMGET<sf::Vector2f>("weapons", this->getId(), front ? "shadow_offset" : "shadow_offset_back");
         AbstractDrawableObject::setPosition(position + use_offset);
         static_shadow_->setPosition(position + shadow_offset);
 

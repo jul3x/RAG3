@@ -305,9 +305,6 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Character::setRotation(float theta)
 {
-    for (auto& weapon : weapons_in_backpack_)
-        weapon->setRotation(theta);
-
     auto get_quarter = [](float theta) {
         if (theta >= 0.0f && theta < 45.0f)
             return 1;
@@ -376,7 +373,7 @@ void Character::setRotation(float theta)
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
 
             if (new_quarter == 11 && theta < 90.0f - CONF<float>("characters/rotating_hysteresis"))
-                current_rotation_quarter_ = 1;
+                current_rotation_quarter_ = 11;
             else if (new_quarter != 11)
                 current_rotation_quarter_ = new_quarter;
             break;
@@ -432,6 +429,11 @@ void Character::setRotation(float theta)
     if (!weapon_id.empty())
         weapons_in_backpack_.at(current_weapon_)->changeTexture(
                 &RM.getTexture("weapons/" + weapon_id + weapon_added_name));
+
+    for (auto& weapon : weapons_in_backpack_)
+        weapon->setRotation(theta);
+
+    weapons_in_backpack_.at(current_weapon_)->setPosition(this->getPosition(), gun_offset_);
 }
 
 void Character::setPosition(const sf::Vector2f& pos)

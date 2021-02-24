@@ -1,16 +1,17 @@
 float max_speed=64.0
-float standby_speed=32.0
+float standby_speed=48.0
 
 float max_health=4
+float min_attack_distance=40.0
 
-vector size=(25.0,60.0)
-vector collision_size=(20.0,40.0)
+vector size=(52.0,60.0)
+vector collision_size=(25.0,35.0)
 vector collision_offset=(0.0,0.0)
 vector map_offset=(0.0,8.0)
 
-list gun_offset=[(9.0,-8.0);(9.0,-9.0);(9.0,-8.0);(9.0,-9.0)]
+list gun_offset=[(0.0,0.0);(0.0,0.0);(0.0,0.0);(0.0,0.0)]
 int frames_number=4
-float frame_duration=0.07
+float frame_duration=0.16
 
 string default_activation="OnKill"
 list default_functions=["Null"]

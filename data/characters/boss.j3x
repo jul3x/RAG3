@@ -1,5 +1,5 @@
 float max_speed=128.0
-float standby_speed=32.0
+float standby_speed=64.0
 
 float max_health=100
 float min_attack_distance=100.0

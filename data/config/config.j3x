@@ -43,7 +43,6 @@ float explosion_force_duration = 0.2
 
 // MELEE
 float melee_weapon_range = 20.0
-float melee_weapon_offset_x = 20.0
 
 // FORCES
 float shot_force_duration = 0.1

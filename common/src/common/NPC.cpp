@@ -459,7 +459,7 @@ void NPC::handleActionMeleeState()
         case VisibilityState::Close:
         {
             if (utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition()) <
-                    CONF<float>("characters/min_melee_distance_ai"))
+                    RMGET<float>("characters", this->getId(), "min_attack_distance"))
                 action_state_ = ActionState::Shot;
             else
                 action_state_ = ActionState::Follow;

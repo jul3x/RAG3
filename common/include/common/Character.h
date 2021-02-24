@@ -79,6 +79,7 @@ public:
     const j3x::List& getTalkScenario() const;
     graphics::StaticShadow* getShadow() const;
     float getRotateTo() const;
+    const sf::Vector2f& getGunOffset() const;
 
     // Setters
     void setMaxHealth(float health);

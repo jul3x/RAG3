@@ -1,6 +1,6 @@
 vector size=(202.0,100.0)
 
-vector map_offset=(0.0,0.0)
+vector map_offset=(-20.0,0.0)
 
 int frames_number=6
 float frame_duration=0.42

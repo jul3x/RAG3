@@ -1,0 +1,32 @@
+float recoil=4800.0
+
+float deadly_factor=6.0
+
+string spawn_func="Null"
+float use_time=0.4
+float spawn_timeout=1.0
+
+vector size=(1.0,1.0)
+vector offset=(0.0,0.0)
+vector map_offset=(0.0,0.0)
+
+int frames_number=4
+float frame_duration=0.1
+vector use_size=(110.0,104.0)
+vector use_size_back=(110.0,104.0)
+
+vector use_offset=(-36.0,-74.0)
+vector use_offset_back=(-40.0,-75.0)
+vector shadow_offset=(19.0,-25.0)
+vector shadow_offset_back=(15.0,-24.0)
+
+vector use_offset_flipped=(-75.0,-75.0)
+vector use_offset_back_flipped=(-65.0,-75.0)
+vector shadow_offset_flipped=(-22.0,-25.0)
+vector shadow_offset_back_flipped=(-11.0,-24.0)
+
+vector area_offset=(-5.0, -10.0)
+float range=40.0
+float activate_time_elapsed=0.22
+
+int z_index=1

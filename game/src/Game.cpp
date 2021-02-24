@@ -747,7 +747,9 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
                 factor = 1.0f;
             }
 
-            spawnBloodEvent(character->getPosition(), character->getRotation());
+            float angle = utils::geo::wrapAngle0_360(std::get<1>(utils::geo::cartesianToPolar(
+                    melee_weapon_area->getFather()->getUser()->getPosition() - character->getPosition())) * 180.0 / M_PI);
+            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, angle > 0 && angle <= 180 ? 5.0 : -5.0), angle);
             melee_weapon_area->setActive(false);
             character->getCut(*melee_weapon_area->getFather(), factor);
         }

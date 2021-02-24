@@ -18,6 +18,7 @@ public:
     MeleeWeapon* getFather() const;
 
     void setActive(bool active);
+    bool isActive() const;
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

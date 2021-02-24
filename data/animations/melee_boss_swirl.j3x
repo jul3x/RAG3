@@ -1,0 +1,13 @@
+vector size=(110.0,104.0)
+
+vector map_offset=(-10.0,20.0)
+
+int frames_number=3
+float frame_duration=0.42
+
+int z_index=1
+
+bool animation_type_quadratic=false
+bool scale=false
+
+string light_point=""

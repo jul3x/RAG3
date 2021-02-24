@@ -345,6 +345,8 @@ void Character::setRotation(float theta)
             weapon_added_name = "_back";
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
+            this->setFlipX(false);
+            static_shadow_->setFlipX(false);
 
             if (new_quarter == 11 && theta >= 45.0f + CONF<float>("characters/rotating_hysteresis"))
                 current_rotation_quarter_ = 11;
@@ -357,6 +359,8 @@ void Character::setRotation(float theta)
             weapon_added_name = "_back";
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
+            this->setFlipX(false);
+            static_shadow_->setFlipX(false);
 
             if (new_quarter == 3 && theta >= 90.0f + CONF<float>("characters/rotating_hysteresis"))
                 current_rotation_quarter_ = 3;
@@ -366,7 +370,8 @@ void Character::setRotation(float theta)
         }
         case 2:
         {
-            added_name += "_2";
+            this->setFlipX(true);
+            static_shadow_->setFlipX(true);
             weapon_added_name = "_back";
             gun_offset_.x = -gun_offset_.x;
 
@@ -380,7 +385,8 @@ void Character::setRotation(float theta)
         }
         case 21:
         {
-            added_name += "_2";
+            this->setFlipX(true);
+            static_shadow_->setFlipX(true);
             weapon_added_name = "_back";
             gun_offset_.x = -gun_offset_.x;
 
@@ -394,8 +400,9 @@ void Character::setRotation(float theta)
         }
         case 3:
         {
-            added_name += "_3";
-
+            added_name += "_4";
+            this->setFlipX(true);
+            static_shadow_->setFlipX(true);
             gun_offset_.x = -gun_offset_.x;
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
@@ -409,7 +416,8 @@ void Character::setRotation(float theta)
         case 4:
         {
             added_name += "_4";
-
+            this->setFlipX(false);
+            static_shadow_->setFlipX(false);
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
 
             if (new_quarter == 3 && theta < 270.0f - CONF<float>("characters/rotating_hysteresis"))
@@ -676,4 +684,9 @@ graphics::StaticShadow* Character::getShadow() const
 float Character::getRotateTo() const
 {
     return rotate_to_;
+}
+
+const sf::Vector2f& Character::getGunOffset() const
+{
+    return gun_offset_;
 }

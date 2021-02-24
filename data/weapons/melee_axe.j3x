@@ -14,9 +14,19 @@ int frames_number=6
 float frame_duration=0.07
 vector use_size=(65.0,92.0)
 vector use_size_back=(69.0,73.0)
+
 vector use_offset=(-28.0,-15.0)
 vector use_offset_back=(-28.0,-15.0)
 vector shadow_offset=(-4.0,-5.0)
 vector shadow_offset_back=(4.0,-9.0)
+
+vector use_offset_flipped=(-30.0,-15.0)
+vector use_offset_back_flipped=(-30.0,-15.0)
+vector shadow_offset_flipped=(-6.0,-5.0)
+vector shadow_offset_back_flipped=(2.0,-9.0)
+
+vector area_offset=(-10.0, -20.0)
+float range=30.0
+float activate_time_elapsed=0.42
 
 int z_index=1

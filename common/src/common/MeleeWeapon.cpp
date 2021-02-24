@@ -20,7 +20,8 @@ MeleeWeapon::MeleeWeapon(Character* user, const std::string& id) :
         deadly_factor_(RMGET<float>("weapons", id, "deadly_factor")),
         use_elapsed_(0.0f),
         saved_rotation_(0.0f),
-        is_used_(false)
+        is_used_(false),
+        spawned_area_(false)
 {
     this->changeOrigin(sf::Vector2f(0.0f, RMGET<sf::Vector2f>("weapons", id, "size").y) / 2.0f +
                        RMGET<sf::Vector2f>("weapons", id, "offset"));
@@ -45,11 +46,6 @@ sf::Vector2f MeleeWeapon::use()
         auto texture_name = "weapons/" + user_->getId() + "_" + this->getId();
         bool flipped = saved_rotation_ > 90.0f && saved_rotation_ <= 270.0f;
         bool front = saved_rotation_ > 0.0f && saved_rotation_ <= 180.0f;
-        if (flipped)
-        {
-            this->setFlipX(true);
-        }
-
         if (!front)
         {
             texture_name += "_back";
@@ -65,18 +61,22 @@ sf::Vector2f MeleeWeapon::use()
         this->setSize(static_shadow_->getSize());
         this->setCurrentFrame(0);
         static_shadow_->setCurrentFrame(0);
-        this->setPosition(user_->getPosition(), {});
-        use_elapsed_ = RMGET<float>("weapons", this->getId(), "use_time");
-        time_elapsed_ = use_timeout_;
-        is_used_ = true;
 
         auto sine = static_cast<float>(std::sin(this->getRotation() * M_PI / 180.0f));
         auto cosine = static_cast<float>(std::cos(this->getRotation() * M_PI / 180.0f));
-        auto offset_position = this->getPosition();
 
-        spawning_function_(user_, "", offset_position, this->getRotation());
-        animation_spawning_function_(this->getId(), this->getPosition(), flipped);
-        area_->setActive(true);
+        use_elapsed_ = RMGET<float>("weapons", this->getId(), "use_time");
+        time_elapsed_ = use_timeout_;
+        is_used_ = true;
+        spawned_area_ = false;
+        this->setPosition(user_->getPosition(), {});
+        this->setRotation(0.0f);
+        this->setFlipY(false);
+        this->setFlipX(flipped);
+        setCurrentFrame(0);
+        static_shadow_->setCurrentFrame(0);
+        updateAnimation(0.0f);
+        static_shadow_->updateAnimation(0.0f);
 
         return reversed_recoil_ * sf::Vector2f{cosine, sine};
     }
@@ -106,16 +106,29 @@ void MeleeWeapon::setPosition(const sf::Vector2f& position, const sf::Vector2f& 
     }
     else
     {
+        bool flipped = saved_rotation_ > 90.0f && saved_rotation_ <= 270.0f;
         bool front = saved_rotation_ > 0.0f && saved_rotation_ <= 180.0f;
-        auto& use_offset = RMGET<sf::Vector2f>("weapons", this->getId(), front ? "use_offset" : "use_offset_back");
 
-        auto& shadow_offset = RMGET<sf::Vector2f>("weapons", this->getId(), front ? "shadow_offset" : "shadow_offset_back");
+        sf::Vector2f use_offset, shadow_offset;
+
+        if (flipped)
+        {
+            use_offset = RMGET<sf::Vector2f>("weapons", this->getId(), front ? "use_offset_flipped" : "use_offset_back_flipped");
+            shadow_offset = RMGET<sf::Vector2f>("weapons", this->getId(), front ? "shadow_offset_flipped" : "shadow_offset_back_flipped");
+        }
+        else
+        {
+            use_offset = RMGET<sf::Vector2f>("weapons", this->getId(), front ? "use_offset" : "use_offset_back");
+            shadow_offset = RMGET<sf::Vector2f>("weapons", this->getId(), front ? "shadow_offset" : "shadow_offset_back");
+        }
+
         AbstractDrawableObject::setPosition(position + use_offset);
         static_shadow_->setPosition(position + shadow_offset);
 
         auto radians = saved_rotation_ * M_PI / 180.0f;
-        area_->setPosition(position + CONF<float>("melee_weapon_offset_x") *
-                sf::Vector2f{static_cast<float>(std::cos(radians)), static_cast<float>(std::sin(radians))});
+
+        area_->setPosition(position + RMGET<sf::Vector2f>("weapons", this->getId(), "area_offset") +
+               RMGET<float>("weapons", this->getId(), "range") * sf::Vector2f{static_cast<float>(std::cos(radians)), static_cast<float>(std::sin(radians))});
     }
 
 }
@@ -154,6 +167,19 @@ void MeleeWeapon::update(float time_elapsed)
             this->setCurrentFrame(frames_number_ - 1);
             static_shadow_->setCurrentFrame(frames_number_ - 1);
         }
+
+        if (!spawned_area_ && use_elapsed_ < RMGET<float>("weapons", this->getId(), "activate_time_elapsed"))
+        {
+            spawned_area_ = true;
+            bool flipped = saved_rotation_ > 90.0f && saved_rotation_ <= 270.0f;
+            bool front = saved_rotation_ > 0.0f && saved_rotation_ <= 180.0f;
+            area_->setActive(true);
+
+            auto radians = saved_rotation_ * M_PI / 180.0f;
+            sf::Vector2f anim_pos = area_->getPosition() - RMGET<float>("weapons", this->getId(), "range") * sf::Vector2f{static_cast<float>(std::cos(radians)), static_cast<float>(std::sin(radians))};
+            anim_pos += RMGET<float>("weapons", this->getId(), "range") * sf::Vector2f(flipped ? -1 : 1, front ? 1 : -1) / 2.0f;
+            animation_spawning_function_(this->getId(), anim_pos, flipped);
+        }
     }
 
     if (use_elapsed_ < 0 && use_elapsed_ > -10.0f)
@@ -189,7 +215,10 @@ void MeleeWeapon::setFlipY(bool flip)
     if (!is_used_)
         AbstractDrawableObject::setFlipY(flip);
     else
+    {
         AbstractDrawableObject::setFlipY(false);
+        static_shadow_->setFlipY(false);
+    }
 }
 
 bool MeleeWeapon::isUsed() const
@@ -203,6 +232,7 @@ void MeleeWeapon::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         target.draw(*static_shadow_, states);
     }
+//    target.draw(*area_, states);
     target.draw(shape_, states);
 }
 

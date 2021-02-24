@@ -50,7 +50,7 @@ private:
     std::function<void(const std::string&, const sf::Vector2f&, bool)> animation_spawning_function_;
 
     float saved_rotation_;
-    bool is_used_;
+    bool is_used_, spawned_area_;
     float use_elapsed_;
     float use_timeout_;
     float reversed_recoil_;

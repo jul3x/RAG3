@@ -54,11 +54,12 @@ private:
 
 class DestructionSystem : public AbstractDrawableObject {
 public:
-    DestructionSystem(const sf::Vector2f& position, float dir, const DestructionParams& params);
+    DestructionSystem(const sf::Vector2f& position, float dir, const DestructionParams& params, float quantity_factor);
 
     bool update(float time_elapsed);
     [[nodiscard]] float getDestructionDir() const;
     [[nodiscard]] const DestructionParams& getDestructionParams() const;
+    [[nodiscard]] float getQuantityFactor() const;
 
     void addToLife(float time);
 
@@ -71,6 +72,7 @@ private:
     std::list<std::unique_ptr<DestructionParticle>> particles_;
     sf::VertexArray drawables_;
     float time_elapsed_, dir_;
+    float quantity_factor_;
 
 };
 

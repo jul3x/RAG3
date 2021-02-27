@@ -502,7 +502,7 @@ void Game::spawnEvent(const std::string& name, const sf::Vector2f& pos, float di
 void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const float r)
 {
     spawnEvent("sparks", pos, dir, r);
-    auto ptr = spawnNewDestructionSystem(pos, dir - 90.0f, destruction_params_["debris"]);
+    auto ptr = spawnNewDestructionSystem(pos, dir - 90.0f, destruction_params_["debris"], 1.0f);
     journal_->event<SpawnDestructionSystem>(ptr);
 }
 
@@ -576,10 +576,10 @@ void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, floa
         engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
 }
 
-void Game::spawnBloodEvent(const sf::Vector2f& pos, float dir)
+void Game::spawnBloodEvent(const sf::Vector2f& pos, float dir, float deadly_factor)
 {
     spawnEvent("blood", pos, dir, 0.0f);
-    auto ptr = spawnNewDestructionSystem(pos, dir, destruction_params_["blood"]);
+    auto ptr = spawnNewDestructionSystem(pos, dir, destruction_params_["blood"], deadly_factor);
     journal_->event<SpawnDestructionSystem>(ptr);
 }
 
@@ -589,7 +589,7 @@ void Game::spawnBullet(Character* user, const std::string& name, const sf::Vecto
 
     auto vector = sf::Vector2f{static_cast<float>(std::cos(dir)), static_cast<float>(std::sin(dir))};
 
-    spawnNewDestructionSystem(pos - 30.0f * vector, dir * 180.0f / M_PI + 90.0f, destruction_params_["husk"]);
+    spawnNewDestructionSystem(pos - 30.0f * vector, dir * 180.0f / M_PI + 90.0f, destruction_params_["husk"], 1.0f);
     journal_->event<SpawnBullet>(ptr);
     this->spawnShotEvent(name, pos, dir);
 }
@@ -675,7 +675,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             character->getShot(*bullet, factor);
 
             float offset = bullet->getRotation() > 0.0f && bullet->getRotation() < 180.0f ? -5.0f : 5.0f;
-            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, offset), bullet->getRotation() + 180.0f);
+            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, offset), bullet->getRotation() + 180.0f, bullet->getDeadlyFactor());
 
             bullet->setDead();
         }
@@ -739,7 +739,6 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
 
     if (character != nullptr && melee_weapon_area != nullptr)
     {
-        //character->setGlobalState(Character::GlobalState::OnFire);
         if (character != melee_weapon_area->getFather()->getUser())
         {
             if (melee_weapon_area->getFather()->getUser() != player_.get())
@@ -749,7 +748,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
 
             float angle = utils::geo::wrapAngle0_360(std::get<1>(utils::geo::cartesianToPolar(
                     melee_weapon_area->getFather()->getUser()->getPosition() - character->getPosition())) * 180.0 / M_PI);
-            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, angle > 0 && angle <= 180 ? 5.0 : -5.0), angle);
+            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, angle > 0 && angle <= 180 ? 5.0 : -5.0), angle, melee_weapon_area->getFather()->getDeadlyFactor());
             melee_weapon_area->setActive(false);
             character->getCut(*melee_weapon_area->getFather(), factor);
         }
@@ -1368,9 +1367,9 @@ void Game::initDestructionParams()
     }
 }
 
-DestructionSystem* Game::spawnNewDestructionSystem(const sf::Vector2f& pos, float dir, const DestructionParams& params)
+DestructionSystem* Game::spawnNewDestructionSystem(const sf::Vector2f& pos, float dir, const DestructionParams& params, float quantity_factor)
 {
-    destruction_systems_.emplace_back(std::make_unique<DestructionSystem>(pos, dir, params));
+    destruction_systems_.emplace_back(std::make_unique<DestructionSystem>(pos, dir, params, quantity_factor));
     return destruction_systems_.back().get();
 }
 

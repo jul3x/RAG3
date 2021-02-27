@@ -267,6 +267,7 @@ private:
 
     sf::Vector2f pos_;
     float dir_;
+    float quantity_factor_;
     const DestructionParams& params_;
 
 };

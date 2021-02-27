@@ -27,6 +27,6 @@ vector shadow_offset_back_flipped=(-11.0,-24.0)
 
 vector area_offset=(-5.0, -10.0)
 float range=40.0
-float activate_time_elapsed=0.22
+float activate_time_elapsed=0.19
 
 int z_index=1

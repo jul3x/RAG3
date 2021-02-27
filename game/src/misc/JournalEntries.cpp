@@ -233,13 +233,13 @@ void SpawnDestructionSystem::executeEntryReversal()
 }
 
 DestroyDestructionSystem::DestroyDestructionSystem(Journal* father, DestructionSystem* ptr) :
-    JournalEntry(father), ptr_(ptr), params_(ptr->getDestructionParams()), dir_(ptr->getDestructionDir()), pos_(ptr->getPosition())
+    JournalEntry(father), ptr_(ptr), params_(ptr->getDestructionParams()), dir_(ptr->getDestructionDir()), pos_(ptr->getPosition()), quantity_factor_(ptr->getQuantityFactor())
 {
 }
 
 void DestroyDestructionSystem::executeEntryReversal()
 {
-    auto new_ptr = Game::get().spawnNewDestructionSystem(pos_, dir_, params_);
+    auto new_ptr = Game::get().spawnNewDestructionSystem(pos_, dir_, params_, quantity_factor_);
 
     // simulate blood
     for (int i = 0; i < 30; ++i)

@@ -86,7 +86,7 @@ public:
     // Spawn events
     void spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);
     void spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir);
-    void spawnBloodEvent(const sf::Vector2f& pos, float dir);
+    void spawnBloodEvent(const sf::Vector2f& pos, float dir, float deadly_factor);
     void spawnExplosionEvent(const sf::Vector2f& pos);
     void spawnTeleportationEvent(const sf::Vector2f& pos);
     void spawnEvent(const std::string& name, const sf::Vector2f& pos, float dir = 0.0f, float r = 0.0f);
@@ -132,7 +132,7 @@ public:
     NPC* spawnNewNPC(const std::string &id, int u_id, Functional::Activation activation,
                      const j3x::List& funcs, const j3x::List& datas);
     NPC* spawnNewPlayerClone(const std::string &weapon_id);
-    DestructionSystem* spawnNewDestructionSystem(const sf::Vector2f& pos, float dir, const DestructionParams& params);
+    DestructionSystem* spawnNewDestructionSystem(const sf::Vector2f& pos, float dir, const DestructionParams& params, float quantity_factor);
 
     // Registering methods
     void registerWeapons(Character* character);

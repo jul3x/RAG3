@@ -77,13 +77,14 @@ void DestructionParticle::addToLife(float time)
     time_alive_ += time;
 }
 
-DestructionSystem::DestructionSystem(const sf::Vector2f& position, float dir, const DestructionParams& params) :
+DestructionSystem::DestructionSystem(const sf::Vector2f& position, float dir, const DestructionParams& params, float quantity_factor) :
         AbstractDrawableObject(position, {1.0f, 1.0f}, nullptr, 1),
-        particles_(params.count),
-        drawables_(sf::Quads, 4 * params.count),
+        particles_(params.count * quantity_factor),
+        drawables_(sf::Quads, 4 * params.count * quantity_factor),
         time_elapsed_(0.0f),
         params_(params),
-        dir_(dir)
+        dir_(dir),
+        quantity_factor_(quantity_factor)
 {
     size_t i = 0;
     for (auto& particle : particles_)
@@ -157,5 +158,10 @@ void DestructionSystem::addToLife(float time)
     {
         particle->addToLife(time);
     }
+}
+
+float DestructionSystem::getQuantityFactor() const
+{
+    return quantity_factor_;
 }
 

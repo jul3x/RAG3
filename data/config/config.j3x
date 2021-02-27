@@ -12,7 +12,7 @@ float get_shot_factor = 640.0
 // TIME MANIPULATION MECHANICS
 float rag3_time = 15.0
 float rag3_speed_factor = 1.25
-float bullet_time_factor = 0.3
+float bullet_time_factor = 0.15
 float journal_sampling_rate = 30.0
 float journal_max_time = 10.0
 float journal_min_time = 3.0

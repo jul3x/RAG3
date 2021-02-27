@@ -214,7 +214,10 @@ namespace r3e {
         time_scale_factor_ = factor;
 
         if (sound_manager_ != nullptr)
+        {
+            factor = std::pow(factor, 0.25);
             sound_manager_->changePitch(factor);
+        }
     }
 
     void Engine::changeSoundListenerPosition(const sf::Vector2f& pos)

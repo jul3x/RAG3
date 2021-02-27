@@ -53,6 +53,7 @@ sf::Vector2f ShootingWeapon::use()
 
             spawning_function_(user_, spawn_type_, offset_position, rotation);
         }
+        animation_spawning_function_(spawn_type_, offset_position, this->getRotation() * M_PI / 180.0f, false);
 
         time_elapsed_ = spawn_timeout_;
 

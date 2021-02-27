@@ -178,7 +178,7 @@ void MeleeWeapon::update(float time_elapsed)
             auto radians = saved_rotation_ * M_PI / 180.0f;
             sf::Vector2f anim_pos = area_->getPosition() - RMGET<float>("weapons", this->getId(), "range") * sf::Vector2f{static_cast<float>(std::cos(radians)), static_cast<float>(std::sin(radians))};
             anim_pos += RMGET<float>("weapons", this->getId(), "range") * sf::Vector2f(flipped ? -1 : 1, front ? 1 : -1) / 2.0f;
-            animation_spawning_function_(this->getId(), anim_pos, flipped);
+            animation_spawning_function_(this->getId(), anim_pos, 0.0f, flipped);
         }
     }
 
@@ -248,11 +248,6 @@ void MeleeWeapon::setFlipX(bool flip)
 {
     AbstractDrawableObject::setFlipX(flip);
     static_shadow_->setFlipX(flip);
-}
-
-void MeleeWeapon::registerAnimationSpawningFunction(std::function<void(const std::string&, const sf::Vector2f&, bool)> func)
-{
-    animation_spawning_function_ = std::move(func);
 }
 
 void MeleeWeapon::recalculate()

@@ -38,6 +38,7 @@ class Game : public AbstractGame {
 
 public:
     using SpawningFunction = std::function<void(Character*, const std::string&, const sf::Vector2f&, float)>;
+    using AnimationSpawningFunction = std::function<void(const std::string&, const sf::Vector2f&, float, bool)>;
 
     enum class GameState
     {
@@ -80,7 +81,7 @@ public:
     [[nodiscard]] const std::list<std::unique_ptr<Fire>>& getFires() const;
     [[nodiscard]] Special* getCurrentSpecialObject() const;
     [[nodiscard]] Character* getCurrentTalkableCharacter() const;
-    [[nodiscard]] const SpawningFunction& getSpawningFunction(const std::string& name) const;
+    [[nodiscard]] std::tuple<SpawningFunction, AnimationSpawningFunction> getSpawningFunction(const std::string& name);
     [[nodiscard]] float getRag3Time() const;
 
     // Spawn events

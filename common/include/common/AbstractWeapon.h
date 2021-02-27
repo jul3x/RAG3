@@ -26,8 +26,8 @@ public:
                    const sf::Vector2f& weapon_offset,
                    const std::string& name);
 
-    void
-    registerSpawningFunction(std::function<void(Character*, const std::string&, const sf::Vector2f&, float)> func);
+    void registerSpawningFunction(std::function<void(Character*, const std::string&, const sf::Vector2f&, float)> func,
+                                  std::function<void(const std::string&, const sf::Vector2f&, float, bool)> animation_func);
 
     virtual sf::Vector2f use() = 0;
     virtual float getState() const = 0;
@@ -52,6 +52,7 @@ protected:
     float time_elapsed_{0.0f};
 
     std::function<void(Character*, const std::string&, const sf::Vector2f&, float)> spawning_function_;
+    std::function<void(const std::string&, const sf::Vector2f&, float, bool)> animation_spawning_function_;
 
 };
 

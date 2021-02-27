@@ -53,7 +53,8 @@ void Game::initialize()
     music_manager_ = std::make_unique<audio::MusicManager>();
     music_manager_->addToQueue(CONF<std::string>("paths/music_dir") + "/menu.ogg");
     music_manager_->setVolume(CONF<float>("sound/music_volume"));
-    music_manager_->play();
+    if (CONF<bool>("sound/sound_on"))
+        music_manager_->play();
 
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());
@@ -112,8 +113,8 @@ void Game::initialize()
 
     for (auto& weapon : map_->getList<PlacedWeapon>())
     {
-        weapon->registerSpawningFunction(
-                this->getSpawningFunction(RMGET<std::string>("weapons", weapon->getId(), "spawn_func")));
+        auto func = this->getSpawningFunction(RMGET<std::string>("weapons", weapon->getId(), "spawn_func"));
+        weapon->registerSpawningFunction(std::get<0>(func), std::get<1>(func));
     }
 
     for (auto& special : map_->getList<Special>())
@@ -570,7 +571,8 @@ void Game::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
 
 void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir)
 {
-    spawnEvent("shot", pos, dir * 180.0f / M_PI, RMGET<float>("bullets", name, "burst_size"));
+    auto vector = sf::Vector2f{static_cast<float>(std::cos(dir)), static_cast<float>(std::sin(dir))};
+    spawnEvent("shot", pos + RMGET<float>("bullets", name, "burst_offset") * vector, dir * 180.0f / M_PI, RMGET<float>("bullets", name, "burst_size"));
 
     if (CONF<bool>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
@@ -589,9 +591,8 @@ void Game::spawnBullet(Character* user, const std::string& name, const sf::Vecto
 
     auto vector = sf::Vector2f{static_cast<float>(std::cos(dir)), static_cast<float>(std::sin(dir))};
 
-    spawnNewDestructionSystem(pos - 30.0f * vector, dir * 180.0f / M_PI + 90.0f, destruction_params_["husk"], 1.0f);
+    spawnNewDestructionSystem(pos - 20.0f * vector, dir * 180.0f / M_PI + 90.0f, destruction_params_["husk"], 1.0f);
     journal_->event<SpawnBullet>(ptr);
-    this->spawnShotEvent(name, pos, dir);
 }
 
 void Game::spawnExplosionForce(const sf::Vector2f& pos, float r)
@@ -779,7 +780,8 @@ Bullet* Game::spawnNewBullet(Character* user, const std::string& id, const sf::V
 
 void Game::spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
-    auto ptr = this->spawnNewFire(user, pos, dir);
+    auto vector = sf::Vector2f{static_cast<float>(std::cos(dir)), static_cast<float>(std::sin(dir))};
+    auto ptr = this->spawnNewFire(user, pos + 20.0f * vector, dir);
     journal_->event<SpawnFire>(ptr);
 }
 
@@ -1058,7 +1060,8 @@ void Game::setGameState(Game::GameState state)
                 camera_->setNormal();
 
             engine_->turnOnCollisions();
-            music_manager_->play();
+            if (CONF<bool>("sound/sound_on"))
+                music_manager_->play();
             break;
         case GameState::Reverse:
             if (this->isJournalFreezed())
@@ -1073,7 +1076,8 @@ void Game::setGameState(Game::GameState state)
         case GameState::Menu:
             music_manager_->clearQueue();
             music_manager_->addToQueue(CONF<std::string>("paths/music_dir") + "/menu.ogg");
-            music_manager_->play();
+            if (CONF<bool>("sound/sound_on"))
+                music_manager_->play();
             break;
         case GameState::Paused:
             music_manager_->pause();
@@ -1166,8 +1170,11 @@ void Game::updateBullets(float time_elapsed)
     }
 }
 
-const Game::SpawningFunction& Game::getSpawningFunction(const std::string& name) const
+std::tuple<Game::SpawningFunction, Game::AnimationSpawningFunction> Game::getSpawningFunction(const std::string& name)
 {
+    static const auto swirl = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) { this->spawnSwirlEvent(name, pos, flipped); };
+    static const auto null = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) { this->spawnNull(nullptr, "", pos, 0.0f); };
+    static const auto sparks = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) { this->spawnShotEvent(name, pos, dir); };
     auto it = spawning_func_.find(name);
 
     if (it == spawning_func_.end())
@@ -1175,7 +1182,12 @@ const Game::SpawningFunction& Game::getSpawningFunction(const std::string& name)
         throw std::invalid_argument("[Game] SpawningFunction " + name + " is not handled!");
     }
 
-    return it->second;
+    if (name == "bullet")
+        return std::make_tuple(it->second, sparks);
+    else if (name == "fire")
+        return std::make_tuple(it->second, null);
+
+    return std::make_tuple(it->second, swirl);
 }
 
 void Game::spawnNull(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
@@ -1273,16 +1285,13 @@ void Game::registerWeapon(AbstractWeapon* weapon)
 {
     if (!weapon->getId().empty())
     {
-        weapon->registerSpawningFunction(
-                this->getSpawningFunction(RMGET<std::string>("weapons", weapon->getId(), "spawn_func")));
+        auto func = this->getSpawningFunction(RMGET<std::string>("weapons", weapon->getId(), "spawn_func"));
+        weapon->registerSpawningFunction(std::get<0>(func), std::get<1>(func));
 
         auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon);
-
         if (melee_weapon != nullptr)
         {
             engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
-            melee_weapon->registerAnimationSpawningFunction(
-                    std::bind(&Game::spawnSwirlEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
         }
     }
 }

@@ -28,9 +28,11 @@ AbstractWeapon::AbstractWeapon(Character* user,
 
 
 void AbstractWeapon::registerSpawningFunction(
-        std::function<void(Character*, const std::string&, const sf::Vector2f&, float)> func)
+        std::function<void(Character*, const std::string&, const sf::Vector2f&, float)> func,
+        std::function<void(const std::string&, const sf::Vector2f&, float, bool)> animation_func)
 {
     spawning_function_ = std::move(func);
+    animation_spawning_function_ = std::move(animation_func);
 }
 
 const sf::Vector2f& AbstractWeapon::getWeaponOffset() const

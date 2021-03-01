@@ -1,0 +1,21 @@
+vector size=(32.0,16.0)
+vector collision_offset=(0.0,-24.0)
+vector map_offset=(0.0,-8.0)
+float collision_size_x=20.0
+float collision_size_y=5.0
+
+int frames_number=4
+float frame_duration=0.2
+
+string default_activation="OnEnter"
+list default_functions=["Kill"]
+list default_datas=["water"]
+
+bool is_drawable=true
+
+int z_index=-2
+
+string light_point=""
+float light_point_data=10.0
+bool shadow=false
+bool default_active=true

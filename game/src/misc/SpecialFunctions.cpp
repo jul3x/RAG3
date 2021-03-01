@@ -349,8 +349,29 @@ void SpecialFunctions::spawnFlame(Functional* obj, const j3x::Obj& data, Charact
 
 void SpecialFunctions::kill(Functional* obj, const j3x::Obj& data, Character* user)
 {
-     LOG.info("[SpecialFunction] Killing.");
-     user->setHealth(0);
+    LOG.info("[SpecialFunction] Killing.");
+
+    const auto& what = j3x::getObj<std::string>(data);
+
+    // TODO - is it worth it?
+    if (what == "lava" || what == "water")
+    {
+        auto object = dynamic_cast<AbstractPhysicalObject*>(obj);
+
+        if (!utils::num::isNearlyEqual(object->getPosition(), user->getPosition(), 10.0f))
+        {
+            auto diff = utils::geo::getNormalized(object->getPosition() - user->getPosition());
+            user->addSteeringForce(RMGET<float>("characters", user->getId(), "max_speed") * diff, 0.1f);
+        }
+        else
+        {
+            user->setHealth(0);
+        }
+    }
+    else
+    {
+       user->setHealth(0);
+    }
 //     Game::get().spawnAnimationEvent(data);
 }
 

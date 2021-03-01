@@ -64,7 +64,7 @@ void Game::initialize()
 
     this->initDestructionParams();
 
-    map_->loadMap("first_new_map");
+    map_->loadMap("map_new");
     engine_->getGraphics().setBgColor(sf::Color(j3x::get<int>(map_->getParams(), "background_color")));
     lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                                                                     static_cast<float>(CONF<int>("graphics/window_height_px"))},

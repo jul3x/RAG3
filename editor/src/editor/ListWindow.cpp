@@ -45,6 +45,7 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
     scroll_panel_ = tgui::ScrollablePanel::create({"100%", "&.height - 30"});
     scroll_panel_->setPosition({"0", CONF<float>("tab_height")});
     scroll_panel_->setHorizontalScrollbarPolicy(tgui::Scrollbar::Policy::Never);
+    scroll_panel_->setVerticalScrollAmount(100);
     scroll_panel_->setRenderer(theme_->getRenderer("ScrollablePanel"));
 
     child_->add(scroll_panel_);

@@ -125,7 +125,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics, float time_elapse
         npc_talk_text_.setOrigin(npc_talk_text_rect.left + npc_talk_text_rect.width/2.0f,
                                  npc_talk_text_rect.top  + npc_talk_text_rect.height/2.0f);
 
-        npc_talk_text_.setPosition(npc_talk->getPosition() - sf::Vector2f{0.0f, OBJECT_USE_TEXT_OFFSET_Y_});
+        npc_talk_text_.setPosition(npc_talk->getPosition() - sf::Vector2f{0.0f, TALK_TEXT_OFFSET_Y_});
         npc_talk_text_.setFillColor(sf::Color::White);
     }
     else
@@ -409,7 +409,7 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
             camera_->setZoomTo(CONF<float>("graphics/camera_right_click_zoom_factor"));
             Game::get().setBulletTime();
         }
-        else
+        else if (Game::get().getForcedZoomTime() < 0.0f)
         {
             camera_->setPointingTo(player_->getPosition());
             camera_->setZoomTo(1.0f);

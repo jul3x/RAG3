@@ -16,7 +16,6 @@ Thought::Thought(AbstractPhysicalObject* father, const std::string& text, float 
 {
     this->changeOrigin({0.0f, CONF<sf::Vector2f>("graphics/thought_size_bottom").y});
     top_.changeOrigin({0.0f, CONF<sf::Vector2f>("graphics/thought_size_top").y});
-
     text_.setFillColor(sf::Color::White);
 
     auto count = std::count(text.begin(), text.end(), '\n');
@@ -31,6 +30,9 @@ Thought::Thought(AbstractPhysicalObject* father, const std::string& text, float 
     }
 
     top_.setPosition(father->getPosition() + incremental_offset);
+    text_.setPosition(father_->getPosition() + incremental_offset + sf::Vector2f{CONF<float>("graphics/thought_text_margin"),
+            CONF<sf::Vector2f>("graphics/thought_size_top").y / 2.0f - CONF<float>("graphics/thought_text_size")});
+
 }
 
 bool Thought::update(float time_elapsed)

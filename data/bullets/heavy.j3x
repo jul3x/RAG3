@@ -11,5 +11,5 @@ vector collision_offset=(0.0,0.0)
 int z_index=1
 
 string default_activation="OnKill"
-list default_functions=["Null"]
+list default_functions=["null"]
 list default_datas=[0]

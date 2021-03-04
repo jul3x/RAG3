@@ -1,6 +1,6 @@
 string default_activation="OnEnter"
 list default_functions=["PickCrystal"; "Destroy"]
-list default_datas=["Null"; "Null"]
+list default_datas=["null"; "null"]
 
 vector size=(32.0,32.0)
 vector collision_offset=(0.0,0.0)

@@ -16,14 +16,14 @@ int frames_number=4
 float frame_duration=0.12
 
 string default_activation="OnKill"
-list default_functions=["Null"]
+list default_functions=["null"]
 list default_datas=[0]
 
 string ai_type="Standard"
 
 int z_index=1
 
-list weapons=["flamethrower";"m4";"desert_eagle";"shotgun";"melee_axe";"rocket_launcher"]
+list weapons=["m4";"m4";"null";"null"]
 
 bool is_talkable=false
 string light_point="const"

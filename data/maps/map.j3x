@@ -33,30 +33,30 @@ tile_map:
 decorations: 
 
 obstacles: 
-door 304 88 940 OnKill [Null] [Null]
-door 413.921 508.971 942 OnKill [Null] [Null]
+door 304 88 940 OnKill [null] [null]
+door 413.921 508.971 942 OnKill [null] [null]
 
 characters: 
-slave 479.287 377.427 1 OnKill [Null] [Null] []
-slave 415.613 374.76 2 OnKill [Null] [Null] []
-slave 347.332 374.76 3 OnKill [Null] [Null] []
-slave 285.017 374.76 4 OnKill [Null] [Null] []
-slave 222.702 375.423 5 OnKill [Null] [Null] []
-slave 157.072 373.435 6 OnKill [Null] [Null] []
-slave 96.083 372.772 7 OnKill [Null] [Null] []
-slave 641.671 412.547 8 OnKill [Null] [Null] []
-slave 641.008 508.671 10 OnKill [Null] [Null] []
-slave 642.997 601.48 11 OnKill [Null] [Null] []
-slave 643.66 700.919 12 OnKill [Null] [Null] []
-slave 645.415 788.318 13 OnKill [Null] [Null] []
+slave 479.287 377.427 1 OnKill [null] [null] []
+slave 415.613 374.76 2 OnKill [null] [null] []
+slave 347.332 374.76 3 OnKill [null] [null] []
+slave 285.017 374.76 4 OnKill [null] [null] []
+slave 222.702 375.423 5 OnKill [null] [null] []
+slave 157.072 373.435 6 OnKill [null] [null] []
+slave 96.083 372.772 7 OnKill [null] [null] []
+slave 641.671 412.547 8 OnKill [null] [null] []
+slave 641.008 508.671 10 OnKill [null] [null] []
+slave 642.997 601.48 11 OnKill [null] [null] []
+slave 643.66 700.919 12 OnKill [null] [null] []
+slave 645.415 788.318 13 OnKill [null] [null] []
 
 specials: 
-flame 92.5532 790.685 934 1 OnEnter [SetOnFire] [Null]
-flame 758.552 804.685 935 1 OnEnter [SetOnFire] [Null]
-flame 128.496 783.679 936 1 OnEnter [SetOnFire] [Null]
-flame 87.5085 758.606 937 1 OnEnter [SetOnFire] [Null]
-flame 109.509 770.604 938 1 OnEnter [SetOnFire] [Null]
-starting_position 76.9998 167.999 939 1 OnEnter [MapStart] [Null]
-lever 328 112 943 1 OnUse [OpenDoor;ChangeOpenState] [940;Null]
+flame 92.5532 790.685 934 1 OnEnter [SetOnFire] [null]
+flame 758.552 804.685 935 1 OnEnter [SetOnFire] [null]
+flame 128.496 783.679 936 1 OnEnter [SetOnFire] [null]
+flame 87.5085 758.606 937 1 OnEnter [SetOnFire] [null]
+flame 109.509 770.604 938 1 OnEnter [SetOnFire] [null]
+starting_position 76.9998 167.999 939 1 OnEnter [MapStart] [null]
+lever 328 112 943 1 OnUse [OpenDoor;ChangeOpenState] [940;null]
 
 weapons: 

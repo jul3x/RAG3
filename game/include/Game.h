@@ -83,12 +83,14 @@ public:
     [[nodiscard]] Character* getCurrentTalkableCharacter() const;
     [[nodiscard]] std::tuple<SpawningFunction, AnimationSpawningFunction> getSpawningFunction(const std::string& name);
     [[nodiscard]] float getRag3Time() const;
+    [[nodiscard]] float getForcedZoomTime() const;
 
     // Spawn events
     void spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);
     void spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir);
     void spawnBloodEvent(const sf::Vector2f& pos, float dir, float deadly_factor);
     void spawnExplosionEvent(const sf::Vector2f& pos);
+    void spawnKillEvent(const sf::Vector2f& pos);
     void spawnTeleportationEvent(const sf::Vector2f& pos);
     void spawnEvent(const std::string& name, const sf::Vector2f& pos, float dir = 0.0f, float r = 0.0f);
     void spawnSwirlEvent(const std::string& name, const sf::Vector2f& pos, bool flipped);
@@ -111,6 +113,7 @@ public:
     void setBulletTime();
     void setNormalTime();
     void setRag3Time(float time_elapsed);
+    void forceZoomTo(NPC* current_npc_zoom);
 
     // Journal methods
     [[nodiscard]] bool isJournalFreezed() const;
@@ -191,6 +194,8 @@ private:
 
     float time_elapsed_;
     float rag3_time_elapsed_;
+    float forced_zoom_to_time_elapsed_;
+    NPC* current_npc_zoom_;
     float current_time_factor_;
 
 };

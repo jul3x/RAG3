@@ -1,5 +1,5 @@
 // CHEATS
-bool god_mode = false
+bool god_mode = true
 bool no_clip_mode = false
 
 // COLLISION DETECTION SETTINGS
@@ -23,6 +23,7 @@ float player_clone_time_factor = 3.0
 float thought_duration = 5.0
 float side_stepping_freeze_time = 0.5
 float achievements_update_time = 0.4
+float forced_zoom_to_time = 0.4
 
 // FIRE MECHANICS
 float on_fire_hurt_speed = 10.0

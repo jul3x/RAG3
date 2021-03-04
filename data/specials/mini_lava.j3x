@@ -1,6 +1,6 @@
 vector size=(32.0,16.0)
-vector collision_offset=(0.0,-24.0)
-vector map_offset=(0.0,-8.0)
+vector collision_offset=(0.0,-32.0)
+vector map_offset=(0.0,-16.0)
 float collision_size_x=20.0
 float collision_size_y=5.0
 

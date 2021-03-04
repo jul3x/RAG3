@@ -12,10 +12,11 @@
 namespace r3e {
     namespace audio {
 
-        MusicManager::MusicManager() : current_pitch_(1.0f), current_volume_(100.0f),
+        MusicManager::MusicManager() : pitch_(10.0f), current_volume_(100.0f),
                                        current_song_(music_list_.begin()), status_(Status::Stopped)
         {
-
+            pitch_.setForcedState(1.0f);
+            pitch_.setState(1.0f);
         }
 
         void MusicManager::addToQueue(sf::Music* music)
@@ -69,10 +70,12 @@ namespace r3e {
 
         void MusicManager::update(float time_elapsed)
         {
+            pitch_.update(time_elapsed);
             if (music_list_.empty()) return;
 
             if (status_ == Status::Playing)
             {
+                (*current_song_)->setPitch(pitch_.getState());
                 if ((*current_song_)->getStatus() != sf::Music::Status::Playing and (*current_song_)->getStatus() != sf::Music::Status::Paused)
                 {
                     (*current_song_)->stop();
@@ -83,7 +86,6 @@ namespace r3e {
                         current_song_ = music_list_.begin();
                     }
 
-                    (*current_song_)->setPitch(current_pitch_);
                     (*current_song_)->setVolume(current_volume_);
                     (*current_song_)->play();
                 }
@@ -101,11 +103,14 @@ namespace r3e {
 
         void MusicManager::setPlaybackPitch(float pitch)
         {
-            current_pitch_ = pitch;
+            pitch_.setState(pitch);
+
+//            if (pitch > 0.9)
+//                pitch_.setAcceleration(2.0f);
+//            else
+//                pitch_.setAcceleration()
 
             if (music_list_.empty()) return;
-
-            (*current_song_)->setPitch(current_pitch_);
         }
 
         void MusicManager::setVolume(float volume)

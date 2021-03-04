@@ -20,9 +20,9 @@ AbstractWeapon::AbstractWeapon(Character* user,
         user_(user),
         AbstractDrawableObject({}, size,
                                name.empty() ? nullptr : &RM.getTexture("weapons/" + name),
-                               name.empty() ? 0 : RMGET<int>("weapons", name, "z_index"),
-                               name.empty() ? 1 : RMGET<int>("weapons", name, "frames_number"),
-                               name.empty() ? 0.0f : RMGET<float>("weapons", name, "frame_duration"))
+                               name.empty() || name == "null" ? 0 : RMGET<int>("weapons", name, "z_index"),
+                               name.empty() || name == "null" ? 1 : RMGET<int>("weapons", name, "frames_number"),
+                               name.empty() || name == "null" ? 0.0f : RMGET<float>("weapons", name, "frame_duration"))
 {
 }
 
@@ -71,12 +71,12 @@ std::shared_ptr<AbstractWeapon> AbstractWeapon::create(Character* user, const st
     {
         return std::make_shared<MeleeWeapon>(user, name);
     }
-    else if (name != "Null" && !name.empty())
+    else if (name != "null" && !name.empty())
     {
         return std::make_shared<ShootingWeapon>(user, name);
     }
 
-    return std::make_shared<NoWeapon>();
+    return std::make_shared<NoWeapon>(user);
 }
 
 void AbstractWeapon::upgrade(const std::string& id)

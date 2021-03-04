@@ -2,7 +2,7 @@ float recoil=4800.0
 
 float deadly_factor=6.0
 
-string spawn_func="Null"
+string spawn_func="null"
 float use_time=0.42
 float spawn_timeout=1.0
 
@@ -27,6 +27,6 @@ vector shadow_offset_back_flipped=(2.0,-9.0)
 
 vector area_offset=(-10.0, -20.0)
 float range=30.0
-float activate_time_elapsed=0.42
+float activate_time_elapsed=0.32
 
 int z_index=1

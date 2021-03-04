@@ -61,6 +61,21 @@ public:
         {
             graphics.draw(el);
         }
+
+        static sf::Text text("", RM.getFont(), 16);
+        i = 0;
+        for (const auto& x : map_blockage_->blockage_)
+        {
+            j = 0;
+            for (const auto& y : x)
+            {
+                text.setString(std::to_string(static_cast<int>(std::min(y, 100.0f))));
+                text.setPosition(DecorationTile::SIZE_X_ * i, DecorationTile::SIZE_Y_ * j);
+                graphics.draw(text);
+                ++j;
+            }
+            ++i;
+        }
     }
 
 private:

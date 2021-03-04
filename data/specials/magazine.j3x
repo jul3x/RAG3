@@ -7,8 +7,8 @@ int frames_number=1
 float frame_duration=0.0
 
 string default_activation="OnPick"
-list default_functions=["Null"]
-list default_datas=["Null"]
+list default_functions=["null"]
+list default_datas=["null"]
 
 bool is_drawable=true
 int z_index=1

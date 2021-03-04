@@ -203,9 +203,10 @@ bool Character::update(float time_elapsed)
     bool is_alive = life_ > 0;
     DynamicObject::update(time_elapsed);
 
+    auto max_speed = RMGET<float>("characters", this->getId(), "max_speed");
     auto speed_factor = this->getSpeedFactor();
     auto vel = std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
-    if (!utils::num::isNearlyEqual(vel, 0.0f, RMGET<float>("characters", this->getId(), "max_speed") / 3.0f))
+    if (!utils::num::isNearlyEqual(vel, 0.0f, max_speed / 3.0f))
     {
         is_moving_ = true;
     }
@@ -213,10 +214,12 @@ bool Character::update(float time_elapsed)
     {
         vel = 0.0f;
         is_moving_ = false;
-        this->setCurrentFrame(0);
+
+        if (max_speed > 0.0f)
+            this->setCurrentFrame(0);
     }
 
-    this->updateAnimation(time_elapsed, vel / RMGET<float>("characters", this->getId(), "max_speed"));
+    this->updateAnimation(time_elapsed, max_speed > 0.0f ? vel / max_speed : 1.0f);
 
     weapons_in_backpack_.at(current_weapon_)->update(time_elapsed);
 
@@ -621,13 +624,18 @@ bool Character::talk(const std::function<void(Character*, const std::string&)> &
     {
         if (talk_moment_ < talk_scenario_.size())
         {
-            talking_func(character, j3x::getObj<std::string>(talk_scenario_, talk_moment_));
+            const auto& sentence = j3x::getObj<std::string>(talk_scenario_, talk_moment_);
+            if (!sentence.empty())
+                talking_func(character, sentence);
+
             talking_func_ = talking_func;
             ++talk_moment_;
 
             if (talk_moment_ < talk_scenario_.size())
                 should_respond_ = true;
-            talking_time_elapsed_ = CONF<float>("characters/talking_respond_time");
+
+            if (!sentence.empty() || talk_moment_ > 1)
+                talking_time_elapsed_ = CONF<float>("characters/talking_respond_time");
         }
     }
     return talk_moment_ < talk_scenario_.size();

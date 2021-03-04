@@ -8,6 +8,8 @@
 #include <list>
 #include <unordered_map>
 
+#include <R3E/objects/StateWithInertia.h>
+
 #include <SFML/Audio/Music.hpp>
 
 
@@ -44,7 +46,9 @@ namespace r3e::audio {
         std::unordered_map<std::string, std::unique_ptr<sf::Music>> music_owned_;
 
         Status status_;
-        float current_pitch_, current_volume_;
+        float current_volume_;
+
+        StateWithInertia<float> pitch_;
 
     };
 } // namespace r3e::audio

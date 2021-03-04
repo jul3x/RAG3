@@ -116,7 +116,6 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
         {
             auto& id = j3x::getObj<std::string>(get_param("obstacles_id"), i);
             auto& pos = j3x::getObj<sf::Vector2f>(get_param("obstacles_pos"), i);
-            auto blocked_pos = pos + RMGET<sf::Vector2f>("obstacles", id, "collision_offset");
             obstacles.emplace_back(std::make_shared<Obstacle>(
                     pos, id,
                     j3x::getObj<std::string>(get_param("obstacles_activation"), i),
@@ -124,9 +123,8 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
                     j3x::getObj<j3x::List>(get_param("obstacles_datas"), i),
                     j3x::getObj<int>(get_param("obstacles_uid"), i)));
 
-            blocked.at(std::round(blocked_pos.x / DecorationTile::SIZE_X_)).
-                    at(std::round(blocked_pos.y / DecorationTile::SIZE_Y_)) =
-                    RMGET<float>("obstacles", id, "endurance");
+            Map::markBlocked(blocked, pos + RMGET<sf::Vector2f>("obstacles", id, "collision_offset"),
+                    RMGET<sf::Vector2f>("obstacles", id, "collision_size"), RMGET<float>("obstacles", id, "endurance"));
         }
 
         characters.clear();

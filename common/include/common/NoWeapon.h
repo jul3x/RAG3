@@ -11,7 +11,7 @@
 
 class NoWeapon : public AbstractWeapon {
 public:
-    NoWeapon();
+    NoWeapon(Character* user);
 
     sf::Vector2f use() override;
 

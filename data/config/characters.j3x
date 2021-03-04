@@ -14,7 +14,7 @@ float talking_respond_time = 1.5
 
 // AI
 float min_melee_distance_ai = 48.0
-float max_distance_ai = 1500.0
+float max_distance_ai = 600.0
 float walls_between_close_ai = 0.0
 float walls_between_far_ai = 1.0
 float max_time_without_path_recalc = 1000.0

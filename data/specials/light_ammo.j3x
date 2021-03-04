@@ -8,7 +8,7 @@ float frame_duration=0.0
 
 string default_activation="OnEnter"
 list default_functions=["AddAmmo"; "Destroy"]
-list default_datas=["desert_eagle"; "Null"]
+list default_datas=["desert_eagle"; "null"]
 
 bool is_drawable=true
 

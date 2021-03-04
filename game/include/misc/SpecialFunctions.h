@@ -40,6 +40,8 @@ public:
     static void activateWeapon(Functional* obj, const j3x::Obj& data, Character* user);
     static void teleport(Functional* obj, const j3x::Obj& data, Character* user);
     static void kill(Functional* obj, const j3x::Obj& data, Character* user);
+    static void killObj(Functional* obj, const j3x::Obj& data, Character* user);
+    static void zoomTo(Functional* obj, const j3x::Obj& data, Character* user);
     static void setOnFire(Functional* obj, const j3x::Obj& data, Character* user);
     static void explode(Functional* obj, const j3x::Obj& data, Character* user);
 

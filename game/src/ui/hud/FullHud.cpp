@@ -160,26 +160,29 @@ void BackpackHud::update(float time_elapsed)
     weapons_.clear();
     for (auto& weapon : Game::get().getPlayer().getWeapons())
     {
-        weapons_.emplace_back(AbstractDrawableObject{placeholders_[i].getPosition(),
-                              RMGET<sf::Vector2f>("specials", weapon->getId(), "size") * CONF<float>("graphics/global_zoom"),
-                              &RM.getTexture("specials/" +  weapon->getId())}, weapon->getId());
-
-        auto tooltip_text = RMGET<std::string>("specials", weapon->getId(), "tooltip");
-        const auto& upgrades = weapon->getUpgrades();
-        if (!upgrades.empty())
+        if (weapon->getId() != "null")
         {
-            tooltip_text += "\n\nUpgrades:\n";
+            weapons_.emplace_back(AbstractDrawableObject{placeholders_[i].getPosition(),
+                                                         RMGET<sf::Vector2f>("specials", weapon->getId(), "size") * CONF<float>("graphics/global_zoom"),
+                                                         &RM.getTexture("specials/" +  weapon->getId())}, weapon->getId());
 
-            for (const auto& upgrade : upgrades)
+            auto tooltip_text = RMGET<std::string>("specials", weapon->getId(), "tooltip");
+            const auto& upgrades = weapon->getUpgrades();
+            if (!upgrades.empty())
             {
-                tooltip_text += "- " + RMGET<std::string>("specials", upgrade, "tooltip_header") + "\n";
-            }
-            tooltip_text.pop_back();
-        }
+                tooltip_text += "\n\nUpgrades:\n";
 
-        tooltips_[i].bindText(RMGET<std::string>("specials", weapon->getId(), "tooltip_header"),
-                              tooltip_text);
-        ++i;
+                for (const auto& upgrade : upgrades)
+                {
+                    tooltip_text += "- " + RMGET<std::string>("specials", upgrade, "tooltip_header") + "\n";
+                }
+                tooltip_text.pop_back();
+            }
+
+            tooltips_[i].bindText(RMGET<std::string>("specials", weapon->getId(), "tooltip_header"),
+                                  tooltip_text);
+            ++i;
+        }
     }
 
     for (; i < tooltips_.size(); ++i)

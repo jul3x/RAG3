@@ -43,11 +43,12 @@ void WeaponsBar::update(const std::vector<std::shared_ptr<AbstractWeapon>>& weap
         auto weapon_cast = dynamic_cast<ShootingWeapon*>(weapons.at(mod_i).get());
         auto melee_cast = dynamic_cast<MeleeWeapon*>(weapons.at(mod_i).get());
         auto& name = weapons.at(mod_i)->getId();
-        auto size = (i == 0 ? CHOSEN_WEAPON_SIZE_FACTOR_ : 1.0f) *
-                RMGET<sf::Vector2f>("specials", name, "size");
+        sf::Vector2f size = {};
+
         auto weapon_pos = base_position + weapons_positions_.at(i) * CONF<float>("graphics/user_interface_zoom");
         if (weapon_cast != nullptr || melee_cast != nullptr)
         {
+            size = (i == 0 ? CHOSEN_WEAPON_SIZE_FACTOR_ : 1.0f) * RMGET<sf::Vector2f>("specials", name, "size");
             weapons_.emplace_back(weapon_pos, size * CONF<float>("graphics/global_zoom"),
                                   &RM.getTexture("specials/" + name));
         }

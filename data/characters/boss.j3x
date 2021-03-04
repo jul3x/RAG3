@@ -14,7 +14,7 @@ int frames_number=4
 float frame_duration=0.14
 
 string default_activation="OnKill"
-list default_functions=["Null"]
+list default_functions=["null"]
 list default_datas=[0]
 
 string ai_type="MeleeAttack"

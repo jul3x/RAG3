@@ -8,7 +8,7 @@ float frame_duration=0.0
 
 string default_activation="OnUse"
 list default_functions=["PourWater"]
-list default_datas=["Null"]
+list default_datas=["null"]
 
 bool is_drawable=false
 

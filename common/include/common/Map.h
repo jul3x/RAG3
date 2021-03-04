@@ -59,6 +59,8 @@ public:
     [[nodiscard]] std::pair<sf::Vector2<size_t>, sf::Vector2f> getTileConstraints() const;
     [[nodiscard]] const j3x::Parameters& getParams() const;
 
+    static void markBlocked(ai::Grid& blocked, const sf::Vector2f& pos, const sf::Vector2f& size, float value);
+
 private:
     template<class T>
     inline bool checkCollisions(const sf::Vector2f& pos, std::list<T>& objs, bool erase = false,

@@ -33,8 +33,10 @@ SpecialFunctions::SpecialFunctions()
     functions_["ChangeOpenState"] = std::make_tuple(&changeOpenState, "[F] Pull the trigger", true);
     functions_["Teleport"] = std::make_tuple(&teleport, "", true);
     functions_["Kill"] = std::make_tuple(&kill, "", true);
+    functions_["KillObj"] = std::make_tuple(&killObj, "", true);
+    functions_["ZoomTo"] = std::make_tuple(&zoomTo, "", false);
     functions_["ActivateWeapon"] = std::make_tuple(&activateWeapon, "", false);
-    functions_["SetOnFire"] = std::make_tuple(&setOnFire, "", true);
+    functions_["SetOnFire"] = std::make_tuple(&setOnFire, "", false); // TODO maybe true?
     functions_["Explode"] = std::make_tuple(&explode, "", false);
     functions_["RemoveDecoration"] = std::make_tuple(&removeDecoration, "", false);
     functions_["RemoveSpecial"] = std::make_tuple(&removeSpecial, "", false);
@@ -45,7 +47,7 @@ SpecialFunctions::SpecialFunctions()
     functions_["SpawnFlame"] = std::make_tuple(&spawnFlame, "", false);
     functions_["SpawnAmmo"] = std::make_tuple(&spawnAmmo, "", false);
     functions_["SpawnDestruction"] = std::make_tuple(&spawnDestruction, "", true);
-    functions_["Null"] = std::make_tuple(&nullFunc, "", true);
+    functions_["null"] = std::make_tuple(&nullFunc, "", true);
     functions_["Deactivate"] = std::make_tuple(&deactivate, "", true);
     functions_["Destroy"] = std::make_tuple(&destroy, "", true);
     functions_["ActivateSpecial"] = std::make_tuple(&activateSpecial, "", true);
@@ -102,12 +104,8 @@ void SpecialFunctions::mapEnd(Functional* obj, const j3x::Obj& data, Character* 
 void SpecialFunctions::openDoor(Functional* obj, const j3x::Obj& data, Character* user)
 {
     LOG.info("[SpecialFunction] Open door.");
-    auto door_id = j3x::getObj<int>(data);
-    auto door = Game::get().getMap().getObjectById<Obstacle>(door_id);
-
-    auto grid_pos = std::make_pair(std::round((door->getPosition().x + RMGET<sf::Vector2f>("obstacles", door->getId(), "collision_offset").x) / DecorationTile::SIZE_X_),
-                                   std::round((door->getPosition().y + RMGET<sf::Vector2f>("obstacles", door->getId(), "collision_offset").y) / DecorationTile::SIZE_Y_));
-
+    auto door = Game::get().getMap().getObjectById<Obstacle>(j3x::getObj<int>(data));
+    float endurance = 0.0f;
     if (door->getCollisionArea().getType() == collision::Area::Type::None)
     {
         door->changeTexture(&RM.getTexture("obstacles/" + door->getId()));
@@ -115,18 +113,19 @@ void SpecialFunctions::openDoor(Functional* obj, const j3x::Obj& data, Character
                                                  RMGET<sf::Vector2f>("obstacles", door->getId(), "collision_size").y,
                                                  RMGET<sf::Vector2f>("obstacles", door->getId(), "collision_offset")));
         door->setZIndex(RMGET<int>("obstacles", door->getId(), "z_index"));
-
-        Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) =
-                RMGET<float>("obstacles", door->getId(), "endurance");
+        endurance = RMGET<float>("obstacles", door->getId(), "endurance");
     }
     else
     {
         door->changeTexture(&RM.getTexture("obstacles/" + door->getId() + "_open"));
         door->changeCollisionArea(collision::None());
         door->setZIndex(RMGET<int>("obstacles", door->getId() + "_open", "z_index"));
-
-        Game::get().getMap().getMapBlockage().blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
     }
+
+    Map::markBlocked(Game::get().getMap().getMapBlockage().blockage_,
+                     door->getPosition() + RMGET<sf::Vector2f>("obstacles", door->getId(), "collision_offset"),
+                     RMGET<sf::Vector2f>("obstacles",  door->getId(), "collision_size"),
+                     endurance);
 
     if (user != nullptr)
         Game::get().getJournal().event<DoorOpen>(door);
@@ -358,9 +357,10 @@ void SpecialFunctions::kill(Functional* obj, const j3x::Obj& data, Character* us
     {
         auto object = dynamic_cast<AbstractPhysicalObject*>(obj);
 
-        if (!utils::num::isNearlyEqual(object->getPosition(), user->getPosition(), 10.0f))
+        auto difference = object->getPosition() + object->getCollisionArea().getOffset() - user->getPosition() - user->getCollisionArea().getOffset();
+        if (!utils::num::isNearlyEqual(std::get<0>(utils::geo::cartesianToPolar(difference)), 0.0f, 16.0f))
         {
-            auto diff = utils::geo::getNormalized(object->getPosition() - user->getPosition());
+            auto diff = utils::geo::getNormalized(difference);
             user->addSteeringForce(RMGET<float>("characters", user->getId(), "max_speed") * diff, 0.1f);
         }
         else
@@ -370,9 +370,17 @@ void SpecialFunctions::kill(Functional* obj, const j3x::Obj& data, Character* us
     }
     else
     {
-       user->setHealth(0);
+        user->setHealth(0);
     }
 //     Game::get().spawnAnimationEvent(data);
+}
+
+void SpecialFunctions::killObj(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Killing object.");
+
+    auto what = Game::get().getMap().getObjectById<Obstacle>(j3x::getObj<int>(data));
+    if (what != nullptr) what->setHealth(0);
 }
 
 void SpecialFunctions::nullFunc(Functional *obj, const j3x::Obj &data, Character* user)
@@ -446,4 +454,12 @@ void SpecialFunctions::takeRag3(Functional* obj, const j3x::Obj& data, Character
 void SpecialFunctions::payRespect(Functional* obj, const j3x::Obj& data, Character* user)
 {
     Game::get().spawnThought(user, "Respect BRO!");
+}
+
+void SpecialFunctions::zoomTo(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Zooming to.");
+
+    auto npc = Game::get().getMap().getObjectById<NPC>(j3x::getObj<int>(data));
+    Game::get().forceZoomTo(npc);
 }

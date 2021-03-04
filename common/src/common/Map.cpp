@@ -181,16 +181,10 @@ Obstacle* Map::spawn(const sf::Vector2f& pos, float direction, const std::string
 {
     if (!check || this->checkCollisionsObjects(pos, false, max_z_index))
     {
-        auto& collision_offset = RMGET<sf::Vector2f>("obstacles", id, "collision_offset");
-        auto grid_pos = std::make_pair(std::round((pos.x + collision_offset.x) / DecorationTile::SIZE_X_),
-                                       std::round((pos.y + collision_offset.y) / DecorationTile::SIZE_Y_));
-
         if (!blocked_.blockage_.empty())
         {
-            if ((blocked_.blockage_.size() > grid_pos.first && blocked_.blockage_.at(0).size() > grid_pos.second) &&
-                grid_pos.first >= 0 && grid_pos.second >= 0)
-                blocked_.blockage_.at(grid_pos.first).at(grid_pos.second) =
-                        RMGET<float>("obstacles", id, "endurance");
+            Map::markBlocked(blocked_.blockage_, pos + RMGET<sf::Vector2f>("obstacles", id, "collision_offset"),
+                    RMGET<sf::Vector2f>("obstacles", id, "collision_size"), RMGET<float>("obstacles", id, "endurance"));
         }
 
         obstacles_.emplace_back(std::make_shared<Obstacle>(pos, id));
@@ -348,4 +342,27 @@ std::pair<sf::Vector2<size_t>, sf::Vector2f> Map::getTileConstraints() const
 const j3x::Parameters& Map::getParams() const
 {
     return params_;
+}
+
+void Map::markBlocked(ai::Grid& blocked, const sf::Vector2f& pos, const sf::Vector2f& size, float value)
+{
+    auto size_x = static_cast<int>(blocked.size()) - 1;
+    auto size_y = static_cast<int>(blocked.front().size()) - 1;
+    auto left = pos - size / 2.0f;
+    auto right = pos + size / 2.0f;
+
+    int left_x = std::min(size_x, std::max(0, static_cast<int>(std::round(left.x / DecorationTile::SIZE_X_))));
+    int left_y = std::min(size_y, std::max(0, static_cast<int>(std::round(left.y / DecorationTile::SIZE_Y_))));
+    int right_x = std::min(size_x, std::max(0, static_cast<int>(std::round(right.x / DecorationTile::SIZE_X_))));
+    int right_y = std::min(size_y, std::max(0, static_cast<int>(std::round(right.y / DecorationTile::SIZE_Y_))));
+
+    int center_x = std::min(size_x, std::max(0, static_cast<int>(std::round(pos.x / DecorationTile::SIZE_X_))));
+    int center_y = std::min(size_y, std::max(0, static_cast<int>(std::round(pos.y / DecorationTile::SIZE_Y_))));
+
+    blocked.at(center_x).at(center_y) = value;
+    for (int x = left_x; x < right_x; ++x)
+    {
+        for (int y = left_y; y < right_y; ++y)
+            blocked.at(x).at(y) = value;
+    }
 }

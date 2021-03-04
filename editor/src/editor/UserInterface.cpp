@@ -431,6 +431,11 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
                 DecorationTile::SIZE_X_ / 4.0f * std::round(mouse_world_pos.x / DecorationTile::SIZE_X_ * 4.0f),
                 DecorationTile::SIZE_Y_ / 4.0f * std::round(mouse_world_pos.y / DecorationTile::SIZE_Y_ * 4.0f));
     }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt))
+    {
+        crosshair_.setPosition(DecorationTile::SIZE_X_ * std::round(mouse_world_pos.x / DecorationTile::SIZE_X_),
+                               DecorationTile::SIZE_Y_ * std::round(mouse_world_pos.y / DecorationTile::SIZE_Y_));
+    }
     else
     {
         crosshair_.setPosition(mouse_world_pos);

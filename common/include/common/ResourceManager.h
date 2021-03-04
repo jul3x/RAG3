@@ -31,6 +31,8 @@ public:
     const T& getParam(const std::string& category, const std::string& id, const std::string& param,
                       float ignore_warn = false)
     {
+        if (id.empty())
+            std::cout << param << std::endl;
         return j3x::get<T>(this->getObjectParams(category, id), param, ignore_warn);
     }
 

@@ -1,25 +1,25 @@
-float max_speed=0.0
+float max_speed=-10.0
 
 float max_health=3
 
-vector size=(32.0,50.0)
+vector size=(42.0,60.0)
 vector collision_size=(30.0,30.0)
 vector collision_offset=(0.0,0.0)
 vector map_offset=(0.0,8.0)
 
-list gun_offset=[(0.0,0.0)]
-int frames_number=1
-float frame_duration=1.0
+list gun_offset=[(0.0,0.0);(0.0,0.0);(0.0,0.0);(0.0,0.0)]
+int frames_number=4
+float frame_duration=2.0
 
 string default_activation="OnKill"
-list default_functions=["Null"]
+list default_functions=["null"]
 list default_datas=[0]
 
 string ai_type="None"
 
 int z_index=1
 
-list weapons=["Null"]
+list weapons=["null"]
 
 bool is_talkable=true
 string light_point=""

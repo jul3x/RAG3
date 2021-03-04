@@ -8,7 +8,7 @@ float frame_duration=0.0
 
 string default_activation="OnPick"
 list default_functions=["TakeRag3"; "Destroy"]
-list default_datas=["Null"; "Null"]
+list default_datas=["null"; "null"]
 
 bool is_drawable=true
 

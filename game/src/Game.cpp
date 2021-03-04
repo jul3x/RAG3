@@ -14,7 +14,8 @@
 
 
 
-Game::Game() : current_time_factor_(1.0f), state_(GameState::Menu), rag3_time_elapsed_(-10.0f), time_elapsed_(0.0f)
+Game::Game() : current_time_factor_(1.0f), state_(GameState::Menu), rag3_time_elapsed_(-10.0f), time_elapsed_(0.0f),
+               forced_zoom_to_time_elapsed_(-10.0f), current_npc_zoom_(nullptr)
 {
     engine_ = std::make_unique<Engine>();
     engine_->registerGame(this);
@@ -33,7 +34,7 @@ void Game::initialize()
 
     spawning_func_["bullet"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnBullet(user, name, pos, dir); };
     spawning_func_["fire"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnFire(user, name, pos, dir); };
-    spawning_func_["Null"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnNull(user, name, pos, dir); };
+    spawning_func_["null"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnNull(user, name, pos, dir); };
 
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     ui_ = std::make_unique<UserInterface>();
@@ -165,6 +166,20 @@ void Game::update(float time_elapsed)
             else if (rag3_time_elapsed_ > -1.0f)
                 setRag3Time(-10.0f);
 
+            if (forced_zoom_to_time_elapsed_ > 0.0f)
+            {
+                forced_zoom_to_time_elapsed_ -= time_elapsed;
+                forceZoomTo(current_npc_zoom_);
+            }
+            else if (forced_zoom_to_time_elapsed_ > -1.0f)
+            {
+                camera_->setPointingTo(player_->getPosition());
+                camera_->setZoomTo(1.0f);
+                Game::get().setNormalTime();
+                forced_zoom_to_time_elapsed_ = -10.0f;
+                current_npc_zoom_ = nullptr;
+            }
+
             time_elapsed_ += time_elapsed;
             break;
         }
@@ -246,10 +261,8 @@ void Game::updateMapObjects(float time_elapsed)
                 (*it)->use(player_.get());
             }
 
-            auto grid_vector_pos = (*it)->getPosition() + RMGET<sf::Vector2f>("obstacles", (*it)->getId(), "collision_offset");
-            auto grid_pos = std::make_pair(std::round(grid_vector_pos.x / DecorationTile::SIZE_X_),
-                                           std::round(grid_vector_pos.y / DecorationTile::SIZE_Y_));
-            blockage.blockage_.at(grid_pos.first).at(grid_pos.second) = 0.0f;
+            Map::markBlocked(blockage.blockage_, (*it)->getPosition() + RMGET<sf::Vector2f>("obstacles", (*it)->getId(), "collision_offset"),
+                             RMGET<sf::Vector2f>("obstacles", (*it)->getId(), "collision_size"), 0.0f);
 
             obstacles.erase(it);
             it = next_it;
@@ -348,8 +361,7 @@ void Game::killNPC(NPC* npc)
 
     // draw on this place destruction
     spawnDecoration(npc->getPosition(), "blood");
-
-    this->spawnExplosionEvent(npc->getPosition());
+    spawnKillEvent(npc->getPosition());
 
     engine_->deleteDynamicObject(npc);
     auto talkable_area = npc->getTalkableArea();
@@ -409,7 +421,7 @@ void Game::draw(graphics::Graphics& graphics)
             }
         };
 
-//    debug_map_blockage_->draw(graphics);
+//        debug_map_blockage_->draw(graphics);
         draw(map_->getList<DecorationTile>());
         draw(map_->getList<Decoration>());
         draw(map_->getList<Obstacle>());
@@ -514,6 +526,15 @@ void Game::spawnExplosionEvent(const sf::Vector2f& pos)
 
     if (CONF<bool>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
+}
+
+void Game::spawnKillEvent(const sf::Vector2f& pos)
+{
+    auto number = std::to_string(utils::num::getRandom(1, 1));
+    spawnEvent("explosion_" + number, pos, 0.0f, RMGET<sf::Vector2f>("animations", "explosion_" + number, "size").x);
+
+//    if (CONF<bool>("sound/sound_on"))
+//        engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
 }
 
 void Game::spawnTeleportationEvent(const sf::Vector2f& pos)
@@ -1061,7 +1082,11 @@ void Game::setGameState(Game::GameState state)
 
             engine_->turnOnCollisions();
             if (CONF<bool>("sound/sound_on"))
+            {
+                music_manager_->setPlaybackPitch(1.0f);
                 music_manager_->play();
+            }
+
             break;
         case GameState::Reverse:
             if (this->isJournalFreezed())
@@ -1074,13 +1099,19 @@ void Game::setGameState(Game::GameState state)
             journal_->event<TimeReversal, void*>();
             break;
         case GameState::Menu:
-            music_manager_->clearQueue();
-            music_manager_->addToQueue(CONF<std::string>("paths/music_dir") + "/menu.ogg");
             if (CONF<bool>("sound/sound_on"))
+            {
+                music_manager_->clearQueue();
+                music_manager_->addToQueue(CONF<std::string>("paths/music_dir") + "/menu.ogg");
                 music_manager_->play();
+                music_manager_->setPlaybackPitch(1.0f);
+            }
+
             break;
         case GameState::Paused:
-            music_manager_->pause();
+            if (state_ != GameState::Paused)
+                if (CONF<bool>("sound/sound_on"))
+                    music_manager_->setPlaybackPitch(CONF<float>("sound/bullet_time_music_factor"));
             break;
     }
 
@@ -1107,8 +1138,8 @@ void Game::updatePlayerClone(float time_elapsed)
         {
             // draw on this place destruction
             spawnDecoration(player_clone_->getPosition(), "blood");
+            spawnKillEvent(player_clone_->getPosition());
 
-            this->spawnExplosionEvent(player_clone_->getPosition());
             this->cleanPlayerClone();
 
             player_->setHealth(0); // player clone is dead - so do player
@@ -1143,10 +1174,10 @@ void Game::updatePlayer(float time_elapsed)
     if (player_->isAlive() && !player_->update(time_elapsed))
     {
         spawnDecoration(player_->getPosition(), "blood");
-        spawnExplosionEvent(player_->getPosition());
+        spawnKillEvent(player_->getPosition());
         player_->setDead();
         engine_->deleteDynamicObject(player_.get());
-        music_manager_->stop();
+        music_manager_->setPlaybackPitch(CONF<float>("sound/bullet_time_music_factor"));
     }
 }
 
@@ -1283,7 +1314,7 @@ void Game::registerWeapons(Character* character)
 
 void Game::registerWeapon(AbstractWeapon* weapon)
 {
-    if (!weapon->getId().empty())
+    if (!weapon->getId().empty() && weapon->getId() != "null")
     {
         auto func = this->getSpawningFunction(RMGET<std::string>("weapons", weapon->getId(), "spawn_func"));
         weapon->registerSpawningFunction(std::get<0>(func), std::get<1>(func));
@@ -1385,5 +1416,23 @@ DestructionSystem* Game::spawnNewDestructionSystem(const sf::Vector2f& pos, floa
 void Game::close()
 {
     this->engine_->getGraphics().getWindow().close();
+}
+
+void Game::forceZoomTo(NPC* current_npc_zoom)
+{
+    camera_->setPointingTo(current_npc_zoom->getPosition());
+    camera_->setZoomTo(CONF<float>("graphics/camera_right_click_zoom_factor"));
+
+    Game::get().setBulletTime();
+
+    if (current_npc_zoom_ == nullptr)
+        forced_zoom_to_time_elapsed_ = CONF<float>("forced_zoom_to_time");
+
+    current_npc_zoom_ = current_npc_zoom;
+}
+
+float Game::getForcedZoomTime() const
+{
+    return forced_zoom_to_time_elapsed_;
 }
 

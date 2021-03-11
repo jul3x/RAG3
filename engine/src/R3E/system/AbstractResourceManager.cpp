@@ -41,6 +41,7 @@ namespace r3e {
 
         for (auto& font : fonts_)
         {
+            font.second.setSmooth(true);
             font.second.setSmooth(fonts_smooth_allowed_);
         }
     }

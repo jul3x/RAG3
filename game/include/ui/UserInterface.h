@@ -78,7 +78,7 @@ private:
     static constexpr float FPS_Y_ = 300.0f;
 
     static constexpr float OBJECT_USE_TEXT_OFFSET_Y_ = 32.0f;
-    static constexpr float TALK_TEXT_OFFSET_Y_ = 48.0f;
+    static constexpr float TALK_TEXT_OFFSET_Y_ = 42.0f;
 
     std::unique_ptr<tgui::Gui> gui_;
     tgui::Theme theme_;

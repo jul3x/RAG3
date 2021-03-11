@@ -60,7 +60,7 @@ namespace r3e {
             bool
             isPointInRectangle(const sf::Vector2f& p, const sf::Vector2f& rect_pos, const sf::Vector2f& rect_size)
             {
-                if (rect_size.x <= 0.0f || rect_size.y <= 0.0f)
+                if (rect_size.x < 0.0f || rect_size.y < 0.0f)
                 {
                     throw std::invalid_argument("[isPointInRectangle] Size of rectangle cannot be negative!");
                 }

@@ -140,7 +140,7 @@ bool Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
     // If there are less than 4 weapons in backpack
     for (auto &weapon : weapons_in_backpack_)
     {
-        if (weapon->getId().empty())
+        if (weapon->getId().empty() || weapon->getId() == "null")
         {
             weapon = ptr;
             return true;

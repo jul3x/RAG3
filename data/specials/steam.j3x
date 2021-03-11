@@ -1,0 +1,20 @@
+vector size=(42.0,100.0)
+vector map_offset=(0.0,32.0)
+vector collision_offset=(0.0,32.0)
+float collision_radius=16.0
+
+int frames_number=14
+float frame_duration=0.11
+
+int z_index=1
+
+string default_activation="OnEnter"
+list default_functions=["SetOnFire"]
+list default_datas=["null"]
+
+bool is_drawable=true
+
+string light_point="sine"
+float light_point_data=frames_number * frame_duration
+bool default_active=true
+bool shadow=false

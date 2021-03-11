@@ -16,14 +16,14 @@ NoteWindow::NoteWindow(tgui::Gui *gui, tgui::Theme *theme, const std::string& te
     label->setRenderer(theme_->getRenderer("TooltipHeader"));
     label->setText("You are reading a note:");
     label->setTextSize(CONF<float>("graphics/popup_text_size"));
-    label->setPosition("50% - width / 2", "20%");
+    label->setPosition("50% - width / 2", "5%");
     child_->add(label);
 
     label = tgui::Label::create();
     label->setRenderer(theme_->getRenderer("TooltipText"));
     label->setText("\"" + text + "\"");
     label->setTextSize(CONF<float>("graphics/popup_text_size"));
-    label->setPosition("50% - width / 2", "30%");
+    label->setPosition("50% - width / 2", "15%");
     child_->add(label);
 
     ok_ = tgui::Button::create();

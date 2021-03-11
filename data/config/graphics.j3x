@@ -27,7 +27,7 @@ int font_color = -1
 
 // BULLET TRAILS
 float full_trail_time = 0.2
-int bullet_trail_vertices = 10
+int bullet_trail_vertices = 30
 
 // FONTS
 float use_text_size = 16
@@ -99,7 +99,7 @@ int shadow_color = 170
 vector thought_size_bottom = (128.0, 16.0)
 vector thought_size_center = (128.0, 8.0)
 vector thought_size_top = (128.0, 8.0)
-vector thought_offset = (16.0, -32.0)
+vector thought_offset = (16.0, -42.0)
 float thought_text_margin = 4.0
 
 // BONUS TEXT

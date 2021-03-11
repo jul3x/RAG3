@@ -1,5 +1,5 @@
 float recoil=0.0
-int max_ammo=2000
+int max_ammo=20
 int ammo_portion=2
 
 string spawn_func="fire"

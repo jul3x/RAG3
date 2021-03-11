@@ -56,6 +56,7 @@ public:
     static void spawnMiniLava(Functional* obj, const j3x::Obj& data, Character* user);
     static void spawnAmmo(Functional* obj, const j3x::Obj& data, Character* user);
     static void spawnFlame(Functional* obj, const j3x::Obj& data, Character* user);
+    static void spawnCrystal(Functional* obj, const j3x::Obj& data, Character* user);
 
     static void nullFunc(Functional* obj, const j3x::Obj& data, Character* user);
     static void deactivate(Functional* obj, const j3x::Obj& data, Character* user);

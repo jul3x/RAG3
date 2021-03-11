@@ -47,6 +47,7 @@ SpecialFunctions::SpecialFunctions()
     functions_["SpawnFlame"] = std::make_tuple(&spawnFlame, "", false);
     functions_["SpawnAmmo"] = std::make_tuple(&spawnAmmo, "", false);
     functions_["SpawnDestruction"] = std::make_tuple(&spawnDestruction, "", true);
+    functions_["SpawnCrystal"] = std::make_tuple(&spawnCrystal, "", true);
     functions_["null"] = std::make_tuple(&nullFunc, "", true);
     functions_["Deactivate"] = std::make_tuple(&deactivate, "", true);
     functions_["Destroy"] = std::make_tuple(&destroy, "", true);
@@ -462,4 +463,11 @@ void SpecialFunctions::zoomTo(Functional* obj, const j3x::Obj& data, Character* 
 
     auto npc = Game::get().getMap().getObjectById<NPC>(j3x::getObj<int>(data));
     Game::get().forceZoomTo(npc);
+}
+
+void SpecialFunctions::spawnCrystal(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Spawning crystal.");
+    auto pos = j3x::getObj<sf::Vector2f>(data);
+    Game::get().spawnSpecial(pos, "crystal");
 }

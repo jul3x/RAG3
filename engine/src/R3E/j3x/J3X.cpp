@@ -2,6 +2,8 @@
 // Created by jul3x on 21.04.20.
 //
 
+#include <algorithm>
+
 #include <R3E/system/Logger.h>
 
 #include <R3E/j3x/Parser.h>
@@ -104,7 +106,16 @@ namespace r3e::j3x {
         }
         else if (data.type() == typeid(std::string))
         {
-            const auto& str = j3x::getObj<std::string>(data);
+            auto str = j3x::getObj<std::string>(data);
+
+            while (true)
+            {
+                auto pos = str.find('\n');
+                if (pos == std::string::npos) break;
+
+                str.replace(pos, 1, "\\n");
+            }
+
             out += "\"" + str + "\"";
         }
         else

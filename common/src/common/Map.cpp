@@ -3,6 +3,7 @@
 //
 
 #include <R3E/system/Logger.h>
+#include <R3E/utils/Numeric.h>
 
 #include <common/ResourceManager.h>
 #include <common/Map.h>
@@ -365,4 +366,27 @@ void Map::markBlocked(ai::Grid& blocked, const sf::Vector2f& pos, const sf::Vect
         for (int y = left_y; y < right_y; ++y)
             blocked.at(x).at(y) = value;
     }
+}
+
+size_t Map::getDigest() const
+{
+    std::list<size_t> hashes;
+    static auto addHashes = [&hashes](const auto& objs) {
+        for (const auto& obj : objs)
+        {
+            size_t seed = utils::num::getHash(std::list<float>({obj->getPosition().x, obj->getPosition().y}));
+            utils::num::hashCombine(seed, obj->getId());
+            hashes.emplace_back(seed);
+        }
+    };
+
+    addHashes(obstacles_tiles_);
+    addHashes(decorations_tiles_);
+    addHashes(characters_);
+    addHashes(specials_);
+    addHashes(obstacles_);
+    addHashes(decorations_);
+    addHashes(weapons_);
+
+    return utils::num::getHash(hashes);
 }

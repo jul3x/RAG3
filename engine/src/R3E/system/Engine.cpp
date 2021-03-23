@@ -89,11 +89,13 @@ namespace r3e {
     void Engine::start()
     {
         game_->initialize();
-        ui_->initialize(*graphics_);
+
+        if (ui_ != nullptr)
+            ui_->initialize(*graphics_);
 
         auto time_start = std::chrono::system_clock::now();
 
-        while (graphics_->isWindowOpen())
+        while (graphics_ == nullptr || graphics_->isWindowOpen())
         {
             frame_time_ = std::chrono::duration_cast<std::chrono::nanoseconds>(
                     std::chrono::system_clock::now() - time_start).count() / 1000000000.0f;
@@ -105,7 +107,9 @@ namespace r3e {
                 continue;
             }
 
-            ui_->handleEvents(*graphics_, time_scale_factor_ * frame_time_);
+            if (ui_ != nullptr)
+                ui_->handleEvents(*graphics_, time_scale_factor_ * frame_time_);
+
             game_->update(time_scale_factor_ * frame_time_);
 
             if (collisions_ != nullptr && collisions_on_)
@@ -114,7 +118,8 @@ namespace r3e {
             updateAnimationEvents(time_scale_factor_ * frame_time_);
             updateEffects(time_scale_factor_ * frame_time_);
 
-            draw();
+            if (graphics_ != nullptr)
+                draw();
 
             if (sound_manager_ != nullptr)
                 sound_manager_->update(time_scale_factor_ * frame_time_);
@@ -202,7 +207,8 @@ namespace r3e {
             graphics_->draw(*effect);
         }
 
-        ui_->draw(*graphics_);
+        if (ui_ != nullptr)
+            ui_->draw(*graphics_);
 
         graphics_->setCurrentView();
 

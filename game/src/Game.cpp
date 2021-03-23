@@ -455,8 +455,9 @@ void Game::draw(graphics::Graphics& graphics)
         draw_light(fire_);
         draw_light(engine_->getAnimationEvents());
 
-        lightning_->add(*player_->getLightPoint());
-        if (player_clone_ != nullptr)
+        if (player_->getLightPoint() != nullptr)
+            lightning_->add(*player_->getLightPoint());
+        if (player_clone_ != nullptr && player_clone_->getLightPoint() != nullptr)
             lightning_->add(*player_clone_->getLightPoint());
 
         graphics.setStaticView();
@@ -729,7 +730,7 @@ void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             auto player = dynamic_cast<Player*>(d_obj);
             if (player != nullptr)
             {
-                player->addSpecialToBackpack(special);
+                player->addSpecialToBackpack(special, [this](Functional* functional) { this->registerFunctions(functional); });
                 special_functions_->destroy(special, {}, player);
             }
         }

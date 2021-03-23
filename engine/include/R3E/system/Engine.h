@@ -88,7 +88,7 @@ namespace r3e {
 
         float time_scale_factor_;
         float frame_time_;
-        float collisions_on_;
+        bool collisions_on_;
 
         std::list<std::shared_ptr<graphics::AnimationEvent>> animation_events_;
         std::list<std::shared_ptr<graphics::Effect>> effects_;

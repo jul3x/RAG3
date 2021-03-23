@@ -23,7 +23,7 @@ string ai_type="Standard"
 
 int z_index=1
 
-list weapons=["";"";"";""]
+list weapons=["m4";"";"";""]
 
 bool is_talkable=false
 string light_point="const"

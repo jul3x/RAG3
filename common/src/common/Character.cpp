@@ -698,3 +698,13 @@ const sf::Vector2f& Character::getGunOffset() const
 {
     return gun_offset_;
 }
+
+void Character::setRotateTo(float theta)
+{
+    rotate_to_ = theta;
+}
+
+void Character::setCurrentWeapon(int number)
+{
+    current_weapon_ = std::max(0, static_cast<int>(number % weapons_in_backpack_.size()));
+}

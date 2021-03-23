@@ -10,11 +10,10 @@
 
 #include <characters/Player.h>
 #include <common/ShootingWeapon.h>
-#include <Game.h>
 
 
 Player::Player(const sf::Vector2f& position) :
-        Character(position, "player"),
+        Character(position, "boss"),
         is_alive_(true),
         side_stepping_freeze_time_(-1.0f),
         skill_points_(0)
@@ -107,7 +106,7 @@ void Player::getCut(const MeleeWeapon& weapon, float factor)
     }
 }
 
-void Player::addSpecialToBackpack(Special* special)
+void Player::addSpecialToBackpack(Special* special, const std::function<void(Functional*)>& register_func)
 {
     for (auto& item : backpack_)
     {
@@ -123,7 +122,7 @@ void Player::addSpecialToBackpack(Special* special)
     backpack_.back().first.changeOrigin(CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", special->getId(), "size") / 2.0f);
     backpack_.back().first.removeShadow();
     backpack_.back().first.lightOff();
-    Game::get().registerFunctions(&backpack_.back().first);
+    register_func(&backpack_.back().first);
 }
 
 void Player::addSkillPoints(int skill_points)

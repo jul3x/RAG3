@@ -46,6 +46,25 @@ namespace r3e::utils::num {
         return std::abs(a.x - b.x) < abs_error && std::abs(a.y - b.y) < abs_error;
     }
 
+    template <class T>
+    inline void hashCombine(std::size_t& seed, const T& v)
+    {
+        std::hash<T> hasher;
+        seed ^= hasher(v) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+    }
+
+    template <class T>
+    inline size_t getHash(const T& objs)
+    {
+        size_t seed = 0;
+        for (const auto& obj : objs)
+        {
+            hashCombine(seed, obj);
+        }
+
+        return seed;
+    }
+
 } // namespace r3e::utils::num
 
 #endif //RAG3_ENGINE_INCLUDE_R3E_UTILS_NUMERIC_H

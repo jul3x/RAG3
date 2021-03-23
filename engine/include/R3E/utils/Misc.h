@@ -5,6 +5,7 @@
 #ifndef RAG3_ENGINE_INCLUDE_R3E_UTILS_MISC_H
 #define RAG3_ENGINE_INCLUDE_R3E_UTILS_MISC_H
 
+#include <chrono>
 #include <list>
 #include <functional>
 
@@ -27,6 +28,8 @@ namespace r3e::utils {
             if (do_increment) ++it;
         }
     }
+
+    uint64_t timeSinceEpochMillisec();
 }
 
 #endif //RAG3_ENGINE_INCLUDE_R3E_UTILS_MISC_H

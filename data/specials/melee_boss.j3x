@@ -1,0 +1,22 @@
+vector size=(1.0,1.0)
+vector collision_offset=(0.0,0.0)
+vector map_offset=(0.0,0.0)
+float collision_radius=1.0
+
+int frames_number=1
+float frame_duration=0.0
+
+string default_activation="OnEnter"
+list default_functions=["AddWeapon"; "Destroy"]
+list default_datas=["melee_boss"; "null"]
+
+bool is_drawable=true
+
+int z_index=1
+
+string light_point=""
+bool shadow=true
+bool default_active=true
+
+string tooltip_header = "Melee"
+string tooltip = "An elegant weapon for more civilized times."

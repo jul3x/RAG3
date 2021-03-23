@@ -32,12 +32,11 @@ public:
     void getCut(const MeleeWeapon& weapon, float factor) override;
     int getSkillPoints() const;
     int getSkill(Skills skill) const;
-    float getMaxTimeManipulation() const;
     std::list<std::pair<Special, int>>& getBackpack();
 
     void addSkillPoints(int skill_points);
     bool addSkill(Skills skill);
-    void addSpecialToBackpack(Special* special);
+    void addSpecialToBackpack(Special* special, const std::function<void(Functional*)>& register_func);
     void useItem(const std::string& name);
     void upgradeWeapon(const std::string& weapon, const std::string& special);
     bool sideStep(Player::SideStepDir dir);

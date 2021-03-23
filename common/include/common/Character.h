@@ -58,6 +58,7 @@ public:
     // Weapon manipulation
     bool shot();
     void switchWeapon(int relative_position_backpack);
+    void setCurrentWeapon(int number);
     int getCurrentWeapon() const;
     void makeOnlyOneWeapon(const std::string& id, float state);
     bool addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr);
@@ -89,6 +90,7 @@ public:
     void setPositionX(float x) override;
     void setPositionY(float y) override;
     void setRotation(float theta) override;
+    void setRotateTo(float theta);
     void setWeaponPointing(const sf::Vector2f& point);
     void setSpeedFactor(float factor, float time);
     void setCurrentSpecialObject(Special* obj);

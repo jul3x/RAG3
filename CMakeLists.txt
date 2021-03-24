@@ -73,11 +73,8 @@ list(FILTER MULTI_SRC EXCLUDE REGEX "(server|client|main_client|main_server)")
 file(GLOB_RECURSE SERVER_SRC "multi/src/server/*.cpp")
 file(GLOB_RECURSE CLIENT_SRC "multi/src/client/*.cpp")
 
-file(GLOB_RECURSE GAME_MISC_SRC "game/src/misc/*.cpp" "game/src/events/*.cpp" "game/src/characters/*.cpp" "game/src/ui/Crosshair.cpp")
-list(FILTER GAME_MISC_SRC EXCLUDE REGEX "(SpecialFunctions|Journal|JournalEntries|Achievements|Stats).cpp$")
-
-add_executable(${SERVER_NAME} ${MULTI_SRC} ${SERVER_SRC} ${GAME_MISC_SRC} multi/src/main_server.cpp)
-add_executable(${CLIENT_NAME} ${MULTI_SRC} ${CLIENT_SRC} ${GAME_MISC_SRC} multi/src/main_client.cpp)
+add_executable(${SERVER_NAME} ${MULTI_SRC} ${SERVER_SRC} multi/src/main_server.cpp)
+add_executable(${CLIENT_NAME} ${MULTI_SRC} ${CLIENT_SRC} multi/src/main_client.cpp)
 
 target_link_libraries(${SERVER_NAME}
         ${COMMON_LIBRARY}

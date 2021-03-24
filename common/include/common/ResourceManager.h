@@ -7,8 +7,8 @@
 
 #include <R3E/system/AbstractResourceManager.h>
 
-#include <common/DecorationTile.h>
-#include <common/ObstacleTile.h>
+#include <common/objects/DecorationTile.h>
+#include <common/objects/ObstacleTile.h>
 #include <common/Map.h>
 
 

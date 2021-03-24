@@ -67,7 +67,7 @@ void Achievements::check(const std::string &condition, int data, int delta_data)
         {
             if (!achievements_unlocked_.count(achievement.first))
             {
-                Game::get().spawnAchievement(achievement.second);
+                stats_->getGame()->spawnAchievement(achievement.second);
             }
             achievements_unlocked_.emplace(achievement.first);
 
@@ -75,9 +75,9 @@ void Achievements::check(const std::string &condition, int data, int delta_data)
             auto& exp = j3x::get<int>(achievement.second, "exp", true);
 
             if (!bonus_text.empty())
-                Game::get().spawnBonusText(Game::get().getPlayer().getPosition(), bonus_text);
+                stats_->getGame()->spawnBonusText(stats_->getGame()->getPlayer()->getPosition(), bonus_text);
 
-            stats_->addExp(exp, Game::get().getPlayer().getPosition(), false);
+            stats_->addExp(exp, stats_->getGame()->getPlayer()->getPosition(), false);
         }
     }
 }

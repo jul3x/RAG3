@@ -2,7 +2,7 @@
 // Created by jul3x on 15.03.20.
 //
 
-#include <common/DecorationTile.h>
+#include <common/objects/DecorationTile.h>
 
 #include <editor/Grid.h>
 

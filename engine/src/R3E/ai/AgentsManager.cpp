@@ -103,7 +103,7 @@ namespace r3e {
         {
             auto it = agents_map_.find(agent);
 
-            if (it == agents_map_.end()) throw std::runtime_error("[AgentsManager] Agent to delete not found!");
+            if (it == agents_map_.end()) return;
             agents_map_.erase(agent);
             LOG.info("[AgentsManager] Agent deleted!");
         }

@@ -21,7 +21,7 @@ namespace r3e {
         AbstractUserInterface& operator=(const AbstractUserInterface&) = delete;
 
         virtual void initialize(graphics::Graphics& graphics) = 0;
-        virtual void handleEvents(graphics::Graphics& graphics, float time_elapsed) = 0;
+        virtual void update(graphics::Graphics& graphics, float time_elapsed) = 0;
         virtual void draw(graphics::Graphics& graphics) = 0;
 
     };

@@ -5,7 +5,7 @@
 #ifndef RAG3_EDITOR_INCLUDE_EDITOR_SPECIALOBJECTWINDOW_H
 #define RAG3_EDITOR_INCLUDE_EDITOR_SPECIALOBJECTWINDOW_H
 
-#include <common/Special.h>
+#include <common/objects/Special.h>
 
 #include <editor/ChildWindow.h>
 

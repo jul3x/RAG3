@@ -20,8 +20,8 @@ int main()
     CFG.appendConfig("../data/config/characters.j3x", "characters");
     CFG.appendConfig("../data/config/paths.j3x", "paths");
 
-
-    Server::get().start();
+    auto server = std::make_unique<Server>();
+    server->start();
 
     return 0;
 }

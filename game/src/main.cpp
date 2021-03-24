@@ -37,7 +37,8 @@ int main()
     RM.lazyLoadTexture("blood_hud_2");
     RM.lazyLoadTexture("blood_hud_3");
 
-    Game::get().start();
+    auto game = std::make_unique<Game>();
+    game->start();
 
     return 0;
 }

@@ -5,27 +5,32 @@
 #ifndef RAG3_MULTI_INCLUDE_MINIMALUSERINTERFACE_H
 #define RAG3_MULTI_INCLUDE_MINIMALUSERINTERFACE_H
 
-#include <R3E/system/AbstractUserInterface.h>
+#include <common/ui/UserInterface.h>
 
 
-namespace r3e {
+class Server;
 
-    class MinimalUserInterface : public AbstractUserInterface {
+class MinimalUserInterface : public UserInterface {
 
-    public:
-        MinimalUserInterface() {}
-        virtual void initialize(graphics::Graphics& graphics) {}
-        virtual void handleEvents(graphics::Graphics& graphics, float time_elapsed) {
-            static sf::Event event;
+public:
+    MinimalUserInterface(Server* server);
 
-            while (graphics.getWindow().pollEvent(event))
-            {
-            }
-        }
-        virtual void draw(graphics::Graphics& graphics) {}
+    void spawnAchievement(const std::string& title, const std::string& text, const std::string& tex) override;
+    void spawnThought(Character* user, const std::string& text) override;
+    void spawnBonusText(const sf::Vector2f& pos, const std::string& text) override;
+    void spawnAcceptWindow(const std::string& text, const std::function<void()>& func) override;
+    void spawnNoteWindow(const std::string& text) override;
+    void closeWindow(Window* window) override;
 
-    };
+    void draw(graphics::Graphics& graphics) override;
 
-} // namespace r3e
+protected:
+    virtual void handleScrolling(float delta) override;
+    virtual void handleKeys() override;
+    virtual void handleMouse(sf::RenderWindow& graphics_window) override;
+    virtual void updatePlayerStates(float time_elapsed) override;
+
+
+};
 
 #endif //RAG3_MULTI_INCLUDE_MINIMALUSERINTERFACE_H

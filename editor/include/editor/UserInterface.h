@@ -38,7 +38,7 @@ namespace editor {
         UserInterface& operator=(const UserInterface&) = delete;
 
         void initialize(graphics::Graphics& graphics) override;
-        void handleEvents(graphics::Graphics& graphics, float time_elapsed) override;
+        void update(graphics::Graphics& graphics, float time_elapsed) override;
         void draw(graphics::Graphics& graphics) override;
 
         void registerCamera(Camera* camera);

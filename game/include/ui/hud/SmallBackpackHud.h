@@ -9,13 +9,16 @@
 #include <SFML/Graphics/Text.hpp>
 
 #include <R3E/objects/AbstractDrawableObject.h>
-#include <ui/Tooltip.h> 
+
+#include <common/characters/Player.h>
+#include <common/ui/Tooltip.h>
+
 
 using namespace r3e;
 
 class SmallBackpackHud : public AbstractDrawableObject {
 public:
-    explicit SmallBackpackHud(const sf::Vector2f& position);
+    explicit SmallBackpackHud(Player* player, const sf::Vector2f& position);
 
     void registerGui(tgui::Gui* gui, tgui::Theme* theme);
     void update(float time_elapsed);
@@ -31,6 +34,8 @@ private:
     std::vector<Special> objects_;
     std::vector<sf::Text> numbers_;
     std::vector<Tooltip> tooltips_;
+
+    Player* player_;
 
 };
 

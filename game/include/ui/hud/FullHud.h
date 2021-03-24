@@ -11,15 +11,17 @@
 #include <R3E/objects/AbstractDrawableObject.h>
 #include <R3E/graphics/LineEffect.h>
 
-#include <characters/Player.h>
-#include <ui/Tooltip.h>
+#include <common/characters/Player.h>
+#include <common/ui/Tooltip.h>
 
 
 using namespace r3e;
 
+class UserInterface;
+
 class BackpackHud : public sf::Drawable {
 public:
-    explicit BackpackHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f& pos, int x, int y);
+    explicit BackpackHud(UserInterface* ui, Player* player, const sf::Vector2f& pos, int x, int y);
 
     void update(float time_elapsed);
     void show(bool hide = false);
@@ -36,11 +38,14 @@ private:
     std::list<std::pair<AbstractDrawableObject, std::string>> weapons_;
     std::vector<Tooltip> tooltips_;
     std::vector<sf::Text> numbers_;
+
+    UserInterface* ui_;
+    Player* player_;
 };
 
 class SkillsHud : public sf::Drawable {
 public:
-    explicit SkillsHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f& pos);
+    explicit SkillsHud(UserInterface* ui, Player* player, const sf::Vector2f& pos);
 
     void update(float time_elapsed);
     void show(bool hide = false);
@@ -57,11 +62,13 @@ private:
     sf::Text points_text_;
     std::list<tgui::Button::Ptr> buttons_;
 
+    Player* player_;
+
 };
 
 class FullHud : public sf::Drawable {
 public:
-    explicit FullHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f& size);
+    explicit FullHud(UserInterface* ui, Player* player, const sf::Vector2f& size);
 
     void update(float time_elapsed);
     void show(bool show);

@@ -11,13 +11,16 @@
 #include <R3E/objects/StateWithInertia.h>
 #include <R3E/utils/Numeric.h>
 
-#include <events/Event.h>
+#include <common/events/Event.h>
 
 using namespace r3e;
 
+class Framework;
+class UserInterface;
+
 class Menu : public AbstractDrawableObject {
 public:
-    explicit Menu(tgui::Gui* gui, tgui::Theme* theme);
+    explicit Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme);
 
     void update(float time_elapsed);
     void doShow(bool show);
@@ -33,6 +36,8 @@ private:
     DynamicObject logo_;
     std::list<Event> animation_events_;
 
+    Framework* framework_;
+    UserInterface* ui_;
     tgui::Gui* gui_;
     tgui::Theme* theme_;
 

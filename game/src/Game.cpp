@@ -5,47 +5,34 @@
 #include <R3E/utils/Geometry.h>
 
 #include <common/ResourceManager.h>
-#include <common/MeleeWeapon.h>
+#include <common/weapons/MeleeWeapon.h>
+#include <common/events/Event.h>
+#include <common/misc/JournalEntries.h>
 
-#include <events/Event.h>
-#include <misc/JournalEntries.h>
-
+#include <misc/Stats.h>
 #include <Game.h>
 
 
 
-Game::Game() : current_time_factor_(1.0f), state_(GameState::Menu), rag3_time_elapsed_(-10.0f), time_elapsed_(0.0f),
-               forced_zoom_to_time_elapsed_(-10.0f), current_npc_zoom_(nullptr)
+Game::Game() : Framework(),
+               current_time_factor_(1.0f), rag3_time_elapsed_(-10.0f),
+               forced_zoom_to_time_elapsed_(-10.0f), current_obj_zoom_(nullptr)
 {
-    engine_ = std::make_unique<Engine>();
-    engine_->registerGame(this);
 }
 
 void Game::initialize()
 {
-    engine_->initializeGraphics(
-            sf::Vector2i{CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_height_px")},
-            "Codename: Rag3",
-            CONF<bool>("graphics/full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
-            sf::Color(CONF<int>("graphics/background_color")));
-    engine_->setFPSLimit(60);
-
+    Framework::initialize();
     engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
 
-    spawning_func_["bullet"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnBullet(user, name, pos, dir); };
-    spawning_func_["fire"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnFire(user, name, pos, dir); };
-    spawning_func_["null"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnNull(user, name, pos, dir); };
-
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
-    ui_ = std::make_unique<UserInterface>();
-    camera_ = std::make_unique<Camera>();
-    journal_ = std::make_unique<Journal>(CONF<float>("journal_max_time"), CONF<float>("journal_sampling_rate"));
-    special_functions_ = std::make_unique<SpecialFunctions>();
-    stats_ = std::make_unique<Stats>();
-    achievements_ = std::make_unique<Achievements>(stats_.get());
+    ui_ = std::make_unique<GameUserInterface>(this);
+    journal_ = std::make_unique<Journal>(this, CONF<float>("journal_max_time"), CONF<float>("journal_sampling_rate"));
+
+    stats_ = std::make_unique<Stats>(this);
+    achievements_ = std::make_unique<Achievements>(dynamic_cast<Stats*>(stats_.get()));
     achievements_->load(CONF<std::string>("paths/achievements"));
 
-    map_ = std::make_unique<Map>();
     agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
                                                           CONF<float>("characters/max_time_without_path_recalc"),
                                                           CONF<float>("characters/min_pos_change_without_path_recalc"),
@@ -60,36 +47,7 @@ void Game::initialize()
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());
 
-    engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
-
-    this->initDestructionParams();
-
-    map_->loadMap("first_new_map");
-    engine_->getGraphics().setBgColor(sf::Color(j3x::get<int>(map_->getParams(), "background_color")));
-    lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                                                                    static_cast<float>(CONF<int>("graphics/window_height_px"))},
-                                                       sf::Color(j3x::get<int>(map_->getParams(), "lightning_color")));
-
-//    debug_map_blockage_ = std::make_unique<DebugMapBlockage>(&map_->getMapBlockage());
-
-    engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
-
-    for (auto& obstacle : map_->getList<ObstacleTile>())
-        engine_->registerStaticObject(obstacle.get());
-
-    for (auto& obstacle : map_->getList<Obstacle>())
-    {
-        engine_->registerStaticObject(obstacle.get());
-        registerLight(obstacle.get());
-
-        registerFunctions(obstacle.get());
-    }
-
-    for (auto& decoration : map_->getList<Decoration>())
-    {
-        registerLight(decoration.get());
-    }
 
     for (auto& character : map_->getList<NPC>())
     {
@@ -111,12 +69,6 @@ void Game::initialize()
     engine_->registerDynamicObject(player_.get());
     registerLight(player_.get());
     registerWeapons(player_.get());
-
-    for (auto& weapon : map_->getList<PlacedWeapon>())
-    {
-        auto func = this->getSpawningFunction(RMGET<std::string>("weapons", weapon->getId(), "spawn_func"));
-        weapon->registerSpawningFunction(std::get<0>(func), std::get<1>(func));
-    }
 
     for (auto& special : map_->getList<Special>())
     {
@@ -169,15 +121,15 @@ void Game::update(float time_elapsed)
             if (forced_zoom_to_time_elapsed_ > 0.0f)
             {
                 forced_zoom_to_time_elapsed_ -= time_elapsed;
-                forceZoomTo(current_npc_zoom_);
+                forceZoomTo(current_obj_zoom_);
             }
             else if (forced_zoom_to_time_elapsed_ > -1.0f)
             {
                 camera_->setPointingTo(player_->getPosition());
                 camera_->setZoomTo(1.0f);
-                Game::get().setNormalTime();
+                this->setNormalTime();
                 forced_zoom_to_time_elapsed_ = -10.0f;
-                current_npc_zoom_ = nullptr;
+                current_obj_zoom_ = nullptr;
             }
 
             time_elapsed_ += time_elapsed;
@@ -465,105 +417,21 @@ void Game::draw(graphics::Graphics& graphics)
     }
 }
 
-void Game::start()
+Player* Game::getPlayer()
 {
-    engine_->start();
+    return player_.get();
 }
 
-Map& Game::getMap()
+Journal* Game::getJournal()
 {
-    return *map_;
+    return journal_.get();
 }
 
-Player& Game::getPlayer()
+DestructionSystem* Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const float r)
 {
-    return *player_;
-}
-
-Camera& Game::getCamera()
-{
-    return *camera_;
-}
-
-Stats& Game::getStats()
-{
-    return *stats_;
-}
-
-Journal& Game::getJournal() const
-{
-    return *journal_;
-}
-
-UserInterface& Game::getUI()
-{
-    return *ui_;
-}
-
-const std::list<std::unique_ptr<Bullet>>& Game::getBullets() const
-{
-    return bullets_;
-}
-
-void Game::spawnEvent(const std::string& name, const sf::Vector2f& pos, float dir, float r)
-{
-    auto event = std::make_shared<Event>(pos, name, dir, r);
-    engine_->spawnAnimationEvent(event);
-
-    registerLight(event.get());
-}
-
-void Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const float r)
-{
-    spawnEvent("sparks", pos, dir, r);
-    auto ptr = spawnNewDestructionSystem(pos, dir - 90.0f, destruction_params_["debris"], 1.0f);
+    auto ptr = Framework::spawnSparksEvent(pos, dir, r);
     journal_->event<SpawnDestructionSystem>(ptr);
-}
-
-void Game::spawnExplosionEvent(const sf::Vector2f& pos)
-{
-    auto number = std::to_string(utils::num::getRandom(1, 1));
-    spawnEvent("explosion_" + number, pos, 0.0f, RMGET<sf::Vector2f>("animations", "explosion_" + number, "size").x);
-
-    if (CONF<bool>("sound/sound_on"))
-        engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
-}
-
-void Game::spawnKillEvent(const sf::Vector2f& pos)
-{
-    auto number = std::to_string(utils::num::getRandom(1, 1));
-    spawnEvent("explosion_" + number, pos, 0.0f, RMGET<sf::Vector2f>("animations", "explosion_" + number, "size").x);
-
-//    if (CONF<bool>("sound/sound_on"))
-//        engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
-}
-
-void Game::spawnTeleportationEvent(const sf::Vector2f& pos)
-{
-    spawnEvent("teleportation", pos + sf::Vector2f{0.0f, 10.0f});
-
-    if (CONF<bool>("sound/sound_on"))
-        engine_->spawnSoundEvent(RM.getSound("teleportation"), pos);
-}
-
-void Game::spawnSwirlEvent(const std::string& name, const sf::Vector2f& pos, bool flipped)
-{
-    auto event = std::make_shared<Event>(pos, name + "_swirl");
-    engine_->spawnAnimationEvent(event);
-
-    if (flipped)
-        event->setFlipX(true);
-
-    registerLight(event.get());
-}
-
-void Game::spawnFadeInOut()
-{
-    engine_->spawnEffect(std::make_shared<graphics::FadeInOut>(
-            sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                         static_cast<float>(CONF<int>("graphics/window_height_px"))}, sf::Color::Black,
-            CONF<float>("graphics/fade_in_out_duration")
-    ));
+    return ptr;
 }
 
 void Game::spawnThought(Character* user, const std::string& text)
@@ -585,59 +453,25 @@ void Game::spawnAchievement(const j3x::Parameters& params)
     );
 }
 
-void Game::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
+Special* Game::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
 {
-    auto ptr = this->spawnNewSpecial(name, -1, pos, Functional::Activation::None, {}, {});
+    auto ptr = Framework::spawnSpecial(pos, name);
     journal_->event<SpawnSpecial>(ptr);
+    return ptr;
 }
 
-void Game::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir)
+DestructionSystem* Game::spawnBloodEvent(const sf::Vector2f& pos, float dir, float deadly_factor)
 {
-    auto vector = sf::Vector2f{static_cast<float>(std::cos(dir)), static_cast<float>(std::sin(dir))};
-    spawnEvent("shot", pos + RMGET<float>("bullets", name, "burst_offset") * vector, dir * 180.0f / M_PI, RMGET<float>("bullets", name, "burst_size"));
-
-    if (CONF<bool>("sound/sound_on"))
-        engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
-}
-
-void Game::spawnBloodEvent(const sf::Vector2f& pos, float dir, float deadly_factor)
-{
-    spawnEvent("blood", pos, dir, 0.0f);
-    auto ptr = spawnNewDestructionSystem(pos, dir, destruction_params_["blood"], deadly_factor);
+    auto ptr = Framework::spawnBloodEvent(pos, dir, deadly_factor);
     journal_->event<SpawnDestructionSystem>(ptr);
+    return ptr;
 }
 
-void Game::spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
+Bullet* Game::spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
-    auto ptr = this->spawnNewBullet(user, name, pos, dir);
-
-    auto vector = sf::Vector2f{static_cast<float>(std::cos(dir)), static_cast<float>(std::sin(dir))};
-
-    spawnNewDestructionSystem(pos - 20.0f * vector, dir * 180.0f / M_PI + 90.0f, destruction_params_["husk"], 1.0f);
+    auto ptr = Framework::spawnBullet(user, name, pos, dir);
     journal_->event<SpawnBullet>(ptr);
-}
-
-void Game::spawnExplosionForce(const sf::Vector2f& pos, float r)
-{
-    desired_explosions_.emplace_back(pos, r);
-}
-
-void Game::updateExplosions()
-{
-    for (const auto& explosion : explosions_)
-    {
-        engine_->deleteHoveringObject(explosion.get());
-    }
-    explosions_.clear();
-
-    for (const auto& desired_explosion : desired_explosions_)
-    {
-        camera_->setShaking(2.0f);
-        explosions_.emplace_back(std::make_unique<Explosion>(desired_explosion.first, desired_explosion.second));
-        engine_->registerHoveringObject(explosions_.back().get());
-    }
-
-    desired_explosions_.clear();
+    return ptr;
 }
 
 void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
@@ -788,23 +622,11 @@ void Game::alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2)
     // Nothing to do for now (maybe sounds?)
 }
 
-Bullet* Game::spawnNewBullet(Character* user, const std::string& id, const sf::Vector2f& pos, float dir)
+Fire* Game::spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
-    bullets_.emplace_back(std::make_unique<Bullet>(user, pos, id, dir));
-
-    auto ptr = bullets_.back().get();
-
-    registerFunctions(ptr);
-    engine_->registerHoveringObject(ptr);
-
-    return ptr;
-}
-
-void Game::spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
-{
-    auto vector = sf::Vector2f{static_cast<float>(std::cos(dir)), static_cast<float>(std::sin(dir))};
-    auto ptr = this->spawnNewFire(user, pos + 20.0f * vector, dir);
+    auto ptr = Framework::spawnFire(user, name, pos, dir);
     journal_->event<SpawnFire>(ptr);
+    return ptr;
 }
 
 void Game::updateFire(float time_elapsed)
@@ -821,19 +643,6 @@ void Game::updateFire(float time_elapsed)
         }
     }
 }
-
-Fire* Game::spawnNewFire(Character* user, const sf::Vector2f& pos, float dir)
-{
-    fire_.emplace_back(std::make_unique<Fire>(user, pos, dir));
-
-    auto ptr = fire_.back().get();
-
-    registerLight(ptr);
-    engine_->registerHoveringObject(ptr);
-
-    return ptr;
-}
-
 
 NPC* Game::spawnNewNPC(const std::string& id, int u_id, Functional::Activation activation,
                        const j3x::List& funcs, const j3x::List& datas)
@@ -918,84 +727,6 @@ void Game::cleanPlayerClone()
     player_clone_.reset();
 }
 
-ObstacleTile* Game::spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos)
-{
-    auto new_ptr = map_->spawn<ObstacleTile>(pos, 0.0f, id);
-    engine_->registerStaticObject(new_ptr);
-    return new_ptr;
-}
-
-Obstacle* Game::spawnNewObstacle(const std::string& id, int u_id, const sf::Vector2f& pos,
-                                 Functional::Activation activation,
-                                 const j3x::List& funcs, const j3x::List& datas)
-{
-    auto new_ptr = map_->spawn<Obstacle>(pos, 0.0f, id);
-
-    if (u_id != -1)
-    {
-        new_ptr->setUniqueId(u_id);
-    }
-
-    if (activation != Functional::Activation::None)
-    {
-        new_ptr->setActivation(activation);
-        new_ptr->setFunctions(funcs);
-        new_ptr->setDatas(datas);
-    }
-
-    registerLight(new_ptr);
-    engine_->registerStaticObject(new_ptr);
-
-    registerFunctions(new_ptr);
-
-    return new_ptr;
-}
-
-void Game::findAndDeleteBullet(Bullet* ptr)
-{
-    for (auto it = bullets_.rbegin(); it != bullets_.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            engine_->deleteHoveringObject(ptr);
-            bullets_.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Game] Warning - bullet to delete not found!");
-}
-
-void Game::findAndDeleteFire(Fire* ptr)
-{
-    for (auto it = fire_.rbegin(); it != fire_.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            engine_->deleteHoveringObject(ptr);
-            fire_.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Game] Warning - fire to delete not found!");
-}
-
-void Game::findAndDeleteDecoration(Decoration* ptr)
-{
-    auto& decorations = map_->getList<Decoration>();
-    for (auto it = decorations.rbegin(); it != decorations.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            decorations.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Game] Warning - decoration to delete not found!");
-}
-
 Special* Game::getCurrentSpecialObject() const
 {
     return player_->getCurrentSpecialObject();
@@ -1050,7 +781,7 @@ void Game::setNormalTime()
         music_manager_->setPlaybackPitch(1.0f);
 }
 
-void Game::setGameState(Game::GameState state)
+void Game::setGameState(Framework::GameState state)
 {
     switch (state)
     {
@@ -1117,11 +848,6 @@ void Game::setGameState(Game::GameState state)
     }
 
     state_ = state;
-}
-
-Game::GameState Game::getGameState() const
-{
-    return state_;
 }
 
 bool Game::isJournalFreezed() const
@@ -1202,149 +928,11 @@ void Game::updateBullets(float time_elapsed)
     }
 }
 
-std::tuple<Game::SpawningFunction, Game::AnimationSpawningFunction> Game::getSpawningFunction(const std::string& name)
+Decoration* Game::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
 {
-    static const auto swirl = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) { this->spawnSwirlEvent(name, pos, flipped); };
-    static const auto null = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) { this->spawnNull(nullptr, "", pos, 0.0f); };
-    static const auto sparks = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) { this->spawnShotEvent(name, pos, dir); };
-    auto it = spawning_func_.find(name);
-
-    if (it == spawning_func_.end())
-    {
-        throw std::invalid_argument("[Game] SpawningFunction " + name + " is not handled!");
-    }
-
-    if (name == "bullet")
-        return std::make_tuple(it->second, sparks);
-    else if (name == "fire")
-        return std::make_tuple(it->second, null);
-
-    return std::make_tuple(it->second, swirl);
-}
-
-void Game::spawnNull(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
-{
-
-}
-
-const std::list<std::unique_ptr<Fire>>& Game::getFires() const
-{
-    return fire_;
-}
-
-Decoration* Game::spawnNewDecoration(const std::string& id, int u_id, const sf::Vector2f& pos)
-{
-    auto ptr = map_->spawn<Decoration>(pos, 0.0f, id);
-    if (u_id != -1)
-    {
-        ptr->setUniqueId(u_id);
-    }
-    registerLight(ptr);
-
-    return ptr;
-}
-
-void Game::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
-{
-    auto ptr = this->spawnNewDecoration(name, -1, pos);
+    auto ptr = Framework::spawnDecoration(pos, name);
     journal_->event<SpawnDecoration>(ptr);
-}
-
-Special* Game::spawnNewSpecial(const std::string& id, int u_id,
-                               const sf::Vector2f& pos, Functional::Activation activation,
-                               const j3x::List& funcs, const j3x::List& datas)
-{
-    auto ptr = map_->spawn<Special>(pos, 0.0f, id);
-    engine_->registerHoveringObject(ptr);
-
-    if (u_id != -1)
-    {
-        ptr->setUniqueId(u_id);
-    }
-
-    if (activation != Functional::Activation::None)
-    {
-        ptr->setActivation(activation);
-        ptr->setFunctions(funcs);
-        ptr->setDatas(datas);
-    }
-
-    registerLight(ptr);
-    registerFunctions(ptr);
-
     return ptr;
-}
-
-void Game::findAndDeleteSpecial(Special* ptr)
-{
-    auto& specials = map_->getList<Special>();
-    for (auto it = specials.rbegin(); it != specials.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            engine_->deleteHoveringObject(ptr);
-            specials.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Game] Warning - special to delete not found!");
-}
-
-void Game::findAndDeleteDestructionSystem(DestructionSystem* ptr)
-{
-    for (auto it = destruction_systems_.rbegin(); it != destruction_systems_.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            destruction_systems_.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Game] Warning - destruction system to delete not found!");
-}
-
-void Game::registerWeapons(Character* character)
-{
-    for (auto& weapon : character->getWeapons())
-    {
-        registerWeapon(weapon.get());
-    }
-}
-
-void Game::registerWeapon(AbstractWeapon* weapon)
-{
-    if (!weapon->getId().empty() && weapon->getId() != "null")
-    {
-        auto func = this->getSpawningFunction(RMGET<std::string>("weapons", weapon->getId(), "spawn_func"));
-        weapon->registerSpawningFunction(std::get<0>(func), std::get<1>(func));
-
-        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon);
-        if (melee_weapon != nullptr)
-        {
-            engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
-        }
-    }
-}
-
-void Game::registerFunctions(Functional* functional) const
-{
-    for (const auto& function : functional->getFunctions())
-    {
-        auto& function_str = j3x::getObj<std::string>(function);
-        functional->bindFunction(special_functions_->bindFunction(function_str),
-                                 special_functions_->bindTextToUse(function_str),
-                                 special_functions_->isUsableByNPC(function_str));
-    }
-}
-
-void Game::registerLight(Lightable* lightable) const
-{
-    if (lightable->getLightPoint() != nullptr)
-    {
-        lightable->getLightPoint()->registerGraphics(engine_->getGraphics());
-    }
 }
 
 void Game::setRag3Time(float time_elapsed)
@@ -1374,62 +962,17 @@ void Game::updateDestructionSystems(float time_elapsed)
     });
 }
 
-void Game::initDestructionParams()
+void Game::forceZoomTo(AbstractPhysicalObject* current_zoom)
 {
-    /* blood */
-    destruction_params_["blood"] = {};
-    destruction_params_["debris"] = {};
-    destruction_params_["husk"] = {};
-
-    for (auto& param : destruction_params_)
-    {
-        param.second.vel = CONF<float>("graphics/" + param.first + "_system_vel");
-        param.second.acc = CONF<float>("graphics/" + param.first + "_system_acc");
-        param.second.time = CONF<float>("graphics/" + param.first + "_system_time");
-        param.second.count = CONF<int>("graphics/" + param.first + "_system_count");
-        param.second.base_color = sf::Color(CONF<int>("graphics/" + param.first + "_system_base_color"));
-
-        param.second.spread_degree = CONF<float>("graphics/" + param.first + "_system_spread_degree");
-        param.second.acceleration_spread = CONF<float>("graphics/" + param.first + "_system_acceleration_spread");
-
-        param.second.vel_fac = CONF<float>("graphics/" + param.first + "_system_vel_fac");
-        param.second.acc_fac = CONF<float>("graphics/" + param.first + "_system_acc_fac");
-        param.second.time_fac = CONF<float>("graphics/" + param.first + "_system_time_fac");
-
-        param.second.min_size = CONF<float>("graphics/" + param.first + "_system_min_size");
-        param.second.max_size = CONF<float>("graphics/" + param.first + "_system_max_size");
-
-        param.second.shader = CONF<std::string>("graphics/" + param.first + "_system_shader");
-        param.second.full_color_fac = CONF<float>("graphics/" + param.first + "_system_full_color_fac");
-        param.second.r_fac = CONF<float>("graphics/" + param.first + "_system_r_fac");
-        param.second.g_fac = CONF<float>("graphics/" + param.first + "_system_g_fac");
-        param.second.b_fac = CONF<float>("graphics/" + param.first + "_system_b_fac");
-
-    }
-}
-
-DestructionSystem* Game::spawnNewDestructionSystem(const sf::Vector2f& pos, float dir, const DestructionParams& params, float quantity_factor)
-{
-    destruction_systems_.emplace_back(std::make_unique<DestructionSystem>(pos, dir, params, quantity_factor));
-    return destruction_systems_.back().get();
-}
-
-void Game::close()
-{
-    this->engine_->getGraphics().getWindow().close();
-}
-
-void Game::forceZoomTo(NPC* current_npc_zoom)
-{
-    camera_->setPointingTo(current_npc_zoom->getPosition());
+    camera_->setPointingTo(current_zoom->getPosition());
     camera_->setZoomTo(CONF<float>("graphics/camera_right_click_zoom_factor"));
 
-    Game::get().setBulletTime();
+    this->setBulletTime();
 
-    if (current_npc_zoom_ == nullptr)
+    if (current_obj_zoom_ == nullptr)
         forced_zoom_to_time_elapsed_ = CONF<float>("forced_zoom_to_time");
 
-    current_npc_zoom_ = current_npc_zoom;
+    current_obj_zoom_ = current_zoom;
 }
 
 float Game::getForcedZoomTime() const

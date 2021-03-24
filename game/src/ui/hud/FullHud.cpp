@@ -8,11 +8,11 @@
 #include <common/ResourceManager.h>
 
 #include <ui/hud/FullHud.h>
-#include <Game.h>
+#include <common/ui/UserInterface.h>
 
 
-
-BackpackHud::BackpackHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f& pos, int x, int y)
+BackpackHud::BackpackHud(UserInterface* ui, Player* player, const sf::Vector2f& pos, int x, int y) :
+        player_(player), ui_(ui)
 {
     for (int i = 0; i < y; ++i)
     {
@@ -24,7 +24,7 @@ BackpackHud::BackpackHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f&
                                        &RM.getTexture("backpack_place"));
             numbers_.emplace_back("", RM.getFont(), CONF<float>("graphics/backpack_text_size"));
 
-            tooltips_.emplace_back(theme, pos + sf::Vector2f{static_cast<float>(j), static_cast<float>(i)}
+            tooltips_.emplace_back(ui->getTheme(), pos + sf::Vector2f{static_cast<float>(j), static_cast<float>(i)}
                 * CONF<float>("graphics/backpack_placeholder_diff")
                 - CONF<sf::Vector2f>("graphics/backpack_placeholder_size") / 2.0f);
         }
@@ -33,7 +33,7 @@ BackpackHud::BackpackHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f&
     for (auto& tooltip : tooltips_)
     {
         tooltip.bindFunction([this, &tooltip]() { this->clickPlaceholder(tooltip); });
-        tooltip.bindGui(gui);
+        tooltip.bindGui(ui->getGui());
         tooltip.show(true);
     }
 }
@@ -54,7 +54,7 @@ void BackpackHud::combineBackpackItems(size_t first, size_t second)
 {
     size_t i = 0;
     std::string special_id{}, weapon_id{};
-    for (auto& special : Game::get().getPlayer().getBackpack())
+    for (auto& special : player_->getBackpack())
     {
         if (i == first) special_id = special.first.getId();
         if (i == second) special_id = special.first.getId();
@@ -82,12 +82,12 @@ void BackpackHud::combineBackpackItems(size_t first, size_t second)
 
         if (can_upgrade)
         {
-            Game::get().getUI().spawnAcceptWindow(
+            ui_->spawnAcceptWindow(
                     "Do you want to upgrade \"" +
                     RMGET<std::string>("specials", weapon_id, "tooltip_header") + "\" with \"" +
                     RMGET<std::string>("specials", special_id, "tooltip_header") + "\"?",
-                    std::bind([&](const std::string& w, const std::string& s) {
-                        Game::get().getPlayer().upgradeWeapon(w, s); }, weapon_id, special_id));
+                    std::bind([this](const std::string& w, const std::string& s) {
+                        player_->upgradeWeapon(w, s); }, weapon_id, special_id));
         }
     }
 }
@@ -104,7 +104,7 @@ void BackpackHud::setOpacity(sf::Uint8 a)
         number.setFillColor({255, 255, 255, a});
     }
 
-    for (auto& special : Game::get().getPlayer().getBackpack())
+    for (auto& special : player_->getBackpack())
     {
         special.first.setColor(255, 255, 255, a);
     }
@@ -141,7 +141,7 @@ void BackpackHud::update(float time_elapsed)
 {
     size_t i = 0;
 
-    for (auto& special : Game::get().getPlayer().getBackpack())
+    for (auto& special : player_->getBackpack())
     {
         special.first.setPosition(placeholders_[i].getPosition());
 
@@ -158,7 +158,7 @@ void BackpackHud::update(float time_elapsed)
     }
 
     weapons_.clear();
-    for (auto& weapon : Game::get().getPlayer().getWeapons())
+    for (auto& weapon : player_->getWeapons())
     {
         if (weapon->getId() != "null")
         {
@@ -207,7 +207,7 @@ void BackpackHud::draw(sf::RenderTarget& target, sf::RenderStates states) const
     }
 
     size_t i = 0;
-    for (auto& special : Game::get().getPlayer().getBackpack())
+    for (auto& special : player_->getBackpack())
     {
         target.draw(special.first, states);
         if (special.second > 1)
@@ -225,8 +225,9 @@ void BackpackHud::draw(sf::RenderTarget& target, sf::RenderStates states) const
 }
 
 
-SkillsHud::SkillsHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f& pos) :
-        points_text_("", RM.getFont(), CONF<float>("graphics/skills_text_size"))
+SkillsHud::SkillsHud(UserInterface* ui, Player* player, const sf::Vector2f& pos) :
+        points_text_("", RM.getFont(), CONF<float>("graphics/skills_text_size")),
+        player_(player)
 {
     int i = 0;
     for (const auto& line : CONF<j3x::List>("graphics/skills_lines"))
@@ -245,17 +246,17 @@ SkillsHud::SkillsHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f& pos
         auto button_pos = texts_.back().getPosition() + sf::Vector2f(texts_.back().getLocalBounds().width, 0)
             + CONF<sf::Vector2f>("graphics/skills_button_offset");
         buttons_.emplace_back(tgui::Button::create("+"));
-        buttons_.back()->setRenderer(theme->getRenderer("AddSkillButton"));
+        buttons_.back()->setRenderer(ui->getTheme()->getRenderer("AddSkillButton"));
         buttons_.back()->setPosition(button_pos);
         buttons_.back()->setSize(CONF<sf::Vector2f>("graphics/skills_button_size"));
         buttons_.back()->setVisible(false);
-        buttons_.back()->connect("pressed", [&](Player::Skills skill) {
-            if (!Game::get().getPlayer().addSkill(skill)) {
+        buttons_.back()->connect("pressed", [this](Player::Skills skill) {
+            if (!player_->addSkill(skill)) {
                 for (auto& button : buttons_)
                     button->setVisible(false);
             }
         }, skills_[i]);
-        gui->add(buttons_.back());
+        ui->getGui()->add(buttons_.back());
 
         ++i;
         if (i >= 4)
@@ -268,8 +269,6 @@ SkillsHud::SkillsHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f& pos
 
 void SkillsHud::update(float time_elapsed)
 {
-    static auto& player = Game::get().getPlayer();
-
     for (auto& line : lines_)
     {
         line.update(time_elapsed);
@@ -278,11 +277,11 @@ void SkillsHud::update(float time_elapsed)
     size_t i = 0;
     for (auto &text : texts_)
     {
-        text.setString(texts_placeholders_[i] + std::to_string(player.getSkill(skills_[i])));
+        text.setString(texts_placeholders_[i] + std::to_string(player_->getSkill(skills_[i])));
         ++i;
     }
 
-    points_text_.setString("Points: " + std::to_string(player.getSkillPoints()));
+    points_text_.setString("Points: " + std::to_string(player_->getSkillPoints()));
 }
 
 void SkillsHud::show(bool hide)
@@ -304,7 +303,7 @@ void SkillsHud::show(bool hide)
 
     for (auto& button : buttons_)
     {
-        if (Game::get().getPlayer().getSkillPoints() > 0)
+        if (player_->getSkillPoints() > 0)
         {
             if (hide)
             {
@@ -349,18 +348,19 @@ void SkillsHud::draw(sf::RenderTarget& target, sf::RenderStates states) const
 }
 
 
-FullHud::FullHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f& size) :
+FullHud::FullHud(UserInterface* ui, Player* player, const sf::Vector2f& size) :
         show_(false),
         bg_color_(sf::Color(0, 0, 0, 0)),
         bg_(size),
         player_(size / 2.0f + CONF<sf::Vector2f>("graphics/huge_player_offset"),
                 CONF<sf::Vector2f>("graphics/huge_player_size"),
                 &RM.getTexture("huge_player")),
-        backpack_hud_(gui, theme,
+        backpack_hud_(ui, player,
                       size / 2.0f + CONF<sf::Vector2f>("graphics/backpack_offset"),
                       CONF<int>("graphics/backpack_placeholders_x"),
                       CONF<int>("graphics/backpack_placeholders_y")),
-        skills_hud_(gui, theme, size / 2.0f + CONF<sf::Vector2f>("graphics/skills_offset"))
+        skills_hud_(ui, player, size / 2.0f + CONF<sf::Vector2f>("graphics/skills_offset")),
+        time_elapsed_(0.0f)
 {
     bg_.setPosition(0.0f, 0.0f);
     bg_.setFillColor(bg_color_);
@@ -368,16 +368,16 @@ FullHud::FullHud(tgui::Gui* gui, tgui::Theme* theme, const sf::Vector2f& size) :
     backpack_hud_.setOpacity(bg_color_.a);
 
     auto label = tgui::Button::create();
-    label->setRenderer(theme->getRenderer("MenuButton"));
+    label->setRenderer(ui->getTheme()->getRenderer("MenuButton"));
     label->setText("Back to menu");
     label->setInheritedFont(RM.getFont("default"));
     label->setTextSize(CONF<float>("graphics/menu_button_text_size"));
     label->setPosition(sf::Vector2f(CONF<int>("graphics/window_width_px") / 2.0f - label->getFullSize().x / 2.0f,
                                     CONF<int>("graphics/window_height_px")) + CONF<sf::Vector2f>("graphics/back_to_menu_pos"));
     label->setVisible(false);
-    label->connect("pressed", [&]() { Game::get().getUI().openMenu(); });
+    label->connect("pressed", [ui]() { ui->openMenu(); });
 
-    gui->add(label);
+    ui->getGui()->add(label);
     buttons_.emplace_back(label);
 }
 

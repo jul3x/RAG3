@@ -6,85 +6,35 @@
 #include <R3E/utils/Misc.h>
 
 #include <common/ResourceManager.h>
-#include <common/MeleeWeapon.h>
-
-#include <events/Event.h>
-#include <misc/JournalEntries.h>
+#include <common/weapons/MeleeWeapon.h>
+#include <common/events/Event.h>
+#include <common/misc/JournalEntries.h>
 
 #include <packets/PlayerInputPacket.h>
 #include <packets/PlayersStatePacket.h>
 #include <client/Client.h>
 
 
-Client::Client() : time_elapsed_(0.0f), last_packet_timestamp_(0.0f), last_received_packet_timestamp_(0)
+Client::Client() : Framework(), last_packet_timestamp_(0.0f), last_received_packet_timestamp_(0)
 {
-    engine_ = std::make_unique<Engine>();
-    engine_->registerGame(this);
 }
 
 void Client::initialize()
 {
-    engine_->initializeGraphics(
-            sf::Vector2i{CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_height_px")},
-            "Codename: Rag3",
-            CONF<bool>("graphics/full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
-            sf::Color(CONF<int>("graphics/background_color")));
-    engine_->setFPSLimit(60);
+    Framework::initialize();
 
     engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
 
-    spawning_func_["bullet"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnBullet(user, name, pos, dir); };
-    spawning_func_["fire"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnFire(user, name, pos, dir); };
-    spawning_func_["null"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnNull(user, name, pos, dir); };
-
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
-    ui_ = std::make_unique<ClientUserInterface>();
-    camera_ = std::make_unique<Camera>();
-//    special_functions_ = std::make_unique<SpecialFunctions>();
-
-    map_ = std::make_unique<Map>();
+    ui_ = std::make_unique<ClientUserInterface>(this);
 
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());
-
-    engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
-
-    this->initDestructionParams();
-
-    map_->loadMap("map_new");
-    engine_->getGraphics().setBgColor(sf::Color(j3x::get<int>(map_->getParams(), "background_color")));
-    lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                                                                    static_cast<float>(CONF<int>("graphics/window_height_px"))},
-                                                       sf::Color(j3x::get<int>(map_->getParams(), "lightning_color")));
-
-    engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
-
-    for (auto& obstacle : map_->getList<ObstacleTile>())
-        engine_->registerStaticObject(obstacle.get());
-
-    for (auto& obstacle : map_->getList<Obstacle>())
-    {
-        engine_->registerStaticObject(obstacle.get());
-        registerLight(obstacle.get());
-
-        registerFunctions(obstacle.get());
-    }
-
-    for (auto& decoration : map_->getList<Decoration>())
-    {
-        registerLight(decoration.get());
-    }
 
     engine_->registerDynamicObject(player_.get());
     registerLight(player_.get());
     registerWeapons(player_.get());
-
-    for (auto& weapon : map_->getList<PlacedWeapon>())
-    {
-        auto func = this->getSpawningFunction(RMGET<std::string>("weapons", weapon->getId(), "spawn_func"));
-        weapon->registerSpawningFunction(std::get<0>(func), std::get<1>(func));
-    }
 
     for (auto& special : map_->getList<Special>())
     {
@@ -297,141 +247,9 @@ void Client::draw(graphics::Graphics& graphics)
     graphics.draw(*lightning_);
 }
 
-void Client::start()
+Player* Client::getPlayer()
 {
-    engine_->start();
-}
-
-Map& Client::getMap()
-{
-    return *map_;
-}
-
-Player& Client::getPlayer()
-{
-    return *player_;
-}
-
-Camera& Client::getCamera()
-{
-    return *camera_;
-}
-
-const std::list<std::unique_ptr<Bullet>>& Client::getBullets() const
-{
-    return bullets_;
-}
-
-void Client::spawnEvent(const std::string& name, const sf::Vector2f& pos, float dir, float r)
-{
-    auto event = std::make_shared<Event>(pos, name, dir, r);
-    engine_->spawnAnimationEvent(event);
-
-    registerLight(event.get());
-}
-
-void Client::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const float r)
-{
-    spawnEvent("sparks", pos, dir, r);
-    auto ptr = spawnNewDestructionSystem(pos, dir - 90.0f, destruction_params_["debris"], 1.0f);
-}
-
-void Client::spawnExplosionEvent(const sf::Vector2f& pos)
-{
-    auto number = std::to_string(utils::num::getRandom(1, 1));
-    spawnEvent("explosion_" + number, pos, 0.0f, RMGET<sf::Vector2f>("animations", "explosion_" + number, "size").x);
-
-    if (CONF<bool>("sound/sound_on"))
-        engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
-}
-
-void Client::spawnKillEvent(const sf::Vector2f& pos)
-{
-    auto number = std::to_string(utils::num::getRandom(1, 1));
-    spawnEvent("explosion_" + number, pos, 0.0f, RMGET<sf::Vector2f>("animations", "explosion_" + number, "size").x);
-
-//    if (CONF<bool>("sound/sound_on"))
-//        engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
-}
-
-void Client::spawnTeleportationEvent(const sf::Vector2f& pos)
-{
-    spawnEvent("teleportation", pos + sf::Vector2f{0.0f, 10.0f});
-
-    if (CONF<bool>("sound/sound_on"))
-        engine_->spawnSoundEvent(RM.getSound("teleportation"), pos);
-}
-
-void Client::spawnSwirlEvent(const std::string& name, const sf::Vector2f& pos, bool flipped)
-{
-    auto event = std::make_shared<Event>(pos, name + "_swirl");
-    engine_->spawnAnimationEvent(event);
-
-    if (flipped)
-        event->setFlipX(true);
-
-    registerLight(event.get());
-}
-
-void Client::spawnFadeInOut()
-{
-    engine_->spawnEffect(std::make_shared<graphics::FadeInOut>(
-            sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                         static_cast<float>(CONF<int>("graphics/window_height_px"))}, sf::Color::Black,
-            CONF<float>("graphics/fade_in_out_duration")
-    ));
-}
-
-void Client::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
-{
-    auto ptr = this->spawnNewSpecial(name, -1, pos, Functional::Activation::None, {}, {});
-}
-
-void Client::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir)
-{
-    auto vector = sf::Vector2f{static_cast<float>(std::cos(dir)), static_cast<float>(std::sin(dir))};
-    spawnEvent("shot", pos + RMGET<float>("bullets", name, "burst_offset") * vector, dir * 180.0f / M_PI, RMGET<float>("bullets", name, "burst_size"));
-
-    if (CONF<bool>("sound/sound_on"))
-        engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
-}
-
-void Client::spawnBloodEvent(const sf::Vector2f& pos, float dir, float deadly_factor)
-{
-    spawnEvent("blood", pos, dir, 0.0f);
-    auto ptr = spawnNewDestructionSystem(pos, dir, destruction_params_["blood"], deadly_factor);
-}
-
-void Client::spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
-{
-    auto ptr = this->spawnNewBullet(user, name, pos, dir);
-
-    auto vector = sf::Vector2f{static_cast<float>(std::cos(dir)), static_cast<float>(std::sin(dir))};
-
-    spawnNewDestructionSystem(pos - 20.0f * vector, dir * 180.0f / M_PI + 90.0f, destruction_params_["husk"], 1.0f);
-}
-
-void Client::spawnExplosionForce(const sf::Vector2f& pos, float r)
-{
-    desired_explosions_.emplace_back(pos, r);
-}
-
-void Client::updateExplosions()
-{
-    for (const auto& explosion : explosions_)
-    {
-        engine_->deleteHoveringObject(explosion.get());
-    }
-    explosions_.clear();
-
-    for (const auto& desired_explosion : desired_explosions_)
-    {
-        camera_->setShaking(2.0f);
-        explosions_.emplace_back(std::make_unique<Explosion>(desired_explosion.first, desired_explosion.second));
-        engine_->registerHoveringObject(explosions_.back().get());
-    }
-
-    desired_explosions_.clear();
+    return player_.get();
 }
 
 void Client::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
@@ -494,10 +312,6 @@ void Client::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
                 special->use(player);
             }
         }
-        else if (special->getActivation() == Functional::Activation::OnUse)
-        {
-            character->setCurrentSpecialObject(special);
-        }
     }
 
     auto explosion = dynamic_cast<Explosion*>(h_obj);
@@ -540,128 +354,6 @@ void Client::alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2)
     // Nothing to do for now (maybe sounds?)
 }
 
-Bullet* Client::spawnNewBullet(Character* user, const std::string& id, const sf::Vector2f& pos, float dir)
-{
-    bullets_.emplace_back(std::make_unique<Bullet>(user, pos, id, dir));
-
-    auto ptr = bullets_.back().get();
-
-    registerFunctions(ptr);
-    engine_->registerHoveringObject(ptr);
-
-    return ptr;
-}
-
-void Client::spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
-{
-    auto vector = sf::Vector2f{static_cast<float>(std::cos(dir)), static_cast<float>(std::sin(dir))};
-    auto ptr = this->spawnNewFire(user, pos + 20.0f * vector, dir);
-}
-
-void Client::updateFire(float time_elapsed)
-{
-    for (auto it = fire_.begin(); it != fire_.end(); ++it)
-    {
-        if (!(*it)->update(time_elapsed))
-        {
-            engine_->deleteHoveringObject(it->get());
-            auto next_it = std::next(it);
-            fire_.erase(it);
-            it = next_it;
-        }
-    }
-}
-
-Fire* Client::spawnNewFire(Character* user, const sf::Vector2f& pos, float dir)
-{
-    fire_.emplace_back(std::make_unique<Fire>(user, pos, dir));
-
-    auto ptr = fire_.back().get();
-
-    registerLight(ptr);
-    engine_->registerHoveringObject(ptr);
-
-    return ptr;
-}
-
-ObstacleTile* Client::spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos)
-{
-    auto new_ptr = map_->spawn<ObstacleTile>(pos, 0.0f, id);
-    engine_->registerStaticObject(new_ptr);
-    return new_ptr;
-}
-
-Obstacle* Client::spawnNewObstacle(const std::string& id, int u_id, const sf::Vector2f& pos,
-                                 Functional::Activation activation,
-                                 const j3x::List& funcs, const j3x::List& datas)
-{
-    auto new_ptr = map_->spawn<Obstacle>(pos, 0.0f, id);
-
-    if (u_id != -1)
-    {
-        new_ptr->setUniqueId(u_id);
-    }
-
-    if (activation != Functional::Activation::None)
-    {
-        new_ptr->setActivation(activation);
-        new_ptr->setFunctions(funcs);
-        new_ptr->setDatas(datas);
-    }
-
-    registerLight(new_ptr);
-    engine_->registerStaticObject(new_ptr);
-
-    registerFunctions(new_ptr);
-
-    return new_ptr;
-}
-
-void Client::findAndDeleteBullet(Bullet* ptr)
-{
-    for (auto it = bullets_.rbegin(); it != bullets_.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            engine_->deleteHoveringObject(ptr);
-            bullets_.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Client] Warning - bullet to delete not found!");
-}
-
-void Client::findAndDeleteFire(Fire* ptr)
-{
-    for (auto it = fire_.rbegin(); it != fire_.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            engine_->deleteHoveringObject(ptr);
-            fire_.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Client] Warning - fire to delete not found!");
-}
-
-void Client::findAndDeleteDecoration(Decoration* ptr)
-{
-    auto& decorations = map_->getList<Decoration>();
-    for (auto it = decorations.rbegin(); it != decorations.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            decorations.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Client] Warning - decoration to delete not found!");
-}
-
 Special* Client::getCurrentSpecialObject() const
 {
     return player_->getCurrentSpecialObject();
@@ -678,8 +370,6 @@ void Client::useSpecialObject()
 
 void Client::updatePlayers(float time_elapsed)
 {
-    player_->setCurrentSpecialObject(nullptr);
-    player_->setCurrentTalkableCharacter(nullptr);
     if (player_->isAlive() && !player_->update(time_elapsed))
     {
         spawnDecoration(player_->getPosition(), "blood");
@@ -690,8 +380,6 @@ void Client::updatePlayers(float time_elapsed)
 
     for (auto& player : players_)
     {
-        player.second->setCurrentSpecialObject(nullptr);
-        player.second->setCurrentTalkableCharacter(nullptr);
         if (player.second->isAlive() && !player.second->update(time_elapsed))
         {
             spawnDecoration(player.second->getPosition(), "blood");
@@ -721,219 +409,20 @@ void Client::updateBullets(float time_elapsed)
     }
 }
 
-std::tuple<Client::SpawningFunction, Client::AnimationSpawningFunction> Client::getSpawningFunction(const std::string& name)
-{
-    static const auto swirl = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) { this->spawnSwirlEvent(name, pos, flipped); };
-    static const auto null = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) { this->spawnNull(nullptr, "", pos, 0.0f); };
-    static const auto sparks = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) { this->spawnShotEvent(name, pos, dir); };
-    auto it = spawning_func_.find(name);
-
-    if (it == spawning_func_.end())
-    {
-        throw std::invalid_argument("[Client] SpawningFunction " + name + " is not handled!");
-    }
-
-    if (name == "bullet")
-        return std::make_tuple(it->second, sparks);
-    else if (name == "fire")
-        return std::make_tuple(it->second, null);
-
-    return std::make_tuple(it->second, swirl);
-}
-
-void Client::spawnNull(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
-{
-
-}
-
-const std::list<std::unique_ptr<Fire>>& Client::getFires() const
-{
-    return fire_;
-}
-
-Decoration* Client::spawnNewDecoration(const std::string& id, int u_id, const sf::Vector2f& pos)
-{
-    auto ptr = map_->spawn<Decoration>(pos, 0.0f, id);
-    if (u_id != -1)
-    {
-        ptr->setUniqueId(u_id);
-    }
-    registerLight(ptr);
-
-    return ptr;
-}
-
-void Client::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
-{
-    auto ptr = this->spawnNewDecoration(name, -1, pos);
-}
-
-Special* Client::spawnNewSpecial(const std::string& id, int u_id,
-                               const sf::Vector2f& pos, Functional::Activation activation,
-                               const j3x::List& funcs, const j3x::List& datas)
-{
-    auto ptr = map_->spawn<Special>(pos, 0.0f, id);
-    engine_->registerHoveringObject(ptr);
-
-    if (u_id != -1)
-    {
-        ptr->setUniqueId(u_id);
-    }
-
-    if (activation != Functional::Activation::None)
-    {
-        ptr->setActivation(activation);
-        ptr->setFunctions(funcs);
-        ptr->setDatas(datas);
-    }
-
-    registerLight(ptr);
-    registerFunctions(ptr);
-
-    return ptr;
-}
-
-void Client::findAndDeleteSpecial(Special* ptr)
-{
-    auto& specials = map_->getList<Special>();
-    for (auto it = specials.rbegin(); it != specials.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            engine_->deleteHoveringObject(ptr);
-            specials.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Client] Warning - special to delete not found!");
-}
-
-void Client::findAndDeleteDestructionSystem(DestructionSystem* ptr)
-{
-    for (auto it = destruction_systems_.rbegin(); it != destruction_systems_.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            destruction_systems_.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Client] Warning - destruction system to delete not found!");
-}
-
-void Client::registerWeapons(Character* character)
-{
-    for (auto& weapon : character->getWeapons())
-    {
-        registerWeapon(weapon.get());
-    }
-}
-
-void Client::registerWeapon(AbstractWeapon* weapon)
-{
-    if (!weapon->getId().empty() && weapon->getId() != "null")
-    {
-        auto func = this->getSpawningFunction(RMGET<std::string>("weapons", weapon->getId(), "spawn_func"));
-        weapon->registerSpawningFunction(std::get<0>(func), std::get<1>(func));
-
-        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon);
-        if (melee_weapon != nullptr)
-        {
-            engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
-        }
-    }
-}
-
-void Client::registerFunctions(Functional* functional) const
-{
-//    for (const auto& function : functional->getFunctions())
-//    {
-//        auto& function_str = j3x::getObj<std::string>(function);
-//        functional->bindFunction(special_functions_->bindFunction(function_str),
-//                                 special_functions_->bindTextToUse(function_str),
-//                                 special_functions_->isUsableByNPC(function_str));
-//    }
-}
-
-void Client::registerLight(Lightable* lightable) const
-{
-    if (lightable->getLightPoint() != nullptr)
-    {
-        lightable->getLightPoint()->registerGraphics(engine_->getGraphics());
-    }
-}
-
-void Client::updateDestructionSystems(float time_elapsed)
-{
-    utils::eraseIf<std::unique_ptr<DestructionSystem>>(destruction_systems_, [&time_elapsed, this](std::unique_ptr<DestructionSystem>& system) {
-        if (!system->update(time_elapsed))
-        {
-            return true;
-        }
-        return false;
-    });
-}
-
-void Client::initDestructionParams()
-{
-    /* blood */
-    destruction_params_["blood"] = {};
-    destruction_params_["debris"] = {};
-    destruction_params_["husk"] = {};
-
-    for (auto& param : destruction_params_)
-    {
-        param.second.vel = CONF<float>("graphics/" + param.first + "_system_vel");
-        param.second.acc = CONF<float>("graphics/" + param.first + "_system_acc");
-        param.second.time = CONF<float>("graphics/" + param.first + "_system_time");
-        param.second.count = CONF<int>("graphics/" + param.first + "_system_count");
-        param.second.base_color = sf::Color(CONF<int>("graphics/" + param.first + "_system_base_color"));
-
-        param.second.spread_degree = CONF<float>("graphics/" + param.first + "_system_spread_degree");
-        param.second.acceleration_spread = CONF<float>("graphics/" + param.first + "_system_acceleration_spread");
-
-        param.second.vel_fac = CONF<float>("graphics/" + param.first + "_system_vel_fac");
-        param.second.acc_fac = CONF<float>("graphics/" + param.first + "_system_acc_fac");
-        param.second.time_fac = CONF<float>("graphics/" + param.first + "_system_time_fac");
-
-        param.second.min_size = CONF<float>("graphics/" + param.first + "_system_min_size");
-        param.second.max_size = CONF<float>("graphics/" + param.first + "_system_max_size");
-
-        param.second.shader = CONF<std::string>("graphics/" + param.first + "_system_shader");
-        param.second.full_color_fac = CONF<float>("graphics/" + param.first + "_system_full_color_fac");
-        param.second.r_fac = CONF<float>("graphics/" + param.first + "_system_r_fac");
-        param.second.g_fac = CONF<float>("graphics/" + param.first + "_system_g_fac");
-        param.second.b_fac = CONF<float>("graphics/" + param.first + "_system_b_fac");
-
-    }
-}
-
-DestructionSystem* Client::spawnNewDestructionSystem(const sf::Vector2f& pos, float dir, const DestructionParams& params, float quantity_factor)
-{
-    destruction_systems_.emplace_back(std::make_unique<DestructionSystem>(pos, dir, params, quantity_factor));
-    return destruction_systems_.back().get();
-}
-
-void Client::close()
-{
-    this->engine_->getGraphics().getWindow().close();
-}
-
 void Client::establishConnection(const sf::IpAddress& ip)
 {
     unsigned short port = 54000;
-    char data[4] = "YES";
-    if (data_send_socket_.send(data, 4, ip, port) != sf::Socket::Done)
+
+    auto status = events_socket_.connect(ip, port);
+    if (status != sf::Socket::Done)
     {
         LOG.error("[Client] Could not establish connection with host: " + ip.toString());
+        throw std::runtime_error("No server to connect!");
     }
-    else
-    {
-        LOG.info("[Client] Connection with host: " + ip.toString() + " successful!");
-        server_ip_ = ip;
-    }
+
+    events_socket_.setBlocking(false);
+    LOG.info("[Client] Connection with host: " + ip.toString() + " successful!");
+    server_ip_ = ip;
 }
 
 void Client::sendInputs()
@@ -966,7 +455,7 @@ void Client::receiveData()
         {
             LOG.info("New data received from: " + sender.toString());
 
-            static constexpr auto max_ping = 300;
+            static constexpr auto max_ping = 400;
 
             if (sender == server_ip_ && packet.getTimestamp() >= last_received_packet_timestamp_ && utils::timeSinceEpochMillisec() - packet.getTimestamp() < max_ping)
             {
@@ -974,7 +463,14 @@ void Client::receiveData()
                 {
                     Player* player = nullptr;
                     if (data.first == sf::IpAddress::getLocalAddress().toString())
+                    {
                         player = player_.get();
+
+                        if (data.second.current_special_id_ != -1)
+                            player->setCurrentSpecialObject(map_->getObjectById<Special>(data.second.current_special_id_));
+                        else
+                            player->setCurrentSpecialObject(nullptr);
+                    }
                     else
                     {
                         player = getPlayer(data.first);
@@ -999,7 +495,7 @@ void Client::receiveData()
             }
             else
             {
-                LOG.error("This server is not registered or packet is old!"
+                LOG.error("This server is not registered or packet is old or latency is too high!"
                           "\nPacket timestamp difference: " + std::to_string(utils::timeSinceEpochMillisec() - packet.getTimestamp()));
 
             }

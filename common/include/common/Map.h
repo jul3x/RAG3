@@ -10,13 +10,13 @@
 #include <R3E/utils/Geometry.h>
 #include <R3E/ai/DataTypes.h>
 
-#include <common/DecorationTile.h>
-#include <common/ObstacleTile.h>
-#include <common/NPC.h>
-#include <common/Special.h>
-#include <common/Obstacle.h>
-#include <common/Decoration.h>
-#include <common/PlacedWeapon.h>
+#include <common/objects/DecorationTile.h>
+#include <common/objects/ObstacleTile.h>
+#include <common/characters/NPC.h>
+#include <common/objects/Special.h>
+#include <common/objects/Obstacle.h>
+#include <common/objects/Decoration.h>
+#include <common/objects/PlacedWeapon.h>
 
 
 using namespace r3e;

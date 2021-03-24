@@ -5,7 +5,7 @@
 #ifndef RAG3_EDITOR_INCLUDE_EDITOR_OBSTACLEOBJECTWINDOW_H
 #define RAG3_EDITOR_INCLUDE_EDITOR_OBSTACLEOBJECTWINDOW_H
 
-#include <common/Obstacle.h>
+#include <common/objects/Obstacle.h>
 
 #include <editor/ChildWindow.h>
 

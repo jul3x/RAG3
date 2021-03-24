@@ -6,11 +6,13 @@
 
 #include <common/ResourceManager.h>
 
+#include <common/Framework.h>
+#include <common/ui/UserInterface.h>
 #include <ui/menu/Menu.h>
-#include <Game.h>
 
 
-Menu::Menu(tgui::Gui* gui, tgui::Theme* theme) : AbstractDrawableObject(sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
+Menu::Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
+               AbstractDrawableObject(sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                                                    static_cast<float>(CONF<int>("graphics/window_height_px"))} / 2.0f,
                                       {static_cast<float>(CONF<int>("graphics/window_width_px")),
                                        static_cast<float>(CONF<int>("graphics/window_height_px"))},
@@ -22,14 +24,14 @@ Menu::Menu(tgui::Gui* gui, tgui::Theme* theme) : AbstractDrawableObject(sf::Vect
                logo_(CONF<sf::Vector2f>("graphics/menu_logo_pos"), sf::Vector2f{},
                      CONF<sf::Vector2f>("graphics/menu_logo_size"), collision::None(),
                      &RM.getTexture("menu/logo"), 0, 0, 0, 200.0f),
-               gui_(gui), theme_(theme),
+               gui_(gui), theme_(theme), ui_(ui), framework_(framework),
                opacity_(1.0f / CONF<float>("graphics/menu_show_duration")),
                logo_rotation_(1.0f / CONF<float>("graphics/menu_logo_rotation_duration")),
                time_elapsed_(0.0f), explosion_elapsed_(0.0f)
 {
-    elements_ = {{"Start game", [&]() { Game::get().getUI().startGame(); }},
+    elements_ = {{"Start game", [this]() { ui_->startGame(); }},
                  {"Load game", &Menu::null}, {"Settings", &Menu::null}, {"About", &Menu::null},
-                 {"Exit", [&]() { Game::get().close(); }}};
+                 {"Exit", [this]() { framework_->close(); }}};
     RM.getTexture("menu/logo").setSmooth(true);
     RM.getTexture("menu/main_panel").setSmooth(true);
 
@@ -99,7 +101,7 @@ void Menu::update(float time_elapsed)
     if (explosion_elapsed_ >= CONF<float>("graphics/menu_explosion_period"))
     {
         animation_events_.emplace_back(logo_.getPosition() + sf::Vector2f{0.0f, -150.0f}, "explosion_1", 0.0f, RMGET<sf::Vector2f>("animations", "explosion_1", "size").x * 4);
-        Game::get().registerLight(&animation_events_.back());
+        framework_->registerLight(&animation_events_.back());
         explosion_elapsed_ -= CONF<float>("graphics/menu_explosion_period");
 
         logo_rotation_.setChangeSpeed(3.0f / CONF<float>("graphics/menu_logo_rotation_duration"));

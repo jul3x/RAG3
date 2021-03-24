@@ -7,14 +7,16 @@
 
 #include <R3E/objects/AbstractDrawableObject.h>
 
-#include <characters/Player.h>
+#include <common/characters/Player.h>
 
 
 using namespace r3e;
 
+class Game;
+
 class BloodSplash : public AbstractDrawableObject {
 public:
-    explicit BloodSplash(const sf::Vector2f& size);
+    explicit BloodSplash(Game* game, const sf::Vector2f& size);
 
     void updateLifeState(Player::LifeState state);
 
@@ -31,6 +33,9 @@ private:
     float time_elapsed_;
 
     Player::LifeState player_life_state_;
+
+    Game* game_;
+
 };
 
 #endif //RAG3_GAME_INCLUDE_UI_BLOODSPLASH_H

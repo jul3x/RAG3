@@ -5,7 +5,7 @@
 #ifndef RAG3_EDITOR_INCLUDE_EDITOR_WEAPONWINDOW_H
 #define RAG3_EDITOR_INCLUDE_EDITOR_WEAPONWINDOW_H
 
-#include <common/PlacedWeapon.h>
+#include <common/objects/PlacedWeapon.h>
 
 #include <editor/ChildWindow.h>
 

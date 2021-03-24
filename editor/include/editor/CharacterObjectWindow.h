@@ -5,7 +5,7 @@
 #ifndef RAG3_EDITOR_INCLUDE_EDITOR_CHARACTEROBJECTWINDOW_H
 #define RAG3_EDITOR_INCLUDE_EDITOR_CHARACTEROBJECTWINDOW_H
 
-#include <common/Character.h>
+#include <common/characters/Character.h>
 
 #include <editor/ChildWindow.h>
 

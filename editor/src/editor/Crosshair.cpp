@@ -8,7 +8,7 @@
 #include <R3E/system/Config.h>
 
 #include <common/ResourceManager.h>
-#include <common/DecorationTile.h>
+#include <common/objects/DecorationTile.h>
 
 #include <editor/Crosshair.h>
 #include <Editor.h>

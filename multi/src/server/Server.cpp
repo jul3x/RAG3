@@ -5,61 +5,25 @@
 #include <R3E/utils/Geometry.h>
 
 #include <common/ResourceManager.h>
-#include <common/MeleeWeapon.h>
+#include <common/weapons/MeleeWeapon.h>
 
-#include <events/Event.h>
-#include <misc/JournalEntries.h>
+#include <common/events/Event.h>
+#include <common/misc/JournalEntries.h>
 
 #include <server/Server.h>
 
 
-
-Server::Server() : time_elapsed_(0.0f), last_packet_timestamp_(0.0f)
+Server::Server() : Framework(), last_packet_timestamp_(0.0f)
 {
-    engine_ = std::make_unique<Engine>();
-    engine_->registerGame(this);
 }
 
 void Server::initialize()
 {
-    engine_->initializeGraphics(
-            sf::Vector2i{CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_height_px")},
-            "Codename: Rag3",
-            CONF<bool>("graphics/full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
-            sf::Color(CONF<int>("graphics/background_color")));
-    engine_->setFPSLimit(60);
+    Framework::initialize();
 
-    spawning_func_["bullet"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnBullet(user, name, pos, dir); };
-    spawning_func_["fire"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnFire(user, name, pos, dir); };
-    spawning_func_["null"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnNull(user, name, pos, dir); };
-
-    // TODO
-//    special_functions_ = std::make_unique<SpecialFunctions>();
-    camera_ = std::make_unique<Camera>();
-    camera_->setViewNormalSize(engine_->getGraphics().getWindow().getView().getSize());
-
-    ui_ = std::make_unique<MinimalUserInterface>();
+    ui_ = std::make_unique<MinimalUserInterface>(this);
+    ui_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
-    engine_->registerCamera(camera_.get());
-
-    map_ = std::make_unique<Map>();
-    map_->loadMap("map_new");
-    engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
-
-    for (auto& obstacle : map_->getList<ObstacleTile>())
-        engine_->registerStaticObject(obstacle.get());
-
-    for (auto& obstacle : map_->getList<Obstacle>())
-    {
-        engine_->registerStaticObject(obstacle.get());
-        registerFunctions(obstacle.get());
-    }
-
-    for (auto& weapon : map_->getList<PlacedWeapon>())
-    {
-        auto func = this->getSpawningFunction(RMGET<std::string>("weapons", weapon->getId(), "spawn_func"));
-        weapon->registerSpawningFunction(std::get<0>(func), std::get<1>(func));
-    }
 
     for (auto& special : map_->getList<Special>())
     {
@@ -71,7 +35,7 @@ void Server::initialize()
     }
 
     // bind sockets
-    if (connection_receiver_socket_.bind(54000) != sf::Socket::Done)
+    if (connection_listener_.listen(54000) != sf::Socket::Done)
     {
         throw std::invalid_argument("[Server] Cannot bind connection socket to desired port!");
     }
@@ -79,10 +43,9 @@ void Server::initialize()
     {
         throw std::invalid_argument("[Server] Cannot bind data receiver socket to desired port!");
     }
-    connection_receiver_socket_.setBlocking(false);
+    connection_listener_.setBlocking(false);
     data_receiver_socket_.setBlocking(false);
     // TODO maybe sender should be non-blocking?
-
 }
 
 void Server::update(float time_elapsed)
@@ -104,6 +67,12 @@ void Server::update(float time_elapsed)
     updateFire(time_elapsed);
 
     sendMessagesToPlayers();
+
+    for (auto& player : players_)
+    {
+        player.second.setCurrentSpecialObject(nullptr);
+        player.second.setCurrentTalkableCharacter(nullptr);
+    }
 
     time_elapsed_ += time_elapsed;
 }
@@ -213,54 +182,6 @@ void Server::draw(graphics::Graphics& graphics)
 
     engine_->drawSortedAnimationEvents();
     graphics.drawAlreadySorted(states.shader);
-}
-
-void Server::start()
-{
-    engine_->start();
-}
-
-Map& Server::getMap()
-{
-    return *map_;
-}
-
-const std::list<std::unique_ptr<Bullet>>& Server::getBullets() const
-{
-    return bullets_;
-}
-
-void Server::spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
-{
-    auto ptr = this->spawnNewBullet(user, name, pos, dir);
-}
-
-void Server::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
-{
-    auto ptr = this->spawnNewSpecial(name, -1, pos, Functional::Activation::None, {}, {});
-
-}
-
-void Server::spawnExplosionForce(const sf::Vector2f& pos, float r)
-{
-    desired_explosions_.emplace_back(pos, r);
-}
-
-void Server::updateExplosions()
-{
-    for (const auto& explosion : explosions_)
-    {
-        engine_->deleteHoveringObject(explosion.get());
-    }
-    explosions_.clear();
-
-    for (const auto& desired_explosion : desired_explosions_)
-    {
-        explosions_.emplace_back(std::make_unique<Explosion>(desired_explosion.first, desired_explosion.second));
-        engine_->registerHoveringObject(explosions_.back().get());
-    }
-
-    desired_explosions_.clear();
 }
 
 void Server::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
@@ -381,136 +302,6 @@ void Server::alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2)
 {
 }
 
-Bullet* Server::spawnNewBullet(Character* user, const std::string& id, const sf::Vector2f& pos, float dir)
-{
-    bullets_.emplace_back(std::make_unique<Bullet>(user, pos, id, dir));
-
-    auto ptr = bullets_.back().get();
-
-    registerFunctions(ptr);
-    engine_->registerHoveringObject(ptr);
-
-    return ptr;
-}
-
-void Server::spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
-{
-    auto vector = sf::Vector2f{static_cast<float>(std::cos(dir)), static_cast<float>(std::sin(dir))};
-    auto ptr = this->spawnNewFire(user, pos + 20.0f * vector, dir);
-}
-
-void Server::updateFire(float time_elapsed)
-{
-    for (auto it = fire_.begin(); it != fire_.end(); ++it)
-    {
-        if (!(*it)->update(time_elapsed))
-        {
-            engine_->deleteHoveringObject(it->get());
-            auto next_it = std::next(it);
-            fire_.erase(it);
-            it = next_it;
-        }
-    }
-}
-
-Fire* Server::spawnNewFire(Character* user, const sf::Vector2f& pos, float dir)
-{
-    fire_.emplace_back(std::make_unique<Fire>(user, pos, dir));
-
-    auto ptr = fire_.back().get();
-    engine_->registerHoveringObject(ptr);
-
-    return ptr;
-}
-
-ObstacleTile* Server::spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos)
-{
-    auto new_ptr = map_->spawn<ObstacleTile>(pos, 0.0f, id);
-    engine_->registerStaticObject(new_ptr);
-    return new_ptr;
-}
-
-Obstacle* Server::spawnNewObstacle(const std::string& id, int u_id, const sf::Vector2f& pos,
-                                 Functional::Activation activation,
-                                 const j3x::List& funcs, const j3x::List& datas)
-{
-    auto new_ptr = map_->spawn<Obstacle>(pos, 0.0f, id);
-
-    if (u_id != -1)
-    {
-        new_ptr->setUniqueId(u_id);
-    }
-
-    if (activation != Functional::Activation::None)
-    {
-        new_ptr->setActivation(activation);
-        new_ptr->setFunctions(funcs);
-        new_ptr->setDatas(datas);
-    }
-
-    engine_->registerStaticObject(new_ptr);
-    registerFunctions(new_ptr);
-
-    return new_ptr;
-}
-
-void Server::findAndDeleteBullet(Bullet* ptr)
-{
-    for (auto it = bullets_.rbegin(); it != bullets_.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            engine_->deleteHoveringObject(ptr);
-            bullets_.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Server] Warning - bullet to delete not found!");
-}
-
-void Server::findAndDeleteFire(Fire* ptr)
-{
-    for (auto it = fire_.rbegin(); it != fire_.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            engine_->deleteHoveringObject(ptr);
-            fire_.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Server] Warning - fire to delete not found!");
-}
-
-void Server::findAndDeleteDecoration(Decoration* ptr)
-{
-    auto& decorations = map_->getList<Decoration>();
-    for (auto it = decorations.rbegin(); it != decorations.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            decorations.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Server] Warning - decoration to delete not found!");
-}
-
-Special* Server::getCurrentSpecialObject() const
-{
-    // TODO
-//    return player_->getCurrentSpecialObject();
-}
-
-Character* Server::getCurrentTalkableCharacter() const
-{
-    // TODO
-//    return player_->getCurrentTalkableCharacter();
-}
-
 void Server::useSpecialObject()
 {
     // TODO
@@ -525,8 +316,6 @@ void Server::updatePlayers(float time_elapsed)
 {
     for (auto& player : players_)
     {
-        player.second.setCurrentSpecialObject(nullptr);
-        player.second.setCurrentTalkableCharacter(nullptr);
         if (player.second.isAlive() && !player.second.update(time_elapsed))
         {
             player.second.setDead();
@@ -555,155 +344,31 @@ void Server::updateBullets(float time_elapsed)
     }
 }
 
-std::tuple<Server::SpawningFunction, Server::AnimationSpawningFunction> Server::getSpawningFunction(const std::string& name)
-{
-    static const auto null = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) { this->spawnNull(nullptr, "", pos, 0.0f); };
-    auto it = spawning_func_.find(name);
-
-    if (it == spawning_func_.end())
-    {
-        throw std::invalid_argument("[Server] SpawningFunction " + name + " is not handled!");
-    }
-
-    if (name == "bullet")
-        return std::make_tuple(it->second, null);
-    else if (name == "fire")
-        return std::make_tuple(it->second, null);
-
-    return std::make_tuple(it->second, null);
-}
-
-void Server::spawnNull(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
-{
-
-}
-
-const std::list<std::unique_ptr<Fire>>& Server::getFires() const
-{
-    return fire_;
-}
-
-Decoration* Server::spawnNewDecoration(const std::string& id, int u_id, const sf::Vector2f& pos)
-{
-    auto ptr = map_->spawn<Decoration>(pos, 0.0f, id);
-    if (u_id != -1)
-    {
-        ptr->setUniqueId(u_id);
-    }
-
-    return ptr;
-}
-
-void Server::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
-{
-    auto ptr = this->spawnNewDecoration(name, -1, pos);
-}
-
-Special* Server::spawnNewSpecial(const std::string& id, int u_id,
-                               const sf::Vector2f& pos, Functional::Activation activation,
-                               const j3x::List& funcs, const j3x::List& datas)
-{
-    auto ptr = map_->spawn<Special>(pos, 0.0f, id);
-    engine_->registerHoveringObject(ptr);
-
-    if (u_id != -1)
-    {
-        ptr->setUniqueId(u_id);
-    }
-
-    if (activation != Functional::Activation::None)
-    {
-        ptr->setActivation(activation);
-        ptr->setFunctions(funcs);
-        ptr->setDatas(datas);
-    }
-
-    registerFunctions(ptr);
-
-    return ptr;
-}
-
-void Server::findAndDeleteSpecial(Special* ptr)
-{
-    auto& specials = map_->getList<Special>();
-    for (auto it = specials.rbegin(); it != specials.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            engine_->deleteHoveringObject(ptr);
-            specials.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Server] Warning - special to delete not found!");
-}
-
-void Server::registerWeapons(Character* character)
-{
-    for (auto& weapon : character->getWeapons())
-    {
-        registerWeapon(weapon.get());
-    }
-}
-
-void Server::registerWeapon(AbstractWeapon* weapon)
-{
-    if (!weapon->getId().empty() && weapon->getId() != "null")
-    {
-        auto func = this->getSpawningFunction(RMGET<std::string>("weapons", weapon->getId(), "spawn_func"));
-        weapon->registerSpawningFunction(std::get<0>(func), std::get<1>(func));
-
-        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon);
-        if (melee_weapon != nullptr)
-        {
-            engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
-        }
-    }
-}
-
-void Server::registerFunctions(Functional* functional) const
-{
-    for (const auto& function : functional->getFunctions())
-    {
-        auto& function_str = j3x::getObj<std::string>(function);
-        // TODO
-//        functional->bindFunction(special_functions_->bindFunction(function_str),
-//                                 special_functions_->bindTextToUse(function_str),
-//                                 special_functions_->isUsableByNPC(function_str));
-    }
-}
-
-void Server::close()
-{
-
-}
-
 void Server::checkAwaitingConnections()
 {
-    static constexpr size_t MESSAGE_SIZE = 4;
-    size_t received;
-    char data[MESSAGE_SIZE];
-    sf::IpAddress sender;
-    unsigned short port;
-    sf::Socket::Status status = connection_receiver_socket_.receive(data, MESSAGE_SIZE, received, sender, port);
+    auto client = std::make_shared<sf::TcpSocket>();
+    client->setBlocking(false);
+    sf::Socket::Status status = connection_listener_.accept(*client);
+    auto ip = client->getRemoteAddress().toString();
 
     switch (status)
     {
         case sf::Socket::Done:
-            LOG.info("New connection attempt from: " + sender.toString());
-            players_.emplace(sender.toString(),
-                             starting_positions_.at(utils::num::getRandom(0, static_cast<int>(starting_positions_.size() - 1))));
-            engine_->registerDynamicObject(&players_.at(sender.toString()));
-            registerWeapons(&players_.at(sender.toString()));
+            events_socket_[ip] = client;
+
+            LOG.info("New connection attempt from: " + ip);
+            players_.emplace(ip, starting_positions_.at(utils::num::getRandom(0, static_cast<int>(starting_positions_.size() - 1))));
+            engine_->registerDynamicObject(&players_.at(ip));
+            registerWeapons(&players_.at(ip));
+
             // Awful but necessary for now
-            players_.at(sender.toString()).getLightPoint()->registerGraphics(engine_->getGraphics());
+            players_.at(ip).getLightPoint()->registerGraphics(engine_->getGraphics());
             break;
         case sf::Socket::NotReady:
 //            LOG.info("No connection yet.");
             break;
         default:
-            LOG.error("Failed connection attempt from: " + sender.toString());
+            LOG.error("Failed connection attempt from: " + ip);
             break;
     }
 }
@@ -718,6 +383,9 @@ void Server::handleMessagesFromPlayers()
     while (!all_messages)
     {
         sf::Socket::Status status = data_receiver_socket_.receive(packet, sender, port);
+
+        static constexpr auto max_ping = 400;
+
         switch (status)
         {
             case sf::Socket::Done:
@@ -728,7 +396,12 @@ void Server::handleMessagesFromPlayers()
 
                 if (player_it != players_.end())
                 {
-                    cached_packets_[sender.toString()] = packet;
+                    if ((cached_packets_.count(sender.toString()) <= 0 || packet.getTimestamp() >= cached_packets_[sender.toString()].getTimestamp()) &&
+                        utils::timeSinceEpochMillisec() - packet.getTimestamp() < max_ping)
+                        cached_packets_[sender.toString()] = packet;
+                    else
+                        LOG.error("This packet is old or latency is too high!"
+                                  "\nPacket timestamp difference: " + std::to_string(utils::timeSinceEpochMillisec() - packet.getTimestamp()));
                 }
                 else
                 {

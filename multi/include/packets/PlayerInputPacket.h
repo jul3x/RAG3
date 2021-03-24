@@ -18,6 +18,8 @@ public:
 
     PlayerInputPacket(const std::set<sf::Keyboard::Key>& keys, bool mouse_pressed, float rotation, short int current_weapon)
     {
+        timestamp_ = utils::timeSinceEpochMillisec();
+        *this << timestamp_;
         for (auto key : IMPLEMENTED_KEYS)
         {
             keys_[key] = keys.count(key);
@@ -50,6 +52,11 @@ public:
         return current_weapon_;
     }
 
+    [[nodiscard]] uint64_t getTimestamp() const
+    {
+        return timestamp_;
+    }
+
 private:
     static constexpr auto IMPLEMENTED_KEYS = {sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::A, sf::Keyboard::D,
                                               sf::Keyboard::LShift};
@@ -57,6 +64,7 @@ private:
     void onReceive(const void* data, std::size_t size) override
     {
         append(data, size);
+        *this >> timestamp_;
 
         for (auto key : IMPLEMENTED_KEYS)
             *this >> keys_[key];
@@ -68,6 +76,7 @@ private:
     bool mouse_pressed_{};
     float rotation_{};
     short int current_weapon_{};
+    uint64_t timestamp_{};
 };
 
 #endif //RAG3_MULTI_INCLUDE_PACKETS_PLAYERINPUTPACKET_H

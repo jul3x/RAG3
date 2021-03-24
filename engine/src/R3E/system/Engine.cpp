@@ -108,7 +108,7 @@ namespace r3e {
             }
 
             if (ui_ != nullptr)
-                ui_->handleEvents(*graphics_, time_scale_factor_ * frame_time_);
+                ui_->update(*graphics_, time_scale_factor_ * frame_time_);
 
             game_->update(time_scale_factor_ * frame_time_);
 

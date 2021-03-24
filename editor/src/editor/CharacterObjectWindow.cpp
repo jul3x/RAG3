@@ -4,7 +4,7 @@
 
 #include <R3E/system/Config.h>
 
-#include <common/Character.h>
+#include <common/characters/Character.h>
 
 #include <editor/CharacterObjectWindow.h>
 

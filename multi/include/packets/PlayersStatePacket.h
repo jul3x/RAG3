@@ -12,7 +12,7 @@
 
 #include <R3E/utils/Misc.h>
 
-#include <characters/Player.h>
+#include <common/characters/Player.h>
 
 #include <packets/PlayerInputPacket.h>
 
@@ -24,6 +24,7 @@ struct PlayerData {
     std::vector<float> weapon_state_{};
     float health_{};
     bool is_shooting_{};
+    int current_special_id_{};
 };
 
 
@@ -45,18 +46,22 @@ public:
             data.health_ = player.second.getHealth();
             data.is_shooting_ = cached_packets.count(player.first) ? cached_packets[player.first].isLeftMousePressed() : false;
 
+            auto special = player.second.getCurrentSpecialObject();
+            data.current_special_id_ = special == nullptr ? -1 : special->getUniqueId();
             for (const auto& weapon : player.second.getWeapons())
             {
                 data.weapon_state_.emplace_back(weapon->getState());
             }
 
             *this << sf::IpAddress(player.first).toInteger() << data.pos_.x << data.pos_.y << data.vel_.x << data.vel_.y
-                  << data.rotation_ << data.current_weapon_ << data.health_ << data.is_shooting_;
+                  << data.rotation_ << data.current_weapon_ << data.health_ << data.is_shooting_ << data.current_special_id_;
             *this << static_cast<short int>(data.weapon_state_.size());
             for (auto state : data.weapon_state_)
             {
                 *this << state;
             }
+
+            std::cout << data.current_special_id_ << std::endl;
 
             players_data_[player.first] = std::move(data);
         }
@@ -91,7 +96,7 @@ private:
             sf::Uint32 ip_int;
             short int weapon_state_size;
             *this >> ip_int >> p_data.pos_.x >> p_data.pos_.y >> p_data.vel_.x >> p_data.vel_.y
-                  >> p_data.rotation_ >> p_data.current_weapon_ >> p_data.health_ >> p_data.is_shooting_;
+                  >> p_data.rotation_ >> p_data.current_weapon_ >> p_data.health_ >> p_data.is_shooting_ >> p_data.current_special_id_;
             *this >> weapon_state_size;
             for (auto j = 0; j < weapon_state_size; ++j)
             {

@@ -6,14 +6,14 @@
 #include <common/ResourceManager.h>
 
 #include <ui/hud/SmallBackpackHud.h>
-#include <Game.h>
 
 
-SmallBackpackHud::SmallBackpackHud(const sf::Vector2f& position) :
+SmallBackpackHud::SmallBackpackHud(Player* player, const sf::Vector2f& position) :
         AbstractDrawableObject(position,
                                {SIZE_X_ * CONF<float>("graphics/user_interface_zoom"),
                                 SIZE_Y_ * CONF<float>("graphics/user_interface_zoom")},
-                               &RM.getTexture("items_hud"))
+                               &RM.getTexture("items_hud")),
+       player_(player)
 {
     this->changeOrigin({SIZE_X_ * CONF<float>("graphics/user_interface_zoom"), 0.0f});
 
@@ -34,7 +34,7 @@ SmallBackpackHud::SmallBackpackHud(const sf::Vector2f& position) :
 
 void SmallBackpackHud::update(float time_elapsed)
 {
-    auto& backpack = Game::get().getPlayer().getBackpack();
+    auto& backpack = player_->getBackpack();
 
     int health = 0, speed = 0, rag3 = 0;
     for (auto& object : backpack)
@@ -70,7 +70,7 @@ void SmallBackpackHud::registerGui(tgui::Gui* gui, tgui::Theme* theme)
     for (size_t i = 0; i < 3; ++i)
     {
         tooltips_.emplace_back(theme, pos_offset + j3x::getObj<sf::Vector2f>(CONF<j3x::List>("graphics/small_backpack_pos"), i, false));
-        tooltips_.back().bindFunction(std::bind([&](const std::string& name){ Game::get().getPlayer().useItem(name); }, NAMES_[i]));
+        tooltips_.back().bindFunction(std::bind([this](const std::string& name){ player_->useItem(name); }, NAMES_[i]));
         tooltips_.back().bindText(RMGET<std::string>("specials", NAMES_[i], "tooltip_header"),
                          RMGET<std::string>("specials", NAMES_[i], "tooltip"));
         tooltips_.back().bindGui(gui);

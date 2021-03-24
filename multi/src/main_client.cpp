@@ -33,7 +33,8 @@ int main()
     RM.lazyLoadTexture("animations/explosion_3");
     RM.lazyLoadTexture("animations/teleportation");
 
-    Client::get().start();
+    auto client = std::make_unique<Client>();
+    client->start();
 
     return 0;
 }

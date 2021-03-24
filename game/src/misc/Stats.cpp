@@ -3,42 +3,22 @@
 //
 
 #include <misc/Stats.h>
+
 #include <Game.h>
 
+Stats::Stats() : Stats(nullptr)
+{
 
-Stats::Stats() :
-    enemies_killed_(0), crystals_picked_(0), explosions_(0), exp_(0), level_(0)
+}
+
+Stats::Stats(Game* game) :
+    game_(game), AbstractStats()
 {
 }
 
 Stats::Stats(int kills, int crystals, int explosions, int exp, int level) :
-        enemies_killed_(kills), crystals_picked_(crystals), explosions_(explosions), exp_(exp), level_(level)
+        AbstractStats(kills, crystals, explosions, exp, level)
 {
-}
-
-int Stats::getEnemiesKilled() const
-{
-    return enemies_killed_;
-}
-
-int Stats::getCrystalsPicked() const
-{
-    return crystals_picked_;
-}
-
-int Stats::getExplosions() const
-{
-    return explosions_;
-}
-
-int Stats::getExp() const
-{
-    return exp_;
-}
-
-int Stats::getLevel() const
-{
-    return level_;
 }
 
 void Stats::killEnemy(const sf::Vector2f& pos)
@@ -67,7 +47,7 @@ void Stats::addExp(int exp, const sf::Vector2f& info_pos, bool bonus_text)
         this->checkLevel();
 
         if (bonus_text)
-            Game::get().spawnBonusText(info_pos, std::to_string(exp));
+            game_->spawnBonusText(info_pos, std::to_string(exp));
     }
 }
 
@@ -79,7 +59,7 @@ void Stats::checkLevel()
     {
         ++level_;
 
-        Game::get().getPlayer().addSkillPoints(CONF<int>("characters/skill_points_per_level"));
+        game_->getPlayer()->addSkillPoints(CONF<int>("characters/skill_points_per_level"));
     }
 }
 
@@ -91,4 +71,9 @@ Stats Stats::operator-(const Stats &stats) const {
             this->getExp() - stats.getExp(),
             this->getLevel() - stats.getLevel()
             );
+}
+
+Game* Stats::getGame() const
+{
+    return game_;
 }

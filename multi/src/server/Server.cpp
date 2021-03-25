@@ -185,8 +185,8 @@ void Server::handleMessagesFromPlayers()
                 if (player_it != players_.end())
                 {
                     if ((cached_packets_.count(ip) <= 0 ||
-                         packet.getTimestamp() >= cached_packets_[ip].getTimestamp()) &&
-                        utils::timeSinceEpochMillisec() - packet.getTimestamp() < max_ping)
+                         packet.getTimestamp() >= cached_packets_[ip].getTimestamp()) /* &&
+                        utils::timeSinceEpochMillisec() - packet.getTimestamp() < max_ping */)
                         cached_packets_[ip] = packet;
                     else
                         LOG.error("This packet is old or latency is too high!"

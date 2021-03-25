@@ -349,8 +349,8 @@ void Client::receiveData()
 
             static constexpr auto max_ping = 400;
 
-            if (sender == server_ip_ && packet.getTimestamp() >= last_received_packet_timestamp_ &&
-                utils::timeSinceEpochMillisec() - packet.getTimestamp() < max_ping)
+            if (sender == server_ip_ && packet.getTimestamp() >= last_received_packet_timestamp_ /*&&
+                utils::timeSinceEpochMillisec() - packet.getTimestamp() < max_ping*/)
             {
                 for (const auto& data : packet.getDatas())
                 {
@@ -376,6 +376,7 @@ void Client::receiveData()
                     player->setForcedVelocity(data.second.vel_);
                     player->setHealth(data.second.health_);
                     player->setGlobalState(data.second.state_);
+                    player->setCurrentWeapon(data.second.current_weapon_);
 
                     size_t i = 0;
                     for (auto state : data.second.weapon_state_)

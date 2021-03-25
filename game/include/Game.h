@@ -37,17 +37,12 @@ public:
     void update(float time_elapsed) override;
     void draw(graphics::Graphics& graphics) override;
 
-    void alertCollision(HoveringObject* h_obj, StaticObject* s_obj) override;
-    void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) override;
-    void alertCollision(DynamicObject* d_obj, StaticObject* s_obj) override;
-    void alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2) override;
-
     // Getters
     [[nodiscard]] Player* getPlayer() override;
     [[nodiscard]] Journal* getJournal() override;
     [[nodiscard]] Special* getCurrentSpecialObject() const override;
     [[nodiscard]] Character* getCurrentTalkableCharacter() const override;
-    [[nodiscard]] float getRag3Time() const;
+    [[nodiscard]] float getRag3Time() const override;
     [[nodiscard]] float getForcedZoomTime() const;
 
     // Spawn events
@@ -84,14 +79,15 @@ private:
     void updateMapObjects(float time_elapsed) override;
     void updatePlayerClone(float time_elapsed);
     void updatePlayer(float time_elapsed);
-    void updateBullets(float time_elapsed) override;
     void updateFire(float time_elapsed) override;
     void updateDestructionSystems(float time_elapsed) override;
+
+    void initPlayers() override;
+    void initNPCs() override;
 
     void killNPC(NPC* npc);
     void cleanPlayerClone();
 
-    std::unique_ptr<ai::AgentsManager> agents_manager_;
     std::unique_ptr<audio::MusicManager> music_manager_;
 
     std::unique_ptr<Achievements> achievements_;

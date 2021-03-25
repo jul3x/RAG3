@@ -10,6 +10,7 @@
 #include <R3E/system/AbstractGame.h>
 #include <R3E/system/Engine.h>
 #include <R3E/graphics/Lightning.h>
+#include <R3E/ai/AgentsManager.h>
 
 #include <common/misc/Destruction.h>
 #include <common/Map.h>
@@ -72,6 +73,7 @@ public:
     [[nodiscard]] virtual Special* getCurrentSpecialObject() const;
     [[nodiscard]] virtual Character* getCurrentTalkableCharacter() const;
     [[nodiscard]] virtual std::tuple<SpawningFunction, AnimationSpawningFunction> getSpawningFunction(const std::string& name);
+    [[nodiscard]] virtual float getRag3Time() const;
 
     // Spawn events
     virtual DestructionSystem* spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);
@@ -137,10 +139,18 @@ protected:
     virtual void updateExplosions();
     virtual void updateDestructionSystems(float time_elapsed);
 
+    virtual void initObstacles();
+    virtual void initDecorations();
+    virtual void initWeapons();
+    virtual void initNPCs();
+    virtual void initSpecials();
+    virtual void initPlayers();
+
     std::unique_ptr<Engine> engine_;
     std::unique_ptr<Camera> camera_;
     std::unique_ptr<graphics::Lightning> lightning_;
     std::unique_ptr<UserInterface> ui_;
+    std::unique_ptr<ai::AgentsManager> agents_manager_;
 
     std::unique_ptr<AbstractStats> stats_;
     std::unique_ptr<SpecialFunctions> special_functions_;

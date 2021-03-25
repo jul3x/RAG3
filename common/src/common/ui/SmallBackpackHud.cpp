@@ -5,7 +5,7 @@
 #include <R3E/system/Config.h>
 #include <common/ResourceManager.h>
 
-#include <ui/hud/SmallBackpackHud.h>
+#include <common/ui/SmallBackpackHud.h>
 
 
 SmallBackpackHud::SmallBackpackHud(Player* player, const sf::Vector2f& position) :

@@ -21,6 +21,7 @@
 #include <common/characters/Player.h>
 #include <common/misc/Camera.h>
 #include <common/ui/Achievement.h>
+#include <common/ui/SmallBackpackHud.h>
 
 class Framework;
 
@@ -60,6 +61,8 @@ public:
 
 protected:
     virtual void handleEvents(graphics::Graphics& graphics);
+    virtual void handleAdditionalKeyPressed(sf::Keyboard::Key code);
+    virtual void handleKeyReleased(sf::Keyboard::Key code);
     virtual void handleScrolling(float delta);
     virtual void handleKeys();
     virtual void handleMouse(sf::RenderWindow& graphics_window);
@@ -87,6 +90,7 @@ protected:
     Crosshair crosshair_;
     RightHud right_hud_;
     HealthBar health_bar_;
+    SmallBackpackHud small_backpack_hud_;
 
     // MISC
     std::list<Achievement> achievements_;

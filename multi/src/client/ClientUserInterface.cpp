@@ -29,65 +29,6 @@ void ClientUserInterface::initialize(graphics::Graphics& graphics)
     health_bar_.setMaxHealth(player_->getMaxHealth());
 }
 
-void ClientUserInterface::handleEvents(graphics::Graphics& graphics)
-{
-    static sf::Event event;
-
-    while (graphics.getWindow().pollEvent(event))
-    {
-        gui_->handleEvent(event);
-
-        switch (event.type)
-        {
-            case sf::Event::Closed:
-            {
-                graphics.getWindow().close();
-                break;
-            }
-            case sf::Event::MouseWheelScrolled:
-            {
-                handleScrolling(event.mouseWheelScroll.delta);
-                break;
-            }
-            case sf::Event::KeyPressed:
-            {
-                switch (event.key.code)
-                {
-                    case sf::Keyboard::Q:
-                    {
-                        framework_->getPlayer()->sideStep(Player::SideStepDir::Left);
-                        break;
-                    }
-                    case sf::Keyboard::E:
-                    {
-                        framework_->getPlayer()->sideStep(Player::SideStepDir::Right);
-                        break;
-                    }
-                    case sf::Keyboard::F:
-                    {
-                        framework_->useSpecialObject();
-                        break;
-                    }
-                    case sf::Keyboard::Escape:
-                    {
-                        break;
-                    }
-                    default:
-                    {
-                        break;
-                    }
-                }
-
-                break;
-            }
-            default:
-            {
-                break;
-            }
-        }
-    }
-}
-
 void ClientUserInterface::draw(graphics::Graphics& graphics)
 {
     graphics.setCurrentView();
@@ -98,6 +39,7 @@ void ClientUserInterface::draw(graphics::Graphics& graphics)
     graphics.draw(right_hud_);
     graphics.draw(health_bar_);
     graphics.draw(weapons_bar_);
+    graphics.draw(small_backpack_hud_);
 
     gui_->draw();
     graphics.draw(crosshair_);

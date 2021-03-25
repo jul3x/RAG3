@@ -39,7 +39,6 @@ public:
     void draw(graphics::Graphics& graphics) override;
 
 private:
-    void handleEvents(graphics::Graphics& graphics) override;
     void handleMouse(sf::RenderWindow& graphics_window) override;
 
 

@@ -43,8 +43,6 @@ public:
 
     void alertCollision(HoveringObject* h_obj, StaticObject* s_obj) override;
     void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) override;
-    void alertCollision(DynamicObject* d_obj, StaticObject* s_obj) override;
-    void alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2) override;
 
     // Getters
     [[nodiscard]] Player* getPlayer() override;
@@ -52,10 +50,12 @@ public:
 
     // UI functions
     void useSpecialObject() override;
+    void setGameState(GameState state) override;
+
 private:
-    void updateMapObjects(float time_elapsed) override;
     void updatePlayers(float time_elapsed);
-    void updateBullets(float time_elapsed) override;
+
+    void initPlayers() override;
 
     void establishConnection(const sf::IpAddress& ip);
     void sendInputs();

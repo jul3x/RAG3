@@ -38,7 +38,6 @@ inline void MinimalUserInterface::updatePlayerStates(float time_elapsed)
 
 void MinimalUserInterface::spawnAchievement(const std::string& title, const std::string& text, const std::string& tex)
 {
-
 }
 
 void MinimalUserInterface::spawnThought(Character* user, const std::string& text)

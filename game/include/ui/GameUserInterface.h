@@ -14,7 +14,7 @@
 #include <ui/BloodSplash.h>
 #include <ui/hud/LeftHud.h>
 #include <ui/hud/StatsHud.h>
-#include <ui/hud/SmallBackpackHud.h>
+#include <common/ui/SmallBackpackHud.h>
 #include <ui/hud/LevelHud.h>
 #include <ui/hud/FullHud.h>
 
@@ -44,7 +44,8 @@ public:
     void draw(graphics::Graphics& graphics) override;
 
 private:
-    void handleEvents(graphics::Graphics& graphics) override;
+    void handleAdditionalKeyPressed(sf::Keyboard::Key code) override;
+    void handleKeyReleased(sf::Keyboard::Key code) override;
     void handleMouse(sf::RenderWindow& graphics_window) override;
     void updatePlayerStates(float time_elapsed) override;
 
@@ -53,7 +54,6 @@ private:
     LeftHud left_hud_;
     TimeBar time_bar_;
     StatsHud stats_hud_;
-    SmallBackpackHud small_backpack_hud_;
     LevelHud level_hud_;
 
     // MENUS

@@ -17,33 +17,26 @@
 
 Client::Client() : Framework(), last_packet_timestamp_(0.0f), last_received_packet_timestamp_(0)
 {
+    setGameState(GameState::Normal);
 }
 
 void Client::initialize()
 {
+    player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     Framework::initialize();
 
     engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
 
-    player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     ui_ = std::make_unique<ClientUserInterface>(this);
 
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());
     engine_->registerUI(ui_.get());
 
-    engine_->registerDynamicObject(player_.get());
-    registerLight(player_.get());
-    registerWeapons(player_.get());
-
     for (auto& special : map_->getList<Special>())
     {
         if (special->getId() == "starting_position")
             player_->setPosition(special->getPosition());
-
-        registerLight(special.get());
-        engine_->registerHoveringObject(special.get());
-        registerFunctions(special.get());
     }
 
     if (data_receive_socket_.bind(54002) != sf::Socket::Done)
@@ -77,108 +70,6 @@ void Client::update(float time_elapsed)
     camera_->setZoomTo(1.0f);
 
     time_elapsed_ += time_elapsed;
-}
-
-void Client::updateMapObjects(float time_elapsed)
-{
-    auto& blockage = map_->getMapBlockage();
-
-    auto& obstacles =  map_->getList<Obstacle>();;
-    auto& specials = map_->getList<Special>();
-    auto& decorations = map_->getList<Decoration>();
-    auto& weapons = map_->getList<PlacedWeapon>();
-
-    for (auto it = obstacles.begin(); it != obstacles.end();)
-    {
-        bool do_increment = true;
-        (*it)->updateAnimation(time_elapsed);
-
-        auto light = (*it)->getLightPoint();
-
-        if (light != nullptr)
-        {
-            light->setPosition((*it)->getPosition());
-            light->update(time_elapsed);
-        }
-
-        if (!(*it)->update(time_elapsed))
-        {
-            this->spawnExplosionEvent((*it)->getPosition());
-
-            auto next_it = std::next(it);
-            engine_->deleteStaticObject(it->get());
-
-            if ((*it)->getActivation() == Functional::Activation::OnKill)
-            {
-                (*it)->use(player_.get());
-            }
-
-            Map::markBlocked(blockage.blockage_, (*it)->getPosition() + RMGET<sf::Vector2f>("obstacles", (*it)->getId(), "collision_offset"),
-                             RMGET<sf::Vector2f>("obstacles", (*it)->getId(), "collision_size"), 0.0f);
-
-            obstacles.erase(it);
-            it = next_it;
-            do_increment = false;
-        }
-
-        if (do_increment) ++it;
-    }
-
-    for (auto it = specials.begin(); it != specials.end();)
-    {
-        bool do_increment = true;
-        (*it)->updateAnimation(time_elapsed);
-
-        auto light = (*it)->getLightPoint();
-
-        if (light != nullptr)
-        {
-            light->setPosition((*it)->getPosition());
-            light->update(time_elapsed);
-        }
-
-        if ((*it)->isDestroyed())
-        {
-            auto next_it = std::next(it);
-            engine_->deleteHoveringObject(it->get());
-
-            specials.erase(it);
-            it = next_it;
-            do_increment = false;
-        }
-
-        if (do_increment) ++it;
-    }
-
-    for (auto it = decorations.begin(); it != decorations.end();)
-    {
-        bool do_increment = true;
-        (*it)->updateAnimation(time_elapsed);
-
-        auto light = (*it)->getLightPoint();
-
-        if (light != nullptr)
-        {
-            light->setPosition((*it)->getPosition());
-            light->update(time_elapsed);
-        }
-        
-        if (!(*it)->isActive())
-        {
-            auto next_it = std::next(it);
-
-            decorations.erase(it);
-            it = next_it;
-            do_increment = false;
-        }
-
-        if (do_increment) ++it;
-    }
-
-    for (auto& weapon : weapons)
-    {
-        weapon->update(time_elapsed);
-    }
 }
 
 void Client::draw(graphics::Graphics& graphics)
@@ -256,7 +147,6 @@ void Client::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
 {
     auto bullet = dynamic_cast<Bullet*>(h_obj);
     auto fire = dynamic_cast<Fire*>(h_obj);
-    auto explosion = dynamic_cast<Explosion*>(h_obj);
     auto obstacle = dynamic_cast<Obstacle*>(s_obj);
     auto obstacle_tile = dynamic_cast<ObstacleTile*>(s_obj);
 
@@ -296,40 +186,6 @@ void Client::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         return;
     }
 
-    auto special = dynamic_cast<Special*>(h_obj);
-
-    if (special != nullptr && character != nullptr && special->isActive())
-    {
-        if (special->getActivation() == Functional::Activation::OnEnter)
-        {
-            auto player = dynamic_cast<Player*>(d_obj);
-            if (special->isUsableByNPC())
-            {
-                special->use(character);
-            }
-            else if (player != nullptr)
-            {
-                special->use(player);
-            }
-        }
-    }
-
-    auto explosion = dynamic_cast<Explosion*>(h_obj);
-
-    if (character != nullptr && explosion != nullptr)
-    {
-        // TODO this should not be invoked
-        explosion->applyForce(character, 1.0f);
-    }
-
-    auto fire = dynamic_cast<Fire*>(h_obj);
-
-    if (character != nullptr && fire != nullptr)
-    {
-        if (fire->getUser() != character)
-            character->setGlobalState(Character::GlobalState::OnFire);
-    }
-
     auto melee_weapon_area = dynamic_cast<MeleeWeaponArea*>(h_obj);
 
     if (character != nullptr && melee_weapon_area != nullptr)
@@ -342,16 +198,6 @@ void Client::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             melee_weapon_area->setActive(false);
         }
     }
-}
-
-void Client::alertCollision(DynamicObject* d_obj, StaticObject* s_obj)
-{
-    // Nothing to do for now (maybe sounds?)
-}
-
-void Client::alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2)
-{
-    // Nothing to do for now (maybe sounds?)
 }
 
 Special* Client::getCurrentSpecialObject() const
@@ -386,25 +232,6 @@ void Client::updatePlayers(float time_elapsed)
             spawnKillEvent(player.second->getPosition());
             player.second->setDead();
             engine_->deleteDynamicObject(player.second.get());
-        }
-    }
-}
-
-void Client::updateBullets(float time_elapsed)
-{
-    for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
-    {
-        if (!(*it)->update(time_elapsed))
-        {
-            if ((*it)->getActivation() == Functional::Activation::OnKill)
-            {
-                (*it)->use(player_.get());
-            }
-
-            engine_->deleteHoveringObject(it->get());
-            auto next_it = std::next(it);
-            bullets_.erase(it);
-            it = next_it;
         }
     }
 }
@@ -541,4 +368,17 @@ Player* Client::getPlayer(const std::string& ip)
     }
 
     return it->second.get();
+}
+
+void Client::initPlayers()
+{
+    engine_->registerDynamicObject(player_.get());
+    registerLight(player_.get());
+    registerWeapons(player_.get());
+}
+
+void Client::setGameState(Framework::GameState state)
+{
+    // TODO
+    state_ = GameState::Normal;
 }

@@ -25,6 +25,7 @@ UserInterface::UserInterface(Framework* framework) :
         npc_talk_text_("[T] Talk to NPC", RM.getFont(), CONF<float>("graphics/use_text_size")),
         right_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")),
                     static_cast<float>(CONF<int>("graphics/window_height_px"))}),
+        small_backpack_hud_(framework->getPlayer(), {static_cast<float>(CONF<int>("graphics/window_width_px")), 0.0f}),
         player_(nullptr),
         camera_(nullptr),
         theme_("../data/config/gui_theme.txt") {}
@@ -41,6 +42,7 @@ void UserInterface::initialize(graphics::Graphics& graphics)
     camera_->setViewNormalSize(graphics.getWindow().getView().getSize());
 
     gui_ = std::make_unique<tgui::Gui>(graphics.getWindow());
+    small_backpack_hud_.registerGui(gui_.get(), &theme_);
 
     tgui::ToolTip::setInitialDelay({});
     tgui::ToolTip::setDistanceToMouse({-tgui::ToolTip::getDistanceToMouse().x, tgui::ToolTip::getDistanceToMouse().y});
@@ -113,6 +115,8 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
 
     while (graphics.getWindow().pollEvent(event))
     {
+        gui_->handleEvent(event);
+
         switch (event.type)
         {
             case sf::Event::Closed:
@@ -120,8 +124,67 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
                 graphics.getWindow().close();
                 break;
             }
-            default:
+            case sf::Event::MouseWheelScrolled:
+            {
+                if (framework_->getGameState() == Framework::GameState::Normal)
+                {
+                    handleScrolling(event.mouseWheelScroll.delta);
+                }
                 break;
+            }
+            case sf::Event::KeyPressed:
+            {
+                switch (event.key.code)
+                {
+                    case sf::Keyboard::Num1:
+                    {
+                        framework_->getPlayer()->useItem("health");
+                        break;
+                    }
+                    case sf::Keyboard::Num2:
+                    {
+                        framework_->getPlayer()->useItem("more_speed");
+                        break;
+                    }
+                    case sf::Keyboard::Num3:
+                    {
+                        framework_->getPlayer()->useItem("rag3");
+                        break;
+                    }
+                    case sf::Keyboard::Q:
+                    {
+                        framework_->getPlayer()->sideStep(Player::SideStepDir::Left);
+                        break;
+                    }
+                    case sf::Keyboard::E:
+                    {
+                        framework_->getPlayer()->sideStep(Player::SideStepDir::Right);
+                        break;
+                    }
+                    case sf::Keyboard::F:
+                    {
+                        if (framework_->getGameState() == Framework::GameState::Normal)
+                            framework_->useSpecialObject();
+                        break;
+                    }
+                    default:
+                    {
+                        handleAdditionalKeyPressed(event.key.code);
+                        break;
+                    }
+                }
+
+                break;
+            }
+            case sf::Event::KeyReleased:
+            {
+                handleKeyReleased(event.key.code);
+                break;
+            }
+            default:
+            {
+                break;
+            }
         }
     }
 }
@@ -183,7 +246,6 @@ void UserInterface::handleKeys()
 
 void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
 {
-    // TODO Extract as much as you can
 }
 
 void UserInterface::updatePlayerStates(float time_elapsed)
@@ -191,6 +253,7 @@ void UserInterface::updatePlayerStates(float time_elapsed)
     weapons_bar_.update(player_->getWeapons(), player_->getCurrentWeapon(), time_elapsed);
 
     health_bar_.update(player_->getHealth(), time_elapsed);
+    small_backpack_hud_.update(time_elapsed);
 }
 
 void UserInterface::spawnThought(Character* user, const std::string& text)
@@ -256,5 +319,15 @@ const std::set<sf::Keyboard::Key>& UserInterface::getKeysPressed()
 bool UserInterface::isLeftMousePressed() const
 {
     return is_left_mouse_pressed_;
+}
+
+void UserInterface::handleAdditionalKeyPressed(sf::Keyboard::Key code)
+{
+
+}
+
+void UserInterface::handleKeyReleased(sf::Keyboard::Key code)
+{
+
 }
 

@@ -15,6 +15,7 @@
 
 Server::Server() : Framework(), last_packet_timestamp_(0.0f)
 {
+    setGameState(GameState::Normal);
 }
 
 void Server::initialize()
@@ -29,9 +30,6 @@ void Server::initialize()
     {
         if (special->getId() == "starting_position")
             starting_positions_.emplace_back(special->getPosition());
-
-        engine_->registerHoveringObject(special.get());
-        registerFunctions(special.get());
     }
 
     // bind sockets
@@ -77,80 +75,6 @@ void Server::update(float time_elapsed)
     time_elapsed_ += time_elapsed;
 }
 
-void Server::updateMapObjects(float time_elapsed)
-{
-    auto& blockage = map_->getMapBlockage();
-
-    auto& obstacles =  map_->getList<Obstacle>();;
-    auto& specials = map_->getList<Special>();
-    auto& decorations = map_->getList<Decoration>();
-    auto& weapons = map_->getList<PlacedWeapon>();
-
-    for (auto it = obstacles.begin(); it != obstacles.end();)
-    {
-        bool do_increment = true;
-
-        if (!(*it)->update(time_elapsed))
-        {
-            auto next_it = std::next(it);
-            engine_->deleteStaticObject(it->get());
-
-            if ((*it)->getActivation() == Functional::Activation::OnKill)
-            {
-                // TODO
-//                (*it)->use(player_.get());
-            }
-
-            Map::markBlocked(blockage.blockage_, (*it)->getPosition() + RMGET<sf::Vector2f>("obstacles", (*it)->getId(), "collision_offset"),
-                             RMGET<sf::Vector2f>("obstacles", (*it)->getId(), "collision_size"), 0.0f);
-
-            obstacles.erase(it);
-            it = next_it;
-            do_increment = false;
-        }
-
-        if (do_increment) ++it;
-    }
-
-    for (auto it = specials.begin(); it != specials.end();)
-    {
-        bool do_increment = true;
-
-        if ((*it)->isDestroyed())
-        {
-            auto next_it = std::next(it);
-            engine_->deleteHoveringObject(it->get());
-
-            specials.erase(it);
-            it = next_it;
-            do_increment = false;
-        }
-
-        if (do_increment) ++it;
-    }
-
-    for (auto it = decorations.begin(); it != decorations.end();)
-    {
-        bool do_increment = true;
-
-        if (!(*it)->isActive())
-        {
-            auto next_it = std::next(it);
-
-            decorations.erase(it);
-            it = next_it;
-            do_increment = false;
-        }
-
-        if (do_increment) ++it;
-    }
-
-    for (auto& weapon : weapons)
-    {
-        weapon->update(time_elapsed);
-    }
-}
-
 void Server::draw(graphics::Graphics& graphics)
 {
     static sf::RenderStates states;
@@ -184,124 +108,6 @@ void Server::draw(graphics::Graphics& graphics)
     graphics.drawAlreadySorted(states.shader);
 }
 
-void Server::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
-{
-    auto bullet = dynamic_cast<Bullet*>(h_obj);
-    auto fire = dynamic_cast<Fire*>(h_obj);
-    auto explosion = dynamic_cast<Explosion*>(h_obj);
-    auto obstacle = dynamic_cast<Obstacle*>(s_obj);
-    auto obstacle_tile = dynamic_cast<ObstacleTile*>(s_obj);
-
-    if (bullet != nullptr)
-    {
-        if (obstacle != nullptr)
-        {
-            obstacle->getShot(*bullet);
-            bullet->setDead();
-        }
-        else if (obstacle_tile != nullptr)
-        {
-            bullet->setDead();
-        }
-    }
-    else if (explosion != nullptr)
-    {
-        if (obstacle != nullptr)
-        {
-            explosion->applyForce(obstacle);
-        }
-    }
-    else if (fire != nullptr)
-    {
-        fire->setDead();
-    }
-}
-
-void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
-{
-    auto bullet = dynamic_cast<Bullet*>(h_obj);
-    auto character = dynamic_cast<Character*>(d_obj);
-
-    if (bullet != nullptr && character != nullptr)
-    {
-        if (bullet->getUser() != character)
-        {
-            character->getShot(*bullet, 1);
-            bullet->setDead();
-        }
-        return;
-    }
-
-    auto special = dynamic_cast<Special*>(h_obj);
-
-    if (special != nullptr && character != nullptr && special->isActive())
-    {
-        if (special->getActivation() == Functional::Activation::OnEnter)
-        {
-//            auto player = dynamic_cast<Player*>(d_obj);
-            if (special->isUsableByNPC())
-            {
-                special->use(character);
-            }
-//            else if (player != nullptr)
-//            {
-//                special->use(player);
-//            }
-        }
-        else if (special->getActivation() == Functional::Activation::OnUse)
-        {
-            character->setCurrentSpecialObject(special);
-        }
-        else
-        {
-//            auto player = dynamic_cast<Player*>(d_obj);
-//            if (player != nullptr)
-//            {
-//                player->addSpecialToBackpack(special);
-                //TODO
-//                special_functions_->destroy(special, {}, player);
-//            }
-        }
-    }
-
-    auto talkable_area = dynamic_cast<TalkableArea*>(h_obj);
-    if (talkable_area != nullptr && character != nullptr)
-    {
-        character->setCurrentTalkableCharacter(talkable_area->getFather());
-    }
-
-    auto explosion = dynamic_cast<Explosion*>(h_obj);
-    if (character != nullptr && explosion != nullptr)
-    {
-        explosion->applyForce(character, 1.0f);
-    }
-
-    auto fire = dynamic_cast<Fire*>(h_obj);
-    if (character != nullptr && fire != nullptr)
-    {
-        if (fire->getUser() != character)
-            character->setGlobalState(Character::GlobalState::OnFire);
-    }
-
-    auto melee_weapon_area = dynamic_cast<MeleeWeaponArea*>(h_obj);
-    if (character != nullptr && melee_weapon_area != nullptr)
-    {
-        if (character != melee_weapon_area->getFather()->getUser())
-        {
-            melee_weapon_area->setActive(false);
-            character->getCut(*melee_weapon_area->getFather(), 1);
-        }
-    }
-}
-
-void Server::alertCollision(DynamicObject* d_obj, StaticObject* s_obj)
-{
-}
-
-void Server::alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2)
-{
-}
-
 void Server::useSpecialObject()
 {
     // TODO
@@ -320,26 +126,6 @@ void Server::updatePlayers(float time_elapsed)
         {
             player.second.setDead();
             engine_->deleteDynamicObject(&player.second);
-        }
-    }
-}
-
-void Server::updateBullets(float time_elapsed)
-{
-    for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
-    {
-        if (!(*it)->update(time_elapsed))
-        {
-            if ((*it)->getActivation() == Functional::Activation::OnKill)
-            {
-                // TODO
-//                (*it)->use(player_.get());
-            }
-
-            engine_->deleteHoveringObject(it->get());
-            auto next_it = std::next(it);
-            bullets_.erase(it);
-            it = next_it;
         }
     }
 }
@@ -496,4 +282,10 @@ void Server::sendMessagesToPlayers()
 
         last_packet_timestamp_ = time_elapsed_;
     }
+}
+
+void Server::setGameState(Framework::GameState state)
+{
+    // TODO
+    state_ = GameState::Normal;
 }

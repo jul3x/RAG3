@@ -9,7 +9,7 @@
 #include <common/Framework.h>
 
 #include <common/events/Event.h>
-
+#include <common/misc/Journal.h>
 
 
 Framework::Framework() : time_elapsed_(0.0f), state_(Framework::GameState::Menu)
@@ -40,6 +40,10 @@ void Framework::initialize()
     this->initDestructionParams();
 
     map_->loadMap("first_new_map");
+    agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
+                                                          CONF<float>("characters/max_time_without_path_recalc"),
+                                                          CONF<float>("characters/min_pos_change_without_path_recalc"),
+                                                          CONF<int>("characters/max_path_search_depth"));
     engine_->getGraphics().setBgColor(sf::Color(j3x::get<int>(map_->getParams(), "background_color")));
     lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                                                                     static_cast<float>(CONF<int>("graphics/window_height_px"))},
@@ -49,48 +53,151 @@ void Framework::initialize()
 
     engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
 
-    for (auto& obstacle : map_->getList<ObstacleTile>())
-        engine_->registerStaticObject(obstacle.get());
-
-    for (auto& obstacle : map_->getList<Obstacle>())
-    {
-        engine_->registerStaticObject(obstacle.get());
-        registerLight(obstacle.get());
-
-        registerFunctions(obstacle.get());
-    }
-
-    for (auto& decoration : map_->getList<Decoration>())
-    {
-        registerLight(decoration.get());
-    }
-
-    for (auto& weapon : map_->getList<PlacedWeapon>())
-    {
-        auto func = this->getSpawningFunction(RMGET<std::string>("weapons", weapon->getId(), "spawn_func"));
-        weapon->registerSpawningFunction(std::get<0>(func), std::get<1>(func));
-    }
-
-    // TODO OVERRIDE METHODS = initSpecials initWeapons and etc...
+    initObstacles();
+    initDecorations();
+    initPlayers();
+    initNPCs();
+    initWeapons();
+    initSpecials();
 }
 
 void Framework::update(float time_elapsed)
 {
+
 }
 
 void Framework::updateMapObjects(float time_elapsed)
 {
-    // TODO Extract as much as you can
+    auto& blockage = map_->getMapBlockage();
+
+    auto& obstacles =  map_->getList<Obstacle>();;
+    auto& specials = map_->getList<Special>();
+    auto& decorations = map_->getList<Decoration>();
+    auto& weapons = map_->getList<PlacedWeapon>();
+
+    for (auto it = obstacles.begin(); it != obstacles.end();)
+    {
+        bool do_increment = true;
+        (*it)->updateAnimation(time_elapsed);
+
+        auto light = (*it)->getLightPoint();
+
+        if (light != nullptr)
+        {
+            light->setPosition((*it)->getPosition());
+            light->update(time_elapsed);
+        }
+
+        if (!(*it)->update(time_elapsed))
+        {
+            if (this->getJournal() != nullptr)
+                this->getJournal()->event<DestroyObstacle>(it->get());
+
+            this->spawnExplosionEvent((*it)->getPosition());
+
+            auto next_it = std::next(it);
+            engine_->deleteStaticObject(it->get());
+
+            if ((*it)->getActivation() == Functional::Activation::OnKill)
+            {
+                (*it)->use(this->getPlayer());
+            }
+
+            Map::markBlocked(blockage.blockage_, (*it)->getPosition() + RMGET<sf::Vector2f>("obstacles", (*it)->getId(), "collision_offset"),
+                             RMGET<sf::Vector2f>("obstacles", (*it)->getId(), "collision_size"), 0.0f);
+
+            obstacles.erase(it);
+            it = next_it;
+            do_increment = false;
+        }
+
+        if (do_increment) ++it;
+    }
+
+    for (auto it = specials.begin(); it != specials.end();)
+    {
+        bool do_increment = true;
+        (*it)->updateAnimation(time_elapsed);
+
+        auto light = (*it)->getLightPoint();
+
+        if (light != nullptr)
+        {
+            light->setPosition((*it)->getPosition());
+            light->update(time_elapsed);
+        }
+
+        if ((*it)->isDestroyed())
+        {
+            if (this->getJournal() != nullptr)
+                this->getJournal()->event<DestroySpecial>(it->get());
+            auto next_it = std::next(it);
+            engine_->deleteHoveringObject(it->get());
+
+            specials.erase(it);
+            it = next_it;
+            do_increment = false;
+        }
+
+        if (do_increment) ++it;
+    }
+
+    for (auto it = decorations.begin(); it != decorations.end();)
+    {
+        bool do_increment = true;
+        (*it)->updateAnimation(time_elapsed);
+
+        auto light = (*it)->getLightPoint();
+
+        if (light != nullptr)
+        {
+            light->setPosition((*it)->getPosition());
+            light->update(time_elapsed);
+        }
+
+        if (!(*it)->isActive())
+        {
+            if (this->getJournal() != nullptr)
+                this->getJournal()->event<DestroyDecoration>(it->get());
+            auto next_it = std::next(it);
+
+            decorations.erase(it);
+            it = next_it;
+            do_increment = false;
+        }
+
+        if (do_increment) ++it;
+    }
+
+    for (auto& weapon : weapons)
+    {
+        weapon->update(time_elapsed);
+    }
 }
 
 void Framework::updateBullets(float time_elapsed)
 {
-    // TODO Extract as much as you can
+    for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
+    {
+        if (!(*it)->update(time_elapsed))
+        {
+            if ((*it)->getActivation() == Functional::Activation::OnKill)
+            {
+                (*it)->use(this->getPlayer());
+            }
+
+            if (getJournal() != nullptr)
+                getJournal()->event<DestroyBullet>(it->get());
+            engine_->deleteHoveringObject(it->get());
+            auto next_it = std::next(it);
+            bullets_.erase(it);
+            it = next_it;
+        }
+    }
 }
 
 void Framework::draw(graphics::Graphics& graphics)
 {
-    // TODO Extract as much as you can
 }
 
 void Framework::start()
@@ -238,12 +345,142 @@ void Framework::updateExplosions()
 
 void Framework::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
 {
-    // TODO Extract as much as you can
+    auto bullet = dynamic_cast<Bullet*>(h_obj);
+    auto fire = dynamic_cast<Fire*>(h_obj);
+    auto explosion = dynamic_cast<Explosion*>(h_obj);
+    auto obstacle = dynamic_cast<Obstacle*>(s_obj);
+    auto obstacle_tile = dynamic_cast<ObstacleTile*>(s_obj);
+
+    if (bullet != nullptr)
+    {
+        if (obstacle != nullptr)
+        {
+            if (getJournal() != nullptr)
+                getJournal()->event<ShotObstacle>(obstacle);
+            obstacle->getShot(*bullet);
+
+            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
+
+            bullet->setDead();
+        }
+        else if (obstacle_tile != nullptr)
+        {
+            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
+            bullet->setDead();
+        }
+    }
+    else if (explosion != nullptr)
+    {
+        if (obstacle != nullptr)
+        {
+            if (getJournal() != nullptr)
+                getJournal()->event<ShotObstacle>(obstacle);
+            explosion->applyForce(obstacle);
+        }
+    }
+    else if (fire != nullptr)
+    {
+        fire->setDead();
+    }
 }
 
 void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
 {
-    // TODO Extract as much as you can
+    auto bullet = dynamic_cast<Bullet*>(h_obj);
+    auto character = dynamic_cast<Character*>(d_obj);
+
+    auto factor = this->getRag3Time() > 0.0f ? CONF<float>("characters/rag3_factor") : 1.0f;
+
+    if (bullet != nullptr && character != nullptr)
+    {
+        if (bullet->getUser() != character)
+        {
+            if (bullet->getUser() != getPlayer())
+            {
+                factor = 1.0f;
+            }
+
+            character->getShot(*bullet, factor);
+
+            float offset = bullet->getRotation() > 0.0f && bullet->getRotation() < 180.0f ? -5.0f : 5.0f;
+            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, offset), bullet->getRotation() + 180.0f, bullet->getDeadlyFactor());
+
+            bullet->setDead();
+        }
+        return;
+    }
+
+    auto special = dynamic_cast<Special*>(h_obj);
+
+    if (special != nullptr && character != nullptr && special->isActive())
+    {
+        if (special->getActivation() == Functional::Activation::OnEnter)
+        {
+            auto player = dynamic_cast<Player*>(d_obj);
+            if (special->isUsableByNPC())
+            {
+                special->use(character);
+            }
+            else if (player != nullptr)
+            {
+                special->use(player);
+            }
+        }
+        else if (special->getActivation() == Functional::Activation::OnUse)
+        {
+            character->setCurrentSpecialObject(special);
+        }
+        else
+        {
+            auto player = dynamic_cast<Player*>(d_obj);
+            if (player != nullptr)
+            {
+                player->addSpecialToBackpack(special, [this](Functional* functional) { this->registerFunctions(functional); });
+                special_functions_->destroy(special, {}, player);
+            }
+        }
+    }
+
+    auto talkable_area = dynamic_cast<TalkableArea*>(h_obj);
+
+    if (talkable_area != nullptr && character != nullptr)
+    {
+        character->setCurrentTalkableCharacter(talkable_area->getFather());
+    }
+
+    auto explosion = dynamic_cast<Explosion*>(h_obj);
+
+    if (character != nullptr && explosion != nullptr)
+    {
+        explosion->applyForce(character, 1.0f);
+    }
+
+    auto fire = dynamic_cast<Fire*>(h_obj);
+
+    if (character != nullptr && fire != nullptr)
+    {
+        if (fire->getUser() != character)
+            character->setGlobalState(Character::GlobalState::OnFire);
+    }
+
+    auto melee_weapon_area = dynamic_cast<MeleeWeaponArea*>(h_obj);
+
+    if (character != nullptr && melee_weapon_area != nullptr)
+    {
+        if (character != melee_weapon_area->getFather()->getUser())
+        {
+            if (melee_weapon_area->getFather()->getUser() != getPlayer())
+            {
+                factor = 1.0f;
+            }
+
+            float angle = utils::geo::wrapAngle0_360(std::get<1>(utils::geo::cartesianToPolar(
+                    melee_weapon_area->getFather()->getUser()->getPosition() - character->getPosition())) * 180.0 / M_PI);
+            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, angle > 0 && angle <= 180 ? 5.0 : -5.0), angle, melee_weapon_area->getFather()->getDeadlyFactor());
+            melee_weapon_area->setActive(false);
+            character->getCut(*melee_weapon_area->getFather(), factor);
+        }
+    }
 }
 
 void Framework::alertCollision(DynamicObject* d_obj, StaticObject* s_obj)
@@ -643,3 +880,61 @@ void Framework::setGameState(Framework::GameState state)
 {
     state_ = state;
 }
+
+void Framework::initObstacles()
+{
+    for (auto& obstacle : map_->getList<ObstacleTile>())
+        engine_->registerStaticObject(obstacle.get());
+
+    for (auto& obstacle : map_->getList<Obstacle>())
+    {
+        engine_->registerStaticObject(obstacle.get());
+        registerLight(obstacle.get());
+
+        registerFunctions(obstacle.get());
+    }
+}
+
+void Framework::initDecorations()
+{
+    for (auto& decoration : map_->getList<Decoration>())
+    {
+        registerLight(decoration.get());
+    }
+}
+
+void Framework::initWeapons()
+{
+    for (auto& weapon : map_->getList<PlacedWeapon>())
+    {
+        auto func = this->getSpawningFunction(RMGET<std::string>("weapons", weapon->getId(), "spawn_func"));
+        weapon->registerSpawningFunction(std::get<0>(func), std::get<1>(func));
+    }
+}
+
+void Framework::initNPCs()
+{
+
+}
+
+void Framework::initPlayers()
+{
+
+}
+
+void Framework::initSpecials()
+{
+    for (auto& special : map_->getList<Special>())
+    {
+        registerLight(special.get());
+        engine_->registerHoveringObject(special.get());
+        registerFunctions(special.get());
+    }
+}
+
+float Framework::getRag3Time() const
+{
+    return 0.0f;
+}
+
+

@@ -23,7 +23,6 @@ GameUserInterface::GameUserInterface(Game* game) :
                    CONF<int>("graphics/window_height_px") - TIME_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")}),
         left_hud_({0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))}),
         stats_hud_({0.0f, 0.0f}),
-        small_backpack_hud_(game->getPlayer(), {static_cast<float>(CONF<int>("graphics/window_width_px")), 0.0f}),
         level_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")) / 2.0f, 0.0f})
 {
 
@@ -40,7 +39,6 @@ void GameUserInterface::initialize(graphics::Graphics& graphics)
     health_bar_.setMaxHealth(player_->getMaxHealth());
     time_bar_.setMaxTime(CONF<float>("journal_max_time"));
 
-    small_backpack_hud_.registerGui(gui_.get(), &theme_);
     full_hud_ = std::make_unique<FullHud>(this, game_->getPlayer(),
                                           sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                                                        static_cast<float>(CONF<int>("graphics/window_height_px"))});
@@ -55,126 +53,52 @@ void GameUserInterface::update(graphics::Graphics& graphics, float time_elapsed)
     blood_splash_.update(time_elapsed);
 }
 
-void GameUserInterface::handleEvents(graphics::Graphics& graphics)
+void GameUserInterface::handleAdditionalKeyPressed(sf::Keyboard::Key code)
 {
-    static sf::Event event;
-
-    while (graphics.getWindow().pollEvent(event))
+    switch (code)
     {
-        gui_->handleEvent(event);
-
-        switch (event.type)
+        case sf::Keyboard::T:
         {
-            case sf::Event::Closed:
-            {
-                graphics.getWindow().close();
-                break;
-            }
-            case sf::Event::MouseWheelScrolled:
-            {
-                if (game_->getGameState() == Game::GameState::Normal)
-                {
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
-                    {
-                        auto current_view = graphics.getCurrentView();
-                        current_view.zoom(1.0f - (event.mouseWheelScroll.delta > 0 ? 0.1f : -0.1f));
-                        graphics.modifyCurrentView(current_view);
-                        camera_->setViewNormalSize(graphics.getCurrentView().getSize());
-                    }
-                    else
-                    {
-                        handleScrolling(event.mouseWheelScroll.delta);
-                    }
-                }
-                break;
-            }
-            case sf::Event::KeyPressed:
-            {
-                switch (event.key.code)
-                {
-                    case sf::Keyboard::Num1:
-                    {
-                        game_->getPlayer()->useItem("health");
-                        break;
-                    }
-                    case sf::Keyboard::Num2:
-                    {
-                        game_->getPlayer()->useItem("more_speed");
-                        break;
-                    }
-                    case sf::Keyboard::Num3:
-                    {
-                        game_->getPlayer()->useItem("rag3");
-                        break;
-                    }
-                    case sf::Keyboard::Q:
-                    {
-                        game_->getPlayer()->sideStep(Player::SideStepDir::Left);
-                        break;
-                    }
-                    case sf::Keyboard::E:
-                    {
-                        game_->getPlayer()->sideStep(Player::SideStepDir::Right);
-                        break;
-                    }
-                    case sf::Keyboard::F:
-                    {
-                        if (game_->getGameState() == Game::GameState::Normal)
-                            game_->useSpecialObject();
-                        break;
-                    }
-                    case sf::Keyboard::T:
-                    {
-                        if (game_->getGameState() == Game::GameState::Normal)
-                            game_->talk();
-                        break;
-                    }
-                    case sf::Keyboard::Escape:
-                    {
-                        if (game_->getGameState() == Game::GameState::Paused)
-                        {
-                            game_->setGameState(Game::GameState::Normal);
-                            full_hud_->show(false);
-                            windows_.clear();
-                        }
-                        else if (game_->getGameState() != Game::GameState::Menu)
-                        {
-                            game_->setGameState(Game::GameState::Paused);
-                            full_hud_->show(true);
-                        }
-
-                        break;
-                    }
-                    case sf::Keyboard::R:
-                    {
-                        if (!game_->isJournalFreezed())
-                            game_->setGameState(Game::GameState::Reverse);
-                        break;
-                    }
-                    default:
-                    {
-                        break;
-                    }
-                }
-
-                break;
-            }
-            case sf::Event::KeyReleased:
-            {
-                if (event.key.code == sf::Keyboard::R)
-                {
-                    if (game_->getGameState() == Game::GameState::Reverse)
-                        game_->setGameState(Game::GameState::Normal);
-                }
-                break;
-            }
-            default:
-            {
-                break;
-            }
+            if (game_->getGameState() == Game::GameState::Normal)
+                game_->talk();
+            break;
         }
+        case sf::Keyboard::Escape:
+        {
+            if (game_->getGameState() == Game::GameState::Paused)
+            {
+                game_->setGameState(Game::GameState::Normal);
+                full_hud_->show(false);
+                windows_.clear();
+            }
+            else if (game_->getGameState() != Game::GameState::Menu)
+            {
+                game_->setGameState(Game::GameState::Paused);
+                full_hud_->show(true);
+            }
+
+            break;
+        }
+        case sf::Keyboard::R:
+        {
+            if (!game_->isJournalFreezed())
+                game_->setGameState(Game::GameState::Reverse);
+            break;
+        }
+        default:
+            break;
     }
 }
+
+void GameUserInterface::handleKeyReleased(sf::Keyboard::Key code)
+{
+    if (code == sf::Keyboard::R)
+    {
+        if (game_->getGameState() == Game::GameState::Reverse)
+            game_->setGameState(Game::GameState::Normal);
+    }
+}
+
 
 void GameUserInterface::draw(graphics::Graphics& graphics)
 {
@@ -286,7 +210,6 @@ void GameUserInterface::updatePlayerStates(float time_elapsed)
 
     auto stats = game_->getStats();
     stats_hud_.update(stats->getEnemiesKilled(), stats->getCrystalsPicked(), time_elapsed);
-    small_backpack_hud_.update(time_elapsed);
     level_hud_.update(stats->getLevel(), stats->getExp(), time_elapsed);
     full_hud_->update(time_elapsed);
     menu_->update(time_elapsed);

@@ -13,7 +13,7 @@ class Server;
 class MinimalUserInterface : public UserInterface {
 
 public:
-    MinimalUserInterface(Server* server);
+    explicit MinimalUserInterface(Server* server);
 
     void spawnAchievement(const std::string& title, const std::string& text, const std::string& tex) override;
     void spawnThought(Character* user, const std::string& text) override;
@@ -25,10 +25,10 @@ public:
     void draw(graphics::Graphics& graphics) override;
 
 protected:
-    virtual void handleScrolling(float delta) override;
-    virtual void handleKeys() override;
-    virtual void handleMouse(sf::RenderWindow& graphics_window) override;
-    virtual void updatePlayerStates(float time_elapsed) override;
+    void handleScrolling(float delta) override;
+    void handleKeys() override;
+    void handleMouse(sf::RenderWindow& graphics_window) override;
+    void updatePlayerStates(float time_elapsed) override;
 
 
 };

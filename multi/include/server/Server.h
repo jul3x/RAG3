@@ -35,19 +35,12 @@ public:
     void update(float time_elapsed) override;
     void draw(graphics::Graphics& graphics) override;
 
-    void alertCollision(HoveringObject* h_obj, StaticObject* s_obj) override;
-    void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) override;
-    void alertCollision(DynamicObject* d_obj, StaticObject* s_obj) override;
-    void alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2) override;
-
     // UI functions
     void useSpecialObject() override;
+    void setGameState(GameState state) override;
 
 private:
-
-    void updateMapObjects(float time_elapsed) override;
     void updatePlayers(float time_elapsed);
-    void updateBullets(float time_elapsed) override;
 
     void checkAwaitingConnections();
     void handleMessagesFromPlayers();

@@ -22,21 +22,16 @@ Game::Game() : Framework(),
 
 void Game::initialize()
 {
+    player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
+
     Framework::initialize();
     engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
-
-    player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     ui_ = std::make_unique<GameUserInterface>(this);
     journal_ = std::make_unique<Journal>(this, CONF<float>("journal_max_time"), CONF<float>("journal_sampling_rate"));
 
     stats_ = std::make_unique<Stats>(this);
     achievements_ = std::make_unique<Achievements>(dynamic_cast<Stats*>(stats_.get()));
     achievements_->load(CONF<std::string>("paths/achievements"));
-
-    agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
-                                                          CONF<float>("characters/max_time_without_path_recalc"),
-                                                          CONF<float>("characters/min_pos_change_without_path_recalc"),
-                                                          CONF<int>("characters/max_path_search_depth"));
 
     music_manager_ = std::make_unique<audio::MusicManager>();
     music_manager_->addToQueue(CONF<std::string>("paths/music_dir") + "/menu.ogg");
@@ -46,38 +41,12 @@ void Game::initialize()
 
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());
-
     engine_->registerUI(ui_.get());
-
-    for (auto& character : map_->getList<NPC>())
-    {
-        engine_->registerDynamicObject(character.get());
-        registerLight(character.get());
-        character->registerAgentsManager(agents_manager_.get());
-        character->registerEnemy(player_.get());
-        character->registerMapBlockage(&map_->getMapBlockage());
-        registerFunctions(character.get());
-        registerWeapons(character.get());
-
-        auto talkable_area = character->getTalkableArea();
-        if (talkable_area != nullptr)
-        {
-            engine_->registerHoveringObject(talkable_area);
-        }
-    }
-
-    engine_->registerDynamicObject(player_.get());
-    registerLight(player_.get());
-    registerWeapons(player_.get());
 
     for (auto& special : map_->getList<Special>())
     {
         if (special->getId() == "starting_position")
             player_->setPosition(special->getPosition());
-
-        registerLight(special.get());
-        engine_->registerHoveringObject(special.get());
-        registerFunctions(special.get());
     }
 }
 
@@ -178,51 +147,8 @@ void Game::update(float time_elapsed)
 
 void Game::updateMapObjects(float time_elapsed)
 {
-    auto& blockage = map_->getMapBlockage();
-
-    auto& obstacles =  map_->getList<Obstacle>();;
+    Framework::updateMapObjects(time_elapsed);
     auto& npcs =  map_->getList<NPC>();;
-    auto& specials = map_->getList<Special>();
-    auto& decorations = map_->getList<Decoration>();
-    auto& weapons = map_->getList<PlacedWeapon>();
-
-    for (auto it = obstacles.begin(); it != obstacles.end();)
-    {
-        bool do_increment = true;
-        (*it)->updateAnimation(time_elapsed);
-
-        auto light = (*it)->getLightPoint();
-
-        if (light != nullptr)
-        {
-            light->setPosition((*it)->getPosition());
-            light->update(time_elapsed);
-        }
-
-        if (!(*it)->update(time_elapsed))
-        {
-            journal_->event<DestroyObstacle>(it->get());
-
-            this->spawnExplosionEvent((*it)->getPosition());
-
-            auto next_it = std::next(it);
-            engine_->deleteStaticObject(it->get());
-
-            if ((*it)->getActivation() == Functional::Activation::OnKill)
-            {
-                (*it)->use(player_.get());
-            }
-
-            Map::markBlocked(blockage.blockage_, (*it)->getPosition() + RMGET<sf::Vector2f>("obstacles", (*it)->getId(), "collision_offset"),
-                             RMGET<sf::Vector2f>("obstacles", (*it)->getId(), "collision_size"), 0.0f);
-
-            obstacles.erase(it);
-            it = next_it;
-            do_increment = false;
-        }
-
-        if (do_increment) ++it;
-    }
 
     for (auto it = npcs.begin(); it != npcs.end();)
     {
@@ -240,64 +166,6 @@ void Game::updateMapObjects(float time_elapsed)
         }
 
         if (do_increment) ++it;
-    }
-
-    for (auto it = specials.begin(); it != specials.end();)
-    {
-        bool do_increment = true;
-        (*it)->updateAnimation(time_elapsed);
-
-        auto light = (*it)->getLightPoint();
-
-        if (light != nullptr)
-        {
-            light->setPosition((*it)->getPosition());
-            light->update(time_elapsed);
-        }
-
-        if ((*it)->isDestroyed())
-        {
-            journal_->event<DestroySpecial>(it->get());
-            auto next_it = std::next(it);
-            engine_->deleteHoveringObject(it->get());
-
-            specials.erase(it);
-            it = next_it;
-            do_increment = false;
-        }
-
-        if (do_increment) ++it;
-    }
-
-    for (auto it = decorations.begin(); it != decorations.end();)
-    {
-        bool do_increment = true;
-        (*it)->updateAnimation(time_elapsed);
-
-        auto light = (*it)->getLightPoint();
-
-        if (light != nullptr)
-        {
-            light->setPosition((*it)->getPosition());
-            light->update(time_elapsed);
-        }
-        
-        if (!(*it)->isActive())
-        {
-            journal_->event<DestroyDecoration>(it->get());
-            auto next_it = std::next(it);
-
-            decorations.erase(it);
-            it = next_it;
-            do_increment = false;
-        }
-
-        if (do_increment) ++it;
-    }
-
-    for (auto& weapon : weapons)
-    {
-        weapon->update(time_elapsed);
     }
 }
 
@@ -472,154 +340,6 @@ Bullet* Game::spawnBullet(Character* user, const std::string& name, const sf::Ve
     auto ptr = Framework::spawnBullet(user, name, pos, dir);
     journal_->event<SpawnBullet>(ptr);
     return ptr;
-}
-
-void Game::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
-{
-    auto bullet = dynamic_cast<Bullet*>(h_obj);
-    auto fire = dynamic_cast<Fire*>(h_obj);
-    auto explosion = dynamic_cast<Explosion*>(h_obj);
-    auto obstacle = dynamic_cast<Obstacle*>(s_obj);
-    auto obstacle_tile = dynamic_cast<ObstacleTile*>(s_obj);
-
-    if (bullet != nullptr)
-    {
-        if (obstacle != nullptr)
-        {
-            journal_->event<ShotObstacle>(obstacle);
-            obstacle->getShot(*bullet);
-
-            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
-
-            bullet->setDead();
-        }
-        else if (obstacle_tile != nullptr)
-        {
-            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
-            bullet->setDead();
-        }
-    }
-    else if (explosion != nullptr)
-    {
-        if (obstacle != nullptr)
-        {
-            journal_->event<ShotObstacle>(obstacle);
-            explosion->applyForce(obstacle);
-        }
-    }
-    else if (fire != nullptr)
-    {
-        fire->setDead();
-    }
-}
-
-void Game::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
-{
-    auto bullet = dynamic_cast<Bullet*>(h_obj);
-    auto character = dynamic_cast<Character*>(d_obj);
-
-    auto factor = rag3_time_elapsed_ > 0.0f ? CONF<float>("characters/rag3_factor") : 1.0f;
-
-    if (bullet != nullptr && character != nullptr)
-    {
-        if (bullet->getUser() != character)
-        {
-            if (bullet->getUser() != player_.get())
-            {
-                factor = 1.0f;
-            }
-
-            character->getShot(*bullet, factor);
-
-            float offset = bullet->getRotation() > 0.0f && bullet->getRotation() < 180.0f ? -5.0f : 5.0f;
-            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, offset), bullet->getRotation() + 180.0f, bullet->getDeadlyFactor());
-
-            bullet->setDead();
-        }
-        return;
-    }
-
-    auto special = dynamic_cast<Special*>(h_obj);
-
-    if (special != nullptr && character != nullptr && special->isActive())
-    {
-        if (special->getActivation() == Functional::Activation::OnEnter)
-        {
-            auto player = dynamic_cast<Player*>(d_obj);
-            if (special->isUsableByNPC())
-            {
-                special->use(character);
-            }
-            else if (player != nullptr)
-            {
-                special->use(player);
-            }
-        }
-        else if (special->getActivation() == Functional::Activation::OnUse)
-        {
-            character->setCurrentSpecialObject(special);
-        }
-        else
-        {
-            auto player = dynamic_cast<Player*>(d_obj);
-            if (player != nullptr)
-            {
-                player->addSpecialToBackpack(special, [this](Functional* functional) { this->registerFunctions(functional); });
-                special_functions_->destroy(special, {}, player);
-            }
-        }
-    }
-
-    auto talkable_area = dynamic_cast<TalkableArea*>(h_obj);
-
-    if (talkable_area != nullptr && character != nullptr)
-    {
-        character->setCurrentTalkableCharacter(talkable_area->getFather());
-    }
-
-    auto explosion = dynamic_cast<Explosion*>(h_obj);
-
-    if (character != nullptr && explosion != nullptr)
-    {
-        explosion->applyForce(character, 1.0f);
-    }
-
-    auto fire = dynamic_cast<Fire*>(h_obj);
-
-    if (character != nullptr && fire != nullptr)
-    {
-        if (fire->getUser() != character)
-            character->setGlobalState(Character::GlobalState::OnFire);
-    }
-
-    auto melee_weapon_area = dynamic_cast<MeleeWeaponArea*>(h_obj);
-
-    if (character != nullptr && melee_weapon_area != nullptr)
-    {
-        if (character != melee_weapon_area->getFather()->getUser())
-        {
-            if (melee_weapon_area->getFather()->getUser() != player_.get())
-            {
-                factor = 1.0f;
-            }
-
-            float angle = utils::geo::wrapAngle0_360(std::get<1>(utils::geo::cartesianToPolar(
-                    melee_weapon_area->getFather()->getUser()->getPosition() - character->getPosition())) * 180.0 / M_PI);
-            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, angle > 0 && angle <= 180 ? 5.0 : -5.0), angle, melee_weapon_area->getFather()->getDeadlyFactor());
-            melee_weapon_area->setActive(false);
-            character->getCut(*melee_weapon_area->getFather(), factor);
-        }
-    }
-}
-
-void Game::alertCollision(DynamicObject* d_obj, StaticObject* s_obj)
-{
-    // Nothing to do for now (maybe sounds?)
-}
-
-void Game::alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2)
-{
-    // Nothing to do for now (maybe sounds?)
 }
 
 Fire* Game::spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
@@ -908,26 +628,6 @@ void Game::updatePlayer(float time_elapsed)
     }
 }
 
-void Game::updateBullets(float time_elapsed)
-{
-    for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
-    {
-        if (!(*it)->update(time_elapsed))
-        {
-            if ((*it)->getActivation() == Functional::Activation::OnKill)
-            {
-                (*it)->use(player_.get());
-            }
-
-            journal_->event<DestroyBullet>(it->get());
-            engine_->deleteHoveringObject(it->get());
-            auto next_it = std::next(it);
-            bullets_.erase(it);
-            it = next_it;
-        }
-    }
-}
-
 Decoration* Game::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
 {
     auto ptr = Framework::spawnDecoration(pos, name);
@@ -980,3 +680,29 @@ float Game::getForcedZoomTime() const
     return forced_zoom_to_time_elapsed_;
 }
 
+void Game::initPlayers()
+{
+    engine_->registerDynamicObject(player_.get());
+    registerLight(player_.get());
+    registerWeapons(player_.get());
+}
+
+void Game::initNPCs()
+{
+    for (auto& character : map_->getList<NPC>())
+    {
+        engine_->registerDynamicObject(character.get());
+        registerLight(character.get());
+        character->registerAgentsManager(agents_manager_.get());
+        character->registerEnemy(player_.get());
+        character->registerMapBlockage(&map_->getMapBlockage());
+        registerFunctions(character.get());
+        registerWeapons(character.get());
+
+        auto talkable_area = character->getTalkableArea();
+        if (talkable_area != nullptr)
+        {
+            engine_->registerHoveringObject(talkable_area);
+        }
+    }
+}

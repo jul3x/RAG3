@@ -126,7 +126,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
         {
             case sf::Event::Closed:
             {
-                graphics.getWindow().close();
+                framework_->close();
                 break;
             }
             case sf::Event::MouseWheelScrolled:
@@ -143,17 +143,17 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
                 {
                     case sf::Keyboard::Num1:
                     {
-                        framework_->getPlayer()->useItem("health");
+                        framework_->useItem("health");
                         break;
                     }
                     case sf::Keyboard::Num2:
                     {
-                        framework_->getPlayer()->useItem("more_speed");
+                        framework_->useItem("more_speed");
                         break;
                     }
                     case sf::Keyboard::Num3:
                     {
-                        framework_->getPlayer()->useItem("rag3");
+                        framework_->useItem("rag3");
                         break;
                     }
                     case sf::Keyboard::Q:

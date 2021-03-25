@@ -27,12 +27,17 @@ void ClientUserInterface::initialize(graphics::Graphics& graphics)
     UserInterface::initialize(graphics);
 
     health_bar_.setMaxHealth(player_->getMaxHealth());
+    small_backpack_hud_.doShow(false);
 }
 
 void ClientUserInterface::draw(graphics::Graphics& graphics)
 {
     graphics.setCurrentView();
-    graphics.getWindow().draw(object_use_text_);
+    graphics.draw(object_use_text_);
+    for (auto& bonus : bonus_texts_)
+        graphics.draw(bonus);
+    for (auto& thought : thoughts_)
+        graphics.draw(thought);
 
     graphics.setStaticView();
 

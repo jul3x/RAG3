@@ -18,6 +18,7 @@
 
 #include <packets/PlayerInputPacket.h>
 #include <packets/PlayersStatePacket.h>
+#include <packets/ServerEventPacket.h>
 #include <server/MinimalUserInterface.h>
 
 
@@ -35,24 +36,33 @@ public:
     void update(float time_elapsed) override;
     void draw(graphics::Graphics& graphics) override;
 
+    void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) override;
+
     // UI functions
     void useSpecialObject() override;
     void setGameState(GameState state) override;
 
 private:
-    void updatePlayers(float time_elapsed);
+    void obstacleDestroyedEvent(Obstacle* obstacle) override;
 
+    void updatePlayers(float time_elapsed);
+    void clearPlayer(Player* player);
+    void useSpecialObject(Player* player, sf::Uint32 ip);
+
+    sf::Uint32 getPlayerIP(Player* player);
     void checkAwaitingConnections();
     void handleMessagesFromPlayers();
+    void handleEventsFromPlayers();
     void sendMessagesToPlayers();
+    void sendEventToPlayers(ServerEventPacket& packet);
 
-    std::unordered_map<std::string, Player> players_;
-    std::unordered_map<std::string, PlayerInputPacket> cached_packets_;
+    std::unordered_map<sf::Uint32, Player> players_;
+    std::unordered_map<sf::Uint32, PlayerInputPacket> cached_packets_;
 
     std::vector<sf::Vector2f> starting_positions_;
 
     sf::TcpListener connection_listener_;
-    std::unordered_map<std::string, std::shared_ptr<sf::TcpSocket>> events_socket_;
+    std::unordered_map<sf::Uint32, std::shared_ptr<sf::TcpSocket>> events_socket_;
     sf::UdpSocket data_receiver_socket_;
     sf::UdpSocket data_sender_socket_;
 

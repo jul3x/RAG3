@@ -25,6 +25,7 @@ struct PlayerData {
     float health_{};
     bool is_shooting_{};
     int current_special_id_{};
+    Player::GlobalState state_{Player::GlobalState::Normal};
 };
 
 
@@ -32,13 +33,14 @@ class PlayersStatePacket : public sf::Packet {
 public:
     PlayersStatePacket() = default;
 
-    explicit PlayersStatePacket(const std::unordered_map<std::string, Player>& players,
-                                std::unordered_map<std::string, PlayerInputPacket>& cached_packets)
+    explicit PlayersStatePacket(const std::unordered_map<sf::Uint32, Player>& players,
+                                std::unordered_map<sf::Uint32, PlayerInputPacket>& cached_packets)
     {
         *this << r3e::utils::timeSinceEpochMillisec() << static_cast<short int>(players.size());
         for (const auto& player : players)
         {
             PlayerData data;
+            data.state_ = player.second.getGlobalState();
             data.pos_ = player.second.getPosition();
             data.vel_ = player.second.getVelocity();
             data.rotation_ = player.second.getRotation();
@@ -46,7 +48,6 @@ public:
             data.health_ = player.second.getHealth();
             data.is_shooting_ =
                     cached_packets.count(player.first) ? cached_packets[player.first].isLeftMousePressed() : false;
-
             auto special = player.second.getCurrentSpecialObject();
             data.current_special_id_ = special == nullptr ? -1 : special->getUniqueId();
             for (const auto& weapon : player.second.getWeapons())
@@ -54,7 +55,7 @@ public:
                 data.weapon_state_.emplace_back(weapon->getState());
             }
 
-            *this << sf::IpAddress(player.first).toInteger() << data.pos_.x << data.pos_.y << data.vel_.x << data.vel_.y
+            *this << player.first << sf::Uint8(data.state_) << data.pos_.x << data.pos_.y << data.vel_.x << data.vel_.y
                   << data.rotation_ << data.current_weapon_ << data.health_ << data.is_shooting_
                   << data.current_special_id_;
             *this << static_cast<short int>(data.weapon_state_.size());
@@ -63,18 +64,16 @@ public:
                 *this << state;
             }
 
-            std::cout << data.current_special_id_ << std::endl;
-
             players_data_[player.first] = std::move(data);
         }
     }
 
-    [[nodiscard]] const std::unordered_map<std::string, PlayerData>& getDatas() const
+    [[nodiscard]] const std::unordered_map<sf::Uint32, PlayerData>& getDatas() const
     {
         return players_data_;
     }
 
-    [[nodiscard]] const PlayerData& getPlayerData(const std::string& ip) const
+    [[nodiscard]] const PlayerData& getPlayerData(sf::Uint32 ip) const
     {
         return players_data_.at(ip);
     }
@@ -96,23 +95,25 @@ private:
         {
             PlayerData p_data;
             sf::Uint32 ip_int;
+            sf::Uint8 state;
             short int weapon_state_size;
-            *this >> ip_int >> p_data.pos_.x >> p_data.pos_.y >> p_data.vel_.x >> p_data.vel_.y
+            *this >> ip_int >> state >> p_data.pos_.x >> p_data.pos_.y >> p_data.vel_.x >> p_data.vel_.y
                   >> p_data.rotation_ >> p_data.current_weapon_ >> p_data.health_ >> p_data.is_shooting_
                   >> p_data.current_special_id_;
             *this >> weapon_state_size;
+
+            p_data.state_ = static_cast<Player::GlobalState>(state);
             for (auto j = 0; j < weapon_state_size; ++j)
             {
                 p_data.weapon_state_.emplace_back();
                 *this >> p_data.weapon_state_.back();
             }
 
-            players_data_[sf::IpAddress(ip_int).toString()] = std::move(p_data);
+            players_data_[ip_int] = std::move(p_data);
         }
-
     }
 
-    std::unordered_map<std::string, PlayerData> players_data_;
+    std::unordered_map<sf::Uint32, PlayerData> players_data_;
     uint64_t timestamp_{};
 };
 

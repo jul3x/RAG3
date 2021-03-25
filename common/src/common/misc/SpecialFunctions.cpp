@@ -262,8 +262,6 @@ void SpecialFunctions::spawnThought(Functional* obj, const j3x::Obj& data, Chara
 void SpecialFunctions::teleport(Functional* obj, const j3x::Obj& data, Character* user)
 {
     LOG.info("[SpecialFunction] Teleport.");
-    auto player = dynamic_cast<Player*>(user);
-
     try
     {
         auto pos = j3x::getObj<sf::Vector2f>(data);
@@ -271,10 +269,10 @@ void SpecialFunctions::teleport(Functional* obj, const j3x::Obj& data, Character
         user->setPosition(pos);
         user->setForcedVelocity({0.0f, 0.0f});
 
-        if (player != nullptr)
+        if (user == framework_->getPlayer())
         {
             framework_->spawnFadeInOut();
-            framework_->getCamera()->setCenter({player->getPosition().x, player->getPosition().y, 0.0f});
+            framework_->getCamera()->setCenter({user->getPosition().x, user->getPosition().y, 0.0f});
         }
     }
     catch (const std::exception& e)

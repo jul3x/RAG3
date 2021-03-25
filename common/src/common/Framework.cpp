@@ -97,6 +97,7 @@ void Framework::updateMapObjects(float time_elapsed)
 
         if (!(*it)->update(time_elapsed))
         {
+            obstacleDestroyedEvent(it->get());
             if (this->getJournal() != nullptr)
                 this->getJournal()->event<DestroyObstacle>(it->get());
 
@@ -853,7 +854,12 @@ void Framework::close()
 
 void Framework::spawnThought(Character* user, const std::string& text)
 {
-    // TODO
+    ui_->spawnThought(user, text);
+}
+
+void Framework::spawnBonusText(const sf::Vector2f& pos, const std::string& text)
+{
+    ui_->spawnBonusText(pos, text);
 }
 
 UserInterface* Framework::getUI()
@@ -961,6 +967,18 @@ void Framework::initSpecials()
 float Framework::getRag3Time() const
 {
     return 0.0f;
+}
+
+void Framework::useItem(const std::string& id)
+{
+    auto player = getPlayer();
+    if (player != nullptr)
+        player->useItem(id);
+}
+
+void Framework::obstacleDestroyedEvent(Obstacle* obstacle)
+{
+
 }
 
 

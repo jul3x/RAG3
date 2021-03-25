@@ -8,4 +8,4 @@ int z_index=1
 
 string light_point="const"
 float light_point_radius=48.0
-float light_point_data=10.0
+float light_point_data=1

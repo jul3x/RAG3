@@ -5,11 +5,11 @@
 #include <R3E/utils/Geometry.h>
 
 #include <common/ResourceManager.h>
-#include <common/weapons/MeleeWeapon.h>
 
 #include <common/events/Event.h>
 #include <common/misc/JournalEntries.h>
 
+#include <packets/PlayerEventPacket.h>
 #include <server/Server.h>
 
 
@@ -51,6 +51,7 @@ void Server::update(float time_elapsed)
     checkAwaitingConnections();
 
     handleMessagesFromPlayers();
+    handleEventsFromPlayers();
 
     updateExplosions();
     camera_->update(time_elapsed);
@@ -135,14 +136,14 @@ void Server::checkAwaitingConnections()
     auto client = std::make_shared<sf::TcpSocket>();
     client->setBlocking(false);
     sf::Socket::Status status = connection_listener_.accept(*client);
-    auto ip = client->getRemoteAddress().toString();
+    auto ip = client->getRemoteAddress().toInteger();
 
     switch (status)
     {
         case sf::Socket::Done:
             events_socket_[ip] = client;
 
-            LOG.info("New connection attempt from: " + ip);
+            LOG.info("New connection attempt from: " + sf::IpAddress(ip).toString());
             players_.emplace(ip, starting_positions_
                     .at(utils::num::getRandom(0, static_cast<int>(starting_positions_.size() - 1))));
             engine_->registerDynamicObject(&players_.at(ip));
@@ -155,7 +156,7 @@ void Server::checkAwaitingConnections()
 //            LOG.info("No connection yet.");
             break;
         default:
-            LOG.error("Failed connection attempt from: " + ip);
+            LOG.error("Failed connection attempt from: " + sf::IpAddress(ip).toString());
             break;
     }
 }
@@ -178,15 +179,15 @@ void Server::handleMessagesFromPlayers()
             case sf::Socket::Done:
             {
                 LOG.info("New data received from: " + sender.toString());
-
-                auto player_it = players_.find(sender.toString());
+                auto ip = sender.toInteger();
+                auto player_it = players_.find(ip);
 
                 if (player_it != players_.end())
                 {
-                    if ((cached_packets_.count(sender.toString()) <= 0 ||
-                         packet.getTimestamp() >= cached_packets_[sender.toString()].getTimestamp()) &&
+                    if ((cached_packets_.count(ip) <= 0 ||
+                         packet.getTimestamp() >= cached_packets_[ip].getTimestamp()) &&
                         utils::timeSinceEpochMillisec() - packet.getTimestamp() < max_ping)
-                        cached_packets_[sender.toString()] = packet;
+                        cached_packets_[ip] = packet;
                     else
                         LOG.error("This packet is old or latency is too high!"
                                   "\nPacket timestamp difference: " +
@@ -261,7 +262,7 @@ void Server::handleMessagesFromPlayers()
         }
         else
         {
-            LOG.error("No input packets received from: " + player.first);
+            LOG.error("No input packets received from: " + sf::IpAddress(player.first).toString());
         }
     }
 }
@@ -277,9 +278,9 @@ void Server::sendMessagesToPlayers()
 
         for (const auto& player : players_)
         {
-            if (data_sender_socket_.send(packet, player.first, port) != sf::Socket::Done)
+            if (data_sender_socket_.send(packet, sf::IpAddress(player.first), port) != sf::Socket::Done)
             {
-                LOG.error("[Server] Could not send data to client: " + player.first);
+                LOG.error("[Server] Could not send data to client: " + sf::IpAddress(player.first).toString());
             }
         }
 
@@ -291,4 +292,214 @@ void Server::setGameState(Framework::GameState state)
 {
     // TODO
     state_ = GameState::Normal;
+}
+
+void Server::handleEventsFromPlayers()
+{
+    for (const auto& socket : events_socket_)
+    {
+        PlayerEventPacket packet;
+        auto status = socket.second->receive(packet);
+        switch (status)
+        {
+            case sf::Socket::Done:
+            {
+                auto player_it = players_.find(socket.first);
+
+                if (player_it != players_.end())
+                {
+                    switch (packet.getType())
+                    {
+                        case PlayerEventPacket::Type::UseObject:
+                        {
+                            useSpecialObject(&player_it->second, player_it->first);
+                            break;
+                        }
+                        case PlayerEventPacket::Type::UseBackpackObject:
+                        {
+                            player_it->second.useItem(packet.getStrData());
+                            break;
+                        }
+                        case PlayerEventPacket::Type::Exit:
+                        {
+                            clearPlayer(&player_it->second);
+                            players_.erase(player_it);
+                            break;
+                        }
+                        default:
+                        {
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    LOG.error("This player is not registered!");
+                }
+                break;
+            }
+            case sf::Socket::NotReady:
+                break;
+            default:
+                LOG.error("Failed connection attempt from: " + sf::IpAddress(socket.first).toString());
+                break;
+        }
+    }
+}
+
+void Server::clearPlayer(Player* player)
+{
+    engine_->deleteDynamicObject(player);
+
+    for (auto& weapon : player->getWeapons())
+    {
+        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+
+        if (melee_weapon != nullptr)
+        {
+            engine_->deleteHoveringObject(melee_weapon->getMeleeWeaponArea());
+        }
+    }
+}
+
+void Server::useSpecialObject(Player* player, sf::Uint32 ip)
+{
+    auto obj = player->getCurrentSpecialObject();
+    if (obj != nullptr)
+    {
+        auto packet = ServerEventPacket(ServerEventPacket::Type::UseObject, obj->getUniqueId(), ip);
+        sendEventToPlayers(packet);
+        obj->use(player);
+    }
+}
+
+void Server::sendEventToPlayers(ServerEventPacket& packet)
+{
+    for (auto& socket : events_socket_)
+    {
+        socket.second->send(packet);
+    }
+}
+
+void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
+{
+    auto bullet = dynamic_cast<Bullet*>(h_obj);
+    auto character = dynamic_cast<Character*>(d_obj);
+
+    auto factor = this->getRag3Time() > 0.0f ? CONF<float>("characters/rag3_factor") : 1.0f;
+
+    if (bullet != nullptr && character != nullptr)
+    {
+        if (bullet->getUser() != character)
+        {
+            if (bullet->getUser() != getPlayer())
+            {
+                factor = 1.0f;
+            }
+
+            character->getShot(*bullet, factor);
+            bullet->setDead();
+        }
+        return;
+    }
+
+    auto special = dynamic_cast<Special*>(h_obj);
+
+    if (special != nullptr && character != nullptr && special->isActive())
+    {
+        if (special->getActivation() == Functional::Activation::OnEnter)
+        {
+            auto player = dynamic_cast<Player*>(d_obj);
+            auto packet = ServerEventPacket(ServerEventPacket::Type::EnteredObject,
+                                            special->getUniqueId(), getPlayerIP(player));
+            sendEventToPlayers(packet);
+            if (special->isUsableByNPC())
+            {
+                special->use(character);
+            }
+            else if (player != nullptr)
+            {
+                special->use(player);
+            }
+        }
+        else if (special->getActivation() == Functional::Activation::OnUse)
+        {
+            character->setCurrentSpecialObject(special);
+        }
+        else
+        {
+            auto player = dynamic_cast<Player*>(d_obj);
+            auto packet = ServerEventPacket(ServerEventPacket::Type::CollectedObject,
+                                            special->getUniqueId(), getPlayerIP(player));
+            sendEventToPlayers(packet);
+            if (player != nullptr)
+            {
+                player->addSpecialToBackpack(special,
+                                             [this](Functional* functional) { this->registerFunctions(functional); });
+                special_functions_->destroy(special, {}, player);
+            }
+        }
+    }
+
+    auto talkable_area = dynamic_cast<TalkableArea*>(h_obj);
+
+    if (talkable_area != nullptr && character != nullptr)
+    {
+        character->setCurrentTalkableCharacter(talkable_area->getFather());
+    }
+
+    auto explosion = dynamic_cast<Explosion*>(h_obj);
+
+    if (character != nullptr && explosion != nullptr)
+    {
+        explosion->applyForce(character, 1.0f);
+    }
+
+    auto fire = dynamic_cast<Fire*>(h_obj);
+
+    if (character != nullptr && fire != nullptr)
+    {
+        if (fire->getUser() != character)
+            character->setGlobalState(Character::GlobalState::OnFire);
+    }
+
+    auto melee_weapon_area = dynamic_cast<MeleeWeaponArea*>(h_obj);
+
+    if (character != nullptr && melee_weapon_area != nullptr)
+    {
+        if (character != melee_weapon_area->getFather()->getUser())
+        {
+            if (melee_weapon_area->getFather()->getUser() != getPlayer())
+            {
+                factor = 1.0f;
+            }
+
+            float angle = utils::geo::wrapAngle0_360(std::get<1>(utils::geo::cartesianToPolar(
+                    melee_weapon_area->getFather()->getUser()->getPosition() - character->getPosition())) * 180.0 /
+                                                     M_PI);
+            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, angle > 0 && angle <= 180 ? 5.0 : -5.0),
+                            angle, melee_weapon_area->getFather()->getDeadlyFactor());
+            melee_weapon_area->setActive(false);
+            character->getCut(*melee_weapon_area->getFather(), factor);
+        }
+    }
+}
+
+sf::Uint32 Server::getPlayerIP(Player* player)
+{
+    for (const auto& p : players_)
+    {
+        if (&p.second == player)
+        {
+            return p.first;
+        }
+    }
+
+    return {};
+}
+
+void Server::obstacleDestroyedEvent(Obstacle* obstacle)
+{
+    auto packet = ServerEventPacket(ServerEventPacket::Type::DestroyedObstacle, obstacle->getUniqueId(), 0);
+    sendEventToPlayers(packet);
 }

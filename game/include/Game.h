@@ -49,8 +49,6 @@ public:
     DestructionSystem* spawnSparksEvent(const sf::Vector2f& pos, float dir, float r) override;
     DestructionSystem* spawnBloodEvent(const sf::Vector2f& pos, float dir, float deadly_factor) override;
     void spawnAchievement(const j3x::Parameters& params);
-    void spawnThought(Character* user, const std::string& text) override;
-    void spawnBonusText(const sf::Vector2f& pos, const std::string& text);
 
     // Spawn objects for journal
     Fire* spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir) override;

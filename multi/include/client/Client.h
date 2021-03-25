@@ -40,6 +40,7 @@ public:
     void initialize() override;
     void update(float time_elapsed) override;
     void draw(graphics::Graphics& graphics) override;
+    void close() override;
 
     void alertCollision(HoveringObject* h_obj, StaticObject* s_obj) override;
     void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) override;
@@ -49,21 +50,22 @@ public:
     [[nodiscard]] Special* getCurrentSpecialObject() const override;
 
     // UI functions
+    void useItem(const std::string& id) override;
     void useSpecialObject() override;
     void setGameState(GameState state) override;
-
 private:
     void updatePlayers(float time_elapsed);
 
     void initPlayers() override;
 
     void establishConnection(const sf::IpAddress& ip);
+    void handleEventsFromServer();
     void sendInputs();
     void receiveData();
-    Player* getPlayer(const std::string& ip);
+    Player* getPlayer(sf::Uint32 ip);
 
-    std::unordered_map<std::string, std::unique_ptr<Player>> players_;
-    std::unordered_map<std::string, PlayerData> cached_datas_;
+    std::unordered_map<sf::Uint32, std::unique_ptr<Player>> players_;
+    std::unordered_map<sf::Uint32, PlayerData> cached_datas_;
     std::unique_ptr<Player> player_;
 
     sf::UdpSocket data_send_socket_;

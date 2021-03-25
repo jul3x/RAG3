@@ -106,8 +106,8 @@ void GameUserInterface::draw(graphics::Graphics& graphics)
     if (game_->getGameState() != Game::GameState::Menu)
     {
         graphics.setCurrentView();
-        graphics.getWindow().draw(object_use_text_);
-        graphics.getWindow().draw(npc_talk_text_);
+        graphics.draw(object_use_text_);
+        graphics.draw(npc_talk_text_);
 
         for (auto& thought : thoughts_)
         {

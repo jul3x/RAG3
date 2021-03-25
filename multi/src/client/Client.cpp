@@ -6,12 +6,13 @@
 #include <R3E/utils/Misc.h>
 
 #include <common/ResourceManager.h>
-#include <common/weapons/MeleeWeapon.h>
 #include <common/events/Event.h>
 #include <common/misc/JournalEntries.h>
 
 #include <packets/PlayerInputPacket.h>
 #include <packets/PlayersStatePacket.h>
+#include <packets/PlayerEventPacket.h>
+#include <packets/ServerEventPacket.h>
 #include <client/Client.h>
 
 
@@ -51,6 +52,7 @@ void Client::initialize()
 void Client::update(float time_elapsed)
 {
     sendInputs();
+    handleEventsFromServer();
     receiveData();
 
     if (CONF<bool>("sound/sound_on"))
@@ -85,7 +87,7 @@ void Client::draw(graphics::Graphics& graphics)
             graphics.drawSorted(*obj);
     };
 
-    auto draw_light = [&graphics, this](auto& list) {
+    auto draw_light = [this](auto& list) {
         for (const auto& obj : list)
         {
             auto light = obj->getLightPoint();
@@ -152,12 +154,7 @@ void Client::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
 
     if (bullet != nullptr)
     {
-        if (obstacle != nullptr)
-        {
-            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
-            bullet->setDead();
-        }
-        else if (obstacle_tile != nullptr)
+        if (obstacle != nullptr || obstacle_tile != nullptr)
         {
             spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
             bullet->setDead();
@@ -213,7 +210,9 @@ void Client::useSpecialObject()
     auto curr = player_->getCurrentSpecialObject();
     if (curr != nullptr)
     {
-        curr->use(player_.get());
+        PlayerEventPacket packet(PlayerEventPacket::Type::UseObject);
+        events_socket_.send(packet);
+        //curr->use(player_.get());
     }
 }
 
@@ -255,6 +254,68 @@ void Client::establishConnection(const sf::IpAddress& ip)
     server_ip_ = ip;
 }
 
+void Client::handleEventsFromServer()
+{
+    ServerEventPacket packet;
+    auto status = events_socket_.receive(packet);
+    switch (status)
+    {
+        case sf::Socket::Done:
+        {
+            switch (packet.getType())
+            {
+                case ServerEventPacket::Type::UseObject:
+                case ServerEventPacket::Type::EnteredObject:
+                {
+                    auto obj = map_->getObjectById<Special>(packet.getUID());
+                    auto player = getPlayer(packet.getIP());
+                    if (obj != nullptr && player != nullptr)
+                    {
+                        obj->use(player);
+                    }
+                    break;
+                }
+                case ServerEventPacket::Type::CollectedObject:
+                {
+                    auto obj = map_->getObjectById<Special>(packet.getUID());
+                    auto player = getPlayer(packet.getIP());
+                    if (obj != nullptr && player != nullptr)
+                    {
+                        player->addSpecialToBackpack(
+                                obj, [this](Functional* functional) { this->registerFunctions(functional); });
+                        special_functions_->destroy(obj, {}, player);
+                    }
+                    break;
+                }
+                case ServerEventPacket::Type::DestroyedObstacle:
+                {
+                    auto obj = map_->getObjectById<Obstacle>(packet.getUID());
+                    if (obj != nullptr)
+                    {
+                        obj->setHealth(-1.0);
+                    }
+                }
+                case ServerEventPacket::Type::Exit:
+                {
+//                    clearPlayer(&player_it->second);
+//                    players_.erase(player_it);
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+            break;
+        }
+        case sf::Socket::NotReady:
+            break;
+        default:
+            LOG.error("Failed connection attempt from: " + server_ip_.toString());
+            break;
+    }
+}
+
 void Client::sendInputs()
 {
     static constexpr float packet_time_elapsed = 0.01f;
@@ -293,16 +354,10 @@ void Client::receiveData()
             {
                 for (const auto& data : packet.getDatas())
                 {
-                    Player* player = nullptr;
-                    if (data.first == sf::IpAddress::getLocalAddress().toString())
+                    Player* player;
+                    if (data.first == sf::IpAddress::getLocalAddress().toInteger())
                     {
                         player = player_.get();
-
-                        if (data.second.current_special_id_ != -1)
-                            player->setCurrentSpecialObject(
-                                    map_->getObjectById<Special>(data.second.current_special_id_));
-                        else
-                            player->setCurrentSpecialObject(nullptr);
                     }
                     else
                     {
@@ -311,10 +366,16 @@ void Client::receiveData()
                         player->setRotateTo(data.second.rotation_);
                     }
 
+                    if (data.second.current_special_id_ != -1)
+                        player->setCurrentSpecialObject(
+                                map_->getObjectById<Special>(data.second.current_special_id_));
+                    else
+                        player->setCurrentSpecialObject(nullptr);
                     player->setPosition(data.second.pos_);
                     player->setVelocity(data.second.vel_);
                     player->setForcedVelocity(data.second.vel_);
                     player->setHealth(data.second.health_);
+                    player->setGlobalState(data.second.state_);
 
                     size_t i = 0;
                     for (auto state : data.second.weapon_state_)
@@ -350,7 +411,7 @@ void Client::receiveData()
 
     for (const auto& data : cached_datas_)
     {
-        if (data.first != sf::IpAddress::getLocalAddress().toString())
+        if (data.first != sf::IpAddress::getLocalAddress().toInteger())
         {
             auto player = getPlayer(data.first);
 
@@ -360,8 +421,11 @@ void Client::receiveData()
     }
 }
 
-Player* Client::getPlayer(const std::string& ip)
+Player* Client::getPlayer(sf::Uint32 ip)
 {
+    if (ip == sf::IpAddress::getLocalAddress().toInteger())
+        return player_.get();
+
     auto it = players_.find(ip);
 
     if (it == players_.end())
@@ -389,3 +453,19 @@ void Client::setGameState(Framework::GameState state)
     // TODO
     state_ = GameState::Normal;
 }
+
+void Client::close()
+{
+    PlayerEventPacket packet(PlayerEventPacket::Type::Exit);
+    events_socket_.setBlocking(true);
+    events_socket_.send(packet);
+    Framework::close();
+}
+
+void Client::useItem(const std::string& id)
+{
+    Framework::useItem(id);
+    auto packet = PlayerEventPacket(PlayerEventPacket::Type::UseBackpackObject, id);
+    events_socket_.send(packet);
+}
+

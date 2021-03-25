@@ -96,8 +96,10 @@ public:
     virtual Decoration* spawnDecoration(const sf::Vector2f& pos, const std::string& name);
 
     // UI functions
+    virtual void useItem(const std::string& id);
     virtual void useSpecialObject();
     virtual void spawnThought(Character* user, const std::string& text);
+    virtual void spawnBonusText(const sf::Vector2f& pos, const std::string& text);
 
     virtual void findAndDeleteBullet(Bullet* ptr);
     virtual void findAndDeleteFire(Fire* ptr);
@@ -143,6 +145,8 @@ protected:
     virtual void updateFire(float time_elapsed);
     virtual void updateExplosions();
     virtual void updateDestructionSystems(float time_elapsed);
+
+    virtual void obstacleDestroyedEvent(Obstacle* obstacle);
 
     virtual void initObstacles();
     virtual void initDecorations();

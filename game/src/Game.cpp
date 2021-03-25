@@ -302,16 +302,6 @@ DestructionSystem* Game::spawnSparksEvent(const sf::Vector2f& pos, const float d
     return ptr;
 }
 
-void Game::spawnThought(Character* user, const std::string& text)
-{
-    ui_->spawnThought(user, text);
-}
-
-void Game::spawnBonusText(const sf::Vector2f& pos, const std::string& text)
-{
-    ui_->spawnBonusText(pos, text);
-}
-
 void Game::spawnAchievement(const j3x::Parameters& params)
 {
     ui_->spawnAchievement(

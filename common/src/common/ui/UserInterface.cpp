@@ -14,12 +14,14 @@
 #include <common/ui/NoteWindow.h>
 #include <common/Framework.h>
 
+
 UserInterface::UserInterface(Framework* framework) :
         framework_(framework),
         weapons_bar_({static_cast<float>(CONF<int>("graphics/window_width_px")),
                       static_cast<float>(CONF<int>("graphics/window_height_px"))}),
-        health_bar_({CONF<int>("graphics/window_width_px") - HEALTH_BAR_X_ * CONF<float>("graphics/user_interface_zoom"),
-                     CONF<int>("graphics/window_height_px") - HEALTH_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")}),
+        health_bar_(
+                {CONF<int>("graphics/window_width_px") - HEALTH_BAR_X_ * CONF<float>("graphics/user_interface_zoom"),
+                 CONF<int>("graphics/window_height_px") - HEALTH_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")}),
         fps_text_("FPS: ", RM.getFont("editor"), 12),
         object_use_text_("[F] Use object", RM.getFont(), CONF<float>("graphics/use_text_size")),
         npc_talk_text_("[T] Talk to NPC", RM.getFont(), CONF<float>("graphics/use_text_size")),
@@ -28,7 +30,9 @@ UserInterface::UserInterface(Framework* framework) :
         small_backpack_hud_(framework->getPlayer(), {static_cast<float>(CONF<int>("graphics/window_width_px")), 0.0f}),
         player_(nullptr),
         camera_(nullptr),
-        theme_("../data/config/gui_theme.txt") {}
+        theme_("../data/config/gui_theme.txt")
+{
+}
 
 void UserInterface::initialize(graphics::Graphics& graphics)
 {
@@ -61,7 +65,8 @@ void UserInterface::registerCamera(Camera* camera)
 void UserInterface::spawnAchievement(const std::string& title, const std::string& text, const std::string& tex)
 {
     achievements_.emplace_back(sf::Vector2f{CONF<int>("graphics/window_width_px") - ACHIEVEMENTS_MARGIN_,
-                                            (ACHIEVEMENTS_MARGIN_ + CONF<sf::Vector2f>("graphics/achievement_size").y) * (achievements_.size() + 1)},
+                                            (ACHIEVEMENTS_MARGIN_ + CONF<sf::Vector2f>("graphics/achievement_size").y) *
+                                            (achievements_.size() + 1)},
                                title, text, &RM.getTexture(tex));
 }
 
@@ -80,8 +85,8 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
     {
         object_use_text_.setString(special_object->getTextToUse());
         auto object_use_text_rect = object_use_text_.getLocalBounds();
-        object_use_text_.setOrigin(object_use_text_rect.left + object_use_text_rect.width/2.0f,
-                                   object_use_text_rect.top  + object_use_text_rect.height/2.0f);
+        object_use_text_.setOrigin(object_use_text_rect.left + object_use_text_rect.width / 2.0f,
+                                   object_use_text_rect.top + object_use_text_rect.height / 2.0f);
 
         object_use_text_.setPosition(special_object->getPosition() - sf::Vector2f{0.0f, OBJECT_USE_TEXT_OFFSET_Y_});
         object_use_text_.setFillColor(sf::Color::White);
@@ -95,8 +100,8 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
     if (npc_talk != nullptr)
     {
         auto npc_talk_text_rect = npc_talk_text_.getLocalBounds();
-        npc_talk_text_.setOrigin(npc_talk_text_rect.left + npc_talk_text_rect.width/2.0f,
-                                 npc_talk_text_rect.top  + npc_talk_text_rect.height/2.0f);
+        npc_talk_text_.setOrigin(npc_talk_text_rect.left + npc_talk_text_rect.width / 2.0f,
+                                 npc_talk_text_rect.top + npc_talk_text_rect.height / 2.0f);
 
         npc_talk_text_.setPosition(npc_talk->getPosition() - sf::Vector2f{0.0f, TALK_TEXT_OFFSET_Y_});
         npc_talk_text_.setFillColor(sf::Color::White);
@@ -271,8 +276,11 @@ void UserInterface::spawnBonusText(const sf::Vector2f& pos, const std::string& t
 void UserInterface::spawnAcceptWindow(const std::string& text, const std::function<void()>& func)
 {
     std::shared_ptr<AcceptWindow> window = std::make_shared<AcceptWindow>(this, text,
-                                                                          sf::Vector2f(CONF<int>("graphics/window_width_px"),
-                                                                                       CONF<int>("graphics/window_height_px")) / 2.0f,
+                                                                          sf::Vector2f(
+                                                                                  CONF<int>("graphics/window_width_px"),
+                                                                                  CONF<int>(
+                                                                                          "graphics/window_height_px")) /
+                                                                          2.0f,
                                                                           CONF<sf::Vector2f>("graphics/popup_size"));
     window->bindFunction(func);
     windows_.emplace_back(window);
@@ -280,15 +288,17 @@ void UserInterface::spawnAcceptWindow(const std::string& text, const std::functi
 
 void UserInterface::closeWindow(Window* window)
 {
-    utils::eraseIf<std::shared_ptr<Window>>(windows_, [window](std::shared_ptr<Window>& window_) { return window_.get() == window; });
+    utils::eraseIf<std::shared_ptr<Window>>(windows_, [window](std::shared_ptr<Window>& window_) {
+        return window_.get() == window;
+    });
 }
 
 void UserInterface::spawnNoteWindow(const std::string& text)
 {
     windows_.emplace_back(std::make_shared<NoteWindow>(framework_, this, text,
-                          sf::Vector2f(CONF<int>("graphics/window_width_px"),
-                                       CONF<int>("graphics/window_height_px")) / 2.0f,
-                          CONF<sf::Vector2f>("graphics/popup_size")));
+                                                       sf::Vector2f(CONF<int>("graphics/window_width_px"),
+                                                                    CONF<int>("graphics/window_height_px")) / 2.0f,
+                                                       CONF<sf::Vector2f>("graphics/popup_size")));
 }
 
 void UserInterface::openMenu()

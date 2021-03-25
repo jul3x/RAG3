@@ -69,9 +69,9 @@ public:
     // Journal methods
     [[nodiscard]] bool isJournalFreezed() const;
 
-    NPC* spawnNewNPC(const std::string &id, int u_id, Functional::Activation activation,
+    NPC* spawnNewNPC(const std::string& id, int u_id, Functional::Activation activation,
                      const j3x::List& funcs, const j3x::List& datas) override;
-    NPC* spawnNewPlayerClone(const std::string &weapon_id) override;
+    NPC* spawnNewPlayerClone(const std::string& weapon_id) override;
 
     void setGameState(Framework::GameState state) override;
 

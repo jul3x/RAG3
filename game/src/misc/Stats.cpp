@@ -6,13 +6,14 @@
 
 #include <Game.h>
 
+
 Stats::Stats() : Stats(nullptr)
 {
 
 }
 
 Stats::Stats(Game* game) :
-    game_(game), AbstractStats()
+        game_(game), AbstractStats()
 {
 }
 
@@ -55,7 +56,8 @@ void Stats::checkLevel()
 {
     static auto& experience_list = CONF<j3x::List>("characters/levels_experience");
 
-    if (level_ < experience_list.size() && exp_ >= j3x::getObj<int>(experience_list, static_cast<size_t>(level_), false))
+    if (level_ < experience_list.size() &&
+        exp_ >= j3x::getObj<int>(experience_list, static_cast<size_t>(level_), false))
     {
         ++level_;
 
@@ -63,14 +65,15 @@ void Stats::checkLevel()
     }
 }
 
-Stats Stats::operator-(const Stats &stats) const {
+Stats Stats::operator-(const Stats& stats) const
+{
     return Stats(
             this->getEnemiesKilled() - stats.getEnemiesKilled(),
             this->getCrystalsPicked() - stats.getCrystalsPicked(),
             this->getExplosions() - stats.getExplosions(),
             this->getExp() - stats.getExp(),
             this->getLevel() - stats.getLevel()
-            );
+    );
 }
 
 Game* Stats::getGame() const

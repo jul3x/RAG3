@@ -35,7 +35,7 @@ namespace r3e::j3x {
     void mergeParams(Parameters& params, const Parameters& new_params);
 
     template<class T>
-    void tokenize(const std::string &str, char delimiter, T& out)
+    void tokenize(const std::string& str, char delimiter, T& out)
     {
         out.clear();
 
@@ -66,14 +66,14 @@ namespace r3e::j3x {
         return {std::stof(data_str.at(0)), std::stof(data_str.at(1))};
     }
 
-    template <class T>
+    template<class T>
     bool has(const Parameters& params, const std::string& key)
     {
         auto it = params.find(key);
         return (it != params.end());
     }
 
-    template <class T>
+    template<class T>
     const T& get(const Parameters& params, const std::string& key, bool ignore_warn = false)
     {
         static T ERR = {};
@@ -86,18 +86,22 @@ namespace r3e::j3x {
             return ERR;
         }
 
-        try {
+        try
+        {
             return std::any_cast<const T&>(it->second);
         }
-        catch (const std::bad_any_cast& exception) {
+        catch (const std::bad_any_cast& exception)
+        {
             if (!ignore_warn)
-                LOG.error("[J3X] Param " + key + " not matching return type! It should be \"" + it->second.type().name() + "\".");
+                LOG.error(
+                        "[J3X] Param " + key + " not matching return type! It should be \"" + it->second.type().name() +
+                        "\".");
 
             return ERR;
         }
     }
 
-    template <class T>
+    template<class T>
     const T& getObj(const Obj& param, bool ignore_warn = false)
     {
         static T ERR = {};
@@ -117,13 +121,13 @@ namespace r3e::j3x {
         }
     }
 
-    template <class T>
+    template<class T>
     const T& getObj(const j3x::List& list, size_t index, bool ignore_warn = false)
     {
         return getObj<T>(list.at(index), ignore_warn);
     }
 
-    template <class T>
+    template<class T>
     void set(Parameters& params, const std::string& key, const T& value)
     {
         params[key] = value;
@@ -142,8 +146,9 @@ namespace r3e::j3x {
         try
         {
             std::string in_str = type + " tmp = " + str;
-            Script *parse_tree = pScript(in_str.c_str());
-            if (!parse_tree) {
+            Script* parse_tree = pScript(in_str.c_str());
+            if (!parse_tree)
+            {
                 throw std::logic_error("parse error");
             }
             parse_tree->accept(&visitor);

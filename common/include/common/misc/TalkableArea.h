@@ -7,6 +7,7 @@
 
 #include <R3E/objects/AbstractPhysicalObject.h>
 
+
 using namespace r3e;
 
 class Character;
@@ -14,8 +15,8 @@ class Character;
 class TalkableArea : public HoveringObject {
 public:
     TalkableArea(Character* father, float r) :
-        father_(father),
-        HoveringObject({}, {}, {r, r}, collision::Circle(r), nullptr, 0, 0, 0.0f, 0.0f)
+            father_(father),
+            HoveringObject({}, {}, {r, r}, collision::Circle(r), nullptr, 0, 0, 0.0f, 0.0f)
     {
 
     }
@@ -31,7 +32,7 @@ private:
 
     }
 
-    Character* father_ ;
+    Character* father_;
 
 };
 

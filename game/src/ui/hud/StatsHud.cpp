@@ -20,11 +20,11 @@ StatsHud::StatsHud(const sf::Vector2f& position) :
 {
     deaths_text_.setFillColor(sf::Color::White);
     deaths_text_.setPosition(DEATHS_X_ * CONF<float>("graphics/user_interface_zoom"),
-            DEATHS_Y_ * CONF<float>("graphics/user_interface_zoom"));
+                             DEATHS_Y_ * CONF<float>("graphics/user_interface_zoom"));
 
     crystals_text_.setFillColor(sf::Color::White);
     crystals_text_.setPosition(CRYSTALS_X_ * CONF<float>("graphics/user_interface_zoom"),
-            CRYSTALS_Y_ * CONF<float>("graphics/user_interface_zoom"));
+                               CRYSTALS_Y_ * CONF<float>("graphics/user_interface_zoom"));
 
     this->changeOrigin({0.0f, 0.0f});
 }

@@ -33,7 +33,7 @@ void Crosshair::setPosition(float x, float y)
     auto coords = Editor::get().getMapCoordinates({x, y});
     std::ostringstream out;
     out.precision(1);
-    out << std::fixed << "(" << coords.x << ", " << coords.y << ")" ;
+    out << std::fixed << "(" << coords.x << ", " << coords.y << ")";
     text_.setString(out.str());
 }
 

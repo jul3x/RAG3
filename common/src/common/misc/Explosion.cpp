@@ -8,7 +8,6 @@
 #include <common/misc/Explosion.h>
 
 
-
 Explosion::Explosion(const sf::Vector2f& position, float r) :
         HoveringObject(position, {}, {2 * r, 2 * r},
                        collision::Circle(r), nullptr, 0, 1, 1, 0.0f),

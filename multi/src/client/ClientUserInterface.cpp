@@ -59,7 +59,8 @@ void ClientUserInterface::handleMouse(sf::RenderWindow& graphics_window)
 
     for (const auto& widget : gui_->getWidgets())
     {
-        if (widget->mouseOnWidget({static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y)}) && widget->isVisible())
+        if (widget->mouseOnWidget({static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y)}) &&
+            widget->isVisible())
         {
             is_gui = true;
             break;

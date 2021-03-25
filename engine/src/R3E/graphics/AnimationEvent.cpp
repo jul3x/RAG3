@@ -54,9 +54,13 @@ namespace r3e::graphics {
             case AnimationType::Quadratic:
             {
                 animation_source_.left = (is_flipped_x_ ? frame_size_.x : 0) + frame_size_.x *
-                                         (current_frame % static_cast<short int>(std::sqrt(frames_number_)));
+                                                                               (current_frame %
+                                                                                static_cast<short int>(std::sqrt(
+                                                                                        frames_number_)));
                 animation_source_.top = (is_flipped_y_ ? frame_size_.y : 0) + frame_size_.y *
-                                        (current_frame / static_cast<short int>(std::sqrt(frames_number_)));
+                                                                              (current_frame /
+                                                                               static_cast<short int>(std::sqrt(
+                                                                                       frames_number_)));
                 break;
             }
             default:

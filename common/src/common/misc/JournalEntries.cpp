@@ -80,13 +80,13 @@ DestroyBullet::DestroyBullet(Journal* father, Bullet* bullet) :
         JournalEntry(father), ptr_(bullet), user_(bullet->getUser()), pos_(bullet->getPosition())
 {
     id_ = bullet->getId();
-    direction_ = bullet->getRotation() ;
+    direction_ = bullet->getRotation();
 }
 
 void DestroyBullet::executeEntryReversal()
 {
     auto new_user = father_->getUpdatedPtr(user_);
-    auto new_ptr = father_->getFramework()->spawnNewBullet(new_user, id_, pos_, direction_* M_PI / 180.0f);
+    auto new_ptr = father_->getFramework()->spawnNewBullet(new_user, id_, pos_, direction_ * M_PI / 180.0f);
 
     new_ptr->setRotation(direction_);
     father_->setUpdatedPtr(ptr_, new_ptr);
@@ -120,13 +120,13 @@ void FireEntry::executeEntryReversal()
 DestroyFire::DestroyFire(Journal* father, Fire* fire) :
         JournalEntry(father), ptr_(fire), user_(fire->getUser()), pos_(fire->getPosition())
 {
-    direction_ = fire->getRotation() ;
+    direction_ = fire->getRotation();
 }
 
 void DestroyFire::executeEntryReversal()
 {
     auto new_user = father_->getUpdatedPtr(user_);
-    auto new_ptr = father_->getFramework()->spawnNewFire(new_user, pos_, direction_* M_PI / 180.0f);
+    auto new_ptr = father_->getFramework()->spawnNewFire(new_user, pos_, direction_ * M_PI / 180.0f);
 
     new_ptr->setRotation(direction_);
     father_->setUpdatedPtr(ptr_, new_ptr);
@@ -219,7 +219,8 @@ void DestroySpecial::executeEntryReversal()
     father_->setUpdatedPtr(ptr_, new_ptr);
 }
 
-SpawnDestructionSystem::SpawnDestructionSystem(Journal* father, DestructionSystem* ptr) : JournalEntry(father), ptr_(ptr)
+SpawnDestructionSystem::SpawnDestructionSystem(Journal* father, DestructionSystem* ptr) :
+        JournalEntry(father), ptr_(ptr)
 {
 
 }
@@ -231,7 +232,8 @@ void SpawnDestructionSystem::executeEntryReversal()
 }
 
 DestroyDestructionSystem::DestroyDestructionSystem(Journal* father, DestructionSystem* ptr) :
-    JournalEntry(father), ptr_(ptr), params_(ptr->getDestructionParams()), dir_(ptr->getDestructionDir()), pos_(ptr->getPosition()), quantity_factor_(ptr->getQuantityFactor())
+        JournalEntry(father), ptr_(ptr), params_(ptr->getDestructionParams()), dir_(ptr->getDestructionDir()),
+        pos_(ptr->getPosition()), quantity_factor_(ptr->getQuantityFactor())
 {
 }
 

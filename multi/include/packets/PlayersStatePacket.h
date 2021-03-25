@@ -28,12 +28,12 @@ struct PlayerData {
 };
 
 
-class PlayersStatePacket : public sf::Packet
-{
+class PlayersStatePacket : public sf::Packet {
 public:
     PlayersStatePacket() = default;
 
-    explicit PlayersStatePacket(const std::unordered_map<std::string, Player>& players, std::unordered_map<std::string, PlayerInputPacket>& cached_packets)
+    explicit PlayersStatePacket(const std::unordered_map<std::string, Player>& players,
+                                std::unordered_map<std::string, PlayerInputPacket>& cached_packets)
     {
         *this << r3e::utils::timeSinceEpochMillisec() << static_cast<short int>(players.size());
         for (const auto& player : players)
@@ -44,7 +44,8 @@ public:
             data.rotation_ = player.second.getRotation();
             data.current_weapon_ = player.second.getCurrentWeapon();
             data.health_ = player.second.getHealth();
-            data.is_shooting_ = cached_packets.count(player.first) ? cached_packets[player.first].isLeftMousePressed() : false;
+            data.is_shooting_ =
+                    cached_packets.count(player.first) ? cached_packets[player.first].isLeftMousePressed() : false;
 
             auto special = player.second.getCurrentSpecialObject();
             data.current_special_id_ = special == nullptr ? -1 : special->getUniqueId();
@@ -54,7 +55,8 @@ public:
             }
 
             *this << sf::IpAddress(player.first).toInteger() << data.pos_.x << data.pos_.y << data.vel_.x << data.vel_.y
-                  << data.rotation_ << data.current_weapon_ << data.health_ << data.is_shooting_ << data.current_special_id_;
+                  << data.rotation_ << data.current_weapon_ << data.health_ << data.is_shooting_
+                  << data.current_special_id_;
             *this << static_cast<short int>(data.weapon_state_.size());
             for (auto state : data.weapon_state_)
             {
@@ -96,7 +98,8 @@ private:
             sf::Uint32 ip_int;
             short int weapon_state_size;
             *this >> ip_int >> p_data.pos_.x >> p_data.pos_.y >> p_data.vel_.x >> p_data.vel_.y
-                  >> p_data.rotation_ >> p_data.current_weapon_ >> p_data.health_ >> p_data.is_shooting_ >> p_data.current_special_id_;
+                  >> p_data.rotation_ >> p_data.current_weapon_ >> p_data.health_ >> p_data.is_shooting_
+                  >> p_data.current_special_id_;
             *this >> weapon_state_size;
             for (auto j = 0; j < weapon_state_size; ++j)
             {

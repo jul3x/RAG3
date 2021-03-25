@@ -14,7 +14,7 @@ SaveWindow::SaveWindow(tgui::Gui* gui, tgui::Theme* theme) :
         ChildWindow(gui, theme, "Save map",
                     (sf::Vector2f(CONF<int>("window_width_px"), CONF<int>("window_height_px")) -
                      CONF<sf::Vector2f>("popup_window_size")) / 2.0f,
-                     CONF<sf::Vector2f>("popup_window_size"),
+                    CONF<sf::Vector2f>("popup_window_size"),
                     "save_window")
 {
     grid_ = tgui::Grid::create();
@@ -40,7 +40,10 @@ SaveWindow::SaveWindow(tgui::Gui* gui, tgui::Theme* theme) :
     button->setText("Save");
     button->setTextSize(CONF<float>("text_box_height"));
     button->setSize(CONF<sf::Vector2f>("button_size"));
-    button->connect("pressed", [&](){ Editor::get().saveMap(text_box_->getText()); child_->close(); });
+    button->connect("pressed", [&]() {
+        Editor::get().saveMap(text_box_->getText());
+        child_->close();
+    });
 
     grid_->addWidget(button, 2, 0);
 

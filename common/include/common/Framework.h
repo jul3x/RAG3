@@ -30,13 +30,13 @@
 using namespace r3e;
 
 class GameUserInterface;
+
 class Journal;
 
 class Framework : public AbstractGame {
 
 public:
-    enum class GameState
-    {
+    enum class GameState {
         Menu,
         Paused,
         Normal,
@@ -72,7 +72,8 @@ public:
     [[nodiscard]] virtual const std::list<std::unique_ptr<Fire>>& getFires() const;
     [[nodiscard]] virtual Special* getCurrentSpecialObject() const;
     [[nodiscard]] virtual Character* getCurrentTalkableCharacter() const;
-    [[nodiscard]] virtual std::tuple<SpawningFunction, AnimationSpawningFunction> getSpawningFunction(const std::string& name);
+    [[nodiscard]] virtual std::tuple<SpawningFunction, AnimationSpawningFunction>
+    getSpawningFunction(const std::string& name);
     [[nodiscard]] virtual float getRag3Time() const;
 
     // Spawn events
@@ -104,18 +105,22 @@ public:
     virtual void findAndDeleteSpecial(Special* ptr);
     virtual void findAndDeleteDestructionSystem(DestructionSystem* ptr);
 
-    virtual NPC* spawnNewPlayerClone(const std::string &weapon_id);
+    virtual NPC* spawnNewPlayerClone(const std::string& weapon_id);
     virtual NPC* spawnNewNPC(const std::string& id, int u_id, Functional::Activation activation,
                              const j3x::List& funcs, const j3x::List& datas);
-    virtual Special* spawnNewSpecial(const std::string& id, int u_id, const sf::Vector2f& pos, Functional::Activation activation,
-                                     const j3x::List& funcs, const j3x::List& datas);
+    virtual Special*
+    spawnNewSpecial(const std::string& id, int u_id, const sf::Vector2f& pos, Functional::Activation activation,
+                    const j3x::List& funcs, const j3x::List& datas);
     virtual Fire* spawnNewFire(Character* user, const sf::Vector2f& pos, float dir);
     virtual Bullet* spawnNewBullet(Character* user, const std::string& id, const sf::Vector2f& pos, float dir);
-    virtual Obstacle* spawnNewObstacle(const std::string& id, int u_id, const sf::Vector2f& pos, Functional::Activation activation,
-                                       const j3x::List& funcs, const j3x::List& datas);
+    virtual Obstacle*
+    spawnNewObstacle(const std::string& id, int u_id, const sf::Vector2f& pos, Functional::Activation activation,
+                     const j3x::List& funcs, const j3x::List& datas);
     virtual ObstacleTile* spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos);
     virtual Decoration* spawnNewDecoration(const std::string& id, int u_id, const sf::Vector2f& pos);
-    virtual DestructionSystem* spawnNewDestructionSystem(const sf::Vector2f& pos, float dir, const DestructionParams& params, float quantity_factor);
+    virtual DestructionSystem*
+    spawnNewDestructionSystem(const sf::Vector2f& pos, float dir, const DestructionParams& params,
+                              float quantity_factor);
 
     // Registering methods
     virtual void registerWeapons(Character* character);

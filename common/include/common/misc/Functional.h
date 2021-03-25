@@ -13,6 +13,7 @@
 #include <R3E/objects/Unique.h>
 #include <R3E/j3x/J3X.h>
 
+
 using namespace r3e;
 
 class Character;
@@ -27,7 +28,7 @@ public:
         OnCollect = 4
     };
 
-    Functional(std::string  activation, const j3x::List& functions,
+    Functional(std::string activation, const j3x::List& functions,
                const j3x::List& datas, const std::string& id, int u_id = -1);
 
     [[nodiscard]] const std::string& getActivationStr() const;
@@ -52,8 +53,9 @@ public:
     virtual void deactivate();
     virtual void destroy();
 
-    void bindFunction(const std::function<void(Functional*, const j3x::Obj&, Character*)>& func, const std::string& text,
-                      bool is_usable_by_npc);
+    void
+    bindFunction(const std::function<void(Functional*, const j3x::Obj&, Character*)>& func, const std::string& text,
+                 bool is_usable_by_npc);
     virtual void use(Character* user);
 
 private:

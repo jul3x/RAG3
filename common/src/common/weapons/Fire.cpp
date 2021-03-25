@@ -9,15 +9,14 @@
 #include <common/ResourceManager.h>
 
 
-
 Fire::Fire(Character* user,
            const sf::Vector2f& position,
            const float direction) :
         HoveringObject(position, CONF<float>("fire_speed") * sf::Vector2f(std::cos(direction), std::sin(direction)),
                        CONF<float>("graphics/fire_image_size") * sf::Vector2f{1.0f, 1.0f},
                        collision::Circle(CONF<float>("fire_initial_radius") *
-                               CONF<float>("fire_collision_factor"),
-                                       {0.0F, CONF<float>("fire_collision_offset")}),
+                                         CONF<float>("fire_collision_factor"),
+                                         {0.0F, CONF<float>("fire_collision_offset")}),
                        &RM.getTexture("fire"),
                        CONF<float>("fire_z_index"),
                        CONF<int>("graphics/fire_frames"),
@@ -31,7 +30,7 @@ Fire::Fire(Character* user,
         offset_(utils::num::getRandom(0.0, 2 * M_PI))
 {
     this->setRotation(direction * 180.0f / static_cast<float>(M_PI) + 90.0f);
-    this->changeOrigin({r_, r_/2.0f});
+    this->changeOrigin({r_, r_ / 2.0f});
 
     this->makeLightPoint(this->getPosition(),
                          CONF<float>("graphics/fire_light_point_size") * CONF<float>("graphics/global_zoom"),
@@ -53,14 +52,15 @@ bool Fire::update(float time_elapsed)
     DynamicObject::update(time_elapsed);
 
     difference_ = CONF<float>("fire_spread_distance") *
-            std::cos(offset_ + life_ / CONF<float>("fire_life") * 4 * M_PI);
+                  std::cos(offset_ + life_ / CONF<float>("fire_life") * 4 * M_PI);
     this->setForcedVelocity(this->getVelocity() +
-                      difference_ * time_elapsed * sf::Vector2f{static_cast<float>(std::cos(direction_ + M_PI_2)),
-                                                 static_cast<float>(std::sin(direction_ + M_PI_2))});
+                            difference_ * time_elapsed * sf::Vector2f{static_cast<float>(std::cos(direction_ + M_PI_2)),
+                                                                      static_cast<float>(std::sin(
+                                                                              direction_ + M_PI_2))});
 
     r_ += time_elapsed * CONF<float>("fire_spread_speed");
-    alpha_ = - life_ * life_ * 4 * 255.0f / (CONF<float>("fire_life") * CONF<float>("fire_life")) +
-            4 * 255.0f / CONF<float>("fire_life") * life_; // ax^2 + bx + c
+    alpha_ = -life_ * life_ * 4 * 255.0f / (CONF<float>("fire_life") * CONF<float>("fire_life")) +
+             4 * 255.0f / CONF<float>("fire_life") * life_; // ax^2 + bx + c
 
     light_->setPosition(this->getPosition());
     light_->setColor(255, 255, 255, alpha_);

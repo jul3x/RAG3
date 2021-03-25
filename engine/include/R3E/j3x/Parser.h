@@ -6,29 +6,32 @@
 
 
 class Script;
+
 class Def;
+
 class ListDef;
+
 class Type;
+
 class Expr;
+
 class ListExpr;
 
-typedef union
-{
-  int int_;
-  char char_;
-  double double_;
-  char* string_;
-  Script* script_;
-  Def* def_;
-  ListDef* listdef_;
-  Type* type_;
-  Expr* expr_;
-  ListExpr* listexpr_;
+typedef union {
+    int int_;
+    char char_;
+    double double_;
+    char* string_;
+    Script* script_;
+    Def* def_;
+    ListDef* listdef_;
+    Type* type_;
+    Expr* expr_;
+    ListExpr* listexpr_;
 } YYSTYPE;
 
-Script* pScript(FILE *inp);
-Script* pScript(const char *str);
-
+Script* pScript(FILE* inp);
+Script* pScript(const char* str);
 
 
 #define _ERROR_ 258

@@ -27,9 +27,15 @@ void Framework::initialize()
             sf::Color(CONF<int>("graphics/background_color")));
     engine_->setFPSLimit(60);
 
-    spawning_func_["bullet"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnBullet(user, name, pos, dir); };
-    spawning_func_["fire"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnFire(user, name, pos, dir); };
-    spawning_func_["null"] = [this] (Character* user, const std::string& name, const sf::Vector2f& pos, float dir) { this->spawnNull(user, name, pos, dir); };
+    spawning_func_["bullet"] = [this](Character* user, const std::string& name, const sf::Vector2f& pos, float dir) {
+        this->spawnBullet(user, name, pos, dir);
+    };
+    spawning_func_["fire"] = [this](Character* user, const std::string& name, const sf::Vector2f& pos, float dir) {
+        this->spawnFire(user, name, pos, dir);
+    };
+    spawning_func_["null"] = [this](Character* user, const std::string& name, const sf::Vector2f& pos, float dir) {
+        this->spawnNull(user, name, pos, dir);
+    };
 
     camera_ = std::make_unique<Camera>();
     special_functions_ = std::make_unique<SpecialFunctions>(this);
@@ -45,9 +51,10 @@ void Framework::initialize()
                                                           CONF<float>("characters/min_pos_change_without_path_recalc"),
                                                           CONF<int>("characters/max_path_search_depth"));
     engine_->getGraphics().setBgColor(sf::Color(j3x::get<int>(map_->getParams(), "background_color")));
-    lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                                                                    static_cast<float>(CONF<int>("graphics/window_height_px"))},
-                                                       sf::Color(j3x::get<int>(map_->getParams(), "lightning_color")));
+    lightning_ = std::make_unique<graphics::Lightning>(
+            sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
+                         static_cast<float>(CONF<int>("graphics/window_height_px"))},
+            sf::Color(j3x::get<int>(map_->getParams(), "lightning_color")));
 
 //    debug_map_blockage_ = std::make_unique<DebugMapBlockage>(&map_->getMapBlockage());
 
@@ -70,7 +77,7 @@ void Framework::updateMapObjects(float time_elapsed)
 {
     auto& blockage = map_->getMapBlockage();
 
-    auto& obstacles =  map_->getList<Obstacle>();;
+    auto& obstacles = map_->getList<Obstacle>();;
     auto& specials = map_->getList<Special>();
     auto& decorations = map_->getList<Decoration>();
     auto& weapons = map_->getList<PlacedWeapon>();
@@ -103,7 +110,8 @@ void Framework::updateMapObjects(float time_elapsed)
                 (*it)->use(this->getPlayer());
             }
 
-            Map::markBlocked(blockage.blockage_, (*it)->getPosition() + RMGET<sf::Vector2f>("obstacles", (*it)->getId(), "collision_offset"),
+            Map::markBlocked(blockage.blockage_, (*it)->getPosition() +
+                                                 RMGET<sf::Vector2f>("obstacles", (*it)->getId(), "collision_offset"),
                              RMGET<sf::Vector2f>("obstacles", (*it)->getId(), "collision_size"), 0.0f);
 
             obstacles.erase(it);
@@ -111,7 +119,8 @@ void Framework::updateMapObjects(float time_elapsed)
             do_increment = false;
         }
 
-        if (do_increment) ++it;
+        if (do_increment)
+            ++it;
     }
 
     for (auto it = specials.begin(); it != specials.end();)
@@ -139,7 +148,8 @@ void Framework::updateMapObjects(float time_elapsed)
             do_increment = false;
         }
 
-        if (do_increment) ++it;
+        if (do_increment)
+            ++it;
     }
 
     for (auto it = decorations.begin(); it != decorations.end();)
@@ -166,7 +176,8 @@ void Framework::updateMapObjects(float time_elapsed)
             do_increment = false;
         }
 
-        if (do_increment) ++it;
+        if (do_increment)
+            ++it;
     }
 
     for (auto& weapon : weapons)
@@ -298,7 +309,8 @@ Special* Framework::spawnSpecial(const sf::Vector2f& pos, const std::string& nam
 void Framework::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir)
 {
     auto vector = sf::Vector2f{static_cast<float>(std::cos(dir)), static_cast<float>(std::sin(dir))};
-    spawnEvent("shot", pos + RMGET<float>("bullets", name, "burst_offset") * vector, dir * 180.0f / M_PI, RMGET<float>("bullets", name, "burst_size"));
+    spawnEvent("shot", pos + RMGET<float>("bullets", name, "burst_offset") * vector, dir * 180.0f / M_PI,
+               RMGET<float>("bullets", name, "burst_size"));
 
     if (CONF<bool>("sound/sound_on"))
         engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
@@ -403,7 +415,8 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             character->getShot(*bullet, factor);
 
             float offset = bullet->getRotation() > 0.0f && bullet->getRotation() < 180.0f ? -5.0f : 5.0f;
-            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, offset), bullet->getRotation() + 180.0f, bullet->getDeadlyFactor());
+            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, offset), bullet->getRotation() + 180.0f,
+                            bullet->getDeadlyFactor());
 
             bullet->setDead();
         }
@@ -435,7 +448,8 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             auto player = dynamic_cast<Player*>(d_obj);
             if (player != nullptr)
             {
-                player->addSpecialToBackpack(special, [this](Functional* functional) { this->registerFunctions(functional); });
+                player->addSpecialToBackpack(special,
+                                             [this](Functional* functional) { this->registerFunctions(functional); });
                 special_functions_->destroy(special, {}, player);
             }
         }
@@ -475,8 +489,10 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             }
 
             float angle = utils::geo::wrapAngle0_360(std::get<1>(utils::geo::cartesianToPolar(
-                    melee_weapon_area->getFather()->getUser()->getPosition() - character->getPosition())) * 180.0 / M_PI);
-            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, angle > 0 && angle <= 180 ? 5.0 : -5.0), angle, melee_weapon_area->getFather()->getDeadlyFactor());
+                    melee_weapon_area->getFather()->getUser()->getPosition() - character->getPosition())) * 180.0 /
+                                                     M_PI);
+            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, angle > 0 && angle <= 180 ? 5.0 : -5.0),
+                            angle, melee_weapon_area->getFather()->getDeadlyFactor());
             melee_weapon_area->setActive(false);
             character->getCut(*melee_weapon_area->getFather(), factor);
         }
@@ -545,8 +561,8 @@ ObstacleTile* Framework::spawnNewObstacleTile(const std::string& id, const sf::V
 }
 
 Obstacle* Framework::spawnNewObstacle(const std::string& id, int u_id, const sf::Vector2f& pos,
-                                 Functional::Activation activation,
-                                 const j3x::List& funcs, const j3x::List& datas)
+                                      Functional::Activation activation,
+                                      const j3x::List& funcs, const j3x::List& datas)
 {
     auto new_ptr = map_->spawn<Obstacle>(pos, 0.0f, id);
 
@@ -625,11 +641,18 @@ void Framework::useSpecialObject()
 
 }
 
-std::tuple<Framework::SpawningFunction, Framework::AnimationSpawningFunction> Framework::getSpawningFunction(const std::string& name)
+std::tuple<Framework::SpawningFunction, Framework::AnimationSpawningFunction>
+Framework::getSpawningFunction(const std::string& name)
 {
-    static const auto swirl = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) { this->spawnSwirlEvent(name, pos, flipped); };
-    static const auto null = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) { this->spawnNull(nullptr, "", pos, 0.0f); };
-    static const auto sparks = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) { this->spawnShotEvent(name, pos, dir); };
+    static const auto swirl = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) {
+        this->spawnSwirlEvent(name, pos, flipped);
+    };
+    static const auto null = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) {
+        this->spawnNull(nullptr, "", pos, 0.0f);
+    };
+    static const auto sparks = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) {
+        this->spawnShotEvent(name, pos, dir);
+    };
     auto it = spawning_func_.find(name);
 
     if (it == spawning_func_.end())
@@ -673,8 +696,8 @@ Decoration* Framework::spawnDecoration(const sf::Vector2f& pos, const std::strin
 }
 
 Special* Framework::spawnNewSpecial(const std::string& id, int u_id,
-                               const sf::Vector2f& pos, Functional::Activation activation,
-                               const j3x::List& funcs, const j3x::List& datas)
+                                    const sf::Vector2f& pos, Functional::Activation activation,
+                                    const j3x::List& funcs, const j3x::List& datas)
 {
     auto ptr = map_->spawn<Special>(pos, 0.0f, id);
     engine_->registerHoveringObject(ptr);
@@ -771,7 +794,8 @@ void Framework::registerLight(Lightable* lightable) const
 
 void Framework::updateDestructionSystems(float time_elapsed)
 {
-    utils::eraseIf<std::unique_ptr<DestructionSystem>>(destruction_systems_, [&time_elapsed, this](std::unique_ptr<DestructionSystem>& system) {
+    utils::eraseIf<std::unique_ptr<DestructionSystem>>(destruction_systems_, [&time_elapsed, this](
+            std::unique_ptr<DestructionSystem>& system) {
         if (!system->update(time_elapsed))
         {
             return true;
@@ -814,7 +838,9 @@ void Framework::initDestructionParams()
     }
 }
 
-DestructionSystem* Framework::spawnNewDestructionSystem(const sf::Vector2f& pos, float dir, const DestructionParams& params, float quantity_factor)
+DestructionSystem*
+Framework::spawnNewDestructionSystem(const sf::Vector2f& pos, float dir, const DestructionParams& params,
+                                     float quantity_factor)
 {
     destruction_systems_.emplace_back(std::make_unique<DestructionSystem>(pos, dir, params, quantity_factor));
     return destruction_systems_.back().get();

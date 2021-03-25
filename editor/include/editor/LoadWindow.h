@@ -12,7 +12,7 @@ namespace editor {
 
     class LoadWindow : public ChildWindow {
     public:
-        LoadWindow(tgui::Gui *gui, tgui::Theme *theme);
+        LoadWindow(tgui::Gui* gui, tgui::Theme* theme);
 
         void refreshMapList(const std::vector<std::string>& map_list);
     private:

@@ -20,12 +20,12 @@ LevelHud::LevelHud(const sf::Vector2f& position) :
 {
     level_text_.setFillColor(sf::Color::White);
     level_text_.setPosition(LEVEL_X_ * CONF<float>("graphics/user_interface_zoom"),
-            LEVEL_Y_ * CONF<float>("graphics/user_interface_zoom"));
+                            LEVEL_Y_ * CONF<float>("graphics/user_interface_zoom"));
     level_text_.setOrigin(-position);
 
     exp_text_.setFillColor(sf::Color::White);
     exp_text_.setPosition(EXP_X_ * CONF<float>("graphics/user_interface_zoom"),
-            EXP_Y_ * CONF<float>("graphics/user_interface_zoom"));
+                          EXP_Y_ * CONF<float>("graphics/user_interface_zoom"));
     exp_text_.setOrigin(-position);
 
     this->changeOrigin({SIZE_X_ * CONF<float>("graphics/user_interface_zoom") / 2.0f, 0.0f});

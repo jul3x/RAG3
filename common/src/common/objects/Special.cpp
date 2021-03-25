@@ -23,7 +23,8 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
         HoveringObject(position, {},
                        RMGET<sf::Vector2f>("specials", id, "size"),
                        collision::None(),
-                       &RM.getTexture("specials/" + (RMGET<bool>("specials", id, "is_drawable") ? id : "special_event")),
+                       &RM.getTexture(
+                               "specials/" + (RMGET<bool>("specials", id, "is_drawable") ? id : "special_event")),
                        RMGET<int>("specials", id, "z_index"),
                        RMGET<int>("specials", id, "frames_number"),
                        RMGET<float>("specials", id, "frame_duration"),
@@ -32,11 +33,15 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
         is_drawable_(RMGET<bool>("specials", id, "is_drawable")),
         additional_boolean_data_(false)
 {
-    this->changeOrigin(RMGET<sf::Vector2f>("specials", id, "size") / 2.0f + RMGET<sf::Vector2f>("specials", id, "map_offset"));
+    this->changeOrigin(
+            RMGET<sf::Vector2f>("specials", id, "size") / 2.0f + RMGET<sf::Vector2f>("specials", id, "map_offset"));
     if (RMHAS<float>("specials", id, "collision_radius"))
-        this->changeCollisionArea(collision::Circle(RMGET<float>("specials", id, "collision_radius"), RMGET<sf::Vector2f>("specials", id, "collision_offset")));
+        this->changeCollisionArea(collision::Circle(RMGET<float>("specials", id, "collision_radius"),
+                                                    RMGET<sf::Vector2f>("specials", id, "collision_offset")));
     else
-        this->changeCollisionArea(collision::Box(RMGET<float>("specials", id, "collision_size_x"), RMGET<float>("specials", id, "collision_size_y"), RMGET<sf::Vector2f>("specials", id, "collision_offset")));
+        this->changeCollisionArea(collision::Box(RMGET<float>("specials", id, "collision_size_x"),
+                                                 RMGET<float>("specials", id, "collision_size_y"),
+                                                 RMGET<sf::Vector2f>("specials", id, "collision_offset")));
 
 
     if (is_active)
@@ -117,7 +122,8 @@ void Special::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(shape_, states);
 }
 
-void Special::setPosition(const sf::Vector2f &pos) {
+void Special::setPosition(const sf::Vector2f& pos)
+{
     AbstractDrawableObject::setPosition(pos);
 
     if (light_ != nullptr)

@@ -82,7 +82,8 @@ namespace r3e {
 
         void AStar::getSmoothedPath_(ai::Path& path)
         {
-            if (path.size() < 3) return;
+            if (path.size() < 3)
+                return;
             sf::Vector2f curPoint, nextPoint;
             sf::Vector2f pointQ, pointR;
 
@@ -90,7 +91,8 @@ namespace r3e {
             {
                 curPoint = it->first;
                 auto next_it = std::next(it);
-                if (next_it == path.end()) break;
+                if (next_it == path.end())
+                    break;
                 nextPoint = next_it->first;
                 pointQ = (0.75f * curPoint) +
                          (0.25f * nextPoint);
@@ -123,7 +125,8 @@ namespace r3e {
 
                 for (auto it = open_set.begin(); it != open_set.end(); ++it)
                 {
-                    if (it->f_score_ < x_it->f_score_) x_it = it;
+                    if (it->f_score_ < x_it->f_score_)
+                        x_it = it;
                 }
 
                 Node x = *x_it;
@@ -141,7 +144,8 @@ namespace r3e {
                 for (const auto& neigh : neighbours)
                 {
                     --limit;
-                    if (limit <= 0) return {};
+                    if (limit <= 0)
+                        return {};
 
                     Node y = Node({neigh.x, neigh.y}, INF, INF, INF);
                     if (closed_set.find(y) != closed_set.end())
@@ -181,7 +185,8 @@ namespace r3e {
                         {
                             came_it->second = x;
                         }
-                        else came_from.insert(std::make_pair(y, x));
+                        else
+                            came_from.insert(std::make_pair(y, x));
                     }
                 }
             }
@@ -210,9 +215,11 @@ namespace r3e {
                 int cord_x = pos.x + neigh.x;
                 int cord_y = pos.y + neigh.y;
 
-                if (cord_x < 0 || cord_x >= grid.size() || cord_y < 0 || cord_y >= grid.at(0).size()) continue;
+                if (cord_x < 0 || cord_x >= grid.size() || cord_y < 0 || cord_y >= grid.at(0).size())
+                    continue;
 
-                if (grid[cord_x][cord_y]) continue;
+                if (grid[cord_x][cord_y])
+                    continue;
 
                 ret.emplace_back(cord_x, cord_y);
             }
@@ -222,11 +229,14 @@ namespace r3e {
                 int cord_x = pos.x + neigh.x;
                 int cord_y = pos.y + neigh.y;
 
-                if (cord_x < 0 || cord_x >= grid.size() || cord_y < 0 || cord_y >= grid.at(0).size()) continue;
+                if (cord_x < 0 || cord_x >= grid.size() || cord_y < 0 || cord_y >= grid.at(0).size())
+                    continue;
 
-                if (grid[cord_x][cord_y]) continue;
+                if (grid[cord_x][cord_y])
+                    continue;
 
-                if (grid[pos.x][cord_y] || grid[cord_x][pos.y]) continue;
+                if (grid[pos.x][cord_y] || grid[cord_x][pos.y])
+                    continue;
 
                 ret.emplace_back(cord_x, cord_y);
             }
@@ -249,9 +259,11 @@ namespace r3e {
                 int cord_x = pos.x + neigh.x;
                 int cord_y = pos.y + neigh.y;
 
-                if (cord_x < 0 || cord_x >= grid.size() || cord_y < 0 || cord_y >= grid.at(0).size()) continue;
+                if (cord_x < 0 || cord_x >= grid.size() || cord_y < 0 || cord_y >= grid.at(0).size())
+                    continue;
 
-                if (grid[cord_x][cord_y]) continue;
+                if (grid[cord_x][cord_y])
+                    continue;
 
                 ret.emplace_back(cord_x, cord_y);
             }

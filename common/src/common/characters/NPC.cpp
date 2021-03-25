@@ -151,10 +151,12 @@ void NPC::handleVisibilityState()
 
         walls_between += map_blockage_->blockage_.at(rounded_x).at(rounded_y);
 
-        if (walls_between > CONF<float>("characters/walls_between_far_ai")) break;
+        if (walls_between > CONF<float>("characters/walls_between_far_ai"))
+            break;
     }
 
-    if (utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition()) > CONF<float>("characters/max_distance_ai"))
+    if (utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition()) >
+        CONF<float>("characters/max_distance_ai"))
         visibility_state_ = VisibilityState::OutOfRange;
     else if (walls_between <= CONF<float>("characters/walls_between_close_ai"))
         visibility_state_ = VisibilityState::Close;
@@ -299,7 +301,7 @@ sf::Vector2f NPC::findNearestSafeSpot(const sf::Vector2f& direction) const
 
     auto check_if_position_valid = [this](int a, int b) {
         return a < this->map_blockage_->blockage_.size() && a >= 0 &&
-                b < this->map_blockage_->blockage_.at(0).size() && b >= 0 &&
+               b < this->map_blockage_->blockage_.at(0).size() && b >= 0 &&
                !this->map_blockage_->blockage_.at(a).at(b);
     };
 
@@ -338,7 +340,7 @@ void NPC::standardAI(float time_elapsed)
         case ActionState::StandBy:
         {
             velocity = RMGET<float>("characters", this->getId(), "standby_speed")
-                    * this->getWanderingDirection(0.2f, 100.0f, 20);
+                       * this->getWanderingDirection(0.2f, 100.0f, 20);
 
             this->setNoGoal();
             this->setWeaponPointing(this->getPosition() + velocity);
@@ -415,14 +417,13 @@ void NPC::meleeAttackAI(float time_elapsed)
         case ActionState::StandBy:
         {
             velocity = RMGET<float>("characters", this->getId(), "standby_speed")
-                    * this->getWanderingDirection(0.2f, 100.0f, 20);
+                       * this->getWanderingDirection(0.2f, 100.0f, 20);
 
             this->setNoGoal();
             this->setWeaponPointing(this->getPosition() + velocity);
             break;
         }
         case ActionState::Follow:
-
         {
             this->setWeaponPointing(enemy_position);
             this->setCurrentGoal(enemy_position);
@@ -459,7 +460,7 @@ void NPC::handleActionMeleeState()
         case VisibilityState::Close:
         {
             if (utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition()) <
-                    RMGET<float>("characters", this->getId(), "min_attack_distance"))
+                RMGET<float>("characters", this->getId(), "min_attack_distance"))
                 action_state_ = ActionState::Shot;
             else
                 action_state_ = ActionState::Follow;

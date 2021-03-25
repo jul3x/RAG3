@@ -53,7 +53,8 @@ namespace r3e {
 
                 auto change_direction = utils::num::getRandom(0, when_opposite);
 
-                if (change_direction == 1) wandering_direction_ = -wandering_direction_;
+                if (change_direction == 1)
+                    wandering_direction_ = -wandering_direction_;
             }
 
             return wandering_direction_;
@@ -73,7 +74,8 @@ namespace r3e {
         {
             const sf::Vector2f& pos = this->getStartPosition();
             const ai::Path& path = manager_->getPath(this);
-            if (path.empty()) return {};
+            if (path.empty())
+                return {};
 
             sf::Vector2f point = utils::geo::getNearestForwardPointToPath(pos, path);
 

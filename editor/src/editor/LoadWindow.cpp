@@ -10,12 +10,13 @@
 
 using namespace editor;
 
-LoadWindow::LoadWindow(tgui::Gui *gui, tgui::Theme *theme) :
+LoadWindow::LoadWindow(tgui::Gui* gui, tgui::Theme* theme) :
         ChildWindow(gui, theme, "Load map",
                     (sf::Vector2f(CONF<int>("window_width_px"), CONF<int>("window_height_px")) -
                      CONF<sf::Vector2f>("popup_window_size")) / 2.0f,
                     CONF<sf::Vector2f>("popup_window_size"),
-                    "load_window") {
+                    "load_window")
+{
     grid_ = tgui::Grid::create();
     grid_->setPosition("50% - width/2", "50% - height/2");
     grid_->setSize("100%", "100%");
@@ -57,10 +58,12 @@ LoadWindow::LoadWindow(tgui::Gui *gui, tgui::Theme *theme) :
     grid_->setWidgetPadding(2, 0, {padding, padding});
 }
 
-void LoadWindow::refreshMapList(const std::vector<std::string> &map_list) {
+void LoadWindow::refreshMapList(const std::vector<std::string>& map_list)
+{
     list_box_->removeAllItems();
 
-    for (const auto &map : map_list) {
+    for (const auto& map : map_list)
+    {
         list_box_->addItem(map);
     }
 }

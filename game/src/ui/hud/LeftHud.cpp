@@ -14,7 +14,7 @@ LeftHud::LeftHud(const sf::Vector2f& position) :
                                 SIZE_Y_ * CONF<float>("graphics/user_interface_zoom")},
                                &RM.getTexture("hud_left")),
         crystal_(position + sf::Vector2f{CRYSTAL_OFFSET_X_, CRYSTAL_OFFSET_Y_}
-                          * CONF<float>("graphics/user_interface_zoom"),
+                            * CONF<float>("graphics/user_interface_zoom"),
                  {CRYSTAL_SIZE_X_ * CONF<float>("graphics/user_interface_zoom"),
                   CRYSTAL_SIZE_Y_ * CONF<float>("graphics/user_interface_zoom")},
                  &RM.getTexture("crystal"))

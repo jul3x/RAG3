@@ -18,7 +18,7 @@ Bullet::Bullet(Character* user,
                    id, -2),
         HoveringObject(position,
                        RMGET<float>("bullets", id, "speed") *
-                               sf::Vector2f(std::cos(direction), std::sin(direction)),
+                       sf::Vector2f(std::cos(direction), std::sin(direction)),
                        RMGET<sf::Vector2f>("bullets", id, "size"),
                        collision::Box(RMGET<sf::Vector2f>("bullets", id, "collision_offset").x,
                                       RMGET<sf::Vector2f>("bullets", id, "collision_offset").y,
@@ -91,9 +91,9 @@ void Bullet::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
                 sf::Vector2f norm = {std::cos(dir), std::sin(dir)};
                 trail_vert.emplace_back(trail_.at(i) - temp_r * norm,
-                        trail_color_, sf::Vector2f{});
+                                        trail_color_, sf::Vector2f{});
                 trail_vert.emplace_back(trail_.at(i) + temp_r * norm,
-                        trail_color_, sf::Vector2f{});
+                                        trail_color_, sf::Vector2f{});
             }
 
             target.draw(&trail_vert[0], trail_vert.size(), sf::TriangleStrip, states);

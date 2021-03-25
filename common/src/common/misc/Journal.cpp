@@ -8,8 +8,8 @@
 #include <common/misc/Journal.h>
 
 
-
-Journal::Journal(Framework* framework, float max_time_back, float sampling_rate) : framework_(framework), time_elapsed_(0.0f), time_reversed_(0.0f)
+Journal::Journal(Framework* framework, float max_time_back, float sampling_rate) :
+        framework_(framework), time_elapsed_(0.0f), time_reversed_(0.0f)
 {
     frame_time_ = 1.0f / sampling_rate;
     journal_max_size_ = static_cast<size_t>(max_time_back * sampling_rate);

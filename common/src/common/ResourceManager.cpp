@@ -124,7 +124,8 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
                     j3x::getObj<int>(get_param("obstacles_uid"), i)));
 
             Map::markBlocked(blocked, pos + RMGET<sf::Vector2f>("obstacles", id, "collision_offset"),
-                    RMGET<sf::Vector2f>("obstacles", id, "collision_size"), RMGET<float>("obstacles", id, "endurance"));
+                             RMGET<sf::Vector2f>("obstacles", id, "collision_size"),
+                             RMGET<float>("obstacles", id, "endurance"));
         }
 
         characters.clear();
@@ -158,12 +159,12 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
         throw std::out_of_range("[ResourceManager] Wrong size of lists with elements in map description");
     }
 
-    auto set_random_initial_frame = [](auto& objects)
-    {
+    auto set_random_initial_frame = [](auto& objects) {
         for (auto& object : objects)
         {
             auto number = object->getFramesNumber();
-            if (number <= 1) continue;
+            if (number <= 1)
+                continue;
 
             object->setCurrentFrame(utils::num::getRandom<int>(0, number - 1));
         }
@@ -184,7 +185,8 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
 
 bool ResourceManager::saveMap(const std::string& name, Map& map)
 {
-    std::ofstream file(CONF<std::string>("paths/maps_dir") + "/" + name + ".j3x", std::ofstream::out | std::ofstream::trunc);
+    std::ofstream
+            file(CONF<std::string>("paths/maps_dir") + "/" + name + ".j3x", std::ofstream::out | std::ofstream::trunc);
 
     if (!file)
     {
@@ -212,14 +214,19 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
 
     for (const auto& obstacle : map.getList<ObstacleTile>())
     {
-        matrix.at(static_cast<size_t>((obstacle->getPosition().y - map_constraints.second.y) / DecorationTile::SIZE_Y_)).
-               at(static_cast<size_t>((obstacle->getPosition().x - map_constraints.second.x) / DecorationTile::SIZE_X_)) = std::stoi(obstacle->getId());
+        matrix.at(static_cast<size_t>((obstacle->getPosition().y - map_constraints.second.y) / DecorationTile::SIZE_Y_))
+              .
+                      at(static_cast<size_t>((obstacle->getPosition().x - map_constraints.second.x) /
+                                             DecorationTile::SIZE_X_)) = std::stoi(obstacle->getId());
     }
 
     for (const auto& decoration : map.getList<DecorationTile>())
     {
-        matrix.at(static_cast<size_t>((decoration->getPosition().y - map_constraints.second.y) / DecorationTile::SIZE_Y_)).
-               at(static_cast<size_t>((decoration->getPosition().x - map_constraints.second.x) / DecorationTile::SIZE_X_)) = - std::stoi(decoration->getId());
+        matrix.at(
+                static_cast<size_t>((decoration->getPosition().y - map_constraints.second.y) / DecorationTile::SIZE_Y_))
+              .
+                      at(static_cast<size_t>((decoration->getPosition().x - map_constraints.second.x) /
+                                             DecorationTile::SIZE_X_)) = -std::stoi(decoration->getId());
     }
 
     j3x::List matrix_j3x;
@@ -329,14 +336,16 @@ std::string ResourceManager::getConfigContent(const std::string& category, const
 
     std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
-    LOG.info("[ResourceManager] Config file " + CONF<std::string>("paths/" + category) + "/" + id + ".j3x" + " is loaded!");
+    LOG.info("[ResourceManager] Config file " + CONF<std::string>("paths/" + category) + "/" + id + ".j3x" +
+             " is loaded!");
 
     return str;
 }
 
 bool ResourceManager::saveConfigFile(const std::string& category, const std::string& id, const std::string& content)
 {
-    std::ofstream file(CONF<std::string>("paths/" + category) + "/" + id + ".j3x", std::ofstream::out | std::ofstream::trunc);
+    std::ofstream
+            file(CONF<std::string>("paths/" + category) + "/" + id + ".j3x", std::ofstream::out | std::ofstream::trunc);
 
     if (!file)
     {
@@ -347,14 +356,16 @@ bool ResourceManager::saveConfigFile(const std::string& category, const std::str
 
     file << content;
 
-    LOG.info("[ResourceManager] Config file " + CONF<std::string>("paths/" + category) + "/" + id + ".j3x" + " is saved!");
+    LOG.info("[ResourceManager] Config file " + CONF<std::string>("paths/" + category) + "/" + id + ".j3x" +
+             " is saved!");
 
     return true;
 }
 
 std::vector<std::string>& ResourceManager::getListOfObjects(const std::string& dir)
 {
-    return getOrLoad(list_of_objects_, std::bind(&ResourceManager::loadListOfObjects, this, std::placeholders::_1), dir);
+    return getOrLoad(list_of_objects_, std::bind(&ResourceManager::loadListOfObjects, this, std::placeholders::_1),
+                     dir);
 }
 
 std::vector<std::string>& ResourceManager::getFreshListOfObjects(const std::string& dir)
@@ -385,8 +396,11 @@ void ResourceManager::loadListOfObjects(const std::string& dir)
     }
 }
 
-ResourceManager::ResourceManager() : AbstractResourceManager(CONF<std::string>("paths/j3x_dir"), CONF<std::string>("paths/textures_dir"), CONF<std::string>("paths/fonts_dir"),
-                                                             CONF<std::string>("paths/sounds_dir"), CONF<std::string>("paths/music_dir"), CONF<std::string>("paths/shaders_dir"))
+ResourceManager::ResourceManager() :
+        AbstractResourceManager(CONF<std::string>("paths/j3x_dir"), CONF<std::string>("paths/textures_dir"),
+                                CONF<std::string>("paths/fonts_dir"),
+                                CONF<std::string>("paths/sounds_dir"), CONF<std::string>("paths/music_dir"),
+                                CONF<std::string>("paths/shaders_dir"))
 {
 
 }

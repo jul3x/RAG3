@@ -114,7 +114,8 @@ namespace r3e {
     {
         short int direction = ABCircle(b, a);
 
-        if (!direction) return false;
+        if (!direction)
+            return false;
 
         float a_r = a.getCollisionArea().getA();
         auto b_bounds = utils::geo::generateCollisionAABB(b);
@@ -172,7 +173,8 @@ namespace r3e {
     {
         short int direction = ABCircle(b, a);
 
-        if (!direction) return false;
+        if (!direction)
+            return false;
 
         float a_r = a.getCollisionArea().getA();
         auto b_bounds = utils::geo::generateCollisionAABB(b);
@@ -247,7 +249,8 @@ namespace r3e {
     {
         short int direction = ABCircle(a, b);
 
-        if (!direction) return false;
+        if (!direction)
+            return false;
 
         float b_r = b.getCollisionArea().getA();
         auto a_bounds = utils::geo::generateCollisionAABB(a);
@@ -316,7 +319,8 @@ namespace r3e {
     {
         short int direction = ABCircle(a, b);
 
-        if (!direction) return false;
+        if (!direction)
+            return false;
 
         float b_r = b.getCollisionArea().getA();
         auto a_bounds = utils::geo::generateCollisionAABB(a);
@@ -395,7 +399,8 @@ namespace r3e {
     {
         short int direction = AABB(a, b);
 
-        if (!direction) return false;
+        if (!direction)
+            return false;
 
         auto a_bounds = utils::geo::generateCollisionAABB(a);
         auto b_bounds = utils::geo::generateCollisionAABB(b);
@@ -437,7 +442,8 @@ namespace r3e {
     {
         short int direction = AABB(a, b);
 
-        if (!direction) return false;
+        if (!direction)
+            return false;
 
         auto a_bounds = utils::geo::generateCollisionAABB(a);
         auto b_bounds = utils::geo::generateCollisionAABB(b);
@@ -502,7 +508,8 @@ namespace r3e {
 
             Collisions::setVerifiedPosition(a, b.getPosition() + b.getCollisionArea().getOffset() -
                                                a.getCollisionArea().getOffset() +
-                                               unit * (a.getCollisionArea().getA() + b.getCollisionArea().getA() + 0.1f));
+                                               unit *
+                                               (a.getCollisionArea().getA() + b.getCollisionArea().getA() + 0.1f));
             a.setForcedVelocity(a.getVelocity() - utils::geo::dotProduct(a.getVelocity(), unit) * unit);
             return true;
         }
@@ -523,10 +530,12 @@ namespace r3e {
 
             Collisions::setVerifiedPosition(a, b.getPosition() + b.getCollisionArea().getOffset() -
                                                a.getCollisionArea().getOffset() +
-                                               unit * (a.getCollisionArea().getA() + b.getCollisionArea().getA() + 0.1f));
+                                               unit *
+                                               (a.getCollisionArea().getA() + b.getCollisionArea().getA() + 0.1f));
             Collisions::setVerifiedPosition(b, a.getPosition() + a.getCollisionArea().getOffset() -
                                                b.getCollisionArea().getOffset() -
-                                               unit * (a.getCollisionArea().getA() + b.getCollisionArea().getA() + 0.1f));
+                                               unit *
+                                               (a.getCollisionArea().getA() + b.getCollisionArea().getA() + 0.1f));
 
             a.setForcedVelocity(a.getVelocity() - utils::geo::dotProduct(a.getVelocity(), unit) * unit);
             b.setForcedVelocity(b.getVelocity() - utils::geo::dotProduct(b.getVelocity(), unit) * unit);

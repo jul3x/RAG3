@@ -9,7 +9,9 @@ namespace r3e::collision {
 
     // Area
     Area::Area(Type type, float a, float b, const sf::Vector2f& offset) :
-            type_(type), a_(a), b_(b), offset_pos_(offset) {}
+            type_(type), a_(a), b_(b), offset_pos_(offset)
+    {
+    }
 
     const Area::Type& Area::getType() const
     {
@@ -32,12 +34,18 @@ namespace r3e::collision {
     }
 
     // None
-    None::None() : Area(Area::Type::None, 0.0f, 0.0f, {}) {}
+    None::None() : Area(Area::Type::None, 0.0f, 0.0f, {})
+    {
+    }
 
     // Box
-    Box::Box(float a, float b, const sf::Vector2f& offset) : Area(Area::Type::Box, a, b, offset) {}
+    Box::Box(float a, float b, const sf::Vector2f& offset) : Area(Area::Type::Box, a, b, offset)
+    {
+    }
 
     // Circle
-    Circle::Circle(float r, const sf::Vector2f& offset) : Area(Area::Type::Circle, r, 0.0f, offset) {}
+    Circle::Circle(float r, const sf::Vector2f& offset) : Area(Area::Type::Circle, r, 0.0f, offset)
+    {
+    }
 
 } // namespace r3e::collision

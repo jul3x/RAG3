@@ -55,7 +55,8 @@ private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     std::string texts_placeholders_[4] = {"Intelligence: ", "Heart: ", "Strength: ", "Agility: "};
-    Player::Skills skills_[4] = {Player::Skills::Intelligence, Player::Skills::Heart, Player::Skills::Strength, Player::Skills::Agility};
+    Player::Skills skills_[4] =
+            {Player::Skills::Intelligence, Player::Skills::Heart, Player::Skills::Strength, Player::Skills::Agility};
 
     std::list<graphics::LineEffect> lines_;
     std::list<sf::Text> texts_;

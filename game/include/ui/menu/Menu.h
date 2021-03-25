@@ -13,9 +13,11 @@
 
 #include <common/events/Event.h>
 
+
 using namespace r3e;
 
 class Framework;
+
 class UserInterface;
 
 class Menu : public AbstractDrawableObject {
@@ -26,7 +28,10 @@ public:
     void doShow(bool show);
 
 private:
-    static void null() {}
+    static void null()
+    {
+    }
+
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     std::vector<std::pair<std::string, std::function<void()>>> elements_;

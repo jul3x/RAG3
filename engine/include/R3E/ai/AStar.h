@@ -28,11 +28,15 @@ namespace r3e::ai {
             float f_score_, g_score_, h_score_;
 
             Node(std::pair<int, int> c, float f, float g, float h) : cord_(std::move(c)), f_score_(f), g_score_(g),
-                                                                     h_score_(h) { }
+                                                                     h_score_(h)
+            {
+            }
 
             Node() = default;
 
-            explicit Node(const sf::Vector2i& c) : cord_(c.x, c.y), f_score_(), g_score_(), h_score_() { }
+            explicit Node(const sf::Vector2i& c) : cord_(c.x, c.y), f_score_(), g_score_(), h_score_()
+            {
+            }
         };
 
         struct NodeHash {

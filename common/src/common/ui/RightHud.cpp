@@ -16,7 +16,7 @@ RightHud::RightHud(const sf::Vector2f& position) :
         face_(position + sf::Vector2f{FACE_OFFSET_X_, FACE_OFFSET_Y_} * CONF<float>("graphics/user_interface_zoom"),
               {FACE_SIZE_X_ * CONF<float>("graphics/user_interface_zoom"),
                FACE_SIZE_Y_ * CONF<float>("graphics/user_interface_zoom")},
-               &RM.getTexture("player_face"))
+              &RM.getTexture("player_face"))
 {
     this->changeOrigin({SIZE_X_ * CONF<float>("graphics/user_interface_zoom"),
                         SIZE_Y_ * CONF<float>("graphics/user_interface_zoom")});

@@ -36,7 +36,8 @@ namespace r3e {
                     do_increment = false;
                 }
 
-                if (do_increment) ++it;
+                if (do_increment)
+                    ++it;
             }
         }
 

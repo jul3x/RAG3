@@ -27,6 +27,6 @@ ChildWindow::ChildWindow(tgui::Gui* gui,
     child_->setResizable(true);
     child_->setMinimumSize(size);
     child_->setTitleTextSize(child_->getTitleTextSize() * CONF<float>("user_interface_zoom"));
-    child_->connect("closed", [](tgui::ChildWindow::Ptr c){ c->setVisible(false); });
+    child_->connect("closed", [](tgui::ChildWindow::Ptr c) { c->setVisible(false); });
     gui_->add(child_, id);
 }

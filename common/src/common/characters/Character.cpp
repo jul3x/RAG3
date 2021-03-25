@@ -26,6 +26,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
                      const std::string& activation, const j3x::List& functions,
                      const j3x::List& datas, int u_id) :
         Functional(activation, functions, datas, id, u_id),
+        Shootable(RMGET<float>("characters", id, "max_health")),
         DynamicObject(position, {},
                       RMGET<sf::Vector2f>("characters", id, "size"),
                       collision::Box(RMGET<sf::Vector2f>("characters", id, "collision_size").x,
@@ -49,8 +50,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
         should_respond_(false),
         is_moving_(false),
         talk_moment_(0),
-        is_talkable_(RMGET<bool>("characters", id, "is_talkable")),
-        Shootable(RMGET<float>("characters", id, "max_health"))
+        is_talkable_(RMGET<bool>("characters", id, "is_talkable"))
 {
     this->changeOrigin(RMGET<sf::Vector2f>("characters", id, "size") / 2.0f +
                        RMGET<sf::Vector2f>("characters", id, "map_offset"));
@@ -138,7 +138,7 @@ bool Character::addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr)
         }
     }
     // If there are less than 4 weapons in backpack
-    for (auto &weapon : weapons_in_backpack_)
+    for (auto& weapon : weapons_in_backpack_)
     {
         if (weapon->getId().empty() || weapon->getId() == "null")
         {
@@ -618,7 +618,7 @@ TalkableArea* Character::getTalkableArea() const
     return talkable_area_.get();
 }
 
-bool Character::talk(const std::function<void(Character*, const std::string&)> &talking_func, Character* character)
+bool Character::talk(const std::function<void(Character*, const std::string&)>& talking_func, Character* character)
 {
     if (!should_respond_)
     {

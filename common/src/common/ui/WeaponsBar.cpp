@@ -27,7 +27,8 @@ WeaponsBar::WeaponsBar(const sf::Vector2f& position) :
     }
 }
 
-void WeaponsBar::update(const std::vector<std::shared_ptr<AbstractWeapon>>& weapons, int curr_weapon, float time_elapsed)
+void
+WeaponsBar::update(const std::vector<std::shared_ptr<AbstractWeapon>>& weapons, int curr_weapon, float time_elapsed)
 {
     weapons_.clear();
 
@@ -62,7 +63,8 @@ void WeaponsBar::update(const std::vector<std::shared_ptr<AbstractWeapon>>& weap
             sf::FloatRect text_rect = ammo_.at(i).getLocalBounds();
             ammo_.at(i).setOrigin(text_rect.left + text_rect.width / 2.0f,
                                   text_rect.top + text_rect.height / 2.0f);
-            ammo_.at(i).setPosition(weapon_pos + sf::Vector2f{-20.0f, -30.0f * CONF<float>("graphics/user_interface_zoom")});
+            ammo_.at(i)
+                 .setPosition(weapon_pos + sf::Vector2f{-20.0f, -30.0f * CONF<float>("graphics/user_interface_zoom")});
         }
         else
         {

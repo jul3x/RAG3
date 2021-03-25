@@ -31,7 +31,10 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
     button->setSize(button_size);
     button->setText("Load map");
     button->setTextSize(button_text_size);
-    button->connect("Clicked", [this]() { this->ui_->resetMapList(); this->gui_->get("load_window")->setVisible(true); });
+    button->connect("Clicked", [this]() {
+        this->ui_->resetMapList();
+        this->gui_->get("load_window")->setVisible(true);
+    });
     grid_->addWidget(button, 0, 0);
 
     button = tgui::Button::create();
@@ -40,7 +43,10 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
     button->setTextSize(button_text_size);
     button->setText("Save map");
     grid_->addWidget(button, 0, 1);
-    button->connect("Clicked", [this]() { this->ui_->resetMapList(); this->gui_->get("save_window")->setVisible(true); });
+    button->connect("Clicked", [this]() {
+        this->ui_->resetMapList();
+        this->gui_->get("save_window")->setVisible(true);
+    });
 
     button = tgui::Button::create();
     button->setRenderer(theme_->getRenderer("Button"));

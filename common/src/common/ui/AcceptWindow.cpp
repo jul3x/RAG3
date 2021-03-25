@@ -7,6 +7,7 @@
 #include <common/ui/AcceptWindow.h>
 #include <common/ui/UserInterface.h>
 
+
 using namespace r3e;
 
 AcceptWindow::AcceptWindow(UserInterface* ui, const std::string& text,
@@ -26,7 +27,8 @@ AcceptWindow::AcceptWindow(UserInterface* ui, const std::string& text,
     yes_->setText("Yes");
     yes_->setTextSize(CONF<float>("graphics/popup_text_size"));
     yes_->setSize(CONF<sf::Vector2f>("graphics/popup_button_size"));
-    yes_->setPosition("33% - width/2", "100% - " + std::to_string(CONF<float>("graphics/popup_button_relative_valign")));
+    yes_->setPosition("33% - width/2",
+                      "100% - " + std::to_string(CONF<float>("graphics/popup_button_relative_valign")));
 
     child_->add(yes_);
 
@@ -36,7 +38,7 @@ AcceptWindow::AcceptWindow(UserInterface* ui, const std::string& text,
     no_->setTextSize(CONF<float>("graphics/popup_text_size"));
     no_->setSize(CONF<sf::Vector2f>("graphics/popup_button_size"));
     no_->setPosition("66% - width/2", "100% - " + std::to_string(CONF<float>("graphics/popup_button_relative_valign")));
-    no_->connect("pressed", [this, ui](){ ui->closeWindow(this); });
+    no_->connect("pressed", [this, ui]() { ui->closeWindow(this); });
 
     child_->add(no_);
 }
@@ -44,5 +46,5 @@ AcceptWindow::AcceptWindow(UserInterface* ui, const std::string& text,
 void AcceptWindow::bindFunction(const std::function<void()>& yes)
 {
     yes_->connect("pressed", yes);
-    yes_->connect("pressed", [this]() { ui_->closeWindow(this);});
+    yes_->connect("pressed", [this]() { ui_->closeWindow(this); });
 }

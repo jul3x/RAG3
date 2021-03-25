@@ -23,7 +23,8 @@ namespace r3e {
         {
             music_list_.push_back(music);
 
-            if (music_list_.size() == 1) current_song_ = music_list_.begin();
+            if (music_list_.size() == 1)
+                current_song_ = music_list_.begin();
         }
 
         void MusicManager::addToQueue(const std::string& name)
@@ -62,7 +63,8 @@ namespace r3e {
         {
             if (status_ == Status::Paused)
             {
-                if (music_list_.empty()) return;
+                if (music_list_.empty())
+                    return;
                 (*current_song_)->play();
             }
             status_ = Status::Playing;
@@ -71,12 +73,14 @@ namespace r3e {
         void MusicManager::update(float time_elapsed)
         {
             pitch_.update(time_elapsed);
-            if (music_list_.empty()) return;
+            if (music_list_.empty())
+                return;
 
             if (status_ == Status::Playing)
             {
                 (*current_song_)->setPitch(pitch_.getState());
-                if ((*current_song_)->getStatus() != sf::Music::Status::Playing and (*current_song_)->getStatus() != sf::Music::Status::Paused)
+                if ((*current_song_)->getStatus() != sf::Music::Status::Playing and
+                    (*current_song_)->getStatus() != sf::Music::Status::Paused)
                 {
                     (*current_song_)->stop();
                     ++current_song_;
@@ -96,7 +100,8 @@ namespace r3e {
         {
             status_ = Status::Stopped;
 
-            if (music_list_.empty()) return;
+            if (music_list_.empty())
+                return;
 
             (*current_song_)->stop();
         }
@@ -110,14 +115,16 @@ namespace r3e {
 //            else
 //                pitch_.setAcceleration()
 
-            if (music_list_.empty()) return;
+            if (music_list_.empty())
+                return;
         }
 
         void MusicManager::setVolume(float volume)
         {
             current_volume_ = volume;
 
-            if (music_list_.empty()) return;
+            if (music_list_.empty())
+                return;
 
             (*current_song_)->setVolume(current_volume_);
         }
@@ -133,7 +140,8 @@ namespace r3e {
 
         void MusicManager::pause()
         {
-            if (music_list_.empty()) return;
+            if (music_list_.empty())
+                return;
 
             (*current_song_)->pause();
             status_ = Status::Paused;

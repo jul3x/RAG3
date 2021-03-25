@@ -14,7 +14,9 @@
 #include <server/MinimalUserInterface.h>
 
 
-MinimalUserInterface::MinimalUserInterface(Server* server) : UserInterface(server) {}
+MinimalUserInterface::MinimalUserInterface(Server* server) : UserInterface(server)
+{
+}
 
 void MinimalUserInterface::draw(graphics::Graphics& graphics)
 {

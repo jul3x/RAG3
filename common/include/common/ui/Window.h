@@ -18,8 +18,8 @@ public:
 
 protected:
     UserInterface* ui_;
-    tgui::Gui *gui_;
-    tgui::Theme *theme_;
+    tgui::Gui* gui_;
+    tgui::Theme* theme_;
 
     tgui::ChildWindow::Ptr child_;
 };

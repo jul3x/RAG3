@@ -12,7 +12,7 @@ namespace editor {
 
     class SaveWindow : public ChildWindow {
     public:
-        SaveWindow(tgui::Gui *gui, tgui::Theme *theme);
+        SaveWindow(tgui::Gui* gui, tgui::Theme* theme);
 
         void refreshMapName(const std::string& map_name);
 

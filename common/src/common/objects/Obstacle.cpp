@@ -9,10 +9,10 @@
 
 
 Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id, int u_id) :
-    Obstacle(position, id,
-             RMGET<std::string>("obstacles", id, "default_activation"),
-             RMGET<j3x::List>("obstacles", id, "default_functions"),
-             RMGET<j3x::List>("obstacles", id, "default_datas"), u_id)
+        Obstacle(position, id,
+                 RMGET<std::string>("obstacles", id, "default_activation"),
+                 RMGET<j3x::List>("obstacles", id, "default_functions"),
+                 RMGET<j3x::List>("obstacles", id, "default_datas"), u_id)
 {
 
 }
@@ -33,7 +33,7 @@ Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id, const st
                   CONF<float>("obstacles_endurance_factor"))
 {
     this->changeOrigin(RMGET<sf::Vector2f>("obstacles", id, "size") / 2.0f +
-                               RMGET<sf::Vector2f>("obstacles", id, "map_offset"));
+                       RMGET<sf::Vector2f>("obstacles", id, "map_offset"));
 
     this->makeLightPoint(this->getPosition(),
                          CONF<float>("graphics/obstacles_light_point_size") * CONF<float>("graphics/global_zoom"),
@@ -106,7 +106,7 @@ void Obstacle::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(shape_, states);
 }
 
-void Obstacle::setPosition(const sf::Vector2f &pos)
+void Obstacle::setPosition(const sf::Vector2f& pos)
 {
     AbstractDrawableObject::setPosition(pos);
 
@@ -114,5 +114,5 @@ void Obstacle::setPosition(const sf::Vector2f &pos)
         light_->setPosition(pos);
     if (static_shadow_ != nullptr)
         static_shadow_->setPosition(pos - RMGET<sf::Vector2f>("obstacles", this->getId(), "map_offset") +
-                RMGET<sf::Vector2f>("obstacles", this->getId(), "shadow_offset", true));
+                                    RMGET<sf::Vector2f>("obstacles", this->getId(), "shadow_offset", true));
 }

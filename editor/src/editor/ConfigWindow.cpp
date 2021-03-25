@@ -12,12 +12,13 @@
 
 using namespace editor;
 
-ConfigWindow::ConfigWindow(tgui::Gui *gui, tgui::Theme *theme) :
+ConfigWindow::ConfigWindow(tgui::Gui* gui, tgui::Theme* theme) :
         ChildWindow(gui, theme, "Edit configuration",
                     (sf::Vector2f(CONF<int>("window_width_px"), CONF<int>("window_height_px")) -
                      CONF<sf::Vector2f>("popup_window_size")) / 2.0f,
                     CONF<sf::Vector2f>("popup_window_size"),
-                    "config_window") {
+                    "config_window")
+{
     grid_ = tgui::Grid::create();
     grid_->setPosition("50% - width/2", "50% - height/2");
     grid_->setSize("100%", "100%");
@@ -51,11 +52,12 @@ ConfigWindow::ConfigWindow(tgui::Gui *gui, tgui::Theme *theme) :
     grid_->setWidgetPadding(2, 0, {padding, padding});
 }
 
-void ConfigWindow::setConfigContent(const std::string &category, const std::string &id) {
+void ConfigWindow::setConfigContent(const std::string& category, const std::string& id)
+{
     child_->setTitle(category + "/" + id);
     text_box_->setText(RM.getConfigContent(category, id));
 
-    button_->connect("pressed", [&](const std::string &category, const std::string &id, tgui::TextBox::Ptr box) {
+    button_->connect("pressed", [&](const std::string& category, const std::string& id, tgui::TextBox::Ptr box) {
         Editor::get().saveConfig(category, id, box->getText());
         child_->close();
     }, category, id, text_box_);

@@ -104,7 +104,7 @@ namespace r3e::graphics {
 
     void Graphics::drawAlreadySorted(sf::RenderStates states)
     {
-        for (auto &object : sorted_drawables_)
+        for (auto& object : sorted_drawables_)
             window_.draw(*object, states);
     }
 

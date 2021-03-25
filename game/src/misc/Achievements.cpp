@@ -10,7 +10,7 @@ Achievements::Achievements(Stats* stats) : stats_(stats)
 {
 }
 
-void Achievements::load(const std::string &path)
+void Achievements::load(const std::string& path)
 {
     achievements_by_condition_.clear();
     auto& achievements = RM.getListOfObjects(path);
@@ -19,7 +19,8 @@ void Achievements::load(const std::string &path)
     {
         auto& params = RM.getObjectParams("achievements", achievement);
 
-        achievements_by_condition_[j3x::get<std::string>(params, "condition")].emplace_back(std::make_pair(achievement, params));
+        achievements_by_condition_[j3x::get<std::string>(params, "condition")]
+                .emplace_back(std::make_pair(achievement, params));
     }
 }
 
@@ -58,7 +59,7 @@ void Achievements::update(float time_elapsed)
     }
 }
 
-void Achievements::check(const std::string &condition, int data, int delta_data)
+void Achievements::check(const std::string& condition, int data, int delta_data)
 {
     for (const auto& achievement : achievements_by_condition_.at(condition))
     {

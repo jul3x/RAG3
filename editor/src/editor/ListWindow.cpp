@@ -16,7 +16,8 @@
 
 using namespace editor;
 
-ListWindow::ListWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme, std::string title, const sf::Vector2f& pos, std::string id) :
+ListWindow::ListWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme, std::string title,
+                       const sf::Vector2f& pos, std::string id) :
         ui_(ui),
         ChildWindow(gui, theme, std::move(title), pos, CONF<sf::Vector2f>("list_windows_size"), std::move(id))
 {
@@ -50,7 +51,7 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
 
     child_->add(scroll_panel_);
 
-    for (const auto &tab : paths_to_objects)
+    for (const auto& tab : paths_to_objects)
     {
         clickables_.emplace_back();
         grids_.emplace_back();
@@ -74,7 +75,8 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
                 size.y = DecorationTile::SIZE_Y_;
             }
 
-            auto full_name = !RMHAS<bool>(tab_name, item, "is_drawable") || RMGET<bool>(tab_name, item, "is_drawable", false) ?
+            auto full_name =
+                    !RMHAS<bool>(tab_name, item, "is_drawable") || RMGET<bool>(tab_name, item, "is_drawable", false) ?
                     tab_name + "/" + item : "specials/special_event";
 
             if (RMGET<int>(tab_name, item, "frames_number", true) == 1)

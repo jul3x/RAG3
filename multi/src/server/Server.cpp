@@ -91,7 +91,7 @@ void Server::draw(graphics::Graphics& graphics)
 
     for (auto& obj : players_)
         graphics.drawSorted(obj.second);
-    
+
     draw(map_->getList<DecorationTile>());
     draw(map_->getList<Decoration>());
     draw(map_->getList<Obstacle>());
@@ -143,7 +143,8 @@ void Server::checkAwaitingConnections()
             events_socket_[ip] = client;
 
             LOG.info("New connection attempt from: " + ip);
-            players_.emplace(ip, starting_positions_.at(utils::num::getRandom(0, static_cast<int>(starting_positions_.size() - 1))));
+            players_.emplace(ip, starting_positions_
+                    .at(utils::num::getRandom(0, static_cast<int>(starting_positions_.size() - 1))));
             engine_->registerDynamicObject(&players_.at(ip));
             registerWeapons(&players_.at(ip));
 
@@ -182,12 +183,14 @@ void Server::handleMessagesFromPlayers()
 
                 if (player_it != players_.end())
                 {
-                    if ((cached_packets_.count(sender.toString()) <= 0 || packet.getTimestamp() >= cached_packets_[sender.toString()].getTimestamp()) &&
+                    if ((cached_packets_.count(sender.toString()) <= 0 ||
+                         packet.getTimestamp() >= cached_packets_[sender.toString()].getTimestamp()) &&
                         utils::timeSinceEpochMillisec() - packet.getTimestamp() < max_ping)
                         cached_packets_[sender.toString()] = packet;
                     else
                         LOG.error("This packet is old or latency is too high!"
-                                  "\nPacket timestamp difference: " + std::to_string(utils::timeSinceEpochMillisec() - packet.getTimestamp()));
+                                  "\nPacket timestamp difference: " +
+                                  std::to_string(utils::timeSinceEpochMillisec() - packet.getTimestamp()));
                 }
                 else
                 {

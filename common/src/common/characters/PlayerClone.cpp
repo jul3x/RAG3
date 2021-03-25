@@ -32,7 +32,8 @@ bool PlayerClone::update(float time_elapsed)
 {
     life_time_ -= time_elapsed;
 
-    if (!this->isVisible()) return true;
+    if (!this->isVisible())
+        return true;
     bool is_alive = Character::update(time_elapsed);
 
     handleEnemySelection();

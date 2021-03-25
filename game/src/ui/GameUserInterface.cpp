@@ -18,7 +18,8 @@
 GameUserInterface::GameUserInterface(Game* game) :
         UserInterface(game),
         game_(game),
-        blood_splash_(game, sf::Vector2f(CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_height_px"))),
+        blood_splash_(game,
+                      sf::Vector2f(CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_height_px"))),
         time_bar_({TIME_BAR_X_ * CONF<float>("graphics/user_interface_zoom"),
                    CONF<int>("graphics/window_height_px") - TIME_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")}),
         left_hud_({0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))}),
@@ -164,7 +165,8 @@ void GameUserInterface::handleMouse(sf::RenderWindow& graphics_window)
 
     for (const auto& widget : gui_->getWidgets())
     {
-        if (widget->mouseOnWidget({static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y)}) && widget->isVisible())
+        if (widget->mouseOnWidget({static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y)}) &&
+            widget->isVisible())
         {
             is_gui = true;
             break;

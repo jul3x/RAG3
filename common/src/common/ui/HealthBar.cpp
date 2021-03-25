@@ -41,24 +41,27 @@ void HealthBar::update(int health, float time_elapsed)
     if (theta > M_PI_2 + M_PI_4)
     {
         curr_health_shape_.setPoint(1, -HEALTH_SIZE_X_ / 2.0f / std::cos(theta) * sf::Vector2f{std::cos(theta),
-                                                                                         -std::sin(theta)});
+                                                                                               -std::sin(theta)});
         curr_health_shape_.setPoint(2, {-HEALTH_SIZE_X_ / 2.0f, -HEALTH_SIZE_Y_ / 2.0f});
-        curr_health_shape_.setTextureRect({{0, 0}, {static_cast<int>(curr_health_shape_.getLocalBounds().width),
-                                         static_cast<int>(curr_health_shape_.getLocalBounds().height)}});
+        curr_health_shape_.setTextureRect({{0, 0},
+                                           {static_cast<int>(curr_health_shape_.getLocalBounds().width),
+                                               static_cast<int>(curr_health_shape_.getLocalBounds().height)}});
     }
     else
     {
         curr_health_shape_.setPoint(1, -HEALTH_SIZE_X_ / 2.0f / -std::sin(theta) * sf::Vector2f{std::cos(theta),
-                                                                                          -std::sin(theta)});
+                                                                                                -std::sin(theta)});
         curr_health_shape_.setPoint(2, {HEALTH_SIZE_X_ / 2.0f, -HEALTH_SIZE_Y_ / 2.0f});
 
         curr_health_shape_.setTextureRect({
-            sf::Vector2i{static_cast<int>(HEALTH_SIZE_X_) / 2 +
-                         std::min<int>(0, static_cast<int>(curr_health_shape_.getPoint(1).x)), 0},
-            sf::Vector2i{static_cast<int>(curr_health_shape_.getLocalBounds().width),
-                         static_cast<int>(curr_health_shape_.getLocalBounds().height)}});
+                                                  sf::Vector2i{static_cast<int>(HEALTH_SIZE_X_) / 2 +
+                                                               std::min<int>(0, static_cast<int>(curr_health_shape_
+                                                                       .getPoint(1).x)), 0},
+                                                  sf::Vector2i{
+                                                          static_cast<int>(curr_health_shape_.getLocalBounds().width),
+                                                          static_cast<int>(curr_health_shape_.getLocalBounds()
+                                                                                             .height)}});
     }
-
 
 
 }

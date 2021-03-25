@@ -13,7 +13,7 @@ namespace editor {
 
     class MenuWindow : public ChildWindow {
     public:
-        MenuWindow(UserInterface* ui, tgui::Gui *gui, tgui::Theme *theme);
+        MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme);
 
     private:
         UserInterface* ui_;

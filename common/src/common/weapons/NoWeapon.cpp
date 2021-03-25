@@ -8,10 +8,10 @@
 
 
 NoWeapon::NoWeapon(Character* user) :
-    AbstractWeapon(user,
-                   user->getId() == "player" ? sf::Vector2f(16.0f, 12.0f) : sf::Vector2f(),
-                   sf::Vector2f(),
-                   user->getId() == "player" ? "null" : "")
+        AbstractWeapon(user,
+                       user->getId() == "player" ? sf::Vector2f(16.0f, 12.0f) : sf::Vector2f(),
+                       sf::Vector2f(),
+                       user->getId() == "player" ? "null" : "")
 {
     this->changeOrigin(sf::Vector2f(6.0f, 12.0) / 2.0f);
 }

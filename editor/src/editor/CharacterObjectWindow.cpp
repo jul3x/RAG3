@@ -11,13 +11,14 @@
 
 using namespace editor;
 
-CharacterObjectWindow::CharacterObjectWindow(tgui::Gui *gui, tgui::Theme *theme) :
+CharacterObjectWindow::CharacterObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
         ChildWindow(gui, theme, "Character editor",
                     (sf::Vector2f(CONF<int>("window_width_px"), CONF<int>("window_height_px")) -
                      CONF<sf::Vector2f>("character_window_size")) / 2.0f,
                     CONF<sf::Vector2f>("character_window_size"),
                     "character_object_window"),
-        character_(nullptr) {
+        character_(nullptr)
+{
     float padding = CONF<float>("items_padding");
 
     grid_ = tgui::Grid::create();
@@ -112,7 +113,8 @@ CharacterObjectWindow::CharacterObjectWindow(tgui::Gui *gui, tgui::Theme *theme)
     grid_->setWidgetPadding(3, 1, {padding, padding});
 }
 
-void CharacterObjectWindow::setObjectContent(const std::string &category, Character *obj) {
+void CharacterObjectWindow::setObjectContent(const std::string& category, Character* obj)
+{
     character_ = obj;
     child_->setTitle(category + "/" + character_->getId());
     id_box_->setText(std::to_string(character_->getUniqueId()));
@@ -120,10 +122,13 @@ void CharacterObjectWindow::setObjectContent(const std::string &category, Charac
     fun_box_->setText(character_->getFunctionsStr());
     data_box_->setText(character_->getDatasStr());
 
-    if (!character_->isTalkable()) {
+    if (!character_->isTalkable())
+    {
         talk_box_->setEnabled(false);
         talk_box_->setText("No conversation");
-    } else {
+    }
+    else
+    {
         talk_box_->setEnabled(true);
         talk_box_->setText(character_->getTalkScenarioStr());
     }
@@ -139,11 +144,13 @@ void CharacterObjectWindow::setObjectContent(const std::string &category, Charac
     });
 }
 
-bool CharacterObjectWindow::isDataFocused() const {
+bool CharacterObjectWindow::isDataFocused() const
+{
     return data_box_->isFocused();
 }
 
-void CharacterObjectWindow::addToData(const std::string &str) {
+void CharacterObjectWindow::addToData(const std::string& str)
+{
     data_box_->setText(data_box_->getText() + str);
 }
 

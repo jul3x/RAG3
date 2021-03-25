@@ -14,8 +14,8 @@ namespace editor {
 
     class ChildWindow {
     public:
-        ChildWindow(tgui::Gui *gui,
-                    tgui::Theme *theme,
+        ChildWindow(tgui::Gui* gui,
+                    tgui::Theme* theme,
                     std::string title,
                     const sf::Vector2f& pos,
                     const sf::Vector2f& size,
@@ -24,8 +24,8 @@ namespace editor {
     protected:
         std::string title_;
 
-        tgui::Gui *gui_;
-        tgui::Theme *theme_;
+        tgui::Gui* gui_;
+        tgui::Theme* theme_;
 
         tgui::ChildWindow::Ptr child_;
 

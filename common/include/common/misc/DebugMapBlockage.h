@@ -25,7 +25,8 @@ public:
             for (const auto& y : x)
             {
                 grid_.emplace_back(sf::Vector2f{i * DecorationTile::SIZE_X_, j * DecorationTile::SIZE_Y_},
-                        sf::Vector2f{DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_}, &RM.getTexture("health_bar"));
+                                   sf::Vector2f{DecorationTile::SIZE_X_, DecorationTile::SIZE_Y_},
+                                   &RM.getTexture("health_bar"));
 
                 if (y != 0.0f)
                     grid_.back().setColor(255, 0, 0, 255);

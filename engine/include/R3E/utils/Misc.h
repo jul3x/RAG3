@@ -25,7 +25,8 @@ namespace r3e::utils {
                 it = next_it;
                 do_increment = false;
             }
-            if (do_increment) ++it;
+            if (do_increment)
+                ++it;
         }
     }
 

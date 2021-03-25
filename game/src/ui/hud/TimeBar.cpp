@@ -21,7 +21,7 @@ TimeBar::TimeBar(const sf::Vector2f& position) :
     curr_time_shape_.setPoint(0, {0.0f, 0.0f});
     curr_time_shape_.setPoint(3, {-TIME_SIZE_X_ / 2.0f, -TIME_SIZE_Y_ / 2.0f});
     curr_time_shape_.setScale(CONF<float>("graphics/user_interface_zoom"),
-            CONF<float>("graphics/user_interface_zoom"));
+                              CONF<float>("graphics/user_interface_zoom"));
     curr_time_shape_.setTexture(&RM.getTexture("current_time_bar"));
 }
 
@@ -41,19 +41,19 @@ void TimeBar::update(float time, float time_elapsed)
     if (theta < M_PI_4)
     {
         curr_time_shape_.setPoint(1, TIME_SIZE_X_ / 2.0f / std::cos(theta) * sf::Vector2f{std::cos(theta),
-                                                                                    -std::sin(theta)});
+                                                                                          -std::sin(theta)});
         curr_time_shape_.setPoint(2, {TIME_SIZE_X_ / 2.0f, -TIME_SIZE_Y_ / 2.0f});
     }
     else
     {
         curr_time_shape_.setPoint(1, TIME_SIZE_X_ / 2.0f / std::sin(theta) * sf::Vector2f{std::cos(theta),
-                                                                                    -std::sin(theta)});
+                                                                                          -std::sin(theta)});
         curr_time_shape_.setPoint(2, {-TIME_SIZE_X_ / 2.0f, -TIME_SIZE_Y_ / 2.0f});
     }
 
     curr_time_shape_.setTextureRect({sf::Vector2i{0, 0},
-                               sf::Vector2i{static_cast<int>(curr_time_shape_.getLocalBounds().width),
-                                            static_cast<int>(curr_time_shape_.getLocalBounds().height)}});
+                                     sf::Vector2i{static_cast<int>(curr_time_shape_.getLocalBounds().width),
+                                                  static_cast<int>(curr_time_shape_.getLocalBounds().height)}});
 }
 
 void TimeBar::setFreeze(bool freeze)

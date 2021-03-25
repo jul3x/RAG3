@@ -87,7 +87,7 @@ void Functional::setActivationStr(const std::string& str)
         activation_ = Activation::OnKill;
     else if (str == "OnCollect")
         activation_ = Activation::OnCollect;
-    else if (str ==  "OnEnter")
+    else if (str == "OnEnter")
         activation_ = Activation::OnEnter;
     else if (str == "OnUse")
         activation_ = Activation::OnUse;

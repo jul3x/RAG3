@@ -12,26 +12,28 @@
 
 
 Menu::Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
-               AbstractDrawableObject(sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                                                   static_cast<float>(CONF<int>("graphics/window_height_px"))} / 2.0f,
-                                      {static_cast<float>(CONF<int>("graphics/window_width_px")),
-                                       static_cast<float>(CONF<int>("graphics/window_height_px"))},
-                                      &RM.getTexture("menu/bg")),
-               bar_(sf::Vector2f{CONF<float>("graphics/menu_bar_width_px"),
-                                 static_cast<float>(CONF<int>("graphics/window_height_px"))} / 2.0f,
-                    {CONF<float>("graphics/menu_bar_width_px"), static_cast<float>(CONF<int>("graphics/window_height_px"))},
-                    &RM.getTexture("menu/main_panel")),
-               logo_(CONF<sf::Vector2f>("graphics/menu_logo_pos"), sf::Vector2f{},
-                     CONF<sf::Vector2f>("graphics/menu_logo_size"), collision::None(),
-                     &RM.getTexture("menu/logo"), 0, 0, 0, 200.0f),
-               gui_(gui), theme_(theme), ui_(ui), framework_(framework),
-               opacity_(1.0f / CONF<float>("graphics/menu_show_duration")),
-               logo_rotation_(1.0f / CONF<float>("graphics/menu_logo_rotation_duration")),
-               time_elapsed_(0.0f), explosion_elapsed_(0.0f)
+        AbstractDrawableObject(sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
+                                            static_cast<float>(CONF<int>("graphics/window_height_px"))} / 2.0f,
+                               {static_cast<float>(CONF<int>("graphics/window_width_px")),
+                                static_cast<float>(CONF<int>("graphics/window_height_px"))},
+                               &RM.getTexture("menu/bg")),
+        bar_(sf::Vector2f{CONF<float>("graphics/menu_bar_width_px"),
+                          static_cast<float>(CONF<int>("graphics/window_height_px"))} / 2.0f,
+             {CONF<float>("graphics/menu_bar_width_px"), static_cast<float>(CONF<int>("graphics/window_height_px"))},
+             &RM.getTexture("menu/main_panel")),
+        logo_(CONF<sf::Vector2f>("graphics/menu_logo_pos"), sf::Vector2f{},
+              CONF<sf::Vector2f>("graphics/menu_logo_size"), collision::None(),
+              &RM.getTexture("menu/logo"), 0, 0, 0, 200.0f),
+        gui_(gui), theme_(theme), ui_(ui), framework_(framework),
+        opacity_(1.0f / CONF<float>("graphics/menu_show_duration")),
+        logo_rotation_(1.0f / CONF<float>("graphics/menu_logo_rotation_duration")),
+        time_elapsed_(0.0f), explosion_elapsed_(0.0f)
 {
     elements_ = {{"Start game", [this]() { ui_->startGame(); }},
-                 {"Load game", &Menu::null}, {"Settings", &Menu::null}, {"About", &Menu::null},
-                 {"Exit", [this]() { framework_->close(); }}};
+                 {"Load game",  &Menu::null},
+                 {"Settings",   &Menu::null},
+                 {"About",      &Menu::null},
+                 {"Exit",       [this]() { framework_->close(); }}};
     RM.getTexture("menu/logo").setSmooth(true);
     RM.getTexture("menu/main_panel").setSmooth(true);
 
@@ -44,7 +46,8 @@ Menu::Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme*
         label->setInheritedFont(RM.getFont("default"));
         label->setTextSize(CONF<float>("graphics/menu_button_text_size"));
         label->setPosition(CONF<float>("graphics/menu_button_pos_x"),
-                           CONF<float>("graphics/menu_button_pos_y") + i * CONF<float>("graphics/menu_button_offset_y"));
+                           CONF<float>("graphics/menu_button_pos_y") +
+                           i * CONF<float>("graphics/menu_button_offset_y"));
 
         label->connect("mouseentered", [this, i]() { this->buttons_[i]->setText("> " + this->elements_[i].first); });
         label->connect("mouseleft", [this, i]() { this->buttons_[i]->setText(this->elements_[i].first); });
@@ -55,9 +58,11 @@ Menu::Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme*
     }
 
     std::vector<std::pair<std::string, sf::Vector2f>> additional_texts =
-            {{"2021", sf::Vector2f{0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))} + CONF<sf::Vector2f>("graphics/menu_year_pos")},
+            {{"2021",   sf::Vector2f{0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))} +
+                        CONF<sf::Vector2f>("graphics/menu_year_pos")},
              {"~jul3x", sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                                     static_cast<float>(CONF<int>("graphics/window_height_px"))} + CONF<sf::Vector2f>("graphics/menu_copyright_pos")}};
+                                     static_cast<float>(CONF<int>("graphics/window_height_px"))} +
+                        CONF<sf::Vector2f>("graphics/menu_copyright_pos")}};
     for (const auto& text : additional_texts)
     {
         auto label = tgui::Button::create();
@@ -100,7 +105,8 @@ void Menu::update(float time_elapsed)
 
     if (explosion_elapsed_ >= CONF<float>("graphics/menu_explosion_period"))
     {
-        animation_events_.emplace_back(logo_.getPosition() + sf::Vector2f{0.0f, -150.0f}, "explosion_1", 0.0f, RMGET<sf::Vector2f>("animations", "explosion_1", "size").x * 4);
+        animation_events_.emplace_back(logo_.getPosition() + sf::Vector2f{0.0f, -150.0f}, "explosion_1", 0.0f,
+                                       RMGET<sf::Vector2f>("animations", "explosion_1", "size").x * 4);
         framework_->registerLight(&animation_events_.back());
         explosion_elapsed_ -= CONF<float>("graphics/menu_explosion_period");
 
@@ -114,7 +120,8 @@ void Menu::update(float time_elapsed)
     }
 
     logo_.setPosition(CONF<sf::Vector2f>("graphics/menu_logo_pos") +
-            sf::Vector2f{25.0f * static_cast<float>(std::sin(time_elapsed_ * M_PI / 2.0f)), 12.0f * static_cast<float>(std::sin(time_elapsed_ * M_PI / 2.5f + 0.1))});
+                      sf::Vector2f{25.0f * static_cast<float>(std::sin(time_elapsed_ * M_PI / 2.0f)),
+                                   12.0f * static_cast<float>(std::sin(time_elapsed_ * M_PI / 2.5f + 0.1))});
     logo_.setColor(255, 255, 255, static_cast<int>(opacity_.getState() * 255));
     logo_.setRotation(logo_rotation_.getState());
     logo_.update(time_elapsed);
@@ -139,9 +146,11 @@ void Menu::doShow(bool show)
     for (auto& button : buttons_)
     {
         if (show)
-            button->showWithEffect(tgui::ShowAnimationType::Fade, sf::seconds(CONF<float>("graphics/menu_show_duration")));
+            button->showWithEffect(tgui::ShowAnimationType::Fade,
+                                   sf::seconds(CONF<float>("graphics/menu_show_duration")));
         else
-            button->hideWithEffect(tgui::ShowAnimationType::Fade, sf::seconds(CONF<float>("graphics/menu_show_duration") / 10.0f));
+            button->hideWithEffect(tgui::ShowAnimationType::Fade,
+                                   sf::seconds(CONF<float>("graphics/menu_show_duration") / 10.0f));
     }
 }
 

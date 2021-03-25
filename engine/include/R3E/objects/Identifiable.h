@@ -12,9 +12,13 @@
 namespace r3e {
     class Identifiable {
     public:
-        Identifiable() : id_() {}
+        Identifiable() : id_()
+        {
+        }
 
-        explicit Identifiable(std::string id) : id_(std::move(id)) {}
+        explicit Identifiable(std::string id) : id_(std::move(id))
+        {
+        }
 
         [[nodiscard]] const std::string& getId() const
         {

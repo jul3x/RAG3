@@ -15,8 +15,7 @@
 
 class Framework;
 
-class SpecialFunctions
-{
+class SpecialFunctions {
 public:
     using SpecialFunction = std::function<void(Functional*, const j3x::Obj&, Character*)>;
     explicit SpecialFunctions(Framework* framework);

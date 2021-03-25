@@ -179,7 +179,8 @@ void Client::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         if (bullet->getUser() != character)
         {
             float offset = bullet->getRotation() > 0.0f && bullet->getRotation() < 180.0f ? -5.0f : 5.0f;
-            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, offset), bullet->getRotation() + 180.0f, bullet->getDeadlyFactor());
+            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, offset), bullet->getRotation() + 180.0f,
+                            bullet->getDeadlyFactor());
 
             bullet->setDead();
         }
@@ -193,8 +194,10 @@ void Client::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         if (character != melee_weapon_area->getFather()->getUser())
         {
             float angle = utils::geo::wrapAngle0_360(std::get<1>(utils::geo::cartesianToPolar(
-                    melee_weapon_area->getFather()->getUser()->getPosition() - character->getPosition())) * 180.0 / M_PI);
-            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, angle > 0 && angle <= 180 ? 5.0 : -5.0), angle, melee_weapon_area->getFather()->getDeadlyFactor());
+                    melee_weapon_area->getFather()->getUser()->getPosition() - character->getPosition())) * 180.0 /
+                                                     M_PI);
+            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, angle > 0 && angle <= 180 ? 5.0 : -5.0),
+                            angle, melee_weapon_area->getFather()->getDeadlyFactor());
             melee_weapon_area->setActive(false);
         }
     }
@@ -259,7 +262,8 @@ void Client::sendInputs()
 
     if (time_elapsed_ - last_packet_timestamp_ >= packet_time_elapsed)
     {
-        PlayerInputPacket packet(ui_->getKeysPressed(), ui_->isLeftMousePressed(), player_->getRotation(), player_->getCurrentWeapon());
+        PlayerInputPacket packet
+                (ui_->getKeysPressed(), ui_->isLeftMousePressed(), player_->getRotation(), player_->getCurrentWeapon());
 
         if (data_send_socket_.send(packet, server_ip_, port) != sf::Socket::Done)
         {
@@ -284,7 +288,8 @@ void Client::receiveData()
 
             static constexpr auto max_ping = 400;
 
-            if (sender == server_ip_ && packet.getTimestamp() >= last_received_packet_timestamp_ && utils::timeSinceEpochMillisec() - packet.getTimestamp() < max_ping)
+            if (sender == server_ip_ && packet.getTimestamp() >= last_received_packet_timestamp_ &&
+                utils::timeSinceEpochMillisec() - packet.getTimestamp() < max_ping)
             {
                 for (const auto& data : packet.getDatas())
                 {
@@ -294,7 +299,8 @@ void Client::receiveData()
                         player = player_.get();
 
                         if (data.second.current_special_id_ != -1)
-                            player->setCurrentSpecialObject(map_->getObjectById<Special>(data.second.current_special_id_));
+                            player->setCurrentSpecialObject(
+                                    map_->getObjectById<Special>(data.second.current_special_id_));
                         else
                             player->setCurrentSpecialObject(nullptr);
                     }
@@ -323,7 +329,8 @@ void Client::receiveData()
             else
             {
                 LOG.error("This server is not registered or packet is old or latency is too high!"
-                          "\nPacket timestamp difference: " + std::to_string(utils::timeSinceEpochMillisec() - packet.getTimestamp()));
+                          "\nPacket timestamp difference: " +
+                          std::to_string(utils::timeSinceEpochMillisec() - packet.getTimestamp()));
 
             }
 

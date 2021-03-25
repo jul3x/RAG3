@@ -42,10 +42,21 @@ namespace editor {
         void draw(graphics::Graphics& graphics) override;
         void close() override;
 
-        void alertCollision(HoveringObject* h_obj, StaticObject* s_obj) override {}
-        void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) override {}
-        void alertCollision(DynamicObject* d_obj, StaticObject* s_obj) override {}
-        void alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2) override {}
+        void alertCollision(HoveringObject* h_obj, StaticObject* s_obj) override
+        {
+        }
+
+        void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) override
+        {
+        }
+
+        void alertCollision(DynamicObject* d_obj, StaticObject* s_obj) override
+        {
+        }
+
+        void alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2) override
+        {
+        }
 
         void setLightning(bool on);
         void setRandomizing(int n);

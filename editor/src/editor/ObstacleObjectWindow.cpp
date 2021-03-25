@@ -9,13 +9,14 @@
 
 using namespace editor;
 
-ObstacleObjectWindow::ObstacleObjectWindow(tgui::Gui *gui, tgui::Theme *theme) :
+ObstacleObjectWindow::ObstacleObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
         ChildWindow(gui, theme, "Special editor",
                     (sf::Vector2f(CONF<int>("window_width_px"), CONF<int>("window_height_px")) -
                      CONF<sf::Vector2f>("popup_window_size")) / 2.0f,
                     CONF<sf::Vector2f>("popup_window_size"),
                     "obstacle_object_window"),
-        obstacle_(nullptr) {
+        obstacle_(nullptr)
+{
     grid_ = tgui::Grid::create();
     grid_->setPosition("50% - width/2", "40% - height/2");
     grid_->setSize("90%", "50%");
@@ -94,7 +95,8 @@ ObstacleObjectWindow::ObstacleObjectWindow(tgui::Gui *gui, tgui::Theme *theme) :
     grid_->setWidgetPadding(3, 1, {padding, padding});
 }
 
-void ObstacleObjectWindow::setObjectContent(const std::string &category, Obstacle *obj) {
+void ObstacleObjectWindow::setObjectContent(const std::string& category, Obstacle* obj)
+{
     obstacle_ = obj;
     child_->setTitle(category + "/" + obstacle_->getId());
     id_box_->setText(std::to_string(obstacle_->getUniqueId()));
@@ -110,11 +112,13 @@ void ObstacleObjectWindow::setObjectContent(const std::string &category, Obstacl
     });
 }
 
-bool ObstacleObjectWindow::isDataFocused() const {
+bool ObstacleObjectWindow::isDataFocused() const
+{
     return data_box_->isFocused();
 }
 
-void ObstacleObjectWindow::addToData(const std::string &str) {
+void ObstacleObjectWindow::addToData(const std::string& str)
+{
     data_box_->setText(data_box_->getText() + str);
 }
 

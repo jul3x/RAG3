@@ -13,10 +13,10 @@
 
 namespace r3e::j3x {
 
-    std::shared_ptr<Parameters> parse(const std::string &filename, const std::string &ns)
+    std::shared_ptr<Parameters> parse(const std::string& filename, const std::string& ns)
     {
         J3XVisitor visitor(ns);
-        FILE *input = fopen(filename.c_str(), "r");
+        FILE* input = fopen(filename.c_str(), "r");
 
         if (input)
         {
@@ -24,8 +24,9 @@ namespace r3e::j3x {
 
             try
             {
-                Script *parse_tree = pScript(input);
-                if (!parse_tree) {
+                Script* parse_tree = pScript(input);
+                if (!parse_tree)
+                {
                     throw std::logic_error("parse error");
                 }
                 parse_tree->accept(&visitor);
@@ -33,7 +34,8 @@ namespace r3e::j3x {
             }
             catch (const std::exception& e)
             {
-                throw std::logic_error("[J3X] Error while reading " + filename + " file.\nError message: " + e.what() + "!\n");
+                throw std::logic_error(
+                        "[J3X] Error while reading " + filename + " file.\nError message: " + e.what() + "!\n");
             }
 
             fclose(input);
@@ -46,7 +48,7 @@ namespace r3e::j3x {
         return std::make_shared<Parameters>(visitor.getParams());
     }
 
-    std::shared_ptr<Parameters> parse(const std::string &filename)
+    std::shared_ptr<Parameters> parse(const std::string& filename)
     {
         return parse(filename, "");
     }
@@ -111,7 +113,8 @@ namespace r3e::j3x {
             while (true)
             {
                 auto pos = str.find('\n');
-                if (pos == std::string::npos) break;
+                if (pos == std::string::npos)
+                    break;
 
                 str.replace(pos, 1, "\\n");
             }

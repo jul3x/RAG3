@@ -15,8 +15,9 @@ Window::Window(UserInterface* ui, const sf::Vector2f& pos, const sf::Vector2f& s
     child_->setPosition(pos - size / 2.0f);
     child_->setTitleTextSize(child_->getTitleTextSize() * CONF<float>("graphics/user_interface_zoom"));
     child_->setResizable(false);
-    child_->getRenderer()->setTitleBarHeight(child_->getRenderer()->getTitleBarHeight() * CONF<float>("graphics/user_interface_zoom"));
-    child_->connect("closed", [this](){ ui_->closeWindow(this); });
+    child_->getRenderer()
+          ->setTitleBarHeight(child_->getRenderer()->getTitleBarHeight() * CONF<float>("graphics/user_interface_zoom"));
+    child_->connect("closed", [this]() { ui_->closeWindow(this); });
     gui_->add(child_);
 }
 

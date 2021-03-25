@@ -11,9 +11,9 @@
 using namespace r3e;
 
 MeleeWeaponArea::MeleeWeaponArea(MeleeWeapon* father, float r) :
-            father_(father),
-            r_(r),
-            HoveringObject({}, {}, {r, r}, collision::None(), nullptr, 0, 0, 0.0f, 0.0f)
+        father_(father),
+        r_(r),
+        HoveringObject({}, {}, {r, r}, collision::None(), nullptr, 0, 0, 0.0f, 0.0f)
 {
 
 }
@@ -41,7 +41,7 @@ void MeleeWeaponArea::draw(sf::RenderTarget& target, sf::RenderStates states) co
 
     shape.setFillColor(sf::Color::Red);
     shape.setPosition(this->getPosition());
-    shape.setOrigin(r_/2.0, r_/2.0);
+    shape.setOrigin(r_ / 2.0, r_ / 2.0);
     shape.setRadius(r_);
 
     target.draw(shape);

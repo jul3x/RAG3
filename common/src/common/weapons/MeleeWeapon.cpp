@@ -33,7 +33,8 @@ MeleeWeapon::MeleeWeapon(Character* user, const std::string& id) :
             shadow_pos, RMGET<sf::Vector2f>("weapons", this->getId(), "use_size"),
             CONF<float>("graphics/shadow_direction"),
             CONF<float>("graphics/shadow_length_factor"),
-            &RM.getTexture("weapons/" + user_->getId() + "_" + this->getId()), sf::Color(CONF<int>("graphics/shadow_color")),
+            &RM.getTexture("weapons/" + user_->getId() + "_" + this->getId()),
+            sf::Color(CONF<int>("graphics/shadow_color")),
             z_index_,
             RMGET<int>("weapons", id, "frames_number"),
             RMGET<float>("weapons", id, "frame_duration"));
@@ -113,13 +114,16 @@ void MeleeWeapon::setPosition(const sf::Vector2f& position, const sf::Vector2f& 
 
         if (flipped)
         {
-            use_offset = RMGET<sf::Vector2f>("weapons", this->getId(), front ? "use_offset_flipped" : "use_offset_back_flipped");
-            shadow_offset = RMGET<sf::Vector2f>("weapons", this->getId(), front ? "shadow_offset_flipped" : "shadow_offset_back_flipped");
+            use_offset = RMGET<sf::Vector2f>("weapons", this->getId(),
+                                             front ? "use_offset_flipped" : "use_offset_back_flipped");
+            shadow_offset = RMGET<sf::Vector2f>("weapons", this->getId(),
+                                                front ? "shadow_offset_flipped" : "shadow_offset_back_flipped");
         }
         else
         {
             use_offset = RMGET<sf::Vector2f>("weapons", this->getId(), front ? "use_offset" : "use_offset_back");
-            shadow_offset = RMGET<sf::Vector2f>("weapons", this->getId(), front ? "shadow_offset" : "shadow_offset_back");
+            shadow_offset =
+                    RMGET<sf::Vector2f>("weapons", this->getId(), front ? "shadow_offset" : "shadow_offset_back");
         }
 
         AbstractDrawableObject::setPosition(position + use_offset);
@@ -128,7 +132,8 @@ void MeleeWeapon::setPosition(const sf::Vector2f& position, const sf::Vector2f& 
         auto radians = saved_rotation_ * M_PI / 180.0f;
 
         area_->setPosition(position + RMGET<sf::Vector2f>("weapons", this->getId(), "area_offset") +
-               RMGET<float>("weapons", this->getId(), "range") * sf::Vector2f{static_cast<float>(std::cos(radians)), static_cast<float>(std::sin(radians))});
+                           RMGET<float>("weapons", this->getId(), "range") *
+                           sf::Vector2f{static_cast<float>(std::cos(radians)), static_cast<float>(std::sin(radians))});
     }
 
 }
@@ -176,8 +181,12 @@ void MeleeWeapon::update(float time_elapsed)
             area_->setActive(true);
 
             auto radians = saved_rotation_ * M_PI / 180.0f;
-            sf::Vector2f anim_pos = area_->getPosition() - RMGET<float>("weapons", this->getId(), "range") * sf::Vector2f{static_cast<float>(std::cos(radians)), static_cast<float>(std::sin(radians))};
-            anim_pos += RMGET<float>("weapons", this->getId(), "range") * sf::Vector2f(flipped ? -1 : 1, front ? 1 : -1) / 2.0f;
+            sf::Vector2f anim_pos = area_->getPosition() - RMGET<float>("weapons", this->getId(), "range") *
+                                                           sf::Vector2f{static_cast<float>(std::cos(radians)),
+                                                                        static_cast<float>(std::sin(radians))};
+            anim_pos +=
+                    RMGET<float>("weapons", this->getId(), "range") * sf::Vector2f(flipped ? -1 : 1, front ? 1 : -1) /
+                    2.0f;
             animation_spawning_function_(this->getId(), anim_pos, 0.0f, flipped);
         }
     }

@@ -11,12 +11,12 @@
 #include <SFML/Network.hpp>
 
 
-class PlayerInputPacket : public sf::Packet
-{
+class PlayerInputPacket : public sf::Packet {
 public:
     PlayerInputPacket() = default;
 
-    PlayerInputPacket(const std::set<sf::Keyboard::Key>& keys, bool mouse_pressed, float rotation, short int current_weapon)
+    PlayerInputPacket(const std::set<sf::Keyboard::Key>& keys, bool mouse_pressed, float rotation,
+                      short int current_weapon)
     {
         timestamp_ = utils::timeSinceEpochMillisec();
         *this << timestamp_;

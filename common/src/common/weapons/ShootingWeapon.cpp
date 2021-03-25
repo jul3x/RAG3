@@ -39,8 +39,9 @@ sf::Vector2f ShootingWeapon::use()
         auto sine = static_cast<float>(std::sin(this->getRotation() * M_PI / 180.0f));
         auto cosine = static_cast<float>(std::cos(this->getRotation() * M_PI / 180.0f));
         auto offset_position = this->getPosition();
-        auto weapon_size = sf::Vector2f{this->getSize().x - weapon_offset_.x + CONF<float>("characters/bullet_starting_offset"),
-                                        static_cast<float>(spawn_offset_factor_) * spawn_offset_};
+        auto weapon_size =
+                sf::Vector2f{this->getSize().x - weapon_offset_.x + CONF<float>("characters/bullet_starting_offset"),
+                             static_cast<float>(spawn_offset_factor_) * spawn_offset_};
         offset_position.x += weapon_size.x * cosine - 2.0f * weapon_size.y * sine;
         offset_position.y += weapon_size.x * sine + 2.0f * weapon_size.y * cosine;
 

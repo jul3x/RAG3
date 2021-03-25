@@ -108,7 +108,8 @@ std::list<std::shared_ptr<PlacedWeapon>>& Map::getList()
 template<>
 DecorationTile* Map::spawn(const sf::Vector2f& pos, float direction, const std::string& id, bool check, int max_z_index)
 {
-    if (!check || (!this->checkCollisions(pos, decorations_tiles_, false, max_z_index) && !this->checkCollisions(pos, obstacles_tiles_, false, max_z_index)))
+    if (!check || (!this->checkCollisions(pos, decorations_tiles_, false, max_z_index) &&
+                   !this->checkCollisions(pos, obstacles_tiles_, false, max_z_index)))
     {
         decorations_tiles_.emplace_back(std::make_shared<DecorationTile>(pos, id));
         return decorations_tiles_.back().get();
@@ -185,7 +186,8 @@ Obstacle* Map::spawn(const sf::Vector2f& pos, float direction, const std::string
         if (!blocked_.blockage_.empty())
         {
             Map::markBlocked(blocked_.blockage_, pos + RMGET<sf::Vector2f>("obstacles", id, "collision_offset"),
-                    RMGET<sf::Vector2f>("obstacles", id, "collision_size"), RMGET<float>("obstacles", id, "endurance"));
+                             RMGET<sf::Vector2f>("obstacles", id, "collision_size"),
+                             RMGET<float>("obstacles", id, "endurance"));
         }
 
         obstacles_.emplace_back(std::make_shared<Obstacle>(pos, id));
@@ -209,7 +211,8 @@ PlacedWeapon* Map::spawn(const sf::Vector2f& pos, float direction, const std::st
 
 void Map::removeTile(const sf::Vector2f& pos, int max_z_index)
 {
-    (!this->checkCollisions(pos, decorations_tiles_, true, max_z_index) && !this->checkCollisions(pos, obstacles_tiles_, true, max_z_index));
+    (!this->checkCollisions(pos, decorations_tiles_, true, max_z_index) &&
+     !this->checkCollisions(pos, obstacles_tiles_, true, max_z_index));
 }
 
 void Map::removeObject(const sf::Vector2f& pos, int max_z_index)
@@ -333,7 +336,9 @@ std::pair<sf::Vector2<size_t>, sf::Vector2f> Map::getTileConstraints() const
             max.y = dec->getPosition().y;
     }
 
-    if (obstacles_tiles_.empty() && decorations_tiles_.empty()) return {{0, 0}, {0.0f, 0.0f}};
+    if (obstacles_tiles_.empty() && decorations_tiles_.empty())
+        return {{0,    0},
+                {0.0f, 0.0f}};
 
     return {sf::Vector2<size_t>(static_cast<size_t>((max.x - min.x) / DecorationTile::SIZE_X_) + 1,
                                 static_cast<size_t>((max.y - min.y) / DecorationTile::SIZE_Y_) + 1),

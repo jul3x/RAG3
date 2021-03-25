@@ -10,9 +10,13 @@ namespace r3e {
     template<class T>
     class StateWithInertia {
     public:
-        explicit StateWithInertia(float change_speed) : change_speed_(change_speed), set_(), current_() {}
+        explicit StateWithInertia(float change_speed) : change_speed_(change_speed), set_(), current_()
+        {
+        }
 
-        explicit StateWithInertia() : StateWithInertia(1.0f) {}
+        explicit StateWithInertia() : StateWithInertia(1.0f)
+        {
+        }
 
         [[nodiscard]] float getChangeSpeed() const
         {

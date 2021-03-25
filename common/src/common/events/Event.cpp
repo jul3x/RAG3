@@ -31,7 +31,7 @@ Event::Event(const sf::Vector2f& position, const std::string& id,
         shape_.setScale(radius / shape_.getSize().x, radius / shape_.getSize().x);
 
     this->changeOrigin(RMGET<sf::Vector2f>("animations", id, "size") / 2.0f +
-                               RMGET<sf::Vector2f>("animations", id, "map_offset"));
+                       RMGET<sf::Vector2f>("animations", id, "map_offset"));
 
     this->makeLightPoint(this->getPosition(),
                          CONF<float>("graphics/animations_light_point_size") * CONF<float>("graphics/global_zoom"),

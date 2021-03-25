@@ -21,7 +21,8 @@ Decoration::Decoration(const sf::Vector2f& position, const std::string& id, int 
                        RMGET<sf::Vector2f>("decorations", id, "map_offset"));
 
     this->makeLightPoint(this->getPosition(),
-                         RMGET<float>("decorations", id, "light_point_radius", true) * CONF<float>("graphics/global_zoom"),
+                         RMGET<float>("decorations", id, "light_point_radius", true) *
+                         CONF<float>("graphics/global_zoom"),
                          &RM.getTexture("lightpoint"), RMGET<std::string>("decorations", id, "light_point"),
                          RMGET<float>("decorations", id, "light_point_data", true));
 }

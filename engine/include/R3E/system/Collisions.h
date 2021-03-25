@@ -20,9 +20,9 @@ namespace r3e {
         Collisions(const Collisions&) = delete;
         Collisions& operator=(const Collisions&) = delete;
 
-        void initialize(const sf::Vector2f &size, float grid);
+        void initialize(const sf::Vector2f& size, float grid);
 
-        void update(AbstractGame *game);
+        void update(AbstractGame* game);
 
         void insert(StaticObject* obj);
         void insert(DynamicObject* obj);
@@ -35,8 +35,9 @@ namespace r3e {
     private:
         inline void updateGridPosition(StaticObject* obj);
 
-        template <class T>
-        inline void updateGrid(std::vector<std::vector<std::list<T*>>> &cont) {
+        template<class T>
+        inline void updateGrid(std::vector<std::vector<std::list<T*>>>& cont)
+        {
             for (size_t i = 0; i < grid_size_x_; ++i)
             {
                 auto& col = cont.at(i);
@@ -58,19 +59,22 @@ namespace r3e {
                             do_increment = false;
                         }
 
-                        if (do_increment) ++it;
+                        if (do_increment)
+                            ++it;
                     }
                 }
             }
         }
 
-        template <class T>
-        inline void insert(T* obj,std::vector<std::vector<std::list<T*>>> &cont) {
-                cont.at(obj->grid_position_.x).at(obj->grid_position_.y).push_back(obj);
+        template<class T>
+        inline void insert(T* obj, std::vector<std::vector<std::list<T*>>>& cont)
+        {
+            cont.at(obj->grid_position_.x).at(obj->grid_position_.y).push_back(obj);
         }
 
-        template <class T>
-        inline void eraseIfExists(T* obj,std::vector<std::vector<std::list<T*>>> &cont) {
+        template<class T>
+        inline void eraseIfExists(T* obj, std::vector<std::vector<std::list<T*>>>& cont)
+        {
             auto& obj_list = cont.at(obj->grid_position_.x).at(obj->grid_position_.y);
             for (auto it = obj_list.begin(); it != obj_list.end(); ++it)
             {
@@ -83,7 +87,7 @@ namespace r3e {
         }
 
         template<class T, class K>
-        inline static bool ifCollideRespond(T &obj_1, K &obj_2)
+        inline static bool ifCollideRespond(T& obj_1, K& obj_2)
         {
             const auto& a = obj_1.getCollisionArea().getType();
             const auto& b = obj_2.getCollisionArea().getType();
@@ -108,11 +112,12 @@ namespace r3e {
             }
 
             throw std::invalid_argument("[Collisions - Response] This collision type (" +
-                    std::to_string(static_cast<int>(a)) + "," + std::to_string(static_cast<int>(b)) + ") is not handled yet!");
+                                        std::to_string(static_cast<int>(a)) + "," +
+                                        std::to_string(static_cast<int>(b)) + ") is not handled yet!");
         }
 
         template<class T, class K>
-        inline static bool isCollision(const T &obj_1, const K &obj_2)
+        inline static bool isCollision(const T& obj_1, const K& obj_2)
         {
             const auto& a = obj_1.getCollisionArea().getType();
             const auto& b = obj_2.getCollisionArea().getType();
@@ -137,33 +142,44 @@ namespace r3e {
             }
 
             throw std::invalid_argument("[Collisions] This collision type (" +
-                    std::to_string(static_cast<int>(a)) + "," + std::to_string(static_cast<int>(b)) + ") is not handled yet!");
+                                        std::to_string(static_cast<int>(a)) + "," +
+                                        std::to_string(static_cast<int>(b)) + ") is not handled yet!");
         }
 
-        template <class T, class K>
-        inline void checkCollisions(AbstractGame *game,
-                             std::vector<std::vector<std::list<T*>>> &cont_1,
-                             std::vector<std::vector<std::list<K*>>> &cont_2,
-                             bool respond = false)
+        template<class T, class K>
+        inline void checkCollisions(AbstractGame* game,
+                                    std::vector<std::vector<std::list<T*>>>& cont_1,
+                                    std::vector<std::vector<std::list<K*>>>& cont_2,
+                                    bool respond = false)
         {
             static std::vector<sf::Vector2<int>> grids_to_check =
-                    {{-1, -1}, {-1, 1}, {1, -1}, {0, -1}, {0, 1}, {0, 0}, {1, 0}, {-1, 0}, {1, 1}};
+                    {{-1, -1},
+                     {-1, 1},
+                     {1,  -1},
+                     {0,  -1},
+                     {0,  1},
+                     {0,  0},
+                     {1,  0},
+                     {-1, 0},
+                     {1,  1}};
             for (size_t i = 0; i < grid_size_x_; ++i)
             {
                 for (size_t j = 0; j < grid_size_y_; ++j)
                 {
-                    for (const auto &grid : grids_to_check)
+                    for (const auto& grid : grids_to_check)
                     {
                         size_t x = grid.x + i;
                         size_t y = grid.y + j;
 
-                        if (x < 0 || x >= grid_size_x_ || y < 0 || y >= grid_size_y_) continue;
+                        if (x < 0 || x >= grid_size_x_ || y < 0 || y >= grid_size_y_)
+                            continue;
 
-                        for (const auto &el1 : cont_1.at(i).at(j))
+                        for (const auto& el1 : cont_1.at(i).at(j))
                         {
-                            for (const auto &el2 : cont_2.at(x).at(y))
+                            for (const auto& el2 : cont_2.at(x).at(y))
                             {
-                                if (x == i && y == j && el1 == el2) continue;
+                                if (x == i && y == j && el1 == el2)
+                                    continue;
 
                                 if ((respond && Collisions::ifCollideRespond(*el1, *el2)) ||
                                     Collisions::isCollision(*el1, *el2))
@@ -179,12 +195,12 @@ namespace r3e {
 
         // Detection
         inline static short int AABB(const StaticObject& a, const StaticObject& b);
-        inline static bool circleCircle(const StaticObject &a, const StaticObject &b);
+        inline static bool circleCircle(const StaticObject& a, const StaticObject& b);
         inline static short int ABCircle(const StaticObject& a, const StaticObject& b);
 
         // Response
-        inline static bool circleABResponse(DynamicObject &a, const StaticObject &b);
-        inline static bool circleABResponse(DynamicObject &a, DynamicObject &b);
+        inline static bool circleABResponse(DynamicObject& a, const StaticObject& b);
+        inline static bool circleABResponse(DynamicObject& a, DynamicObject& b);
 
         inline static bool ABCircleResponse(DynamicObject& a, const StaticObject& b);
         inline static bool ABCircleResponse(DynamicObject& a, DynamicObject& b);
@@ -192,14 +208,14 @@ namespace r3e {
         inline static bool AABBResponse(DynamicObject& a, const StaticObject& b);
         inline static bool AABBResponse(DynamicObject& a, DynamicObject& b);
 
-        inline static bool circleCircleResponse(DynamicObject &a, const StaticObject &b);
-        inline static bool circleCircleResponse(DynamicObject &a, DynamicObject &b);
+        inline static bool circleCircleResponse(DynamicObject& a, const StaticObject& b);
+        inline static bool circleCircleResponse(DynamicObject& a, DynamicObject& b);
 
         inline static void blockNormalVelocity(DynamicObject& a, short int dir);
 
-        inline static void setVerifiedPosition(StaticObject &a, const sf::Vector2f &pos);
-        inline static void setVerifiedPositionX(StaticObject &a, float x);
-        inline static void setVerifiedPositionY(StaticObject &a, float y);
+        inline static void setVerifiedPosition(StaticObject& a, const sf::Vector2f& pos);
+        inline static void setVerifiedPositionX(StaticObject& a, float x);
+        inline static void setVerifiedPositionY(StaticObject& a, float y);
 
         std::vector<std::vector<std::list<StaticObject*>>> s_grid_;
         std::vector<std::vector<std::list<DynamicObject*>>> d_grid_;

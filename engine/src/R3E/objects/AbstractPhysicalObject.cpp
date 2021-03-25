@@ -19,7 +19,9 @@ namespace r3e {
                                                    short int frames_number,
                                                    float frame_duration) :
             AbstractDrawableObject(position, size, texture, z_index, frames_number, frame_duration),
-            c_area_(c_area) {}
+            c_area_(c_area)
+    {
+    }
 
     const collision::Area& AbstractPhysicalObject::getCollisionArea() const
     {
@@ -42,9 +44,14 @@ namespace r3e {
                                int z_index,
                                short int frames_number,
                                float frame_duration) :
-            AbstractPhysicalObject(position, size, c_area, texture, z_index, frames_number, frame_duration) {}
+            AbstractPhysicalObject(position, size, c_area, texture, z_index, frames_number, frame_duration)
+    {
+    }
 
-    bool StaticObject::update(float time_elapsed) { return true; }
+    bool StaticObject::update(float time_elapsed)
+    {
+        return true;
+    }
 
 //
 // DynamicObject
@@ -59,9 +66,11 @@ namespace r3e {
                                  short int frames_number,
                                  float frame_duration,
                                  const float acceleration) :
-            StaticObject(position, size, c_area, texture, z_index,  frames_number, frame_duration),
+            StaticObject(position, size, c_area, texture, z_index, frames_number, frame_duration),
             curr_v_(velocity), set_v_(velocity),
-            acceleration_(acceleration) {}
+            acceleration_(acceleration)
+    {
+    }
 
     const sf::Vector2f& DynamicObject::getVelocity() const
     {
@@ -127,7 +136,8 @@ namespace r3e {
 
             curr_v_ = curr_v_ + it->first * time_elapsed;
 
-            if (do_increment) ++it;
+            if (do_increment)
+                ++it;
         }
 
         this->setPosition(this->getPosition() + curr_v_ * time_elapsed);
@@ -153,6 +163,9 @@ namespace r3e {
                                    short int frames_number,
                                    float frame_duration,
                                    float acceleration) :
-            DynamicObject(position, velocity, size, c_area, texture, z_index, frames_number, frame_duration, acceleration) {}
+            DynamicObject(position, velocity, size, c_area, texture, z_index, frames_number, frame_duration,
+                          acceleration)
+    {
+    }
 
 } // namespace r3e

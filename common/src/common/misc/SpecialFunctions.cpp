@@ -13,44 +13,51 @@
 
 SpecialFunctions::SpecialFunctions(Framework* framework) : framework_(framework)
 {
-    // TODO this looks horrible...
-    functions_["MapStart"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->mapStart(obj, data, user); }, "[F] Start new map", false);
-    functions_["MapEnd"]= std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->mapEnd(obj, data, user); }, "[F] End this map", false);
-    functions_["TurnLight"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->turnLight(obj, data, user); }, "[F] Press", true);
-    functions_["PourWater"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->pourWater(obj, data, user); }, "[F] Pour water on yourself", true);
-    functions_["OpenDoor"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->openDoor(obj, data, user); }, "", true);
-    functions_["ReadNote"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->readNote(obj, data, user); }, "[F] Read note", true);
-    functions_["AddWeapon"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->addWeapon(obj, data, user); }, "[F} Pick weapon", false);
-    functions_["AddAmmo"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->addAmmo(obj, data, user); }, "[F] Pick ammunition", false);
-    functions_["AddHealth"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->addHealth(obj, data, user); }, "[F] Pick to heal yourself", false);
-    functions_["AddSpeed"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->addSpeed(obj, data, user); }, "[F] Pick to inject", false);
-    functions_["TakeRag3"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->takeRag3(obj, data, user); }, "[F] Pick to take", false);
-    functions_["PickCrystal"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->pickCrystal(obj, data, user); }, "[F] Pick crystal", false);
-    functions_["PayRespect"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->payRespect(obj, data, user); }, "[F] Pay respect", false);
-    functions_["SpawnThought"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->spawnThought(obj, data, user); }, "", true);
-    functions_["SpawnPlayerThought"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->spawnPlayerThought(obj, data, user); }, "", true);
-    functions_["ChangeOpenState"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->changeOpenState(obj, data, user); }, "[F] Pull the trigger", true);
-    functions_["Teleport"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->teleport(obj, data, user); }, "", true);
-    functions_["Kill"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->kill(obj, data, user); }, "", true);
-    functions_["KillObj"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->killObj(obj, data, user); }, "", true);
-    functions_["ZoomTo"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->zoomTo(obj, data, user); }, "", false);
-    functions_["ActivateWeapon"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->activateWeapon(obj, data, user); }, "", false);
-    functions_["SetOnFire"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->setOnFire(obj, data, user); }, "", false); // TODO maybe true?
-    functions_["Explode"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->explode(obj, data, user); }, "", false);
-    functions_["RemoveDecoration"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->removeDecoration(obj, data, user); }, "", false);
-    functions_["RemoveSpecial"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->removeSpecial(obj, data, user); }, "", false);
-    functions_["SpawnLava"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->spawnLava(obj, data, user); }, "", false);
-    functions_["SpawnExplosionEvent"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->spawnExplosionEvent(obj, data, user); }, "", false);
-    functions_["SpawnExplosionEventByPos"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->spawnExplosionEventByPos(obj, data, user); }, "", true);
-    functions_["SpawnMiniLava"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->spawnMiniLava(obj, data, user); }, "", false);
-    functions_["SpawnFlame"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->spawnFlame(obj, data, user); }, "", false);
-    functions_["SpawnAmmo"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->spawnAmmo(obj, data, user); }, "", false);
-    functions_["SpawnDestruction"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->spawnDestruction(obj, data, user); }, "", true);
-    functions_["SpawnCrystal"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->spawnCrystal(obj, data, user); }, "", true);
-    functions_["null"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->nullFunc(obj, data, user); }, "", true);
-    functions_["Deactivate"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->deactivate(obj, data, user); }, "", true);
-    functions_["Destroy"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->destroy(obj, data, user); }, "", true);
-    functions_["ActivateSpecial"] = std::make_tuple([this](Functional* obj, const j3x::Obj& data, Character* user) { this->activateSpecial(obj, data, user); }, "", true);
+    static auto init = [this](const std::string& name,
+            void (SpecialFunctions::*func)(Functional*, const j3x::Obj&, Character*),
+            const std::string& tooltip = "", bool is_usable_by_npc = false) {
+        functions_[name] = std::make_tuple(
+                [this, func](Functional* obj, const j3x::Obj& data, Character* user) { (this->*func)(obj, data, user); },
+                tooltip, is_usable_by_npc);
+    };
+
+    init("MapStart", &SpecialFunctions::mapStart, "[F] Start new map");
+    init("MapEnd", &SpecialFunctions::mapEnd, "[F] End this map");
+    init("TurnLight", &SpecialFunctions::turnLight, "[F] Press", true);
+    init("PourWater", &SpecialFunctions::pourWater, "[F] Pour water on yourself", true);
+    init("OpenDoor", &SpecialFunctions::openDoor, "", true);
+    init("ReadNote", &SpecialFunctions::readNote, "[F] Read note", true);
+    init("AddWeapon", &SpecialFunctions::addWeapon, "[F} Pick weapon");
+    init("AddAmmo", &SpecialFunctions::addAmmo, "[F] Pick ammunition");
+    init("AddHealth", &SpecialFunctions::addHealth, "[F] Pick to heal yourself");
+    init("AddSpeed", &SpecialFunctions::addSpeed, "[F] Pick to inject");
+    init("TakeRag3", &SpecialFunctions::takeRag3, "[F] Pick to take");
+    init("PickCrystal", &SpecialFunctions::pickCrystal, "[F] Pick crystal");
+    init("PayRespect", &SpecialFunctions::payRespect, "[F] Pay respect");
+    init("SpawnThought", &SpecialFunctions::spawnThought, "", true);
+    init("SpawnPlayerThought", &SpecialFunctions::spawnPlayerThought, "", true);
+    init("ChangeOpenState", &SpecialFunctions::changeOpenState, "[F] Pull the trigger", true);
+    init("Teleport", &SpecialFunctions::teleport, "", true);
+    init("Kill", &SpecialFunctions::kill, "", true);
+    init("KillObj", &SpecialFunctions::killObj, "", true);
+    init("ZoomTo", &SpecialFunctions::zoomTo);
+    init("ActivateWeapon", &SpecialFunctions::activateWeapon);
+    init("SetOnFire", &SpecialFunctions::setOnFire); // TODO maybe true for npcs?
+    init("Explode", &SpecialFunctions::explode);
+    init("RemoveDecoration", &SpecialFunctions::removeDecoration);
+    init("RemoveSpecial", &SpecialFunctions::removeSpecial);
+    init("SpawnLava", &SpecialFunctions::spawnLava);
+    init("SpawnExplosionEvent", &SpecialFunctions::spawnExplosionEvent);
+    init("SpawnExplosionEventByPos", &SpecialFunctions::spawnExplosionEventByPos, "", true);
+    init("SpawnMiniLava", &SpecialFunctions::spawnMiniLava);
+    init("SpawnFlame", &SpecialFunctions::spawnFlame);
+    init("SpawnAmmo", &SpecialFunctions::spawnAmmo);
+    init("SpawnDestruction", &SpecialFunctions::spawnDestruction, "", true);
+    init("SpawnCrystal", &SpecialFunctions::spawnCrystal, "", true);
+    init("null", &SpecialFunctions::nullFunc, "", true);
+    init("Deactivate", &SpecialFunctions::deactivate, "", true);
+    init("Destroy", &SpecialFunctions::destroy, "", true);
+    init("ActivateSpecial", &SpecialFunctions::activateSpecial, "", true);
 }
 
 
@@ -66,7 +73,7 @@ const SpecialFunctions::SpecialFunction& SpecialFunctions::bindFunction(const st
     return std::get<0>(it->second);
 }
 
-const std::string& SpecialFunctions::bindTextToUse(const std::string &key) const
+const std::string& SpecialFunctions::bindTextToUse(const std::string& key) const
 {
     auto it = functions_.find(key);
 
@@ -124,7 +131,7 @@ void SpecialFunctions::openDoor(Functional* obj, const j3x::Obj& data, Character
 
     Map::markBlocked(framework_->getMap()->getMapBlockage().blockage_,
                      door->getPosition() + RMGET<sf::Vector2f>("obstacles", door->getId(), "collision_offset"),
-                     RMGET<sf::Vector2f>("obstacles",  door->getId(), "collision_size"),
+                     RMGET<sf::Vector2f>("obstacles", door->getId(), "collision_size"),
                      endurance);
 
     if (user != nullptr && framework_->getJournal() != nullptr)
@@ -177,8 +184,10 @@ void SpecialFunctions::turnLight(Functional* obj, const j3x::Obj& data, Characte
     else
     {
         light_obj->makeLightPoint(light_obj->getPosition(),
-                                  RMGET<float>("decorations", light_obj->getId(), "light_point_radius", true) * CONF<float>("graphics/global_zoom"),
-                                  &RM.getTexture("lightpoint"), RMGET<std::string>("decorations", light_obj->getId(), "light_point"),
+                                  RMGET<float>("decorations", light_obj->getId(), "light_point_radius", true) *
+                                  CONF<float>("graphics/global_zoom"),
+                                  &RM.getTexture("lightpoint"),
+                                  RMGET<std::string>("decorations", light_obj->getId(), "light_point"),
                                   RMGET<float>("decorations", light_obj->getId(), "light_point_data", true));
         framework_->registerLight(light_obj);
     }
@@ -361,7 +370,8 @@ void SpecialFunctions::kill(Functional* obj, const j3x::Obj& data, Character* us
     {
         auto object = dynamic_cast<AbstractPhysicalObject*>(obj);
 
-        auto difference = object->getPosition() + object->getCollisionArea().getOffset() - user->getPosition() - user->getCollisionArea().getOffset();
+        auto difference = object->getPosition() + object->getCollisionArea().getOffset() - user->getPosition() -
+                          user->getCollisionArea().getOffset();
         if (!utils::num::isNearlyEqual(std::get<0>(utils::geo::cartesianToPolar(difference)), 0.0f, 16.0f))
         {
             auto diff = utils::geo::getNormalized(difference);
@@ -384,15 +394,16 @@ void SpecialFunctions::killObj(Functional* obj, const j3x::Obj& data, Character*
     LOG.info("[SpecialFunction] Killing object.");
 
     auto what = framework_->getMap()->getObjectById<Obstacle>(j3x::getObj<int>(data));
-    if (what != nullptr) what->setHealth(0);
+    if (what != nullptr)
+        what->setHealth(0);
 }
 
-void SpecialFunctions::nullFunc(Functional *obj, const j3x::Obj &data, Character* user)
+void SpecialFunctions::nullFunc(Functional* obj, const j3x::Obj& data, Character* user)
 {
     LOG.info("[SpecialFunction] Null.");
 }
 
-void SpecialFunctions::deactivate(Functional *obj, const j3x::Obj &data, Character* user)
+void SpecialFunctions::deactivate(Functional* obj, const j3x::Obj& data, Character* user)
 {
     LOG.info("[SpecialFunction] Deactivating.");
     obj->deactivate();
@@ -401,7 +412,7 @@ void SpecialFunctions::deactivate(Functional *obj, const j3x::Obj &data, Charact
         framework_->getJournal()->event<ObjectDeactivated>(dynamic_cast<Special*>(obj));
 }
 
-void SpecialFunctions::destroy(Functional *obj, const j3x::Obj &data, Character* user)
+void SpecialFunctions::destroy(Functional* obj, const j3x::Obj& data, Character* user)
 {
     LOG.info("[SpecialFunction] Destroying " + std::to_string(obj->getUniqueId()) + ".");
     framework_->spawnEvent("dust", dynamic_cast<AbstractPhysicalObject*>(obj)->getPosition());

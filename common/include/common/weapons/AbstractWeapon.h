@@ -27,7 +27,8 @@ public:
                    const std::string& name);
 
     void registerSpawningFunction(std::function<void(Character*, const std::string&, const sf::Vector2f&, float)> func,
-                                  std::function<void(const std::string&, const sf::Vector2f&, float, bool)> animation_func);
+                                  std::function<void(const std::string&, const sf::Vector2f&, float,
+                                                     bool)> animation_func);
 
     virtual sf::Vector2f use() = 0;
     virtual float getState() const = 0;

@@ -129,7 +129,8 @@ namespace r3e {
 
     bool AbstractDrawableObject::updateAnimation(float time_elapsed, float animation_speed_factor)
     {
-        if (frames_number_ <= 1) return true;
+        if (frames_number_ <= 1)
+            return true;
 
         time_elapsed_ += time_elapsed * animation_speed_factor;
 

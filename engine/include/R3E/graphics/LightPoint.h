@@ -39,7 +39,8 @@ namespace r3e::graphics {
         {
             auto mapped_pos = graphics_->getWindow().mapCoordsToPixel(pos, graphics_->getCurrentView());
             auto mapped_pos_2 = graphics_->getWindow().mapPixelToCoords(mapped_pos, graphics_->getStaticView());
-            AbstractDrawableObject::setPosition(mapped_pos_2.x, graphics_->getStaticView().getSize().y - mapped_pos_2.y);
+            AbstractDrawableObject::setPosition(mapped_pos_2.x,
+                                                graphics_->getStaticView().getSize().y - mapped_pos_2.y);
         }
 
         virtual void update(float time_elapsed)
@@ -73,7 +74,8 @@ namespace r3e::graphics {
         void update(float time_elapsed) override
         {
             time_elapsed_ += time_elapsed;
-            this->setColor(255, 255, 255, static_cast<sf::Uint8>(255 * std::abs(std::sin(time_elapsed_ / period_ * 2 * M_PI))));
+            this->setColor(255, 255, 255,
+                           static_cast<sf::Uint8>(255 * std::abs(std::sin(time_elapsed_ / period_ * 2 * M_PI))));
         }
 
     private:
@@ -106,7 +108,8 @@ namespace r3e::graphics {
             {
                 randomized_period_ = utils::num::getRandom(0.2f, period_ / 2.0f);
                 this->setColor(255, 255, 255, 255);
-                if (time_elapsed_ > period_) time_elapsed_ -= period_;
+                if (time_elapsed_ > period_)
+                    time_elapsed_ -= period_;
             }
         }
 

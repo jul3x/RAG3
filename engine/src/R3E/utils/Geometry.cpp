@@ -70,7 +70,7 @@ namespace r3e {
             }
 
             short int AABB(const sf::Vector2f& a_origin, const sf::Vector2f& a_size,
-                                  const sf::Vector2f& b_origin, const sf::Vector2f& b_size)
+                           const sf::Vector2f& b_origin, const sf::Vector2f& b_size)
             {
                 //
                 // 6  ___2___  7
@@ -105,8 +105,10 @@ namespace r3e {
                     float diff_x = std::abs(b1.x - a_origin.x - a_size.x / 2.0f);
                     float diff_y = std::abs(b1.y - a_origin.y - a_size.y / 2.0f);
 
-                    if (diff_x > diff_y) return 2;
-                    else return 1;
+                    if (diff_x > diff_y)
+                        return 2;
+                    else
+                        return 1;
                 }
 
                 if (a_origin.x >= b2.x && a_origin.y < b1.y)
@@ -114,8 +116,10 @@ namespace r3e {
                     float diff_x = std::abs(b2.x - a_origin.x + a_size.x / 2.0f);
                     float diff_y = std::abs(b1.y - a_origin.y - a_size.y / 2.0f);
 
-                    if (diff_x > diff_y) return 2;
-                    else return 3;
+                    if (diff_x > diff_y)
+                        return 2;
+                    else
+                        return 3;
                 }
 
                 if (a_origin.x >= b2.x && a_origin.y >= b2.y)
@@ -123,8 +127,10 @@ namespace r3e {
                     float diff_x = std::abs(b2.x - a_origin.x + a_size.x / 2.0f);
                     float diff_y = std::abs(b2.y - a_origin.y + a_size.y / 2.0f);
 
-                    if (diff_x > diff_y) return 4;
-                    else return 3;
+                    if (diff_x > diff_y)
+                        return 4;
+                    else
+                        return 3;
                 }
 
                 if (a_origin.x < b1.x && a_origin.y >= b2.y)
@@ -132,8 +138,10 @@ namespace r3e {
                     float diff_x = std::abs(b1.x - a_origin.x - a_size.x / 2.0f);
                     float diff_y = std::abs(b2.y - a_origin.y + a_size.y / 2.0f);
 
-                    if (diff_x > diff_y) return 4;
-                    else return 1;
+                    if (diff_x > diff_y)
+                        return 4;
+                    else
+                        return 1;
                 }
 
                 // Origin of second rectangle inside first
@@ -154,13 +162,13 @@ namespace r3e {
             }
 
             bool circleCircle(const sf::Vector2f& a_origin, float a_r,
-                                     const sf::Vector2f& b_origin, float b_r)
+                              const sf::Vector2f& b_origin, float b_r)
             {
                 return (utils::geo::getDistance(a_origin, b_origin) < a_r + b_r);
             }
 
             short int ABCircle(const sf::Vector2f& a_origin, const sf::Vector2f& a_size,
-                                      const sf::Vector2f& b_origin, float b_r)
+                               const sf::Vector2f& b_origin, float b_r)
             {
                 //
                 // 6  ___2___  7
@@ -286,7 +294,8 @@ namespace r3e {
 
             sf::Vector2f getNearestForwardPointToPath(const sf::Vector2f& pos, const ai::Path& path)
             {
-                if (path.empty()) return {};
+                if (path.empty())
+                    return {};
 
                 auto nearest_it = path.begin();
                 auto dist_to = utils::geo::getDistance(pos, nearest_it->first);
@@ -297,7 +306,8 @@ namespace r3e {
                     auto new_dist_to = utils::geo::getDistance(pos, it->first);
                     auto new_dist = dist_to + it->second;
                     bool should_break = false;
-                    if (new_dist_to > dist_to) should_break = true;
+                    if (new_dist_to > dist_to)
+                        should_break = true;
 
                     if (new_dist + new_dist_to <= dist + dist_to)
                     {
@@ -306,7 +316,8 @@ namespace r3e {
                         dist = new_dist;
                     }
 
-                    if (should_break) break;
+                    if (should_break)
+                        break;
                 }
 
                 return nearest_it->first;

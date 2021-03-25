@@ -8,22 +8,29 @@
 #include <common/ResourceManager.h>
 
 
-DestructionParticle::DestructionParticle(const sf::Vector2f& position, float dir, const DestructionParams& params) : pos_(position)
+DestructionParticle::DestructionParticle(const sf::Vector2f& position, float dir, const DestructionParams& params) :
+        pos_(position)
 {
-    double _dir = utils::geo::wrapAngle0_2PI((static_cast<double>(dir) + utils::num::getRandom(-params.spread_degree, params.spread_degree)) * M_PI / 180.0);
+    double _dir = utils::geo::wrapAngle0_2PI(
+            (static_cast<double>(dir) + utils::num::getRandom(-params.spread_degree, params.spread_degree)) * M_PI /
+            180.0);
     dir_ = _dir;
     sf::Vector2f unit = sf::Vector2f{static_cast<float>(std::cos(_dir)), static_cast<float>(std::sin(_dir))};
 
     vel_ = (params.vel + params.vel_fac * utils::num::getRandom(-params.vel, params.vel)) * unit;
     acc_ = (-unit + sf::Vector2f{utils::num::getRandom(-params.acceleration_spread, params.acceleration_spread),
-                                 utils::num::getRandom(-params.acceleration_spread, params.acceleration_spread)}) * (params.acc + params.acc_fac * utils::num::getRandom(-params.acc, params.acc));
+                                 utils::num::getRandom(-params.acceleration_spread, params.acceleration_spread)}) *
+           (params.acc + params.acc_fac * utils::num::getRandom(-params.acc, params.acc));
     time_alive_ = params.time + params.time_fac * utils::num::getRandom(-params.time, params.time);
 
     if (params.full_color_fac == 0.0f)
     {
-        color_.r = std::max(0.0f, std::min(255.0f, params.base_color.r + params.r_fac * utils::num::getRandom<float>(-params.base_color.r, params.base_color.r)));
-        color_.g = std::max(0.0f, std::min(255.0f, params.base_color.g + params.g_fac * utils::num::getRandom<float>(-params.base_color.g, params.base_color.g)));
-        color_.b = std::max(0.0f, std::min(255.0f, params.base_color.b + params.b_fac * utils::num::getRandom<float>(-params.base_color.b, params.base_color.b)));
+        color_.r = std::max(0.0f, std::min(255.0f, params.base_color.r + params.r_fac * utils::num::getRandom<float>(
+                -params.base_color.r, params.base_color.r)));
+        color_.g = std::max(0.0f, std::min(255.0f, params.base_color.g + params.g_fac * utils::num::getRandom<float>(
+                -params.base_color.g, params.base_color.g)));
+        color_.b = std::max(0.0f, std::min(255.0f, params.base_color.b + params.b_fac * utils::num::getRandom<float>(
+                -params.base_color.b, params.base_color.b)));
     }
     else
     {
@@ -43,7 +50,8 @@ bool DestructionParticle::update(float time_elapsed)
 
     time_alive_ -= time_elapsed;
 
-    if (!utils::num::isNearlyEqual(utils::geo::wrapAngle0_2PI(std::get<1>(utils::geo::cartesianToPolar(vel_))), dir_, M_PI_2))
+    if (!utils::num::isNearlyEqual(utils::geo::wrapAngle0_2PI(std::get<1>(utils::geo::cartesianToPolar(vel_))), dir_,
+                                   M_PI_2))
     {
         vel_ = {};
         acc_ = {};
@@ -77,7 +85,8 @@ void DestructionParticle::addToLife(float time)
     time_alive_ += time;
 }
 
-DestructionSystem::DestructionSystem(const sf::Vector2f& position, float dir, const DestructionParams& params, float quantity_factor) :
+DestructionSystem::DestructionSystem(const sf::Vector2f& position, float dir, const DestructionParams& params,
+                                     float quantity_factor) :
         AbstractDrawableObject(position, {1.0f, 1.0f}, nullptr, 1),
         particles_(params.count * quantity_factor),
         drawables_(sf::Quads, 4 * params.count * quantity_factor),
@@ -115,7 +124,8 @@ bool DestructionSystem::update(float time_elapsed)
         ++i;
     }
 
-    if (time_elapsed_ > 0.25f) this->setZIndex(0);
+    if (time_elapsed_ > 0.25f)
+        this->setZIndex(0);
 
     time_elapsed_ += time_elapsed;
     return any_alive;

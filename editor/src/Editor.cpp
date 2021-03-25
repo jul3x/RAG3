@@ -25,7 +25,8 @@ void Editor::initialize()
     map_ = std::make_unique<Map>();
 
     ui_->registerCamera(camera_.get());
-    camera_->setViewNormalSize({static_cast<float>(CONF<int>("window_width_px")), static_cast<float>(CONF<int>("window_height_px"))});
+    camera_->setViewNormalSize(
+            {static_cast<float>(CONF<int>("window_width_px")), static_cast<float>(CONF<int>("window_height_px"))});
 
     engine_->initializeGraphics(
             sf::Vector2i{CONF<int>("window_width_px"), CONF<int>("window_height_px")}, "RAG3 Editor",
@@ -249,7 +250,7 @@ void Editor::removeItem(const sf::Vector2f& pos)
     auto max_z_index = ui_->getZIndex();
     if (current_item_.first == "decorations_tiles" || current_item_.first == "obstacles_tiles")
         map_->removeTile(pos, max_z_index);
-    else if (current_item_.first == "characters" || current_item_.first == "specials" || 
+    else if (current_item_.first == "characters" || current_item_.first == "specials" ||
              current_item_.first == "decorations" || current_item_.first == "obstacles" ||
              current_item_.first == "weapons")
         map_->removeObject(pos, max_z_index);

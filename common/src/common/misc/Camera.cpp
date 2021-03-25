@@ -10,8 +10,8 @@
 #include <common/misc/Camera.h>
 
 
-
-Camera::Camera() : state_(State::Normal) {
+Camera::Camera() : state_(State::Normal)
+{
     center_ = {};
 }
 
@@ -55,7 +55,7 @@ void Camera::update(float time_elapsed)
     view_size_.x += zoom_diff.x * time_elapsed * CONF<float>("graphics/camera_zoom_speed");
     view_size_.y += zoom_diff.y * time_elapsed * CONF<float>("graphics/camera_zoom_speed");
 
-    for (auto & it : shaking_map_)
+    for (auto& it : shaking_map_)
     {
         it.second -= time_elapsed;
     }
@@ -72,11 +72,14 @@ void Camera::update(float time_elapsed)
         }
 
         center_.z = element->first * CONF<float>("graphics/camera_rotation_recoil") *
-                    std::sin(element->first * time_elapsed_ / CONF<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
+                    std::sin(
+                            element->first * time_elapsed_ / CONF<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
         center_.x += element->first * time_elapsed * CONF<float>("graphics/camera_position_recoil") *
-                     std::cos(element->first * time_elapsed_ / CONF<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
+                     std::cos(element->first * time_elapsed_ / CONF<float>("graphics/camera_shaking_time") * M_PI *
+                              2.0f);
         center_.y -= element->first * time_elapsed * CONF<float>("graphics/camera_position_recoil") *
-                     std::cos(element->first * time_elapsed_ / CONF<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
+                     std::cos(element->first * time_elapsed_ / CONF<float>("graphics/camera_shaking_time") * M_PI *
+                              2.0f);
 
         if (state_ != State::Rag3)
             time_elapsed_ -= time_elapsed;

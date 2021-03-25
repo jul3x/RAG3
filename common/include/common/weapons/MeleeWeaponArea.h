@@ -7,6 +7,7 @@
 
 #include <R3E/objects/AbstractPhysicalObject.h>
 
+
 using namespace r3e;
 
 class MeleeWeapon;

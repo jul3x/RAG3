@@ -24,7 +24,7 @@ UserInterface::UserInterface() :
         tiles_window_(this, &gui_, &gui_theme_, "Tiles",
                       CONF<sf::Vector2f>("tiles_window_pos"), "tiles_window"),
         objects_window_(this, &gui_, &gui_theme_, "Objects",
-                        CONF<sf::Vector2f>("objects_window_pos") , "objects_window"),
+                        CONF<sf::Vector2f>("objects_window_pos"), "objects_window"),
         menu_window_(this, &gui_, &gui_theme_),
         save_window_(&gui_, &gui_theme_),
         load_window_(&gui_, &gui_theme_),
@@ -304,12 +304,12 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
                     marked_item_ = nullptr;
                 }
                 else if (event.mouseButton.button == sf::Mouse::Left &&
-                    !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && !mouse_on_widget_)
+                         !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && !mouse_on_widget_)
                 {
                     if (Editor::get().getCurrentItem().first == "weapons")
                         Editor::get().placeItem(previous_mouse_world_pos_,
-                                180.0f / M_PI * std::get<1>(utils::geo::cartesianToPolar(
-                                        crosshair_.getPosition() - previous_mouse_world_pos_)));
+                                                180.0f / M_PI * std::get<1>(utils::geo::cartesianToPolar(
+                                                        crosshair_.getPosition() - previous_mouse_world_pos_)));
                 }
             }
             default:
@@ -399,7 +399,8 @@ inline void UserInterface::handleCameraCenter(sf::RenderWindow& graphics_window,
                 vec += vector;
             }
 
-            vec = vec / static_cast<float>(mouse_camera_center_vectors_.size()) * CFG.get<float>("camera_moving_factor");
+            vec = vec / static_cast<float>(mouse_camera_center_vectors_.size()) *
+                  CFG.get<float>("camera_moving_factor");
             camera_->setPointingTo(camera_->getPointingTo() + vec);
 
             mouse_camera_center_vectors_.pop_front();
@@ -449,8 +450,9 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
     {
         crosshair_.setColor(255, 255, 255, 120);
 
-        auto crosshair_texture_name = !RMHAS<bool>(current_item.first, current_item.second, "is_drawable") || RMGET<bool>(current_item.first, current_item.second, "is_drawable", false) ?
-                         current_item.first + "/" + current_item.second : "specials/special_event";
+        auto crosshair_texture_name = !RMHAS<bool>(current_item.first, current_item.second, "is_drawable") ||
+                                      RMGET<bool>(current_item.first, current_item.second, "is_drawable", false) ?
+                                      current_item.first + "/" + current_item.second : "specials/special_event";
         crosshair_.changeTexture(&RM.getTexture(crosshair_texture_name), true);
 
         if (is_tile)
@@ -462,11 +464,13 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
         {
             crosshair_.setSize(RMGET<sf::Vector2f>(current_item.first, current_item.second, "size"));
             crosshair_.changeOrigin(RMGET<sf::Vector2f>(current_item.first, current_item.second, "size") / 2.0f
-                    + RMGET<sf::Vector2f>(current_item.first, current_item.second,"map_offset"));
+                                    + RMGET<sf::Vector2f>(current_item.first, current_item.second, "map_offset"));
 
             if (RMGET<int>(current_item.first, current_item.second, "frames_number") > 1)
                 crosshair_.changeTextureRect({{0, 0},
-                                              static_cast<sf::Vector2i>(RMGET<sf::Vector2f>(current_item.first, current_item.second, "size"))});
+                                              static_cast<sf::Vector2i>(RMGET<sf::Vector2f>(current_item.first,
+                                                                                            current_item.second,
+                                                                                            "size"))});
 
         }
 
@@ -474,7 +478,7 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
             !sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
         {
             crosshair_.setRotation(180.0f / M_PI * std::get<1>(utils::geo::cartesianToPolar(crosshair_.getPosition() -
-                                                                     previous_mouse_world_pos_)));
+                                                                                            previous_mouse_world_pos_)));
             crosshair_.setPosition(previous_mouse_world_pos_);
         }
         else

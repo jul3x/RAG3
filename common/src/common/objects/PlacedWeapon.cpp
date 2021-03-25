@@ -8,21 +8,21 @@
 
 
 PlacedWeapon::PlacedWeapon(const sf::Vector2f& position, float direction, const std::string& id, int u_id) :
-    PlacedWeapon(position, direction, id,
-                 RMGET<std::string>("weapons", id, "default_usage"),
-                 RMGET<float>("weapons", id, "default_data"), u_id)
+        PlacedWeapon(position, direction, id,
+                     RMGET<std::string>("weapons", id, "default_usage"),
+                     RMGET<float>("weapons", id, "default_data"), u_id)
 {
 
 }
 
 PlacedWeapon::PlacedWeapon(const sf::Vector2f& position, float direction, const std::string& id,
                            const std::string& usage, float data, int u_id) :
-    ShootingWeapon(nullptr, id),
-    Unique(u_id),
-    data_(data),
-    usage_str_(usage),
-    active_(false),
-    time_elapsed_(0.0f)
+        ShootingWeapon(nullptr, id),
+        Unique(u_id),
+        data_(data),
+        usage_str_(usage),
+        active_(false),
+        time_elapsed_(0.0f)
 {
     // TODO Change origin?
 

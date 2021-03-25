@@ -45,7 +45,8 @@ namespace r3e {
                 }
             }
 
-            if (agents_to_update_.empty()) return;
+            if (agents_to_update_.empty())
+                return;
 
             auto& agent = agents_to_update_.front();
 
@@ -103,7 +104,8 @@ namespace r3e {
         {
             auto it = agents_map_.find(agent);
 
-            if (it == agents_map_.end()) return;
+            if (it == agents_map_.end())
+                return;
             agents_map_.erase(agent);
             LOG.info("[AgentsManager] Agent deleted!");
         }
@@ -118,7 +120,8 @@ namespace r3e {
         {
             auto it = agents_map_.find(agent);
 
-            if (it == agents_map_.end()) throw std::runtime_error("[AgentsManager] Agent not found!");
+            if (it == agents_map_.end())
+                throw std::runtime_error("[AgentsManager] Agent not found!");
             return it->second;
         }
 
@@ -127,7 +130,8 @@ namespace r3e {
         {
             auto it = agents_map_.find(agent);
 
-            if (it == agents_map_.end()) throw std::runtime_error("[AgentsManager] Agent not found!");
+            if (it == agents_map_.end())
+                throw std::runtime_error("[AgentsManager] Agent not found!");
             return it->second;
         }
 

@@ -9,7 +9,11 @@
 
 using namespace editor;
 
-Camera::Camera() { center_ = {}; zoom_to_ = 1.0f; }
+Camera::Camera()
+{
+    center_ = {};
+    zoom_to_ = 1.0f;
+}
 
 void Camera::update(float time_elapsed)
 {

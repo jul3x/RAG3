@@ -45,7 +45,8 @@ bool Player::sideStep(Player::SideStepDir dir)
     {
         this->addSteeringForce(this->getSpeedFactor() *
                                utils::geo::polarToCartesian(RMGET<float>("characters", "player", "side_step_speed"),
-                                       (this->getRotation() + static_cast<int>(dir) * 90.0f) * M_PI / 180.0f),
+                                                            (this->getRotation() + static_cast<int>(dir) * 90.0f) *
+                                                            M_PI / 180.0f),
                                CONF<float>("side_step_force_duration"));
 
         side_stepping_freeze_time_ = CONF<float>("side_stepping_freeze_time");
@@ -118,8 +119,10 @@ void Player::addSpecialToBackpack(Special* special, const std::function<void(Fun
     }
 
     backpack_.emplace_back(std::make_pair(Special({}, special->getId()), 1));
-    backpack_.back().first.setSize(CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", special->getId(), "size"));
-    backpack_.back().first.changeOrigin(CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", special->getId(), "size") / 2.0f);
+    backpack_.back().first
+             .setSize(CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", special->getId(), "size"));
+    backpack_.back().first.changeOrigin(
+            CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", special->getId(), "size") / 2.0f);
     backpack_.back().first.removeShadow();
     backpack_.back().first.lightOff();
     register_func(&backpack_.back().first);
@@ -159,7 +162,8 @@ void Player::upgradeWeapon(const std::string& weapon, const std::string& special
         }
     }
 
-    if (!has_special) return;
+    if (!has_special)
+        return;
 
     for (auto& obj : weapons_in_backpack_)
     {

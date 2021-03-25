@@ -14,7 +14,8 @@ namespace r3e::graphics {
     class LineEffect : public sf::Drawable {
 
     public:
-        LineEffect(const sf::Color& color, float change_speed) : start_p_(change_speed), end_p_(change_speed), line_(sf::TriangleStrip, 4)
+        LineEffect(const sf::Color& color, float change_speed) :
+                start_p_(change_speed), end_p_(change_speed), line_(sf::TriangleStrip, 4)
         {
             line_[0].color = color;
             line_[1].color = color;
@@ -67,7 +68,7 @@ namespace r3e::graphics {
             end_p_.update(time_elapsed);
 
             auto unit_direction = utils::geo::getNormalized(end_p_.getState() - start_p_.getState());
-            auto unit_perpendicular = sf::Vector2f(- unit_direction.y, unit_direction.x);
+            auto unit_perpendicular = sf::Vector2f(-unit_direction.y, unit_direction.x);
 
             auto offset = (thickness_ / 2.0f) * unit_perpendicular;
 

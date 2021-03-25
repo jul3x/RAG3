@@ -12,6 +12,7 @@
 #include <common/objects/Obstacle.h>
 #include <common/objects/ObstacleTile.h>
 
+
 using namespace r3e;
 
 class Explosion : public HoveringObject {

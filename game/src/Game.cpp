@@ -13,7 +13,6 @@
 #include <Game.h>
 
 
-
 Game::Game() : Framework(),
                current_time_factor_(1.0f), rag3_time_elapsed_(-10.0f),
                forced_zoom_to_time_elapsed_(-10.0f), current_obj_zoom_(nullptr)
@@ -148,7 +147,7 @@ void Game::update(float time_elapsed)
 void Game::updateMapObjects(float time_elapsed)
 {
     Framework::updateMapObjects(time_elapsed);
-    auto& npcs =  map_->getList<NPC>();;
+    auto& npcs = map_->getList<NPC>();;
 
     for (auto it = npcs.begin(); it != npcs.end();)
     {
@@ -165,7 +164,8 @@ void Game::updateMapObjects(float time_elapsed)
             do_increment = false;
         }
 
-        if (do_increment) ++it;
+        if (do_increment)
+            ++it;
     }
 }
 
@@ -471,7 +471,8 @@ void Game::talk()
     auto curr = player_->getCurrentTalkableCharacter();
     if (curr != nullptr)
     {
-        auto still_talking = curr->talk([this](Character* character, const std::string& text) { this->spawnThought(character, text); },
+        auto still_talking = curr->talk(
+                [this](Character* character, const std::string& text) { this->spawnThought(character, text); },
                 player_.get());
 
         if (!still_talking)
@@ -652,7 +653,8 @@ float Game::getRag3Time() const
 
 void Game::updateDestructionSystems(float time_elapsed)
 {
-    utils::eraseIf<std::unique_ptr<DestructionSystem>>(destruction_systems_, [&time_elapsed, this](std::unique_ptr<DestructionSystem>& system) {
+    utils::eraseIf<std::unique_ptr<DestructionSystem>>(destruction_systems_, [&time_elapsed, this](
+            std::unique_ptr<DestructionSystem>& system) {
         if (!system->update(time_elapsed))
         {
             journal_->event<DestroyDestructionSystem>(system.get());

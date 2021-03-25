@@ -18,7 +18,8 @@ namespace r3e {
             return light_.get();
         }
 
-        void makeLightPoint(const sf::Vector2f& pos, float radius, sf::Texture* texture, const std::string& type, float data = 0.0f)
+        void makeLightPoint(const sf::Vector2f& pos, float radius, sf::Texture* texture, const std::string& type,
+                            float data = 0.0f)
         {
             if (type == "const")
             {
@@ -30,7 +31,8 @@ namespace r3e {
             }
             else if (type == "flicker")
             {
-                light_ = std::make_unique<graphics::FlickeringLightPoint>(pos, sf::Vector2f{radius, radius}, texture, data);
+                light_ = std::make_unique<graphics::FlickeringLightPoint>(pos, sf::Vector2f{radius, radius}, texture,
+                                                                          data);
             }
         }
 

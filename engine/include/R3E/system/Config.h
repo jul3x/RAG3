@@ -37,13 +37,13 @@ namespace r3e {
             j3x::mergeParams(*params_, *new_params);
         }
 
-        template <class T>
+        template<class T>
         const T& get(const std::string& key, bool ignore_warn = false) const
         {
             return j3x::get<T>(*params_, key, ignore_warn);
         }
 
-        template <class T>
+        template<class T>
         void set(const std::string& key, const T& value)
         {
             j3x::set<T>(*params_, key, value);

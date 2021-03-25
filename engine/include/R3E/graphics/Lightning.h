@@ -32,7 +32,7 @@ namespace r3e::graphics {
         void add(const LightPoint& light)
         {
             if (utils::geo::isPointInRectangle(light.getPosition(), -light.getSize() / 2.0f,
-                    static_cast<sf::Vector2f>(render_texture_.getSize()) + light.getSize()))
+                                               static_cast<sf::Vector2f>(render_texture_.getSize()) + light.getSize()))
                 render_texture_.draw(light, sf::BlendAdd);
         }
 

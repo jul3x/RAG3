@@ -13,18 +13,22 @@ SmallBackpackHud::SmallBackpackHud(Player* player, const sf::Vector2f& position)
                                {SIZE_X_ * CONF<float>("graphics/user_interface_zoom"),
                                 SIZE_Y_ * CONF<float>("graphics/user_interface_zoom")},
                                &RM.getTexture("items_hud")),
-       player_(player)
+        player_(player)
 {
     this->changeOrigin({SIZE_X_ * CONF<float>("graphics/user_interface_zoom"), 0.0f});
 
-    objects_.emplace_back(position + j3x::getObj<sf::Vector2f>(CONF<j3x::List>("graphics/small_backpack_pos"), 0), NAMES_[0]);
-    objects_.emplace_back(position + j3x::getObj<sf::Vector2f>(CONF<j3x::List>("graphics/small_backpack_pos"), 1), NAMES_[1]);
-    objects_.emplace_back(position + j3x::getObj<sf::Vector2f>(CONF<j3x::List>("graphics/small_backpack_pos"), 2), NAMES_[2]);
+    objects_.emplace_back(position + j3x::getObj<sf::Vector2f>(CONF<j3x::List>("graphics/small_backpack_pos"), 0),
+                          NAMES_[0]);
+    objects_.emplace_back(position + j3x::getObj<sf::Vector2f>(CONF<j3x::List>("graphics/small_backpack_pos"), 1),
+                          NAMES_[1]);
+    objects_.emplace_back(position + j3x::getObj<sf::Vector2f>(CONF<j3x::List>("graphics/small_backpack_pos"), 2),
+                          NAMES_[2]);
 
     for (auto& object : objects_)
     {
         object.setSize(CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", object.getId(), "size"));
-        object.changeOrigin(CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", object.getId(), "size") / 2.0f);
+        object.changeOrigin(
+                CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", object.getId(), "size") / 2.0f);
         object.removeShadow();
         object.setColor(255, 255, 255, 80);
         numbers_.emplace_back("", RM.getFont(), CONF<float>("graphics/backpack_text_size"));
@@ -69,10 +73,13 @@ void SmallBackpackHud::registerGui(tgui::Gui* gui, tgui::Theme* theme)
 
     for (size_t i = 0; i < 3; ++i)
     {
-        tooltips_.emplace_back(theme, pos_offset + j3x::getObj<sf::Vector2f>(CONF<j3x::List>("graphics/small_backpack_pos"), i, false));
-        tooltips_.back().bindFunction(std::bind([this](const std::string& name){ player_->useItem(name); }, NAMES_[i]));
+        tooltips_.emplace_back(theme, pos_offset +
+                                      j3x::getObj<sf::Vector2f>(CONF<j3x::List>("graphics/small_backpack_pos"), i,
+                                                                false));
+        tooltips_.back()
+                 .bindFunction(std::bind([this](const std::string& name) { player_->useItem(name); }, NAMES_[i]));
         tooltips_.back().bindText(RMGET<std::string>("specials", NAMES_[i], "tooltip_header"),
-                         RMGET<std::string>("specials", NAMES_[i], "tooltip"));
+                                  RMGET<std::string>("specials", NAMES_[i], "tooltip"));
         tooltips_.back().bindGui(gui);
         tooltips_.back().show(true);
     }

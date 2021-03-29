@@ -36,6 +36,7 @@ public:
     void initialize() override;
     void update(float time_elapsed) override;
     void draw(graphics::Graphics& graphics) override;
+    void close() override;
 
     // Getters
     [[nodiscard]] Player* getPlayer() override;

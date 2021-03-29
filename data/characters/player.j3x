@@ -27,3 +27,5 @@ list weapons=["m4";"";"";""]
 
 bool is_talkable=false
 string light_point="const"
+
+bool show_health_bar=false

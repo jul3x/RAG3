@@ -698,3 +698,8 @@ void Game::initNPCs()
         }
     }
 }
+
+void Game::close() {
+    map_->getList<NPC>().clear();
+    Framework::close();
+}

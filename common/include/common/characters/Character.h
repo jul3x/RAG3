@@ -23,6 +23,7 @@
 #include <common/objects/Decoration.h>
 #include <common/misc/TalkableArea.h>
 #include <common/weapons/MeleeWeapon.h>
+#include <common/characters/LifeBar.h>
 
 
 using namespace r3e;
@@ -63,6 +64,7 @@ public:
     void makeOnlyOneWeapon(const std::string& id, float state);
     bool addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr);
     void addAmmoToWeapon(const std::string& id);
+    void makeLifeBar(const std::string& name);
 
     // Getters
     const std::vector<std::shared_ptr<AbstractWeapon>>& getWeapons() const;
@@ -142,6 +144,8 @@ private:
     size_t talk_moment_;
 
     float talking_time_elapsed_;
+
+    std::unique_ptr<LifeBar> life_bar_;
 
     std::pair<float, float> speed_factor_with_time_;
 

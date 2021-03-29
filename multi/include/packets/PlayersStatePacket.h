@@ -36,7 +36,7 @@ public:
     explicit PlayersStatePacket(const std::unordered_map<sf::Uint32, Player>& players,
                                 std::unordered_map<sf::Uint32, PlayerInputPacket>& cached_packets)
     {
-        *this << r3e::utils::timeSinceEpochMillisec() << static_cast<short int>(players.size());
+        *this << static_cast<sf::Uint64>(r3e::utils::timeSinceEpochMillisec()) << static_cast<short int>(players.size());
         for (const auto& player : players)
         {
             PlayerData data;
@@ -89,8 +89,9 @@ private:
         append(data, size);
 
         short int players_count;
-        *this >> timestamp_ >> players_count;
-
+        sf::Uint64 time;
+        *this >> time >> players_count;
+        timestamp_ = static_cast<uint64_t>(time);
         for (int i = 0; i < players_count; ++i)
         {
             PlayerData p_data;

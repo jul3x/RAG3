@@ -46,7 +46,7 @@ void Client::initialize()
     }
     data_receive_socket_.setBlocking(false);
 
-    establishConnection("192.168.0.14");
+    establishConnection("192.168.1.23");
 }
 
 void Client::update(float time_elapsed)
@@ -252,6 +252,9 @@ void Client::establishConnection(const sf::IpAddress& ip)
     events_socket_.setBlocking(false);
     LOG.info("[Client] Connection with host: " + ip.toString() + " successful!");
     server_ip_ = ip;
+
+    PlayerEventPacket packet(PlayerEventPacket::Type::NameChange, "jul3x");
+    events_socket_.send(packet);
 }
 
 void Client::handleEventsFromServer()
@@ -294,6 +297,11 @@ void Client::handleEventsFromServer()
                     {
                         obj->setHealth(-1.0);
                     }
+                }
+                case ServerEventPacket::Type::NameChange:
+                {
+                    auto player = getPlayer(packet.getIP());
+                    player->makeLifeBar(packet.getStrData());
                 }
                 case ServerEventPacket::Type::Exit:
                 {

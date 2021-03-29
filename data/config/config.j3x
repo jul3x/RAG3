@@ -1,6 +1,6 @@
 // CHEATS
-bool god_mode = false
-bool no_clip_mode = false
+bool god_mode = true
+bool no_clip_mode = true
 
 // COLLISION DETECTION SETTINGS
 float collision_grid_size = 150.0

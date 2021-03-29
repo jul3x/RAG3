@@ -24,3 +24,5 @@ list weapons=["enemy_chaingun"]
 
 bool is_talkable=false
 string light_point=""
+
+bool show_health_bar=true

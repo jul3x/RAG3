@@ -80,6 +80,9 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
             z_index_,
             RMGET<int>("characters", id, "frames_number"),
             RMGET<float>("characters", id, "frame_duration"));
+
+    if (RMGET<bool>("characters", id, "show_health_bar"))
+        life_bar_ = std::make_unique<LifeBar>(this->getId(), this->getMaxHealth());
 }
 
 bool Character::shot()
@@ -172,6 +175,8 @@ const std::vector<std::shared_ptr<AbstractWeapon>>& Character::getWeapons() cons
 void Character::setMaxHealth(float health)
 {
     max_life_ = health;
+    if (life_bar_ != nullptr)
+        life_bar_->setMaxHealth(health);
 }
 
 float Character::getMaxHealth() const
@@ -202,6 +207,13 @@ bool Character::update(float time_elapsed)
 {
     bool is_alive = life_ > 0;
     DynamicObject::update(time_elapsed);
+
+    if (life_bar_ != nullptr)
+    {
+        life_bar_->setPosition(this->getPosition());
+        life_bar_->setHealth(this->getHealth());
+        life_bar_->update(time_elapsed);
+    }
 
     auto max_speed = RMGET<float>("characters", this->getId(), "max_speed");
     auto speed_factor = this->getSpeedFactor();
@@ -304,6 +316,9 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
         if (!weapons_in_backpack_.empty())
             target.draw(*weapons_in_backpack_.at(current_weapon_), states);
     }
+
+    if (life_bar_ != nullptr)
+        target.draw(*life_bar_);
 }
 
 void Character::setRotation(float theta)
@@ -707,4 +722,9 @@ void Character::setRotateTo(float theta)
 void Character::setCurrentWeapon(int number)
 {
     current_weapon_ = std::max(0, static_cast<int>(number % weapons_in_backpack_.size()));
+}
+
+void Character::makeLifeBar(const std::string& name)
+{
+    life_bar_ = std::make_unique<LifeBar>(name, this->getMaxHealth());
 }

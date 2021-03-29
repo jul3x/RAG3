@@ -19,7 +19,7 @@ public:
                       short int current_weapon)
     {
         timestamp_ = utils::timeSinceEpochMillisec();
-        *this << timestamp_;
+        *this << static_cast<sf::Uint64>(timestamp_);
         for (auto key : IMPLEMENTED_KEYS)
         {
             keys_[key] = keys.count(key);
@@ -64,8 +64,9 @@ private:
     void onReceive(const void* data, std::size_t size) override
     {
         append(data, size);
-        *this >> timestamp_;
-
+        sf::Uint64 time;
+        *this >> time;
+        timestamp_ = static_cast<uint64_t>(time);
         for (auto key : IMPLEMENTED_KEYS)
             *this >> keys_[key];
 

@@ -14,6 +14,7 @@
 class PlayerEventPacket : public sf::Packet {
 public:
     enum class Type {
+        NameChange = 3,
         UseBackpackObject = 2,
         UseObject = 1,
         Exit = -1,

@@ -1,6 +1,6 @@
 // GRAPHICS SETTINGS
 bool auto_resolution = true
-bool full_screen = false
+bool full_screen = true
 int window_width_px = 1920
 int window_height_px = 1080
 float global_zoom = 2.0
@@ -33,6 +33,7 @@ int bullet_trail_vertices = 30
 float use_text_size = 16
 float thought_text_size = 16
 float bonus_text_size = 16
+float player_names_text_size = 16
 float stats_text_size = 36 * user_interface_zoom
 float level_text_size = 54 * user_interface_zoom
 float weapons_text_size = 30 * user_interface_zoom
@@ -69,6 +70,11 @@ float camera_right_click_zoom_factor = 0.6
 float blood_pulsating_time = 5.0
 float inertial_states_change_speed = 4.0
 vector crosshair_size = (25.0, 25.0) * user_interface_zoom
+int health_bar_color = 510575359
+float health_bar_max_width = 50.0
+float health_bar_thickness = 5.0
+float health_bar_offset = -60.0
+float health_bar_name_offset = 5.0
 
 // ACHIEVEMENT POPUPS
 float achievement_show_speed = 4.0

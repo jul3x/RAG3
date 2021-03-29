@@ -320,6 +320,12 @@ void Server::handleEventsFromPlayers()
                             player_it->second.useItem(packet.getStrData());
                             break;
                         }
+                        case PlayerEventPacket::Type::NameChange:
+                        {
+                            ServerEventPacket server_packet(ServerEventPacket::Type::NameChange, packet.getStrData(), player_it->first);
+                            sendEventToPlayers(server_packet);
+                            break;
+                        }
                         case PlayerEventPacket::Type::Exit:
                         {
                             clearPlayer(&player_it->second);

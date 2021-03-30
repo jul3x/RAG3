@@ -32,6 +32,8 @@ namespace r3e::j3x {
 
     std::shared_ptr<Parameters> parse(const std::string& filename);
 
+    std::shared_ptr<Parameters> parseContent(const std::string& content);
+
     void mergeParams(Parameters& params, const Parameters& new_params);
 
     template<class T>

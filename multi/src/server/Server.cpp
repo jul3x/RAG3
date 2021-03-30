@@ -317,12 +317,14 @@ void Server::handleEventsFromPlayers()
                         }
                         case PlayerEventPacket::Type::UseBackpackObject:
                         {
-                            player_it->second.useItem(packet.getStrData());
+                            player_it->second.useItem(j3x::get<std::string>(packet.getParams(), "id"));
                             break;
                         }
                         case PlayerEventPacket::Type::NameChange:
                         {
-                            ServerEventPacket server_packet(ServerEventPacket::Type::NameChange, packet.getStrData(), player_it->first);
+                            ServerEventPacket server_packet(ServerEventPacket::Type::NameChange,
+                                                            packet.getParams(),
+                                                            player_it->first);
                             sendEventToPlayers(server_packet);
                             break;
                         }

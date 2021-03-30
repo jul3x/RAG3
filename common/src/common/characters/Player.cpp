@@ -207,3 +207,11 @@ std::list<std::pair<Special, int>>& Player::getBackpack()
 {
     return backpack_;
 }
+
+void Player::changePlayerTexture(const std::string &name)
+{
+    this->setTextureName(name);
+    this->changeTexture(&RM.getTexture("characters/" + name), true);
+    this->setSize(RMGET<sf::Vector2f>("characters", name, "size"));
+    static_shadow_->setSize(RMGET<sf::Vector2f>("characters", name, "size"));
+}

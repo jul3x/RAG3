@@ -53,6 +53,27 @@ namespace r3e::j3x {
         return parse(filename, "");
     }
 
+    std::shared_ptr<Parameters> parseContent(const std::string& content)
+    {
+        J3XVisitor visitor;
+        try
+        {
+            Script* parse_tree = pScript(content.c_str());
+            if (!parse_tree)
+            {
+                throw std::logic_error("parse error");
+            }
+            parse_tree->accept(&visitor);
+            delete parse_tree;
+        }
+        catch (const std::exception& e)
+        {
+            throw std::logic_error("[J3X] Error while parsing content from string.\nError message: " + std::string(e.what()) + "!\n");
+        }
+
+        return std::make_shared<Parameters>(visitor.getParams());
+    }
+
     void mergeParams(Parameters& params, const Parameters& new_params)
     {
         params.insert(new_params.begin(), new_params.end());

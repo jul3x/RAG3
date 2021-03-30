@@ -83,6 +83,7 @@ public:
     graphics::StaticShadow* getShadow() const;
     float getRotateTo() const;
     const sf::Vector2f& getGunOffset() const;
+    const std::string& getTextureName() const;
 
     // Setters
     void setMaxHealth(float health);
@@ -101,6 +102,7 @@ public:
     void setTalkScenarioStr(const std::string& str);
     void setTalkScenario(const j3x::List& str);
     void changeTexture(sf::Texture* texture, bool reset = false) override;
+    void setTextureName(const std::string& name);
 
     bool updateAnimation(float time_elapsed, float animation_speed_factor = 1.0f) override;
     bool update(float time_elapsed) override;
@@ -131,6 +133,8 @@ protected:
     bool is_talkable_;
     bool is_moving_;
     bool should_respond_;
+
+    std::string texture_name_;
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

@@ -10,6 +10,8 @@
 #include <SFML/System.hpp>
 #include <SFML/Network.hpp>
 
+#include <R3E/j3x/J3X.h>
+
 
 class PlayerEventPacket : public sf::Packet {
 public:
@@ -23,11 +25,13 @@ public:
 
     PlayerEventPacket() = default;
 
-    PlayerEventPacket(Type type, const std::string& data = "")
+    PlayerEventPacket(Type type, const r3e::j3x::Parameters& data = {})
     {
-        type_ = type;
-        data_ = data;
-        *this << static_cast<sf::Uint16>(type_) << data_;
+        std::string params;
+
+        for (const auto& param : data)
+            r3e::j3x::serializeAssign(param.first, param.second, params);
+        *this << static_cast<sf::Uint16>(type) << params;
     }
 
     [[nodiscard]] Type getType() const
@@ -35,9 +39,9 @@ public:
         return type_;
     }
 
-    [[nodiscard]] const std::string& getStrData() const
+    [[nodiscard]] const j3x::Parameters& getParams() const
     {
-        return data_;
+        return *data_;
     }
 
 private:
@@ -45,12 +49,14 @@ private:
     {
         append(data, size);
         sf::Uint16 type;
-        *this >> type >> data_;
+        std::string params;
+        *this >> type >> params;
+        data_ = r3e::j3x::parseContent(params);
 
         type_ = static_cast<Type>(type);
     }
 
-    std::string data_;
+    std::shared_ptr<j3x::Parameters> data_;
     Type type_;
 
 };

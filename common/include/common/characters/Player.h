@@ -39,6 +39,7 @@ public:
     void addSpecialToBackpack(Special* special, const std::function<void(Functional*)>& register_func);
     void useItem(const std::string& name);
     void upgradeWeapon(const std::string& weapon, const std::string& special);
+    void changePlayerTexture(const std::string& name);
     bool sideStep(Player::SideStepDir dir);
     bool update(float time_elapsed) override;
 

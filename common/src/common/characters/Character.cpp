@@ -83,6 +83,8 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
 
     if (RMGET<bool>("characters", id, "show_health_bar"))
         life_bar_ = std::make_unique<LifeBar>(this->getId(), this->getMaxHealth());
+
+    texture_name_ = this->getId();
 }
 
 bool Character::shot()
@@ -448,7 +450,7 @@ void Character::setRotation(float theta)
             throw std::runtime_error("[Character] Invalid rotation quarter!");
     }
 
-    this->changeTexture(&RM.getTexture("characters/" + this->getId() + added_name));
+    this->changeTexture(&RM.getTexture("characters/" + this->getTextureName() + added_name));
 
     auto& weapon_id = weapons_in_backpack_.at(current_weapon_)->getId();
 
@@ -727,4 +729,14 @@ void Character::setCurrentWeapon(int number)
 void Character::makeLifeBar(const std::string& name)
 {
     life_bar_ = std::make_unique<LifeBar>(name, this->getMaxHealth());
+}
+
+const std::string &Character::getTextureName() const
+{
+    return texture_name_;
+}
+
+void Character::setTextureName(const std::string& texture_name)
+{
+    texture_name_ = texture_name;
 }

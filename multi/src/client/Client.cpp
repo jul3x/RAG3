@@ -253,7 +253,10 @@ void Client::establishConnection(const sf::IpAddress& ip)
     LOG.info("[Client] Connection with host: " + ip.toString() + " successful!");
     server_ip_ = ip;
 
-    PlayerEventPacket packet(PlayerEventPacket::Type::NameChange, "jul3x");
+    j3x::Parameters data;
+    data["name"] = std::string("jul3x");
+    data["texture"] = std::string("chaingunner");
+    PlayerEventPacket packet(PlayerEventPacket::Type::NameChange, data);
     events_socket_.send(packet);
 }
 
@@ -297,11 +300,15 @@ void Client::handleEventsFromServer()
                     {
                         obj->setHealth(-1.0);
                     }
+                    break;
                 }
                 case ServerEventPacket::Type::NameChange:
                 {
                     auto player = getPlayer(packet.getIP());
-                    player->makeLifeBar(packet.getStrData());
+
+                    player->makeLifeBar(j3x::get<std::string>(packet.getParams(), "name"));
+                    player->changePlayerTexture(j3x::get<std::string>(packet.getParams(), "texture"));
+                    break;
                 }
                 case ServerEventPacket::Type::Exit:
                 {
@@ -474,7 +481,9 @@ void Client::close()
 void Client::useItem(const std::string& id)
 {
     Framework::useItem(id);
-    auto packet = PlayerEventPacket(PlayerEventPacket::Type::UseBackpackObject, id);
+    j3x::Parameters data;
+    data["id"] = id;
+    auto packet = PlayerEventPacket(PlayerEventPacket::Type::UseBackpackObject, data);
     events_socket_.send(packet);
 }
 

@@ -25,11 +25,7 @@ public:
             keys_[key] = keys.count(key);
             *this << keys_[key];
         }
-        mouse_pressed_ = mouse_pressed;
-        rotation_ = rotation;
-        current_weapon_ = current_weapon;
-
-        *this << mouse_pressed_ << rotation_ << current_weapon_;
+        *this << mouse_pressed << rotation << current_weapon;
     }
 
     [[nodiscard]] bool isKey(sf::Keyboard::Key key) const

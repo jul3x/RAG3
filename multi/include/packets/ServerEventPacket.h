@@ -29,18 +29,17 @@ public:
 
     ServerEventPacket(Type type, int uid, sf::Uint32 player_ip)
     {
-        type_ = type;
-        uid_ = uid;
-        player_ip_ = player_ip;
-        *this << static_cast<sf::Uint16>(type_) << player_ip_ << uid_;
+        *this << static_cast<sf::Uint16>(type) << player_ip << uid;
     }
 
-    ServerEventPacket(Type type, const std::string& data, sf::Uint32 player_ip)
+    ServerEventPacket(Type type, const j3x::Parameters& data, sf::Uint32 player_ip)
     {
-        type_ = type;
-        data_ = data;
-        player_ip_ = player_ip;
-        *this << static_cast<sf::Uint16>(type_) << player_ip_ << data_;
+        *this << static_cast<sf::Uint16>(type) << player_ip;
+
+        std::string params;
+        for (const auto& param : data)
+            r3e::j3x::serializeAssign(param.first, param.second, params);
+        *this << params;
     }
 
     [[nodiscard]] Type getType() const
@@ -53,9 +52,9 @@ public:
         return uid_;
     }
 
-    [[nodiscard]] const std::string& getStrData() const
+    [[nodiscard]] const j3x::Parameters& getParams() const
     {
-        return data_;
+        return *data_;
     }
 
     [[nodiscard]] sf::Uint32 getIP() const
@@ -71,7 +70,11 @@ private:
         *this >> type >> player_ip_;
 
         if (type > STRING_DATA_ABOVE)
-            *this >> data_;
+        {
+            std::string params;
+            *this >> params;
+            data_ = r3e::j3x::parseContent(params);
+        }
         else
             *this >> uid_;
         type_ = static_cast<Type>(type);
@@ -80,7 +83,7 @@ private:
     Type type_{Type::None};
     int uid_{-1};
     sf::Uint32 player_ip_{0};
-    std::string data_;
+    std::shared_ptr<j3x::Parameters> data_;
 
 };
 

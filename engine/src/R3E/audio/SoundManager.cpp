@@ -12,10 +12,11 @@ namespace r3e {
 
         }
 
-        void SoundManager::playSound(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume)
+        void SoundManager::playSound(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume, bool force_pitch)
         {
             played_sounds_.emplace_back(buffer);
-            played_sounds_.back().setPitch(current_pitch_);
+            if (!force_pitch)
+                played_sounds_.back().setPitch(current_pitch_);
             played_sounds_.back().setPosition(position.x, 0.0f, position.y);
             played_sounds_.back().setAttenuation(attenuation_);
             played_sounds_.back().setVolume(volume);

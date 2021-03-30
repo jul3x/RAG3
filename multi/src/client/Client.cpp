@@ -289,6 +289,7 @@ void Client::handleEventsFromServer()
                     {
                         player->addSpecialToBackpack(
                                 obj, [this](Functional* functional) { this->registerFunctions(functional); });
+                        spawnSound(RM.getSound("collect"), obj->getPosition());
                         special_functions_->destroy(obj, {}, player);
                     }
                     break;

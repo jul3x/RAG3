@@ -17,7 +17,7 @@ BloodSplash::BloodSplash(Game* game, const sf::Vector2f& size) :
         low_(size / 2.0f, size, &RM.getTexture("blood_hud_1")),
         player_life_state_(Player::LifeState::High),
         transparency_(255),
-        time_elapsed_(0)
+        time_elapsed_(0), heartbeat_time_elapsed_(2.0f)
 {
 }
 
@@ -44,6 +44,7 @@ void BloodSplash::resizeWindow(const sf::Vector2f& new_size)
 bool BloodSplash::update(float time_elapsed)
 {
     time_elapsed_ += time_elapsed;
+
     auto period = game_->getRag3Time() > 0.0f ? CONF<float>("rag3_time") / 5.0f :
                   CONF<float>("graphics/blood_pulsating_time");
     transparency_ = std::abs(255.0f * std::sin(time_elapsed_ / period * M_PI * 2.0f));
@@ -57,6 +58,20 @@ bool BloodSplash::update(float time_elapsed)
     if (game_->getRag3Time() <= 0.0f && player_life_state_ != Player::LifeState::Critical &&
         player_life_state_ != Player::LifeState::Dead)
         time_elapsed_ = 0.0f;
+
+    if (game_->getRag3Time() > 0.0f || player_life_state_ == Player::LifeState::Critical)
+    {
+        heartbeat_time_elapsed_ += time_elapsed;
+        if (heartbeat_time_elapsed_ > 2.0f)
+        {
+            game_->spawnSound(RM.getSound("heartbeat"), game_->getPlayer()->getPosition());
+            heartbeat_time_elapsed_ = 0.0f;
+        }
+    }
+    else
+    {
+        heartbeat_time_elapsed_ = 2.0f;
+    }
 
     return true;
 }

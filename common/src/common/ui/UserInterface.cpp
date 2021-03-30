@@ -46,7 +46,7 @@ void UserInterface::initialize(graphics::Graphics& graphics)
     camera_->setViewNormalSize(graphics.getWindow().getView().getSize());
 
     gui_ = std::make_unique<tgui::Gui>(graphics.getWindow());
-    small_backpack_hud_.registerGui(gui_.get(), &theme_);
+    small_backpack_hud_.registerGui(framework_);
 
     tgui::ToolTip::setInitialDelay({});
     tgui::ToolTip::setDistanceToMouse({-tgui::ToolTip::getDistanceToMouse().x, tgui::ToolTip::getDistanceToMouse().y});
@@ -291,6 +291,7 @@ void UserInterface::closeWindow(Window* window)
     utils::eraseIf<std::shared_ptr<Window>>(windows_, [window](std::shared_ptr<Window>& window_) {
         return window_.get() == window;
     });
+    framework_->spawnSound(RM.getSound("ui_click"), framework_->getPlayer()->getPosition(), true);
 }
 
 void UserInterface::spawnNoteWindow(const std::string& text)
@@ -299,6 +300,7 @@ void UserInterface::spawnNoteWindow(const std::string& text)
                                                        sf::Vector2f(CONF<int>("graphics/window_width_px"),
                                                                     CONF<int>("graphics/window_height_px")) / 2.0f,
                                                        CONF<sf::Vector2f>("graphics/popup_size")));
+    framework_->spawnSound(RM.getSound("ui_click"), framework_->getPlayer()->getPosition(), true);
 }
 
 void UserInterface::openMenu()
@@ -319,6 +321,11 @@ tgui::Gui* UserInterface::getGui()
 tgui::Theme* UserInterface::getTheme()
 {
     return &theme_;
+}
+
+Framework* UserInterface::getFramework()
+{
+    return framework_;
 }
 
 const std::set<sf::Keyboard::Key>& UserInterface::getKeysPressed()

@@ -182,6 +182,7 @@ void Game::killNPC(NPC* npc)
     // draw on this place destruction
     spawnDecoration(npc->getPosition(), "blood");
     spawnKillEvent(npc->getPosition());
+    spawnSound(RM.getSound(npc->getId() + "_dead"), npc->getPosition());
 
     engine_->deleteDynamicObject(npc);
     auto talkable_area = npc->getTalkableArea();

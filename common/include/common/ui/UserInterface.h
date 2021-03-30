@@ -54,6 +54,7 @@ public:
 
     tgui::Gui* getGui();
     tgui::Theme* getTheme();
+    Framework* getFramework();
 
     void draw(graphics::Graphics& graphics) override;
 

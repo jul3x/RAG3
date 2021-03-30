@@ -52,7 +52,7 @@ namespace r3e {
         void deleteHoveringObject(HoveringObject* obj);
 
         void spawnAnimationEvent(const std::shared_ptr<graphics::AnimationEvent>& event);
-        void spawnSoundEvent(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume = 100.0f);
+        void spawnSoundEvent(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume = 100.0f, bool force_pitch = false);
         void spawnEffect(const std::shared_ptr<graphics::Effect>& effect);
 
         [[nodiscard]] float getCurrentFPS() const;

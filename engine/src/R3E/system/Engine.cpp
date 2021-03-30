@@ -76,9 +76,9 @@ namespace r3e {
         animation_events_.push_back(event);
     }
 
-    void Engine::spawnSoundEvent(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume)
+    void Engine::spawnSoundEvent(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume, bool force_pitch)
     {
-        sound_manager_->playSound(buffer, position, volume);
+        sound_manager_->playSound(buffer, position, volume, force_pitch);
     }
 
     void Engine::spawnEffect(const std::shared_ptr<graphics::Effect>& effect)

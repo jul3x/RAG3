@@ -49,8 +49,10 @@ Menu::Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme*
                            CONF<float>("graphics/menu_button_pos_y") +
                            i * CONF<float>("graphics/menu_button_offset_y"));
 
-        label->connect("mouseentered", [this, i]() { this->buttons_[i]->setText("> " + this->elements_[i].first); });
-        label->connect("mouseleft", [this, i]() { this->buttons_[i]->setText(this->elements_[i].first); });
+        label->connect("mouseentered", [this, i]() {
+            framework_->spawnSound(RM.getSound("ui_hover"), framework_->getPlayer()->getPosition()); this->buttons_[i]->setText("> " + this->elements_[i].first); });
+        label->connect("mouseleft", [this, i]() {
+            this->buttons_[i]->setText(this->elements_[i].first); });
         label->connect("pressed", elem.second);
         gui_->add(label);
         buttons_.emplace_back(label);

@@ -6,6 +6,7 @@
 #include <common/ResourceManager.h>
 
 #include <common/ui/SmallBackpackHud.h>
+#include <common/Framework.h>
 
 
 SmallBackpackHud::SmallBackpackHud(Player* player, const sf::Vector2f& position) :
@@ -66,21 +67,21 @@ void SmallBackpackHud::update(float time_elapsed)
     numbers_[2].setString(rag3 > 1 ? std::to_string(rag3) : "");
 }
 
-void SmallBackpackHud::registerGui(tgui::Gui* gui, tgui::Theme* theme)
+void SmallBackpackHud::registerGui(Framework* framework)
 {
     auto placeholder_size = CONF<sf::Vector2f>("graphics/backpack_placeholder_size");
     auto pos_offset = this->getPosition() - placeholder_size / 2.0f;
 
     for (size_t i = 0; i < 3; ++i)
     {
-        tooltips_.emplace_back(theme, pos_offset +
-                                      j3x::getObj<sf::Vector2f>(CONF<j3x::List>("graphics/small_backpack_pos"), i,
-                                                                false));
+        tooltips_.emplace_back(framework, framework->getUI()->getTheme(), pos_offset +
+                               j3x::getObj<sf::Vector2f>(CONF<j3x::List>("graphics/small_backpack_pos"), i,
+                                                         false));
         tooltips_.back()
-                 .bindFunction(std::bind([this](const std::string& name) { player_->useItem(name); }, NAMES_[i]));
+                 .bindFunction(std::bind([framework](const std::string& name) { framework->useItem(name); }, NAMES_[i]));
         tooltips_.back().bindText(RMGET<std::string>("specials", NAMES_[i], "tooltip_header"),
                                   RMGET<std::string>("specials", NAMES_[i], "tooltip"));
-        tooltips_.back().bindGui(gui);
+        tooltips_.back().bindGui(framework->getUI()->getGui());
         tooltips_.back().show(true);
     }
 }

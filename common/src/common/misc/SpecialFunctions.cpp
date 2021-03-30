@@ -136,6 +136,8 @@ void SpecialFunctions::openDoor(Functional* obj, const j3x::Obj& data, Character
 
     if (user != nullptr && framework_->getJournal() != nullptr)
         framework_->getJournal()->event<DoorOpen>(door);
+
+    framework_->spawnSound(RM.getSound("door"), door->getPosition());
 }
 
 void SpecialFunctions::changeOpenState(Functional* obj, const j3x::Obj& data, Character* user)
@@ -208,6 +210,8 @@ void SpecialFunctions::addWeapon(Functional* obj, const j3x::Obj& data, Characte
     auto& data_parsed = j3x::getObj<std::string>(data);
     std::shared_ptr<AbstractWeapon> weapon = AbstractWeapon::create(user, data_parsed);
 
+    framework_->spawnSound(RM.getSound("collect"), dynamic_cast<AbstractPhysicalObject*>(obj)->getPosition());
+
     if (user->addWeaponToBackpack(weapon))
     {
         framework_->registerWeapon(weapon.get());
@@ -217,6 +221,8 @@ void SpecialFunctions::addWeapon(Functional* obj, const j3x::Obj& data, Characte
 void SpecialFunctions::addAmmo(Functional* obj, const j3x::Obj& data, Character* user)
 {
     LOG.info("[SpecialFunction] Adding ammo.");
+
+    framework_->spawnSound(RM.getSound("collect"), dynamic_cast<AbstractPhysicalObject*>(obj)->getPosition());
 
     user->addAmmoToWeapon(j3x::getObj<std::string>(data));
 }
@@ -249,6 +255,7 @@ void SpecialFunctions::pickCrystal(Functional* obj, const j3x::Obj& data, Charac
     if (framework_->getStats() != nullptr)
         framework_->getStats()->pickCrystal(pos);
 
+    framework_->spawnSound(RM.getSound("collect"), pos);
     framework_->spawnThought(user, "I need more of them!");
 }
 

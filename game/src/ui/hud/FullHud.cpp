@@ -9,6 +9,7 @@
 
 #include <ui/hud/FullHud.h>
 #include <common/ui/UserInterface.h>
+#include <common/Framework.h>
 
 
 BackpackHud::BackpackHud(UserInterface* ui, Player* player, const sf::Vector2f& pos, int x, int y) :
@@ -24,9 +25,11 @@ BackpackHud::BackpackHud(UserInterface* ui, Player* player, const sf::Vector2f& 
                                        &RM.getTexture("backpack_place"));
             numbers_.emplace_back("", RM.getFont(), CONF<float>("graphics/backpack_text_size"));
 
-            tooltips_.emplace_back(ui->getTheme(), pos + sf::Vector2f{static_cast<float>(j), static_cast<float>(i)}
-                                                         * CONF<float>("graphics/backpack_placeholder_diff")
-                                                   - CONF<sf::Vector2f>("graphics/backpack_placeholder_size") / 2.0f);
+            tooltips_.emplace_back(ui->getFramework(),
+                                   ui->getTheme(),
+                                   pos + sf::Vector2f{static_cast<float>(j), static_cast<float>(i)}
+                                         * CONF<float>("graphics/backpack_placeholder_diff")
+                                         - CONF<sf::Vector2f>("graphics/backpack_placeholder_size") / 2.0f);
         }
     }
 
@@ -258,7 +261,8 @@ SkillsHud::SkillsHud(UserInterface* ui, Player* player, const sf::Vector2f& pos)
         buttons_.back()->setPosition(button_pos);
         buttons_.back()->setSize(CONF<sf::Vector2f>("graphics/skills_button_size"));
         buttons_.back()->setVisible(false);
-        buttons_.back()->connect("pressed", [this](Player::Skills skill) {
+        buttons_.back()->connect("pressed", [this, ui](Player::Skills skill) {
+            ui->getFramework()->spawnSound(RM.getSound("ui_click"), ui->getFramework()->getPlayer()->getPosition());
             if (!player_->addSkill(skill))
             {
                 for (auto& button : buttons_)
@@ -387,6 +391,8 @@ FullHud::FullHud(UserInterface* ui, Player* player, const sf::Vector2f& size) :
                                     CONF<int>("graphics/window_height_px")) +
                        CONF<sf::Vector2f>("graphics/back_to_menu_pos"));
     label->setVisible(false);
+    label->connect("mouseentered", [ui]() {
+        ui->getFramework()->spawnSound(RM.getSound("ui_hover"), ui->getFramework()->getPlayer()->getPosition()); });
     label->connect("pressed", [ui]() { ui->openMenu(); });
 
     ui->getGui()->add(label);

@@ -20,7 +20,7 @@ class SmallBackpackHud : public AbstractDrawableObject {
 public:
     explicit SmallBackpackHud(Player* player, const sf::Vector2f& position);
 
-    void registerGui(tgui::Gui* gui, tgui::Theme* theme);
+    void registerGui(Framework* framework);
     void update(float time_elapsed);
     void doShow(bool hide);
 

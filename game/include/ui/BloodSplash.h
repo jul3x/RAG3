@@ -30,7 +30,7 @@ private:
     AbstractDrawableObject dead_, low_, critical_;
 
     sf::Uint8 transparency_;
-    float time_elapsed_;
+    float time_elapsed_, heartbeat_time_elapsed_;
 
     Player::LifeState player_life_state_;
 

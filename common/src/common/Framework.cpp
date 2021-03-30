@@ -286,6 +286,7 @@ void Framework::spawnSwirlEvent(const std::string& name, const sf::Vector2f& pos
 {
     auto event = std::make_shared<Event>(pos, name + "_swirl");
     engine_->spawnAnimationEvent(event);
+    engine_->spawnSoundEvent(RM.getSound(name), pos);
 
     if (flipped)
         event->setFlipX(true);
@@ -449,6 +450,7 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             auto player = dynamic_cast<Player*>(d_obj);
             if (player != nullptr)
             {
+                spawnSound(RM.getSound("collect"), special->getPosition());
                 player->addSpecialToBackpack(special,
                                              [this](Functional* functional) { this->registerFunctions(functional); });
                 special_functions_->destroy(special, {}, player);
@@ -494,6 +496,7 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
                                                      M_PI);
             spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, angle > 0 && angle <= 180 ? 5.0 : -5.0),
                             angle, melee_weapon_area->getFather()->getDeadlyFactor());
+            spawnSound(RM.getSound("melee_hit"), character->getPosition());
             melee_weapon_area->setActive(false);
             character->getCut(*melee_weapon_area->getFather(), factor);
         }
@@ -651,6 +654,9 @@ Framework::getSpawningFunction(const std::string& name)
     static const auto null = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) {
         this->spawnNull(nullptr, "", pos, 0.0f);
     };
+    static const auto fire = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) {
+        this->spawnSound(RM.getSound("flame_shot"), pos);
+    };
     static const auto sparks = [this](const std::string& name, const sf::Vector2f pos, float dir, bool flipped) {
         this->spawnShotEvent(name, pos, dir);
     };
@@ -664,7 +670,7 @@ Framework::getSpawningFunction(const std::string& name)
     if (name == "bullet")
         return std::make_tuple(it->second, sparks);
     else if (name == "fire")
-        return std::make_tuple(it->second, null);
+        return std::make_tuple(it->second, fire);
 
     return std::make_tuple(it->second, swirl);
 }
@@ -973,7 +979,10 @@ void Framework::useItem(const std::string& id)
 {
     auto player = getPlayer();
     if (player != nullptr)
+    {
         player->useItem(id);
+        spawnSound(RM.getSound("ui_click"), player->getPosition());
+    }
 }
 
 void Framework::obstacleDestroyedEvent(Obstacle* obstacle)
@@ -981,4 +990,7 @@ void Framework::obstacleDestroyedEvent(Obstacle* obstacle)
 
 }
 
-
+void Framework::spawnSound(const sf::SoundBuffer &sound, const sf::Vector2f &pos, bool force_pitch)
+{
+    engine_->spawnSoundEvent(sound, pos, 100.0f, force_pitch);
+}

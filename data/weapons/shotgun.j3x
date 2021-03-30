@@ -8,7 +8,7 @@ vector map_offset=(0.0,0.0)
 
 string spawn_func="bullet"
 float spawn_timeout=0.7
-string spawn_type="light"
+string spawn_type="shotgun"
 int spawn_quantity=7
 float spawn_angular_diff=5.0
 float spawn_offset=5.0

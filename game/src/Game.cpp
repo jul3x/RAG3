@@ -257,7 +257,7 @@ void Game::draw(graphics::Graphics& graphics)
             if (special->isDrawable())
                 graphics.drawSorted(*special);
 
-        if (player_->isAlive())
+        if (player_->isAlive() and state_ != GameState::Reverse)
             graphics.drawSorted(*player_);
 
         if (player_clone_ != nullptr)
@@ -510,6 +510,8 @@ void Game::setGameState(Framework::GameState state)
                     system->addToLife(journal_->getTimeReversed());
                 }
 
+                this->spawnTeleportationEvent(player_->getPosition());
+
                 journal_->clear();
             }
             else if (state_ == GameState::Menu)
@@ -703,4 +705,11 @@ void Game::initNPCs()
 void Game::close() {
     map_->getList<NPC>().clear();
     Framework::close();
+}
+
+DestructionSystem *Game::spawnSparksEvent2(const sf::Vector2f &pos, float dir, float r)
+{
+    auto ptr = Framework::spawnSparksEvent2(pos, dir, r);
+    journal_->event<SpawnDestructionSystem>(ptr);
+    return ptr;
 }

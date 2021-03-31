@@ -1,7 +1,7 @@
 float speed=500.0
 float life=2.0
 float deadly_factor=5.0
-vector size=(15.0,2.0)
+vector size=(10.0,5.0)
 float burst_size=200.0
 float burst_offset=10.0
 vector map_offset=(0.0,0.0)

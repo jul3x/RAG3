@@ -48,6 +48,7 @@ public:
 
     // Spawn events
     DestructionSystem* spawnSparksEvent(const sf::Vector2f& pos, float dir, float r) override;
+    DestructionSystem* spawnSparksEvent2(const sf::Vector2f& pos, float dir, float r) override;
     DestructionSystem* spawnBloodEvent(const sf::Vector2f& pos, float dir, float deadly_factor) override;
     void spawnAchievement(const j3x::Parameters& params);
 

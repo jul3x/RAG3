@@ -1,9 +1,9 @@
-vector size=(64.0,64.0)
+vector size=(42.0,100.0)
 
-vector map_offset=(-5.0,6.0)
+vector map_offset=(-5.0,30.0)
 
-int frames_number=100
-float frame_duration=1.0
+int frames_number=14
+float frame_duration=0.7
 
 int z_index=1
 

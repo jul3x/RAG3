@@ -78,6 +78,7 @@ public:
 
     // Spawn events
     virtual DestructionSystem* spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);
+    virtual DestructionSystem* spawnSparksEvent2(const sf::Vector2f& pos, float dir, float r);
     virtual void spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir);
     virtual DestructionSystem* spawnBloodEvent(const sf::Vector2f& pos, float dir, float deadly_factor);
     virtual void spawnExplosionEvent(const sf::Vector2f& pos);

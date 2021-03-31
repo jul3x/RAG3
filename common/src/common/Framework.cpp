@@ -252,7 +252,6 @@ void Framework::spawnEvent(const std::string& name, const sf::Vector2f& pos, flo
 
 DestructionSystem* Framework::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const float r)
 {
-    spawnEvent("sparks", pos, dir, r);
     return spawnNewDestructionSystem(pos, dir - 90.0f, destruction_params_["debris"], 1.0f);
 }
 
@@ -260,33 +259,26 @@ void Framework::spawnExplosionEvent(const sf::Vector2f& pos)
 {
     auto number = std::to_string(utils::num::getRandom(1, 1));
     spawnEvent("explosion_" + number, pos, 0.0f, RMGET<sf::Vector2f>("animations", "explosion_" + number, "size").x);
-
-    if (CONF<bool>("sound/sound_on"))
-        engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
+    spawnSound(RM.getSound("wall_explosion"), pos);
 }
 
 void Framework::spawnKillEvent(const sf::Vector2f& pos)
 {
     auto number = std::to_string(utils::num::getRandom(1, 1));
     spawnEvent("explosion_" + number, pos, 0.0f, RMGET<sf::Vector2f>("animations", "explosion_" + number, "size").x);
-
-//    if (CONF<bool>("sound/sound_on"))
-//        engine_->spawnSoundEvent(RM.getSound("wall_explosion"), pos);
 }
 
 void Framework::spawnTeleportationEvent(const sf::Vector2f& pos)
 {
     spawnEvent("teleportation", pos + sf::Vector2f{0.0f, 10.0f});
-
-    if (CONF<bool>("sound/sound_on"))
-        engine_->spawnSoundEvent(RM.getSound("teleportation"), pos);
+    spawnSound(RM.getSound("teleportation"), pos);
 }
 
 void Framework::spawnSwirlEvent(const std::string& name, const sf::Vector2f& pos, bool flipped)
 {
     auto event = std::make_shared<Event>(pos, name + "_swirl");
     engine_->spawnAnimationEvent(event);
-    engine_->spawnSoundEvent(RM.getSound(name), pos);
+    spawnSound(RM.getSound(name), pos);
 
     if (flipped)
         event->setFlipX(true);
@@ -313,9 +305,7 @@ void Framework::spawnShotEvent(const std::string& name, const sf::Vector2f& pos,
     auto vector = sf::Vector2f{static_cast<float>(std::cos(dir)), static_cast<float>(std::sin(dir))};
     spawnEvent("shot", pos + RMGET<float>("bullets", name, "burst_offset") * vector, dir * 180.0f / M_PI,
                RMGET<float>("bullets", name, "burst_size"));
-
-    if (CONF<bool>("sound/sound_on"))
-        engine_->spawnSoundEvent(RM.getSound(name + "_bullet_shot"), pos);
+    spawnSound(RM.getSound(name + "_bullet_shot"), pos);
 }
 
 DestructionSystem* Framework::spawnBloodEvent(const sf::Vector2f& pos, float dir, float deadly_factor)
@@ -374,12 +364,13 @@ void Framework::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
             obstacle->getShot(*bullet);
 
             spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
-
+            spawnSparksEvent2(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
             bullet->setDead();
         }
         else if (obstacle_tile != nullptr)
         {
             spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
+            spawnSparksEvent2(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
             bullet->setDead();
         }
     }
@@ -813,9 +804,9 @@ void Framework::updateDestructionSystems(float time_elapsed)
 
 void Framework::initDestructionParams()
 {
-    /* blood */
     destruction_params_["blood"] = {};
     destruction_params_["debris"] = {};
+    destruction_params_["debris2"] = {};
     destruction_params_["husk"] = {};
 
     for (auto& param : destruction_params_)
@@ -841,7 +832,6 @@ void Framework::initDestructionParams()
         param.second.r_fac = CONF<float>("graphics/" + param.first + "_system_r_fac");
         param.second.g_fac = CONF<float>("graphics/" + param.first + "_system_g_fac");
         param.second.b_fac = CONF<float>("graphics/" + param.first + "_system_b_fac");
-
     }
 }
 
@@ -992,5 +982,11 @@ void Framework::obstacleDestroyedEvent(Obstacle* obstacle)
 
 void Framework::spawnSound(const sf::SoundBuffer &sound, const sf::Vector2f &pos, bool force_pitch)
 {
-    engine_->spawnSoundEvent(sound, pos, 100.0f, force_pitch);
+    if (CONF<bool>("sound/sound_on") && utils::geo::getDistance(pos, getPlayer()->getPosition()) < 500.0f)
+        engine_->spawnSoundEvent(sound, pos, 100.0f, force_pitch);
+}
+
+DestructionSystem *Framework::spawnSparksEvent2(const sf::Vector2f &pos, float dir, float r)
+{
+    return spawnNewDestructionSystem(pos, dir - 90.0f, destruction_params_["debris2"], 1.0f);
 }

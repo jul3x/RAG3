@@ -180,6 +180,24 @@ float debris_system_r_fac = 0.0
 float debris_system_g_fac = 0.0
 float debris_system_b_fac = 0.0
 
+float debris2_system_vel = 300.0
+float debris2_system_acc = 2000.0
+float debris2_system_time = 2.0
+int debris2_system_count = 10
+int debris2_system_base_color = 4289340159
+float debris2_system_spread_degree = 40.0
+float debris2_system_acceleration_spread = 0.6
+float debris2_system_vel_fac = 0.5
+float debris2_system_acc_fac = 0.2
+float debris2_system_time_fac = 0.5
+float debris2_system_min_size = 1.0
+float debris2_system_max_size = 2.0
+string debris2_system_shader = "debris.frag"
+float debris2_system_full_color_fac = 0.3
+float debris2_system_r_fac = 0.0
+float debris2_system_g_fac = 0.0
+float debris2_system_b_fac = 0.0
+
 float husk_system_vel = 300.0
 float husk_system_acc = 2500.0
 float husk_system_time = 3.0

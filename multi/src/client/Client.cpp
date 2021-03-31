@@ -157,6 +157,7 @@ void Client::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
         if (obstacle != nullptr || obstacle_tile != nullptr)
         {
             spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
+            spawnSparksEvent2(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
             bullet->setDead();
         }
     }

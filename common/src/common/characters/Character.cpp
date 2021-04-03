@@ -4,6 +4,7 @@
 
 #include <R3E/utils/Geometry.h>
 #include <R3E/utils/Numeric.h>
+#include <R3E/utils/Misc.h>
 #include <R3E/system/Config.h>
 
 #include <common/ResourceManager.h>
@@ -82,7 +83,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
             RMGET<float>("characters", id, "frame_duration"));
 
     if (RMGET<bool>("characters", id, "show_health_bar"))
-        life_bar_ = std::make_unique<LifeBar>(this->getId(), this->getMaxHealth());
+        life_bar_ = std::make_unique<LifeBar>(utils::capitalFirst(this->getId()), this->getMaxHealth());
 
     texture_name_ = this->getId();
 }

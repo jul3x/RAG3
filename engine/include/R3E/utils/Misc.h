@@ -31,6 +31,8 @@ namespace r3e::utils {
     }
 
     uint64_t timeSinceEpochMillisec();
+
+    std::string capitalFirst(const std::string& word);
 }
 
 #endif //RAG3_ENGINE_INCLUDE_R3E_UTILS_MISC_H

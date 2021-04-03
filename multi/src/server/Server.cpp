@@ -402,7 +402,7 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         {
             if (bullet->getUser() != getPlayer())
             {
-                factor = 1.0f;
+                factor = 1.0f / factor;
             }
 
             character->getShot(*bullet, factor);
@@ -479,7 +479,7 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         {
             if (melee_weapon_area->getFather()->getUser() != getPlayer())
             {
-                factor = 1.0f;
+                factor = 1.0f / factor;
             }
 
             float angle = utils::geo::wrapAngle0_360(std::get<1>(utils::geo::cartesianToPolar(

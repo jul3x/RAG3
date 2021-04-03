@@ -75,7 +75,7 @@ void Player::getShot(const Bullet& bullet, float factor)
 {
     if (!CONF<bool>("god_mode"))
     {
-        Character::getShot(bullet, 1.0f);
+        Character::getShot(bullet, factor);
     }
 }
 
@@ -103,7 +103,7 @@ void Player::getCut(const MeleeWeapon& weapon, float factor)
 {
     if (!CONF<bool>("god_mode"))
     {
-        Character::getCut(weapon, 1.0f);
+        Character::getCut(weapon, factor);
     }
 }
 

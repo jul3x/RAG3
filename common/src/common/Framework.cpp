@@ -402,14 +402,14 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         {
             if (bullet->getUser() != getPlayer())
             {
-                factor = 1.0f;
+                factor = 1.0f / factor;
             }
 
             character->getShot(*bullet, factor);
 
             float offset = bullet->getRotation() > 0.0f && bullet->getRotation() < 180.0f ? -5.0f : 5.0f;
             spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, offset), bullet->getRotation() + 180.0f,
-                            bullet->getDeadlyFactor());
+                            bullet->getDeadlyFactor() * factor);
 
             bullet->setDead();
         }
@@ -479,14 +479,14 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         {
             if (melee_weapon_area->getFather()->getUser() != getPlayer())
             {
-                factor = 1.0f;
+                factor = 1.0f / factor;
             }
 
             float angle = utils::geo::wrapAngle0_360(std::get<1>(utils::geo::cartesianToPolar(
                     melee_weapon_area->getFather()->getUser()->getPosition() - character->getPosition())) * 180.0 /
                                                      M_PI);
             spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, angle > 0 && angle <= 180 ? 5.0 : -5.0),
-                            angle, melee_weapon_area->getFather()->getDeadlyFactor());
+                            angle, melee_weapon_area->getFather()->getDeadlyFactor() * factor);
             spawnSound(RM.getSound("melee_hit"), character->getPosition());
             melee_weapon_area->setActive(false);
             character->getCut(*melee_weapon_area->getFather(), factor);

@@ -18,7 +18,7 @@ public:
     explicit Stats(Game* game);
     Stats(int kills, int crystals, int explosions, int exp, int level);
 
-    void killEnemy(const sf::Vector2f& pos) override;
+    void killEnemy(const std::string& id, const sf::Vector2f& pos) override;
     void pickCrystal(const sf::Vector2f& pos) override;
     void explode(const sf::Vector2f& pos) override;
     void addExp(int exp, const sf::Vector2f& pos, bool bonus_text = true) override;

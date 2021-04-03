@@ -27,3 +27,4 @@ bool is_talkable=false
 string light_point=""
 
 bool show_health_bar=false
+int enemy_kill_exp = 50

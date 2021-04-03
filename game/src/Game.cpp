@@ -172,7 +172,7 @@ void Game::updateMapObjects(float time_elapsed)
 void Game::killNPC(NPC* npc)
 {
     journal_->event<DestroyCharacter>(npc);
-    stats_->killEnemy(npc->getPosition());
+    stats_->killEnemy(npc->getId(), npc->getPosition());
 
     if (player_clone_ != nullptr)
     {

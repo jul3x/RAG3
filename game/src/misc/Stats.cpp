@@ -18,14 +18,15 @@ Stats::Stats(Game* game) :
 }
 
 Stats::Stats(int kills, int crystals, int explosions, int exp, int level) :
-        AbstractStats(kills, crystals, explosions, exp, level)
+        AbstractStats(kills, crystals, explosions, exp, level),
+        game_(nullptr)
 {
 }
 
-void Stats::killEnemy(const sf::Vector2f& pos)
+void Stats::killEnemy(const std::string& id, const sf::Vector2f& pos)
 {
     ++enemies_killed_;
-    this->addExp(CONF<int>("enemy_kill_exp"), pos);
+    this->addExp(RMGET<int>("characters", id, "enemy_kill_exp"), pos);
 }
 
 void Stats::pickCrystal(const sf::Vector2f& pos)

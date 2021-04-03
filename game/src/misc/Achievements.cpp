@@ -78,7 +78,7 @@ void Achievements::check(const std::string& condition, int data, int delta_data)
             if (!bonus_text.empty())
                 stats_->getGame()->spawnBonusText(stats_->getGame()->getPlayer()->getPosition(), bonus_text);
 
-            stats_->addExp(exp, stats_->getGame()->getPlayer()->getPosition(), false);
+            stats_->addExp(exp, stats_->getGame()->getPlayer()->getPosition(), bonus_text.empty());
         }
     }
 }

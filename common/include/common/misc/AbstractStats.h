@@ -5,6 +5,8 @@
 #ifndef RAG3_COMMON_INCLUDE_MISC_ABSTRACTSTATS_H
 #define RAG3_COMMON_INCLUDE_MISC_ABSTRACTSTATS_H
 
+#include <string>
+
 #include <SFML/System/Vector2.hpp>
 
 
@@ -13,7 +15,7 @@ public:
     explicit AbstractStats();
     AbstractStats(int kills, int crystals, int explosions, int exp, int level);
 
-    virtual void killEnemy(const sf::Vector2f& pos);
+    virtual void killEnemy(const std::string& id, const sf::Vector2f& pos);
     virtual void pickCrystal(const sf::Vector2f& pos);
     virtual void explode(const sf::Vector2f& pos);
     virtual void addExp(int exp, const sf::Vector2f& pos, bool bonus_text = true);

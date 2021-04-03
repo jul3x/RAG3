@@ -42,7 +42,7 @@ AbstractStats::AbstractStats(int kills, int crystals, int explosions, int exp, i
 
 }
 
-void AbstractStats::killEnemy(const sf::Vector2f& pos)
+void AbstractStats::killEnemy(const std::string& id, const sf::Vector2f& pos)
 {
     ++enemies_killed_;
 }

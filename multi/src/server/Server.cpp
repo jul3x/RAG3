@@ -151,6 +151,12 @@ void Server::checkAwaitingConnections()
 
             // Awful but necessary for now
             players_.at(ip).getLightPoint()->registerGraphics(engine_->getGraphics());
+
+            for (auto& packet : cached_events_)
+            {
+                events_socket_[ip]->send(packet);
+            }
+
             break;
         case sf::Socket::NotReady:
 //            LOG.info("No connection yet.");
@@ -383,6 +389,8 @@ void Server::useSpecialObject(Player* player, sf::Uint32 ip)
 
 void Server::sendEventToPlayers(ServerEventPacket& packet)
 {
+    cached_events_.emplace_back(packet);
+
     for (auto& socket : events_socket_)
     {
         socket.second->send(packet);

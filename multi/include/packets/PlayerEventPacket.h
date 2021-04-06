@@ -51,6 +51,7 @@ private:
         sf::Uint16 type;
         std::string params;
         *this >> type >> params;
+
         data_ = r3e::j3x::parseContent(params);
 
         type_ = static_cast<Type>(type);

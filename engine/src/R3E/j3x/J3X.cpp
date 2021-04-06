@@ -58,6 +58,9 @@ namespace r3e::j3x {
         J3XVisitor visitor;
         try
         {
+            if (content.empty())
+                return std::make_shared<Parameters>();
+
             Script* parse_tree = pScript(content.c_str());
             if (!parse_tree)
             {
@@ -68,7 +71,9 @@ namespace r3e::j3x {
         }
         catch (const std::exception& e)
         {
-            throw std::logic_error("[J3X] Error while parsing content from string.\nError message: " + std::string(e.what()) + "!\n");
+            throw std::logic_error("[J3X] Error while parsing content from string.\n"
+                                   "Error message: " + std::string(e.what()) + "!\n"
+                                   "Parsed content: " + content);
         }
 
         return std::make_shared<Parameters>(visitor.getParams());
@@ -160,7 +165,7 @@ namespace r3e::j3x {
         }
         else if (obj.type() == typeid(float))
         {
-            out += "float";
+            out += "float ";
         }
         else if (obj.type() == typeid(bool))
         {

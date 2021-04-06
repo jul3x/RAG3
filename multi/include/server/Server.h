@@ -58,6 +58,7 @@ private:
 
     std::unordered_map<sf::Uint32, Player> players_;
     std::unordered_map<sf::Uint32, PlayerInputPacket> cached_packets_;
+    std::vector<ServerEventPacket> cached_events_;
 
     std::vector<sf::Vector2f> starting_positions_;
 

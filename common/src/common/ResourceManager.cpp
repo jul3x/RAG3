@@ -60,6 +60,7 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
 
     auto tile_number = 0;
     obstacles_tiles.clear();
+    decorations_tiles.clear();
     for (auto& tile : get_param("tile_map"))
     {
         auto tile_id = j3x::getObj<int>(tile);

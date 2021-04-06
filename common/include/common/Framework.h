@@ -25,6 +25,7 @@
 #include <common/ui/UserInterface.h>
 #include <common/misc/AbstractStats.h>
 #include <common/misc/Thought.h>
+#include <common/misc/Weather.h>
 
 
 using namespace r3e;
@@ -166,6 +167,7 @@ protected:
     std::unique_ptr<AbstractStats> stats_;
     std::unique_ptr<SpecialFunctions> special_functions_;
     std::unique_ptr<Map> map_;
+    std::unique_ptr<WeatherSystem> weather_;
     std::unique_ptr<DebugMapBlockage> debug_map_blockage_;
 
     std::list<std::unique_ptr<Bullet>> bullets_;

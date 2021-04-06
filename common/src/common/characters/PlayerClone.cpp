@@ -16,6 +16,7 @@ PlayerClone::PlayerClone(const sf::Vector2f& position, const Player* player, flo
         life_time_(life_time)
 {
     this->setSpeedFactor(1.0f, 0.0f);
+    makeLifeBar("Past Henry");
 }
 
 void PlayerClone::updateLifeTimeDependingOnPrevious(float life_time)

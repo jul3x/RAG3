@@ -81,6 +81,8 @@ void Game::update(float time_elapsed)
             journal_->update(time_elapsed);
             camera_->update(time_elapsed);
 
+            weather_->update(time_elapsed);
+
             if (rag3_time_elapsed_ > 0.0f)
                 rag3_time_elapsed_ -= time_elapsed;
             else if (rag3_time_elapsed_ > -1.0f)
@@ -264,8 +266,10 @@ void Game::draw(graphics::Graphics& graphics)
             graphics.drawSorted(*player_clone_);
 
         engine_->drawSortedAnimationEvents();
+        graphics.drawSorted(*weather_);
 
         graphics.drawAlreadySorted(states.shader);
+
 
         lightning_->clear();
 

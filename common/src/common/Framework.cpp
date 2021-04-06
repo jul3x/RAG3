@@ -40,6 +40,7 @@ void Framework::initialize()
     camera_ = std::make_unique<Camera>();
     special_functions_ = std::make_unique<SpecialFunctions>(this);
     map_ = std::make_unique<Map>();
+    weather_ = std::make_unique<WeatherSystem>(this, -45.0f, WeatherParams{});
 
     engine_->registerCamera(camera_.get());
 

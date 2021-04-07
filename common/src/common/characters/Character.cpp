@@ -326,6 +326,9 @@ void Character::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void Character::setRotation(float theta)
 {
+    if (!this->isVisible())
+        return;
+
     auto get_quarter = [](float theta) {
         if (theta >= 0.0f && theta < 45.0f)
             return 1;
@@ -340,7 +343,7 @@ void Character::setRotation(float theta)
         else
             return 4;
     };
-
+    theta = utils::geo::wrapAngle0_360(theta);
     short int new_quarter = get_quarter(theta);
 
     static std::string added_name;
@@ -371,7 +374,9 @@ void Character::setRotation(float theta)
 
             if (new_quarter == 11 && theta >= 45.0f + CONF<float>("characters/rotating_hysteresis"))
                 current_rotation_quarter_ = 11;
-            else if (new_quarter != 11)
+            else if (new_quarter == 4 && theta < 360.0f - CONF<float>("characters/rotating_hysteresis"))
+                current_rotation_quarter_ = 4;
+            else if (new_quarter != 11 && new_quarter != 4)
                 current_rotation_quarter_ = new_quarter;
             break;
         }
@@ -383,9 +388,11 @@ void Character::setRotation(float theta)
             this->setFlipX(false);
             static_shadow_->setFlipX(false);
 
-            if (new_quarter == 3 && theta >= 90.0f + CONF<float>("characters/rotating_hysteresis"))
-                current_rotation_quarter_ = 3;
-            else if (new_quarter != 3)
+            if (new_quarter == 2 && theta >= 90.0f + CONF<float>("characters/rotating_hysteresis"))
+                current_rotation_quarter_ = 2;
+            else if (new_quarter == 1 && theta < 45.0f - CONF<float>("characters/rotating_hysteresis"))
+                current_rotation_quarter_ = 1;
+            else if (new_quarter != 2 && new_quarter != 1)
                 current_rotation_quarter_ = new_quarter;
             break;
         }
@@ -400,7 +407,9 @@ void Character::setRotation(float theta)
 
             if (new_quarter == 11 && theta < 90.0f - CONF<float>("characters/rotating_hysteresis"))
                 current_rotation_quarter_ = 11;
-            else if (new_quarter != 11)
+            else if (new_quarter == 21 && theta >= 135.0f + CONF<float>("characters/rotating_hysteresis"))
+                current_rotation_quarter_ = 21;
+            else if (new_quarter != 11 && new_quarter != 21)
                 current_rotation_quarter_ = new_quarter;
             break;
         }
@@ -415,7 +424,9 @@ void Character::setRotation(float theta)
 
             if (new_quarter == 2 && theta < 135.0f - CONF<float>("characters/rotating_hysteresis"))
                 current_rotation_quarter_ = 2;
-            else if (new_quarter != 2)
+            else if (new_quarter == 3 && theta >= 180.0f + CONF<float>("characters/rotating_hysteresis"))
+                current_rotation_quarter_ = 3;
+            else if (new_quarter != 2 && new_quarter != 3)
                 current_rotation_quarter_ = new_quarter;
             break;
         }
@@ -430,7 +441,9 @@ void Character::setRotation(float theta)
 
             if (new_quarter == 4 && theta >= 270.0f + CONF<float>("characters/rotating_hysteresis"))
                 current_rotation_quarter_ = 4;
-            else if (new_quarter != 4)
+            else if (new_quarter == 21 && theta < 180.0f - CONF<float>("characters/rotating_hysteresis"))
+                current_rotation_quarter_ = 21;
+            else if (new_quarter != 4 && new_quarter != 21)
                 current_rotation_quarter_ = new_quarter;
             break;
         }
@@ -443,7 +456,9 @@ void Character::setRotation(float theta)
 
             if (new_quarter == 3 && theta < 270.0f - CONF<float>("characters/rotating_hysteresis"))
                 current_rotation_quarter_ = 3;
-            else if (new_quarter != 3)
+            else if (new_quarter == 1 && theta >= CONF<float>("characters/rotating_hysteresis"))
+                current_rotation_quarter_ = 1;
+            else if (new_quarter != 3 && new_quarter != 1)
                 current_rotation_quarter_ = new_quarter;
             break;
         }
@@ -700,6 +715,7 @@ void Character::changeTexture(sf::Texture* texture, bool reset)
 {
     AbstractDrawableObject::changeTexture(texture, reset);
     static_shadow_->changeTexture(texture);
+    static_shadow_->updateAnimation(0.0f);
 }
 
 graphics::StaticShadow* Character::getShadow() const

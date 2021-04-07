@@ -1,7 +1,8 @@
 // STEERING
 float max_acceleration = 1200.0
 float mouse_reaction_speed = 100.0
-float rotating_hysteresis = 10.0
+float rotating_hysteresis = 20.0
+float crosshair_min_distance = 50.0
 
 // IT SHOULD PROBABLY BE IN PARTICULAR CHARACTER DESCRIPTION
 int ammo_dropped = 3

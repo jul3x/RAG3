@@ -56,7 +56,14 @@ void ClientUserInterface::handleMouse(sf::RenderWindow& graphics_window)
 {
     auto mouse_pos = sf::Mouse::getPosition(graphics_window);
     auto mouse_world_pos = graphics_window.mapPixelToCoords(mouse_pos);
-
+    auto player_pos = player_->getPosition() - RMGET<sf::Vector2f>("characters", "player", "map_offset");
+    if (utils::geo::circleCircle(mouse_world_pos, 0.0f, player_pos, CONF<float>("characters/crosshair_min_distance")))
+    {
+        mouse_world_pos = player_pos + CONF<float>("characters/crosshair_min_distance")
+                                       * utils::geo::getNormalized(mouse_world_pos - player_pos);
+        mouse_pos = graphics_window.mapCoordsToPixel(mouse_world_pos);
+        sf::Mouse::setPosition(mouse_pos, graphics_window);
+    }
     crosshair_.setPosition(mouse_pos.x, mouse_pos.y);
 
     bool is_gui = false;

@@ -1,6 +1,6 @@
 // GRAPHICS SETTINGS
-bool auto_resolution = false
-bool full_screen = false
+bool auto_resolution = true
+bool full_screen = true
 int window_width_px = 1700
 int window_height_px = 800
 float global_zoom = 2.0
@@ -215,3 +215,18 @@ float husk_system_full_color_fac = 0.0
 float husk_system_r_fac = 0.0
 float husk_system_g_fac = 0.0
 float husk_system_b_fac = 0.0
+
+// WEATHER SYSTEM
+int weather_particles_count = 200
+float weather_vel = 100.0
+float weather_dir = -45.0
+float weather_spread_degree = 10.0
+float weather_spread_vel = 30.0
+int weather_base_color = -1431655681
+int weather_rag3_color = 65535
+int weather_alpha_min = 50
+int weather_alpha_max = 255
+float weather_min_size = 1.0
+float weather_max_size = 2.0
+float weather_new_particles_time = 1.0
+string weather_shader = "debris.frag"

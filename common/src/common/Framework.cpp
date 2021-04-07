@@ -40,12 +40,11 @@ void Framework::initialize()
     camera_ = std::make_unique<Camera>();
     special_functions_ = std::make_unique<SpecialFunctions>(this);
     map_ = std::make_unique<Map>();
-    weather_ = std::make_unique<WeatherSystem>(this, -45.0f, WeatherParams{});
 
     engine_->registerCamera(camera_.get());
 
-    this->initDestructionParams();
-
+    this->initParams();
+    weather_ = std::make_unique<WeatherSystem>(this, weather_params_.get());
     map_->loadMap("first_new_map");
     agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
                                                           CONF<float>("characters/max_time_without_path_recalc"),
@@ -803,7 +802,7 @@ void Framework::updateDestructionSystems(float time_elapsed)
     });
 }
 
-void Framework::initDestructionParams()
+void Framework::initParams()
 {
     destruction_params_["blood"] = {};
     destruction_params_["debris"] = {};
@@ -834,6 +833,24 @@ void Framework::initDestructionParams()
         param.second.g_fac = CONF<float>("graphics/" + param.first + "_system_g_fac");
         param.second.b_fac = CONF<float>("graphics/" + param.first + "_system_b_fac");
     }
+
+    weather_params_ = std::make_unique<WeatherParams>();
+    weather_params_->vel = CONF<float>("graphics/weather_vel");
+    weather_params_->dir = CONF<float>("graphics/weather_dir");
+    weather_params_->spread_degree = CONF<float>("graphics/weather_spread_degree");
+    weather_params_->spread_vel = CONF<float>("graphics/weather_spread_vel");
+
+    weather_params_->base_color = sf::Color(CONF<int>("graphics/weather_base_color"));
+    weather_params_->rag3_color = sf::Color(CONF<int>("graphics/weather_rag3_color"));
+    weather_params_->alpha_max = CONF<int>("graphics/weather_alpha_max");
+    weather_params_->alpha_min = CONF<int>("graphics/weather_alpha_min");
+    weather_params_->new_particles_time = CONF<float>("graphics/weather_new_particles_time");
+    weather_params_->min_size = CONF<float>("graphics/weather_min_size");
+    weather_params_->max_size = CONF<float>("graphics/weather_max_size");
+
+    weather_params_->count = CONF<int>("graphics/weather_particles_count");
+
+    weather_params_->shader = CONF<std::string>("graphics/weather_shader");
 }
 
 DestructionSystem*

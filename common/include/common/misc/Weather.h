@@ -18,12 +18,13 @@ using namespace r3e;
 class Framework;
 
 struct WeatherParams {
-    float vel, acc, time;
-    float spread_degree, acceleration_spread;
-    float vel_fac, acc_fac, time_fac;
+    float vel;
+    float dir;
+    float spread_degree, spread_vel;
 
-    sf::Color base_color;
-    float r_fac, g_fac, b_fac, full_color_fac;
+    sf::Color base_color, rag3_color;
+    int alpha_max, alpha_min;
+    float new_particles_time;
     float min_size, max_size;
 
     int count;
@@ -34,7 +35,7 @@ struct WeatherParams {
 
 class WeatherParticle {
 public:
-    WeatherParticle(const sf::Vector2f& position, float dir, const WeatherParams& params);
+    WeatherParticle(const sf::Vector2f& position, WeatherParams* params);
 
     bool update(float time_elapsed);
 
@@ -54,7 +55,7 @@ private:
 
 class WeatherSystem : public AbstractDrawableObject {
 public:
-    WeatherSystem(Framework* framework, float dir, const WeatherParams& params);
+    WeatherSystem(Framework* framework, WeatherParams* params);
 
     bool update(float time_elapsed);
 
@@ -65,10 +66,10 @@ private:
 
     std::list<std::unique_ptr<WeatherParticle>> particles_;
     sf::VertexArray drawables_;
-    float dir_;
     float time_elapsed_;
 
     Framework* framework_;
+    WeatherParams* params_;
 
 };
 

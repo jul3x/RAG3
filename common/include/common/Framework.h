@@ -141,7 +141,7 @@ public:
     [[nodiscard]] Framework::GameState getGameState() const;
 
 protected:
-    virtual void initDestructionParams();
+    virtual void initParams();
 
     virtual void updateMapObjects(float time_elapsed);
     virtual void updateBullets(float time_elapsed);
@@ -178,6 +178,7 @@ protected:
 
     std::unordered_map<std::string, DestructionParams> destruction_params_;
     std::unordered_map<std::string, SpawningFunction> spawning_func_;
+    std::unique_ptr<WeatherParams> weather_params_;
 
     float time_elapsed_;
     Framework::GameState state_;

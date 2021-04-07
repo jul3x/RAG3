@@ -3,7 +3,7 @@ bool god_mode = false
 bool no_clip_mode = false
 
 // COLLISION DETECTION SETTINGS
-float collision_grid_size = 150.0
+float collision_grid_size = 100.0
 
 // DESTRUCTION POWER FACTORS
 float obstacles_endurance_factor = 3

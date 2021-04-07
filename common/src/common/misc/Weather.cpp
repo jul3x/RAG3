@@ -9,21 +9,18 @@
 #include <common/ResourceManager.h>
 
 
-WeatherParticle::WeatherParticle(const sf::Vector2f& position, float dir, const WeatherParams& params) :
-        pos_(position), dir_(dir), time_elapsed_(0.0f)
+WeatherParticle::WeatherParticle(const sf::Vector2f& position, WeatherParams* params) :
+        pos_(position), time_elapsed_(0.0f)
 {
-    dir_ = dir + utils::num::getRandom(-10.0f, 10.0f);
+    dir_ = params->dir + utils::num::getRandom(-params->spread_degree, params->spread_degree);
     sf::Vector2f unit = sf::Vector2f{static_cast<float>(std::cos(dir_)), static_cast<float>(std::sin(dir_))};
 
-    perp_vel_ = 100.0f * sf::Vector2f{-unit.y, unit.x};
-    vel_ = (100.0f + utils::num::getRandom(-30.0f, 30.0f)) * unit;
+    perp_vel_ = params->vel * sf::Vector2f{-unit.y, unit.x};
+    vel_ = (params->vel + utils::num::getRandom(-params->spread_vel, params->spread_vel)) * unit;
 
-//    float gamma_factor = utils::num::getRandom(-params.full_color_fac, params.full_color_fac);
-//    color_.r = std::max(0.0f, std::min(255.0f, params.base_color.r + gamma_factor * 255));
-//    color_.g = std::max(0.0f, std::min(255.0f, params.base_color.g + gamma_factor * 255));
-//    color_.b = std::max(0.0f, std::min(255.0f, params.base_color.b + gamma_factor * 255));
-    color_ = sf::Color(160, 160, 160, utils::num::getRandom(50, 255));
-    size_ = utils::num::getRandom(1, 2);
+    color_ = params->base_color;
+    color_.a = utils::num::getRandom(params->alpha_min, params->alpha_max);
+    size_ = utils::num::getRandom(params->min_size, params->max_size);
 }
 
 bool WeatherParticle::update(float time_elapsed)
@@ -48,13 +45,13 @@ float WeatherParticle::getSize() const
     return size_;
 }
 
-WeatherSystem::WeatherSystem(Framework* framework, float dir, const WeatherParams& params) :
+WeatherSystem::WeatherSystem(Framework* framework, WeatherParams* params) :
         AbstractDrawableObject({}, {1.0f, 1.0f}, nullptr, 0),
         particles_(),
         framework_(framework),
         drawables_(sf::Quads, 0),
         time_elapsed_(0.0f),
-        dir_(dir)
+        params_(params)
 {
 }
 
@@ -62,6 +59,8 @@ bool WeatherSystem::update(float time_elapsed)
 {
     int i = 0;
     auto pos = framework_->getPlayer()->getPosition();
+    static auto width = CONF<int>("graphics/window_width_px") / CONF<float>("graphics/global_zoom");
+    static auto height = CONF<int>("graphics/window_height_px") / CONF<float>("graphics/global_zoom");
     this->setPosition(pos);
 
     utils::eraseIf<std::unique_ptr<WeatherParticle>>(particles_,
@@ -71,23 +70,23 @@ bool WeatherSystem::update(float time_elapsed)
 
         ++i;
 
-        if (utils::geo::getDistance(particle->getPosition(), this->getPosition()) > CONF<int>("graphics/window_width_px"))
+        if (utils::geo::getDistance(particle->getPosition(), this->getPosition()) > width)
             return true;
         return false;
     });
 
 
-    if (time_elapsed_ > 1.0f)
+    if (time_elapsed_ > params_->new_particles_time)
     {
         i = 0;
 
-        for (i = -100; i < 100; ++i)
+        for (i = -params_->count / 2; i < params_->count / 2; ++i)
         {
             particles_.emplace_back(std::make_unique<WeatherParticle>(
-                    pos + sf::Vector2f(i * CONF<int>("graphics/window_width_px") / 200 * 2, CONF<int>("graphics/window_height_px") / 2.0f), dir_, WeatherParams{}));
+                    pos + sf::Vector2f(i * width / params_->count * 2, height), params_));
         }
         drawables_.resize(particles_.size() * 4);
-        time_elapsed_ -= 0.5f;
+        time_elapsed_ -= params_->new_particles_time;
     }
 
     time_elapsed_ += time_elapsed;
@@ -97,7 +96,7 @@ bool WeatherSystem::update(float time_elapsed)
 void WeatherSystem::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     static sf::RenderStates states_;
-    states_.shader = &RM.getShader("debris.frag");
+    states_.shader = &RM.getShader(params_->shader);
     target.draw(drawables_, states_);
 }
 
@@ -110,7 +109,10 @@ void WeatherSystem::updateParticle(std::unique_ptr<WeatherParticle>& particle, i
         if (framework_->getRag3Time() <= 0.0f)
             drawables_[4 * i + j].color = particle->getColor();
         else
-            drawables_[4 * i + j].color = sf::Color(0, 0, 255, particle->getColor().a);
+        {
+            drawables_[4 * i + j].color = params_->rag3_color;
+            drawables_[4 * i + j].color.a = particle->getColor().a;
+        }
     }
     drawables_[4 * i + 1].position += {particle->getSize(), 0};
     drawables_[4 * i + 2].position += {particle->getSize(), particle->getSize()};

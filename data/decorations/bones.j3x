@@ -1,0 +1,10 @@
+vector size=(32.0,32.0)
+
+vector map_offset=(0.0,0.0)
+
+int frames_number=1
+float frame_duration=0.0
+
+int z_index=0
+
+string light_point=""

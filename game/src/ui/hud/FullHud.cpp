@@ -95,6 +95,7 @@ void BackpackHud::combineBackpackItems(size_t first, size_t second)
                     RMGET<std::string>("specials", special_id, "tooltip_header") + "\"?",
                     std::bind([this](const std::string& w, const std::string& s) {
                         player_->upgradeWeapon(w, s);
+                        ui_->getFramework()->spawnSound(RM.getSound("ui_upgrade"), ui_->getFramework()->getPlayer()->getPosition());
                     }, weapon_id, special_id));
         }
     }
@@ -393,7 +394,10 @@ FullHud::FullHud(UserInterface* ui, Player* player, const sf::Vector2f& size) :
     label->setVisible(false);
     label->connect("mouseentered", [ui]() {
         ui->getFramework()->spawnSound(RM.getSound("ui_hover"), ui->getFramework()->getPlayer()->getPosition()); });
-    label->connect("pressed", [ui]() { ui->openMenu(); });
+    label->connect("pressed", [ui]() {
+        ui->getFramework()->spawnSound(RM.getSound("ui_upgrade"), ui->getFramework()->getPlayer()->getPosition(), true);
+        ui->openMenu();
+    });
 
     ui->getGui()->add(label);
     buttons_.emplace_back(label);

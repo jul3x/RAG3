@@ -53,7 +53,9 @@ Menu::Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme*
             framework_->spawnSound(RM.getSound("ui_hover"), framework_->getPlayer()->getPosition()); this->buttons_[i]->setText("> " + this->elements_[i].first); });
         label->connect("mouseleft", [this, i]() {
             this->buttons_[i]->setText(this->elements_[i].first); });
-        label->connect("pressed", elem.second);
+        label->connect("pressed", [&elem, this]() {
+            framework_->spawnSound(RM.getSound("ui_upgrade"), framework_->getPlayer()->getPosition(), true);
+            elem.second(); });
         gui_->add(label);
         buttons_.emplace_back(label);
         ++i;

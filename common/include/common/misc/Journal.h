@@ -33,6 +33,7 @@ public:
 
     void update(float time_elapsed);
     bool executeTimeReversal(float time_elapsed);
+    void removeSavedTime(float time_to_remove);
     float getTimeReversed() const;
     Framework* getFramework();
 

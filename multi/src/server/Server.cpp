@@ -402,17 +402,12 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     auto bullet = dynamic_cast<Bullet*>(h_obj);
     auto character = dynamic_cast<Character*>(d_obj);
 
-    auto factor = this->getRag3Time() > 0.0f ? CONF<float>("characters/rag3_factor") : 1.0f;
+    auto factor = 1.0f;
 
     if (bullet != nullptr && character != nullptr)
     {
         if (bullet->getUser() != character)
         {
-            if (bullet->getUser() != getPlayer())
-            {
-                factor = 1.0f / factor;
-            }
-
             character->getShot(*bullet, factor);
             bullet->setDead();
         }
@@ -485,11 +480,6 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     {
         if (character != melee_weapon_area->getFather()->getUser())
         {
-            if (melee_weapon_area->getFather()->getUser() != getPlayer())
-            {
-                factor = 1.0f / factor;
-            }
-
             float angle = utils::geo::wrapAngle0_360(std::get<1>(utils::geo::cartesianToPolar(
                     melee_weapon_area->getFather()->getUser()->getPosition() - character->getPosition())) * 180.0 /
                                                      M_PI);

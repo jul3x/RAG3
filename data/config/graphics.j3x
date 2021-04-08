@@ -125,7 +125,7 @@ vector backpack_placeholder_size = (82.0, 82.0) * user_interface_zoom
 vector backpack_offset = (0.0, -175.0 * user_interface_zoom)
 vector skills_offset = (-200.0, 175.0) * user_interface_zoom
 vector skills_button_size = (20.0, 20.0) * user_interface_zoom
-vector skills_button_offset = (35.0, 12.0) * user_interface_zoom
+vector skills_button_offset = (20.0, 12.0) * user_interface_zoom
 vector skill_points_offset = (-200.0, 20.0) * user_interface_zoom
 list skills_lines = [(-50.0, -300.0) * user_interface_zoom;
                      (-100.0, -200.0) * user_interface_zoom;

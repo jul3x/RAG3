@@ -10,12 +10,12 @@
 #include <common/ui/Tooltip.h>
 
 
-Tooltip::Tooltip(Framework* framework, tgui::Theme* theme, const sf::Vector2f& position) : theme_(theme)
+Tooltip::Tooltip(Framework* framework, tgui::Theme* theme, const sf::Vector2f& position, const sf::Vector2f& size) : theme_(theme)
 {
     button_ = tgui::Button::create();
     button_->setRenderer(theme->getRenderer("TooltipButton"));
     button_->setPosition(position);
-    button_->setSize(CONF<sf::Vector2f>("graphics/backpack_placeholder_size"));
+    button_->setSize(size);
 
     layout_ = tgui::Panel::create();
     layout_->setRenderer(theme->getRenderer("Tooltip"));
@@ -77,4 +77,9 @@ void Tooltip::setActive(bool active)
 bool Tooltip::isActive() const
 {
     return active_;
+}
+
+tgui::Panel::Ptr Tooltip::getTooltip()
+{
+    return layout_;
 }

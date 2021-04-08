@@ -212,16 +212,18 @@ void UserInterface::handleKeys()
     keys_pressed_.clear();
     auto delta = sf::Vector2f(0.0f, 0.0f);
 
-    float max_speed;
-
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
     {
         keys_pressed_.insert(sf::Keyboard::LShift);
-        max_speed = RMGET<float>("characters", "player", "max_running_speed");
+        player_->setRunning(true);
     }
     else
-        max_speed = RMGET<float>("characters", "player", "max_speed");
+    {
+        player_->setRunning(false);
+    }
 
+    float max_speed = player_->isRunning() ? RMGET<float>("characters", "player", "max_running_speed") :
+            RMGET<float>("characters", "player", "max_speed");
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
@@ -257,6 +259,7 @@ void UserInterface::updatePlayerStates(float time_elapsed)
 {
     weapons_bar_.update(player_->getWeapons(), player_->getCurrentWeapon(), time_elapsed);
 
+    health_bar_.setMaxHealth(player_->getMaxHealth());
     health_bar_.update(player_->getHealth(), time_elapsed);
     small_backpack_hud_.update(time_elapsed);
 }

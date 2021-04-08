@@ -402,7 +402,14 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         {
             if (bullet->getUser() != getPlayer())
             {
-                factor = 1.0f / factor;
+                if (character == getPlayer())
+                {
+                    static auto strength_skill_factor = CONF<float>("characters/strength_skill_factor");
+                    factor = 1.0f / factor;
+                    factor = factor * (strength_skill_factor - getPlayer()->getSkill(Player::Skills::Strength)) / strength_skill_factor;
+                }
+                else
+                    factor = 1.0f;
             }
 
             character->getShot(*bullet, factor);
@@ -479,7 +486,10 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         {
             if (melee_weapon_area->getFather()->getUser() != getPlayer())
             {
-                factor = 1.0f / factor;
+                if (character == getPlayer())
+                    factor = 1.0f / factor;
+                else
+                    factor = 1.0f;
             }
 
             float angle = utils::geo::wrapAngle0_360(std::get<1>(utils::geo::cartesianToPolar(
@@ -1007,4 +1017,9 @@ void Framework::spawnSound(const sf::SoundBuffer &sound, const sf::Vector2f &pos
 DestructionSystem *Framework::spawnSparksEvent2(const sf::Vector2f &pos, float dir, float r)
 {
     return spawnNewDestructionSystem(pos, dir - 90.0f, destruction_params_["debris2"], 1.0f);
+}
+
+float Framework::getTimeManipulationFuel() const
+{
+    return 0.0f;
 }

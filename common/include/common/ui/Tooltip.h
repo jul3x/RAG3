@@ -15,7 +15,7 @@ using namespace r3e;
 
 class Tooltip {
 public:
-    explicit Tooltip(Framework* framework, tgui::Theme* theme, const sf::Vector2f& position);
+    explicit Tooltip(Framework* framework, tgui::Theme* theme, const sf::Vector2f& position, const sf::Vector2f& size);
 
     void bindText(const std::string& header, const std::string& text);
 
@@ -28,6 +28,8 @@ public:
     void setActive(bool active);
 
     [[nodiscard]] bool isActive() const;
+
+    [[nodiscard]] tgui::Panel::Ptr getTooltip();
 
 private:
     tgui::Theme* theme_;

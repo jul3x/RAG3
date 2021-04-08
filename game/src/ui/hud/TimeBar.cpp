@@ -14,7 +14,7 @@ TimeBar::TimeBar(const sf::Vector2f& position) :
                                 TIME_SIZE_Y_ * CONF<float>("graphics/user_interface_zoom")},
                                &RM.getTexture("full_time_bar")),
         curr_time_shape_(4),
-        curr_time_(CONF<float>("graphics/inertial_states_change_speed"))
+        curr_time_(CONF<float>("graphics/inertial_states_change_speed") * 5.0f)
 {
 
     curr_time_shape_.setPosition(position);

@@ -45,6 +45,7 @@ public:
     [[nodiscard]] Character* getCurrentTalkableCharacter() const override;
     [[nodiscard]] float getRag3Time() const override;
     [[nodiscard]] float getForcedZoomTime() const;
+    [[nodiscard]] float getTimeManipulationFuel() const override;
 
     // Spawn events
     DestructionSystem* spawnSparksEvent(const sf::Vector2f& pos, float dir, float r) override;
@@ -61,7 +62,7 @@ public:
     // UI functions
     void talk();
     void useSpecialObject() override;
-    void setBulletTime();
+    bool setBulletTime();
     void setNormalTime();
     void setRag3Time(float time_elapsed) override;
     void forceZoomTo(AbstractPhysicalObject* obj) override;
@@ -99,6 +100,7 @@ private:
     float forced_zoom_to_time_elapsed_;
     AbstractPhysicalObject* current_obj_zoom_;
     float current_time_factor_;
+    float time_manipulation_fuel_;
 
 };
 

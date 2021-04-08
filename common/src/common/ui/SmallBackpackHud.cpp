@@ -76,7 +76,8 @@ void SmallBackpackHud::registerGui(Framework* framework)
     {
         tooltips_.emplace_back(framework, framework->getUI()->getTheme(), pos_offset +
                                j3x::getObj<sf::Vector2f>(CONF<j3x::List>("graphics/small_backpack_pos"), i,
-                                                         false));
+                                                         false),
+                               CONF<sf::Vector2f>("graphics/backpack_placeholder_size"));
         tooltips_.back()
                  .bindFunction(std::bind([framework](const std::string& name) { framework->useItem(name); }, NAMES_[i]));
         tooltips_.back().bindText(RMGET<std::string>("specials", NAMES_[i], "tooltip_header"),

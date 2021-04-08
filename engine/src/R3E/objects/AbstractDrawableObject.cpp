@@ -141,7 +141,7 @@ namespace r3e {
 
         if (current_frame_ >= frames_number_)
         {
-            current_frame_ -= frames_number_;
+            current_frame_ -= static_cast<short>(current_frame_ / frames_number_) * frames_number_;
         }
 
         animation_source_.left = (is_flipped_x_ ? 1 : 0) * frame_size_.x + frame_size_.x * current_frame_;

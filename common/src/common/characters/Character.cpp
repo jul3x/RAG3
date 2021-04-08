@@ -51,7 +51,8 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
         should_respond_(false),
         is_moving_(false),
         talk_moment_(0),
-        is_talkable_(RMGET<bool>("characters", id, "is_talkable"))
+        is_talkable_(RMGET<bool>("characters", id, "is_talkable")),
+        previous_pos_(position), current_pos_(position)
 {
     this->changeOrigin(RMGET<sf::Vector2f>("characters", id, "size") / 2.0f +
                        RMGET<sf::Vector2f>("characters", id, "map_offset"));
@@ -209,32 +210,37 @@ void Character::switchWeapon(int relative_position_backpack)
 bool Character::update(float time_elapsed)
 {
     bool is_alive = life_ > 0;
+    previous_pos_ = current_pos_;
+    current_pos_ = this->getPosition();
     DynamicObject::update(time_elapsed);
 
     if (life_bar_ != nullptr)
     {
         life_bar_->setPosition(this->getPosition());
         life_bar_->setHealth(this->getHealth());
+        life_bar_->setMaxHealth(this->getMaxHealth());
         life_bar_->update(time_elapsed);
     }
 
     auto max_speed = RMGET<float>("characters", this->getId(), "max_speed");
     auto speed_factor = this->getSpeedFactor();
-    auto vel = std::get<0>(utils::geo::cartesianToPolar(this->getVelocity()));
-    if (!utils::num::isNearlyEqual(vel, 0.0f, max_speed / 3.0f))
+    auto vel = std::get<0>(utils::geo::cartesianToPolar(current_pos_ - previous_pos_)) / time_elapsed;
+
+    if ((is_moving_ && vel > max_speed / 10.0f ) ||
+        (!is_moving_ && vel > max_speed / 2.0f))
     {
         is_moving_ = true;
+        this->updateAnimation(time_elapsed, max_speed > 0.0f ? vel / max_speed : 1.0f);
     }
     else
     {
-        vel = 0.0f;
         is_moving_ = false;
 
         if (max_speed > 0.0f)
             this->setCurrentFrame(0);
+        else
+            this->updateAnimation(time_elapsed, 1.0f);
     }
-
-    this->updateAnimation(time_elapsed, max_speed > 0.0f ? vel / max_speed : 1.0f);
 
     weapons_in_backpack_.at(current_weapon_)->update(time_elapsed);
 
@@ -551,9 +557,9 @@ Special* Character::getCurrentSpecialObject() const
 
 void Character::handleLifeState()
 {
-    if (life_ > 0.67f * max_life_)
+    if (life_ > 0.67f * getMaxHealth())
         life_state_ = LifeState::High;
-    else if (life_ > 0.2f * max_life_)
+    else if (life_ > 0.2f * getMaxHealth())
         life_state_ = LifeState::Low;
     else if (life_ > 0.0f)
         life_state_ = LifeState::Critical;

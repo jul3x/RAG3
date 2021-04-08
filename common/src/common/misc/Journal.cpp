@@ -218,3 +218,8 @@ Framework* Journal::getFramework()
 {
     return framework_;
 }
+
+void Journal::removeSavedTime(float time_to_remove)
+{
+
+}

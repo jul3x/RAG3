@@ -16,17 +16,13 @@ Player::Player(const sf::Vector2f& position) :
         Character(position, "player"),
         is_alive_(true),
         side_stepping_freeze_time_(-1.0f),
-        skill_points_(0)
+        skill_points_(0),
+        is_running_(false)
 {
     if (CONF<bool>("no_clip_mode"))
     {
         this->changeCollisionArea(collision::None());
     }
-
-    skills_.emplace(std::make_pair(Skills::Intelligence, 0));
-    skills_.emplace(std::make_pair(Skills::Heart, 0));
-    skills_.emplace(std::make_pair(Skills::Strength, 0));
-    skills_.emplace(std::make_pair(Skills::Agility, 0));
 }
 
 void Player::setDead()
@@ -59,6 +55,21 @@ bool Player::sideStep(Player::SideStepDir dir)
 bool Player::update(float time_elapsed)
 {
     side_stepping_freeze_time_ -= time_elapsed;
+
+    if (is_running_)
+    {
+        running_fuel_ -= time_elapsed;
+        if (running_fuel_ <= 0.0f)
+        {
+            running_fuel_ = 0.0f;
+            setRunning(false);
+        }
+    }
+    else
+    {
+        running_fuel_ = std::min(running_fuel_ + getRunningFuelSpeed() * time_elapsed, getMaxRunningFuel());
+    }
+
     bool alive = Character::update(time_elapsed);
     return alive;
 }
@@ -103,7 +114,9 @@ void Player::getCut(const MeleeWeapon& weapon, float factor)
 {
     if (!CONF<bool>("god_mode"))
     {
-        Character::getCut(weapon, factor);
+        static auto strength_skill_factor = CONF<float>("characters/strength_skill_factor");
+        auto skill_factor = (strength_skill_factor - getSkill(Skills::Strength)) / strength_skill_factor;
+        Character::getCut(weapon, factor * skill_factor);
     }
 }
 
@@ -135,10 +148,13 @@ void Player::addSkillPoints(int skill_points)
 
 bool Player::addSkill(Player::Skills skill)
 {
-    if (skill_points_ > 0)
+    static auto max_skills_count = CONF<int>("characters/max_skills_count");
+    auto skills_count = getSkill(skill);
+    if (skill_points_ > 0 && skills_count < max_skills_count)
     {
-        skills_[skill] = skills_.at(skill) + 1;
+        skills_[skill] = ++skills_count;
         --skill_points_;
+        return skill_points_ > 0;
     }
 
     return skill_points_ > 0;
@@ -182,7 +198,7 @@ int Player::getSkillPoints() const
 
 int Player::getSkill(Skills skill) const
 {
-    return skills_.at(skill);
+    return skills_.count(skill) ? skills_.at(skill) : 0;
 }
 
 void Player::useItem(const std::string& name)
@@ -215,3 +231,59 @@ void Player::changePlayerTexture(const std::string &name)
     this->setSize(RMGET<sf::Vector2f>("characters", name, "size"));
     static_shadow_->setSize(RMGET<sf::Vector2f>("characters", name, "size"));
 }
+
+float Player::getMaxHealth() const
+{
+    static auto factor = CONF<float>("characters/health_skill_factor");
+    return max_life_ * static_cast<float>(factor + getSkill(Skills::Heart)) / factor;
+}
+
+float Player::getMaxTimeManipulation() const
+{
+    static auto factor = CONF<float>("characters/intelligence_skill_factor");
+    return CONF<float>("characters/max_base_time_manipulation") * static_cast<float>(factor + getSkill(Skills::Intelligence)) / factor;
+}
+
+float Player::getTimeManipulationFuelSpeed() const
+{
+    static auto factor = CONF<float>("characters/intelligence_skill_factor");
+    return CONF<float>("characters/time_manipulation_fuel_speed") * static_cast<float>(factor + getSkill(Skills::Intelligence)) / factor;
+}
+
+float Player::getMaxRunningFuel() const
+{
+    static auto factor = CONF<float>("characters/agility_skill_factor");
+    return CONF<float>("characters/max_base_running_fuel") * static_cast<float>(factor + getSkill(Skills::Agility)) / factor;
+}
+
+float Player::getRunningFuelSpeed() const
+{
+    static auto factor = CONF<float>("characters/agility_skill_factor");
+    return CONF<float>("characters/running_fuel_speed") * static_cast<float>(factor + getSkill(Skills::Agility)) / factor;
+}
+
+void Player::setRunning(bool run)
+{
+    if (!run)
+    {
+        is_running_ = false;
+        return;
+    }
+
+    if (running_fuel_ > CONF<float>("running_min_time"))
+    {
+        is_running_ = true;
+    }
+}
+
+bool Player::isRunning() const
+{
+    return is_running_;
+}
+
+float Player::getSpeedFactor() const
+{
+    static auto factor = CONF<float>("characters/agility_skill_factor");
+    return Character::getSpeedFactor() * static_cast<float>(factor + getSkill(Skills::Agility)) / factor;
+}
+

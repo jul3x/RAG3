@@ -26,10 +26,18 @@ public:
 
     void setDead();
     void setHealth(float life) override;
+    void setRunning(bool run);
 
+    bool isRunning() const;
     bool isAlive() const;
     void getShot(const Bullet& bullet, float factor) override;
     void getCut(const MeleeWeapon& weapon, float factor) override;
+    float getMaxHealth() const override;
+    float getSpeedFactor() const override;
+    float getMaxTimeManipulation() const;
+    float getTimeManipulationFuelSpeed() const;
+    float getMaxRunningFuel() const;
+    float getRunningFuelSpeed() const;
     int getSkillPoints() const;
     int getSkill(Skills skill) const;
     std::list<std::pair<Special, int>>& getBackpack();
@@ -47,7 +55,9 @@ protected:
     inline void handleGlobalState(float time_elapsed) override;
 
 private:
+    bool is_running_;
     float side_stepping_freeze_time_;
+    float running_fuel_;
 
     bool is_alive_;
 

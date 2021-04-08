@@ -82,7 +82,7 @@ void GameUserInterface::handleAdditionalKeyPressed(sf::Keyboard::Key code)
         }
         case sf::Keyboard::R:
         {
-            if (!game_->isJournalFreezed())
+            if (!game_->isJournalFreezed() && game_->getGameState() == Game::GameState::Normal)
                 game_->setGameState(Game::GameState::Reverse);
             break;
         }
@@ -193,13 +193,12 @@ void GameUserInterface::handleMouse(sf::RenderWindow& graphics_window)
                 camera_->setShaking();
         }
 
-        if (!is_gui && sf::Mouse::isButtonPressed(sf::Mouse::Right))
+        if (!is_gui && sf::Mouse::isButtonPressed(sf::Mouse::Right) && game_->getTimeManipulationFuel() > 0.0f && game_->setBulletTime())
         {
             camera_->setPointingTo(player_->getPosition() +
                                    utils::geo::getNormalized(mouse_world_pos - player_->getPosition()) *
                                    CONF<float>("graphics/camera_right_click_distance_factor"));
             camera_->setZoomTo(CONF<float>("graphics/camera_right_click_zoom_factor"));
-            game_->setBulletTime();
         }
         else if (game_->getForcedZoomTime() < 0.0f)
         {
@@ -214,7 +213,8 @@ void GameUserInterface::updatePlayerStates(float time_elapsed)
 {
     UserInterface::updatePlayerStates(time_elapsed);
 
-    time_bar_.update(game_->getJournal()->getDurationSaved(), time_elapsed);
+    time_bar_.setMaxTime(game_->getPlayer()->getMaxTimeManipulation());
+    time_bar_.update(std::min(game_->getTimeManipulationFuel(), game_->getJournal()->getDurationSaved()), time_elapsed);
     time_bar_.setFreeze(game_->isJournalFreezed() && game_->getGameState() != Game::GameState::Reverse);
 
     blood_splash_.updateLifeState(player_->getLifeState());

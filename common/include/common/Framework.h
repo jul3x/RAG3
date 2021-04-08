@@ -76,6 +76,7 @@ public:
     [[nodiscard]] virtual std::tuple<SpawningFunction, AnimationSpawningFunction>
     getSpawningFunction(const std::string& name);
     [[nodiscard]] virtual float getRag3Time() const;
+    [[nodiscard]] virtual float getTimeManipulationFuel() const;
 
     // Spawn events
     virtual DestructionSystem* spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);

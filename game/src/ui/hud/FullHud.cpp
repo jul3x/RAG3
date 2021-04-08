@@ -25,11 +25,11 @@ BackpackHud::BackpackHud(UserInterface* ui, Player* player, const sf::Vector2f& 
                                        &RM.getTexture("backpack_place"));
             numbers_.emplace_back("", RM.getFont(), CONF<float>("graphics/backpack_text_size"));
 
-            tooltips_.emplace_back(ui->getFramework(),
-                                   ui->getTheme(),
+            tooltips_.emplace_back(ui->getFramework(), ui->getTheme(),
                                    pos + sf::Vector2f{static_cast<float>(j), static_cast<float>(i)}
                                          * CONF<float>("graphics/backpack_placeholder_diff")
-                                         - CONF<sf::Vector2f>("graphics/backpack_placeholder_size") / 2.0f);
+                                         - CONF<sf::Vector2f>("graphics/backpack_placeholder_size") / 2.0f,
+                                   CONF<sf::Vector2f>("graphics/backpack_placeholder_size"));
         }
     }
 
@@ -251,13 +251,13 @@ SkillsHud::SkillsHud(UserInterface* ui, Player* player, const sf::Vector2f& pos)
         lines_.back().setThickness(CONF<float>("graphics/lines_thickness"));
         lines_.back().forceSet();
 
-        texts_.emplace_back(texts_placeholders_[i], RM.getFont(), CONF<float>("graphics/skills_text_size"));
+        texts_.emplace_back(texts_placeholders_[i] + ": 0", RM.getFont(), CONF<float>("graphics/skills_text_size"));
         texts_.back().setFillColor(sf::Color::White);
         texts_.back().setPosition(lines_.back().getStart() + CONF<sf::Vector2f>("graphics/skills_text_offset"));
 
         auto button_pos = texts_.back().getPosition() + sf::Vector2f(texts_.back().getLocalBounds().width, 0)
                           + CONF<sf::Vector2f>("graphics/skills_button_offset");
-        buttons_.emplace_back(tgui::Button::create("+"));
+        buttons_.emplace_back(tgui::Button::create("i"));
         buttons_.back()->setRenderer(ui->getTheme()->getRenderer("AddSkillButton"));
         buttons_.back()->setPosition(button_pos);
         buttons_.back()->setSize(CONF<sf::Vector2f>("graphics/skills_button_size"));
@@ -267,9 +267,12 @@ SkillsHud::SkillsHud(UserInterface* ui, Player* player, const sf::Vector2f& pos)
             if (!player_->addSkill(skill))
             {
                 for (auto& button : buttons_)
-                    button->setVisible(false);
+                    button->setText("i");
             }
         }, skills_[i]);
+        tooltips_.emplace_back(ui->getFramework(), ui->getTheme(), button_pos, CONF<sf::Vector2f>("graphics/skills_button_size"));
+        tooltips_.back().bindText(texts_placeholders_[i], texts_tooltips_[i]);
+        buttons_.back()->setToolTip(tooltips_.back().getTooltip());
         ui->getGui()->add(buttons_.back());
 
         ++i;
@@ -291,7 +294,7 @@ void SkillsHud::update(float time_elapsed)
     size_t i = 0;
     for (auto& text : texts_)
     {
-        text.setString(texts_placeholders_[i] + std::to_string(player_->getSkill(skills_[i])));
+        text.setString(texts_placeholders_[i] + ": " + std::to_string(player_->getSkill(skills_[i])));
         ++i;
     }
 
@@ -319,19 +322,22 @@ void SkillsHud::show(bool hide)
     {
         if (player_->getSkillPoints() > 0)
         {
-            if (hide)
-            {
-                button->hideWithEffect(tgui::ShowAnimationType::Fade,
-                                       sf::seconds(CONF<float>("graphics/full_hud_show_duration") / 2.0f));
-            }
-            else
-            {
-                button->showWithEffect(tgui::ShowAnimationType::Fade,
-                                       sf::seconds(CONF<float>("graphics/full_hud_show_duration")));
-            }
+            button->setText("+");
+        }
+
+        if (hide)
+        {
+            button->hideWithEffect(tgui::ShowAnimationType::Fade,
+                                   sf::seconds(CONF<float>("graphics/full_hud_show_duration") / 2.0f));
+        }
+        else
+        {
+            button->showWithEffect(tgui::ShowAnimationType::Fade,
+                                   sf::seconds(CONF<float>("graphics/full_hud_show_duration")));
         }
     }
 }
+
 
 void SkillsHud::setColor(const sf::Color& color)
 {

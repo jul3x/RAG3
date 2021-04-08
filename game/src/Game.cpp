@@ -15,14 +15,15 @@
 
 Game::Game() : Framework(),
                current_time_factor_(1.0f), rag3_time_elapsed_(-10.0f),
-               forced_zoom_to_time_elapsed_(-10.0f), current_obj_zoom_(nullptr)
+               forced_zoom_to_time_elapsed_(-10.0f), current_obj_zoom_(nullptr),
+               time_manipulation_fuel_(0.0f)
 {
 }
 
 void Game::initialize()
 {
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
-
+    time_manipulation_fuel_ = player_->getMaxTimeManipulation();
     Framework::initialize();
     engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
     ui_ = std::make_unique<GameUserInterface>(this);
@@ -102,12 +103,20 @@ void Game::update(float time_elapsed)
                 current_obj_zoom_ = nullptr;
             }
 
+            if (current_time_factor_ == 1.0f)
+                time_manipulation_fuel_ = std::min(time_manipulation_fuel_ + player_->getTimeManipulationFuelSpeed() * time_elapsed,
+                                                   player_->getMaxTimeManipulation());
+            else
+                time_manipulation_fuel_ -= CONF<float>("characters/time_manipulation_slow_use_speed") * time_elapsed;
+
             time_elapsed_ += time_elapsed;
             break;
         }
         case GameState::Reverse:
         {
-            if (!journal_->executeTimeReversal(CONF<float>("time_reversal_speed_factor") * time_elapsed))
+            time_manipulation_fuel_ -= CONF<float>("time_reversal_speed_factor") * time_elapsed;
+            if (!journal_->executeTimeReversal(CONF<float>("time_reversal_speed_factor") * time_elapsed) ||
+                time_manipulation_fuel_ <= 0.0f)
             {
                 this->setGameState(GameState::Normal);
             }
@@ -479,13 +488,16 @@ void Game::talk()
     }
 }
 
-void Game::setBulletTime()
+bool Game::setBulletTime()
 {
+    if (current_time_factor_ == 1.0f && time_manipulation_fuel_ < CONF<float>("bullet_time_min_time"))
+        return false;
     current_time_factor_ = CONF<float>("bullet_time_factor");
     engine_->setTimeScaleFactor(current_time_factor_);
 
     if (CONF<bool>("sound/sound_on"))
         music_manager_->setPlaybackPitch(CONF<float>("sound/bullet_time_music_factor"));
+    return true;
 }
 
 void Game::setNormalTime()
@@ -539,7 +551,7 @@ void Game::setGameState(Framework::GameState state)
 
             break;
         case GameState::Reverse:
-            if (this->isJournalFreezed())
+            if (this->isJournalFreezed() || current_time_factor_ != 1.0f || this->getTimeManipulationFuel() <= 0.0f)
                 return;
 
             this->spawnTeleportationEvent(player_->getPosition());
@@ -716,4 +728,9 @@ DestructionSystem *Game::spawnSparksEvent2(const sf::Vector2f &pos, float dir, f
     auto ptr = Framework::spawnSparksEvent2(pos, dir, r);
     journal_->event<SpawnDestructionSystem>(ptr);
     return ptr;
+}
+
+float Game::getTimeManipulationFuel() const
+{
+    return time_manipulation_fuel_;
 }

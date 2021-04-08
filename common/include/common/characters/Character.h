@@ -68,11 +68,11 @@ public:
 
     // Getters
     const std::vector<std::shared_ptr<AbstractWeapon>>& getWeapons() const;
-    float getMaxHealth() const;
+    virtual float getMaxHealth() const;
     LifeState getLifeState() const;
     GlobalState getGlobalState() const;
     float getRotation() const override;
-    float getSpeedFactor() const;
+    virtual float getSpeedFactor() const;
     Special* getCurrentSpecialObject() const;
     Character* getCurrentTalkableCharacter() const;
     bool isAlreadyRotated() const;
@@ -139,6 +139,7 @@ protected:
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
+    sf::Vector2f previous_pos_, current_pos_;
     sf::Vector2f gun_offset_;
     float rotate_to_;
 

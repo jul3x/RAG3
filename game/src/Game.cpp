@@ -184,7 +184,7 @@ void Game::killNPC(NPC* npc)
 {
     journal_->event<DestroyCharacter>(npc);
     stats_->killEnemy(npc->getId(), npc->getPosition());
-
+    ui_->removeArrowIfExists(npc);
     if (player_clone_ != nullptr)
     {
         player_clone_->removeEnemy(npc);
@@ -467,6 +467,7 @@ void Game::useSpecialObject()
     if (curr != nullptr)
     {
         curr->use(player_.get());
+        ui_->removeArrowIfExists(curr);
     }
 }
 
@@ -484,6 +485,7 @@ void Game::talk()
             engine_->deleteHoveringObject(curr->getTalkableArea());
             curr->use(curr);
             curr->deactivate();
+            ui_->removeArrowIfExists(curr);
         }
     }
 }

@@ -118,6 +118,11 @@ void GameUserInterface::draw(graphics::Graphics& graphics)
         {
             graphics.draw(bonus_text);
         }
+
+        for (auto& arrow : tutorial_arrows_)
+        {
+            graphics.draw(arrow.second);
+        }
     }
 
     graphics.setStaticView();

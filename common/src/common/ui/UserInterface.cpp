@@ -30,6 +30,7 @@ UserInterface::UserInterface(Framework* framework) :
         small_backpack_hud_(framework->getPlayer(), {static_cast<float>(CONF<int>("graphics/window_width_px")), 0.0f}),
         player_(nullptr),
         camera_(nullptr),
+        tutorial_arrows_initialized_(false),
         theme_("../data/config/gui_theme.txt")
 {
 }
@@ -79,6 +80,7 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
     updatePlayerStates(time_elapsed);
     handleMouse(graphics.getWindow());
     handleKeys();
+    handleTutorialArrows(time_elapsed);
 
     auto special_object = framework_->getCurrentSpecialObject();
     if (special_object != nullptr)
@@ -349,5 +351,48 @@ void UserInterface::handleAdditionalKeyPressed(sf::Keyboard::Key code)
 void UserInterface::handleKeyReleased(sf::Keyboard::Key code)
 {
 
+}
+
+void UserInterface::handleTutorialArrows(float time_elapsed)
+{
+// TODO needs rework when loading new maps will be available
+
+    static auto& has_arrows = CONF<j3x::List>("graphics/tutorial_arrows");
+    if (!tutorial_arrows_initialized_)
+    {
+        for (size_t i = 0; i < has_arrows.size(); ++i)
+        {
+            auto name = j3x::getObj<std::string>(has_arrows, i);
+
+            if (name == "talkables")
+            {
+                for (auto& obj : framework_->getMap()->getList<NPC>())
+                {
+                    if (obj->isTalkable())
+                        tutorial_arrows_.emplace(std::make_pair(obj.get(), TutorialArrow(obj.get())));
+                }
+            }
+            else
+            {
+                for (auto& obj : framework_->getMap()->getList<Special>())
+                {
+                    if (obj->getId() == name)
+                        tutorial_arrows_.emplace(std::make_pair(obj.get(), TutorialArrow(obj.get())));
+                }
+            }
+        }
+
+        tutorial_arrows_initialized_ = true;
+    }
+
+    for (auto& arrow : tutorial_arrows_)
+        arrow.second.update(time_elapsed);
+}
+
+void UserInterface::removeArrowIfExists(AbstractPhysicalObject *obj)
+{
+    auto it = tutorial_arrows_.find(obj);
+    if (it != tutorial_arrows_.end())
+        tutorial_arrows_.erase(it);
 }
 

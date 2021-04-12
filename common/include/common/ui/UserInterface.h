@@ -20,6 +20,7 @@
 #include <common/misc/BonusText.h>
 #include <common/characters/Player.h>
 #include <common/misc/Camera.h>
+#include <common/misc/TutorialArrow.h>
 #include <common/ui/Achievement.h>
 #include <common/ui/SmallBackpackHud.h>
 
@@ -61,7 +62,10 @@ public:
     const std::set<sf::Keyboard::Key>& getKeysPressed();
     bool isLeftMousePressed() const;
 
+    void removeArrowIfExists(AbstractPhysicalObject* obj);
+
 protected:
+    virtual void handleTutorialArrows(float time_elapsed);
     virtual void handleEvents(graphics::Graphics& graphics);
     virtual void handleAdditionalKeyPressed(sf::Keyboard::Key code);
     virtual void handleKeyReleased(sf::Keyboard::Key code);
@@ -81,8 +85,8 @@ protected:
     static constexpr float FPS_X_ = 150.0f;
     static constexpr float FPS_Y_ = 300.0f;
 
-    static constexpr float OBJECT_USE_TEXT_OFFSET_Y_ = 32.0f;
-    static constexpr float TALK_TEXT_OFFSET_Y_ = 42.0f;
+    static constexpr float OBJECT_USE_TEXT_OFFSET_Y_ = 20.0f;
+    static constexpr float TALK_TEXT_OFFSET_Y_ = 40.0f;
 
     std::unique_ptr<tgui::Gui> gui_;
     tgui::Theme theme_;
@@ -98,6 +102,8 @@ protected:
     std::list<Achievement> achievements_;
     std::list<Thought> thoughts_;
     std::list<BonusText> bonus_texts_;
+    std::unordered_map<AbstractPhysicalObject*, TutorialArrow> tutorial_arrows_;
+    bool tutorial_arrows_initialized_;
     std::list<std::shared_ptr<Window>> windows_;
     sf::Text fps_text_;
     sf::Text object_use_text_;

@@ -31,6 +31,7 @@ int bullet_trail_vertices = 30
 
 // FONTS
 float use_text_size = 16
+float tutorial_arrow_text_size = 16
 float thought_text_size = 16
 float bonus_text_size = 16
 float player_names_text_size = 16
@@ -75,6 +76,9 @@ float health_bar_max_width = 50.0
 float health_bar_thickness = 5.0
 float health_bar_offset = -60.0
 float health_bar_name_offset = 5.0
+list tutorial_arrows = ["talkables"; "note"; "note_open"]
+float tutorial_arrow_offset = -12.0
+float tutorial_arrow_amplitude = 3.0
 
 // ACHIEVEMENT POPUPS
 float achievement_show_speed = 4.0

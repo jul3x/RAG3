@@ -26,7 +26,7 @@ void ClientUserInterface::initialize(graphics::Graphics& graphics)
 
     UserInterface::initialize(graphics);
 
-    health_bar_.setMaxHealth(player_->getMaxHealth());
+    health_bar_.setMaxAmount(player_->getMaxHealth());
     small_backpack_hud_.doShow(false);
 }
 

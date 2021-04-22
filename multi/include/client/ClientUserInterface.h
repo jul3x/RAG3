@@ -11,7 +11,6 @@
 #include <R3E/system/AbstractUserInterface.h>
 
 #include <common/ui/WeaponsBar.h>
-#include <common/ui/HealthBar.h>
 #include <common/ui/Crosshair.h>
 #include <common/ui/RightHud.h>
 #include <common/ui/Achievement.h>

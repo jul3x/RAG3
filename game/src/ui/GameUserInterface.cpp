@@ -21,10 +21,13 @@ GameUserInterface::GameUserInterface(Game* game) :
         blood_splash_(game,
                       sf::Vector2f(CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_height_px"))),
         time_bar_({TIME_BAR_X_ * CONF<float>("graphics/user_interface_zoom"),
-                   CONF<int>("graphics/window_height_px") - TIME_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")}),
+                   CONF<int>("graphics/window_height_px") - TIME_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")},
+                  "time_bar"),
+        speed_bar_({SPEED_BAR_X_ * CONF<float>("graphics/user_interface_zoom"),
+                   CONF<int>("graphics/window_height_px") - SPEED_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")},
+                  "speed_bar"),
         left_hud_({0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))}),
-        stats_hud_({0.0f, 0.0f}),
-        level_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")) / 2.0f, 0.0f})
+        stats_hud_({0.0f, 0.0f})
 {
 
 }
@@ -37,8 +40,9 @@ void GameUserInterface::initialize(graphics::Graphics& graphics)
     }
 
     UserInterface::initialize(graphics);
-    health_bar_.setMaxHealth(player_->getMaxHealth());
-    time_bar_.setMaxTime(CONF<float>("journal_max_time"));
+    health_bar_.setMaxAmount(player_->getMaxHealth());
+    time_bar_.setMaxAmount(CONF<float>("journal_max_time"));
+    speed_bar_.setMaxAmount(player_->getMaxRunningFuel());
 
     full_hud_ = std::make_unique<FullHud>(this, game_->getPlayer(),
                                           sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
@@ -136,11 +140,12 @@ void GameUserInterface::draw(graphics::Graphics& graphics)
         graphics.draw(right_hud_);
         graphics.draw(health_bar_);
         graphics.draw(time_bar_);
+        graphics.draw(speed_bar_);
         graphics.draw(weapons_bar_);
         graphics.draw(*full_hud_);
         graphics.draw(stats_hud_);
         graphics.draw(small_backpack_hud_);
-        graphics.draw(level_hud_);
+//        graphics.draw(level_hud_);
     }
     else
     {
@@ -218,15 +223,16 @@ void GameUserInterface::updatePlayerStates(float time_elapsed)
 {
     UserInterface::updatePlayerStates(time_elapsed);
 
-    time_bar_.setMaxTime(game_->getPlayer()->getMaxTimeManipulation());
+    time_bar_.setMaxAmount(player_->getMaxTimeManipulation());
     time_bar_.update(std::min(game_->getTimeManipulationFuel(), game_->getJournal()->getDurationSaved()), time_elapsed);
     time_bar_.setFreeze(game_->isJournalFreezed() && game_->getGameState() != Game::GameState::Reverse);
-
+    speed_bar_.setMaxAmount(player_->getMaxRunningFuel());
+    speed_bar_.update(player_->getRunningFuel(), time_elapsed);
+    speed_bar_.setFreeze(player_->getRunningFuel() < CONF<float>("running_min_time") && !player_->isRunning());
     blood_splash_.updateLifeState(player_->getLifeState());
 
     auto stats = game_->getStats();
     stats_hud_.update(stats->getEnemiesKilled(), stats->getCrystalsPicked(), time_elapsed);
-    level_hud_.update(stats->getLevel(), stats->getExp(), time_elapsed);
     full_hud_->update(time_elapsed);
     menu_->update(time_elapsed);
 }

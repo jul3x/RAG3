@@ -1,9 +1,9 @@
 // GRAPHICS SETTINGS
-bool auto_resolution = false
-bool full_screen = false
+bool auto_resolution = true
+bool full_screen = true
 int window_width_px = 1700
 int window_height_px = 800
-float global_zoom = 2.0
+float global_zoom = 4.0
 float user_interface_zoom = global_zoom / 2.0
 
 // MENU
@@ -36,7 +36,8 @@ float thought_text_size = 16
 float bonus_text_size = 16
 float player_names_text_size = 16
 float stats_text_size = 36 * user_interface_zoom
-float level_text_size = 54 * user_interface_zoom
+float name_text_size = 54 * user_interface_zoom
+float level_text_size = 24 * user_interface_zoom
 float weapons_text_size = 30 * user_interface_zoom
 float achievement_title_text_size = 24 * user_interface_zoom
 float achievement_text_text_size = 20 * user_interface_zoom

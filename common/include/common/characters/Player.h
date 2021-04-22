@@ -27,6 +27,7 @@ public:
     void setDead();
     void setHealth(float life) override;
     void setRunning(bool run);
+    void setName(const std::string& name);
 
     bool isRunning() const;
     bool isAlive() const;
@@ -36,11 +37,14 @@ public:
     float getSpeedFactor() const override;
     float getMaxTimeManipulation() const;
     float getTimeManipulationFuelSpeed() const;
+    float getRunningFuel() const;
     float getMaxRunningFuel() const;
     float getRunningFuelSpeed() const;
     int getSkillPoints() const;
     int getSkill(Skills skill) const;
     std::list<std::pair<Special, int>>& getBackpack();
+    const std::string& getName() const;
+    void makeLifeBar(const std::string& name) override;
 
     void addSkillPoints(int skill_points);
     bool addSkill(Skills skill);
@@ -64,6 +68,7 @@ private:
     std::list<std::pair<Special, int>> backpack_;
     int skill_points_;
     std::map<Skills, int> skills_;
+    std::string name_;
 
 };
 

@@ -11,7 +11,7 @@
 #include <R3E/system/AbstractUserInterface.h>
 
 #include <common/ui/WeaponsBar.h>
-#include <common/ui/HealthBar.h>
+#include <common/ui/HudBar.h>
 #include <common/ui/Crosshair.h>
 #include <common/ui/RightHud.h>
 #include <common/ui/AcceptWindow.h>
@@ -76,11 +76,14 @@ protected:
 
     static constexpr float ACHIEVEMENTS_MARGIN_ = 20.0f;
 
-    static constexpr float HEALTH_BAR_X_ = 163.0f;
-    static constexpr float HEALTH_BAR_Y_ = 161.0f;
+    static constexpr float HEALTH_BAR_X_ = 370.0f;
+    static constexpr float HEALTH_BAR_Y_ = 40.0f;
 
-    static constexpr float TIME_BAR_X_ = 165.0f;
-    static constexpr float TIME_BAR_Y_ = 157.0f;
+    static constexpr float TIME_BAR_X_ = 141.0f;
+    static constexpr float TIME_BAR_Y_ = 102.0f;
+
+    static constexpr float SPEED_BAR_X_ = 141.0f;
+    static constexpr float SPEED_BAR_Y_ = 54.0f;
 
     static constexpr float FPS_X_ = 150.0f;
     static constexpr float FPS_Y_ = 300.0f;
@@ -95,7 +98,7 @@ protected:
     WeaponsBar weapons_bar_;
     Crosshair crosshair_;
     RightHud right_hud_;
-    HealthBar health_bar_;
+    HudBar health_bar_;
     SmallBackpackHud small_backpack_hud_;
 
     // MISC

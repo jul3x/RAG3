@@ -64,7 +64,7 @@ public:
     void makeOnlyOneWeapon(const std::string& id, float state);
     bool addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr);
     void addAmmoToWeapon(const std::string& id);
-    void makeLifeBar(const std::string& name);
+    virtual void makeLifeBar(const std::string& name);
 
     // Getters
     const std::vector<std::shared_ptr<AbstractWeapon>>& getWeapons() const;

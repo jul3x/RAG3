@@ -21,7 +21,8 @@ UserInterface::UserInterface(Framework* framework) :
                       static_cast<float>(CONF<int>("graphics/window_height_px"))}),
         health_bar_(
                 {CONF<int>("graphics/window_width_px") - HEALTH_BAR_X_ * CONF<float>("graphics/user_interface_zoom"),
-                 CONF<int>("graphics/window_height_px") - HEALTH_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")}),
+                 CONF<int>("graphics/window_height_px") - HEALTH_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")},
+                 "health_bar"),
         fps_text_("FPS: ", RM.getFont("editor"), 12),
         object_use_text_("[F] Use object", RM.getFont(), CONF<float>("graphics/use_text_size")),
         npc_talk_text_("[T] Talk to NPC", RM.getFont(), CONF<float>("graphics/use_text_size")),
@@ -33,6 +34,7 @@ UserInterface::UserInterface(Framework* framework) :
         tutorial_arrows_initialized_(false),
         theme_("../data/config/gui_theme.txt")
 {
+    health_bar_.setReversed(true);
 }
 
 void UserInterface::initialize(graphics::Graphics& graphics)
@@ -261,7 +263,15 @@ void UserInterface::updatePlayerStates(float time_elapsed)
 {
     weapons_bar_.update(player_->getWeapons(), player_->getCurrentWeapon(), time_elapsed);
 
-    health_bar_.setMaxHealth(player_->getMaxHealth());
+    auto stats = framework_->getStats();
+    if (stats != nullptr)
+        right_hud_.update(framework_->getStats()->getLevel(), framework_->getStats()->getExp(), time_elapsed);
+
+    auto player = framework_->getPlayer();
+    if (player != nullptr)
+        right_hud_.setName(player->getName());
+
+    health_bar_.setMaxAmount(player_->getMaxHealth());
     health_bar_.update(player_->getHealth(), time_elapsed);
     small_backpack_hud_.update(time_elapsed);
 }

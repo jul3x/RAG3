@@ -15,8 +15,8 @@
 
 WeaponsBar::WeaponsBar(const sf::Vector2f& position) :
         AbstractDrawableObject(position, {2.0f, 2.0f}, nullptr),
-        weapons_positions_({sf::Vector2f(-461.0f, -140.0f), sf::Vector2f(-405.0f, -278.0f),
-                            sf::Vector2f(-286.0f, -366.0f), sf::Vector2f(-149.0f, -410.0f)})
+        weapons_positions_({sf::Vector2f(-814.0f, -65.0f), sf::Vector2f(-705.0f, -65.0f),
+                            sf::Vector2f(-603.0f, -65.0f), sf::Vector2f(-500.0f, -65.0f)})
 {
     for (int i = 0; i < SLOTS_; ++i)
     {
@@ -63,8 +63,7 @@ WeaponsBar::update(const std::vector<std::shared_ptr<AbstractWeapon>>& weapons, 
             sf::FloatRect text_rect = ammo_.at(i).getLocalBounds();
             ammo_.at(i).setOrigin(text_rect.left + text_rect.width / 2.0f,
                                   text_rect.top + text_rect.height / 2.0f);
-            ammo_.at(i)
-                 .setPosition(weapon_pos + sf::Vector2f{-20.0f, -30.0f * CONF<float>("graphics/user_interface_zoom")});
+            ammo_.at(i).setPosition(weapon_pos + sf::Vector2f{0.0f, -30.0f * CONF<float>("graphics/user_interface_zoom")});
         }
         else
         {

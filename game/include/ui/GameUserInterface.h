@@ -10,12 +10,11 @@
 #include <R3E/system/Config.h>
 
 #include <ui/menu/Menu.h>
-#include <ui/hud/TimeBar.h>
+#include <common/ui/HudBar.h>
 #include <ui/BloodSplash.h>
 #include <ui/hud/LeftHud.h>
 #include <ui/hud/StatsHud.h>
 #include <common/ui/SmallBackpackHud.h>
-#include <ui/hud/LevelHud.h>
 #include <ui/hud/FullHud.h>
 
 #include <common/ui/UserInterface.h>
@@ -49,12 +48,12 @@ private:
     void handleMouse(sf::RenderWindow& graphics_window) override;
     void updatePlayerStates(float time_elapsed) override;
 
-    // NORMAL HUD - maybe should be refactored
+    // NORMAL HUD
     BloodSplash blood_splash_;
     LeftHud left_hud_;
-    TimeBar time_bar_;
+    HudBar time_bar_;
+    HudBar speed_bar_;
     StatsHud stats_hud_;
-    LevelHud level_hud_;
 
     // MENUS
     std::unique_ptr<FullHud> full_hud_;

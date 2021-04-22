@@ -17,7 +17,8 @@ Player::Player(const sf::Vector2f& position) :
         is_alive_(true),
         side_stepping_freeze_time_(-1.0f),
         skill_points_(0),
-        is_running_(false)
+        is_running_(false),
+        running_fuel_(0.0f)
 {
     if (CONF<bool>("no_clip_mode"))
     {
@@ -285,5 +286,26 @@ float Player::getSpeedFactor() const
 {
     static auto factor = CONF<float>("characters/agility_skill_factor");
     return Character::getSpeedFactor() * static_cast<float>(factor + getSkill(Skills::Agility)) / factor;
+}
+
+float Player::getRunningFuel() const
+{
+    return running_fuel_;
+}
+
+const std::string& Player::getName() const
+{
+    return name_;
+}
+
+void Player::makeLifeBar(const std::string& name)
+{
+    Character::makeLifeBar(name);
+    name_ = name;
+}
+
+void Player::setName(const std::string& name)
+{
+    name_ = name;
 }
 

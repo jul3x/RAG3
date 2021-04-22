@@ -27,8 +27,8 @@ public:
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    static constexpr float SIZE_X_ = 540.0f;
-    static constexpr float SIZE_Y_ = 200.0f;
+    static constexpr float SIZE_X_ = 590.0f;
+    static constexpr float SIZE_Y_ = 250.0f;
     const std::string NAMES_[3] = {"health", "more_speed", "rag3"};
 
     std::vector<Special> objects_;

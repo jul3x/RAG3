@@ -488,4 +488,3 @@ void Client::useItem(const std::string& id)
     auto packet = PlayerEventPacket(PlayerEventPacket::Type::UseBackpackObject, data);
     events_socket_.send(packet);
 }
-

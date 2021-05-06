@@ -74,7 +74,7 @@ void GameUserInterface::handleAdditionalKeyPressed(sf::Keyboard::Key code)
             {
                 game_->setGameState(Game::GameState::Normal);
                 full_hud_->show(false);
-                windows_.clear();
+                clearWindows();
             }
             else if (game_->getGameState() != Game::GameState::Menu)
             {
@@ -88,12 +88,6 @@ void GameUserInterface::handleAdditionalKeyPressed(sf::Keyboard::Key code)
         {
             if (!game_->isJournalFreezed() && game_->getGameState() == Game::GameState::Normal)
                 game_->setGameState(Game::GameState::Reverse);
-            break;
-        }
-        case sf::Keyboard::P:
-        {
-            if (game_->getGameState() == Game::GameState::Normal)
-                game_->respawn();
             break;
         }
         default:

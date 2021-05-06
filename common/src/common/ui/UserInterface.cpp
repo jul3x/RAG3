@@ -411,3 +411,8 @@ void UserInterface::clearThoughts()
     thoughts_.clear();
 }
 
+void UserInterface::clearWindows()
+{
+    windows_.clear();
+}
+

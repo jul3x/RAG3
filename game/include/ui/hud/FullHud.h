@@ -13,6 +13,7 @@
 
 #include <common/characters/Player.h>
 #include <common/ui/Tooltip.h>
+#include <common/ui/TextButton.h>
 
 
 using namespace r3e;
@@ -97,7 +98,7 @@ private:
     bool show_;
     float time_elapsed_;
 
-    std::vector<tgui::Button::Ptr> buttons_;
+    std::vector<std::unique_ptr<TextButton>> buttons_;
 
 };
 

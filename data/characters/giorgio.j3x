@@ -21,7 +21,7 @@ string ai_type="MeleeAttack"
 
 int z_index=1
 
-list weapons=["melee_boss"]
+list weapons=["melee_giorgio"]
 
 bool is_talkable=false
 string light_point=""

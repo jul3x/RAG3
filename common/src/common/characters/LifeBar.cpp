@@ -23,11 +23,6 @@ LifeBar::LifeBar(const std::string& name, float max_health) :
     health_.setState(max_health);
     health_.setForcedState(max_health);
 
-    sf::Color color(CONF<int>("graphics/health_bar_color"));
-    line_[0].color = color;
-    line_[1].color = color;
-    line_[2].color = color;
-    line_[3].color = color;
     auto rect = name_.getGlobalBounds();
     name_.setOrigin(rect.width / 2.0f, rect.height / 2.0f);
 }
@@ -57,8 +52,9 @@ void LifeBar::setHealth(float health)
 
 void LifeBar::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    target.draw(line_, states);
     target.draw(name_, states);
+    states.texture = &RM.getTexture("health_bar");
+    target.draw(line_, states);
 }
 
 void LifeBar::setPosition(const sf::Vector2f &pos)

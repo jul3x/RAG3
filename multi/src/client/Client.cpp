@@ -256,7 +256,7 @@ void Client::establishConnection(const sf::IpAddress& ip)
 
     j3x::Parameters data;
     data["name"] = std::string("jul3x");
-    data["texture"] = std::string("chaingunner");
+    data["texture"] = std::string("trevor");
     PlayerEventPacket packet(PlayerEventPacket::Type::NameChange, data);
     events_socket_.send(packet);
 }

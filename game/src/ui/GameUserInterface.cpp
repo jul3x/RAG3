@@ -44,7 +44,7 @@ void GameUserInterface::initialize(graphics::Graphics& graphics)
     time_bar_.setMaxAmount(CONF<float>("journal_max_time"));
     speed_bar_.setMaxAmount(player_->getMaxRunningFuel());
 
-    full_hud_ = std::make_unique<FullHud>(this, game_->getPlayer(),
+    full_hud_ = std::make_unique<FullHud>(this, game_,
                                           sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                                                        static_cast<float>(CONF<int>("graphics/window_height_px"))});
     menu_ = std::make_unique<Menu>(framework_, this, gui_.get(), &theme_);
@@ -88,6 +88,12 @@ void GameUserInterface::handleAdditionalKeyPressed(sf::Keyboard::Key code)
         {
             if (!game_->isJournalFreezed() && game_->getGameState() == Game::GameState::Normal)
                 game_->setGameState(Game::GameState::Reverse);
+            break;
+        }
+        case sf::Keyboard::P:
+        {
+            if (game_->getGameState() == Game::GameState::Normal)
+                game_->respawn();
             break;
         }
         default:

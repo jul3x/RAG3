@@ -49,6 +49,7 @@ public:
     virtual void spawnBonusText(const sf::Vector2f& pos, const std::string& text);
     virtual void spawnAcceptWindow(const std::string& text, const std::function<void()>& func);
     virtual void spawnNoteWindow(const std::string& text);
+    virtual void clearThoughts();
     virtual void closeWindow(Window* window);
     virtual void openMenu();
     virtual void startGame();

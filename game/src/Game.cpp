@@ -44,11 +44,7 @@ void Game::initialize()
     ui_->registerPlayer(player_.get());
     engine_->registerUI(ui_.get());
 
-    for (auto& special : map_->getList<Special>())
-    {
-        if (special->getId() == "starting_position")
-            player_->setPosition(special->getPosition());
-    }
+    this->setStartingPosition();
 }
 
 void Game::update(float time_elapsed)
@@ -433,23 +429,26 @@ NPC* Game::spawnNewPlayerClone(const std::string& weapon_id)
 
 void Game::cleanPlayerClone()
 {
-    for (auto& enemy : map_->getList<NPC>())
+    if (player_clone_ != nullptr)
     {
-        enemy->removeEnemy(player_clone_.get());
-    }
-
-    for (auto& weapon : player_clone_->getWeapons())
-    {
-        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
-
-        if (melee_weapon != nullptr)
+        for (auto& enemy : map_->getList<NPC>())
         {
-            engine_->deleteHoveringObject(melee_weapon->getMeleeWeaponArea());
+            enemy->removeEnemy(player_clone_.get());
         }
-    }
 
-    engine_->deleteDynamicObject(player_clone_.get());
-    player_clone_.reset();
+        for (auto& weapon : player_clone_->getWeapons())
+        {
+            auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+
+            if (melee_weapon != nullptr)
+            {
+                engine_->deleteHoveringObject(melee_weapon->getMeleeWeaponArea());
+            }
+        }
+
+        engine_->deleteDynamicObject(player_clone_.get());
+        player_clone_.reset();
+    }
 }
 
 Special* Game::getCurrentSpecialObject() const
@@ -736,4 +735,47 @@ DestructionSystem *Game::spawnSparksEvent2(const sf::Vector2f &pos, float dir, f
 float Game::getTimeManipulationFuel() const
 {
     return time_manipulation_fuel_;
+}
+
+void Game::respawn()
+{
+    player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
+    player_->setName("jul3x");
+    ui_->clearThoughts();
+    ui_->registerPlayer(player_.get());
+    time_manipulation_fuel_ = player_->getMaxTimeManipulation();
+    setRag3Time(0.0f);
+    map_->getList<NPC>().clear();
+
+    map_->loadMap("first_new_map");
+    agents_manager_->setMapBlockage(&map_->getMapBlockage());
+
+    engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
+    initObstacles();
+    initDecorations();
+    initPlayers();
+    initNPCs();
+    initWeapons();
+    initSpecials();
+
+    this->setStartingPosition();
+
+    journal_->clear();
+    this->cleanPlayerClone();
+
+    // TODO - after saving, stats should not be zeroed but restored to previous state
+    stats_->setEnemiesKilled(0);
+    stats_->setCrystalsPicked(0);
+    stats_->setExplosions(0);
+    stats_->setExp(0);
+    stats_->setLevel(0);
+}
+
+void Game::setStartingPosition()
+{
+    for (auto& special : map_->getList<Special>())
+    {
+        if (special->getId() == "starting_position")
+            player_->setPosition(special->getPosition());
+    }
 }

@@ -14,7 +14,7 @@
 
 namespace r3e {
     namespace ai {
-        AgentsManager::AgentsManager(const ai::MapBlockage& map_blockage, ai::NeighbourFunction func,
+        AgentsManager::AgentsManager(ai::MapBlockage* map_blockage, ai::NeighbourFunction func,
                                      float max_time_without_ms, float min_threshold_goal, size_t max_path_search_limit)
                 :
                 max_time_without_ms_(max_time_without_ms),
@@ -53,7 +53,7 @@ namespace r3e {
             try
             {
                 auto& data = AgentsManager::getAgentData(agent);
-                std::get<0>(data) = ai::AStar::getSmoothedPath(map_blockage_, agent->getStartPosition(),
+                std::get<0>(data) = ai::AStar::getSmoothedPath(*map_blockage_, agent->getStartPosition(),
                                                                std::get<1>(data), neighbour_function_,
                                                                max_path_search_limit_);
                 std::get<2>(data) = std::chrono::system_clock::now();
@@ -138,6 +138,11 @@ namespace r3e {
         bool AgentsManager::isGoalValid(const ai::Goal& goal)
         {
             return goal.x != ai::NO_GOAL_ && goal.y != ai::NO_GOAL_;
+        }
+
+        void AgentsManager::setMapBlockage(ai::MapBlockage* map_blockage)
+        {
+            map_blockage_ = map_blockage;
         }
 
     } // namespace ai

@@ -27,6 +27,12 @@ public:
     [[nodiscard]] int getExp() const;
     [[nodiscard]] int getLevel() const;
 
+    void setEnemiesKilled(int count);
+    void setCrystalsPicked(int count);
+    void setExplosions(int count);
+    void setExp(int count);
+    void setLevel(int count);
+
 protected:
     int enemies_killed_;
     int crystals_picked_;

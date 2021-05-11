@@ -66,6 +66,7 @@ public:
     void setNormalTime();
     void setRag3Time(float time_elapsed) override;
     void forceZoomTo(AbstractPhysicalObject* obj) override;
+    void respawn();
 
     // Journal methods
     [[nodiscard]] bool isJournalFreezed() const;
@@ -85,6 +86,7 @@ private:
 
     void initPlayers() override;
     void initNPCs() override;
+    void setStartingPosition();
 
     void killNPC(NPC* npc);
     void cleanPlayerClone();

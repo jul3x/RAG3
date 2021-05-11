@@ -9,12 +9,12 @@
 #include <common/Framework.h>
 
 
-SmallBackpackHud::SmallBackpackHud(Player* player, const sf::Vector2f& position) :
+SmallBackpackHud::SmallBackpackHud(Framework* framework, const sf::Vector2f& position) :
         AbstractDrawableObject(position,
                                {SIZE_X_ * CONF<float>("graphics/user_interface_zoom"),
                                 SIZE_Y_ * CONF<float>("graphics/user_interface_zoom")},
                                &RM.getTexture("items_hud")),
-        player_(player)
+        framework_(framework)
 {
     this->changeOrigin({SIZE_X_ * CONF<float>("graphics/user_interface_zoom"), 0.0f});
 
@@ -39,7 +39,7 @@ SmallBackpackHud::SmallBackpackHud(Player* player, const sf::Vector2f& position)
 
 void SmallBackpackHud::update(float time_elapsed)
 {
-    auto& backpack = player_->getBackpack();
+    auto& backpack = framework_->getPlayer()->getBackpack();
 
     int health = 0, speed = 0, rag3 = 0;
     for (auto& object : backpack)

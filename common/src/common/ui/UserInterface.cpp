@@ -28,7 +28,7 @@ UserInterface::UserInterface(Framework* framework) :
         npc_talk_text_("[T] Talk to NPC", RM.getFont(), CONF<float>("graphics/use_text_size")),
         right_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")),
                     static_cast<float>(CONF<int>("graphics/window_height_px"))}),
-        small_backpack_hud_(framework->getPlayer(), {static_cast<float>(CONF<int>("graphics/window_width_px")), 0.0f}),
+        small_backpack_hud_(framework, {static_cast<float>(CONF<int>("graphics/window_width_px")), 0.0f}),
         player_(nullptr),
         camera_(nullptr),
         tutorial_arrows_initialized_(false),
@@ -404,5 +404,10 @@ void UserInterface::removeArrowIfExists(AbstractPhysicalObject *obj)
     auto it = tutorial_arrows_.find(obj);
     if (it != tutorial_arrows_.end())
         tutorial_arrows_.erase(it);
+}
+
+void UserInterface::clearThoughts()
+{
+    thoughts_.clear();
 }
 

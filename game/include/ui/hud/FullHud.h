@@ -18,10 +18,11 @@
 using namespace r3e;
 
 class UserInterface;
+class Framework;
 
 class BackpackHud : public sf::Drawable {
 public:
-    explicit BackpackHud(UserInterface* ui, Player* player, const sf::Vector2f& pos, int x, int y);
+    explicit BackpackHud(UserInterface* ui, Framework* framework, const sf::Vector2f& pos, int x, int y);
 
     void update(float time_elapsed);
     void show(bool hide = false);
@@ -40,12 +41,12 @@ private:
     std::vector<sf::Text> numbers_;
 
     UserInterface* ui_;
-    Player* player_;
+    Framework* framework_;
 };
 
 class SkillsHud : public sf::Drawable {
 public:
-    explicit SkillsHud(UserInterface* ui, Player* player, const sf::Vector2f& pos);
+    explicit SkillsHud(UserInterface* ui, Framework* framework, const sf::Vector2f& pos);
 
     void update(float time_elapsed);
     void show(bool hide = false);
@@ -73,13 +74,13 @@ private:
     sf::Text points_text_;
     std::list<tgui::Button::Ptr> buttons_;
 
-    Player* player_;
+    Framework* framework_;
 
 };
 
 class FullHud : public sf::Drawable {
 public:
-    explicit FullHud(UserInterface* ui, Player* player, const sf::Vector2f& size);
+    explicit FullHud(UserInterface* ui, Framework* framework, const sf::Vector2f& size);
 
     void update(float time_elapsed);
     void show(bool show);

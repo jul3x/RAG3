@@ -10,15 +10,16 @@
 
 #include <R3E/objects/AbstractDrawableObject.h>
 
-#include <common/characters/Player.h>
 #include <common/ui/Tooltip.h>
 
 
 using namespace r3e;
 
+class Framework;
+
 class SmallBackpackHud : public AbstractDrawableObject {
 public:
-    explicit SmallBackpackHud(Player* player, const sf::Vector2f& position);
+    explicit SmallBackpackHud(Framework* framework, const sf::Vector2f& position);
 
     void registerGui(Framework* framework);
     void update(float time_elapsed);
@@ -35,7 +36,7 @@ private:
     std::vector<sf::Text> numbers_;
     std::vector<Tooltip> tooltips_;
 
-    Player* player_;
+    Framework* framework_;
 
 };
 

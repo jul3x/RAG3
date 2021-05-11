@@ -46,7 +46,7 @@ void Framework::initialize()
     this->initParams();
     weather_ = std::make_unique<WeatherSystem>(this, weather_params_.get());
     map_->loadMap("first_new_map");
-    agents_manager_ = std::make_unique<ai::AgentsManager>(map_->getMapBlockage(), ai::AStar::EightNeighbours,
+    agents_manager_ = std::make_unique<ai::AgentsManager>(&map_->getMapBlockage(), ai::AStar::EightNeighbours,
                                                           CONF<float>("characters/max_time_without_path_recalc"),
                                                           CONF<float>("characters/min_pos_change_without_path_recalc"),
                                                           CONF<int>("characters/max_path_search_depth"));
@@ -339,7 +339,7 @@ void Framework::updateExplosions()
 
     for (const auto& desired_explosion : desired_explosions_)
     {
-        camera_->setShaking(2.0f);
+        camera_->setShaking(1.5f);
         explosions_.emplace_back(std::make_unique<Explosion>(desired_explosion.first, desired_explosion.second));
         engine_->registerHoveringObject(explosions_.back().get());
     }

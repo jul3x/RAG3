@@ -12,8 +12,8 @@
 #include <common/Framework.h>
 
 
-BackpackHud::BackpackHud(UserInterface* ui, Player* player, const sf::Vector2f& pos, int x, int y) :
-        player_(player), ui_(ui)
+BackpackHud::BackpackHud(UserInterface* ui, Framework* framework, const sf::Vector2f& pos, int x, int y) :
+        framework_(framework), ui_(ui)
 {
     for (int i = 0; i < y; ++i)
     {
@@ -57,7 +57,9 @@ void BackpackHud::combineBackpackItems(size_t first, size_t second)
 {
     size_t i = 0;
     std::string special_id{}, weapon_id{};
-    for (auto& special : player_->getBackpack())
+    auto player = framework_->getPlayer();
+
+    for (auto& special : player->getBackpack())
     {
         if (i == first)
             special_id = special.first.getId();
@@ -94,8 +96,8 @@ void BackpackHud::combineBackpackItems(size_t first, size_t second)
                     RMGET<std::string>("specials", weapon_id, "tooltip_header") + "\" with \"" +
                     RMGET<std::string>("specials", special_id, "tooltip_header") + "\"?",
                     std::bind([this](const std::string& w, const std::string& s) {
-                        player_->upgradeWeapon(w, s);
-                        ui_->getFramework()->spawnSound(RM.getSound("ui_upgrade"), ui_->getFramework()->getPlayer()->getPosition());
+                        framework_->getPlayer()->upgradeWeapon(w, s);
+                        ui_->getFramework()->spawnSound(RM.getSound("ui_upgrade"), framework_->getPlayer()->getPosition());
                     }, weapon_id, special_id));
         }
     }
@@ -113,7 +115,7 @@ void BackpackHud::setOpacity(sf::Uint8 a)
         number.setFillColor({255, 255, 255, a});
     }
 
-    for (auto& special : player_->getBackpack())
+    for (auto& special : framework_->getPlayer()->getBackpack())
     {
         special.first.setColor(255, 255, 255, a);
     }
@@ -149,8 +151,8 @@ void BackpackHud::resetActiveTooltips()
 void BackpackHud::update(float time_elapsed)
 {
     size_t i = 0;
-
-    for (auto& special : player_->getBackpack())
+    auto player = framework_->getPlayer();
+    for (auto& special : player->getBackpack())
     {
         special.first.setPosition(placeholders_[i].getPosition());
 
@@ -168,7 +170,7 @@ void BackpackHud::update(float time_elapsed)
     }
 
     weapons_.clear();
-    for (auto& weapon : player_->getWeapons())
+    for (auto& weapon : player->getWeapons())
     {
         if (weapon->getId() != "null")
         {
@@ -219,7 +221,7 @@ void BackpackHud::draw(sf::RenderTarget& target, sf::RenderStates states) const
     }
 
     size_t i = 0;
-    for (auto& special : player_->getBackpack())
+    for (auto& special : framework_->getPlayer()->getBackpack())
     {
         target.draw(special.first, states);
         if (special.second > 1)
@@ -237,9 +239,9 @@ void BackpackHud::draw(sf::RenderTarget& target, sf::RenderStates states) const
 }
 
 
-SkillsHud::SkillsHud(UserInterface* ui, Player* player, const sf::Vector2f& pos) :
+SkillsHud::SkillsHud(UserInterface* ui, Framework* framework, const sf::Vector2f& pos) :
         points_text_("", RM.getFont(), CONF<float>("graphics/skills_text_size")),
-        player_(player)
+        framework_(framework)
 {
     int i = 0;
     for (const auto& line : CONF<j3x::List>("graphics/skills_lines"))
@@ -263,14 +265,14 @@ SkillsHud::SkillsHud(UserInterface* ui, Player* player, const sf::Vector2f& pos)
         buttons_.back()->setSize(CONF<sf::Vector2f>("graphics/skills_button_size"));
         buttons_.back()->setVisible(false);
         buttons_.back()->connect("pressed", [this, ui](Player::Skills skill) {
-            ui->getFramework()->spawnSound(RM.getSound("ui_click"), ui->getFramework()->getPlayer()->getPosition());
-            if (!player_->addSkill(skill))
+            framework_->spawnSound(RM.getSound("ui_click"), framework_->getPlayer()->getPosition());
+            if (!framework_->getPlayer()->addSkill(skill))
             {
                 for (auto& button : buttons_)
                     button->setText("i");
             }
         }, skills_[i]);
-        tooltips_.emplace_back(ui->getFramework(), ui->getTheme(), button_pos, CONF<sf::Vector2f>("graphics/skills_button_size"));
+        tooltips_.emplace_back(framework_, ui->getTheme(), button_pos, CONF<sf::Vector2f>("graphics/skills_button_size"));
         tooltips_.back().bindText(texts_placeholders_[i], texts_tooltips_[i]);
         buttons_.back()->setToolTip(tooltips_.back().getTooltip());
         ui->getGui()->add(buttons_.back());
@@ -294,11 +296,11 @@ void SkillsHud::update(float time_elapsed)
     size_t i = 0;
     for (auto& text : texts_)
     {
-        text.setString(texts_placeholders_[i] + ": " + std::to_string(player_->getSkill(skills_[i])));
+        text.setString(texts_placeholders_[i] + ": " + std::to_string(framework_->getPlayer()->getSkill(skills_[i])));
         ++i;
     }
 
-    points_text_.setString("Points: " + std::to_string(player_->getSkillPoints()));
+    points_text_.setString("Points: " + std::to_string(framework_->getPlayer()->getSkillPoints()));
 }
 
 void SkillsHud::show(bool hide)
@@ -320,7 +322,7 @@ void SkillsHud::show(bool hide)
 
     for (auto& button : buttons_)
     {
-        if (player_->getSkillPoints() > 0)
+        if (framework_->getPlayer()->getSkillPoints() > 0)
         {
             button->setText("+");
         }
@@ -370,18 +372,18 @@ void SkillsHud::draw(sf::RenderTarget& target, sf::RenderStates states) const
 }
 
 
-FullHud::FullHud(UserInterface* ui, Player* player, const sf::Vector2f& size) :
+FullHud::FullHud(UserInterface* ui, Framework* framework, const sf::Vector2f& size) :
         show_(false),
         bg_color_(sf::Color(0, 0, 0, 0)),
         bg_(size),
         player_(size / 2.0f + CONF<sf::Vector2f>("graphics/huge_player_offset"),
                 CONF<sf::Vector2f>("graphics/huge_player_size"),
                 &RM.getTexture("huge_player")),
-        backpack_hud_(ui, player,
+        backpack_hud_(ui, framework,
                       size / 2.0f + CONF<sf::Vector2f>("graphics/backpack_offset"),
                       CONF<int>("graphics/backpack_placeholders_x"),
                       CONF<int>("graphics/backpack_placeholders_y")),
-        skills_hud_(ui, player, size / 2.0f + CONF<sf::Vector2f>("graphics/skills_offset")),
+        skills_hud_(ui, framework, size / 2.0f + CONF<sf::Vector2f>("graphics/skills_offset")),
         time_elapsed_(0.0f)
 {
     bg_.setPosition(0.0f, 0.0f);
@@ -398,10 +400,10 @@ FullHud::FullHud(UserInterface* ui, Player* player, const sf::Vector2f& size) :
                                     CONF<int>("graphics/window_height_px")) +
                        CONF<sf::Vector2f>("graphics/back_to_menu_pos"));
     label->setVisible(false);
-    label->connect("mouseentered", [ui]() {
-        ui->getFramework()->spawnSound(RM.getSound("ui_hover"), ui->getFramework()->getPlayer()->getPosition()); });
-    label->connect("pressed", [ui]() {
-        ui->getFramework()->spawnSound(RM.getSound("ui_upgrade"), ui->getFramework()->getPlayer()->getPosition(), true);
+    label->connect("mouseentered", [framework]() {
+        framework->spawnSound(RM.getSound("ui_hover"), framework->getPlayer()->getPosition()); });
+    label->connect("pressed", [framework, ui]() {
+        framework->spawnSound(RM.getSound("ui_upgrade"), framework->getPlayer()->getPosition(), true);
         ui->openMenu();
     });
 

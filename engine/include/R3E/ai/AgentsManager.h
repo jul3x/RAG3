@@ -22,7 +22,7 @@ namespace r3e::ai {
     public:
         AgentsManager() = delete;
 
-        AgentsManager(const ai::MapBlockage& map_blockage, ai::NeighbourFunction func,
+        AgentsManager(ai::MapBlockage* map_blockage, ai::NeighbourFunction func,
                       float max_time_without_ms = 0.0f, float min_threshold_goal = 1.0f,
                       size_t max_path_search_limit = 1e12);
 
@@ -33,6 +33,7 @@ namespace r3e::ai {
 
         void setCurrentGoal(AbstractAgent* agent, const ai::Goal& new_goal);
         void setNoGoal(AbstractAgent* agent);
+        void setMapBlockage(ai::MapBlockage* map_blockage);
 
         void registerAgent(AbstractAgent* agent);
         void deleteAgent(AbstractAgent* agent);
@@ -45,7 +46,7 @@ namespace r3e::ai {
 
         float max_time_without_ms_, min_threshold_goal_;
         size_t max_path_search_limit_;
-        const ai::MapBlockage& map_blockage_;
+        ai::MapBlockage* map_blockage_;
         ai::NeighbourFunction neighbour_function_;
 
         std::unordered_map<AbstractAgent*, std::tuple<ai::Path, ai::Goal, ai::Timestamp>> agents_map_;

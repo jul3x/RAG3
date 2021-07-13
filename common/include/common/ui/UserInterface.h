@@ -53,6 +53,7 @@ public:
     virtual void closeWindow(Window* window);
     virtual void openMenu();
     virtual void startGame();
+    virtual void clearWindows();
 
     tgui::Gui* getGui();
     tgui::Theme* getTheme();

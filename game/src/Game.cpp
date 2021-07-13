@@ -769,6 +769,8 @@ void Game::respawn()
     stats_->setExplosions(0);
     stats_->setExp(0);
     stats_->setLevel(0);
+
+    setGameState(Game::GameState::Normal);
 }
 
 void Game::setStartingPosition()

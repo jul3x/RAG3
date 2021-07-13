@@ -391,24 +391,20 @@ FullHud::FullHud(UserInterface* ui, Framework* framework, const sf::Vector2f& si
     player_.setColor(255, 255, 255, bg_color_.a);
     backpack_hud_.setOpacity(bg_color_.a);
 
-    auto label = tgui::Button::create();
-    label->setRenderer(ui->getTheme()->getRenderer("MenuButton"));
-    label->setText("Back to menu");
-    label->setInheritedFont(RM.getFont("default"));
-    label->setTextSize(CONF<float>("graphics/menu_button_text_size"));
-    label->setPosition(sf::Vector2f(CONF<int>("graphics/window_width_px") / 2.0f - label->getFullSize().x / 2.0f,
-                                    CONF<int>("graphics/window_height_px")) +
-                       CONF<sf::Vector2f>("graphics/back_to_menu_pos"));
-    label->setVisible(false);
-    label->connect("mouseentered", [framework]() {
-        framework->spawnSound(RM.getSound("ui_hover"), framework->getPlayer()->getPosition()); });
-    label->connect("pressed", [framework, ui]() {
-        framework->spawnSound(RM.getSound("ui_upgrade"), framework->getPlayer()->getPosition(), true);
-        ui->openMenu();
+    auto button_size = CONF<float>("graphics/menu_button_text_size");
+    auto window_center = sf::Vector2f(CONF<int>("graphics/window_width_px") / 2.0f,
+                                      CONF<int>("graphics/window_height_px"));
+    auto show_duration = CONF<float>("graphics/full_hud_show_duration");
+    buttons_.emplace_back(std::make_unique<TextButton>(framework, "Back to menu",
+                          window_center + CONF<sf::Vector2f>("graphics/back_to_menu_button_pos"),
+                          button_size, show_duration));
+    buttons_.back()->bindFunction([ui]() { ui->openMenu(); });
+    buttons_.emplace_back(std::make_unique<TextButton>(framework, "Respawn",
+                          window_center + CONF<sf::Vector2f>("graphics/respawn_button_pos"),
+                          button_size, show_duration));
+    buttons_.back()->bindFunction([framework, ui, this]() {
+        framework->respawn(); ui->clearWindows(); this->show(false);
     });
-
-    ui->getGui()->add(label);
-    buttons_.emplace_back(label);
 }
 
 void FullHud::update(float time_elapsed)
@@ -450,12 +446,7 @@ void FullHud::show(bool show)
     {
         for (auto& button : buttons_)
         {
-            if (show)
-                button->showWithEffect(tgui::ShowAnimationType::Fade,
-                                       sf::seconds(CONF<float>("graphics/full_hud_show_duration")));
-            else
-                button->hideWithEffect(tgui::ShowAnimationType::Fade,
-                                       sf::seconds(CONF<float>("graphics/full_hud_show_duration") / 2.0f));
+            button->show(!show);
         }
 
         time_elapsed_ = CONF<float>("graphics/full_hud_show_duration");

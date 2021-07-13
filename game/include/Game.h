@@ -66,7 +66,7 @@ public:
     void setNormalTime();
     void setRag3Time(float time_elapsed) override;
     void forceZoomTo(AbstractPhysicalObject* obj) override;
-    void respawn();
+    void respawn() override;
 
     // Journal methods
     [[nodiscard]] bool isJournalFreezed() const;

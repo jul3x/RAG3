@@ -18,7 +18,8 @@ vector menu_copyright_pos = (-2.0 * menu_button_pos_x, -200.0 * user_interface_z
 float menu_show_duration = 2.5
 float menu_explosion_period = 4.0
 float menu_logo_rotation_duration = 2.0
-vector back_to_menu_pos = (0.0, -200.0 * user_interface_zoom)
+vector back_to_menu_button_pos = (0.0, -200.0 * user_interface_zoom)
+vector respawn_button_pos = (0.0, -1000.0 * user_interface_zoom)
 
 // COLORS
 int background_color = 286331136

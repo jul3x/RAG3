@@ -53,6 +53,7 @@ public:
     void useItem(const std::string& id) override;
     void useSpecialObject() override;
     void setGameState(GameState state) override;
+
 private:
     void updatePlayers(float time_elapsed);
 

@@ -104,6 +104,7 @@ public:
     virtual void useSpecialObject();
     virtual void spawnThought(Character* user, const std::string& text);
     virtual void spawnBonusText(const sf::Vector2f& pos, const std::string& text);
+    virtual void respawn();
 
     virtual void findAndDeleteBullet(Bullet* ptr);
     virtual void findAndDeleteFire(Fire* ptr);

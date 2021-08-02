@@ -262,6 +262,10 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
                     gui_.get("character_object_window")->setVisible(false);
                     gui_.get("obstacle_object_window")->setVisible(false);
                 }
+                else if (event.key.code == sf::Keyboard::Q)
+                {
+                    Editor::get().setCurrentItem("", "");
+                }
             }
             case sf::Event::MouseButtonPressed:
             {

@@ -202,6 +202,8 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
                 logo_.setPosition(event.size.width - CONF<sf::Vector2f>("logo_pos_off").x,
                                   CONF<sf::Vector2f>("logo_pos_off").y);
 
+                Editor::get().resetLightning(visible_area);
+
                 break;
             }
             case sf::Event::MouseWheelScrolled:

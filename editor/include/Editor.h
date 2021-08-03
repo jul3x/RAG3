@@ -58,6 +58,7 @@ namespace editor {
         {
         }
 
+        void resetLightning(const sf::Vector2f& size);
         void setLightning(bool on);
         void setRandomizing(int n);
         void setCurrentItem(const std::string& category, const std::string& id);

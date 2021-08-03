@@ -366,6 +366,11 @@ void Editor::spawnError(const std::string& err)
     ui_->spawnError(err);
 }
 
+void Editor::resetLightning(const sf::Vector2f& size)
+{
+    lightning_ = std::make_unique<graphics::Lightning>(size, sf::Color(CONF<int>("graphics/lightning_color")));
+}
+
 void Editor::setLightning(bool on)
 {
     is_lightning_on_ = on;

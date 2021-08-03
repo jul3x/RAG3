@@ -12,7 +12,7 @@
 using namespace editor;
 
 Editor::Editor() : grid_(CONF<int>("window_width_px"), CONF<int>("window_height_px")),
-                   is_lightning_on_(true), randomizing_value_(0), marked_item_(nullptr)
+                   is_lighting_on_(true), randomizing_value_(0), marked_item_(nullptr)
 {
     engine_ = std::make_unique<Engine>();
     engine_->registerGame(this);
@@ -36,9 +36,9 @@ void Editor::initialize()
     engine_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
 
-    lightning_ = std::make_unique<graphics::Lightning>(sf::Vector2f{static_cast<float>(CONF<int>("window_width_px")),
-                                                                    static_cast<float>(CONF<int>("window_height_px"))},
-                                                       sf::Color(CONF<int>("graphics/lightning_color")));
+    lighting_ = std::make_unique<graphics::Lighting>(sf::Vector2f{static_cast<float>(CONF<int>("window_width_px")),
+                                                                  static_cast<float>(CONF<int>("window_height_px"))},
+                                                     sf::Color(CONF<int>("graphics/lighting_color")));
 
 }
 
@@ -91,7 +91,7 @@ void Editor::draw(graphics::Graphics& graphics)
         for (auto& obj : list)
             if (obj->getZIndex() <= max_z_index)
                 if (obj->getLightPoint() != nullptr)
-                    this->lightning_->add(*obj->getLightPoint());
+                    this->lighting_->add(*obj->getLightPoint());
     };
 
     draw(map_->getList<DecorationTile>());
@@ -104,15 +104,15 @@ void Editor::draw(graphics::Graphics& graphics)
 
     graphics.drawAlreadySorted();
 
-    if (is_lightning_on_)
+    if (is_lighting_on_)
     {
-        lightning_->clear();
+        lighting_->clear();
         draw_light(map_->getList<NPC>());
         draw_light(map_->getList<Obstacle>());
         draw_light(map_->getList<Decoration>());
         draw_light(map_->getList<Special>());
         graphics.setStaticView();
-        graphics.draw(*lightning_);
+        graphics.draw(*lighting_);
     }
 }
 
@@ -366,14 +366,14 @@ void Editor::spawnError(const std::string& err)
     ui_->spawnError(err);
 }
 
-void Editor::resetLightning(const sf::Vector2f& size)
+void Editor::resetLighting(const sf::Vector2f& size)
 {
-    lightning_ = std::make_unique<graphics::Lightning>(size, sf::Color(CONF<int>("graphics/lightning_color")));
+    lighting_ = std::make_unique<graphics::Lighting>(size, sf::Color(CONF<int>("graphics/lighting_color")));
 }
 
-void Editor::setLightning(bool on)
+void Editor::setLighting(bool on)
 {
-    is_lightning_on_ = on;
+    is_lighting_on_ = on;
 }
 
 void Editor::setRandomizing(int n)

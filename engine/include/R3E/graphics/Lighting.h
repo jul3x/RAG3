@@ -2,8 +2,8 @@
 // Created by jul3x on 19.05.2020.
 //
 
-#ifndef RAG3_ENGINE_INCLUDE_R3E_GRAPHICS_LIGHTNING_H
-#define RAG3_ENGINE_INCLUDE_R3E_GRAPHICS_LIGHTNING_H
+#ifndef RAG3_ENGINE_INCLUDE_R3E_GRAPHICS_LIGHTING_H
+#define RAG3_ENGINE_INCLUDE_R3E_GRAPHICS_LIGHTING_H
 
 
 #include <SFML/Graphics/RenderTexture.hpp>
@@ -14,11 +14,11 @@
 
 
 namespace r3e::graphics {
-    class Lightning : public AbstractDrawableObject {
+    class Lighting : public AbstractDrawableObject {
     public:
-        Lightning(const sf::Vector2f& size, const sf::Color& clear_color) :
-                clear_color_(clear_color),
-                AbstractDrawableObject(size / 2.0f, size, nullptr)
+        Lighting(const sf::Vector2f& size, const sf::Color& clear_color) :
+                 clear_color_(clear_color),
+                 AbstractDrawableObject(size / 2.0f, size, nullptr)
         {
             render_texture_.create(size.x, size.y);
             this->changeTexture((sf::Texture*) &render_texture_.getTexture(), true);
@@ -47,4 +47,4 @@ namespace r3e::graphics {
     };
 } // namespace r3e::graphics
 
-#endif //RAG3_ENGINE_INCLUDE_R3E_GRAPHICS_LIGHTNING_H
+#endif //RAG3_ENGINE_INCLUDE_R3E_GRAPHICS_LIGHTING_H

@@ -11,7 +11,7 @@
 #include <R3E/system/Engine.h>
 #include <R3E/ai/AgentsManager.h>
 #include <R3E/audio/MusicManager.h>
-#include <R3E/graphics/Lightning.h>
+#include <R3E/graphics/Lighting.h>
 
 #include <common/Map.h>
 
@@ -58,8 +58,8 @@ namespace editor {
         {
         }
 
-        void resetLightning(const sf::Vector2f& size);
-        void setLightning(bool on);
+        void resetLighting(const sf::Vector2f& size);
+        void setLighting(bool on);
         void setRandomizing(int n);
         void setCurrentItem(const std::string& category, const std::string& id);
         [[nodiscard]] const std::pair<std::string, std::string>& getCurrentItem() const;
@@ -86,7 +86,7 @@ namespace editor {
         std::unique_ptr<Engine> engine_;
         std::unique_ptr<UserInterface> ui_;
         std::unique_ptr<Camera> camera_;
-        std::unique_ptr<graphics::Lightning> lightning_;
+        std::unique_ptr<graphics::Lighting> lighting_;
         Grid grid_;
 
         std::unique_ptr<Map> map_;
@@ -97,7 +97,7 @@ namespace editor {
         std::pair<std::string, std::string> current_item_;
         AbstractDrawableObject* marked_item_;
 
-        bool is_lightning_on_;
+        bool is_lighting_on_;
 
 
     };

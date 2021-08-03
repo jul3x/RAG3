@@ -9,7 +9,7 @@
 
 #include <R3E/system/AbstractGame.h>
 #include <R3E/system/Engine.h>
-#include <R3E/graphics/Lightning.h>
+#include <R3E/graphics/Lighting.h>
 #include <R3E/ai/AgentsManager.h>
 
 #include <common/misc/Destruction.h>
@@ -162,7 +162,7 @@ protected:
 
     std::unique_ptr<Engine> engine_;
     std::unique_ptr<Camera> camera_;
-    std::unique_ptr<graphics::Lightning> lightning_;
+    std::unique_ptr<graphics::Lighting> lighting_;
     std::unique_ptr<UserInterface> ui_;
     std::unique_ptr<ai::AgentsManager> agents_manager_;
 

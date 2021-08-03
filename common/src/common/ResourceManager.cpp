@@ -56,7 +56,7 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
 
     params["shader"] = j3x::get<std::string>(*map_description, "shader");
     params["background_color"] = j3x::get<int>(*map_description, "background_color");
-    params["lightning_color"] = j3x::get<int>(*map_description, "lightning_color");
+    params["lighting_color"] = j3x::get<int>(*map_description, "lighting_color");
 
     auto tile_number = 0;
     obstacles_tiles.clear();
@@ -203,7 +203,7 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
     j3x::serializeAssign("map_size", static_cast<sf::Vector2f>(map_constraints.first), out);
     j3x::serializeAssign("shader", j3x::get<std::string>(map.getParams(), "shader"), out);
     j3x::serializeAssign("background_color", j3x::get<int>(map.getParams(), "background_color"), out);
-    j3x::serializeAssign("lightning_color", j3x::get<int>(map.getParams(), "lightning_color"), out);
+    j3x::serializeAssign("lighting_color", j3x::get<int>(map.getParams(), "lighting_color"), out);
 
     std::vector<std::vector<int>> matrix;
     matrix.resize(map_constraints.first.y);

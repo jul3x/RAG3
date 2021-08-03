@@ -126,7 +126,7 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
 
     auto label = tgui::Label::create();
     label->setRenderer(theme_->getRenderer("Label"));
-    label->setText("Lightning");
+    label->setText("Lighting");
     label->setTextSize(CONF<float>("label_text_size"));
     grid_->addWidget(label, 5, 0);
 
@@ -137,9 +137,9 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
     grid_->addWidget(checkbox, 5, 1);
 
     checkbox->connect("Checked", [&]() {
-        Editor::get().setLightning(true);
+        Editor::get().setLighting(true);
     });
     checkbox->connect("Unchecked", [&]() {
-        Editor::get().setLightning(false);
+        Editor::get().setLighting(false);
     });
 }

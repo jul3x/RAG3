@@ -92,7 +92,7 @@ void Client::draw(graphics::Graphics& graphics)
         {
             auto light = obj->getLightPoint();
             if (light != nullptr)
-                this->lightning_->add(*light);
+                this->lighting_->add(*light);
         }
     };
 
@@ -122,7 +122,7 @@ void Client::draw(graphics::Graphics& graphics)
 
     graphics.drawAlreadySorted(states.shader);
 
-    lightning_->clear();
+    lighting_->clear();
 
     draw_light(map_->getList<Obstacle>());
     draw_light(map_->getList<Decoration>());
@@ -130,14 +130,14 @@ void Client::draw(graphics::Graphics& graphics)
     draw_light(fire_);
     draw_light(engine_->getAnimationEvents());
 
-    lightning_->add(*player_->getLightPoint());
+    lighting_->add(*player_->getLightPoint());
     for (auto& player : players_)
     {
-        lightning_->add(*player.second->getLightPoint());
+        lighting_->add(*player.second->getLightPoint());
     }
 
     graphics.setStaticView();
-    graphics.draw(*lightning_);
+    graphics.draw(*lighting_);
 }
 
 Player* Client::getPlayer()

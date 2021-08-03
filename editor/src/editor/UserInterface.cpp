@@ -66,7 +66,10 @@ void UserInterface::generateMenuBar(sf::RenderWindow& window)
     list_menu->connectMenuItem("File", "Clear existing map", [&]() { Editor::get().clearMap(); });
 
     list_menu->addMenuItem("File", "Load map");
-    list_menu->connectMenuItem("File", "Load map", [this]() { this->gui_.get("load_window")->setVisible(true); });
+    list_menu->connectMenuItem("File", "Load map", [this]() {
+        this->resetMapList();
+        this->gui_.get("load_window")->setVisible(true);
+    });
 
     list_menu->addMenuItem("File", "Save map");
     list_menu->connectMenuItem("File", "Save map", [this]() { this->gui_.get("save_window")->setVisible(true); });

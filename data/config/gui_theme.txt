@@ -66,6 +66,14 @@ EditBox {
     CaretColor = rgba(255, 255, 255, 105);
 }
 
+Header {
+    TextColor = rgba(255, 255, 255, 255);
+}
+
+Text {
+    TextColor = rgba(255, 255, 255, 255);
+}
+
 Label {
     TextColor = rgba(255, 255, 255, 215);
     Scrollbar = &Scrollbar;
@@ -187,7 +195,7 @@ TextBox {
     Scrollbar = &Scrollbar;
 }
 
-MenuButton{
+MenuButton {
     BackgroundColor = rgba(90, 90, 90, 0);
     BackgroundColorHover = rgba(200, 40, 40, 0);
     BackgroundColorDown = rgba(200, 40, 40, 0);

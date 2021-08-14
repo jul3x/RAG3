@@ -31,7 +31,6 @@ UserInterface::UserInterface(Framework* framework) :
         small_backpack_hud_(framework, {static_cast<float>(CONF<int>("graphics/window_width_px")), 0.0f}),
         player_(nullptr),
         camera_(nullptr),
-        tutorial_arrows_initialized_(false),
         theme_("../data/config/gui_theme.txt")
 {
     health_bar_.setReversed(true);
@@ -82,7 +81,9 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
     updatePlayerStates(time_elapsed);
     handleMouse(graphics.getWindow());
     handleKeys();
-    handleTutorialArrows(time_elapsed);
+
+    for (auto& arrow : tutorial_arrows_)
+        arrow.second.update(time_elapsed);
 
     auto special_object = framework_->getCurrentSpecialObject();
     if (special_object != nullptr)
@@ -363,40 +364,31 @@ void UserInterface::handleKeyReleased(sf::Keyboard::Key code)
 
 }
 
-void UserInterface::handleTutorialArrows(float time_elapsed)
+void UserInterface::initializeTutorialArrows()
 {
-// TODO needs rework when loading new maps will be available
-
-    static auto& has_arrows = CONF<j3x::List>("graphics/tutorial_arrows");
-    if (!tutorial_arrows_initialized_)
+    tutorial_arrows_.clear();
+    const auto& has_arrows = CONF<j3x::List>("graphics/tutorial_arrows");
+    for (size_t i = 0; i < has_arrows.size(); ++i)
     {
-        for (size_t i = 0; i < has_arrows.size(); ++i)
-        {
-            auto name = j3x::getObj<std::string>(has_arrows, i);
+        auto name = j3x::getObj<std::string>(has_arrows, i);
 
-            if (name == "talkables")
+        if (name == "talkables")
+        {
+            for (auto& obj : framework_->getMap()->getList<NPC>())
             {
-                for (auto& obj : framework_->getMap()->getList<NPC>())
-                {
-                    if (obj->isTalkable())
-                        tutorial_arrows_.emplace(std::make_pair(obj.get(), TutorialArrow(obj.get())));
-                }
-            }
-            else
-            {
-                for (auto& obj : framework_->getMap()->getList<Special>())
-                {
-                    if (obj->getId() == name)
-                        tutorial_arrows_.emplace(std::make_pair(obj.get(), TutorialArrow(obj.get())));
-                }
+                if (obj->isTalkable())
+                    tutorial_arrows_.emplace(std::make_pair(obj.get(), TutorialArrow(obj.get())));
             }
         }
-
-        tutorial_arrows_initialized_ = true;
+        else
+        {
+            for (auto& obj : framework_->getMap()->getList<Special>())
+            {
+                if (obj->getId() == name)
+                    tutorial_arrows_.emplace(std::make_pair(obj.get(), TutorialArrow(obj.get())));
+            }
+        }
     }
-
-    for (auto& arrow : tutorial_arrows_)
-        arrow.second.update(time_elapsed);
 }
 
 void UserInterface::removeArrowIfExists(AbstractPhysicalObject *obj)

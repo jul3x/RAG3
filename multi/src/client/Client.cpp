@@ -46,7 +46,7 @@ void Client::initialize()
     }
     data_receive_socket_.setBlocking(false);
 
-    establishConnection("192.168.1.23");
+    establishConnection("192.168.0.17");
 }
 
 void Client::update(float time_elapsed)

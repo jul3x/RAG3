@@ -737,7 +737,7 @@ float Game::getTimeManipulationFuel() const
     return time_manipulation_fuel_;
 }
 
-void Game::respawn()
+void Game::respawn(const std::string& map_name)
 {
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     player_->setName("jul3x");
@@ -747,8 +747,18 @@ void Game::respawn()
     setRag3Time(0.0f);
     map_->getList<NPC>().clear();
 
-    map_->loadMap("first_new_map");
-    agents_manager_->setMapBlockage(&map_->getMapBlockage());
+    map_->loadMap(map_name.empty() ? map_->getMapName() : map_name);
+    agents_manager_ = std::make_unique<ai::AgentsManager>(&map_->getMapBlockage(), ai::AStar::EightNeighbours,
+                                                          CONF<float>("characters/max_time_without_path_recalc"),
+                                                          CONF<float>("characters/min_pos_change_without_path_recalc"),
+                                                          CONF<int>("characters/max_path_search_depth"));
+    engine_->getGraphics().setBgColor(sf::Color(j3x::get<int>(map_->getParams(), "background_color")));
+    lightning_ = std::make_unique<graphics::Lightning>(
+            sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
+                         static_cast<float>(CONF<int>("graphics/window_height_px"))},
+            sf::Color(j3x::get<int>(map_->getParams(), "lightning_color")));
+
+//    debug_map_blockage_ = std::make_unique<DebugMapBlockage>(&map_->getMapBlockage());
 
     engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
     initObstacles();
@@ -770,6 +780,7 @@ void Game::respawn()
     stats_->setExp(0);
     stats_->setLevel(0);
 
+    ui_->initializeTutorialArrows();
     setGameState(Game::GameState::Normal);
 }
 

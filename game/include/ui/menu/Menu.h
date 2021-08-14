@@ -13,6 +13,8 @@
 
 #include <common/events/Event.h>
 
+#include <ui/menu/MenuWindow.h>
+
 
 using namespace r3e;
 
@@ -22,10 +24,18 @@ class UserInterface;
 
 class Menu : public AbstractDrawableObject {
 public:
+    enum class Window {
+        None = 0,
+        LoadGame = 1,
+        Settings = 2,
+        About = 3,
+    };
+
     explicit Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme);
 
     void update(float time_elapsed);
     void doShow(bool show);
+    void showWindow(Window window);
 
 private:
     static void null()
@@ -36,6 +46,8 @@ private:
 
     std::vector<std::pair<std::string, std::function<void()>>> elements_;
     std::vector<tgui::Button::Ptr> buttons_;
+
+    std::unordered_map<Menu::Window, std::unique_ptr<MenuWindow>> windows_;
 
     AbstractDrawableObject bar_;
     DynamicObject logo_;

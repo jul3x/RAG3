@@ -249,6 +249,7 @@ void GameUserInterface::startGame()
     menu_->doShow(false);
     game_->setGameState(Game::GameState::Normal);
     small_backpack_hud_.doShow(false);
+    menu_->showWindow(Menu::Window::None);
 }
 
 void GameUserInterface::openMenu()

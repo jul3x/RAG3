@@ -13,13 +13,18 @@ vector menu_logo_pos = menu_logo_size * 0.5 + (10.0, 0.0) * user_interface_zoom
 float menu_button_pos_x = 120.0 * user_interface_zoom
 float menu_button_pos_y = 350.0 * user_interface_zoom
 float menu_button_offset_y = 70.0 * user_interface_zoom
-vector menu_year_pos = (menu_button_pos_x, -200.0 * user_interface_zoom)
-vector menu_copyright_pos = (-2.0 * menu_button_pos_x, -200.0 * user_interface_zoom)
+vector menu_year_pos = (menu_button_pos_x, -100.0 * user_interface_zoom)
+vector menu_copyright_pos = (-2.0 * menu_button_pos_x, -100.0 * user_interface_zoom)
 float menu_show_duration = 2.5
 float menu_explosion_period = 4.0
 float menu_logo_rotation_duration = 2.0
 vector back_to_menu_button_pos = (0.0, -200.0 * user_interface_zoom)
 vector respawn_button_pos = (0.0, -1000.0 * user_interface_zoom)
+vector menu_window_pos = (-100.0, 200.0) * user_interface_zoom
+vector menu_window_size = (1000, 700) * user_interface_zoom
+vector menu_window_header_pos = (20.0, 10.0) * user_interface_zoom
+vector menu_map_screen_size = (200, 120) * user_interface_zoom
+float menu_maps_padding = 25.0 * user_interface_zoom
 
 // COLORS
 int background_color = 286331136
@@ -47,6 +52,8 @@ float backpack_text_size = 24 * user_interface_zoom
 float tooltip_text_size = 14 * user_interface_zoom
 float popup_text_size = 12 * user_interface_zoom
 float menu_button_text_size = 44 * user_interface_zoom
+float menu_window_header_size = 44 * user_interface_zoom
+float menu_window_text_size = 36 * user_interface_zoom
 
 // FIRE GRAPHICS
 int fire_color = -1

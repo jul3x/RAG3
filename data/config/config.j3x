@@ -26,6 +26,7 @@ float side_stepping_freeze_time = 0.5
 float achievements_update_time = 0.4
 float forced_zoom_to_time = 0.4
 float running_min_time = 1.0
+string about_text = "Lorem ipsum dolor sit amet. \nTODO..."
 
 // FIRE MECHANICS
 float on_fire_hurt_speed = 10.0
@@ -53,3 +54,7 @@ float side_step_force_duration = 0.1
 
 // EXPERIENCE
 int crystal_pick_exp = 50
+
+// MAP NAMES
+string map_name_first_new_map = "Tutorial"
+string map_name_map_new = "Test map"

@@ -8,6 +8,9 @@
 
 #include <common/Framework.h>
 #include <common/ui/UserInterface.h>
+
+#include <ui/menu/AboutWindow.h>
+#include <ui/menu/LoadGameWindow.h>
 #include <ui/menu/Menu.h>
 
 
@@ -29,10 +32,14 @@ Menu::Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme*
         logo_rotation_(1.0f / CONF<float>("graphics/menu_logo_rotation_duration")),
         time_elapsed_(0.0f), explosion_elapsed_(0.0f)
 {
-    elements_ = {{"Start game", [this]() { ui_->startGame(); }},
-                 {"Load game",  &Menu::null},
-                 {"Settings",   &Menu::null},
-                 {"About",      &Menu::null},
+    windows_[Window::LoadGame] = std::make_unique<LoadGameWindow>(gui, theme, framework);
+    windows_[Window::Settings] = std::make_unique<MenuWindow>(gui, theme, "> Settings");
+    windows_[Window::About] = std::make_unique<AboutWindow>(gui, theme);
+
+    elements_ = {{"Start game", [this]() { framework_->respawn("first_new_map"); ui_->startGame(); }},
+                 {"Load game",  [this]() { this->showWindow(Menu::Window::LoadGame); }},
+                 {"Settings",   [this]() { this->showWindow(Menu::Window::Settings); }},
+                 {"About",      [this]() { this->showWindow(Menu::Window::About); }},
                  {"Exit",       [this]() { framework_->close(); }}};
     RM.getTexture("menu/logo").setSmooth(true);
     RM.getTexture("menu/main_panel").setSmooth(true);
@@ -89,6 +96,11 @@ void Menu::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(shape_, states);
     target.draw(bar_, states);
+
+    for (auto& window : windows_)
+    {
+        target.draw(*window.second, states);
+    }
 
     for (auto& event : animation_events_)
     {
@@ -156,5 +168,15 @@ void Menu::doShow(bool show)
             button->hideWithEffect(tgui::ShowAnimationType::Fade,
                                    sf::seconds(CONF<float>("graphics/menu_show_duration") / 10.0f));
     }
+}
+
+void Menu::showWindow(Menu::Window window)
+{
+    for (auto& w : windows_) {
+        w.second->doShow(false);
+    }
+
+    if (window != Window::None)
+        windows_[window]->doShow(true);
 }
 

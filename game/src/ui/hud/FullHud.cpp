@@ -327,12 +327,12 @@ void SkillsHud::show(bool hide)
             button->setText("+");
         }
 
-        if (hide)
+        if (hide && button->isVisible())
         {
             button->hideWithEffect(tgui::ShowAnimationType::Fade,
                                    sf::seconds(CONF<float>("graphics/full_hud_show_duration") / 2.0f));
         }
-        else
+        else if (!hide && !button->isVisible())
         {
             button->showWithEffect(tgui::ShowAnimationType::Fade,
                                    sf::seconds(CONF<float>("graphics/full_hud_show_duration")));

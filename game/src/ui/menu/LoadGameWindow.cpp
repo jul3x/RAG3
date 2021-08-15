@@ -44,8 +44,10 @@ LoadGameWindow::LoadGameWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
     int i = 0;
     for (const auto& item : RM.getListOfObjects(CONF<std::string>("paths/maps_dir")))
     {
+        static constexpr auto button_opacity = 0.8f;
         auto button = tgui::Picture::create(RM.getTexture("maps/" + item));
         auto label = tgui::Label::create(CONF<std::string>("map_name_" + item));
+        button->setInheritedOpacity(button_opacity);
         label->setRenderer(theme->getRenderer("Text"));
         label->setTextSize(CONF<float>("graphics/menu_window_text_size"));
         label->setInheritedFont(RM.getFont("default"));
@@ -55,6 +57,13 @@ LoadGameWindow::LoadGameWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
         grid->addWidget(label, (i / 4) * 2 + 1, i % 4);
         grid->setWidgetPadding(button, {CONF<float>("graphics/menu_maps_padding"), CONF<float>("graphics/menu_maps_padding")});
 
+        button->connect("mouseentered", [button, this]() {
+            button->setInheritedOpacity(1.0f);
+            framework_->spawnSound(RM.getSound("ui_hover"), framework_->getPlayer()->getPosition());
+        });
+        button->connect("mouseleft", [button]() {
+           button->setInheritedOpacity(button_opacity);
+        });
         button->connect("Clicked", [this](const std::string& map_name) {
             framework_->respawn(map_name);
             framework_->getUI()->startGame();

@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <utility>
+#include <experimental/filesystem>
 
 #include <R3E/system/AbstractResourceManager.h>
 #include <R3E/system/Logger.h>
@@ -148,6 +149,22 @@ namespace r3e {
         }
 
         LOG.info("[AbstractResourceManager] Shader " + key + " is loaded!");
+    }
+
+    bool AbstractResourceManager::fileExists(const std::string& filename)
+    {
+        return std::experimental::filesystem::exists(filename);
+    }
+
+    void AbstractResourceManager::copyFile(const std::string& in, const std::string& out)
+    {
+        std::experimental::filesystem::copy(in, out);
+    }
+
+    void AbstractResourceManager::copyFileIfNotExist(const std::string& in, const std::string& out)
+    {
+        if (!AbstractResourceManager::fileExists(out))
+            AbstractResourceManager::copyFile(in, out);
     }
 
 

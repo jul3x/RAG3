@@ -15,10 +15,18 @@ int main()
     LOG.setLogStatus(Logger::LogStatus::Full);
 
     CFG.initialize("../data/config/config.j3x");
+    CFG.appendConfig("../data/config/paths.j3x", "paths");
+
+    RM.copyFileIfNotExist("../data/config/default_graphics.j3x", "../data/config/graphics.j3x");
+    RM.copyFileIfNotExist("../data/config/default_sound.j3x", "../data/config/sound.j3x");
+
+    CFG.appendConfig("../data/config/user/graphics.j3x", "graphics");
+    CFG.appendConfig("../data/config/user/sound.j3x", "sound");
+
     CFG.appendConfig("../data/config/graphics.j3x", "graphics");
     CFG.appendConfig("../data/config/sound.j3x", "sound");
     CFG.appendConfig("../data/config/characters.j3x", "characters");
-    CFG.appendConfig("../data/config/paths.j3x", "paths");
+
 
     if (CONF<bool>("graphics/auto_resolution"))
     {

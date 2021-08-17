@@ -61,6 +61,8 @@ public:
     [[nodiscard]] size_t getDigest() const;
     [[nodiscard]] const std::string& getMapName() const;
 
+    void setParams(const j3x::Parameters& params);
+
     static void markBlocked(ai::Grid& blocked, const sf::Vector2f& pos, const sf::Vector2f& size, float value);
 
 private:

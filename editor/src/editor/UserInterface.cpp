@@ -34,6 +34,7 @@ UserInterface::UserInterface() :
         character_object_window_(&gui_, &gui_theme_),
         weapon_window_(&gui_, &gui_theme_),
         obstacle_object_window_(&gui_, &gui_theme_),
+        parameters_window_(&gui_, &gui_theme_),
         marked_item_(nullptr)
 {
     gui_.get("save_window")->setVisible(false);
@@ -44,6 +45,7 @@ UserInterface::UserInterface() :
     gui_.get("weapon_window")->setVisible(false);
     gui_.get("character_object_window")->setVisible(false);
     gui_.get("obstacle_object_window")->setVisible(false);
+    gui_.get("parameters_window")->setVisible(false);
 
     information_.setPosition(CONF<sf::Vector2f>("info_pos"));
     information_.setFillColor(sf::Color(255, 255, 255, 0));
@@ -150,6 +152,12 @@ void UserInterface::openObstacleWindow(const std::string& category, Obstacle* ob
 {
     obstacle_object_window_.setObjectContent(category, obj);
     gui_.get("obstacle_object_window")->setVisible(true);
+}
+
+void UserInterface::openParametersWindow()
+{
+    parameters_window_.setParameters();
+    gui_.get("parameters_window")->setVisible(true);
 }
 
 void UserInterface::setZIndex(int value)
@@ -496,4 +504,3 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
         }
     }
 }
-

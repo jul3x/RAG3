@@ -404,3 +404,8 @@ const std::string& Map::getMapName() const
 {
     return map_name_;
 }
+
+void Map::setParams(const j3x::Parameters& params)
+{
+    params_ = params;
+}

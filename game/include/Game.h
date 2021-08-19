@@ -11,7 +11,7 @@
 #include <R3E/system/Engine.h>
 #include <R3E/ai/AgentsManager.h>
 #include <R3E/audio/MusicManager.h>
-#include <R3E/graphics/Lightning.h>
+#include <R3E/graphics/Lighting.h>
 
 #include <common/Framework.h>
 #include <common/misc/Journal.h>

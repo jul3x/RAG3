@@ -66,7 +66,10 @@ void UserInterface::generateMenuBar(sf::RenderWindow& window)
     list_menu->connectMenuItem("File", "Clear existing map", [&]() { Editor::get().clearMap(); });
 
     list_menu->addMenuItem("File", "Load map");
-    list_menu->connectMenuItem("File", "Load map", [this]() { this->gui_.get("load_window")->setVisible(true); });
+    list_menu->connectMenuItem("File", "Load map", [this]() {
+        this->resetMapList();
+        this->gui_.get("load_window")->setVisible(true);
+    });
 
     list_menu->addMenuItem("File", "Save map");
     list_menu->connectMenuItem("File", "Save map", [this]() { this->gui_.get("save_window")->setVisible(true); });
@@ -201,6 +204,8 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
 
                 logo_.setPosition(event.size.width - CONF<sf::Vector2f>("logo_pos_off").x,
                                   CONF<sf::Vector2f>("logo_pos_off").y);
+
+                Editor::get().resetLighting(visible_area);
 
                 break;
             }

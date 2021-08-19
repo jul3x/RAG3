@@ -246,7 +246,7 @@ void Game::draw(graphics::Graphics& graphics)
             {
                 auto light = obj->getLightPoint();
                 if (light != nullptr)
-                    this->lightning_->add(*light);
+                    this->lighting_->add(*light);
             }
         };
 
@@ -277,7 +277,7 @@ void Game::draw(graphics::Graphics& graphics)
         graphics.drawAlreadySorted(states.shader);
 
 
-        lightning_->clear();
+        lighting_->clear();
 
         draw_light(map_->getList<NPC>());
         draw_light(map_->getList<Obstacle>());
@@ -287,12 +287,12 @@ void Game::draw(graphics::Graphics& graphics)
         draw_light(engine_->getAnimationEvents());
 
         if (player_->getLightPoint() != nullptr)
-            lightning_->add(*player_->getLightPoint());
+            lighting_->add(*player_->getLightPoint());
         if (player_clone_ != nullptr && player_clone_->getLightPoint() != nullptr)
-            lightning_->add(*player_clone_->getLightPoint());
+            lighting_->add(*player_clone_->getLightPoint());
 
         graphics.setStaticView();
-        graphics.draw(*lightning_);
+        graphics.draw(*lighting_);
     }
 }
 

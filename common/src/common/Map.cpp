@@ -13,7 +13,7 @@ Map::Map()
 {
     params_["shader"] = "normal.frag";
     params_["background_color"] = CONF<int>("graphics/background_color");
-    params_["lightning_color"] = CONF<int>("graphics/lightning_color");
+    params_["lighting_color"] = CONF<int>("graphics/lighting_color");
 }
 
 bool Map::clearMap()

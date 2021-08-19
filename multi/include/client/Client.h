@@ -11,7 +11,7 @@
 
 #include <R3E/system/AbstractGame.h>
 #include <R3E/system/Engine.h>
-#include <R3E/graphics/Lightning.h>
+#include <R3E/graphics/Lighting.h>
 
 #include <common/Map.h>
 #include <common/weapons/Bullet.h>

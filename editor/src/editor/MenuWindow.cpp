@@ -23,70 +23,48 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
     grid_->setPosition(CONF<sf::Vector2f>("menu_window_size") * 0.075f);
     child_->add(grid_);
 
-    auto button = tgui::Button::create();
-    button->setRenderer(theme_->getRenderer("Button"));
 
-    auto button_size = CONF<sf::Vector2f>("button_size");
-    unsigned int button_text_size = CONF<float>("label_text_size");
-    button->setSize(button_size);
-    button->setText("Load map");
-    button->setTextSize(button_text_size);
-    button->connect("Clicked", [this]() {
+    auto create_button = [this](const std::string& name, const std::function<void()>& function, int i, int j) {
+        auto button = tgui::Button::create();
+        button->setRenderer(theme_->getRenderer("Button"));
+        auto button_size = CONF<sf::Vector2f>("button_size");
+        unsigned int button_text_size = CONF<float>("label_text_size");
+        button->setSize(button_size);
+        button->setText(name);
+        button->setTextSize(button_text_size);
+        button->connect("Clicked", function);
+        grid_->addWidget(button, i, j);
+    };
+
+    create_button("Load map", [this]() {
         this->ui_->resetMapList();
         this->gui_->get("load_window")->setVisible(true);
-    });
-    grid_->addWidget(button, 0, 0);
+    }, 0, 0);
 
-    button = tgui::Button::create();
-    button->setRenderer(theme_->getRenderer("Button"));
-    button->setSize(button_size);
-    button->setTextSize(button_text_size);
-    button->setText("Save map");
-    grid_->addWidget(button, 0, 1);
-    button->connect("Clicked", [this]() {
+    create_button("Save map", [this]() {
         this->ui_->resetMapList();
         this->gui_->get("save_window")->setVisible(true);
-    });
+    }, 0, 1);
 
-    button = tgui::Button::create();
-    button->setRenderer(theme_->getRenderer("Button"));
-    button->setSize(button_size);
-    button->setTextSize(button_text_size);
-    button->setText("Edit config");
-    grid_->addWidget(button, 1, 0);
-    button->connect("Clicked", [this]() { this->ui_->openConfigWindow("config_dir", "config"); });
+    create_button("Edit graphics", [this]() {
+        this->ui_->openConfigWindow("config_dir", "graphics");
+    }, 1, 0);
 
-    button = tgui::Button::create();
-    button->setRenderer(theme_->getRenderer("Button"));
-    button->setSize(button_size);
-    button->setTextSize(button_text_size);
-    button->setText("Edit graphics");
-    grid_->addWidget(button, 1, 1);
-    button->connect("Clicked", [this]() { this->ui_->openConfigWindow("config_dir", "graphics"); });
+    create_button("Edit config", [this]() {
+        this->ui_->openConfigWindow("config_dir", "config");
+    }, 1, 1);
 
-    button = tgui::Button::create();
-    button->setRenderer(theme_->getRenderer("Button"));
-    button->setSize(button_size);
-    button->setTextSize(button_text_size);
-    button->setText("Edit characters");
-    grid_->addWidget(button, 2, 0);
-    button->connect("Clicked", [this]() { this->ui_->openConfigWindow("config_dir", "characters"); });
+    create_button("Edit characters", [this]() {
+        this->ui_->openConfigWindow("config_dir", "characters");
+    }, 2, 0);
 
-    button = tgui::Button::create();
-    button->setRenderer(theme_->getRenderer("Button"));
-    button->setSize(button_size);
-    button->setTextSize(button_text_size);
-    button->setText("Edit sound");
-    grid_->addWidget(button, 2, 1);
-    button->connect("Clicked", [this]() { this->ui_->openConfigWindow("config_dir", "sound"); });
+    create_button("Edit sound", [this]() {
+        this->ui_->openConfigWindow("config_dir", "sound");
+    }, 2, 1);
 
-    button = tgui::Button::create();
-    button->setRenderer(theme_->getRenderer("Button"));
-    button->setSize(button_size);
-    button->setTextSize(button_text_size);
-    button->setText("Edit parameters");
-    grid_->addWidget(button, 3, 0);
-    button->connect("Clicked", [this]() { this->ui_->openParametersWindow(); });
+    create_button("Edit parameters", [this]() {
+        this->ui_->openParametersWindow();
+    }, 3, 0);
 
     z_index_label_ = tgui::Label::create();
     z_index_label_->setRenderer(theme_->getRenderer("Label"));

@@ -23,12 +23,13 @@ namespace editor {
         void setParameters();
 
     private:
-
         tgui::Grid::Ptr grid_;
 
         tgui::Button::Ptr button_;
 
-        tgui::EditBox::Ptr shader_box_, background_box_, lighting_box_;
+        const std::vector<std::string> map_parameters = {"background_color", "lighting_color", "shader"};
+
+        std::unordered_map<std::string, tgui::EditBox::Ptr> parameters_boxes_;
 
     };
 

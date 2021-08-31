@@ -44,12 +44,12 @@ set(LIBRARY_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/build")
 file(GLOB_RECURSE COMMON_SRC "common/src/*.cpp")
 set(COMMON_LIBRARY "Common")
 
-add_library(${COMMON_LIBRARY} STATIC ${COMMON_SRC} editor/include/editor/ParametersWindow.h)
+add_library(${COMMON_LIBRARY} STATIC ${COMMON_SRC})
 
 # R3Editor
 set(EDITOR_NAME "Rag3Editor")
 file(GLOB_RECURSE EDITOR_SRC "editor/src/*.cpp")
-add_executable(${EDITOR_NAME} ${EDITOR_SRC} editor/src/editor/ParametersWindow.cpp)
+add_executable(${EDITOR_NAME} ${EDITOR_SRC})
 
 target_link_libraries(${EDITOR_NAME}
         ${COMMON_LIBRARY}

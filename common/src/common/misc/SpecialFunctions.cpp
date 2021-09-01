@@ -54,6 +54,8 @@ SpecialFunctions::SpecialFunctions(Framework* framework) : framework_(framework)
     init("SpawnAmmo", &SpecialFunctions::spawnAmmo);
     init("SpawnDestruction", &SpecialFunctions::spawnDestruction, "", true);
     init("SpawnCrystal", &SpecialFunctions::spawnCrystal, "", true);
+    init("SpawnAnimationEvent", &SpecialFunctions::spawnAnimationEvent, "", true);
+    init("SpawnSound", &SpecialFunctions::spawnSound, "", true);
     init("null", &SpecialFunctions::nullFunc, "", true);
     init("Deactivate", &SpecialFunctions::deactivate, "", true);
     init("Destroy", &SpecialFunctions::destroy, "", true);
@@ -494,4 +496,23 @@ void SpecialFunctions::spawnCrystal(Functional* obj, const j3x::Obj& data, Chara
     LOG.info("[SpecialFunction] Spawning crystal.");
     auto pos = j3x::getObj<sf::Vector2f>(data);
     framework_->spawnSpecial(pos, "crystal");
+}
+
+void SpecialFunctions::spawnAnimationEvent(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Spawning animation.");
+    auto& data_list = j3x::getObj<j3x::List>(data);
+    const auto& animation = j3x::getObj<std::string>(data_list, 0);
+    const auto& pos = j3x::getObj<sf::Vector2f>(data_list, 1);
+    auto number = std::to_string(utils::num::getRandom(1, 1));
+    framework_->spawnEvent(animation + number, pos, 0.0f, RMGET<sf::Vector2f>("animations", animation + number, "size").x);
+}
+
+void SpecialFunctions::spawnSound(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Spawning sound.");
+    auto& data_list = j3x::getObj<j3x::List>(data);
+    const auto& sound = j3x::getObj<std::string>(data_list, 0);
+    const auto& pos = j3x::getObj<sf::Vector2f>(data_list, 1);
+    framework_->spawnSound(RM.getSound(sound), pos);
 }

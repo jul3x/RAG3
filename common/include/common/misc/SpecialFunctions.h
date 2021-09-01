@@ -58,6 +58,8 @@ public:
     void spawnAmmo(Functional* obj, const j3x::Obj& data, Character* user);
     void spawnFlame(Functional* obj, const j3x::Obj& data, Character* user);
     void spawnCrystal(Functional* obj, const j3x::Obj& data, Character* user);
+    void spawnAnimationEvent(Functional* obj, const j3x::Obj& data, Character* user);
+    void spawnSound(Functional* obj, const j3x::Obj& data, Character* user);
 
     void nullFunc(Functional* obj, const j3x::Obj& data, Character* user);
     void deactivate(Functional* obj, const j3x::Obj& data, Character* user);

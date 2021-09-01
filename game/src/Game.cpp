@@ -753,10 +753,10 @@ void Game::respawn(const std::string& map_name)
                                                           CONF<float>("characters/min_pos_change_without_path_recalc"),
                                                           CONF<int>("characters/max_path_search_depth"));
     engine_->getGraphics().setBgColor(sf::Color(j3x::get<int>(map_->getParams(), "background_color")));
-    lightning_ = std::make_unique<graphics::Lightning>(
+    lighting_ = std::make_unique<graphics::Lighting>(
             sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                          static_cast<float>(CONF<int>("graphics/window_height_px"))},
-            sf::Color(j3x::get<int>(map_->getParams(), "lightning_color")));
+            sf::Color(j3x::get<int>(map_->getParams(), "lighting_color")));
 
 //    debug_map_blockage_ = std::make_unique<DebugMapBlockage>(&map_->getMapBlockage());
 

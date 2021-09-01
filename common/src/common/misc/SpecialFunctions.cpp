@@ -504,8 +504,7 @@ void SpecialFunctions::spawnAnimationEvent(Functional* obj, const j3x::Obj& data
     auto& data_list = j3x::getObj<j3x::List>(data);
     const auto& animation = j3x::getObj<std::string>(data_list, 0);
     const auto& pos = j3x::getObj<sf::Vector2f>(data_list, 1);
-    auto number = std::to_string(utils::num::getRandom(1, 1));
-    framework_->spawnEvent(animation + number, pos, 0.0f, RMGET<sf::Vector2f>("animations", animation + number, "size").x);
+    framework_->spawnEvent(animation, pos, 0.0f, RMGET<sf::Vector2f>("animations", animation, "size").x);
 }
 
 void SpecialFunctions::spawnSound(Functional* obj, const j3x::Obj& data, Character* user)

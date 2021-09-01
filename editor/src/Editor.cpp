@@ -385,3 +385,13 @@ void Editor::close()
 {
     this->engine_->getGraphics().getWindow().close();
 }
+
+Map& Editor::getMap()
+{
+    return *map_;
+}
+
+UserInterface& Editor::getUI()
+{
+    return *ui_;
+}

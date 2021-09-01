@@ -17,6 +17,8 @@ int main()
     CFG.appendConfig("../data/config/graphics.j3x", "graphics");
     CFG.appendConfig("../data/config/sound.j3x", "sound");
     CFG.appendConfig("../data/config/characters.j3x", "characters");
+    CFG.appendConfig("../data/config/user/default_graphics.j3x", "graphics");
+    CFG.appendConfig("../data/config/user/default_sound.j3x", "sound");
     CFG.appendConfig("../data/config/paths.j3x", "paths");
 
     if (CONF<bool>("auto_resolution"))

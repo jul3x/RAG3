@@ -75,6 +75,8 @@ namespace editor {
         void saveMap(const std::string& name);
         [[nodiscard]] const std::string& getCurrentMapName() const;
         [[nodiscard]] sf::Vector2f getMapCoordinates(const sf::Vector2f& pos) const;
+        [[nodiscard]] Map& getMap();
+        [[nodiscard]] UserInterface& getUI();
 
         void saveConfig(const std::string& category, const std::string& id, const std::string& content);
 

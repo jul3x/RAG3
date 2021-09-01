@@ -61,6 +61,8 @@ public:
     [[nodiscard]] size_t getDigest() const;
     [[nodiscard]] const std::string& getMapName() const;
 
+    void setParams(const j3x::Parameters& params);
+
     static void markBlocked(ai::Grid& blocked, const sf::Vector2f& pos, const sf::Vector2f& size, float value);
 
 private:
@@ -134,7 +136,6 @@ private:
                 !this->checkCollisions(pos, obstacles_, erase, max_z_index) &&
                 !this->checkCollisions(pos, weapons_, erase, max_z_index));
     }
-
 
     std::list<std::shared_ptr<ObstacleTile>> obstacles_tiles_;
     std::list<std::shared_ptr<NPC>> characters_;

@@ -11,7 +11,7 @@
 
 Map::Map()
 {
-    params_["shader"] = "normal.frag";
+    params_["shader"] = std::string("normal.frag");
     params_["background_color"] = CONF<int>("graphics/background_color");
     params_["lighting_color"] = CONF<int>("graphics/lighting_color");
 }
@@ -403,4 +403,9 @@ size_t Map::getDigest() const
 const std::string& Map::getMapName() const
 {
     return map_name_;
+}
+
+void Map::setParams(const j3x::Parameters& params)
+{
+    params_ = params;
 }

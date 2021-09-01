@@ -3,6 +3,7 @@
 //
 
 #include <R3E/system/Config.h>
+#include <R3E/utils/Misc.h>
 
 #include <editor/ParametersWindow.h>
 
@@ -22,7 +23,7 @@ ParametersWindow::ParametersWindow(tgui::Gui* gui, tgui::Theme* theme) :
 
     grid_ = tgui::Grid::create();
     grid_->setPosition("50% - width/2", "20");
-    grid_->setSize("90%", "50%");
+    grid_->setSize("90%", "80%");
     grid_->setAutoSize(true);
     child_->add(grid_);
 
@@ -33,9 +34,10 @@ ParametersWindow::ParametersWindow(tgui::Gui* gui, tgui::Theme* theme) :
     {
         auto label = tgui::Label::create();
         label->setRenderer(theme_->getRenderer("Label"));
-        label->setText(parameter);
+        label->setText(r3e::utils::humanize(parameter));
         label->setTextSize(CONF<float>("label_text_size"));
         grid_->addWidget(label, i, 0);
+        grid_->setWidgetPadding(i, 0, {padding, padding});
         ++i;
 
         auto edit_box = tgui::EditBox::create();
@@ -43,9 +45,9 @@ ParametersWindow::ParametersWindow(tgui::Gui* gui, tgui::Theme* theme) :
         edit_box->setSize("80%", CONF<float>("text_box_height"));
         edit_box->setTextSize(CONF<float>("label_text_size"));
         grid_->addWidget(edit_box, i, 0);
+        grid_->setWidgetPadding(i, 0, {padding, padding});
         ++i;
 
-        grid_->setWidgetPadding(i, 0, {padding, padding});
         parameters_boxes_.emplace(std::make_pair(parameter, edit_box));
     }
 
@@ -61,24 +63,34 @@ ParametersWindow::ParametersWindow(tgui::Gui* gui, tgui::Theme* theme) :
 
 void ParametersWindow::setParameters()
 {
-    //todo resolve the problem with type mismatch
     auto& params = Editor::get().getMap().getParams();
 
     for (const auto& parameter : map_parameters)
     {
-        parameters_boxes_[parameter]->setText(j3x::get<std::string>(params, parameter));
+        std::string out;
+        j3x::serialize(params.at(parameter), out);
+        parameters_boxes_[parameter]->setText(out);
     }
 
     button_->connect("pressed", [&]() {
-        j3x::Parameters params;
-
+        std::string parse_str;
         for (const auto& parameter : map_parameters)
         {
-            params[parameter] = std::string(parameters_boxes_[parameter]->getText());
+            auto type = j3x::getType(params.at(parameter));
+            parse_str += type + " " + parameter + " = " + parameters_boxes_[parameter]->getText() + "\n";
         }
 
-        Editor::get().getMap().setParams(params);
+        try
+        {
+            auto new_params = j3x::parseContent(parse_str);
+            Editor::get().getMap().setParams(*new_params);
 
-        child_->close();
+            child_->close();
+        }
+        catch (const std::exception& e)
+        {
+            Editor::get().getUI().spawnError("Parameters parsing error!");
+        }
+
     });
 }

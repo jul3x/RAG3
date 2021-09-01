@@ -390,3 +390,8 @@ Map& Editor::getMap()
 {
     return *map_;
 }
+
+UserInterface& Editor::getUI()
+{
+    return *ui_;
+}

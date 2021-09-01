@@ -11,7 +11,7 @@
 
 Map::Map()
 {
-    params_["shader"] = "normal.frag";
+    params_["shader"] = std::string("normal.frag");
     params_["background_color"] = CONF<int>("graphics/background_color");
     params_["lighting_color"] = CONF<int>("graphics/lighting_color");
 }

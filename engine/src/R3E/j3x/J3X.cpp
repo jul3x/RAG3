@@ -159,38 +159,41 @@ namespace r3e::j3x {
 
     void serializeAssign(const std::string& variable, const j3x::Obj& obj, std::string& out)
     {
+        out += getType(obj) + " " + variable + " = ";
+        serialize(obj, out);
+        out += "\n";
+    }
+
+    std::string getType(const Obj& obj)
+    {
         if (obj.type() == typeid(j3x::List))
         {
-            out += "list ";
+            return "list";
         }
         else if (obj.type() == typeid(int))
         {
-            out += "int ";
+            return "int";
         }
         else if (obj.type() == typeid(float))
         {
-            out += "float ";
+            return "float";
         }
         else if (obj.type() == typeid(bool))
         {
-            out += "bool ";
+            return "bool";
         }
         else if (obj.type() == typeid(sf::Vector2f))
         {
-            out += "vector ";
+            return "vector";
         }
         else if (obj.type() == typeid(std::string))
         {
-            out += "string ";
+            return "string";
         }
         else
         {
-            throw std::logic_error("[j3x::serialize] Not handled data type: " + std::string(obj.type().name()));
+            throw std::logic_error("[j3x::getType] Not handled data type: " + std::string(obj.type().name()));
         }
-
-        out += variable + " = ";
-        serialize(obj, out);
-        out += "\n";
     }
 
 } // namespace r3e::j3x

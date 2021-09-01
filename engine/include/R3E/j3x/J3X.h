@@ -139,6 +139,8 @@ namespace r3e::j3x {
 
     void serializeAssign(const std::string& variable, const j3x::Obj& obj, std::string& out);
 
+    std::string getType(const j3x::Obj& obj);
+
     template<class T>
     T parseObj(const std::string& type, const std::string& str)
     {

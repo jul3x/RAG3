@@ -137,7 +137,6 @@ private:
                 !this->checkCollisions(pos, weapons_, erase, max_z_index));
     }
 
-
     std::list<std::shared_ptr<ObstacleTile>> obstacles_tiles_;
     std::list<std::shared_ptr<NPC>> characters_;
     std::list<std::shared_ptr<DecorationTile>> decorations_tiles_;

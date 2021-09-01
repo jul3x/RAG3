@@ -9,9 +9,10 @@
 #include <R3E/utils/Misc.h>
 
 #include <common/ResourceManager.h>
-
-#include <ui/GameUserInterface.h>
 #include <common/ui/NoteWindow.h>
+
+#include <ui/menu/SettingsWindow.h>
+#include <ui/GameUserInterface.h>
 #include <Game.h>
 
 
@@ -60,47 +61,46 @@ void GameUserInterface::update(graphics::Graphics& graphics, float time_elapsed)
 
 void GameUserInterface::handleAdditionalKeyPressed(sf::Keyboard::Key code)
 {
-    switch (code)
+    if (code == CONF<int>("controls/talk"))
     {
-        case sf::Keyboard::T:
+        if (game_->getGameState() == Game::GameState::Normal)
+            game_->talk();
+    }
+    else if (code == sf::Keyboard::Escape)
+    {
+        if (game_->getGameState() == Game::GameState::Paused)
         {
-            if (game_->getGameState() == Game::GameState::Normal)
-                game_->talk();
-            break;
+            game_->setGameState(Game::GameState::Normal);
+            full_hud_->show(false);
+            clearWindows();
         }
-        case sf::Keyboard::Escape:
+        else if (game_->getGameState() != Game::GameState::Menu)
         {
-            if (game_->getGameState() == Game::GameState::Paused)
-            {
-                game_->setGameState(Game::GameState::Normal);
-                full_hud_->show(false);
-                clearWindows();
-            }
-            else if (game_->getGameState() != Game::GameState::Menu)
-            {
-                game_->setGameState(Game::GameState::Paused);
-                full_hud_->show(true);
-            }
+            game_->setGameState(Game::GameState::Paused);
+            full_hud_->show(true);
+        }
 
-            break;
-        }
-        case sf::Keyboard::R:
-        {
-            if (!game_->isJournalFreezed() && game_->getGameState() == Game::GameState::Normal)
-                game_->setGameState(Game::GameState::Reverse);
-            break;
-        }
-        default:
-            break;
+    }
+    if (code == CONF<int>("controls/time_reversal"))
+    {
+        if (!game_->isJournalFreezed() && game_->getGameState() == Game::GameState::Normal)
+            game_->setGameState(Game::GameState::Reverse);
     }
 }
 
 void GameUserInterface::handleKeyReleased(sf::Keyboard::Key code)
 {
-    if (code == sf::Keyboard::R)
+    if (framework_->getGameState() == Framework::GameState::Menu && menu_->isOpen(Menu::Window::Settings))
     {
-        if (game_->getGameState() == Game::GameState::Reverse)
-            game_->setGameState(Game::GameState::Normal);
+        dynamic_cast<SettingsWindow&>(menu_->getWindow(Menu::Window::Settings)).setKey(code);
+    }
+    else
+    {
+        if (code == CONF<int>("controls/time_reversal"))
+        {
+            if (game_->getGameState() == Game::GameState::Reverse)
+                game_->setGameState(Game::GameState::Normal);
+        }
     }
 }
 

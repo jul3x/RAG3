@@ -36,6 +36,8 @@ public:
     void update(float time_elapsed);
     void doShow(bool show);
     void showWindow(Window window);
+    bool isOpen(Window window) const;
+    MenuWindow& getWindow(Window window);
 
 private:
     static void null()

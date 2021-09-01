@@ -55,5 +55,6 @@ test/build_test/*
 *googletest*
 
 # User Configs
+data/config/user/controls.j3x
 data/config/user/graphics.j3x
 data/config/user/sound.j3x

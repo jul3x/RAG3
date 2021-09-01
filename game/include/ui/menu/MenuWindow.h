@@ -19,6 +19,8 @@ public:
 
     virtual void doShow(bool show);
 
+    bool isOpen() const;
+
 protected:
     bool is_visible_;
 

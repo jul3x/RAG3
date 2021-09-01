@@ -24,8 +24,8 @@ UserInterface::UserInterface(Framework* framework) :
                  CONF<int>("graphics/window_height_px") - HEALTH_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")},
                  "health_bar"),
         fps_text_("FPS: ", RM.getFont("editor"), 12),
-        object_use_text_("[F] Use object", RM.getFont(), CONF<float>("graphics/use_text_size")),
-        npc_talk_text_("[T] Talk to NPC", RM.getFont(), CONF<float>("graphics/use_text_size")),
+        object_use_text_("Use object", RM.getFont(), CONF<float>("graphics/use_text_size")),
+        npc_talk_text_("Talk to NPC", RM.getFont(), CONF<float>("graphics/use_text_size")),
         right_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")),
                     static_cast<float>(CONF<int>("graphics/window_height_px"))}),
         small_backpack_hud_(framework, {static_cast<float>(CONF<int>("graphics/window_width_px")), 0.0f}),
@@ -88,7 +88,8 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
     auto special_object = framework_->getCurrentSpecialObject();
     if (special_object != nullptr)
     {
-        object_use_text_.setString(special_object->getTextToUse());
+        object_use_text_.setString("[" + utils::keyToString(static_cast<sf::Keyboard::Key>(CONF<int>("controls/use")))
+                                   + "] " + special_object->getTextToUse());
         auto object_use_text_rect = object_use_text_.getLocalBounds();
         object_use_text_.setOrigin(object_use_text_rect.left + object_use_text_rect.width / 2.0f,
                                    object_use_text_rect.top + object_use_text_rect.height / 2.0f);
@@ -104,6 +105,8 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
     auto npc_talk = framework_->getCurrentTalkableCharacter();
     if (npc_talk != nullptr)
     {
+        npc_talk_text_.setString("[" + utils::keyToString(static_cast<sf::Keyboard::Key>(CONF<int>("controls/talk")))
+                                 + "] Talk to NPC");
         auto npc_talk_text_rect = npc_talk_text_.getLocalBounds();
         npc_talk_text_.setOrigin(npc_talk_text_rect.left + npc_talk_text_rect.width / 2.0f,
                                  npc_talk_text_rect.top + npc_talk_text_rect.height / 2.0f);
@@ -144,44 +147,34 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
             }
             case sf::Event::KeyPressed:
             {
-                switch (event.key.code)
+                if (event.key.code == CONF<int>("controls/health"))
                 {
-                    case sf::Keyboard::Num1:
-                    {
-                        framework_->useItem("health");
-                        break;
-                    }
-                    case sf::Keyboard::Num2:
-                    {
-                        framework_->useItem("more_speed");
-                        break;
-                    }
-                    case sf::Keyboard::Num3:
-                    {
-                        framework_->useItem("rag3");
-                        break;
-                    }
-                    case sf::Keyboard::Q:
-                    {
-                        framework_->getPlayer()->sideStep(Player::SideStepDir::Left);
-                        break;
-                    }
-                    case sf::Keyboard::E:
-                    {
-                        framework_->getPlayer()->sideStep(Player::SideStepDir::Right);
-                        break;
-                    }
-                    case sf::Keyboard::F:
-                    {
-                        if (framework_->getGameState() == Framework::GameState::Normal)
-                            framework_->useSpecialObject();
-                        break;
-                    }
-                    default:
-                    {
-                        handleAdditionalKeyPressed(event.key.code);
-                        break;
-                    }
+                    framework_->useItem("health");
+                }
+                else if (event.key.code == CONF<int>("controls/more_speed"))
+                {
+                    framework_->useItem("more_speed");
+                }
+                else if (event.key.code == CONF<int>("controls/more_speed"))
+                {
+                    framework_->useItem("rag3");
+                }
+                else if (event.key.code == CONF<int>("controls/dodge_left"))
+                {
+                    framework_->getPlayer()->sideStep(Player::SideStepDir::Left);
+                }
+                else if (event.key.code == CONF<int>("controls/dodge_right"))
+                {
+                    framework_->getPlayer()->sideStep(Player::SideStepDir::Right);
+                }
+                else if (event.key.code == CONF<int>("controls/use"))
+                {
+                    if (framework_->getGameState() == Framework::GameState::Normal)
+                        framework_->useSpecialObject();
+                }
+                else
+                {
+                    handleAdditionalKeyPressed(event.key.code);
                 }
 
                 break;
@@ -217,9 +210,15 @@ void UserInterface::handleKeys()
     keys_pressed_.clear();
     auto delta = sf::Vector2f(0.0f, 0.0f);
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+    auto up_key = static_cast<sf::Keyboard::Key>(CONF<int>("controls/up"));
+    auto left_key = static_cast<sf::Keyboard::Key>(CONF<int>("controls/left"));
+    auto down_key = static_cast<sf::Keyboard::Key>(CONF<int>("controls/down"));
+    auto right_key = static_cast<sf::Keyboard::Key>(CONF<int>("controls/right"));
+    auto run_key = static_cast<sf::Keyboard::Key>(CONF<int>("controls/run"));
+
+    if (sf::Keyboard::isKeyPressed(run_key))
     {
-        keys_pressed_.insert(sf::Keyboard::LShift);
+        keys_pressed_.insert(run_key);
         player_->setRunning(true);
     }
     else
@@ -230,26 +229,26 @@ void UserInterface::handleKeys()
     float max_speed = player_->isRunning() ? RMGET<float>("characters", "player", "max_running_speed") :
             RMGET<float>("characters", "player", "max_speed");
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    if (sf::Keyboard::isKeyPressed(left_key))
     {
         delta.x -= max_speed;
-        keys_pressed_.insert(sf::Keyboard::A);
+        keys_pressed_.insert(left_key);
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    else if (sf::Keyboard::isKeyPressed(right_key))
     {
         delta.x += max_speed;
-        keys_pressed_.insert(sf::Keyboard::D);
+        keys_pressed_.insert(right_key);
     }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    if (sf::Keyboard::isKeyPressed(up_key))
     {
         delta.y -= max_speed;
-        keys_pressed_.insert(sf::Keyboard::W);
+        keys_pressed_.insert(up_key);
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+    else if (sf::Keyboard::isKeyPressed(down_key))
     {
         delta.y += max_speed;
-        keys_pressed_.insert(sf::Keyboard::S);
+        keys_pressed_.insert(down_key);
     }
 
     if (player_->isAlive())

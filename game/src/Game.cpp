@@ -23,7 +23,7 @@ Game::Game() : Framework(),
 void Game::initialize()
 {
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
-    player_->setName("jul3x");
+    player_->setName(CONF<std::string>("general/player_name"));
     time_manipulation_fuel_ = player_->getMaxTimeManipulation();
     Framework::initialize();
     engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
@@ -740,7 +740,7 @@ float Game::getTimeManipulationFuel() const
 void Game::respawn(const std::string& map_name)
 {
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
-    player_->setName("jul3x");
+    player_->setName(CONF<std::string>("general/player_name"));
     ui_->clearThoughts();
     ui_->registerPlayer(player_.get());
     time_manipulation_fuel_ = player_->getMaxTimeManipulation();

@@ -12,10 +12,9 @@
 
 
 namespace r3e::j3x {
-
-    std::shared_ptr<Parameters> parse(const std::string& filename, const std::string& ns)
+    std::shared_ptr<J3XVisitor> parseWithVisitor(const std::string& filename, const std::string& ns)
     {
-        J3XVisitor visitor(ns);
+        auto visitor = std::make_shared<J3XVisitor>(ns);
         FILE* input = fopen(filename.c_str(), "r");
 
         if (input)
@@ -29,7 +28,7 @@ namespace r3e::j3x {
                 {
                     throw std::logic_error("parse error");
                 }
-                parse_tree->accept(&visitor);
+                parse_tree->accept(visitor.get());
                 delete parse_tree;
             }
             catch (const std::exception& e)
@@ -45,7 +44,12 @@ namespace r3e::j3x {
             throw std::logic_error("[J3X] J3X " + filename + " file not found!\n");
         }
 
-        return std::make_shared<Parameters>(visitor.getParams());
+        return visitor;
+    }
+
+    std::shared_ptr<Parameters> parse(const std::string& filename, const std::string& ns)
+    {
+        return std::make_shared<Parameters>(parseWithVisitor(filename, ns)->getParams());
     }
 
     std::shared_ptr<Parameters> parse(const std::string& filename)

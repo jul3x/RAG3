@@ -34,3 +34,8 @@ void MenuWindow::doShow(bool show) {
     is_visible_ = show;
     header_->setVisible(show);
 }
+
+bool MenuWindow::isOpen() const
+{
+    return is_visible_;
+}

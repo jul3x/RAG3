@@ -1,0 +1,3 @@
+// GRAPHICS SETTINGS
+string player_name = "jul3x"
+string character = "player"

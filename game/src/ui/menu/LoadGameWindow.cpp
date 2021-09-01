@@ -31,8 +31,9 @@ LoadGameWindow::LoadGameWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
                                                   CONF<float>("graphics/menu_window_header_size") * 2.0f});
     scroll_panel_->setHorizontalScrollbarPolicy(tgui::Scrollbar::Policy::Never);
     scroll_panel_->setVerticalScrollAmount(100);
-    scroll_panel_->setRenderer(theme->getRenderer("ScrollablePanel"));
+    scroll_panel_->setRenderer(theme->getRenderer("ScrollablePanelGame"));
     scroll_panel_->getRenderer()->setBackgroundColor(sf::Color::Transparent);
+    scroll_panel_->getRenderer()->setScrollbarWidth(CONF<float>("graphics/menu_scrollbar_width"));
 
     gui->add(scroll_panel_);
 

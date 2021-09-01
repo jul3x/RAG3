@@ -11,6 +11,7 @@
 
 #include <ui/menu/AboutWindow.h>
 #include <ui/menu/LoadGameWindow.h>
+#include <ui/menu/SettingsWindow.h>
 #include <ui/menu/Menu.h>
 
 
@@ -33,7 +34,7 @@ Menu::Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme*
         time_elapsed_(0.0f), explosion_elapsed_(0.0f)
 {
     windows_[Window::LoadGame] = std::make_unique<LoadGameWindow>(gui, theme, framework);
-    windows_[Window::Settings] = std::make_unique<MenuWindow>(gui, theme, "> Settings");
+    windows_[Window::Settings] = std::make_unique<SettingsWindow>(gui, theme, framework);
     windows_[Window::About] = std::make_unique<AboutWindow>(gui, theme);
 
     elements_ = {{"Start game", [this]() { framework_->respawn("first_new_map"); ui_->startGame(); }},
@@ -180,3 +181,12 @@ void Menu::showWindow(Menu::Window window)
         windows_[window]->doShow(true);
 }
 
+bool Menu::isOpen(Menu::Window window) const
+{
+    return windows_.at(window)->isOpen();
+}
+
+MenuWindow& Menu::getWindow(Menu::Window window)
+{
+    return *windows_.at(window);
+}

@@ -49,6 +49,11 @@ namespace r3e {
             j3x::set<T>(*params_, key, value);
         }
 
+        j3x::Parameters& getParameters()
+        {
+            return *params_;
+        }
+
     private:
         Config() = default;
 

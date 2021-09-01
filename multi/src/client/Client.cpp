@@ -46,7 +46,7 @@ void Client::initialize()
     }
     data_receive_socket_.setBlocking(false);
 
-    establishConnection("192.168.1.23");
+    establishConnection("192.168.0.17");
 }
 
 void Client::update(float time_elapsed)
@@ -255,7 +255,7 @@ void Client::establishConnection(const sf::IpAddress& ip)
     server_ip_ = ip;
 
     j3x::Parameters data;
-    data["name"] = std::string("jul3x");
+    data["name"] = std::string(CONF<std::string>("general/player_name"));
     data["texture"] = std::string("trevor");
     PlayerEventPacket packet(PlayerEventPacket::Type::NameChange, data);
     events_socket_.send(packet);

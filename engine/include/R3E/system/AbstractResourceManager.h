@@ -45,6 +45,10 @@ namespace r3e {
         // TODO - templates
         void lazyLoadTexture(const std::string& key);
 
+        static bool fileExists(const std::string& filename);
+        static void copyFile(const std::string& in, const std::string& out);
+        static void copyFileIfNotExist(const std::string& in, const std::string& out);
+
     protected:
         template<class T>
         T& getOrLoad(std::unordered_map<std::string, T>& objs,

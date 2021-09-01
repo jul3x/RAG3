@@ -1,4 +1,2 @@
-bool sound_on=true
-float music_volume=20.0
 float sound_attenuation=0.005
 float bullet_time_music_factor=0.6

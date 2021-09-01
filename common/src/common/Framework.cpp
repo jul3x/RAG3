@@ -45,27 +45,6 @@ void Framework::initialize()
 
     this->initParams();
     weather_ = std::make_unique<WeatherSystem>(this, weather_params_.get());
-    map_->loadMap("first_new_map");
-    agents_manager_ = std::make_unique<ai::AgentsManager>(&map_->getMapBlockage(), ai::AStar::EightNeighbours,
-                                                          CONF<float>("characters/max_time_without_path_recalc"),
-                                                          CONF<float>("characters/min_pos_change_without_path_recalc"),
-                                                          CONF<int>("characters/max_path_search_depth"));
-    engine_->getGraphics().setBgColor(sf::Color(j3x::get<int>(map_->getParams(), "background_color")));
-    lighting_ = std::make_unique<graphics::Lighting>(
-            sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                         static_cast<float>(CONF<int>("graphics/window_height_px"))},
-            sf::Color(j3x::get<int>(map_->getParams(), "lighting_color")));
-
-//    debug_map_blockage_ = std::make_unique<DebugMapBlockage>(&map_->getMapBlockage());
-
-    engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
-
-    initObstacles();
-    initDecorations();
-    initPlayers();
-    initNPCs();
-    initWeapons();
-    initSpecials();
 }
 
 void Framework::update(float time_elapsed)
@@ -1024,7 +1003,7 @@ float Framework::getTimeManipulationFuel() const
     return 0.0f;
 }
 
-void Framework::respawn()
+void Framework::respawn(const std::string& map_name)
 {
 
 }

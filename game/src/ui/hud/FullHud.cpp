@@ -327,12 +327,12 @@ void SkillsHud::show(bool hide)
             button->setText("+");
         }
 
-        if (hide)
+        if (hide && button->isVisible())
         {
             button->hideWithEffect(tgui::ShowAnimationType::Fade,
                                    sf::seconds(CONF<float>("graphics/full_hud_show_duration") / 2.0f));
         }
-        else
+        else if (!hide && !button->isVisible())
         {
             button->showWithEffect(tgui::ShowAnimationType::Fade,
                                    sf::seconds(CONF<float>("graphics/full_hud_show_duration")));
@@ -403,7 +403,7 @@ FullHud::FullHud(UserInterface* ui, Framework* framework, const sf::Vector2f& si
                           window_center + CONF<sf::Vector2f>("graphics/respawn_button_pos"),
                           button_size, show_duration));
     buttons_.back()->bindFunction([framework, ui, this]() {
-        framework->respawn(); ui->clearWindows(); this->show(false);
+        framework->respawn(""); ui->clearWindows(); this->show(false);
     });
 }
 

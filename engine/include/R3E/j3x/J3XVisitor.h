@@ -10,6 +10,7 @@
 #include <any>
 #include <utility>
 
+#include <R3E/j3x/Helpers.h>
 #include <R3E/j3x/Absyn.h>
 
 
@@ -55,9 +56,19 @@ namespace r3e::j3x {
         void visitString(String x) override;
         void visitIdent(Ident x) override;
 
-        const std::unordered_map<std::string, std::any>& getParams()
+        const Parameters& getParams() const
         {
             return variables_;
+        }
+
+        const std::vector<std::string>& getVariablesList() const
+        {
+            return variables_list_;
+        }
+
+        const std::unordered_map<std::string, std::string>& getTypes() const
+        {
+            return types_;
         }
 
     private:
@@ -69,6 +80,7 @@ namespace r3e::j3x {
                         "line number " + std::to_string(line_number) + " - Redeclaration of \"" + new_name +
                         "\" variable!");
 
+            variables_list_.emplace_back(new_name);
             variables_[new_name] = value;
             types_[new_name] = type;
         }
@@ -98,7 +110,8 @@ namespace r3e::j3x {
             return (variables_.find(x) != variables_.end() and types_.find(x) != types_.end());
         }
 
-        std::unordered_map<std::string, std::any> variables_;
+        std::vector<std::string> variables_list_;
+        Parameters variables_;
         std::unordered_map<std::string, std::string> types_;
         std::string ns_;
 

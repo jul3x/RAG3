@@ -13,7 +13,7 @@
 
 
 Player::Player(const sf::Vector2f& position) :
-        Character(position, "player"),
+        Character(position, CONF<std::string>("general/character")),
         is_alive_(true),
         side_stepping_freeze_time_(-1.0f),
         skill_points_(0),

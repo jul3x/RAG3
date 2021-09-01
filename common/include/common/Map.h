@@ -59,6 +59,7 @@ public:
     [[nodiscard]] std::pair<sf::Vector2<size_t>, sf::Vector2f> getTileConstraints() const;
     [[nodiscard]] const j3x::Parameters& getParams() const;
     [[nodiscard]] size_t getDigest() const;
+    [[nodiscard]] const std::string& getMapName() const;
 
     static void markBlocked(ai::Grid& blocked, const sf::Vector2f& pos, const sf::Vector2f& size, float value);
 
@@ -147,6 +148,8 @@ private:
 
     j3x::Parameters params_;
     sf::Vector2f size_;
+
+    std::string map_name_;
 
 };
 

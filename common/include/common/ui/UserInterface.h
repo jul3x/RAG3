@@ -43,6 +43,7 @@ public:
 
     virtual void registerPlayer(Player* player);
     virtual void registerCamera(Camera* camera);
+    virtual void initializeTutorialArrows();
 
     virtual void spawnAchievement(const std::string& title, const std::string& text, const std::string& tex);
     virtual void spawnThought(Character* user, const std::string& text);
@@ -67,7 +68,6 @@ public:
     void removeArrowIfExists(AbstractPhysicalObject* obj);
 
 protected:
-    virtual void handleTutorialArrows(float time_elapsed);
     virtual void handleEvents(graphics::Graphics& graphics);
     virtual void handleAdditionalKeyPressed(sf::Keyboard::Key code);
     virtual void handleKeyReleased(sf::Keyboard::Key code);
@@ -108,7 +108,6 @@ protected:
     std::list<Thought> thoughts_;
     std::list<BonusText> bonus_texts_;
     std::unordered_map<AbstractPhysicalObject*, TutorialArrow> tutorial_arrows_;
-    bool tutorial_arrows_initialized_;
     std::list<std::shared_ptr<Window>> windows_;
     sf::Text fps_text_;
     sf::Text object_use_text_;

@@ -9,6 +9,8 @@
 #include <list>
 #include <functional>
 
+#include <SFML/Window/Keyboard.hpp>
+
 
 namespace r3e::utils {
     template<class T>
@@ -30,9 +32,21 @@ namespace r3e::utils {
         }
     }
 
+    template<class T, class K>
+    bool contains(const T& container, const K& element) {
+        return std::find(container.begin(), container.end(), element) != container.end();
+    }
+
     uint64_t timeSinceEpochMillisec();
 
     std::string capitalFirst(const std::string& word);
+    std::string toLower(const std::string& word);
+    std::string toUpper(const std::string& word);
+    std::string humanize(const std::string& word);
+    std::string floatToString(float v, float precision = 2);
+    bool startsWith(const std::string& what, const std::string& prefix);
+    std::string keyToString(sf::Keyboard::Key key);
+    sf::Keyboard::Key stringToKey(const std::string& str);
 }
 
 #endif //RAG3_ENGINE_INCLUDE_R3E_UTILS_MISC_H

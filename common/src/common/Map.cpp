@@ -26,6 +26,8 @@ bool Map::clearMap()
     weapons_.clear();
     decorations_.clear();
 
+    map_name_.clear();
+
     return true;
 }
 
@@ -42,6 +44,8 @@ bool Map::loadMap(const std::string& name)
 
         blocked_.scale_x_ = DecorationTile::SIZE_X_;
         blocked_.scale_y_ = DecorationTile::SIZE_X_;
+
+        map_name_ = name;
 
         return true;
     }
@@ -394,4 +398,9 @@ size_t Map::getDigest() const
     addHashes(weapons_);
 
     return utils::num::getHash(hashes);
+}
+
+const std::string& Map::getMapName() const
+{
+    return map_name_;
 }

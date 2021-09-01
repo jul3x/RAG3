@@ -1,0 +1,68 @@
+int COLOR_MIN = -2147483640
+int COLOR_MAX = 2147483640
+float LIGHT_POINT_SIZE_MIN = 0.0
+float LIGHT_POINT_SIZE_MAX = 256.0
+
+int window_width_px_min = 800
+int window_width_px_max = 3840
+int window_height_px_min = 600
+int window_height_px_max = 2160
+
+float characters_light_point_size_min = LIGHT_POINT_SIZE_MIN
+float characters_light_point_size_max = LIGHT_POINT_SIZE_MAX
+float obstacles_light_point_size_min = LIGHT_POINT_SIZE_MIN
+float obstacles_light_point_size_max = LIGHT_POINT_SIZE_MAX
+float specials_light_point_size_min = LIGHT_POINT_SIZE_MIN
+float specials_light_point_size_max = LIGHT_POINT_SIZE_MAX
+float decorations_light_point_size_min = LIGHT_POINT_SIZE_MIN
+float decorations_light_point_size_max = LIGHT_POINT_SIZE_MAX
+float fire_light_point_size_min = LIGHT_POINT_SIZE_MIN
+float fire_light_point_size_max = LIGHT_POINT_SIZE_MAX
+float animations_light_point_size_min = LIGHT_POINT_SIZE_MIN
+float animations_light_point_size_max = LIGHT_POINT_SIZE_MAX
+int lighting_color_min = COLOR_MIN
+int lighting_color_max = COLOR_MAX
+float shadow_direction_min = -1.07
+float shadow_direction_max = 1.07
+float shadow_length_factor_min = 0.0
+float shadow_length_factor_max = 2.0
+int shadow_color_min = COLOR_MIN
+int shadow_color_max = COLOR_MAX
+
+float blood_system_time_min = 0.0
+float blood_system_time_max = 100.0
+int blood_system_count_min = 0
+int blood_system_count_max = 5000
+int blood_system_base_color_min = COLOR_MIN
+int blood_system_base_color_max = COLOR_MAX
+
+float debris_system_time_min = 0.0
+float debris_system_time_max = 100.0
+int debris_system_count_min = 0
+int debris_system_count_max = 5000
+int debris_system_base_color_min = COLOR_MIN
+int debris_system_base_color_max = COLOR_MAX
+
+float debris2_system_time_min = 0.0
+float debris2_system_time_max = 100.0
+int debris2_system_count_min = 0
+int debris2_system_count_max = 5000
+int debris2_system_base_color_min = COLOR_MIN
+int debris2_system_base_color_max = COLOR_MAX
+
+float husk_system_time_min = 0.0
+float husk_system_time_max = 100.0
+int husk_system_count_min = 0
+int husk_system_count_max = 5000
+int husk_system_base_color_min = COLOR_MIN
+int husk_system_base_color_max = COLOR_MAX
+
+int weather_particles_count_min = 0
+int weather_particles_count_max = 5000
+int weather_base_color_min = -COLOR_MIN
+int weather_base_color_max = -COLOR_MAX
+int weather_rag3_color_min = COLOR_MIN
+int weather_rag3_color_max = COLOR_MAX
+
+float music_volume_min = 0.0
+float music_volume_max = 100.0

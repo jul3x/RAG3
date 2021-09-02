@@ -24,6 +24,7 @@
 #include <editor/CharacterObjectWindow.h>
 #include <editor/ObstacleObjectWindow.h>
 #include <editor/ParametersWindow.h>
+#include <editor/ControlsWindow.h>
 
 
 using namespace r3e;
@@ -56,6 +57,7 @@ namespace editor {
         void openWeaponWindow(const std::string& category, PlacedWeapon* obj);
         void openObstacleWindow(const std::string& category, Obstacle* obj);
         void openParametersWindow();
+        void openControlsWindow();
 
         void setZIndex(int value);
         int getZIndex() const;
@@ -90,6 +92,7 @@ namespace editor {
         WeaponWindow weapon_window_;
         CharacterObjectWindow character_object_window_;
         ParametersWindow parameters_window_;
+        ControlsWindow controls_window_;
 
         sf::Text information_;
         float information_a_;

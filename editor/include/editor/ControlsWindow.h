@@ -1,5 +1,5 @@
 //
-// Created by macie on 05/08/2021.
+// Created by maciek on 05/08/2021.
 //
 
 #ifndef RAG3_EDITOR_INCLUDE_EDITOR_CONTROLSWINDOW_H

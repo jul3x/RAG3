@@ -281,6 +281,8 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
                     gui_.get("weapon_window")->setVisible(false);
                     gui_.get("character_object_window")->setVisible(false);
                     gui_.get("obstacle_object_window")->setVisible(false);
+                    gui_.get("parameters_window")->setVisible(false);
+                    gui_.get("controls_window")->setVisible(false);
                 }
                 else if (event.key.code == sf::Keyboard::Q)
                 {

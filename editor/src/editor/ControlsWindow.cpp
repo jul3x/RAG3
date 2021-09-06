@@ -29,11 +29,11 @@ ControlsWindow::ControlsWindow(tgui::Gui* gui, tgui::Theme* theme) :
     auto label = tgui::Label::create();
     label->setRenderer(theme_->getRenderer("Label"));
     label->setText("E - Edit object's parameters\nQ - Clear cursor\n"
-                                        "F1 - Paste cursor's current coordinates\nF2 - Paste hovered object's UID\n"
-                                        "ESC - Close all windows\nLEFT SHIFT - Align object to the grid\n"
-                                        "LEFT SHIFT - Align object to the 0.25 grid size\nLEFT MOUSE BUTTON - Place object\n"
-                                        "RIGHT MOUSE BUTTON - Remove object\nMIDDLE MOUSE BUTTON - Move object\n"
-                                        "CTRL + MOUSE - Move camera\nMOUSE WHEEL - Zoom");
+                    "F1 - Paste cursor's current coordinates\nF2 - Paste hovered object's UID\n"
+                    "ESC - Close all windows\nLEFT SHIFT - Align object to the grid\n"
+                    "LEFT ALT - Align object to the 0.25 grid size\nLEFT MOUSE BUTTON - Place object\n"
+                    "RIGHT MOUSE BUTTON - Remove object\nMIDDLE MOUSE BUTTON - Move object\n"
+                    "CTRL + MOUSE - Move camera\nMOUSE WHEEL - Zoom");
     label->setTextSize(CONF<float>("label_text_size"));
     grid_->addWidget(label, 0, 0);
 

@@ -35,6 +35,7 @@ UserInterface::UserInterface() :
         weapon_window_(&gui_, &gui_theme_),
         obstacle_object_window_(&gui_, &gui_theme_),
         parameters_window_(&gui_, &gui_theme_),
+        controls_window_(&gui_, &gui_theme_),
         marked_item_(nullptr)
 {
     gui_.get("save_window")->setVisible(false);
@@ -46,6 +47,7 @@ UserInterface::UserInterface() :
     gui_.get("character_object_window")->setVisible(false);
     gui_.get("obstacle_object_window")->setVisible(false);
     gui_.get("parameters_window")->setVisible(false);
+    gui_.get("controls_window")->setVisible(false);
 
     information_.setPosition(CONF<sf::Vector2f>("info_pos"));
     information_.setFillColor(sf::Color(255, 255, 255, 0));
@@ -158,6 +160,11 @@ void UserInterface::openParametersWindow()
 {
     parameters_window_.setParameters();
     gui_.get("parameters_window")->setVisible(true);
+}
+
+void UserInterface::openControlsWindow()
+{
+    gui_.get("controls_window")->setVisible(true);
 }
 
 void UserInterface::setZIndex(int value)
@@ -274,6 +281,8 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
                     gui_.get("weapon_window")->setVisible(false);
                     gui_.get("character_object_window")->setVisible(false);
                     gui_.get("obstacle_object_window")->setVisible(false);
+                    gui_.get("parameters_window")->setVisible(false);
+                    gui_.get("controls_window")->setVisible(false);
                 }
                 else if (event.key.code == sf::Keyboard::Q)
                 {

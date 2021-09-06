@@ -66,6 +66,10 @@ MenuWindow::MenuWindow(UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :
         this->ui_->openParametersWindow();
     }, 3, 0);
 
+    create_button("Controls", [this]() {
+        this->ui_->openControlsWindow();
+    }, 3, 1);
+
     z_index_label_ = tgui::Label::create();
     z_index_label_->setRenderer(theme_->getRenderer("Label"));
     z_index_label_->setText("Visible z-index: 10");

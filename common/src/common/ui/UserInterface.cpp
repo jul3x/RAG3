@@ -155,7 +155,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
                 {
                     framework_->useItem("more_speed");
                 }
-                else if (event.key.code == CONF<int>("controls/more_speed"))
+                else if (event.key.code == CONF<int>("controls/rag3"))
                 {
                     framework_->useItem("rag3");
                 }

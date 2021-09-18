@@ -2,8 +2,6 @@
 // Created by jul3x on 22.03.21.
 //
 
-#include <sstream>
-
 #include <SFML/Window/Keyboard.hpp>
 
 #include <R3E/utils/Misc.h>
@@ -56,14 +54,6 @@ namespace r3e::utils {
         }
 
         return out;
-    }
-
-    std::string floatToString(float v, float precision)
-    {
-        std::ostringstream out;
-        out.precision(precision);
-        out << std::fixed << v;
-        return out.str();
     }
 
     sf::Keyboard::Key stringToKey(const std::string& str)

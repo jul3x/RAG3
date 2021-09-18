@@ -28,9 +28,6 @@ private:
     static constexpr float FACE_OFFSET_X_ = -71.0f;
     static constexpr float FACE_OFFSET_Y_ = -64.0f;
 
-    static constexpr float FACE_SIZE_X_ = 109.0f;
-    static constexpr float FACE_SIZE_Y_ = 99.0f;
-
     static constexpr float LEVEL_X_ = -145.0f;
     static constexpr float LEVEL_Y_ = -66.0f;
 

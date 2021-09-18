@@ -71,6 +71,7 @@ SettingsWindow::SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
     scroll_panel_->getRenderer()->setPadding(tgui::Padding(0.0f, CONF<float>("graphics/menu_items_padding")));
 
     createWidgets();
+    updateValues();
 
     gui->add(scroll_panel_);
     gui->add(tabs_);
@@ -98,11 +99,10 @@ void SettingsWindow::createWidgets()
 {
     for (const auto& tab : tab_names_)
     {
-        grids_.emplace_back();
-        grids_.back() = tgui::Grid::create();
-        grids_.back()->setAutoSize(true);
+        auto grid = tgui::Grid::create();
+        grid->setAutoSize(true);
 
-        scroll_panel_->add(grids_.back(), tab);
+        scroll_panel_->add(grid, tab);
 
         auto filename = CONF<std::string>("paths/user_dir") + "/" + r3e::utils::toLower(tab) + ".j3x";
         params_[tab] = r3e::j3x::parseWithVisitor(filename, "");
@@ -112,32 +112,35 @@ void SettingsWindow::createWidgets()
         const auto& types = params_[tab]->getTypes();
         const auto& values = params_[tab]->getParams();
 
-        bool is_normal_widget = tab == "Graphics" || tab == "Sound";
-        bool is_control_widget = tab == "Controls";
         for (const auto& param : params_[tab]->getVariablesList())
         {
-            auto label = tgui::Label::create(r3e::utils::humanize(param));
-            label->setRenderer(theme_->getRenderer("ItemLabel"));
-            label->setTextSize(CONF<float>("graphics/menu_window_text_size"));
-            label->getRenderer()->setFont(RM.getFont("default"));
+            auto hash_key = tab + "/" + param;
+            const auto& type = types.at(param);
 
-            tgui::Widget::Ptr widget;
-            if (is_normal_widget)
-                widget = this->createWidget(values, param, types.at(param), i);
-            else if (is_control_widget)
-                widget = this->createControlsWidget(values, param);
+            if (tab == "General" && param == "character")
+                widgets_[hash_key] = std::make_unique<CharacterSettingsWidget>(theme_, param);
+            else if (tab == "Controls")
+                widgets_[hash_key] = std::make_unique<ControlsSettingsWidget>(this, theme_, param);
             else
-                widget = this->createGeneralWidget(values, param, types.at(param), i);
+            {
+                if (type == "bool")
+                    widgets_[hash_key] = std::make_unique<BoolSettingsWidget>(theme_, param);
+                else if (type == "int")
+                    widgets_[hash_key] = std::make_unique<SliderSettingsWidget<int>>(theme_, param);
+                else if (type == "float")
+                    widgets_[hash_key] = std::make_unique<SliderSettingsWidget<float>>(theme_, param);
+                else if (type == "string")
+                    widgets_[hash_key] = std::make_unique<StringSettingsWidget>(theme_, param);
+                else
+                    throw std::runtime_error("[SettingsWindow::createWidgets] Widgets for type " + type + " not handled yet!");
+            }
 
-            grids_.back()->addWidget(label, i, 0);
-            grids_.back()->addWidget(widget, i, 1);
-
-            grids_.back()->setWidgetPadding(label, {CONF<float>("graphics/menu_items_padding"), 0.0f});
-            grids_.back()->setWidgetPadding(widget, {CONF<float>("graphics/menu_items_padding"), 0.0f});
-            grids_.back()->setWidgetAlignment(label, tgui::Grid::Alignment::BottomLeft);
-            grids_.back()->setWidgetAlignment(widget, is_normal_widget ?
-                                                      tgui::Grid::Alignment::Bottom :
-                                                      tgui::Grid::Alignment::BottomLeft);
+            grid->addWidget(widgets_[hash_key]->getLabel(), i, 0);
+            grid->addWidget(widgets_[hash_key]->getWidget(), i, 1);
+            grid->setWidgetPadding(widgets_[hash_key]->getLabel(), {CONF<float>("graphics/menu_items_padding"), 0.0f});
+            grid->setWidgetPadding(widgets_[hash_key]->getWidget(), {CONF<float>("graphics/menu_items_padding"), 0.0f});
+            grid->setWidgetAlignment(widgets_[hash_key]->getLabel(), tgui::Grid::Alignment::Left);
+            grid->setWidgetAlignment(widgets_[hash_key]->getWidget(), widgets_[hash_key]->getAlignment());
             ++i;
         }
     }
@@ -145,176 +148,36 @@ void SettingsWindow::createWidgets()
 
 void SettingsWindow::updateValues()
 {
-    int i = 0;
     for (const auto& tab : tab_names_)
     {
-        int j = 0;
         const auto& types = params_[tab]->getTypes();
         const auto& values = params_[tab]->getParams();
         for (const auto& param : params_[tab]->getVariablesList())
         {
-            auto* widget = grids_[i]->getWidget(j, 1).get();
-
-            if (tab == "Controls")
-            {
-                dynamic_cast<tgui::Button*>(widget)->setText(r3e::utils::keyToString(
-                        static_cast<sf::Keyboard::Key>(r3e::j3x::get<int>(values, param))));
-            }
-            else if (types.at(param) == "bool")
-            {
-                dynamic_cast<tgui::CheckBox*>(widget)->setChecked(r3e::j3x::get<bool>(values, param));
-            }
-            else if (types.at(param) == "int")
-            {
-                dynamic_cast<tgui::Slider*>(widget)->setValue(r3e::j3x::get<int>(values, param));
-            }
-            else if (types.at(param) == "float")
-            {
-                dynamic_cast<tgui::Slider*>(widget)->setValue(r3e::j3x::get<float>(values, param));
-            }
-            else if (types.at(param) == "string")
-            {
-                dynamic_cast<tgui::EditBox*>(widget)->setText(r3e::j3x::get<std::string>(values, param));
-            }
-            ++j;
+            widgets_[tab + "/" + param]->updateValue(values);
         }
-        ++i;
     }
 }
 
 void SettingsWindow::saveValues()
 {
-    int i = 0;
     for (const auto& tab : tab_names_)
     {
-        int j = 0;
         const auto& types = params_[tab]->getTypes();
         std::string out;
         for (const auto& param : params_[tab]->getVariablesList())
         {
-            auto* widget = grids_[i]->getWidget(j, 1).get();
-            if (tab == "Controls")
-            {
-                j3x::serializeAssign(param, static_cast<int>(
-                        r3e::utils::stringToKey(dynamic_cast<tgui::Button*>(widget)->getText())), out);
-            }
-            else if (types.at(param) == "bool")
-            {
-                j3x::serializeAssign(param, dynamic_cast<tgui::CheckBox*>(widget)->isChecked(), out);
-            }
-            else if (types.at(param) == "int")
-            {
-                j3x::serializeAssign(param, static_cast<int>(dynamic_cast<tgui::Slider*>(widget)->getValue()), out);
-            }
-            else if (types.at(param) == "float")
-            {
-                j3x::serializeAssign(param, dynamic_cast<tgui::Slider*>(widget)->getValue(), out);
-            }
-            else if (types.at(param) == "string")
-            {
-                j3x::serializeAssign(param, std::string(dynamic_cast<tgui::EditBox*>(widget)->getText()), out);
-            }
-            ++j;
+            widgets_[tab + "/" + param]->serializeAndAppend(out);
         }
 
         RM.saveConfigFile("user_dir", r3e::utils::toLower(tab), out);
-        ++i;
     }
-}
-
-tgui::Widget::Ptr
-SettingsWindow::createWidget(const j3x::Parameters& values, const std::string& param, const std::string& type, int i)
-{
-    tgui::Widget::Ptr widget;
-    if (type == "bool")
-    {
-        auto checkbox = tgui::CheckBox::create("");
-        checkbox->setChecked(r3e::j3x::get<bool>(values, param));
-        widget = checkbox;
-        widget->setRenderer(theme_->getRenderer("CheckBoxGame"));
-        widget->setSize({CONF<sf::Vector2f>("graphics/menu_checkbox_size")});
-    }
-    else if (type == "int" || type == "float")
-    {
-        bool is_int = type == "int";
-        auto param_min_str = "ranges/" + param + "_min";
-        auto param_max_str = "ranges/" + param + "_max";
-        auto slider = tgui::Slider::create();
-        auto value = tgui::Label::create();
-
-        if (is_int)
-        {
-            slider->setMinimum(CONF<int>(param_min_str));
-            slider->setMaximum(CONF<int>(param_max_str));
-            slider->setValue(r3e::j3x::get<int>(values, param));
-            value->setText(std::to_string(r3e::j3x::get<int>(values, param)));
-        }
-        else
-        {
-            slider->setStep(0.1f);
-            slider->setMinimum(CONF<float>(param_min_str));
-            slider->setMaximum(CONF<float>(param_max_str));
-            slider->setValue(r3e::j3x::get<float>(values, param));
-            value->setText(r3e::utils::floatToString(r3e::j3x::get<float>(values, param)));
-        }
-
-        value->setRenderer(theme_->getRenderer("ItemLabel"));
-        value->setTextSize(CONF<float>("graphics/menu_window_text_size"));
-        value->getRenderer()->setFont(RM.getFont("default"));
-
-        slider->connect("ValueChanged", [value, slider, is_int]() {
-            if (is_int)
-                value->setText(std::to_string(static_cast<int>(slider->getValue())));
-            else
-                value->setText(r3e::utils::floatToString(slider->getValue()));
-        });
-
-        slider->setRenderer(theme_->getRenderer("SliderGame"));
-        slider->setSize(CONF<sf::Vector2f>("graphics/menu_slider_size"));
-        widget = slider;
-
-        grids_.back()->addWidget(value, i, 2);
-        grids_.back()->setWidgetAlignment(value, tgui::Grid::Alignment::BottomLeft);
-    }
-    else if (type == "string")
-    {
-        auto edit_box = tgui::EditBox::create();
-        edit_box->setText(r3e::j3x::get<std::string>(values, param));
-        edit_box->setTextSize(CONF<float>("graphics/menu_window_text_size"));
-        edit_box->setSize(CONF<sf::Vector2f>("graphics/menu_edit_box_size"));
-        widget = edit_box;
-        widget->setRenderer(theme_->getRenderer("EditBoxGame"));
-        widget->getRenderer()->setFont(RM.getFont("default"));
-    }
-    return widget;
-}
-
-tgui::Widget::Ptr SettingsWindow::createControlsWidget(const j3x::Parameters& values, const std::string& param)
-{
-    auto widget = tgui::Button::create(r3e::utils::keyToString(
-            static_cast<sf::Keyboard::Key>(r3e::j3x::get<int>(values, param))));
-    widget->setRenderer(theme_->getRenderer("ButtonLabel"));
-    widget->setTextSize(CONF<float>("graphics/menu_window_text_size"));
-    widget->getRenderer()->setFont(RM.getFont("default"));
-    clicked_button_color_ = widget->getRenderer()->getTextColorDown();
-    normal_button_color_ = widget->getRenderer()->getTextColor();
-
-    widget->setFocusable(true);
-    controls_widgets_.emplace_back(widget.get());
-
-    widget->connect("mousepressed", [widget, this]() {
-        this->unfocusControlsWidgets();
-        focused_controls_widget_ = widget.get();
-        focused_controls_widget_->getRenderer()->setTextColor(clicked_button_color_);
-    });
-
-    return widget;
 }
 
 void SettingsWindow::unfocusControlsWidgets()
 {
     if (focused_controls_widget_ != nullptr)
-        focused_controls_widget_->getRenderer()->setTextColor(normal_button_color_);
+        focused_controls_widget_->setFocus(false);
     focused_controls_widget_ = nullptr;
 }
 
@@ -324,17 +187,252 @@ void SettingsWindow::setKey(sf::Keyboard::Key k)
             {sf::Keyboard::Key::Unknown, sf::Keyboard::Key::Escape};
     if (!utils::contains(forbidden_keys, k) && focused_controls_widget_ != nullptr)
     {
-        focused_controls_widget_->setText(r3e::utils::keyToString(k));
-        unfocusControlsWidgets();
+        focused_controls_widget_->setKey(k);
         framework_->spawnSound(RM.getSound("ui_hover"), framework_->getPlayer()->getPosition());
     }
+
+    unfocusControlsWidgets();
 }
 
-tgui::Widget::Ptr
-SettingsWindow::createGeneralWidget(const j3x::Parameters& values, const std::string& param, const std::string& type,
-                                    int i)
+void SettingsWindow::setFocusedControlsWidget(ControlsSettingsWidget* widget)
 {
-//    if (param == "player_name")
-    return this->createWidget(values, param, type, i);
+    focused_controls_widget_ = widget;
+    widget->setFocus(true);
+}
 
+
+/* Widgets */
+
+BaseSettingsWidget::BaseSettingsWidget(tgui::Theme* theme, const std::string& name) : name_(name) {
+    label_ = tgui::Label::create(r3e::utils::humanize(name));
+    label_->setRenderer(theme->getRenderer("ItemLabel"));
+    label_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
+    label_->getRenderer()->setFont(RM.getFont("default"));
+}
+
+[[nodiscard]] tgui::Label::Ptr BaseSettingsWidget::getLabel() const {
+    return label_;
+}
+
+[[nodiscard]] tgui::Grid::Alignment BaseSettingsWidget::getAlignment() const {
+    return tgui::Grid::Alignment::BottomLeft;
+}
+
+BoolSettingsWidget::BoolSettingsWidget(tgui::Theme* theme, const std::string& name) :
+        BaseSettingsWidget(theme, name) {
+    checkbox_ = tgui::CheckBox::create("");
+    checkbox_->setRenderer(theme->getRenderer("CheckBoxGame"));
+    checkbox_->setSize({CONF<sf::Vector2f>("graphics/menu_checkbox_size")});
+}
+
+[[nodiscard]] tgui::Widget::Ptr BoolSettingsWidget::getWidget() const {
+    return checkbox_;
+}
+
+void BoolSettingsWidget::serializeAndAppend(std::string& out) const {
+    j3x::serializeAssign(name_, checkbox_->isChecked(), out);
+}
+
+void BoolSettingsWidget::updateValue(const j3x::Parameters& values) {
+    checkbox_->setChecked(r3e::j3x::get<bool>(values, name_));
+}
+
+
+StringSettingsWidget::StringSettingsWidget(tgui::Theme* theme, const std::string& name) :
+        BaseSettingsWidget(theme, name) {
+    editbox_ = tgui::EditBox::create();
+    editbox_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
+    editbox_->setSize(CONF<sf::Vector2f>("graphics/menu_edit_box_size"));
+    editbox_->setRenderer(theme->getRenderer("EditBoxGame"));
+    editbox_->getRenderer()->setFont(RM.getFont("default"));
+}
+
+[[nodiscard]] tgui::Widget::Ptr StringSettingsWidget::getWidget() const {
+    return editbox_;
+}
+
+void StringSettingsWidget::serializeAndAppend(std::string& out) const {
+    j3x::serializeAssign(name_, std::string(editbox_->getText()), out);
+}
+
+void StringSettingsWidget::updateValue(const j3x::Parameters& values) {
+    editbox_->setText(r3e::j3x::get<std::string>(values, name_));
+}
+
+
+ControlsSettingsWidget::ControlsSettingsWidget(SettingsWindow* window, tgui::Theme* theme, const std::string& name) :
+        BaseSettingsWidget(theme, name) {
+    button_ = tgui::Button::create();
+    button_->setRenderer(theme->getRenderer("ButtonLabel"));
+    button_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
+    button_->getRenderer()->setFont(RM.getFont("default"));
+    button_->setFocusable(true);
+
+    button_->connect("mousepressed", [window, this]() {
+        window->unfocusControlsWidgets();
+        window->setFocusedControlsWidget(this);
+    });
+}
+
+[[nodiscard]] tgui::Widget::Ptr ControlsSettingsWidget::getWidget() const {
+    return button_;
+}
+
+void ControlsSettingsWidget::serializeAndAppend(std::string& out) const {
+    j3x::serializeAssign(name_, static_cast<int>(r3e::utils::stringToKey(button_->getText())), out);
+}
+
+void ControlsSettingsWidget::updateValue(const j3x::Parameters& values) {
+    button_->setText(r3e::utils::keyToString(
+            static_cast<sf::Keyboard::Key>(r3e::j3x::get<int>(values, name_))));
+}
+
+void ControlsSettingsWidget::setFocus(bool focus) {
+    static const auto clicked_button_color = button_->getRenderer()->getTextColorDown();
+    static const auto normal_button_color = button_->getRenderer()->getTextColor();
+    button_->getRenderer()->setTextColor(focus ? clicked_button_color : normal_button_color);
+}
+
+void ControlsSettingsWidget::setKey(sf::Keyboard::Key key) {
+    button_->setText(r3e::utils::keyToString(key));
+}
+
+
+CharacterSettingsWidget::CharacterSettingsWidget(tgui::Theme* theme, const std::string& name) :
+        BaseSettingsWidget(theme, name) {
+    grid_ = tgui::Grid::create();
+    grid_->setAutoSize(true);
+
+    pictures_container_ = tgui::Panel::create(CONF<sf::Vector2f>("graphics/face_size") * 1.1f);
+    pictures_container_->getRenderer()->setBackgroundColor(sf::Color::Transparent);
+
+    character_ = tgui::Label::create();
+    character_->setRenderer(theme->getRenderer("ItemLabel"));
+    character_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
+    character_->getRenderer()->setFont(RM.getFont("default"));
+
+    left_ = tgui::Button::create("<");
+    left_->setRenderer(theme->getRenderer("ButtonLabel"));
+    left_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
+    left_->getRenderer()->setFont(RM.getFont("default"));
+    left_->setFocusable(true);
+
+    right_ = tgui::Button::create(">");
+    right_->setRenderer(theme->getRenderer("ButtonLabel"));
+    right_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
+    right_->getRenderer()->setFont(RM.getFont("default"));
+    right_->setFocusable(true);
+
+    grid_->addWidget(left_, 0, 0);
+    grid_->addWidget(pictures_container_, 0, 1);
+    grid_->addWidget(right_, 0, 2);
+    grid_->addWidget(character_, 1, 1);
+
+    grid_->setWidgetAlignment(pictures_container_, tgui::Grid::Alignment::Up);
+    grid_->setWidgetAlignment(left_, tgui::Grid::Alignment::Bottom);
+    grid_->setWidgetAlignment(right_, tgui::Grid::Alignment::Bottom);
+    grid_->setWidgetPadding(character_, tgui::Padding{0, 0, 0, 0.1f * CONF<sf::Vector2f>("graphics/face_size").y});
+    grid_->setWidgetPadding(pictures_container_, tgui::Padding{0, 0.1f * CONF<sf::Vector2f>("graphics/face_size").y, 0, 0});
+
+    for (const auto& character : RM.getListOfObjects(CONF<std::string>("paths/characters")))
+    {
+        if (utils::contains(CONF<j3x::List>("forbidden_characters_to_play"), character))
+            continue;
+
+        possible_characters_.emplace_back(character);
+        pictures_[character] = tgui::Picture::create(RM.getTexture("characters/" + character + "_face"));
+        pictures_[character]->setSize(CONF<sf::Vector2f>("graphics/face_size"));
+        pictures_[character]->setVisible(false);
+        pictures_container_->add(pictures_[character]);
+    }
+
+    current_character_ = possible_characters_.begin();
+
+    left_->connect("mousepressed", [this]() {
+        this->change(--this->current_character_);
+    });
+    right_->connect("mousepressed", [this]() {
+        this->change(++this->current_character_);
+    });
+}
+
+[[nodiscard]] tgui::Grid::Alignment CharacterSettingsWidget::getAlignment() const {
+    return tgui::Grid::Alignment::Bottom;
+}
+
+[[nodiscard]] tgui::Widget::Ptr CharacterSettingsWidget::getWidget() const {
+    return grid_;
+}
+
+void CharacterSettingsWidget::serializeAndAppend(std::string& out) const {
+    j3x::serializeAssign(name_, *current_character_, out);
+}
+
+void CharacterSettingsWidget::updateValue(const j3x::Parameters& values) {
+    const auto& character = r3e::j3x::get<std::string>(values, name_);
+
+    auto it = std::find(possible_characters_.begin(), possible_characters_.end(), character);
+
+    if (it == possible_characters_.end())
+        throw std::runtime_error("[CharacterSettingsWidget::updateValue] Character " +
+                character + " is forbidden!");
+    change(it);
+}
+
+void CharacterSettingsWidget::change(std::vector<std::string>::iterator new_value) {
+    if (new_value < possible_characters_.begin())
+        new_value = possible_characters_.end() - 1;
+    if (new_value >= possible_characters_.end())
+        new_value = possible_characters_.begin();
+
+    character_->setText(utils::humanize(*new_value));
+
+    for (auto& picture : pictures_)
+        picture.second->setVisible(false);
+    pictures_[*new_value]->setVisible(true);
+    current_character_ = new_value;
+}
+
+template<class T>
+SliderSettingsWidget<T>::SliderSettingsWidget(tgui::Theme* theme, const std::string& name) :
+        BaseSettingsWidget(theme, name) {
+    grid_ = tgui::Grid::create();
+    grid_->setAutoSize(true);
+
+    slider_ = tgui::Slider::create();
+    slider_->setRenderer(theme->getRenderer("SliderGame"));
+    slider_->setSize(CONF<sf::Vector2f>("graphics/menu_slider_size"));
+
+    value_ = tgui::Label::create();
+    value_->setRenderer(theme->getRenderer("ItemLabel"));
+    value_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
+    value_->getRenderer()->setFont(RM.getFont("default"));
+
+    grid_->addWidget(slider_, 0, 0);
+    grid_->addWidget(value_, 0, 1);
+    grid_->setWidgetAlignment(slider_, tgui::Grid::Alignment::Bottom);
+
+    auto param_min_str = "ranges/" + name + "_min";
+    auto param_max_str = "ranges/" + name + "_max";
+    slider_->setMinimum(CONF<T>("ranges/" + name + "_min"));
+    slider_->setMaximum(CONF<T>("ranges/" + name + "_max"));
+
+    slider_->connect("ValueChanged", [this]() {
+        value_->setText(utils::toString<T>(static_cast<T>(slider_->getValue())));
+    });
+}
+
+template<class T>
+[[nodiscard]] tgui::Widget::Ptr SliderSettingsWidget<T>::getWidget() const {
+    return grid_;
+}
+
+template<class T>
+void SliderSettingsWidget<T>::serializeAndAppend(std::string& out) const {
+    j3x::serializeAssign(name_, static_cast<T>(slider_->getValue()), out);
+}
+
+template<class T>
+void SliderSettingsWidget<T>::updateValue(const j3x::Parameters& values) {
+    slider_->setValue(r3e::j3x::get<T>(values, name_));
 }

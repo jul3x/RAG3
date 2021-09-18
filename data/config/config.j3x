@@ -27,6 +27,7 @@ float achievements_update_time = 0.4
 float forced_zoom_to_time = 0.4
 float running_min_time = 1.0
 string about_text = "Lorem ipsum dolor sit amet. \nTODO..."
+list forbidden_characters_to_play = ["slave"]
 
 // FIRE MECHANICS
 float on_fire_hurt_speed = 10.0

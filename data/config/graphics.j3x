@@ -91,6 +91,7 @@ float health_bar_name_offset = 5.0
 list tutorial_arrows = ["talkables"; "note"; "note_open"]
 float tutorial_arrow_offset = -12.0
 float tutorial_arrow_amplitude = 3.0
+vector face_size = (109.0, 99.0) * user_interface_zoom
 
 // ACHIEVEMENT POPUPS
 float achievement_show_speed = 4.0

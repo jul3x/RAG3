@@ -8,8 +8,11 @@
 #include <chrono>
 #include <list>
 #include <functional>
+#include <sstream>
 
 #include <SFML/Window/Keyboard.hpp>
+
+#include <R3E/j3x/J3X.h>
 
 
 namespace r3e::utils {
@@ -37,13 +40,36 @@ namespace r3e::utils {
         return std::find(container.begin(), container.end(), element) != container.end();
     }
 
+    template<class K>
+    inline bool contains(const j3x::List& container, const K& element) {
+        for (const auto& obj : container)
+        {
+            if (j3x::getObj<K>(obj) == element)
+                return true;
+        }
+        return false;
+    }
+
+    template<class T>
+    std::string toString(T v) {
+        return std::to_string(v);
+    }
+
+    template<>
+    inline std::string toString<float>(float v) {
+        static constexpr auto PRECISION = 2;
+        std::ostringstream out;
+        out.precision(PRECISION);
+        out << std::fixed << v;
+        return out.str();
+    }
+
     uint64_t timeSinceEpochMillisec();
 
     std::string capitalFirst(const std::string& word);
     std::string toLower(const std::string& word);
     std::string toUpper(const std::string& word);
     std::string humanize(const std::string& word);
-    std::string floatToString(float v, float precision = 2);
     bool startsWith(const std::string& what, const std::string& prefix);
     std::string keyToString(sf::Keyboard::Key key);
     sf::Keyboard::Key stringToKey(const std::string& str);

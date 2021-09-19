@@ -14,10 +14,12 @@
 SpecialFunctions::SpecialFunctions(Framework* framework) : framework_(framework)
 {
     static auto init = [this](const std::string& name,
-            void (SpecialFunctions::*func)(Functional*, const j3x::Obj&, Character*),
-            const std::string& tooltip = "", bool is_usable_by_npc = false) {
+                              void (SpecialFunctions::*func)(Functional*, const j3x::Obj&, Character*),
+                              const std::string& tooltip = "", bool is_usable_by_npc = false) {
         functions_[name] = std::make_tuple(
-                [this, func](Functional* obj, const j3x::Obj& data, Character* user) { (this->*func)(obj, data, user); },
+                [this, func](Functional* obj, const j3x::Obj& data, Character* user) {
+                    (this->*func)(obj, data, user);
+                },
                 tooltip, is_usable_by_npc);
     };
 

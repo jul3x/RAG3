@@ -25,8 +25,9 @@ GameUserInterface::GameUserInterface(Game* game) :
                    CONF<int>("graphics/window_height_px") - TIME_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")},
                   "time_bar"),
         speed_bar_({SPEED_BAR_X_ * CONF<float>("graphics/user_interface_zoom"),
-                   CONF<int>("graphics/window_height_px") - SPEED_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")},
-                  "speed_bar"),
+                    CONF<int>("graphics/window_height_px") -
+                    SPEED_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")},
+                   "speed_bar"),
         left_hud_({0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))}),
         stats_hud_({0.0f, 0.0f})
 {
@@ -172,7 +173,7 @@ void GameUserInterface::handleMouse(sf::RenderWindow& graphics_window)
         utils::geo::circleCircle(mouse_world_pos, 0.0f, player_pos, CONF<float>("characters/crosshair_min_distance")))
     {
         mouse_world_pos = player_pos + CONF<float>("characters/crosshair_min_distance")
-                * utils::geo::getNormalized(mouse_world_pos - player_pos);
+                                       * utils::geo::getNormalized(mouse_world_pos - player_pos);
         mouse_pos = graphics_window.mapCoordsToPixel(mouse_world_pos);
         sf::Mouse::setPosition(mouse_pos, graphics_window);
     }
@@ -203,7 +204,8 @@ void GameUserInterface::handleMouse(sf::RenderWindow& graphics_window)
                 camera_->setShaking();
         }
 
-        if (!is_gui && sf::Mouse::isButtonPressed(sf::Mouse::Right) && game_->getTimeManipulationFuel() > 0.0f && game_->setBulletTime())
+        if (!is_gui && sf::Mouse::isButtonPressed(sf::Mouse::Right) && game_->getTimeManipulationFuel() > 0.0f &&
+            game_->setBulletTime())
         {
             camera_->setPointingTo(player_->getPosition() +
                                    utils::geo::getNormalized(mouse_world_pos - player_->getPosition()) *

@@ -37,7 +37,10 @@ Menu::Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme*
     windows_[Window::Settings] = std::make_unique<SettingsWindow>(gui, theme, framework);
     windows_[Window::About] = std::make_unique<AboutWindow>(gui, theme);
 
-    elements_ = {{"Start game", [this]() { framework_->respawn("first_new_map"); ui_->startGame(); }},
+    elements_ = {{"Start game", [this]() {
+        framework_->respawn("first_new_map");
+        ui_->startGame();
+    }},
                  {"Load game",  [this]() { this->showWindow(Menu::Window::LoadGame); }},
                  {"Settings",   [this]() { this->showWindow(Menu::Window::Settings); }},
                  {"About",      [this]() { this->showWindow(Menu::Window::About); }},
@@ -58,20 +61,24 @@ Menu::Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme*
                            i * CONF<float>("graphics/menu_button_offset_y"));
 
         label->connect("mouseentered", [this, i]() {
-            framework_->spawnSound(RM.getSound("ui_hover"), framework_->getPlayer()->getPosition()); this->buttons_[i]->setText("> " + this->elements_[i].first); });
+            framework_->spawnSound(RM.getSound("ui_hover"), framework_->getPlayer()->getPosition());
+            this->buttons_[i]->setText("> " + this->elements_[i].first);
+        });
         label->connect("mouseleft", [this, i]() {
-            this->buttons_[i]->setText(this->elements_[i].first); });
+            this->buttons_[i]->setText(this->elements_[i].first);
+        });
         label->connect("pressed", [&elem, this]() {
             framework_->spawnSound(RM.getSound("ui_upgrade"), framework_->getPlayer()->getPosition(), true);
-            elem.second(); });
+            elem.second();
+        });
         gui_->add(label);
         buttons_.emplace_back(label);
         ++i;
     }
 
     std::vector<std::pair<std::string, sf::Vector2f>> additional_texts =
-            {{"2021",   sf::Vector2f{0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))} +
-                        CONF<sf::Vector2f>("graphics/menu_year_pos")},
+            {{"2021", sf::Vector2f{0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))} +
+                      CONF<sf::Vector2f>("graphics/menu_year_pos")},
              {"~jul3x", sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                                      static_cast<float>(CONF<int>("graphics/window_height_px"))} +
                         CONF<sf::Vector2f>("graphics/menu_copyright_pos")}};
@@ -173,7 +180,8 @@ void Menu::doShow(bool show)
 
 void Menu::showWindow(Menu::Window window)
 {
-    for (auto& w : windows_) {
+    for (auto& w : windows_)
+    {
         w.second->doShow(false);
     }
 

@@ -36,7 +36,8 @@ public:
     explicit PlayersStatePacket(const std::unordered_map<sf::Uint32, Player>& players,
                                 std::unordered_map<sf::Uint32, PlayerInputPacket>& cached_packets)
     {
-        *this << static_cast<sf::Uint64>(r3e::utils::timeSinceEpochMillisec()) << static_cast<short int>(players.size());
+        *this << static_cast<sf::Uint64>(r3e::utils::timeSinceEpochMillisec())
+              << static_cast<short int>(players.size());
         for (const auto& player : players)
         {
             PlayerData data;
@@ -46,7 +47,8 @@ public:
             data.rotation_ = player.second.getRotation();
             data.current_weapon_ = player.second.getCurrentWeapon();
             data.health_ = player.second.getHealth();
-            data.is_shooting_ = cached_packets.count(player.first) != 0 && cached_packets[player.first].isLeftMousePressed();
+            data.is_shooting_ =
+                    cached_packets.count(player.first) != 0 && cached_packets[player.first].isLeftMousePressed();
             auto special = player.second.getCurrentSpecialObject();
             data.current_special_id_ = special == nullptr ? -1 : special->getUniqueId();
             for (const auto& weapon : player.second.getWeapons())

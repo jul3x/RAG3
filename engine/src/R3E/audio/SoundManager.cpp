@@ -12,7 +12,8 @@ namespace r3e {
 
         }
 
-        void SoundManager::playSound(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume, bool force_pitch)
+        void SoundManager::playSound(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume,
+                                     bool force_pitch)
         {
             played_sounds_.emplace_back(buffer);
             if (!force_pitch)

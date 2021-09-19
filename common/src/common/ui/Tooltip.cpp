@@ -10,7 +10,8 @@
 #include <common/ui/Tooltip.h>
 
 
-Tooltip::Tooltip(Framework* framework, tgui::Theme* theme, const sf::Vector2f& position, const sf::Vector2f& size) : theme_(theme)
+Tooltip::Tooltip(Framework* framework, tgui::Theme* theme, const sf::Vector2f& position, const sf::Vector2f& size) :
+        theme_(theme)
 {
     button_ = tgui::Button::create();
     button_->setRenderer(theme->getRenderer("TooltipButton"));
@@ -36,7 +37,8 @@ Tooltip::Tooltip(Framework* framework, tgui::Theme* theme, const sf::Vector2f& p
     button_->setToolTip(layout_);
 
     button_->connect("mouseentered", [framework]() {
-        framework->spawnSound(RM.getSound("ui_hover"), framework->getPlayer()->getPosition()); });
+        framework->spawnSound(RM.getSound("ui_hover"), framework->getPlayer()->getPosition());
+    });
 }
 
 void Tooltip::bindText(const std::string& header, const std::string& text)

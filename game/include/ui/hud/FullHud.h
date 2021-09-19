@@ -19,6 +19,7 @@
 using namespace r3e;
 
 class UserInterface;
+
 class Framework;
 
 class BackpackHud : public sf::Drawable {

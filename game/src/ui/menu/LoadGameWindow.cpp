@@ -11,7 +11,8 @@
 
 LoadGameWindow::LoadGameWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* framework) :
         MenuWindow(gui, theme, "> Load game"),
-        framework_(framework) {
+        framework_(framework)
+{
     auto pos = CONF<sf::Vector2f>("graphics/menu_window_pos") +
                sf::Vector2f((CONF<float>("graphics/menu_bar_width_px") + CONF<int>("graphics/window_width_px")) / 2.0f,
                             CONF<float>("graphics/menu_window_header_size") * 2.0f);
@@ -27,7 +28,7 @@ LoadGameWindow::LoadGameWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
 
     scroll_panel_ = tgui::ScrollablePanel::create({CONF<sf::Vector2f>("graphics/menu_window_size").x,
                                                    CONF<sf::Vector2f>("graphics/menu_window_size").y * 0.7f});
-    scroll_panel_->setPosition(pos + sf::Vector2f{- CONF<sf::Vector2f>("graphics/menu_window_size").x * 0.5f,
+    scroll_panel_->setPosition(pos + sf::Vector2f{-CONF<sf::Vector2f>("graphics/menu_window_size").x * 0.5f,
                                                   CONF<float>("graphics/menu_window_header_size") * 2.0f});
     scroll_panel_->setHorizontalScrollbarPolicy(tgui::Scrollbar::Policy::Never);
     scroll_panel_->setVerticalScrollAmount(100);
@@ -56,14 +57,15 @@ LoadGameWindow::LoadGameWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
         button->setSize(CONF<sf::Vector2f>("graphics/menu_map_screen_size"));
         grid->addWidget(button, (i / 4) * 2, i % 4);
         grid->addWidget(label, (i / 4) * 2 + 1, i % 4);
-        grid->setWidgetPadding(button, {CONF<float>("graphics/menu_maps_padding"), CONF<float>("graphics/menu_maps_padding")});
+        grid->setWidgetPadding(button,
+                               {CONF<float>("graphics/menu_maps_padding"), CONF<float>("graphics/menu_maps_padding")});
 
         button->connect("mouseentered", [button, this]() {
             button->setInheritedOpacity(1.0f);
             framework_->spawnSound(RM.getSound("ui_hover"), framework_->getPlayer()->getPosition());
         });
         button->connect("mouseleft", [button]() {
-           button->setInheritedOpacity(button_opacity);
+            button->setInheritedOpacity(button_opacity);
         });
         button->connect("Clicked", [this](const std::string& map_name) {
             framework_->respawn(map_name);
@@ -76,7 +78,8 @@ LoadGameWindow::LoadGameWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
     doShow(false);
 }
 
-void LoadGameWindow::doShow(bool show) {
+void LoadGameWindow::doShow(bool show)
+{
     MenuWindow::doShow(show);
     scroll_panel_->setVisible(show);
     text_->setVisible(show);

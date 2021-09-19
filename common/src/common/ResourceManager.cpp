@@ -224,7 +224,8 @@ bool ResourceManager::saveMap(const std::string& name, Map& map)
     for (const auto& decoration : map.getList<DecorationTile>())
     {
         matrix.at(
-                static_cast<size_t>((decoration->getPosition().y - map_constraints.second.y) / DecorationTile::SIZE_Y_))
+                      static_cast<size_t>((decoration->getPosition().y - map_constraints.second.y) /
+                                          DecorationTile::SIZE_Y_))
               .
                       at(static_cast<size_t>((decoration->getPosition().x - map_constraints.second.x) /
                                              DecorationTile::SIZE_X_)) = -std::stoi(decoration->getId());

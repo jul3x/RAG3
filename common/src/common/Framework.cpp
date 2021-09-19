@@ -385,7 +385,8 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
                 {
                     static auto strength_skill_factor = CONF<float>("characters/strength_skill_factor");
                     factor = 1.0f / factor;
-                    factor = factor * (strength_skill_factor - getPlayer()->getSkill(Player::Skills::Strength)) / strength_skill_factor;
+                    factor = factor * (strength_skill_factor - getPlayer()->getSkill(Player::Skills::Strength)) /
+                             strength_skill_factor;
                 }
                 else
                     factor = 1.0f;
@@ -987,13 +988,13 @@ void Framework::obstacleDestroyedEvent(Obstacle* obstacle)
 
 }
 
-void Framework::spawnSound(const sf::SoundBuffer &sound, const sf::Vector2f &pos, bool force_pitch)
+void Framework::spawnSound(const sf::SoundBuffer& sound, const sf::Vector2f& pos, bool force_pitch)
 {
     if (CONF<bool>("sound/sound_on") && utils::geo::getDistance(pos, getPlayer()->getPosition()) < 500.0f)
         engine_->spawnSoundEvent(sound, pos, 100.0f, force_pitch);
 }
 
-DestructionSystem *Framework::spawnSparksEvent2(const sf::Vector2f &pos, float dir, float r)
+DestructionSystem* Framework::spawnSparksEvent2(const sf::Vector2f& pos, float dir, float r)
 {
     return spawnNewDestructionSystem(pos, dir - 90.0f, destruction_params_["debris2"], 1.0f);
 }

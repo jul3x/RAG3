@@ -26,11 +26,11 @@ RightHud::RightHud(const sf::Vector2f& position) :
 
     level_text_.setFillColor(sf::Color::White);
     level_text_.setPosition(position + sf::Vector2f{LEVEL_X_, LEVEL_Y_}
-                            * CONF<float>("graphics/user_interface_zoom"));
+                                       * CONF<float>("graphics/user_interface_zoom"));
 
     name_.setFillColor(sf::Color::White);
     name_.setPosition(position + sf::Vector2f{NAME_X_, NAME_Y_}
-                      * CONF<float>("graphics/user_interface_zoom"));
+                                 * CONF<float>("graphics/user_interface_zoom"));
 }
 
 void RightHud::update(int level, int exp, float time_elapsed)

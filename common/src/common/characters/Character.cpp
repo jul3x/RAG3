@@ -226,7 +226,7 @@ bool Character::update(float time_elapsed)
     auto speed_factor = this->getSpeedFactor();
     auto vel = std::get<0>(utils::geo::cartesianToPolar(current_pos_ - previous_pos_)) / time_elapsed;
 
-    if ((is_moving_ && vel > max_speed / 10.0f ) ||
+    if ((is_moving_ && vel > max_speed / 10.0f) ||
         (!is_moving_ && vel > max_speed / 2.0f))
     {
         is_moving_ = true;
@@ -754,7 +754,7 @@ void Character::makeLifeBar(const std::string& name)
     life_bar_ = std::make_unique<LifeBar>(name, this->getMaxHealth());
 }
 
-const std::string &Character::getTextureName() const
+const std::string& Character::getTextureName() const
 {
     return texture_name_;
 }

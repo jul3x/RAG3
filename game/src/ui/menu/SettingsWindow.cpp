@@ -132,7 +132,8 @@ void SettingsWindow::createWidgets()
                 else if (type == "string")
                     widgets_[hash_key] = std::make_unique<StringSettingsWidget>(theme_, param);
                 else
-                    throw std::runtime_error("[SettingsWindow::createWidgets] Widgets for type " + type + " not handled yet!");
+                    throw std::runtime_error(
+                            "[SettingsWindow::createWidgets] Widgets for type " + type + " not handled yet!");
             }
 
             grid->addWidget(widgets_[hash_key]->getLabel(), i, 0);
@@ -203,43 +204,51 @@ void SettingsWindow::setFocusedControlsWidget(ControlsSettingsWidget* widget)
 
 /* Widgets */
 
-BaseSettingsWidget::BaseSettingsWidget(tgui::Theme* theme, const std::string& name) : name_(name) {
+BaseSettingsWidget::BaseSettingsWidget(tgui::Theme* theme, const std::string& name) : name_(name)
+{
     label_ = tgui::Label::create(r3e::utils::humanize(name));
     label_->setRenderer(theme->getRenderer("ItemLabel"));
     label_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
     label_->getRenderer()->setFont(RM.getFont("default"));
 }
 
-[[nodiscard]] tgui::Label::Ptr BaseSettingsWidget::getLabel() const {
+[[nodiscard]] tgui::Label::Ptr BaseSettingsWidget::getLabel() const
+{
     return label_;
 }
 
-[[nodiscard]] tgui::Grid::Alignment BaseSettingsWidget::getAlignment() const {
+[[nodiscard]] tgui::Grid::Alignment BaseSettingsWidget::getAlignment() const
+{
     return tgui::Grid::Alignment::BottomLeft;
 }
 
 BoolSettingsWidget::BoolSettingsWidget(tgui::Theme* theme, const std::string& name) :
-        BaseSettingsWidget(theme, name) {
+        BaseSettingsWidget(theme, name)
+{
     checkbox_ = tgui::CheckBox::create("");
     checkbox_->setRenderer(theme->getRenderer("CheckBoxGame"));
     checkbox_->setSize({CONF<sf::Vector2f>("graphics/menu_checkbox_size")});
 }
 
-[[nodiscard]] tgui::Widget::Ptr BoolSettingsWidget::getWidget() const {
+[[nodiscard]] tgui::Widget::Ptr BoolSettingsWidget::getWidget() const
+{
     return checkbox_;
 }
 
-void BoolSettingsWidget::serializeAndAppend(std::string& out) const {
+void BoolSettingsWidget::serializeAndAppend(std::string& out) const
+{
     j3x::serializeAssign(name_, checkbox_->isChecked(), out);
 }
 
-void BoolSettingsWidget::updateValue(const j3x::Parameters& values) {
+void BoolSettingsWidget::updateValue(const j3x::Parameters& values)
+{
     checkbox_->setChecked(r3e::j3x::get<bool>(values, name_));
 }
 
 
 StringSettingsWidget::StringSettingsWidget(tgui::Theme* theme, const std::string& name) :
-        BaseSettingsWidget(theme, name) {
+        BaseSettingsWidget(theme, name)
+{
     editbox_ = tgui::EditBox::create();
     editbox_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
     editbox_->setSize(CONF<sf::Vector2f>("graphics/menu_edit_box_size"));
@@ -247,21 +256,25 @@ StringSettingsWidget::StringSettingsWidget(tgui::Theme* theme, const std::string
     editbox_->getRenderer()->setFont(RM.getFont("default"));
 }
 
-[[nodiscard]] tgui::Widget::Ptr StringSettingsWidget::getWidget() const {
+[[nodiscard]] tgui::Widget::Ptr StringSettingsWidget::getWidget() const
+{
     return editbox_;
 }
 
-void StringSettingsWidget::serializeAndAppend(std::string& out) const {
+void StringSettingsWidget::serializeAndAppend(std::string& out) const
+{
     j3x::serializeAssign(name_, std::string(editbox_->getText()), out);
 }
 
-void StringSettingsWidget::updateValue(const j3x::Parameters& values) {
+void StringSettingsWidget::updateValue(const j3x::Parameters& values)
+{
     editbox_->setText(r3e::j3x::get<std::string>(values, name_));
 }
 
 
 ControlsSettingsWidget::ControlsSettingsWidget(SettingsWindow* window, tgui::Theme* theme, const std::string& name) :
-        BaseSettingsWidget(theme, name) {
+        BaseSettingsWidget(theme, name)
+{
     button_ = tgui::Button::create();
     button_->setRenderer(theme->getRenderer("ButtonLabel"));
     button_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
@@ -274,32 +287,38 @@ ControlsSettingsWidget::ControlsSettingsWidget(SettingsWindow* window, tgui::The
     });
 }
 
-[[nodiscard]] tgui::Widget::Ptr ControlsSettingsWidget::getWidget() const {
+[[nodiscard]] tgui::Widget::Ptr ControlsSettingsWidget::getWidget() const
+{
     return button_;
 }
 
-void ControlsSettingsWidget::serializeAndAppend(std::string& out) const {
+void ControlsSettingsWidget::serializeAndAppend(std::string& out) const
+{
     j3x::serializeAssign(name_, static_cast<int>(r3e::utils::stringToKey(button_->getText())), out);
 }
 
-void ControlsSettingsWidget::updateValue(const j3x::Parameters& values) {
+void ControlsSettingsWidget::updateValue(const j3x::Parameters& values)
+{
     button_->setText(r3e::utils::keyToString(
             static_cast<sf::Keyboard::Key>(r3e::j3x::get<int>(values, name_))));
 }
 
-void ControlsSettingsWidget::setFocus(bool focus) {
+void ControlsSettingsWidget::setFocus(bool focus)
+{
     static const auto clicked_button_color = button_->getRenderer()->getTextColorDown();
     static const auto normal_button_color = button_->getRenderer()->getTextColor();
     button_->getRenderer()->setTextColor(focus ? clicked_button_color : normal_button_color);
 }
 
-void ControlsSettingsWidget::setKey(sf::Keyboard::Key key) {
+void ControlsSettingsWidget::setKey(sf::Keyboard::Key key)
+{
     button_->setText(r3e::utils::keyToString(key));
 }
 
 
 CharacterSettingsWidget::CharacterSettingsWidget(tgui::Theme* theme, const std::string& name) :
-        BaseSettingsWidget(theme, name) {
+        BaseSettingsWidget(theme, name)
+{
     grid_ = tgui::Grid::create();
     grid_->setAutoSize(true);
 
@@ -332,7 +351,8 @@ CharacterSettingsWidget::CharacterSettingsWidget(tgui::Theme* theme, const std::
     grid_->setWidgetAlignment(left_, tgui::Grid::Alignment::Bottom);
     grid_->setWidgetAlignment(right_, tgui::Grid::Alignment::Bottom);
     grid_->setWidgetPadding(character_, tgui::Padding{0, 0, 0, 0.1f * CONF<sf::Vector2f>("graphics/face_size").y});
-    grid_->setWidgetPadding(pictures_container_, tgui::Padding{0, 0.1f * CONF<sf::Vector2f>("graphics/face_size").y, 0, 0});
+    grid_->setWidgetPadding(pictures_container_,
+                            tgui::Padding{0, 0.1f * CONF<sf::Vector2f>("graphics/face_size").y, 0, 0});
 
     for (const auto& character : RM.getListOfObjects(CONF<std::string>("paths/characters")))
     {
@@ -356,30 +376,35 @@ CharacterSettingsWidget::CharacterSettingsWidget(tgui::Theme* theme, const std::
     });
 }
 
-[[nodiscard]] tgui::Grid::Alignment CharacterSettingsWidget::getAlignment() const {
+[[nodiscard]] tgui::Grid::Alignment CharacterSettingsWidget::getAlignment() const
+{
     return tgui::Grid::Alignment::Bottom;
 }
 
-[[nodiscard]] tgui::Widget::Ptr CharacterSettingsWidget::getWidget() const {
+[[nodiscard]] tgui::Widget::Ptr CharacterSettingsWidget::getWidget() const
+{
     return grid_;
 }
 
-void CharacterSettingsWidget::serializeAndAppend(std::string& out) const {
+void CharacterSettingsWidget::serializeAndAppend(std::string& out) const
+{
     j3x::serializeAssign(name_, *current_character_, out);
 }
 
-void CharacterSettingsWidget::updateValue(const j3x::Parameters& values) {
+void CharacterSettingsWidget::updateValue(const j3x::Parameters& values)
+{
     const auto& character = r3e::j3x::get<std::string>(values, name_);
 
     auto it = std::find(possible_characters_.begin(), possible_characters_.end(), character);
 
     if (it == possible_characters_.end())
         throw std::runtime_error("[CharacterSettingsWidget::updateValue] Character " +
-                character + " is forbidden!");
+                                 character + " is forbidden!");
     change(it);
 }
 
-void CharacterSettingsWidget::change(std::vector<std::string>::iterator new_value) {
+void CharacterSettingsWidget::change(std::vector<std::string>::iterator new_value)
+{
     if (new_value < possible_characters_.begin())
         new_value = possible_characters_.end() - 1;
     if (new_value >= possible_characters_.end())
@@ -395,7 +420,8 @@ void CharacterSettingsWidget::change(std::vector<std::string>::iterator new_valu
 
 template<class T>
 SliderSettingsWidget<T>::SliderSettingsWidget(tgui::Theme* theme, const std::string& name) :
-        BaseSettingsWidget(theme, name) {
+        BaseSettingsWidget(theme, name)
+{
     grid_ = tgui::Grid::create();
     grid_->setAutoSize(true);
 
@@ -423,16 +449,19 @@ SliderSettingsWidget<T>::SliderSettingsWidget(tgui::Theme* theme, const std::str
 }
 
 template<class T>
-[[nodiscard]] tgui::Widget::Ptr SliderSettingsWidget<T>::getWidget() const {
+[[nodiscard]] tgui::Widget::Ptr SliderSettingsWidget<T>::getWidget() const
+{
     return grid_;
 }
 
 template<class T>
-void SliderSettingsWidget<T>::serializeAndAppend(std::string& out) const {
+void SliderSettingsWidget<T>::serializeAndAppend(std::string& out) const
+{
     j3x::serializeAssign(name_, static_cast<T>(slider_->getValue()), out);
 }
 
 template<class T>
-void SliderSettingsWidget<T>::updateValue(const j3x::Parameters& values) {
+void SliderSettingsWidget<T>::updateValue(const j3x::Parameters& values)
+{
     slider_->setValue(r3e::j3x::get<T>(values, name_));
 }

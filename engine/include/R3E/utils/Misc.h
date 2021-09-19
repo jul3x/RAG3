@@ -36,12 +36,14 @@ namespace r3e::utils {
     }
 
     template<class T, class K>
-    bool contains(const T& container, const K& element) {
+    bool contains(const T& container, const K& element)
+    {
         return std::find(container.begin(), container.end(), element) != container.end();
     }
 
     template<class K>
-    inline bool contains(const j3x::List& container, const K& element) {
+    inline bool contains(const j3x::List& container, const K& element)
+    {
         for (const auto& obj : container)
         {
             if (j3x::getObj<K>(obj) == element)
@@ -51,12 +53,14 @@ namespace r3e::utils {
     }
 
     template<class T>
-    std::string toString(T v) {
+    std::string toString(T v)
+    {
         return std::to_string(v);
     }
 
     template<>
-    inline std::string toString<float>(float v) {
+    inline std::string toString<float>(float v)
+    {
         static constexpr auto PRECISION = 2;
         std::ostringstream out;
         out.precision(PRECISION);

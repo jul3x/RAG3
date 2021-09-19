@@ -7,9 +7,11 @@
 
 MenuWindow::MenuWindow(tgui::Gui* gui, tgui::Theme* theme, const std::string& header) :
         gui_(gui), theme_(theme), is_visible_(false),
-        background_(CONF<sf::Vector2f>("graphics/menu_window_size")) {
+        background_(CONF<sf::Vector2f>("graphics/menu_window_size"))
+{
     auto pos = CONF<sf::Vector2f>("graphics/menu_window_pos") +
-               sf::Vector2f((CONF<float>("graphics/menu_bar_width_px") + CONF<int>("graphics/window_width_px")) / 2.0f, 0.0f);
+               sf::Vector2f((CONF<float>("graphics/menu_bar_width_px") + CONF<int>("graphics/window_width_px")) / 2.0f,
+                            0.0f);
     background_.setFillColor(sf::Color(0, 0, 0, 160));
     background_.setOutlineColor(sf::Color(255, 255, 255, 200));
     background_.setOutlineThickness(2.0f * CONF<float>("graphics/user_interface_zoom"));
@@ -30,7 +32,8 @@ MenuWindow::MenuWindow(tgui::Gui* gui, tgui::Theme* theme, const std::string& he
     doShow(false);
 }
 
-void MenuWindow::doShow(bool show) {
+void MenuWindow::doShow(bool show)
+{
     is_visible_ = show;
     header_->setVisible(show);
 }

@@ -15,7 +15,9 @@
 using namespace r3e;
 
 class Framework;
+
 class BaseSettingsWidget;
+
 class ControlsSettingsWidget;
 
 class SettingsWindow : public MenuWindow {

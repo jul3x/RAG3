@@ -11,6 +11,7 @@
 
 #include <common/ResourceManager.h>
 
+
 using namespace r3e;
 
 class MenuWindow : public sf::Drawable {
@@ -25,7 +26,8 @@ protected:
     bool is_visible_;
 
 private:
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override
+    {
         if (is_visible_)
             target.draw(background_, states);
     }

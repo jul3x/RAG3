@@ -63,7 +63,8 @@ WeaponsBar::update(const std::vector<std::shared_ptr<AbstractWeapon>>& weapons, 
             sf::FloatRect text_rect = ammo_.at(i).getLocalBounds();
             ammo_.at(i).setOrigin(text_rect.left + text_rect.width / 2.0f,
                                   text_rect.top + text_rect.height / 2.0f);
-            ammo_.at(i).setPosition(weapon_pos + sf::Vector2f{0.0f, -30.0f * CONF<float>("graphics/user_interface_zoom")});
+            ammo_.at(i)
+                 .setPosition(weapon_pos + sf::Vector2f{0.0f, -30.0f * CONF<float>("graphics/user_interface_zoom")});
         }
         else
         {

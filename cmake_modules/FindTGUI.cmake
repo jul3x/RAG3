@@ -59,14 +59,14 @@ find_path(TGUI_INCLUDE_DIR TGUI/Config.hpp
 
 # check the version number
 set(TGUI_VERSION_OK TRUE)
-if(TGUI_INCLUDE_DIR)
+if (TGUI_INCLUDE_DIR)
     # extract the major and minor version numbers from TGUI/Config.hpp
     # we have to handle framework a little bit differently:
-    if("${TGUI_INCLUDE_DIR}" MATCHES "TGUI.framework")
+    if ("${TGUI_INCLUDE_DIR}" MATCHES "TGUI.framework")
         set(TGUI_CONFIG_HPP_INPUT "${TGUI_INCLUDE_DIR}/Headers/Config.hpp")
-    else()
+    else ()
         set(TGUI_CONFIG_HPP_INPUT "${TGUI_INCLUDE_DIR}/TGUI/Config.hpp")
-    endif()
+    endif ()
     FILE(READ "${TGUI_CONFIG_HPP_INPUT}" TGUI_CONFIG_HPP_CONTENTS)
     STRING(REGEX MATCH ".*#define TGUI_VERSION_MAJOR ([0-9]+).*#define TGUI_VERSION_MINOR ([0-9]+).*#define TGUI_VERSION_PATCH ([0-9]+).*" TGUI_CONFIG_HPP_CONTENTS "${TGUI_CONFIG_HPP_CONTENTS}")
     STRING(REGEX REPLACE ".*#define TGUI_VERSION_MAJOR ([0-9]+).*" "\\1" TGUI_VERSION_MAJOR "${TGUI_CONFIG_HPP_CONTENTS}")
@@ -81,17 +81,17 @@ if(TGUI_INCLUDE_DIR)
         math(EXPR TGUI_VERSION_NOPATCH "${TGUI_VERSION_MAJOR} * 10000 + ${TGUI_VERSION_MINOR} * 100")
 
         # compare them
-        if(TGUI_FIND_VERSION_PATCH)
-            if(NOT TGUI_VERSION EQUAL TGUI_REQUESTED_VERSION)
+        if (TGUI_FIND_VERSION_PATCH)
+            if (NOT TGUI_VERSION EQUAL TGUI_REQUESTED_VERSION)
                 set(TGUI_VERSION_OK FALSE)
-            endif()
-        else()
-            if(NOT TGUI_VERSION_NOPATCH EQUAL TGUI_REQUESTED_VERSION)
+            endif ()
+        else ()
+            if (NOT TGUI_VERSION_NOPATCH EQUAL TGUI_REQUESTED_VERSION)
                 set(TGUI_VERSION_OK FALSE)
-            endif()
-        endif()
-    endif()
-endif()
+            endif ()
+        endif ()
+    endif ()
+endif ()
 
 # find the static debug library
 find_library(TGUI_LIBRARY_STATIC_DEBUG
@@ -118,21 +118,21 @@ find_library(TGUI_LIBRARY_DYNAMIC_RELEASE
         PATHS ${FIND_TGUI_PATHS})
 
 # choose the entries that fit the requested link type
-if(SFML_STATIC_LIBRARIES)
-    if(TGUI_LIBRARY_STATIC_RELEASE)
+if (SFML_STATIC_LIBRARIES)
+    if (TGUI_LIBRARY_STATIC_RELEASE)
         set(TGUI_LIBRARY_RELEASE ${TGUI_LIBRARY_STATIC_RELEASE})
-    endif()
-    if(TGUI_LIBRARY_STATIC_DEBUG)
+    endif ()
+    if (TGUI_LIBRARY_STATIC_DEBUG)
         set(TGUI_LIBRARY_DEBUG ${TGUI_LIBRARY_STATIC_DEBUG})
-    endif()
-else()
-    if(TGUI_LIBRARY_DYNAMIC_RELEASE)
+    endif ()
+else ()
+    if (TGUI_LIBRARY_DYNAMIC_RELEASE)
         set(TGUI_LIBRARY_RELEASE ${TGUI_LIBRARY_DYNAMIC_RELEASE})
-    endif()
-    if(TGUI_LIBRARY_DYNAMIC_DEBUG)
+    endif ()
+    if (TGUI_LIBRARY_DYNAMIC_DEBUG)
         set(TGUI_LIBRARY_DEBUG ${TGUI_LIBRARY_DYNAMIC_DEBUG})
-    endif()
-endif()
+    endif ()
+endif ()
 
 if (TGUI_LIBRARY_DEBUG OR TGUI_LIBRARY_RELEASE)
     # library found
@@ -140,26 +140,26 @@ if (TGUI_LIBRARY_DEBUG OR TGUI_LIBRARY_RELEASE)
 
     # if both are found, set TGUI_LIBRARY to contain both
     if (TGUI_LIBRARY_DEBUG AND TGUI_LIBRARY_RELEASE)
-        set(TGUI_LIBRARY debug     ${TGUI_LIBRARY_DEBUG}
+        set(TGUI_LIBRARY debug ${TGUI_LIBRARY_DEBUG}
                 optimized ${TGUI_LIBRARY_RELEASE})
-    endif()
+    endif ()
 
     # if only one debug/release variant is found, set the other to be equal to the found one
     if (TGUI_LIBRARY_DEBUG AND NOT TGUI_LIBRARY_RELEASE)
         # debug and not release
         set(TGUI_LIBRARY_RELEASE ${TGUI_LIBRARY_DEBUG})
-        set(TGUI_LIBRARY         ${TGUI_LIBRARY_DEBUG})
-    endif()
+        set(TGUI_LIBRARY ${TGUI_LIBRARY_DEBUG})
+    endif ()
     if (TGUI_LIBRARY_RELEASE AND NOT TGUI_LIBRARY_DEBUG)
         # release and not debug
         set(TGUI_LIBRARY_DEBUG ${TGUI_LIBRARY_RELEASE})
-        set(TGUI_LIBRARY       ${TGUI_LIBRARY_RELEASE})
-    endif()
-else()
+        set(TGUI_LIBRARY ${TGUI_LIBRARY_RELEASE})
+    endif ()
+else ()
     # library not found
     set(TGUI_FOUND FALSE)
     set(TGUI_LIBRARY "")
-endif()
+endif ()
 
 # mark variables as advanced so that they won't show up unless the 'advanced' option is checked
 mark_as_advanced(TGUI_LIBRARY
@@ -171,25 +171,25 @@ mark_as_advanced(TGUI_LIBRARY
         TGUI_LIBRARY_DYNAMIC_RELEASE)
 
 # handle errors
-if(NOT TGUI_VERSION_OK)
+if (NOT TGUI_VERSION_OK)
     # TGUI version not ok
     set(FIND_TGUI_ERROR "TGUI found in ${TGUI_INCLUDE_DIR} but version was wrong (requested: ${TGUI_FIND_VERSION}, found: ${TGUI_VERSION_MAJOR}.${TGUI_VERSION_MINOR}.${TGUI_VERSION_PATCH})")
     set(TGUI_FOUND FALSE)
-elseif(NOT TGUI_FOUND)
+elseif (NOT TGUI_FOUND)
     # include directory or library not found
     set(FIND_TGUI_ERROR "Could NOT find TGUI")
-endif()
+endif ()
 if (NOT TGUI_FOUND)
-    if(TGUI_FIND_REQUIRED)
+    if (TGUI_FIND_REQUIRED)
         # fatal error
         message(FATAL_ERROR ${FIND_TGUI_ERROR})
-    elseif(NOT TGUI_FIND_QUIETLY)
+    elseif (NOT TGUI_FIND_QUIETLY)
         # error but continue
         message("${FIND_TGUI_ERROR}")
-    endif()
-endif()
+    endif ()
+endif ()
 
 # handle success
-if(TGUI_FOUND AND NOT TGUI_FIND_QUIETLY)
+if (TGUI_FOUND AND NOT TGUI_FIND_QUIETLY)
     message(STATUS "Found TGUI ${TGUI_VERSION_MAJOR}.${TGUI_VERSION_MINOR}.${TGUI_VERSION_PATCH} in ${TGUI_INCLUDE_DIR}")
-endif()
+endif ()

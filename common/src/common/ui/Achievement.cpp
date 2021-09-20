@@ -45,7 +45,7 @@ Achievement::Achievement(const sf::Vector2f& position,
 
     text_text_.setFillColor(sf::Color(CONF<int>("graphics/achievement_text_color")));
     text_text_.setPosition(sf::Vector2f(position.x, -CONF<sf::Vector2f>("graphics/achievement_size").y)
-                            + CONF<sf::Vector2f>("graphics/achievement_text_pos"));
+                           + CONF<sf::Vector2f>("graphics/achievement_text_pos"));
 
     this->changeOrigin({CONF<sf::Vector2f>("graphics/achievement_size").x, 0.0f});
 }

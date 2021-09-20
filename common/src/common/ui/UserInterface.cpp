@@ -22,7 +22,7 @@ UserInterface::UserInterface(Framework* framework) :
         health_bar_(
                 {CONF<int>("graphics/window_width_px") - HEALTH_BAR_X_ * CONF<float>("graphics/user_interface_zoom"),
                  CONF<int>("graphics/window_height_px") - HEALTH_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")},
-                 "health_bar"),
+                "health_bar"),
         fps_text_("FPS: ", RM.getFont("editor"), 12),
         object_use_text_("Use object", RM.getFont(), CONF<float>("graphics/use_text_size")),
         npc_talk_text_("Talk to NPC", RM.getFont(), CONF<float>("graphics/use_text_size")),
@@ -227,7 +227,7 @@ void UserInterface::handleKeys()
     }
 
     float max_speed = player_->isRunning() ? RMGET<float>("characters", "player", "max_running_speed") :
-            RMGET<float>("characters", "player", "max_speed");
+                      RMGET<float>("characters", "player", "max_speed");
 
     if (sf::Keyboard::isKeyPressed(left_key))
     {
@@ -390,7 +390,7 @@ void UserInterface::initializeTutorialArrows()
     }
 }
 
-void UserInterface::removeArrowIfExists(AbstractPhysicalObject *obj)
+void UserInterface::removeArrowIfExists(AbstractPhysicalObject* obj)
 {
     auto it = tutorial_arrows_.find(obj);
     if (it != tutorial_arrows_.end())

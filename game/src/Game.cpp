@@ -101,8 +101,9 @@ void Game::update(float time_elapsed)
             }
 
             if (current_time_factor_ == 1.0f)
-                time_manipulation_fuel_ = std::min(time_manipulation_fuel_ + player_->getTimeManipulationFuelSpeed() * time_elapsed,
-                                                   player_->getMaxTimeManipulation());
+                time_manipulation_fuel_ =
+                        std::min(time_manipulation_fuel_ + player_->getTimeManipulationFuelSpeed() * time_elapsed,
+                                 player_->getMaxTimeManipulation());
             else
                 time_manipulation_fuel_ -= CONF<float>("characters/time_manipulation_slow_use_speed") * time_elapsed;
 
@@ -720,12 +721,13 @@ void Game::initNPCs()
     }
 }
 
-void Game::close() {
+void Game::close()
+{
     map_->getList<NPC>().clear();
     Framework::close();
 }
 
-DestructionSystem *Game::spawnSparksEvent2(const sf::Vector2f &pos, float dir, float r)
+DestructionSystem* Game::spawnSparksEvent2(const sf::Vector2f& pos, float dir, float r)
 {
     auto ptr = Framework::spawnSparksEvent2(pos, dir, r);
     journal_->event<SpawnDestructionSystem>(ptr);

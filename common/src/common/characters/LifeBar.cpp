@@ -7,6 +7,7 @@
 #include <common/ResourceManager.h>
 #include <common/characters/LifeBar.h>
 
+
 using namespace r3e;
 
 
@@ -31,7 +32,7 @@ void LifeBar::update(float time_elapsed)
 {
     health_.update(time_elapsed);
 
-    float width = health_.getState() / max_health_ * CONF <float>("graphics/health_bar_max_width");
+    float width = health_.getState() / max_health_ * CONF<float>("graphics/health_bar_max_width");
     float thickness = CONF<float>("graphics/health_bar_thickness");
     line_[0].position = pos_ - sf::Vector2f{width / 2.0f, thickness / 2.0f};
     line_[1].position = pos_ - sf::Vector2f{width / 2.0f, -thickness / 2.0f};
@@ -57,7 +58,7 @@ void LifeBar::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(line_, states);
 }
 
-void LifeBar::setPosition(const sf::Vector2f &pos)
+void LifeBar::setPosition(const sf::Vector2f& pos)
 {
     pos_ = pos + sf::Vector2f(0.0, CONF<float>("graphics/health_bar_offset"));
 }

@@ -28,7 +28,7 @@ BackpackHud::BackpackHud(UserInterface* ui, Framework* framework, const sf::Vect
             tooltips_.emplace_back(ui->getFramework(), ui->getTheme(),
                                    pos + sf::Vector2f{static_cast<float>(j), static_cast<float>(i)}
                                          * CONF<float>("graphics/backpack_placeholder_diff")
-                                         - CONF<sf::Vector2f>("graphics/backpack_placeholder_size") / 2.0f,
+                                   - CONF<sf::Vector2f>("graphics/backpack_placeholder_size") / 2.0f,
                                    CONF<sf::Vector2f>("graphics/backpack_placeholder_size"));
         }
     }
@@ -97,7 +97,8 @@ void BackpackHud::combineBackpackItems(size_t first, size_t second)
                     RMGET<std::string>("specials", special_id, "tooltip_header") + "\"?",
                     std::bind([this](const std::string& w, const std::string& s) {
                         framework_->getPlayer()->upgradeWeapon(w, s);
-                        ui_->getFramework()->spawnSound(RM.getSound("ui_upgrade"), framework_->getPlayer()->getPosition());
+                        ui_->getFramework()
+                           ->spawnSound(RM.getSound("ui_upgrade"), framework_->getPlayer()->getPosition());
                     }, weapon_id, special_id));
         }
     }
@@ -272,7 +273,8 @@ SkillsHud::SkillsHud(UserInterface* ui, Framework* framework, const sf::Vector2f
                     button->setText("i");
             }
         }, skills_[i]);
-        tooltips_.emplace_back(framework_, ui->getTheme(), button_pos, CONF<sf::Vector2f>("graphics/skills_button_size"));
+        tooltips_.emplace_back(framework_, ui->getTheme(), button_pos,
+                               CONF<sf::Vector2f>("graphics/skills_button_size"));
         tooltips_.back().bindText(texts_placeholders_[i], texts_tooltips_[i]);
         buttons_.back()->setToolTip(tooltips_.back().getTooltip());
         ui->getGui()->add(buttons_.back());
@@ -396,14 +398,18 @@ FullHud::FullHud(UserInterface* ui, Framework* framework, const sf::Vector2f& si
                                       CONF<int>("graphics/window_height_px"));
     auto show_duration = CONF<float>("graphics/full_hud_show_duration");
     buttons_.emplace_back(std::make_unique<TextButton>(framework, "Back to menu",
-                          window_center + CONF<sf::Vector2f>("graphics/back_to_menu_button_pos"),
-                          button_size, show_duration));
+                                                       window_center +
+                                                       CONF<sf::Vector2f>("graphics/back_to_menu_button_pos"),
+                                                       button_size, show_duration));
     buttons_.back()->bindFunction([ui]() { ui->openMenu(); });
     buttons_.emplace_back(std::make_unique<TextButton>(framework, "Respawn",
-                          window_center + CONF<sf::Vector2f>("graphics/respawn_button_pos"),
-                          button_size, show_duration));
+                                                       window_center +
+                                                       CONF<sf::Vector2f>("graphics/respawn_button_pos"),
+                                                       button_size, show_duration));
     buttons_.back()->bindFunction([framework, ui, this]() {
-        framework->respawn(""); ui->clearWindows(); this->show(false);
+        framework->respawn("");
+        ui->clearWindows();
+        this->show(false);
     });
 }
 

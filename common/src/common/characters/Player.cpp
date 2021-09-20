@@ -225,7 +225,7 @@ std::list<std::pair<Special, int>>& Player::getBackpack()
     return backpack_;
 }
 
-void Player::changePlayerTexture(const std::string &name)
+void Player::changePlayerTexture(const std::string& name)
 {
     this->setTextureName(name);
     this->changeTexture(&RM.getTexture("characters/" + name), true);
@@ -242,25 +242,29 @@ float Player::getMaxHealth() const
 float Player::getMaxTimeManipulation() const
 {
     static auto factor = CONF<float>("characters/intelligence_skill_factor");
-    return CONF<float>("characters/max_base_time_manipulation") * static_cast<float>(factor + getSkill(Skills::Intelligence)) / factor;
+    return CONF<float>("characters/max_base_time_manipulation") *
+           static_cast<float>(factor + getSkill(Skills::Intelligence)) / factor;
 }
 
 float Player::getTimeManipulationFuelSpeed() const
 {
     static auto factor = CONF<float>("characters/intelligence_skill_factor");
-    return CONF<float>("characters/time_manipulation_fuel_speed") * static_cast<float>(factor + getSkill(Skills::Intelligence)) / factor;
+    return CONF<float>("characters/time_manipulation_fuel_speed") *
+           static_cast<float>(factor + getSkill(Skills::Intelligence)) / factor;
 }
 
 float Player::getMaxRunningFuel() const
 {
     static auto factor = CONF<float>("characters/agility_skill_factor");
-    return CONF<float>("characters/max_base_running_fuel") * static_cast<float>(factor + getSkill(Skills::Agility)) / factor;
+    return CONF<float>("characters/max_base_running_fuel") * static_cast<float>(factor + getSkill(Skills::Agility)) /
+           factor;
 }
 
 float Player::getRunningFuelSpeed() const
 {
     static auto factor = CONF<float>("characters/agility_skill_factor");
-    return CONF<float>("characters/running_fuel_speed") * static_cast<float>(factor + getSkill(Skills::Agility)) / factor;
+    return CONF<float>("characters/running_fuel_speed") * static_cast<float>(factor + getSkill(Skills::Agility)) /
+           factor;
 }
 
 void Player::setRunning(bool run)

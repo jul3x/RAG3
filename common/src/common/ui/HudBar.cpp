@@ -42,10 +42,11 @@ void HudBar::update(float amount, float time_elapsed)
     }
     else
     {
-        curr_bar_shape_.setTextureRect({sf::Vector2i{static_cast<int>(SIZE_X_ - curr_bar_shape_.getLocalBounds().width), 0}, 
-                                        sf::Vector2i{static_cast<int>(SIZE_X_), static_cast<int>(SIZE_Y_)}});
+        curr_bar_shape_
+                .setTextureRect({sf::Vector2i{static_cast<int>(SIZE_X_ - curr_bar_shape_.getLocalBounds().width), 0},
+                                 sf::Vector2i{static_cast<int>(SIZE_X_), static_cast<int>(SIZE_Y_)}});
         curr_bar_shape_.setPosition(pos_ + sf::Vector2f{
-            (1.0f - percentage) * CONF<float>("graphics/user_interface_zoom") * SIZE_X_, 0.0f});
+                (1.0f - percentage) * CONF<float>("graphics/user_interface_zoom") * SIZE_X_, 0.0f});
     }
 
 }

@@ -17,8 +17,8 @@ namespace r3e::graphics {
     class Lighting : public AbstractDrawableObject {
     public:
         Lighting(const sf::Vector2f& size, const sf::Color& clear_color) :
-                 clear_color_(clear_color),
-                 AbstractDrawableObject(size / 2.0f, size, nullptr)
+                clear_color_(clear_color),
+                AbstractDrawableObject(size / 2.0f, size, nullptr)
         {
             render_texture_.create(size.x, size.y);
             this->changeTexture((sf::Texture*) &render_texture_.getTexture(), true);

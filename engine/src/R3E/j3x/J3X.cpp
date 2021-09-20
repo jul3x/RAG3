@@ -77,7 +77,7 @@ namespace r3e::j3x {
         {
             throw std::logic_error("[J3X] Error while parsing content from string.\n"
                                    "Error message: " + std::string(e.what()) + "!\n"
-                                   "Parsed content: " + content);
+                                                                               "Parsed content: " + content);
         }
 
         return std::make_shared<Parameters>(visitor.getParams());

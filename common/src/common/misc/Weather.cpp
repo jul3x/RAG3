@@ -64,16 +64,18 @@ bool WeatherSystem::update(float time_elapsed)
     this->setPosition(pos);
 
     utils::eraseIf<std::unique_ptr<WeatherParticle>>(particles_,
-            [this, time_elapsed, &i](std::unique_ptr<WeatherParticle>& particle) {
-        particle->update(time_elapsed);
-        updateParticle(particle, i);
+                                                     [this, time_elapsed, &i](
+                                                             std::unique_ptr<WeatherParticle>& particle) {
+                                                         particle->update(time_elapsed);
+                                                         updateParticle(particle, i);
 
-        ++i;
+                                                         ++i;
 
-        if (utils::geo::getDistance(particle->getPosition(), this->getPosition()) > width)
-            return true;
-        return false;
-    });
+                                                         if (utils::geo::getDistance(particle->getPosition(),
+                                                                                     this->getPosition()) > width)
+                                                             return true;
+                                                         return false;
+                                                     });
 
 
     if (time_elapsed_ > params_->new_particles_time)

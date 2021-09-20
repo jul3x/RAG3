@@ -48,7 +48,6 @@ SpecialFunctions::SpecialFunctions(Framework* framework) : framework_(framework)
     init("RemoveSpecial", &SpecialFunctions::removeSpecial);
     init("SpawnLava", &SpecialFunctions::spawnLava);
     init("SpawnExplosionEvent", &SpecialFunctions::spawnExplosionEvent);
-    init("SpawnExplosionEventByPos", &SpecialFunctions::spawnExplosionEventByPos, "", true);
     init("SpawnMiniLava", &SpecialFunctions::spawnMiniLava);
     init("SpawnFlame", &SpecialFunctions::spawnFlame);
     init("SpawnAmmo", &SpecialFunctions::spawnAmmo);
@@ -320,13 +319,6 @@ void SpecialFunctions::spawnExplosionEvent(Functional* obj, const j3x::Obj& data
     LOG.info("[SpecialFunction] Spawning explosion event.");
     auto obs = dynamic_cast<AbstractPhysicalObject*>(obj);
     framework_->spawnExplosionEvent(obs->getPosition());
-}
-
-void SpecialFunctions::spawnExplosionEventByPos(Functional* obj, const j3x::Obj& data, Character* user)
-{
-    LOG.info("[SpecialFunction] Spawning explosion event by position.");
-    auto pos = j3x::getObj<sf::Vector2f>(data);
-    framework_->spawnExplosionEvent(pos);
 }
 
 void SpecialFunctions::spawnLava(Functional* obj, const j3x::Obj& data, Character* user)

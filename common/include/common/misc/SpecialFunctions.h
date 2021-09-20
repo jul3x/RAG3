@@ -49,7 +49,6 @@ public:
     void removeDecoration(Functional* obj, const j3x::Obj& data, Character* user);
     void removeSpecial(Functional* obj, const j3x::Obj& data, Character* user);
     void spawnExplosionEvent(Functional* obj, const j3x::Obj& data, Character* user);
-    void spawnExplosionEventByPos(Functional* obj, const j3x::Obj& data, Character* user);
     void spawnThought(Functional* obj, const j3x::Obj& data, Character* user);
     void spawnPlayerThought(Functional* obj, const j3x::Obj& data, Character* user);
     void spawnLava(Functional* obj, const j3x::Obj& data, Character* user);

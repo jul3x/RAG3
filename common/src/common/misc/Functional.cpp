@@ -81,18 +81,23 @@ const j3x::List& Functional::getDatas() const
     return datas_;
 }
 
-void Functional::setActivationStr(const std::string& str)
+Functional::Activation Functional::convertActivationStr(const std::string& str)
 {
     if (str == "OnKill")
-        activation_ = Activation::OnKill;
+        return Activation::OnKill;
     else if (str == "OnCollect")
-        activation_ = Activation::OnCollect;
+        return Activation::OnCollect;
     else if (str == "OnEnter")
-        activation_ = Activation::OnEnter;
+        return Activation::OnEnter;
     else if (str == "OnUse")
-        activation_ = Activation::OnUse;
+        return Activation::OnUse;
     else
-        activation_ = Activation::None;
+        return Activation::None;
+}
+
+void Functional::setActivationStr(const std::string& str)
+{
+    activation_ = Functional::convertActivationStr(str);
 }
 
 void Functional::setActivation(Functional::Activation activation)

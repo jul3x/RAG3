@@ -58,6 +58,8 @@ public:
                  bool is_usable_by_npc);
     virtual void use(Character* user);
 
+    static Activation convertActivationStr(const std::string& str);
+
 private:
     bool is_active_;
     bool is_destroyed_;

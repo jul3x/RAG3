@@ -19,10 +19,10 @@ using namespace r3e;
 class Achievements {
 public:
     explicit Achievements(Stats* stats);
-
     void load(const std::string& path);
-
+    void rotate();
     void update(float time_elapsed);
+    void setAchievementsUnlocked(const j3x::List& achievements);
 
 private:
     void check(const std::string& condition, int data, int delta_data);

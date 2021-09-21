@@ -1,0 +1,13 @@
+list maps_unlocked = ["first_new_map"]
+list achievements_unlocked = []
+int exp = 0
+int level = 0
+int kills = 0
+int crystals = 0
+int explosions = 0
+int skill_points = 0
+list skills = []
+
+// List of tuples [name; ammo; list of upgrades]
+list weapons = []
+list backpack = []

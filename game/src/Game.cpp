@@ -23,8 +23,6 @@ Game::Game() : Framework(),
 void Game::initialize()
 {
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
-    player_->setName(CONF<std::string>("general/player_name"));
-    time_manipulation_fuel_ = player_->getMaxTimeManipulation();
     Framework::initialize();
     engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
     ui_ = std::make_unique<GameUserInterface>(this);
@@ -44,7 +42,7 @@ void Game::initialize()
     ui_->registerPlayer(player_.get());
     engine_->registerUI(ui_.get());
 
-    this->setStartingPosition();
+    this->preloadSave();
 }
 
 void Game::update(float time_elapsed)
@@ -194,22 +192,8 @@ void Game::killNPC(NPC* npc)
     spawnSound(RM.getSound(npc->getId() + "_dead"), npc->getPosition());
 
     engine_->deleteDynamicObject(npc);
-    auto talkable_area = npc->getTalkableArea();
-    if (talkable_area != nullptr)
-    {
-        engine_->deleteHoveringObject(talkable_area);
-    }
-
-    for (auto& weapon : npc->getWeapons())
-    {
-        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
-
-        if (melee_weapon != nullptr)
-        {
-            engine_->deleteHoveringObject(melee_weapon->getMeleeWeaponArea());
-        }
-    }
-
+    this->unregisterTalkableArea(npc);
+    this->unregisterWeapons(npc);
     if (npc->getActivation() == Functional::Activation::OnKill && npc->isActive())
     {
         npc->use(npc);
@@ -442,16 +426,7 @@ void Game::cleanPlayerClone()
             enemy->removeEnemy(player_clone_.get());
         }
 
-        for (auto& weapon : player_clone_->getWeapons())
-        {
-            auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
-
-            if (melee_weapon != nullptr)
-            {
-                engine_->deleteHoveringObject(melee_weapon->getMeleeWeaponArea());
-            }
-        }
-
+        unregisterWeapons(player_clone_.get());
         engine_->deleteDynamicObject(player_clone_.get());
         player_clone_.reset();
     }
@@ -488,7 +463,7 @@ void Game::talk()
 
         if (!still_talking)
         {
-            engine_->deleteHoveringObject(curr->getTalkableArea());
+            unregisterTalkableArea(curr);
             curr->use(curr);
             curr->deactivate();
             ui_->removeArrowIfExists(curr);
@@ -779,13 +754,7 @@ void Game::respawn(const std::string& map_name)
 
     journal_->clear();
     this->cleanPlayerClone();
-
-    // TODO - after saving, stats should not be zeroed but restored to previous state
-    stats_->setEnemiesKilled(0);
-    stats_->setCrystalsPicked(0);
-    stats_->setExplosions(0);
-    stats_->setExp(0);
-    stats_->setLevel(0);
+    this->loadSave();
 
     ui_->initializeTutorialArrows();
     setGameState(Game::GameState::Normal);
@@ -797,5 +766,58 @@ void Game::setStartingPosition()
     {
         if (special->getId() == "starting_position")
             player_->setPosition(special->getPosition());
+    }
+}
+
+void Game::preloadSave()
+{
+    achievements_->setAchievementsUnlocked(CONF<j3x::List>("save/achievements_unlocked"));
+    stats_->setEnemiesKilled(CONF<int>("save/kills"));
+    stats_->setCrystalsPicked(CONF<int>("save/crystals"));
+    stats_->setExplosions(CONF<int>("save/explosions"));
+    stats_->setExp(CONF<int>("save/exp"));
+    stats_->setLevel(CONF<int>("save/level"));
+    achievements_->rotate();
+}
+
+void Game::loadSave()
+{
+    preloadSave();
+
+    this->unregisterWeapons(player_.get());
+    player_->clearWeapons();
+    std::vector<std::shared_ptr<AbstractWeapon>> weapons;
+    for (const auto& weapon_data : CONF<j3x::List>("save/weapons"))
+    {
+        const auto& data = j3x::getObj<j3x::List>(weapon_data);
+        const auto& id = j3x::getObj<std::string>(data, 0);
+        const auto& state = j3x::getObj<float>(data, 1);
+        const auto& upgrades = j3x::getObj<j3x::List>(data, 2);
+
+        auto weapon = AbstractWeapon::create(player_.get(), j3x::getObj<std::string>(id));
+        weapon->setState(state);
+        for (const auto& upgrade : upgrades)
+            weapon->upgrade(j3x::getObj<std::string>(upgrade));
+        weapons.emplace_back(weapon);
+    }
+    player_->setWeapons(weapons);
+    this->registerWeapons(player_.get());
+
+    for (const auto& item : CONF<j3x::List>("save/backpack"))
+    {
+        const auto& data = j3x::getObj<j3x::List>(item);
+        const auto& id = j3x::getObj<std::string>(data, 0);
+        const auto& state = j3x::getObj<int>(data, 1);
+        player_->addSpecialToBackpack(id, state,
+                                      [this](Functional* functional) { this->registerFunctions(functional); });
+    }
+
+    player_->setSkillPoints(CONF<int>("save/skill_points"));
+    for (const auto& skill : CONF<j3x::List>("save/skills"))
+    {
+        const auto& data = j3x::getObj<j3x::List>(skill);
+        const auto& id = j3x::getObj<std::string>(data, 0);
+        const auto& state = j3x::getObj<int>(data, 1);
+        player_->setSkill(id, state);
     }
 }

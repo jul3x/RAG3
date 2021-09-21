@@ -132,7 +132,9 @@ public:
                               float quantity_factor);
 
     // Registering methods
+    virtual void unregisterTalkableArea(Character* character);
     virtual void registerWeapons(Character* character);
+    virtual void unregisterWeapons(Character* character);
     virtual void registerWeapon(AbstractWeapon* weapon);
     virtual void registerFunctions(Functional* functional) const;
     virtual void registerLight(Lightable* light) const;

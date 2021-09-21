@@ -91,6 +91,8 @@ private:
 
     void killNPC(NPC* npc);
     void cleanPlayerClone();
+    void preloadSave();
+    void loadSave();
 
     std::unique_ptr<audio::MusicManager> music_manager_;
 

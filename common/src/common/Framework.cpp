@@ -429,7 +429,7 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             if (player != nullptr)
             {
                 spawnSound(RM.getSound("collect"), special->getPosition());
-                player->addSpecialToBackpack(special,
+                player->addSpecialToBackpack(special->getId(), 1,
                                              [this](Functional* functional) { this->registerFunctions(functional); });
                 special_functions_->destroy(special, {}, player);
             }
@@ -775,6 +775,15 @@ void Framework::findAndDeleteDestructionSystem(DestructionSystem* ptr)
     LOG.error("[Framework] Warning - destruction system to delete not found!");
 }
 
+void Framework::unregisterTalkableArea(Character* character)
+{
+    auto talkable_area = character->getTalkableArea();
+    if (talkable_area != nullptr)
+    {
+        engine_->deleteHoveringObject(talkable_area);
+    }
+}
+
 void Framework::registerWeapons(Character* character)
 {
     for (auto& weapon : character->getWeapons())
@@ -794,6 +803,18 @@ void Framework::registerWeapon(AbstractWeapon* weapon)
         if (melee_weapon != nullptr)
         {
             engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
+        }
+    }
+}
+
+void Framework::unregisterWeapons(Character* character)
+{
+    for (auto& weapon : character->getWeapons())
+    {
+        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+        if (melee_weapon != nullptr)
+        {
+            engine_->deleteHoveringObject(melee_weapon->getMeleeWeaponArea());
         }
     }
 }

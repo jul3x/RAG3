@@ -82,3 +82,17 @@ void Achievements::check(const std::string& condition, int data, int delta_data)
         }
     }
 }
+
+void Achievements::setAchievementsUnlocked(const j3x::List& achievements)
+{
+    achievements_unlocked_.clear();
+    for (const auto& achievement : achievements)
+    {
+        achievements_unlocked_.insert(j3x::getObj<std::string>(achievement));
+    }
+}
+
+void Achievements::rotate()
+{
+    saved_stats_ = *stats_;
+}

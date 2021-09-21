@@ -364,16 +364,7 @@ void Server::handleEventsFromPlayers()
 void Server::clearPlayer(Player* player)
 {
     engine_->deleteDynamicObject(player);
-
-    for (auto& weapon : player->getWeapons())
-    {
-        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
-
-        if (melee_weapon != nullptr)
-        {
-            engine_->deleteHoveringObject(melee_weapon->getMeleeWeaponArea());
-        }
-    }
+    unregisterWeapons(player);
 }
 
 void Server::useSpecialObject(Player* player, sf::Uint32 ip)
@@ -445,7 +436,7 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             sendEventToPlayers(packet);
             if (player != nullptr)
             {
-                player->addSpecialToBackpack(special,
+                player->addSpecialToBackpack(special->getId(), 1,
                                              [this](Functional* functional) { this->registerFunctions(functional); });
                 special_functions_->destroy(special, {}, player);
             }

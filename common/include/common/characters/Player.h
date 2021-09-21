@@ -28,6 +28,8 @@ public:
     void setHealth(float life) override;
     void setRunning(bool run);
     void setName(const std::string& name);
+    void setSkill(const std::string& skill, int count);
+    void setSkillPoints(int points);
 
     bool isRunning() const;
     bool isAlive() const;
@@ -48,7 +50,7 @@ public:
 
     void addSkillPoints(int skill_points);
     bool addSkill(Skills skill);
-    void addSpecialToBackpack(Special* special, const std::function<void(Functional*)>& register_func);
+    void addSpecialToBackpack(const std::string& id, int count, const std::function<void(Functional*)>& register_func);
     void useItem(const std::string& name);
     void upgradeWeapon(const std::string& weapon, const std::string& special);
     void changePlayerTexture(const std::string& name);

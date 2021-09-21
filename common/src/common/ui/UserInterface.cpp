@@ -306,7 +306,7 @@ void UserInterface::closeWindow(Window* window)
     utils::eraseIf<std::shared_ptr<Window>>(windows_, [window](std::shared_ptr<Window>& window_) {
         return window_.get() == window;
     });
-    framework_->spawnSound(RM.getSound("ui_click"), framework_->getPlayer()->getPosition(), true);
+    framework_->spawnSound(RM.getSound("ui_click"));
 }
 
 void UserInterface::spawnNoteWindow(const std::string& text)
@@ -315,7 +315,7 @@ void UserInterface::spawnNoteWindow(const std::string& text)
                                                        sf::Vector2f(CONF<int>("graphics/window_width_px"),
                                                                     CONF<int>("graphics/window_height_px")) / 2.0f,
                                                        CONF<sf::Vector2f>("graphics/popup_size")));
-    framework_->spawnSound(RM.getSound("ui_click"), framework_->getPlayer()->getPosition(), true);
+    framework_->spawnSound(RM.getSound("ui_click"));
 }
 
 void UserInterface::openMenu()

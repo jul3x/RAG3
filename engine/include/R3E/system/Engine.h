@@ -54,6 +54,7 @@ namespace r3e {
         void spawnAnimationEvent(const std::shared_ptr<graphics::AnimationEvent>& event);
         void spawnSoundEvent(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume = 100.0f,
                              bool force_pitch = false);
+        void spawnSoundEvent(const sf::SoundBuffer& buffer, float volume = 100.0f);
         void spawnEffect(const std::shared_ptr<graphics::Effect>& effect);
 
         [[nodiscard]] float getCurrentFPS() const;

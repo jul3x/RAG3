@@ -82,6 +82,11 @@ namespace r3e {
         sound_manager_->playSound(buffer, position, volume, force_pitch);
     }
 
+    void Engine::spawnSoundEvent(const sf::SoundBuffer& buffer, float volume)
+    {
+        sound_manager_->playSound(buffer, volume);
+    }
+
     void Engine::spawnEffect(const std::shared_ptr<graphics::Effect>& effect)
     {
         effects_.push_back(effect);

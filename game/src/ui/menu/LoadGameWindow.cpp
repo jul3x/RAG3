@@ -62,7 +62,7 @@ LoadGameWindow::LoadGameWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
 
         button->connect("mouseentered", [button, this]() {
             button->setInheritedOpacity(1.0f);
-            framework_->spawnSound(RM.getSound("ui_hover"), framework_->getPlayer()->getPosition());
+            framework_->spawnSound(RM.getSound("ui_hover"));
         });
         button->connect("mouseleft", [button]() {
             button->setInheritedOpacity(button_opacity);

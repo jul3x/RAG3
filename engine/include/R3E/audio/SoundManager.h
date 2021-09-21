@@ -20,6 +20,8 @@ namespace r3e::audio {
         void
         playSound(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume, bool force_pitch = false);
 
+        void playSound(const sf::SoundBuffer& buffer, float volume);
+
         void update(float time_elapsed);
 
         void changePitch(float pitch);

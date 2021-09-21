@@ -97,8 +97,7 @@ void BackpackHud::combineBackpackItems(size_t first, size_t second)
                     RMGET<std::string>("specials", special_id, "tooltip_header") + "\"?",
                     std::bind([this](const std::string& w, const std::string& s) {
                         framework_->getPlayer()->upgradeWeapon(w, s);
-                        ui_->getFramework()
-                           ->spawnSound(RM.getSound("ui_upgrade"), framework_->getPlayer()->getPosition());
+                        framework_->spawnSound(RM.getSound("ui_upgrade"));
                     }, weapon_id, special_id));
         }
     }
@@ -266,7 +265,7 @@ SkillsHud::SkillsHud(UserInterface* ui, Framework* framework, const sf::Vector2f
         buttons_.back()->setSize(CONF<sf::Vector2f>("graphics/skills_button_size"));
         buttons_.back()->setVisible(false);
         buttons_.back()->connect("pressed", [this, ui](Player::Skills skill) {
-            framework_->spawnSound(RM.getSound("ui_click"), framework_->getPlayer()->getPosition());
+            framework_->spawnSound(RM.getSound("ui_click"));
             if (!framework_->getPlayer()->addSkill(skill))
             {
                 for (auto& button : buttons_)

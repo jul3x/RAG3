@@ -91,6 +91,7 @@ public:
     virtual void spawnSwirlEvent(const std::string& name, const sf::Vector2f& pos, bool flipped);
     virtual void spawnExplosionForce(const sf::Vector2f& pos, float r);
     virtual void spawnSound(const sf::SoundBuffer& sound, const sf::Vector2f& pos, bool force_pitch = false);
+    virtual void spawnSound(const sf::SoundBuffer& sound);
     virtual void spawnFadeInOut();
 
     // Spawn objects for journal

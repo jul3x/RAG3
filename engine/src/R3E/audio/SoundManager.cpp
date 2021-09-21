@@ -24,6 +24,16 @@ namespace r3e {
             played_sounds_.back().play();
         }
 
+        void SoundManager::playSound(const sf::SoundBuffer& buffer, float volume)
+        {
+            played_sounds_.emplace_back(buffer);
+            played_sounds_.back().setAttenuation(0.0f);
+            played_sounds_.back().setPosition(0.0f, 0.0f, 0.0f);
+            played_sounds_.back().setRelativeToListener(true);
+            played_sounds_.back().setVolume(volume);
+            played_sounds_.back().play();
+        }
+
         void SoundManager::update(float time_elapsed)
         {
             for (auto it = played_sounds_.begin(); it != played_sounds_.end();)

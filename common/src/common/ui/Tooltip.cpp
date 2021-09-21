@@ -37,7 +37,7 @@ Tooltip::Tooltip(Framework* framework, tgui::Theme* theme, const sf::Vector2f& p
     button_->setToolTip(layout_);
 
     button_->connect("mouseentered", [framework]() {
-        framework->spawnSound(RM.getSound("ui_hover"), framework->getPlayer()->getPosition());
+        framework->spawnSound(RM.getSound("ui_hover"));
     });
 }
 

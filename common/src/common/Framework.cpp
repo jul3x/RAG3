@@ -1057,6 +1057,12 @@ void Framework::spawnSound(const sf::SoundBuffer& sound, const sf::Vector2f& pos
         engine_->spawnSoundEvent(sound, pos, 100.0f, force_pitch);
 }
 
+void Framework::spawnSound(const sf::SoundBuffer& sound)
+{
+    if (CONF<bool>("sound/sound_on"))
+        engine_->spawnSoundEvent(sound, 100.0f);
+}
+
 DestructionSystem* Framework::spawnSparksEvent2(const sf::Vector2f& pos, float dir, float r)
 {
     return spawnNewDestructionSystem(pos, dir - 90.0f, destruction_params_["debris2"], 1.0f);

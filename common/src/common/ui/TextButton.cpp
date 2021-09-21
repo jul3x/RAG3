@@ -20,10 +20,10 @@ TextButton::TextButton(Framework* framework, const std::string& text,
     button_->setPosition({pos.x - button_->getFullSize().x / 2.0f, pos.y - button_->getFullSize().y / 2.0f});
     button_->setVisible(false);
     button_->connect("mouseentered", [this]() {
-        framework_->spawnSound(RM.getSound("ui_hover"), framework_->getPlayer()->getPosition());
+        framework_->spawnSound(RM.getSound("ui_hover"));
     });
     button_->connect("pressed", [this]() {
-        framework_->spawnSound(RM.getSound("ui_upgrade"), framework_->getPlayer()->getPosition(), true);
+        framework_->spawnSound(RM.getSound("ui_upgrade"));
     });
 }
 

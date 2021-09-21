@@ -14,10 +14,12 @@
 SpecialFunctions::SpecialFunctions(Framework* framework) : framework_(framework)
 {
     static auto init = [this](const std::string& name,
-            void (SpecialFunctions::*func)(Functional*, const j3x::Obj&, Character*),
-            const std::string& tooltip = "", bool is_usable_by_npc = false) {
+                              void (SpecialFunctions::*func)(Functional*, const j3x::Obj&, Character*),
+                              const std::string& tooltip = "", bool is_usable_by_npc = false) {
         functions_[name] = std::make_tuple(
-                [this, func](Functional* obj, const j3x::Obj& data, Character* user) { (this->*func)(obj, data, user); },
+                [this, func](Functional* obj, const j3x::Obj& data, Character* user) {
+                    (this->*func)(obj, data, user);
+                },
                 tooltip, is_usable_by_npc);
     };
 
@@ -55,6 +57,7 @@ SpecialFunctions::SpecialFunctions(Framework* framework) : framework_(framework)
     init("SpawnCrystal", &SpecialFunctions::spawnCrystal, "", true);
     init("SpawnAnimationEvent", &SpecialFunctions::spawnAnimationEvent, "", true);
     init("SpawnSound", &SpecialFunctions::spawnSound, "", true);
+    init("SpawnNPC", &SpecialFunctions::spawnNPC, "", false);
     init("null", &SpecialFunctions::nullFunc, "", true);
     init("Deactivate", &SpecialFunctions::deactivate, "", true);
     init("Destroy", &SpecialFunctions::destroy, "", true);
@@ -493,7 +496,7 @@ void SpecialFunctions::spawnCrystal(Functional* obj, const j3x::Obj& data, Chara
 void SpecialFunctions::spawnAnimationEvent(Functional* obj, const j3x::Obj& data, Character* user)
 {
     LOG.info("[SpecialFunction] Spawning animation.");
-    auto& data_list = j3x::getObj<j3x::List>(data);
+    const auto& data_list = j3x::getObj<j3x::List>(data);
     const auto& animation = j3x::getObj<std::string>(data_list, 0);
     const auto& pos = j3x::getObj<sf::Vector2f>(data_list, 1);
     framework_->spawnEvent(animation, pos, 0.0f, RMGET<sf::Vector2f>("animations", animation, "size").x);
@@ -502,8 +505,22 @@ void SpecialFunctions::spawnAnimationEvent(Functional* obj, const j3x::Obj& data
 void SpecialFunctions::spawnSound(Functional* obj, const j3x::Obj& data, Character* user)
 {
     LOG.info("[SpecialFunction] Spawning sound.");
-    auto& data_list = j3x::getObj<j3x::List>(data);
+    const auto& data_list = j3x::getObj<j3x::List>(data);
     const auto& sound = j3x::getObj<std::string>(data_list, 0);
     const auto& pos = j3x::getObj<sf::Vector2f>(data_list, 1);
     framework_->spawnSound(RM.getSound(sound), pos);
+}
+
+void SpecialFunctions::spawnNPC(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Spawning NPC.");
+    const auto& data_list = j3x::getObj<j3x::List>(data);
+    const auto& character = j3x::getObj<std::string>(data_list, 0);
+    const auto& pos = j3x::getObj<sf::Vector2f>(data_list, 1);
+    auto npc = framework_->spawnNewNPC(character, -1,
+                                       Functional::convertActivationStr(
+                                               RMGET<std::string>("characters", character, "default_activation")),
+                                       RMGET<j3x::List>("characters", character, "default_funcs"),
+                                       RMGET<j3x::List>("characters", character, "default_datas"));
+    npc->setPosition(pos);
 }

@@ -42,6 +42,7 @@ public:
     void setFunctions(const j3x::List& func);
     void setDatas(const j3x::List& data);
     void setActivation(Activation activation);
+    static Activation convertActivationStr(const std::string& str);
     void setActivationStr(const std::string& str);
     void setFunctionsStr(const std::string& str);
     void setDatasStr(const std::string& str);

@@ -57,7 +57,6 @@ public:
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    std::string texts_placeholders_[4] = {"Intelligence", "Heart", "Strength", "Agility"};
     std::string texts_tooltips_[4] = {"More intelligence comes with better understanding.\n"
                                       "Increases your ability of using RAG3 crystals to manipulate time.",
                                       "Stronger heart can improve your endurance.\n"
@@ -67,8 +66,6 @@ private:
                                       "and decreases your body effects after shots and hits.",
                                       "Faster you run, more likely you survive.\n"
                                       "Improves your running skills."};
-    Player::Skills skills_[4] =
-            {Player::Skills::Intelligence, Player::Skills::Heart, Player::Skills::Strength, Player::Skills::Agility};
 
     std::list<graphics::LineEffect> lines_;
     std::list<sf::Text> texts_;

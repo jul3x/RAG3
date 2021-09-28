@@ -37,10 +37,7 @@ Menu::Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme*
     windows_[Window::Settings] = std::make_unique<SettingsWindow>(gui, theme, framework);
     windows_[Window::About] = std::make_unique<AboutWindow>(gui, theme);
 
-    elements_ = {{"Start game", [this]() {
-        framework_->respawn("first_new_map");
-        ui_->startGame();
-    }},
+    elements_ = {{"Start game", [this]() { framework_->startGame(); }},
                  {"Load game",  [this]() { this->showWindow(Menu::Window::LoadGame); }},
                  {"Settings",   [this]() { this->showWindow(Menu::Window::Settings); }},
                  {"About",      [this]() { this->showWindow(Menu::Window::About); }},
@@ -77,8 +74,8 @@ Menu::Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme*
     }
 
     std::vector<std::pair<std::string, sf::Vector2f>> additional_texts =
-            {{"2021", sf::Vector2f{0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))} +
-                      CONF<sf::Vector2f>("graphics/menu_year_pos")},
+            {{"2021",   sf::Vector2f{0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))} +
+                        CONF<sf::Vector2f>("graphics/menu_year_pos")},
              {"~jul3x", sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                                      static_cast<float>(CONF<int>("graphics/window_height_px"))} +
                         CONF<sf::Vector2f>("graphics/menu_copyright_pos")}};

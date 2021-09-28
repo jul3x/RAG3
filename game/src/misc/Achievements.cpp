@@ -96,3 +96,14 @@ void Achievements::rotate()
 {
     saved_stats_ = *stats_;
 }
+
+const j3x::List& Achievements::getAchievementsUnlocked() const
+{
+    static j3x::List ret;
+    ret.clear();
+
+    for (const auto& a : achievements_unlocked_)
+        ret.emplace_back(a);
+
+    return ret;
+}

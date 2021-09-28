@@ -20,6 +20,11 @@ Player::Player(const sf::Vector2f& position) :
         is_running_(false),
         running_fuel_(0.0f)
 {
+    skills_names_ = {{Skills::Intelligence, "Intelligence"},
+                     {Skills::Heart, "Heart"},
+                     {Skills::Strength, "Strength"},
+                     {Skills::Agility, "Agility"}};
+
     if (CONF<bool>("no_clip_mode"))
     {
         this->changeCollisionArea(collision::None());
@@ -329,6 +334,59 @@ void Player::setSkill(const std::string& skill, int count)
         skills_[Skills::Strength] = count;
     else
         skills_[Skills::Agility] = count;
+}
+
+const j3x::List& Player::getSkills() const
+{
+    static j3x::List ret;
+    ret.clear();
+
+    for (const auto& skill : SKILLS)
+    {
+        j3x::List param = {this->getSkillName(skill), this->getSkill(skill)};
+        ret.emplace_back(param);
+    }
+
+    return ret;
+}
+
+const std::string& Player::getSkillName(Player::Skills skill) const
+{
+    return skills_names_.at(skill);
+}
+
+const j3x::List& Player::getBackpackToSerialize()
+{
+    static j3x::List ret;
+    ret.clear();
+
+    for (const auto& item : backpack_)
+    {
+        j3x::List param = {item.first.getId(), item.second};
+        ret.emplace_back(param);
+    }
+
+    return ret;
+}
+
+const j3x::List& Player::getWeaponsToSerialize()
+{
+    static j3x::List ret;
+    ret.clear();
+
+    for (const auto& weapon : weapons_in_backpack_)
+    {
+        j3x::List upgrades;
+        for (const auto& upgrade : weapon->getUpgrades())
+        {
+            upgrades.emplace_back(upgrade);
+        }
+
+        j3x::List param = {weapon->getId(), weapon->getState(), upgrades};
+        ret.emplace_back(param);
+    }
+
+    return ret;
 }
 
 

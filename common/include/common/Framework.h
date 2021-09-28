@@ -107,6 +107,7 @@ public:
     virtual void spawnThought(Character* user, const std::string& text);
     virtual void spawnBonusText(const sf::Vector2f& pos, const std::string& text);
     virtual void respawn(const std::string& map_name);
+    virtual void startGame(const std::string& map_name = "");
 
     virtual void findAndDeleteCharacter(Character* ptr);
     virtual void findAndDeleteBullet(Bullet* ptr);
@@ -140,6 +141,9 @@ public:
     virtual void registerFunctions(Functional* functional) const;
     virtual void registerLight(Lightable* light) const;
 
+    // Misc
+    virtual void setFinishMap();
+    virtual void finishMap();
     virtual void setRag3Time(float duration);
     virtual void forceZoomTo(AbstractPhysicalObject* obj);
 
@@ -189,6 +193,7 @@ protected:
 
     float time_elapsed_;
     Framework::GameState state_;
+    bool should_finish_map_;
 
 };
 

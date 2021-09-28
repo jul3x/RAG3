@@ -16,7 +16,7 @@
 Game::Game() : Framework(),
                current_time_factor_(1.0f), rag3_time_elapsed_(-10.0f),
                forced_zoom_to_time_elapsed_(-10.0f), current_obj_zoom_(nullptr),
-               time_manipulation_fuel_(0.0f)
+               time_manipulation_fuel_(0.0f), is_playing_previous_map_(false)
 {
 }
 
@@ -104,6 +104,9 @@ void Game::update(float time_elapsed)
                                  player_->getMaxTimeManipulation());
             else
                 time_manipulation_fuel_ -= CONF<float>("characters/time_manipulation_slow_use_speed") * time_elapsed;
+
+            if (should_finish_map_)
+                finishMap();
 
             time_elapsed_ += time_elapsed;
             break;
@@ -685,6 +688,7 @@ void Game::initNPCs()
 {
     for (auto& character : map_->getList<NPC>())
     {
+        character->clearEnemies();
         engine_->registerDynamicObject(character.get());
         registerLight(character.get());
         character->registerAgentsManager(agents_manager_.get());
@@ -727,9 +731,9 @@ void Game::respawn(const std::string& map_name)
     ui_->registerPlayer(player_.get());
     time_manipulation_fuel_ = player_->getMaxTimeManipulation();
     setRag3Time(0.0f);
-    map_->getList<NPC>().clear();
 
     map_->loadMap(map_name.empty() ? map_->getMapName() : map_name);
+    engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
     agents_manager_ = std::make_unique<ai::AgentsManager>(&map_->getMapBlockage(), ai::AStar::EightNeighbours,
                                                           CONF<float>("characters/max_time_without_path_recalc"),
                                                           CONF<float>("characters/min_pos_change_without_path_recalc"),
@@ -739,10 +743,14 @@ void Game::respawn(const std::string& map_name)
             sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                          static_cast<float>(CONF<int>("graphics/window_height_px"))},
             sf::Color(j3x::get<int>(map_->getParams(), "lighting_color")));
+    fire_.clear();
+    bullets_.clear();
+    explosions_.clear();
+    desired_explosions_.clear();
+    destruction_systems_.clear();
 
 //    debug_map_blockage_ = std::make_unique<DebugMapBlockage>(&map_->getMapBlockage());
 
-    engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
     initObstacles();
     initDecorations();
     initPlayers();
@@ -758,6 +766,7 @@ void Game::respawn(const std::string& map_name)
 
     ui_->initializeTutorialArrows();
     setGameState(Game::GameState::Normal);
+    should_finish_map_ = false;
 }
 
 void Game::setStartingPosition()
@@ -820,4 +829,56 @@ void Game::loadSave()
         const auto& state = j3x::getObj<int>(data, 1);
         player_->setSkill(id, state);
     }
+}
+
+void Game::saveState(bool presave)
+{
+    std::string out;
+    const auto& maps = CONF<j3x::List>("maps_order");
+
+    auto previous_maps = map_->getPreviousMapsAndCurrent();
+    if (presave)
+        previous_maps.emplace_back(map_->getNextMapName());
+    r3e::j3x::serializeAssign("maps_unlocked", previous_maps, out);
+    r3e::j3x::serializeAssign("achievements_unlocked", achievements_->getAchievementsUnlocked(), out);
+    r3e::j3x::serializeAssign("exp", stats_->getExp(), out);
+    r3e::j3x::serializeAssign("level", stats_->getLevel(), out);
+    r3e::j3x::serializeAssign("kills", stats_->getEnemiesKilled(), out);
+    r3e::j3x::serializeAssign("crystals", stats_->getCrystalsPicked(), out);
+    r3e::j3x::serializeAssign("explosions", stats_->getExplosions(), out);
+    r3e::j3x::serializeAssign("skill_points", player_->getSkillPoints(), out);
+    r3e::j3x::serializeAssign("skills", player_->getSkills(), out);
+    r3e::j3x::serializeAssign("weapons", player_->getWeaponsToSerialize(), out);
+    r3e::j3x::serializeAssign("backpack", player_->getBackpackToSerialize(), out);
+
+    RM.saveConfigFile("user_dir", "save", out);
+    CFG.appendConfig("../data/config/user/save.j3x", "save", true);
+}
+
+void Game::finishMap()
+{
+    Framework::finishMap();
+
+    if (is_playing_previous_map_)
+        ui_->openMenu();
+    else
+    {
+        const auto& new_map = map_->getNextMapName();
+        if (!new_map.empty())
+        {
+            this->saveState(true);
+            this->respawn(map_->getNextMapName());
+        }
+    }
+}
+
+void Game::startGame(const std::string& map_name)
+{
+    Framework::startGame(map_name);
+
+    is_playing_previous_map_ = !map_name.empty();
+
+    this->respawn(!is_playing_previous_map_ ? j3x::getObj<std::string>(CONF<j3x::List>("save/maps_unlocked").back()) :
+                  map_name);
+    ui_->startGame();
 }

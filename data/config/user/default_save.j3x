@@ -9,5 +9,5 @@ int skill_points = 0
 list skills = []
 
 // List of tuples [name; ammo; list of upgrades]
-list weapons = []
+list weapons = [["null";1.0;[]]; ["null";1.0;[]]; ["null";1.0;[]]; ["null";1.0;[]]]
 list backpack = []

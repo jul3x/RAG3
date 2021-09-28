@@ -109,7 +109,7 @@ void SpecialFunctions::mapStart(Functional* obj, const j3x::Obj& data, Character
 void SpecialFunctions::mapEnd(Functional* obj, const j3x::Obj& data, Character* user)
 {
     LOG.info("[SpecialFunction] Map end.");
-    user->setHealth(0);
+    framework_->setFinishMap();
 }
 
 void SpecialFunctions::openDoor(Functional* obj, const j3x::Obj& data, Character* user)

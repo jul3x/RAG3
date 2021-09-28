@@ -443,7 +443,7 @@ SliderSettingsWidget<T>::SliderSettingsWidget(tgui::Theme* theme, const std::str
     slider_->setMinimum(CONF<T>("ranges/" + name + "_min"));
     slider_->setMaximum(CONF<T>("ranges/" + name + "_max"));
 
-    if (std::is_same<T, int>::value)
+    if constexpr (std::is_same<T, int>::value)
         slider_->setStep(1.0f);
     else
         slider_->setStep(0.1f);

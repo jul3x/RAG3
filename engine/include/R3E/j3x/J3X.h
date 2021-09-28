@@ -32,7 +32,7 @@ namespace r3e::j3x {
 
     std::shared_ptr<Parameters> parseContent(const std::string& content);
 
-    void mergeParams(Parameters& params, const Parameters& new_params);
+    void mergeParams(Parameters& params, const Parameters& new_params, bool force_update = false);
 
     template<class T>
     void tokenize(const std::string& str, char delimiter, T& out)

@@ -22,6 +22,10 @@ public:
         Agility = 3
     };
 
+    static constexpr Player::Skills SKILLS[4] =
+            {Player::Skills::Intelligence, Player::Skills::Heart,
+             Player::Skills::Strength, Player::Skills::Agility};
+
     explicit Player(const sf::Vector2f& position);
 
     void setDead();
@@ -44,7 +48,11 @@ public:
     float getRunningFuelSpeed() const;
     int getSkillPoints() const;
     int getSkill(Skills skill) const;
+    const j3x::List& getSkills() const;
+    const std::string& getSkillName(Skills skill) const;
     std::list<std::pair<Special, int>>& getBackpack();
+    const j3x::List& getBackpackToSerialize();
+    const j3x::List& getWeaponsToSerialize();
     const std::string& getName() const;
     void makeLifeBar(const std::string& name) override;
 
@@ -69,6 +77,7 @@ private:
 
     std::list<std::pair<Special, int>> backpack_;
     int skill_points_;
+    std::unordered_map<Player::Skills, std::string> skills_names_;
     std::map<Skills, int> skills_;
     std::string name_;
 

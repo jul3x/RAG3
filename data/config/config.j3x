@@ -56,6 +56,7 @@ float side_step_force_duration = 0.1
 // EXPERIENCE
 int crystal_pick_exp = 50
 
-// MAP NAMES
+// MAPS
+list maps_order = ["first_new_map"; "map_new"]
 string map_name_first_new_map = "Tutorial"
 string map_name_map_new = "Test map"

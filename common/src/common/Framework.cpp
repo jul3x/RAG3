@@ -12,7 +12,7 @@
 #include <common/misc/Journal.h>
 
 
-Framework::Framework() : time_elapsed_(0.0f), state_(Framework::GameState::Menu)
+Framework::Framework() : time_elapsed_(0.0f), state_(Framework::GameState::Menu), should_finish_map_(false)
 {
     engine_ = std::make_unique<Engine>();
     engine_->registerGame(this);
@@ -434,6 +434,7 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
                 special_functions_->destroy(special, {}, player);
             }
         }
+        return;
     }
 
     auto talkable_area = dynamic_cast<TalkableArea*>(h_obj);
@@ -441,6 +442,7 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     if (talkable_area != nullptr && character != nullptr)
     {
         character->setCurrentTalkableCharacter(talkable_area->getFather());
+        return;
     }
 
     auto explosion = dynamic_cast<Explosion*>(h_obj);
@@ -448,6 +450,7 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     if (character != nullptr && explosion != nullptr)
     {
         explosion->applyForce(character, 1.0f);
+        return;
     }
 
     auto fire = dynamic_cast<Fire*>(h_obj);
@@ -456,6 +459,7 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     {
         if (fire->getUser() != character)
             character->setGlobalState(Character::GlobalState::OnFire);
+        return;
     }
 
     auto melee_weapon_area = dynamic_cast<MeleeWeaponArea*>(h_obj);
@@ -481,6 +485,7 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             melee_weapon_area->setActive(false);
             character->getCut(*melee_weapon_area->getFather(), factor);
         }
+        return;
     }
 }
 
@@ -1074,6 +1079,21 @@ float Framework::getTimeManipulationFuel() const
 }
 
 void Framework::respawn(const std::string& map_name)
+{
+
+}
+
+void Framework::finishMap()
+{
+    should_finish_map_ = false;
+}
+
+void Framework::setFinishMap()
+{
+    should_finish_map_ = true;
+}
+
+void Framework::startGame(const std::string& map_name)
 {
 
 }

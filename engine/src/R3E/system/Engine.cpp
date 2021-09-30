@@ -142,36 +142,6 @@ namespace r3e {
         return {res_x, res_y};
     }
 
-    void Engine::registerStaticObject(StaticObject* obj)
-    {
-        collisions_->insert(obj);
-    }
-
-    void Engine::registerDynamicObject(DynamicObject* obj)
-    {
-        collisions_->insert(obj);
-    }
-
-    void Engine::registerHoveringObject(HoveringObject* obj)
-    {
-        collisions_->insert(obj);
-    }
-
-    void Engine::deleteStaticObject(StaticObject* obj)
-    {
-        collisions_->erase(obj);
-    }
-
-    void Engine::deleteDynamicObject(DynamicObject* obj)
-    {
-        collisions_->erase(obj);
-    }
-
-    void Engine::deleteHoveringObject(HoveringObject* obj)
-    {
-        collisions_->erase(obj);
-    }
-
     void Engine::updateAnimationEvents(float time_elapsed)
     {
         for (auto it = animation_events_.begin(); it != animation_events_.end(); ++it)

@@ -125,8 +125,7 @@ void Server::updatePlayers(float time_elapsed)
     {
         if (player.second.isAlive() && !player.second.update(time_elapsed))
         {
-            player.second.setDead();
-            engine_->deleteDynamicObject(&player.second);
+            clearPlayer(player.second.get());
         }
     }
 }
@@ -146,7 +145,7 @@ void Server::checkAwaitingConnections()
             LOG.info("New connection attempt from: " + sf::IpAddress(ip).toString());
             players_.emplace(ip, starting_positions_
                     .at(utils::num::getRandom(0, static_cast<int>(starting_positions_.size() - 1))));
-            engine_->registerDynamicObject(&players_.at(ip));
+            engine_->registerObj<DynamicObject>(&players_.at(ip));
             registerWeapons(&players_.at(ip));
 
             // Awful but necessary for now
@@ -363,7 +362,8 @@ void Server::handleEventsFromPlayers()
 
 void Server::clearPlayer(Player* player)
 {
-    engine_->deleteDynamicObject(player);
+    player->setDead();
+    engine_->unregisterObj<DynamicObject>(player);
     unregisterWeapons(player);
 }
 

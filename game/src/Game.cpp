@@ -183,20 +183,14 @@ void Game::killNPC(NPC* npc)
 {
     journal_->event<DestroyCharacter>(npc);
     stats_->killEnemy(npc->getId(), npc->getPosition());
-    ui_->removeArrowIfExists(npc);
-    if (player_clone_ != nullptr)
-    {
-        player_clone_->removeEnemy(npc);
-    }
+
+    this->unregisterCharacter(npc);
 
     // draw on this place destruction
     spawnDecoration(npc->getPosition(), "blood");
     spawnKillEvent(npc->getPosition());
     spawnSound(RM.getSound(npc->getId() + "_dead"), npc->getPosition());
 
-    engine_->deleteDynamicObject(npc);
-    this->unregisterTalkableArea(npc);
-    this->unregisterWeapons(npc);
     if (npc->getActivation() == Functional::Activation::OnKill && npc->isActive())
     {
         npc->use(npc);
@@ -349,7 +343,7 @@ void Game::updateFire(float time_elapsed)
     {
         if (!(*it)->update(time_elapsed))
         {
-            engine_->deleteHoveringObject(it->get());
+            engine_->unregisterObj<HoveringObject>(it->get());
             journal_->event<DestroyFire>(it->get());
             auto next_it = std::next(it);
             fire_.erase(it);
@@ -371,7 +365,7 @@ NPC* Game::spawnNewNPC(const std::string& id, int u_id, Functional::Activation a
     ptr->setActivation(activation);
     ptr->setFunctions(funcs);
     ptr->setDatas(datas);
-    engine_->registerDynamicObject(ptr);
+    engine_->registerObj<DynamicObject>(ptr);
     registerLight(ptr);
 
     ptr->registerAgentsManager(agents_manager_.get());
@@ -386,7 +380,7 @@ NPC* Game::spawnNewNPC(const std::string& id, int u_id, Functional::Activation a
 
     auto talkable_area = ptr->getTalkableArea();
     if (talkable_area != nullptr)
-        engine_->registerHoveringObject(talkable_area);
+        engine_->registerObj<HoveringObject>(talkable_area);
 
     return ptr;
 }
@@ -401,7 +395,7 @@ NPC* Game::spawnNewPlayerClone(const std::string& weapon_id)
     player_clone_ = std::make_unique<PlayerClone>(this->player_->getPosition(), player_.get(),
                                                   journal_->getDurationSaved() *
                                                   CONF<float>("player_clone_time_factor"));
-    engine_->registerDynamicObject(player_clone_.get());
+    engine_->registerObj<DynamicObject>(player_clone_.get());
     registerLight(player_clone_.get());
 
     player_clone_->registerAgentsManager(agents_manager_.get());
@@ -424,13 +418,7 @@ void Game::cleanPlayerClone()
 {
     if (player_clone_ != nullptr)
     {
-        for (auto& enemy : map_->getList<NPC>())
-        {
-            enemy->removeEnemy(player_clone_.get());
-        }
-
-        unregisterWeapons(player_clone_.get());
-        engine_->deleteDynamicObject(player_clone_.get());
+        this->unregisterCharacter(player_clone_.get(), false);
         player_clone_.reset();
     }
 }
@@ -616,10 +604,7 @@ void Game::updatePlayer(float time_elapsed)
     player_->setCurrentTalkableCharacter(nullptr);
     if (player_->isAlive() && !player_->update(time_elapsed))
     {
-        spawnDecoration(player_->getPosition(), "blood");
-        spawnKillEvent(player_->getPosition());
-        player_->setDead();
-        engine_->deleteDynamicObject(player_.get());
+        this->killPlayer(player_.get());
         music_manager_->setPlaybackPitch(CONF<float>("sound/bullet_time_music_factor"));
     }
 }
@@ -679,7 +664,7 @@ float Game::getForcedZoomTime() const
 
 void Game::initPlayers()
 {
-    engine_->registerDynamicObject(player_.get());
+    engine_->registerObj<DynamicObject>(player_.get());
     registerLight(player_.get());
     registerWeapons(player_.get());
 }
@@ -689,7 +674,7 @@ void Game::initNPCs()
     for (auto& character : map_->getList<NPC>())
     {
         character->clearEnemies();
-        engine_->registerDynamicObject(character.get());
+        engine_->registerObj<DynamicObject>(character.get());
         registerLight(character.get());
         character->registerAgentsManager(agents_manager_.get());
         character->registerEnemy(player_.get());
@@ -700,7 +685,7 @@ void Game::initNPCs()
         auto talkable_area = character->getTalkableArea();
         if (talkable_area != nullptr)
         {
-            engine_->registerHoveringObject(talkable_area);
+            engine_->registerObj<HoveringObject>(talkable_area);
         }
     }
 }

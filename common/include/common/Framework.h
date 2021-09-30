@@ -137,6 +137,7 @@ public:
     virtual void unregisterTalkableArea(Character* character);
     virtual void registerWeapons(Character* character);
     virtual void unregisterWeapons(Character* character);
+    virtual void unregisterCharacter(Character* character, bool clear_clone = true);
     virtual void registerWeapon(AbstractWeapon* weapon);
     virtual void registerFunctions(Functional* functional) const;
     virtual void registerLight(Lightable* light) const;
@@ -146,6 +147,7 @@ public:
     virtual void finishMap();
     virtual void setRag3Time(float duration);
     virtual void forceZoomTo(AbstractPhysicalObject* obj);
+    virtual void killPlayer(Player* player);
 
     // State methods
     virtual void setGameState(Framework::GameState state);

@@ -109,12 +109,8 @@ public:
     virtual void respawn(const std::string& map_name);
     virtual void startGame(const std::string& map_name = "");
 
-    virtual void findAndDeleteCharacter(Character* ptr);
-    virtual void findAndDeleteBullet(Bullet* ptr);
-    virtual void findAndDeleteFire(Fire* ptr);
-    virtual void findAndDeleteDecoration(Decoration* ptr);
-    virtual void findAndDeleteSpecial(Special* ptr);
-    virtual void findAndDeleteDestructionSystem(DestructionSystem* ptr);
+    template <class T>
+    void findAndDelete(T* ptr) {}
 
     virtual NPC* spawnNewPlayerClone(const std::string& weapon_id);
     virtual NPC* spawnNewNPC(const std::string& id, int u_id, Functional::Activation activation,

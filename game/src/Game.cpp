@@ -296,7 +296,21 @@ Journal* Game::getJournal()
 DestructionSystem* Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const float r)
 {
     auto ptr = Framework::spawnSparksEvent(pos, dir, r);
-    journal_->event<SpawnDestructionSystem>(ptr);
+    journal_->event<SpawnEntry<DestructionSystem>>(ptr);
+    return ptr;
+}
+
+DestructionSystem* Game::spawnSparksEvent2(const sf::Vector2f& pos, float dir, float r)
+{
+    auto ptr = Framework::spawnSparksEvent2(pos, dir, r);
+    journal_->event<SpawnEntry<DestructionSystem>>(ptr);
+    return ptr;
+}
+
+Decoration* Game::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
+{
+    auto ptr = Framework::spawnDecoration(pos, name);
+    journal_->event<SpawnEntry<Decoration>>(ptr);
     return ptr;
 }
 
@@ -312,44 +326,29 @@ void Game::spawnAchievement(const j3x::Parameters& params)
 Special* Game::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
 {
     auto ptr = Framework::spawnSpecial(pos, name);
-    journal_->event<SpawnSpecial>(ptr);
+    journal_->event<SpawnEntry<Special>>(ptr);
     return ptr;
 }
 
 DestructionSystem* Game::spawnBloodEvent(const sf::Vector2f& pos, float dir, float deadly_factor)
 {
     auto ptr = Framework::spawnBloodEvent(pos, dir, deadly_factor);
-    journal_->event<SpawnDestructionSystem>(ptr);
+    journal_->event<SpawnEntry<DestructionSystem>>(ptr);
     return ptr;
 }
 
 Bullet* Game::spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
     auto ptr = Framework::spawnBullet(user, name, pos, dir);
-    journal_->event<SpawnBullet>(ptr);
+    journal_->event<SpawnEntry<Bullet>>(ptr);
     return ptr;
 }
 
 Fire* Game::spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
     auto ptr = Framework::spawnFire(user, name, pos, dir);
-    journal_->event<SpawnFire>(ptr);
+    journal_->event<SpawnEntry<Fire>>(ptr);
     return ptr;
-}
-
-void Game::updateFire(float time_elapsed)
-{
-    for (auto it = fire_.begin(); it != fire_.end(); ++it)
-    {
-        if (!(*it)->update(time_elapsed))
-        {
-            engine_->unregisterObj<HoveringObject>(it->get());
-            journal_->event<DestroyFire>(it->get());
-            auto next_it = std::next(it);
-            fire_.erase(it);
-            it = next_it;
-        }
-    }
 }
 
 NPC* Game::spawnNewNPC(const std::string& id, int u_id, Functional::Activation activation,
@@ -609,11 +608,19 @@ void Game::updatePlayer(float time_elapsed)
     }
 }
 
-Decoration* Game::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
+void Game::updateFire(float time_elapsed)
 {
-    auto ptr = Framework::spawnDecoration(pos, name);
-    journal_->event<SpawnDecoration>(ptr);
-    return ptr;
+    for (auto it = fire_.begin(); it != fire_.end(); ++it)
+    {
+        if (!(*it)->update(time_elapsed))
+        {
+            engine_->unregisterObj<HoveringObject>(it->get());
+            journal_->event<DestroyFire>(it->get());
+            auto next_it = std::next(it);
+            fire_.erase(it);
+            it = next_it;
+        }
+    }
 }
 
 void Game::setRag3Time(float time_elapsed)
@@ -694,13 +701,6 @@ void Game::close()
 {
     map_->getList<NPC>().clear();
     Framework::close();
-}
-
-DestructionSystem* Game::spawnSparksEvent2(const sf::Vector2f& pos, float dir, float r)
-{
-    auto ptr = Framework::spawnSparksEvent2(pos, dir, r);
-    journal_->event<SpawnDestructionSystem>(ptr);
-    return ptr;
 }
 
 float Game::getTimeManipulationFuel() const

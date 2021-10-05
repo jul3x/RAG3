@@ -38,7 +38,7 @@ namespace r3e::utils {
     template<class T>
     void eraseIfUpdated(std::list<T>& elements, float time_elapsed)
     {
-        eraseIf(elements, [time_elapsed](T& element) { return !element.update(time_elapsed); });
+        eraseIf<T>(elements, [time_elapsed](T& element) { return !element.update(time_elapsed); });
     }
 
     template<class T, class K>

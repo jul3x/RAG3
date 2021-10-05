@@ -5,11 +5,11 @@
 #include <R3E/utils/Geometry.h>
 
 #include <common/ResourceManager.h>
-#include <common/weapons/MeleeWeapon.h>
 #include <common/Framework.h>
 
 #include <common/events/Event.h>
 #include <common/misc/Journal.h>
+#include <common/misc/JournalEntries.h>
 
 
 Framework::Framework() : time_elapsed_(0.0f), state_(Framework::GameState::Menu), should_finish_map_(false)
@@ -685,7 +685,8 @@ Special* Framework::spawnNewSpecial(const std::string& id, int u_id,
     return ptr;
 }
 
-void Framework::findAndDeleteCharacter(Character* ptr)
+template<>
+void Framework::findAndDelete<Character>(Character* ptr)
 {
     auto& npcs = map_->getList<NPC>();
     for (auto it = npcs.rbegin(); it != npcs.rend(); ++it)
@@ -701,7 +702,8 @@ void Framework::findAndDeleteCharacter(Character* ptr)
     LOG.error("[Framework] Warning - character to delete not found!");
 }
 
-void Framework::findAndDeleteBullet(Bullet* ptr)
+template<>
+void Framework::findAndDelete<Bullet>(Bullet* ptr)
 {
     for (auto it = bullets_.rbegin(); it != bullets_.rend(); ++it)
     {
@@ -716,7 +718,8 @@ void Framework::findAndDeleteBullet(Bullet* ptr)
     LOG.error("[Framework] Warning - bullet to delete not found!");
 }
 
-void Framework::findAndDeleteFire(Fire* ptr)
+template<>
+void Framework::findAndDelete<Fire>(Fire* ptr)
 {
     for (auto it = fire_.rbegin(); it != fire_.rend(); ++it)
     {
@@ -731,7 +734,8 @@ void Framework::findAndDeleteFire(Fire* ptr)
     LOG.error("[Framework] Warning - fire to delete not found!");
 }
 
-void Framework::findAndDeleteDecoration(Decoration* ptr)
+template<>
+void Framework::findAndDelete<Decoration>(Decoration* ptr)
 {
     auto& decorations = map_->getList<Decoration>();
     for (auto it = decorations.rbegin(); it != decorations.rend(); ++it)
@@ -746,7 +750,8 @@ void Framework::findAndDeleteDecoration(Decoration* ptr)
     LOG.error("[Framework] Warning - decoration to delete not found!");
 }
 
-void Framework::findAndDeleteSpecial(Special* ptr)
+template<>
+void Framework::findAndDelete<Special>(Special* ptr)
 {
     auto& specials = map_->getList<Special>();
     for (auto it = specials.rbegin(); it != specials.rend(); ++it)
@@ -762,7 +767,8 @@ void Framework::findAndDeleteSpecial(Special* ptr)
     LOG.error("[Framework] Warning - special to delete not found!");
 }
 
-void Framework::findAndDeleteDestructionSystem(DestructionSystem* ptr)
+template<>
+void Framework::findAndDelete<DestructionSystem>(DestructionSystem* ptr)
 {
     for (auto it = destruction_systems_.rbegin(); it != destruction_systems_.rend(); ++it)
     {

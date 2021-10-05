@@ -4,17 +4,8 @@
 
 #include <common/ResourceManager.h>
 
-#include <common/misc/Journal.h>
 #include <common/misc/JournalEntries.h>
 
-
-JournalEntry::JournalEntry() : father_(nullptr)
-{
-}
-
-JournalEntry::JournalEntry(Journal* father) : father_(father)
-{
-}
 
 TimeReversal::TimeReversal(Journal* father, void* placeholder) : JournalEntry(father)
 {
@@ -45,16 +36,6 @@ void CharacterEntry::executeEntryReversal()
     new_ptr->setHealth(life_);
     new_ptr->getWeapons().at(new_ptr->getCurrentWeapon())->setState(ammo_state_);
     new_ptr->setGlobalState(state_);
-}
-
-SpawnCharacter::SpawnCharacter(Journal* father, Character* character) : JournalEntry(father), ptr_(character)
-{
-}
-
-void SpawnCharacter::executeEntryReversal()
-{
-    auto new_ptr = father_->getUpdatedPtr(ptr_);
-    father_->getFramework()->findAndDeleteCharacter(new_ptr);
 }
 
 DestroyCharacter::DestroyCharacter(Journal* father, Character* ptr) : JournalEntry(father), ptr_(ptr)
@@ -102,16 +83,6 @@ void DestroyBullet::executeEntryReversal()
     father_->setUpdatedPtr(ptr_, new_ptr);
 }
 
-SpawnBullet::SpawnBullet(Journal* father, Bullet* bullet) : JournalEntry(father), ptr_(bullet)
-{
-}
-
-void SpawnBullet::executeEntryReversal()
-{
-    auto new_ptr = father_->getUpdatedPtr(ptr_);
-    father_->getFramework()->findAndDeleteBullet(new_ptr);
-}
-
 FireEntry::FireEntry(Journal* father, Fire* fire) : JournalEntry(father), ptr_(fire)
 {
     pos_ = fire->getPosition();
@@ -142,16 +113,6 @@ void DestroyFire::executeEntryReversal()
     father_->setUpdatedPtr(ptr_, new_ptr);
 }
 
-SpawnFire::SpawnFire(Journal* father, Fire* fire) : JournalEntry(father), ptr_(fire)
-{
-}
-
-void SpawnFire::executeEntryReversal()
-{
-    auto new_ptr = father_->getUpdatedPtr(ptr_);
-    father_->getFramework()->findAndDeleteFire(new_ptr);
-}
-
 DestroyObstacle::DestroyObstacle(Journal* father, Obstacle* ptr) : JournalEntry(father), ptr_(ptr)
 {
     id_ = ptr->getId();
@@ -179,16 +140,6 @@ void ShotObstacle::executeEntryReversal()
     new_ptr->setHealth(life_);
 }
 
-SpawnDecoration::SpawnDecoration(Journal* father, Decoration* ptr) : JournalEntry(father), ptr_(ptr)
-{
-}
-
-void SpawnDecoration::executeEntryReversal()
-{
-    auto new_ptr = father_->getUpdatedPtr(ptr_);
-    father_->getFramework()->findAndDeleteDecoration(new_ptr);
-}
-
 DestroyDecoration::DestroyDecoration(Journal* father, Decoration* ptr) : JournalEntry(father), ptr_(ptr)
 {
     u_id_ = ptr->getUniqueId();
@@ -200,17 +151,6 @@ void DestroyDecoration::executeEntryReversal()
 {
     auto new_ptr = father_->getFramework()->spawnNewDecoration(id_, u_id_, pos_);
     father_->setUpdatedPtr(ptr_, new_ptr);
-}
-
-SpawnSpecial::SpawnSpecial(Journal* father, Special* ptr) : JournalEntry(father), ptr_(ptr)
-{
-
-}
-
-void SpawnSpecial::executeEntryReversal()
-{
-    auto new_ptr = father_->getUpdatedPtr(ptr_);
-    father_->getFramework()->findAndDeleteSpecial(new_ptr);
 }
 
 DestroySpecial::DestroySpecial(Journal* father, Special* ptr) : JournalEntry(father), ptr_(ptr)
@@ -227,18 +167,6 @@ void DestroySpecial::executeEntryReversal()
 {
     auto new_ptr = father_->getFramework()->spawnNewSpecial(id_, u_id_, pos_, activation_, funcs_, datas_);
     father_->setUpdatedPtr(ptr_, new_ptr);
-}
-
-SpawnDestructionSystem::SpawnDestructionSystem(Journal* father, DestructionSystem* ptr) :
-        JournalEntry(father), ptr_(ptr)
-{
-
-}
-
-void SpawnDestructionSystem::executeEntryReversal()
-{
-    auto new_ptr = father_->getUpdatedPtr(ptr_);
-    father_->getFramework()->findAndDeleteDestructionSystem(new_ptr);
 }
 
 DestroyDestructionSystem::DestroyDestructionSystem(Journal* father, DestructionSystem* ptr) :

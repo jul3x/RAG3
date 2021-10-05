@@ -99,11 +99,5 @@ void Achievements::rotate()
 
 const j3x::List& Achievements::getAchievementsUnlocked() const
 {
-    static j3x::List ret;
-    ret.clear();
-
-    for (const auto& a : achievements_unlocked_)
-        ret.emplace_back(a);
-
-    return ret;
+    return j3x::convertToList(achievements_unlocked_);
 }

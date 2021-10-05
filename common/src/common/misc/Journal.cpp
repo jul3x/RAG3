@@ -4,8 +4,8 @@
 
 #include <R3E/system/Logger.h>
 
-#include <common/misc/JournalEntries.h>
 #include <common/misc/Journal.h>
+#include <common/misc/JournalEntries.h>
 
 
 Journal::Journal(Framework* framework, float max_time_back, float sampling_rate) :

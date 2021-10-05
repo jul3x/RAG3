@@ -9,6 +9,7 @@
 #include <common/Framework.h>
 #include <common/misc/SpecialFunctions.h>
 #include <common/misc/Journal.h>
+#include <common/misc/JournalEntries.h>
 
 
 SpecialFunctions::SpecialFunctions(Framework* framework) : framework_(framework)
@@ -525,6 +526,6 @@ void SpecialFunctions::spawnNPC(Functional* obj, const j3x::Obj& data, Character
     npc->setPosition(pos);
 
     if (framework_->getJournal() != nullptr) {
-        framework_->getJournal()->event<SpawnCharacter>(npc);
+        framework_->getJournal()->event<SpawnEntry<Character>>(npc);
     }
 }

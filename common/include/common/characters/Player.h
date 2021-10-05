@@ -22,7 +22,7 @@ public:
         Agility = 3
     };
 
-    static constexpr Player::Skills SKILLS[4] =
+    static constexpr std::array<Player::Skills, 4> SKILLS =
             {Player::Skills::Intelligence, Player::Skills::Heart,
              Player::Skills::Strength, Player::Skills::Agility};
 

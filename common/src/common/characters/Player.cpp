@@ -338,16 +338,10 @@ void Player::setSkill(const std::string& skill, int count)
 
 const j3x::List& Player::getSkills() const
 {
-    static j3x::List ret;
-    ret.clear();
-
-    for (const auto& skill : SKILLS)
-    {
-        j3x::List param = {this->getSkillName(skill), this->getSkill(skill)};
-        ret.emplace_back(param);
-    }
-
-    return ret;
+    return j3x::convertToList<Player::Skills>(
+        SKILLS, [this](j3x::List& ret, const auto& item) { 
+            ret.emplace_back(j3x::List{this->getSkillName(item), this->getSkill(item)}); 
+        });
 }
 
 const std::string& Player::getSkillName(Player::Skills skill) const
@@ -357,36 +351,21 @@ const std::string& Player::getSkillName(Player::Skills skill) const
 
 const j3x::List& Player::getBackpackToSerialize()
 {
-    static j3x::List ret;
-    ret.clear();
-
-    for (const auto& item : backpack_)
-    {
-        j3x::List param = {item.first.getId(), item.second};
-        ret.emplace_back(param);
-    }
-
-    return ret;
+    return j3x::convertToList<std::pair<Special, int>>(
+        backpack_, [](j3x::List& ret, const auto& item) { 
+            ret.emplace_back(j3x::List{item.first.getId(), item.second}); 
+        });
 }
 
 const j3x::List& Player::getWeaponsToSerialize()
 {
-    static j3x::List ret;
-    ret.clear();
-
-    for (const auto& weapon : weapons_in_backpack_)
-    {
-        j3x::List upgrades;
-        for (const auto& upgrade : weapon->getUpgrades())
-        {
-            upgrades.emplace_back(upgrade);
-        }
-
-        j3x::List param = {weapon->getId(), weapon->getState(), upgrades};
-        ret.emplace_back(param);
-    }
-
-    return ret;
+    return j3x::convertToList<std::shared_ptr<AbstractWeapon>>(
+        weapons_in_backpack_, [](j3x::List& ret, const auto& weapon) { 
+            ret.emplace_back(j3x::List{
+                weapon->getId(), weapon->getState(), 
+                j3x::convertToList(weapon->getUpgrades())
+            });
+        });
 }
 
 

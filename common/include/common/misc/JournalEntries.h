@@ -77,6 +77,16 @@ private:
 
 };
 
+class SpawnCharacter : public JournalEntry {
+public:
+    SpawnCharacter(Journal* father, Character* character);
+
+    void executeEntryReversal() override;
+
+private:
+    Character* ptr_;
+
+};
 
 class BulletEntry : public JournalEntry {
 public:

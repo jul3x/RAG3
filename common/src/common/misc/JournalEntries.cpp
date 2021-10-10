@@ -47,6 +47,16 @@ void CharacterEntry::executeEntryReversal()
     new_ptr->setGlobalState(state_);
 }
 
+SpawnCharacter::SpawnCharacter(Journal* father, Character* character) : JournalEntry(father), ptr_(character)
+{
+}
+
+void SpawnCharacter::executeEntryReversal()
+{
+    auto new_ptr = father_->getUpdatedPtr(ptr_);
+    father_->getFramework()->findAndDeleteCharacter(new_ptr);
+}
+
 DestroyCharacter::DestroyCharacter(Journal* father, Character* ptr) : JournalEntry(father), ptr_(ptr)
 {
     u_id_ = ptr->getUniqueId();

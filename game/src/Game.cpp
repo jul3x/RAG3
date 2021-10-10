@@ -302,6 +302,11 @@ Player* Game::getPlayer()
     return player_.get();
 }
 
+PlayerClone* Game::getPlayerClone()
+{
+    return player_clone_.get();
+}
+
 Journal* Game::getJournal()
 {
     return journal_.get();

@@ -520,7 +520,11 @@ void SpecialFunctions::spawnNPC(Functional* obj, const j3x::Obj& data, Character
     auto npc = framework_->spawnNewNPC(character, -1,
                                        Functional::convertActivationStr(
                                                RMGET<std::string>("characters", character, "default_activation")),
-                                       RMGET<j3x::List>("characters", character, "default_funcs"),
+                                       RMGET<j3x::List>("characters", character, "default_functions"),
                                        RMGET<j3x::List>("characters", character, "default_datas"));
     npc->setPosition(pos);
+
+    if (framework_->getJournal() != nullptr) {
+        framework_->getJournal()->event<SpawnCharacter>(npc);
+    }
 }

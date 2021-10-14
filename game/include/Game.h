@@ -40,6 +40,7 @@ public:
 
     // Getters
     [[nodiscard]] Player* getPlayer() override;
+    [[nodiscard]] PlayerClone* getPlayerClone() override;
     [[nodiscard]] Journal* getJournal() override;
     [[nodiscard]] Special* getCurrentSpecialObject() const override;
     [[nodiscard]] Character* getCurrentTalkableCharacter() const override;

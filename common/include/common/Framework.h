@@ -63,6 +63,7 @@ public:
 
     // Getters
     [[nodiscard]] virtual Player* getPlayer();
+    [[nodiscard]] virtual PlayerClone* getPlayerClone();
     [[nodiscard]] virtual Map* getMap();
     [[nodiscard]] virtual Camera* getCamera();
     [[nodiscard]] virtual UserInterface* getUI();
@@ -106,6 +107,7 @@ public:
     virtual void spawnBonusText(const sf::Vector2f& pos, const std::string& text);
     virtual void respawn(const std::string& map_name);
 
+    virtual void findAndDeleteCharacter(Character* ptr);
     virtual void findAndDeleteBullet(Bullet* ptr);
     virtual void findAndDeleteFire(Fire* ptr);
     virtual void findAndDeleteDecoration(Decoration* ptr);

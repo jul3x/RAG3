@@ -571,6 +571,43 @@ Obstacle* Framework::spawnNewObstacle(const std::string& id, int u_id, const sf:
     return new_ptr;
 }
 
+void Framework::findAndDeleteCharacter(Character* ptr)
+{
+    auto& npcs = map_->getList<NPC>();
+    for (auto it = npcs.rbegin(); it != npcs.rend(); ++it)
+    {
+        if (it->get() == ptr)
+        {
+            ui_->removeArrowIfExists(ptr);
+            auto player_clone = getPlayerClone();
+            if (player_clone != nullptr)
+            {
+                player_clone->removeEnemy(ptr);
+            }
+            engine_->deleteDynamicObject(ptr);
+            auto talkable_area = ptr->getTalkableArea();
+            if (talkable_area != nullptr)
+            {
+                engine_->deleteHoveringObject(talkable_area);
+            }
+            //TODO change to unregisterWeapons
+            for (auto& weapon : ptr->getWeapons())
+            {
+                auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+
+                if (melee_weapon != nullptr)
+                {
+                    engine_->deleteHoveringObject(melee_weapon->getMeleeWeaponArea());
+                }
+            }
+            npcs.erase((++it).base());
+            return;
+        }
+    }
+
+    LOG.error("[Framework] Warning - character to delete not found!");
+}
+
 void Framework::findAndDeleteBullet(Bullet* ptr)
 {
     for (auto it = bullets_.rbegin(); it != bullets_.rend(); ++it)
@@ -877,6 +914,11 @@ SpecialFunctions* Framework::getSpecialFunctions()
 }
 
 Player* Framework::getPlayer()
+{
+    return nullptr;
+}
+
+PlayerClone* Framework::getPlayerClone()
 {
     return nullptr;
 }

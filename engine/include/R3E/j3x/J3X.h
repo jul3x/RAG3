@@ -13,6 +13,7 @@
 #include <unordered_map>
 #include <vector>
 #include <memory>
+#include <functional>
 
 #include <SFML/System/Vector2.hpp>
 
@@ -32,7 +33,7 @@ namespace r3e::j3x {
 
     std::shared_ptr<Parameters> parseContent(const std::string& content);
 
-    void mergeParams(Parameters& params, const Parameters& new_params);
+    void mergeParams(Parameters& params, const Parameters& new_params, bool force_update = false);
 
     template<class T>
     void tokenize(const std::string& str, char delimiter, T& out)
@@ -164,6 +165,30 @@ namespace r3e::j3x {
         }
 
         return getObj<T>(visitor.getParams().at("tmp"));
+    }
+
+    template<class T, class K>
+    const j3x::List& convertToList(const K& container, const std::function<void(j3x::List&, const T&)>& custom_function)
+    {
+        static j3x::List ret;
+        ret.clear();
+
+        for (const auto& a : container)
+            custom_function(ret, a);
+
+        return ret;
+    }
+
+    template<class K>
+    const j3x::List& convertToList(const K& container)
+    {
+        static j3x::List ret;
+        ret.clear();
+
+        for (const auto& a : container)
+            ret.emplace_back(a);
+
+        return ret;
     }
 
 } // namespace r3e::j3x

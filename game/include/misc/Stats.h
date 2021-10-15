@@ -29,7 +29,6 @@ public:
     Stats operator-(const Stats& stats) const;
 
 private:
-
     Game* game_;
 
 };

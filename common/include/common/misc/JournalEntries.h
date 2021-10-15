@@ -8,24 +8,10 @@
 #include <common/Map.h>
 #include <common/weapons/Fire.h>
 #include <common/misc/Destruction.h>
-
+#include <common/misc/Journal.h>
 
 using namespace r3e;
 
-class Journal;
-
-class JournalEntry {
-public:
-    JournalEntry();
-
-    explicit JournalEntry(Journal* father);
-
-    virtual void executeEntryReversal() = 0;
-
-protected:
-    Journal* father_;
-
-};
 
 class TimeReversal : public JournalEntry {
 public:
@@ -77,17 +63,6 @@ private:
 
 };
 
-class SpawnCharacter : public JournalEntry {
-public:
-    SpawnCharacter(Journal* father, Character* character);
-
-    void executeEntryReversal() override;
-
-private:
-    Character* ptr_;
-
-};
-
 class BulletEntry : public JournalEntry {
 public:
     BulletEntry(Journal* father, Bullet* bullet);
@@ -117,14 +92,21 @@ private:
 
 };
 
-class SpawnBullet : public JournalEntry {
+template<class T>
+class SpawnEntry : public JournalEntry {
 public:
-    SpawnBullet(Journal* father, Bullet* bullet);
+    SpawnEntry(Journal* father, T* ptr) : JournalEntry(father), ptr_(ptr)
+    {
+    }
 
-    void executeEntryReversal() override;
+    void executeEntryReversal() override
+    {
+        auto new_ptr = father_->getUpdatedPtr(ptr_);
+        father_->getFramework()->findAndDelete<T>(new_ptr);
+    }
 
 private:
-    Bullet* ptr_;
+    T* ptr_;
 
 };
 
@@ -155,17 +137,6 @@ private:
     sf::Vector2f pos_;
     float direction_;
     Character* user_;
-
-};
-
-class SpawnFire : public JournalEntry {
-public:
-    SpawnFire(Journal* father, Fire* fire);
-
-    void executeEntryReversal() override;
-
-private:
-    Fire* ptr_;
 
 };
 
@@ -200,17 +171,6 @@ private:
 
 };
 
-class SpawnDecoration : public JournalEntry {
-public:
-    SpawnDecoration(Journal* father, Decoration* ptr);
-
-    void executeEntryReversal() override;
-
-private:
-    Decoration* ptr_;
-
-};
-
 class DestroyDecoration : public JournalEntry {
 public:
     DestroyDecoration(Journal* father, Decoration* ptr);
@@ -223,17 +183,6 @@ private:
     int u_id_;
     std::string id_;
     sf::Vector2f pos_;
-
-};
-
-class SpawnSpecial : public JournalEntry {
-public:
-    SpawnSpecial(Journal* father, Special* ptr);
-
-    void executeEntryReversal() override;
-
-private:
-    Special* ptr_;
 
 };
 
@@ -252,17 +201,6 @@ private:
     Functional::Activation activation_;
     j3x::List funcs_;
     j3x::List datas_;
-
-};
-
-class SpawnDestructionSystem : public JournalEntry {
-public:
-    SpawnDestructionSystem(Journal* father, DestructionSystem* ptr);
-
-    void executeEntryReversal() override;
-
-private:
-    DestructionSystem* ptr_;
 
 };
 

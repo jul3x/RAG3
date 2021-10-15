@@ -409,3 +409,41 @@ void Map::setParams(const j3x::Parameters& params)
 {
     params_ = params;
 }
+
+size_t Map::getMapIndex() const
+{
+    const auto& maps = CONF<j3x::List>("maps_order");
+    size_t i = 0;
+    for (const auto& map : maps)
+    {
+        const auto& name = j3x::getObj<std::string>(map);
+        if (name == this->getMapName())
+            break;
+        ++i;
+    }
+    return i;
+}
+
+const std::string& Map::getNextMapName() const
+{
+    static const std::string ERR = "";
+    const auto& maps = CONF<j3x::List>("maps_order");
+    auto i = this->getMapIndex();
+
+    if (i + 1 >= maps.size())
+        return ERR;
+
+    return j3x::getObj<std::string>(maps, i + 1);
+}
+
+const j3x::List& Map::getPreviousMapsAndCurrent() const
+{
+    static j3x::List ret;
+    ret.clear();
+
+    const auto& maps = CONF<j3x::List>("maps_order");
+    for (size_t i = 0; i <= this->getMapIndex(); ++i)
+        ret.emplace_back(j3x::getObj<std::string>(maps, i));
+
+    return ret;
+}

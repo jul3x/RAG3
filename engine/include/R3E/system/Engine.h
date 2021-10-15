@@ -43,17 +43,23 @@ namespace r3e {
         void registerUI(AbstractUserInterface* user_interface);
         void registerCamera(graphics::AbstractCamera* camera);
         void registerGame(AbstractGame* game);
-        void registerStaticObject(StaticObject* obj);
-        void registerDynamicObject(DynamicObject* obj);
-        void registerHoveringObject(HoveringObject* obj);
 
-        void deleteStaticObject(StaticObject* obj);
-        void deleteDynamicObject(DynamicObject* obj);
-        void deleteHoveringObject(HoveringObject* obj);
+        template<class T>
+        void registerObj(T* obj)
+        {
+            collisions_->insert(obj);
+        }
+
+        template<class T>
+        void unregisterObj(T* obj)
+        {
+            collisions_->erase(obj);
+        }
 
         void spawnAnimationEvent(const std::shared_ptr<graphics::AnimationEvent>& event);
         void spawnSoundEvent(const sf::SoundBuffer& buffer, const sf::Vector2f& position, float volume = 100.0f,
                              bool force_pitch = false);
+        void spawnSoundEvent(const sf::SoundBuffer& buffer, float volume = 100.0f);
         void spawnEffect(const std::shared_ptr<graphics::Effect>& effect);
 
         [[nodiscard]] float getCurrentFPS() const;

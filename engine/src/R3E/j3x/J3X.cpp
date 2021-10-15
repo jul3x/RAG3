@@ -83,9 +83,17 @@ namespace r3e::j3x {
         return std::make_shared<Parameters>(visitor.getParams());
     }
 
-    void mergeParams(Parameters& params, const Parameters& new_params)
+    void mergeParams(Parameters& params, const Parameters& new_params, bool force_update)
     {
-        params.insert(new_params.begin(), new_params.end());
+        if (!force_update)
+            params.insert(new_params.begin(), new_params.end());
+        else
+        {
+            for (const auto& param : new_params)
+            {
+                params[param.first] = param.second;
+            }
+        }
     }
 
     void serialize(const j3x::List& data, std::string& out)

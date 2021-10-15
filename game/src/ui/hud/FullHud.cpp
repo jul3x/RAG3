@@ -97,8 +97,7 @@ void BackpackHud::combineBackpackItems(size_t first, size_t second)
                     RMGET<std::string>("specials", special_id, "tooltip_header") + "\"?",
                     std::bind([this](const std::string& w, const std::string& s) {
                         framework_->getPlayer()->upgradeWeapon(w, s);
-                        ui_->getFramework()
-                           ->spawnSound(RM.getSound("ui_upgrade"), framework_->getPlayer()->getPosition());
+                        framework_->spawnSound(RM.getSound("ui_upgrade"));
                     }, weapon_id, special_id));
         }
     }
@@ -247,6 +246,7 @@ SkillsHud::SkillsHud(UserInterface* ui, Framework* framework, const sf::Vector2f
     int i = 0;
     for (const auto& line : CONF<j3x::List>("graphics/skills_lines"))
     {
+        const auto& skill_name = framework_->getPlayer()->getSkillName(Player::SKILLS[i]);
         auto line_pos = j3x::getObj<sf::Vector2f>(line);
         lines_.emplace_back(sf::Color::White, 3.0f);
         lines_.back().setStart(pos + line_pos);
@@ -254,7 +254,7 @@ SkillsHud::SkillsHud(UserInterface* ui, Framework* framework, const sf::Vector2f
         lines_.back().setThickness(CONF<float>("graphics/lines_thickness"));
         lines_.back().forceSet();
 
-        texts_.emplace_back(texts_placeholders_[i] + ": 0", RM.getFont(), CONF<float>("graphics/skills_text_size"));
+        texts_.emplace_back(skill_name + ": 0", RM.getFont(), CONF<float>("graphics/skills_text_size"));
         texts_.back().setFillColor(sf::Color::White);
         texts_.back().setPosition(lines_.back().getStart() + CONF<sf::Vector2f>("graphics/skills_text_offset"));
 
@@ -266,16 +266,16 @@ SkillsHud::SkillsHud(UserInterface* ui, Framework* framework, const sf::Vector2f
         buttons_.back()->setSize(CONF<sf::Vector2f>("graphics/skills_button_size"));
         buttons_.back()->setVisible(false);
         buttons_.back()->connect("pressed", [this, ui](Player::Skills skill) {
-            framework_->spawnSound(RM.getSound("ui_click"), framework_->getPlayer()->getPosition());
+            framework_->spawnSound(RM.getSound("ui_click"));
             if (!framework_->getPlayer()->addSkill(skill))
             {
                 for (auto& button : buttons_)
                     button->setText("i");
             }
-        }, skills_[i]);
+        }, Player::SKILLS[i]);
         tooltips_.emplace_back(framework_, ui->getTheme(), button_pos,
                                CONF<sf::Vector2f>("graphics/skills_button_size"));
-        tooltips_.back().bindText(texts_placeholders_[i], texts_tooltips_[i]);
+        tooltips_.back().bindText(skill_name, texts_tooltips_[i]);
         buttons_.back()->setToolTip(tooltips_.back().getTooltip());
         ui->getGui()->add(buttons_.back());
 
@@ -298,7 +298,8 @@ void SkillsHud::update(float time_elapsed)
     size_t i = 0;
     for (auto& text : texts_)
     {
-        text.setString(texts_placeholders_[i] + ": " + std::to_string(framework_->getPlayer()->getSkill(skills_[i])));
+        const auto& skill_name = framework_->getPlayer()->getSkillName(Player::SKILLS[i]);
+        text.setString(skill_name + ": " + std::to_string(framework_->getPlayer()->getSkill(Player::SKILLS[i])));
         ++i;
     }
 

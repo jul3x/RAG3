@@ -74,9 +74,9 @@ void UserInterface::spawnAchievement(const std::string& title, const std::string
 
 void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
 {
-    utils::eraseIf<Achievement>(achievements_, [time_elapsed](Achievement& a) { return !a.update(time_elapsed); });
-    utils::eraseIf<Thought>(thoughts_, [time_elapsed](Thought& thought) { return !thought.update(time_elapsed); });
-    utils::eraseIf<BonusText>(bonus_texts_, [time_elapsed](BonusText& text) { return !text.update(time_elapsed); });
+    utils::eraseIfUpdated<Achievement>(achievements_, time_elapsed);
+    utils::eraseIfUpdated<Thought>(thoughts_, time_elapsed);
+    utils::eraseIfUpdated<BonusText>(bonus_texts_, time_elapsed);
 
     updatePlayerStates(time_elapsed);
     handleMouse(graphics.getWindow());
@@ -140,42 +140,28 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
             case sf::Event::MouseWheelScrolled:
             {
                 if (framework_->getGameState() == Framework::GameState::Normal)
-                {
                     handleScrolling(event.mouseWheelScroll.delta);
-                }
                 break;
             }
             case sf::Event::KeyPressed:
             {
                 if (event.key.code == CONF<int>("controls/health"))
-                {
                     framework_->useItem("health");
-                }
                 else if (event.key.code == CONF<int>("controls/more_speed"))
-                {
                     framework_->useItem("more_speed");
-                }
                 else if (event.key.code == CONF<int>("controls/rag3"))
-                {
                     framework_->useItem("rag3");
-                }
                 else if (event.key.code == CONF<int>("controls/dodge_left"))
-                {
                     framework_->getPlayer()->sideStep(Player::SideStepDir::Left);
-                }
                 else if (event.key.code == CONF<int>("controls/dodge_right"))
-                {
                     framework_->getPlayer()->sideStep(Player::SideStepDir::Right);
-                }
                 else if (event.key.code == CONF<int>("controls/use"))
                 {
                     if (framework_->getGameState() == Framework::GameState::Normal)
                         framework_->useSpecialObject();
                 }
                 else
-                {
                     handleAdditionalKeyPressed(event.key.code);
-                }
 
                 break;
             }
@@ -306,7 +292,7 @@ void UserInterface::closeWindow(Window* window)
     utils::eraseIf<std::shared_ptr<Window>>(windows_, [window](std::shared_ptr<Window>& window_) {
         return window_.get() == window;
     });
-    framework_->spawnSound(RM.getSound("ui_click"), framework_->getPlayer()->getPosition(), true);
+    framework_->spawnSound(RM.getSound("ui_click"));
 }
 
 void UserInterface::spawnNoteWindow(const std::string& text)
@@ -315,7 +301,7 @@ void UserInterface::spawnNoteWindow(const std::string& text)
                                                        sf::Vector2f(CONF<int>("graphics/window_width_px"),
                                                                     CONF<int>("graphics/window_height_px")) / 2.0f,
                                                        CONF<sf::Vector2f>("graphics/popup_size")));
-    framework_->spawnSound(RM.getSound("ui_click"), framework_->getPlayer()->getPosition(), true);
+    framework_->spawnSound(RM.getSound("ui_click"));
 }
 
 void UserInterface::openMenu()

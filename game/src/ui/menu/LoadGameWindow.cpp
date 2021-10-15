@@ -44,8 +44,9 @@ LoadGameWindow::LoadGameWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
     scroll_panel_->add(grid);
 
     int i = 0;
-    for (const auto& item : RM.getListOfObjects(CONF<std::string>("paths/maps_dir")))
+    for (const auto& map : CONF<j3x::List>("maps_order"))
     {
+        const auto& item = j3x::getObj<std::string>(map);
         static constexpr auto button_opacity = 0.8f;
         auto button = tgui::Picture::create(RM.getTexture("maps/" + item));
         auto label = tgui::Label::create(CONF<std::string>("map_name_" + item));
@@ -62,14 +63,13 @@ LoadGameWindow::LoadGameWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
 
         button->connect("mouseentered", [button, this]() {
             button->setInheritedOpacity(1.0f);
-            framework_->spawnSound(RM.getSound("ui_hover"), framework_->getPlayer()->getPosition());
+            framework_->spawnSound(RM.getSound("ui_hover"));
         });
         button->connect("mouseleft", [button]() {
             button->setInheritedOpacity(button_opacity);
         });
         button->connect("Clicked", [this](const std::string& map_name) {
-            framework_->respawn(map_name);
-            framework_->getUI()->startGame();
+            framework_->startGame(map_name);
         }, item);
 
         ++i;

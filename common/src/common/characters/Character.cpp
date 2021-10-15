@@ -763,3 +763,14 @@ void Character::setTextureName(const std::string& texture_name)
 {
     texture_name_ = texture_name;
 }
+
+void Character::clearWeapons()
+{
+    weapons_in_backpack_.clear();
+    current_weapon_ = 0;
+}
+
+void Character::setWeapons(const std::vector<std::shared_ptr<AbstractWeapon>>& weapons)
+{
+    weapons_in_backpack_ = weapons;
+}

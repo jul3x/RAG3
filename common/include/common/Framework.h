@@ -91,6 +91,7 @@ public:
     virtual void spawnSwirlEvent(const std::string& name, const sf::Vector2f& pos, bool flipped);
     virtual void spawnExplosionForce(const sf::Vector2f& pos, float r);
     virtual void spawnSound(const sf::SoundBuffer& sound, const sf::Vector2f& pos, bool force_pitch = false);
+    virtual void spawnSound(const sf::SoundBuffer& sound);
     virtual void spawnFadeInOut();
 
     // Spawn objects for journal
@@ -106,13 +107,10 @@ public:
     virtual void spawnThought(Character* user, const std::string& text);
     virtual void spawnBonusText(const sf::Vector2f& pos, const std::string& text);
     virtual void respawn(const std::string& map_name);
+    virtual void startGame(const std::string& map_name = "");
 
-    virtual void findAndDeleteCharacter(Character* ptr);
-    virtual void findAndDeleteBullet(Bullet* ptr);
-    virtual void findAndDeleteFire(Fire* ptr);
-    virtual void findAndDeleteDecoration(Decoration* ptr);
-    virtual void findAndDeleteSpecial(Special* ptr);
-    virtual void findAndDeleteDestructionSystem(DestructionSystem* ptr);
+    template <class T>
+    void findAndDelete(T* ptr) {}
 
     virtual NPC* spawnNewPlayerClone(const std::string& weapon_id);
     virtual NPC* spawnNewNPC(const std::string& id, int u_id, Functional::Activation activation,
@@ -132,13 +130,20 @@ public:
                               float quantity_factor);
 
     // Registering methods
+    virtual void unregisterTalkableArea(Character* character);
     virtual void registerWeapons(Character* character);
+    virtual void unregisterWeapons(Character* character);
+    virtual void unregisterCharacter(Character* character, bool clear_clone = true);
     virtual void registerWeapon(AbstractWeapon* weapon);
     virtual void registerFunctions(Functional* functional) const;
     virtual void registerLight(Lightable* light) const;
 
+    // Misc
+    virtual void setFinishMap();
+    virtual void finishMap();
     virtual void setRag3Time(float duration);
     virtual void forceZoomTo(AbstractPhysicalObject* obj);
+    virtual void killPlayer(Player* player);
 
     // State methods
     virtual void setGameState(Framework::GameState state);
@@ -186,6 +191,7 @@ protected:
 
     float time_elapsed_;
     Framework::GameState state_;
+    bool should_finish_map_;
 
 };
 

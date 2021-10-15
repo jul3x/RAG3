@@ -41,10 +41,10 @@ SettingsWindow::SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
     save_button_->connect("pressed", [this, framework]() {
         this->unfocusControlsWidgets();
         this->saveValues();
-        framework->spawnSound(RM.getSound("ui_upgrade"), framework->getPlayer()->getPosition());
+        framework->spawnSound(RM.getSound("ui_upgrade"));
     });
     save_button_->connect("mouseentered", [framework]() {
-        framework->spawnSound(RM.getSound("ui_hover"), framework->getPlayer()->getPosition());
+        framework->spawnSound(RM.getSound("ui_hover"));
     });
     gui->add(save_button_);
 
@@ -57,7 +57,7 @@ SettingsWindow::SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
     restore_button_->connect("pressed", [this, framework]() {
         this->unfocusControlsWidgets();
         this->updateValues();
-        framework->spawnSound(RM.getSound("ui_upgrade"), framework->getPlayer()->getPosition());
+        framework->spawnSound(RM.getSound("ui_upgrade"));
     });
     gui->add(restore_button_);
 
@@ -78,7 +78,7 @@ SettingsWindow::SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
 
     tabs_->connect("TabSelected", [this, gui, framework](const std::string& tab) {
         this->onTabSelected(*gui, tab);
-        framework->spawnSound(RM.getSound("ui_hover"), framework->getPlayer()->getPosition());
+        framework->spawnSound(RM.getSound("ui_hover"));
     });
     tabs_->select(0);
 
@@ -189,7 +189,7 @@ void SettingsWindow::setKey(sf::Keyboard::Key k)
     if (!utils::contains(forbidden_keys, k) && focused_controls_widget_ != nullptr)
     {
         focused_controls_widget_->setKey(k);
-        framework_->spawnSound(RM.getSound("ui_hover"), framework_->getPlayer()->getPosition());
+        framework_->spawnSound(RM.getSound("ui_hover"));
     }
 
     unfocusControlsWidgets();
@@ -442,6 +442,11 @@ SliderSettingsWidget<T>::SliderSettingsWidget(tgui::Theme* theme, const std::str
     auto param_max_str = "ranges/" + name + "_max";
     slider_->setMinimum(CONF<T>("ranges/" + name + "_min"));
     slider_->setMaximum(CONF<T>("ranges/" + name + "_max"));
+
+    if constexpr (std::is_same<T, int>::value)
+        slider_->setStep(1.0f);
+    else
+        slider_->setStep(0.1f);
 
     slider_->connect("ValueChanged", [this]() {
         value_->setText(utils::toString<T>(static_cast<T>(slider_->getValue())));

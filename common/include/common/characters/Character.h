@@ -62,6 +62,8 @@ public:
     void setCurrentWeapon(int number);
     int getCurrentWeapon() const;
     void makeOnlyOneWeapon(const std::string& id, float state);
+    void clearWeapons();
+    void setWeapons(const std::vector<std::shared_ptr<AbstractWeapon>>& weapons);
     bool addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr);
     void addAmmoToWeapon(const std::string& id);
     virtual void makeLifeBar(const std::string& name);

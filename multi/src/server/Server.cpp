@@ -125,8 +125,7 @@ void Server::updatePlayers(float time_elapsed)
     {
         if (player.second.isAlive() && !player.second.update(time_elapsed))
         {
-            player.second.setDead();
-            engine_->deleteDynamicObject(&player.second);
+            clearPlayer(player.second.get());
         }
     }
 }
@@ -146,7 +145,7 @@ void Server::checkAwaitingConnections()
             LOG.info("New connection attempt from: " + sf::IpAddress(ip).toString());
             players_.emplace(ip, starting_positions_
                     .at(utils::num::getRandom(0, static_cast<int>(starting_positions_.size() - 1))));
-            engine_->registerDynamicObject(&players_.at(ip));
+            engine_->registerObj<DynamicObject>(&players_.at(ip));
             registerWeapons(&players_.at(ip));
 
             // Awful but necessary for now
@@ -363,17 +362,9 @@ void Server::handleEventsFromPlayers()
 
 void Server::clearPlayer(Player* player)
 {
-    engine_->deleteDynamicObject(player);
-
-    for (auto& weapon : player->getWeapons())
-    {
-        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
-
-        if (melee_weapon != nullptr)
-        {
-            engine_->deleteHoveringObject(melee_weapon->getMeleeWeaponArea());
-        }
-    }
+    player->setDead();
+    engine_->unregisterObj<DynamicObject>(player);
+    unregisterWeapons(player);
 }
 
 void Server::useSpecialObject(Player* player, sf::Uint32 ip)
@@ -445,7 +436,7 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             sendEventToPlayers(packet);
             if (player != nullptr)
             {
-                player->addSpecialToBackpack(special,
+                player->addSpecialToBackpack(special->getId(), 1,
                                              [this](Functional* functional) { this->registerFunctions(functional); });
                 special_functions_->destroy(special, {}, player);
             }

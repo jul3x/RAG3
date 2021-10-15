@@ -13,10 +13,21 @@
 #include <common/Map.h>
 #include <common/Framework.h>
 
-#include <common/misc/JournalEntries.h>
-
 
 using namespace r3e;
+
+class JournalEntry {
+public:
+    JournalEntry() : father_(nullptr) {}
+
+    explicit JournalEntry(Journal* father) : father_(father) {}
+
+    virtual void executeEntryReversal() = 0;
+
+protected:
+    Journal* father_;
+
+};
 
 
 class Journal {

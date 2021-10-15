@@ -220,21 +220,13 @@ void Client::useSpecialObject()
 void Client::updatePlayers(float time_elapsed)
 {
     if (player_->isAlive() && !player_->update(time_elapsed))
-    {
-        spawnDecoration(player_->getPosition(), "blood");
-        spawnKillEvent(player_->getPosition());
-        player_->setDead();
-        engine_->deleteDynamicObject(player_.get());
-    }
+        this->killPlayer(player_.get());
 
     for (auto& player : players_)
     {
         if (player.second->isAlive() && !player.second->update(time_elapsed))
         {
-            spawnDecoration(player.second->getPosition(), "blood");
-            spawnKillEvent(player.second->getPosition());
-            player.second->setDead();
-            engine_->deleteDynamicObject(player.second.get());
+            this->killPlayer(player.second.get()));
         }
     }
 }
@@ -289,7 +281,8 @@ void Client::handleEventsFromServer()
                     if (obj != nullptr && player != nullptr)
                     {
                         player->addSpecialToBackpack(
-                                obj, [this](Functional* functional) { this->registerFunctions(functional); });
+                                obj->getId(), 1,
+                                [this](Functional* functional) { this->registerFunctions(functional); });
                         spawnSound(RM.getSound("collect"), obj->getPosition());
                         special_functions_->destroy(obj, {}, player);
                     }
@@ -449,7 +442,7 @@ Player* Client::getPlayer(sf::Uint32 ip)
     if (it == players_.end())
     {
         players_[ip] = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
-        engine_->registerDynamicObject(players_[ip].get());
+        engine_->registerObj<DynamicObject>(players_[ip].get());
         registerLight(players_[ip].get());
         registerWeapons(players_[ip].get());
 
@@ -461,7 +454,7 @@ Player* Client::getPlayer(sf::Uint32 ip)
 
 void Client::initPlayers()
 {
-    engine_->registerDynamicObject(player_.get());
+    engine_->registerObj<DynamicObject>(player_.get());
     registerLight(player_.get());
     registerWeapons(player_.get());
 }

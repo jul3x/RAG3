@@ -64,7 +64,7 @@ bool BloodSplash::update(float time_elapsed)
         heartbeat_time_elapsed_ += time_elapsed;
         if (heartbeat_time_elapsed_ > 2.0f)
         {
-            game_->spawnSound(RM.getSound("heartbeat"), game_->getPlayer()->getPosition());
+            game_->spawnSound(RM.getSound("heartbeat"));
             heartbeat_time_elapsed_ = 0.0f;
         }
     }

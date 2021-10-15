@@ -16,15 +16,13 @@
 Game::Game() : Framework(),
                current_time_factor_(1.0f), rag3_time_elapsed_(-10.0f),
                forced_zoom_to_time_elapsed_(-10.0f), current_obj_zoom_(nullptr),
-               time_manipulation_fuel_(0.0f)
+               time_manipulation_fuel_(0.0f), is_playing_previous_map_(false)
 {
 }
 
 void Game::initialize()
 {
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
-    player_->setName(CONF<std::string>("general/player_name"));
-    time_manipulation_fuel_ = player_->getMaxTimeManipulation();
     Framework::initialize();
     engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
     ui_ = std::make_unique<GameUserInterface>(this);
@@ -44,7 +42,7 @@ void Game::initialize()
     ui_->registerPlayer(player_.get());
     engine_->registerUI(ui_.get());
 
-    this->setStartingPosition();
+    this->preloadSave();
 }
 
 void Game::update(float time_elapsed)
@@ -106,6 +104,9 @@ void Game::update(float time_elapsed)
                                  player_->getMaxTimeManipulation());
             else
                 time_manipulation_fuel_ -= CONF<float>("characters/time_manipulation_slow_use_speed") * time_elapsed;
+
+            if (should_finish_map_)
+                finishMap();
 
             time_elapsed_ += time_elapsed;
             break;
@@ -182,33 +183,13 @@ void Game::killNPC(NPC* npc)
 {
     journal_->event<DestroyCharacter>(npc);
     stats_->killEnemy(npc->getId(), npc->getPosition());
-    ui_->removeArrowIfExists(npc);
-    if (player_clone_ != nullptr)
-    {
-        player_clone_->removeEnemy(npc);
-    }
+
+    this->unregisterCharacter(npc);
 
     // draw on this place destruction
     spawnDecoration(npc->getPosition(), "blood");
     spawnKillEvent(npc->getPosition());
     spawnSound(RM.getSound(npc->getId() + "_dead"), npc->getPosition());
-
-    engine_->deleteDynamicObject(npc);
-    auto talkable_area = npc->getTalkableArea();
-    if (talkable_area != nullptr)
-    {
-        engine_->deleteHoveringObject(talkable_area);
-    }
-
-    for (auto& weapon : npc->getWeapons())
-    {
-        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
-
-        if (melee_weapon != nullptr)
-        {
-            engine_->deleteHoveringObject(melee_weapon->getMeleeWeaponArea());
-        }
-    }
 
     if (npc->getActivation() == Functional::Activation::OnKill && npc->isActive())
     {
@@ -315,7 +296,21 @@ Journal* Game::getJournal()
 DestructionSystem* Game::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const float r)
 {
     auto ptr = Framework::spawnSparksEvent(pos, dir, r);
-    journal_->event<SpawnDestructionSystem>(ptr);
+    journal_->event<SpawnEntry<DestructionSystem>>(ptr);
+    return ptr;
+}
+
+DestructionSystem* Game::spawnSparksEvent2(const sf::Vector2f& pos, float dir, float r)
+{
+    auto ptr = Framework::spawnSparksEvent2(pos, dir, r);
+    journal_->event<SpawnEntry<DestructionSystem>>(ptr);
+    return ptr;
+}
+
+Decoration* Game::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
+{
+    auto ptr = Framework::spawnDecoration(pos, name);
+    journal_->event<SpawnEntry<Decoration>>(ptr);
     return ptr;
 }
 
@@ -331,44 +326,29 @@ void Game::spawnAchievement(const j3x::Parameters& params)
 Special* Game::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
 {
     auto ptr = Framework::spawnSpecial(pos, name);
-    journal_->event<SpawnSpecial>(ptr);
+    journal_->event<SpawnEntry<Special>>(ptr);
     return ptr;
 }
 
 DestructionSystem* Game::spawnBloodEvent(const sf::Vector2f& pos, float dir, float deadly_factor)
 {
     auto ptr = Framework::spawnBloodEvent(pos, dir, deadly_factor);
-    journal_->event<SpawnDestructionSystem>(ptr);
+    journal_->event<SpawnEntry<DestructionSystem>>(ptr);
     return ptr;
 }
 
 Bullet* Game::spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
     auto ptr = Framework::spawnBullet(user, name, pos, dir);
-    journal_->event<SpawnBullet>(ptr);
+    journal_->event<SpawnEntry<Bullet>>(ptr);
     return ptr;
 }
 
 Fire* Game::spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
     auto ptr = Framework::spawnFire(user, name, pos, dir);
-    journal_->event<SpawnFire>(ptr);
+    journal_->event<SpawnEntry<Fire>>(ptr);
     return ptr;
-}
-
-void Game::updateFire(float time_elapsed)
-{
-    for (auto it = fire_.begin(); it != fire_.end(); ++it)
-    {
-        if (!(*it)->update(time_elapsed))
-        {
-            engine_->deleteHoveringObject(it->get());
-            journal_->event<DestroyFire>(it->get());
-            auto next_it = std::next(it);
-            fire_.erase(it);
-            it = next_it;
-        }
-    }
 }
 
 NPC* Game::spawnNewNPC(const std::string& id, int u_id, Functional::Activation activation,
@@ -384,7 +364,7 @@ NPC* Game::spawnNewNPC(const std::string& id, int u_id, Functional::Activation a
     ptr->setActivation(activation);
     ptr->setFunctions(funcs);
     ptr->setDatas(datas);
-    engine_->registerDynamicObject(ptr);
+    engine_->registerObj<DynamicObject>(ptr);
     registerLight(ptr);
 
     ptr->registerAgentsManager(agents_manager_.get());
@@ -399,7 +379,7 @@ NPC* Game::spawnNewNPC(const std::string& id, int u_id, Functional::Activation a
 
     auto talkable_area = ptr->getTalkableArea();
     if (talkable_area != nullptr)
-        engine_->registerHoveringObject(talkable_area);
+        engine_->registerObj<HoveringObject>(talkable_area);
 
     return ptr;
 }
@@ -414,7 +394,7 @@ NPC* Game::spawnNewPlayerClone(const std::string& weapon_id)
     player_clone_ = std::make_unique<PlayerClone>(this->player_->getPosition(), player_.get(),
                                                   journal_->getDurationSaved() *
                                                   CONF<float>("player_clone_time_factor"));
-    engine_->registerDynamicObject(player_clone_.get());
+    engine_->registerObj<DynamicObject>(player_clone_.get());
     registerLight(player_clone_.get());
 
     player_clone_->registerAgentsManager(agents_manager_.get());
@@ -437,22 +417,7 @@ void Game::cleanPlayerClone()
 {
     if (player_clone_ != nullptr)
     {
-        for (auto& enemy : map_->getList<NPC>())
-        {
-            enemy->removeEnemy(player_clone_.get());
-        }
-
-        for (auto& weapon : player_clone_->getWeapons())
-        {
-            auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
-
-            if (melee_weapon != nullptr)
-            {
-                engine_->deleteHoveringObject(melee_weapon->getMeleeWeaponArea());
-            }
-        }
-
-        engine_->deleteDynamicObject(player_clone_.get());
+        this->unregisterCharacter(player_clone_.get(), false);
         player_clone_.reset();
     }
 }
@@ -488,7 +453,7 @@ void Game::talk()
 
         if (!still_talking)
         {
-            engine_->deleteHoveringObject(curr->getTalkableArea());
+            unregisterTalkableArea(curr);
             curr->use(curr);
             curr->deactivate();
             ui_->removeArrowIfExists(curr);
@@ -638,19 +603,24 @@ void Game::updatePlayer(float time_elapsed)
     player_->setCurrentTalkableCharacter(nullptr);
     if (player_->isAlive() && !player_->update(time_elapsed))
     {
-        spawnDecoration(player_->getPosition(), "blood");
-        spawnKillEvent(player_->getPosition());
-        player_->setDead();
-        engine_->deleteDynamicObject(player_.get());
+        this->killPlayer(player_.get());
         music_manager_->setPlaybackPitch(CONF<float>("sound/bullet_time_music_factor"));
     }
 }
 
-Decoration* Game::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
+void Game::updateFire(float time_elapsed)
 {
-    auto ptr = Framework::spawnDecoration(pos, name);
-    journal_->event<SpawnDecoration>(ptr);
-    return ptr;
+    for (auto it = fire_.begin(); it != fire_.end(); ++it)
+    {
+        if (!(*it)->update(time_elapsed))
+        {
+            engine_->unregisterObj<HoveringObject>(it->get());
+            journal_->event<DestroyFire>(it->get());
+            auto next_it = std::next(it);
+            fire_.erase(it);
+            it = next_it;
+        }
+    }
 }
 
 void Game::setRag3Time(float time_elapsed)
@@ -701,7 +671,7 @@ float Game::getForcedZoomTime() const
 
 void Game::initPlayers()
 {
-    engine_->registerDynamicObject(player_.get());
+    engine_->registerObj<DynamicObject>(player_.get());
     registerLight(player_.get());
     registerWeapons(player_.get());
 }
@@ -710,7 +680,8 @@ void Game::initNPCs()
 {
     for (auto& character : map_->getList<NPC>())
     {
-        engine_->registerDynamicObject(character.get());
+        character->clearEnemies();
+        engine_->registerObj<DynamicObject>(character.get());
         registerLight(character.get());
         character->registerAgentsManager(agents_manager_.get());
         character->registerEnemy(player_.get());
@@ -721,7 +692,7 @@ void Game::initNPCs()
         auto talkable_area = character->getTalkableArea();
         if (talkable_area != nullptr)
         {
-            engine_->registerHoveringObject(talkable_area);
+            engine_->registerObj<HoveringObject>(talkable_area);
         }
     }
 }
@@ -730,13 +701,6 @@ void Game::close()
 {
     map_->getList<NPC>().clear();
     Framework::close();
-}
-
-DestructionSystem* Game::spawnSparksEvent2(const sf::Vector2f& pos, float dir, float r)
-{
-    auto ptr = Framework::spawnSparksEvent2(pos, dir, r);
-    journal_->event<SpawnDestructionSystem>(ptr);
-    return ptr;
 }
 
 float Game::getTimeManipulationFuel() const
@@ -752,9 +716,9 @@ void Game::respawn(const std::string& map_name)
     ui_->registerPlayer(player_.get());
     time_manipulation_fuel_ = player_->getMaxTimeManipulation();
     setRag3Time(0.0f);
-    map_->getList<NPC>().clear();
 
     map_->loadMap(map_name.empty() ? map_->getMapName() : map_name);
+    engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
     agents_manager_ = std::make_unique<ai::AgentsManager>(&map_->getMapBlockage(), ai::AStar::EightNeighbours,
                                                           CONF<float>("characters/max_time_without_path_recalc"),
                                                           CONF<float>("characters/min_pos_change_without_path_recalc"),
@@ -764,10 +728,14 @@ void Game::respawn(const std::string& map_name)
             sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                          static_cast<float>(CONF<int>("graphics/window_height_px"))},
             sf::Color(j3x::get<int>(map_->getParams(), "lighting_color")));
+    fire_.clear();
+    bullets_.clear();
+    explosions_.clear();
+    desired_explosions_.clear();
+    destruction_systems_.clear();
 
 //    debug_map_blockage_ = std::make_unique<DebugMapBlockage>(&map_->getMapBlockage());
 
-    engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
     initObstacles();
     initDecorations();
     initPlayers();
@@ -779,16 +747,11 @@ void Game::respawn(const std::string& map_name)
 
     journal_->clear();
     this->cleanPlayerClone();
-
-    // TODO - after saving, stats should not be zeroed but restored to previous state
-    stats_->setEnemiesKilled(0);
-    stats_->setCrystalsPicked(0);
-    stats_->setExplosions(0);
-    stats_->setExp(0);
-    stats_->setLevel(0);
+    this->loadSave();
 
     ui_->initializeTutorialArrows();
     setGameState(Game::GameState::Normal);
+    should_finish_map_ = false;
 }
 
 void Game::setStartingPosition()
@@ -798,4 +761,109 @@ void Game::setStartingPosition()
         if (special->getId() == "starting_position")
             player_->setPosition(special->getPosition());
     }
+}
+
+void Game::preloadSave()
+{
+    achievements_->setAchievementsUnlocked(CONF<j3x::List>("save/achievements_unlocked"));
+    stats_->setEnemiesKilled(CONF<int>("save/kills"));
+    stats_->setCrystalsPicked(CONF<int>("save/crystals"));
+    stats_->setExplosions(CONF<int>("save/explosions"));
+    stats_->setExp(CONF<int>("save/exp"));
+    stats_->setLevel(CONF<int>("save/level"));
+    achievements_->rotate();
+}
+
+void Game::loadSave()
+{
+    preloadSave();
+
+    this->unregisterWeapons(player_.get());
+    player_->clearWeapons();
+    std::vector<std::shared_ptr<AbstractWeapon>> weapons;
+    for (const auto& weapon_data : CONF<j3x::List>("save/weapons"))
+    {
+        const auto& data = j3x::getObj<j3x::List>(weapon_data);
+        const auto& id = j3x::getObj<std::string>(data, 0);
+        const auto& state = j3x::getObj<float>(data, 1);
+        const auto& upgrades = j3x::getObj<j3x::List>(data, 2);
+
+        auto weapon = AbstractWeapon::create(player_.get(), j3x::getObj<std::string>(id));
+        weapon->setState(state);
+        for (const auto& upgrade : upgrades)
+            weapon->upgrade(j3x::getObj<std::string>(upgrade));
+        weapons.emplace_back(weapon);
+    }
+    player_->setWeapons(weapons);
+    this->registerWeapons(player_.get());
+
+    for (const auto& item : CONF<j3x::List>("save/backpack"))
+    {
+        const auto& data = j3x::getObj<j3x::List>(item);
+        const auto& id = j3x::getObj<std::string>(data, 0);
+        const auto& state = j3x::getObj<int>(data, 1);
+        player_->addSpecialToBackpack(id, state,
+                                      [this](Functional* functional) { this->registerFunctions(functional); });
+    }
+
+    player_->setSkillPoints(CONF<int>("save/skill_points"));
+    for (const auto& skill : CONF<j3x::List>("save/skills"))
+    {
+        const auto& data = j3x::getObj<j3x::List>(skill);
+        const auto& id = j3x::getObj<std::string>(data, 0);
+        const auto& state = j3x::getObj<int>(data, 1);
+        player_->setSkill(id, state);
+    }
+}
+
+void Game::saveState(bool presave)
+{
+    std::string out;
+    const auto& maps = CONF<j3x::List>("maps_order");
+
+    auto previous_maps = map_->getPreviousMapsAndCurrent();
+    if (presave)
+        previous_maps.emplace_back(map_->getNextMapName());
+    r3e::j3x::serializeAssign("maps_unlocked", previous_maps, out);
+    r3e::j3x::serializeAssign("achievements_unlocked", achievements_->getAchievementsUnlocked(), out);
+    r3e::j3x::serializeAssign("exp", stats_->getExp(), out);
+    r3e::j3x::serializeAssign("level", stats_->getLevel(), out);
+    r3e::j3x::serializeAssign("kills", stats_->getEnemiesKilled(), out);
+    r3e::j3x::serializeAssign("crystals", stats_->getCrystalsPicked(), out);
+    r3e::j3x::serializeAssign("explosions", stats_->getExplosions(), out);
+    r3e::j3x::serializeAssign("skill_points", player_->getSkillPoints(), out);
+    r3e::j3x::serializeAssign("skills", player_->getSkills(), out);
+    r3e::j3x::serializeAssign("weapons", player_->getWeaponsToSerialize(), out);
+    r3e::j3x::serializeAssign("backpack", player_->getBackpackToSerialize(), out);
+
+    RM.saveConfigFile("user_dir", "save", out);
+    CFG.appendConfig("../data/config/user/save.j3x", "save", true);
+}
+
+void Game::finishMap()
+{
+    Framework::finishMap();
+
+    if (is_playing_previous_map_)
+        ui_->openMenu();
+    else
+    {
+        const auto& new_map = map_->getNextMapName();
+        if (!new_map.empty())
+        {
+            this->saveState(true);
+            this->respawn(map_->getNextMapName());
+        }
+    }
+}
+
+void Game::startGame(const std::string& map_name)
+{
+    Framework::startGame(map_name);
+
+    is_playing_previous_map_ = !map_name.empty();
+
+    this->respawn(!is_playing_previous_map_ ? j3x::getObj<std::string>(CONF<j3x::List>("save/maps_unlocked").back()) :
+                  map_name);
+    ui_->startGame();
 }

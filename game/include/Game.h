@@ -65,9 +65,8 @@ public:
     void useSpecialObject() override;
     bool setBulletTime();
     void setNormalTime();
-    void setRag3Time(float time_elapsed) override;
-    void forceZoomTo(AbstractPhysicalObject* obj) override;
     void respawn(const std::string& map_name) override;
+    void startGame(const std::string& map_name) override;
 
     // Journal methods
     [[nodiscard]] bool isJournalFreezed() const;
@@ -77,6 +76,11 @@ public:
     NPC* spawnNewPlayerClone(const std::string& weapon_id) override;
 
     void setGameState(Framework::GameState state) override;
+
+    // Misc
+    void finishMap() override;
+    void setRag3Time(float time_elapsed) override;
+    void forceZoomTo(AbstractPhysicalObject* obj) override;
 
 private:
     void updateMapObjects(float time_elapsed) override;
@@ -91,6 +95,9 @@ private:
 
     void killNPC(NPC* npc);
     void cleanPlayerClone();
+    void preloadSave();
+    void loadSave();
+    void saveState(bool presave);
 
     std::unique_ptr<audio::MusicManager> music_manager_;
 
@@ -104,6 +111,8 @@ private:
     AbstractPhysicalObject* current_obj_zoom_;
     float current_time_factor_;
     float time_manipulation_fuel_;
+
+    bool is_playing_previous_map_;
 
 };
 

@@ -30,11 +30,11 @@ namespace r3e {
             params_ = j3x::parse(filename);
         }
 
-        void appendConfig(const std::string& filename, const std::string& ns = "")
+        void appendConfig(const std::string& filename, const std::string& ns = "", bool force_update = false)
         {
             auto new_params = j3x::parse(filename, ns);
 
-            j3x::mergeParams(*params_, *new_params);
+            j3x::mergeParams(*params_, *new_params, force_update);
         }
 
         template<class T>

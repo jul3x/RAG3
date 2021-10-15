@@ -22,12 +22,18 @@ public:
         Agility = 3
     };
 
+    static constexpr std::array<Player::Skills, 4> SKILLS =
+            {Player::Skills::Intelligence, Player::Skills::Heart,
+             Player::Skills::Strength, Player::Skills::Agility};
+
     explicit Player(const sf::Vector2f& position);
 
     void setDead();
     void setHealth(float life) override;
     void setRunning(bool run);
     void setName(const std::string& name);
+    void setSkill(const std::string& skill, int count);
+    void setSkillPoints(int points);
 
     bool isRunning() const;
     bool isAlive() const;
@@ -42,13 +48,17 @@ public:
     float getRunningFuelSpeed() const;
     int getSkillPoints() const;
     int getSkill(Skills skill) const;
+    const j3x::List& getSkills() const;
+    const std::string& getSkillName(Skills skill) const;
     std::list<std::pair<Special, int>>& getBackpack();
+    const j3x::List& getBackpackToSerialize();
+    const j3x::List& getWeaponsToSerialize();
     const std::string& getName() const;
     void makeLifeBar(const std::string& name) override;
 
     void addSkillPoints(int skill_points);
     bool addSkill(Skills skill);
-    void addSpecialToBackpack(Special* special, const std::function<void(Functional*)>& register_func);
+    void addSpecialToBackpack(const std::string& id, int count, const std::function<void(Functional*)>& register_func);
     void useItem(const std::string& name);
     void upgradeWeapon(const std::string& weapon, const std::string& special);
     void changePlayerTexture(const std::string& name);
@@ -67,6 +77,7 @@ private:
 
     std::list<std::pair<Special, int>> backpack_;
     int skill_points_;
+    std::unordered_map<Player::Skills, std::string> skills_names_;
     std::map<Skills, int> skills_;
     std::string name_;
 

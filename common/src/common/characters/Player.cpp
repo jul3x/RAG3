@@ -20,6 +20,11 @@ Player::Player(const sf::Vector2f& position) :
         is_running_(false),
         running_fuel_(0.0f)
 {
+    skills_names_ = {{Skills::Intelligence, "Intelligence"},
+                     {Skills::Heart, "Heart"},
+                     {Skills::Strength, "Strength"},
+                     {Skills::Agility, "Agility"}};
+
     if (CONF<bool>("no_clip_mode"))
     {
         this->changeCollisionArea(collision::None());
@@ -121,22 +126,23 @@ void Player::getCut(const MeleeWeapon& weapon, float factor)
     }
 }
 
-void Player::addSpecialToBackpack(Special* special, const std::function<void(Functional*)>& register_func)
+void
+Player::addSpecialToBackpack(const std::string& id, int count, const std::function<void(Functional*)>& register_func)
 {
     for (auto& item : backpack_)
     {
-        if (item.first.getId() == special->getId())
+        if (item.first.getId() == id)
         {
             item.second++;
             return;
         }
     }
 
-    backpack_.emplace_back(std::make_pair(Special({}, special->getId()), 1));
+    backpack_.emplace_back(std::make_pair(Special({}, id), count));
     backpack_.back().first
-             .setSize(CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", special->getId(), "size"));
+             .setSize(CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", id, "size"));
     backpack_.back().first.changeOrigin(
-            CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", special->getId(), "size") / 2.0f);
+            CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", id, "size") / 2.0f);
     backpack_.back().first.removeShadow();
     backpack_.back().first.lightOff();
     register_func(&backpack_.back().first);
@@ -312,4 +318,54 @@ void Player::setName(const std::string& name)
 {
     name_ = name;
 }
+
+void Player::setSkillPoints(int points)
+{
+    skill_points_ = points;
+}
+
+void Player::setSkill(const std::string& skill, int count)
+{
+    if (skill == "Intelligence")
+        skills_[Skills::Intelligence] = count;
+    else if (skill == "Heart")
+        skills_[Skills::Heart] = count;
+    else if (skill == "Strength")
+        skills_[Skills::Strength] = count;
+    else
+        skills_[Skills::Agility] = count;
+}
+
+const j3x::List& Player::getSkills() const
+{
+    return j3x::convertToList<Player::Skills>(
+        SKILLS, [this](j3x::List& ret, const auto& item) { 
+            ret.emplace_back(j3x::List{this->getSkillName(item), this->getSkill(item)}); 
+        });
+}
+
+const std::string& Player::getSkillName(Player::Skills skill) const
+{
+    return skills_names_.at(skill);
+}
+
+const j3x::List& Player::getBackpackToSerialize()
+{
+    return j3x::convertToList<std::pair<Special, int>>(
+        backpack_, [](j3x::List& ret, const auto& item) { 
+            ret.emplace_back(j3x::List{item.first.getId(), item.second}); 
+        });
+}
+
+const j3x::List& Player::getWeaponsToSerialize()
+{
+    return j3x::convertToList<std::shared_ptr<AbstractWeapon>>(
+        weapons_in_backpack_, [](j3x::List& ret, const auto& weapon) { 
+            ret.emplace_back(j3x::List{
+                weapon->getId(), weapon->getState(), 
+                j3x::convertToList(weapon->getUpgrades())
+            });
+        });
+}
+
 

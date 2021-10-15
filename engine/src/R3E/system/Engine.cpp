@@ -82,6 +82,11 @@ namespace r3e {
         sound_manager_->playSound(buffer, position, volume, force_pitch);
     }
 
+    void Engine::spawnSoundEvent(const sf::SoundBuffer& buffer, float volume)
+    {
+        sound_manager_->playSound(buffer, volume);
+    }
+
     void Engine::spawnEffect(const std::shared_ptr<graphics::Effect>& effect)
     {
         effects_.push_back(effect);
@@ -135,36 +140,6 @@ namespace r3e {
         LOG.info("[Engine] Screen resolution is: " + std::to_string(res_x) + "px, " + std::to_string(res_y) + "px.");
 
         return {res_x, res_y};
-    }
-
-    void Engine::registerStaticObject(StaticObject* obj)
-    {
-        collisions_->insert(obj);
-    }
-
-    void Engine::registerDynamicObject(DynamicObject* obj)
-    {
-        collisions_->insert(obj);
-    }
-
-    void Engine::registerHoveringObject(HoveringObject* obj)
-    {
-        collisions_->insert(obj);
-    }
-
-    void Engine::deleteStaticObject(StaticObject* obj)
-    {
-        collisions_->erase(obj);
-    }
-
-    void Engine::deleteDynamicObject(DynamicObject* obj)
-    {
-        collisions_->erase(obj);
-    }
-
-    void Engine::deleteHoveringObject(HoveringObject* obj)
-    {
-        collisions_->erase(obj);
     }
 
     void Engine::updateAnimationEvents(float time_elapsed)

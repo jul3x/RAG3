@@ -5,14 +5,14 @@
 #include <R3E/utils/Geometry.h>
 
 #include <common/ResourceManager.h>
-#include <common/weapons/MeleeWeapon.h>
 #include <common/Framework.h>
 
 #include <common/events/Event.h>
 #include <common/misc/Journal.h>
+#include <common/misc/JournalEntries.h>
 
 
-Framework::Framework() : time_elapsed_(0.0f), state_(Framework::GameState::Menu)
+Framework::Framework() : time_elapsed_(0.0f), state_(Framework::GameState::Menu), should_finish_map_(false)
 {
     engine_ = std::make_unique<Engine>();
     engine_->registerGame(this);
@@ -83,7 +83,7 @@ void Framework::updateMapObjects(float time_elapsed)
             this->spawnExplosionEvent((*it)->getPosition());
 
             auto next_it = std::next(it);
-            engine_->deleteStaticObject(it->get());
+            engine_->unregisterObj<StaticObject>(it->get());
 
             if ((*it)->getActivation() == Functional::Activation::OnKill)
             {
@@ -121,7 +121,7 @@ void Framework::updateMapObjects(float time_elapsed)
             if (this->getJournal() != nullptr)
                 this->getJournal()->event<DestroySpecial>(it->get());
             auto next_it = std::next(it);
-            engine_->deleteHoveringObject(it->get());
+            engine_->unregisterObj<HoveringObject>(it->get());
 
             specials.erase(it);
             it = next_it;
@@ -179,12 +179,56 @@ void Framework::updateBullets(float time_elapsed)
 
             if (getJournal() != nullptr)
                 getJournal()->event<DestroyBullet>(it->get());
-            engine_->deleteHoveringObject(it->get());
+            engine_->unregisterObj<HoveringObject>(it->get());
             auto next_it = std::next(it);
             bullets_.erase(it);
             it = next_it;
         }
     }
+}
+
+void Framework::updateFire(float time_elapsed)
+{
+    for (auto it = fire_.begin(); it != fire_.end(); ++it)
+    {
+        if (!(*it)->update(time_elapsed))
+        {
+            engine_->unregisterObj<HoveringObject>(it->get());
+            auto next_it = std::next(it);
+            fire_.erase(it);
+            it = next_it;
+        }
+    }
+}
+
+void Framework::updateExplosions()
+{
+    for (const auto& explosion : explosions_)
+    {
+        engine_->unregisterObj<HoveringObject>(explosion.get());
+    }
+    explosions_.clear();
+
+    for (const auto& desired_explosion : desired_explosions_)
+    {
+        camera_->setShaking(1.5f);
+        explosions_.emplace_back(std::make_unique<Explosion>(desired_explosion.first, desired_explosion.second));
+        engine_->registerObj<HoveringObject>(explosions_.back().get());
+    }
+
+    desired_explosions_.clear();
+}
+
+void Framework::updateDestructionSystems(float time_elapsed)
+{
+    utils::eraseIf<std::unique_ptr<DestructionSystem>>(destruction_systems_, [&time_elapsed, this](
+            std::unique_ptr<DestructionSystem>& system) {
+        if (!system->update(time_elapsed))
+        {
+            return true;
+        }
+        return false;
+    });
 }
 
 void Framework::draw(graphics::Graphics& graphics)
@@ -220,6 +264,190 @@ const std::list<std::unique_ptr<Bullet>>& Framework::getBullets() const
 {
     return bullets_;
 }
+
+void Framework::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
+{
+    auto bullet = dynamic_cast<Bullet*>(h_obj);
+    auto obstacle = dynamic_cast<Obstacle*>(s_obj);
+    auto obstacle_tile = dynamic_cast<ObstacleTile*>(s_obj);
+
+    if (bullet != nullptr)
+    {
+        if (obstacle != nullptr)
+        {
+            if (getJournal() != nullptr)
+                getJournal()->event<ShotObstacle>(obstacle);
+            obstacle->getShot(*bullet);
+
+            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
+            spawnSparksEvent2(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
+            bullet->setDead();
+        }
+        else if (obstacle_tile != nullptr)
+        {
+            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
+            spawnSparksEvent2(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
+            bullet->setDead();
+        }
+        return;
+    }
+
+    auto explosion = dynamic_cast<Explosion*>(h_obj);
+    if (explosion != nullptr)
+    {
+        if (obstacle != nullptr)
+        {
+            if (getJournal() != nullptr)
+                getJournal()->event<ShotObstacle>(obstacle);
+            explosion->applyForce(obstacle);
+        }
+        return;
+    }
+
+    auto fire = dynamic_cast<Fire*>(h_obj);
+    if (fire != nullptr)
+    {
+        fire->setDead();
+    }
+}
+
+void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
+{
+    auto bullet = dynamic_cast<Bullet*>(h_obj);
+    auto character = dynamic_cast<Character*>(d_obj);
+
+    auto factor = this->getRag3Time() > 0.0f ? CONF<float>("characters/rag3_factor") : 1.0f;
+
+    if (bullet != nullptr && character != nullptr)
+    {
+        if (bullet->getUser() != character)
+        {
+            if (bullet->getUser() != getPlayer())
+            {
+                if (character == getPlayer())
+                {
+                    static auto strength_skill_factor = CONF<float>("characters/strength_skill_factor");
+                    factor = 1.0f / factor;
+                    factor = factor * (strength_skill_factor - getPlayer()->getSkill(Player::Skills::Strength)) /
+                             strength_skill_factor;
+                }
+                else
+                    factor = 1.0f;
+            }
+
+            character->getShot(*bullet, factor);
+
+            float offset = bullet->getRotation() > 0.0f && bullet->getRotation() < 180.0f ? -5.0f : 5.0f;
+            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, offset), bullet->getRotation() + 180.0f,
+                            bullet->getDeadlyFactor() * factor);
+
+            bullet->setDead();
+        }
+        return;
+    }
+
+    auto special = dynamic_cast<Special*>(h_obj);
+
+    if (special != nullptr && character != nullptr && special->isActive())
+    {
+        if (special->getActivation() == Functional::Activation::OnEnter)
+        {
+            auto player = dynamic_cast<Player*>(d_obj);
+            if (special->isUsableByNPC())
+            {
+                special->use(character);
+            }
+            else if (player != nullptr)
+            {
+                special->use(player);
+            }
+        }
+        else if (special->getActivation() == Functional::Activation::OnUse)
+        {
+            character->setCurrentSpecialObject(special);
+        }
+        else
+        {
+            auto player = dynamic_cast<Player*>(d_obj);
+            if (player != nullptr)
+            {
+                spawnSound(RM.getSound("collect"), special->getPosition());
+                player->addSpecialToBackpack(special->getId(), 1,
+                                             [this](Functional* functional) { this->registerFunctions(functional); });
+                special_functions_->destroy(special, {}, player);
+            }
+        }
+        return;
+    }
+
+    auto talkable_area = dynamic_cast<TalkableArea*>(h_obj);
+
+    if (talkable_area != nullptr && character != nullptr)
+    {
+        character->setCurrentTalkableCharacter(talkable_area->getFather());
+        return;
+    }
+
+    auto explosion = dynamic_cast<Explosion*>(h_obj);
+
+    if (character != nullptr && explosion != nullptr)
+    {
+        explosion->applyForce(character, 1.0f);
+        return;
+    }
+
+    auto fire = dynamic_cast<Fire*>(h_obj);
+
+    if (character != nullptr && fire != nullptr)
+    {
+        if (fire->getUser() != character)
+            character->setGlobalState(Character::GlobalState::OnFire);
+        return;
+    }
+
+    auto melee_weapon_area = dynamic_cast<MeleeWeaponArea*>(h_obj);
+
+    if (character != nullptr && melee_weapon_area != nullptr)
+    {
+        if (character != melee_weapon_area->getFather()->getUser())
+        {
+            if (melee_weapon_area->getFather()->getUser() != getPlayer())
+            {
+                if (character == getPlayer())
+                    factor = 1.0f / factor;
+                else
+                    factor = 1.0f;
+            }
+
+            float angle = utils::geo::wrapAngle0_360(std::get<1>(utils::geo::cartesianToPolar(
+                    melee_weapon_area->getFather()->getUser()->getPosition() - character->getPosition())) * 180.0 /
+                                                     M_PI);
+            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, angle > 0 && angle <= 180 ? 5.0 : -5.0),
+                            angle, melee_weapon_area->getFather()->getDeadlyFactor() * factor);
+            spawnSound(RM.getSound("melee_hit"), character->getPosition());
+            melee_weapon_area->setActive(false);
+            character->getCut(*melee_weapon_area->getFather(), factor);
+        }
+        return;
+    }
+}
+
+void Framework::alertCollision(DynamicObject* d_obj, StaticObject* s_obj)
+{
+    // Nothing to do for now (maybe sounds?)
+}
+
+void Framework::alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2)
+{
+    // Nothing to do for now (maybe sounds?)
+}
+
+Fire* Framework::spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
+{
+    auto vector = sf::Vector2f{static_cast<float>(std::cos(dir)), static_cast<float>(std::sin(dir))};
+    return this->spawnNewFire(user, pos + 20.0f * vector, dir);
+}
+
 
 void Framework::spawnEvent(const std::string& name, const sf::Vector2f& pos, float dir, float r)
 {
@@ -308,192 +536,6 @@ void Framework::spawnExplosionForce(const sf::Vector2f& pos, float r)
     desired_explosions_.emplace_back(pos, r);
 }
 
-void Framework::updateExplosions()
-{
-    for (const auto& explosion : explosions_)
-    {
-        engine_->deleteHoveringObject(explosion.get());
-    }
-    explosions_.clear();
-
-    for (const auto& desired_explosion : desired_explosions_)
-    {
-        camera_->setShaking(1.5f);
-        explosions_.emplace_back(std::make_unique<Explosion>(desired_explosion.first, desired_explosion.second));
-        engine_->registerHoveringObject(explosions_.back().get());
-    }
-
-    desired_explosions_.clear();
-}
-
-void Framework::alertCollision(HoveringObject* h_obj, StaticObject* s_obj)
-{
-    auto bullet = dynamic_cast<Bullet*>(h_obj);
-    auto fire = dynamic_cast<Fire*>(h_obj);
-    auto explosion = dynamic_cast<Explosion*>(h_obj);
-    auto obstacle = dynamic_cast<Obstacle*>(s_obj);
-    auto obstacle_tile = dynamic_cast<ObstacleTile*>(s_obj);
-
-    if (bullet != nullptr)
-    {
-        if (obstacle != nullptr)
-        {
-            if (getJournal() != nullptr)
-                getJournal()->event<ShotObstacle>(obstacle);
-            obstacle->getShot(*bullet);
-
-            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
-            spawnSparksEvent2(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
-            bullet->setDead();
-        }
-        else if (obstacle_tile != nullptr)
-        {
-            spawnSparksEvent(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
-            spawnSparksEvent2(bullet->getPosition(), bullet->getRotation() - 90.0f, 0.0f);
-            bullet->setDead();
-        }
-    }
-    else if (explosion != nullptr)
-    {
-        if (obstacle != nullptr)
-        {
-            if (getJournal() != nullptr)
-                getJournal()->event<ShotObstacle>(obstacle);
-            explosion->applyForce(obstacle);
-        }
-    }
-    else if (fire != nullptr)
-    {
-        fire->setDead();
-    }
-}
-
-void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
-{
-    auto bullet = dynamic_cast<Bullet*>(h_obj);
-    auto character = dynamic_cast<Character*>(d_obj);
-
-    auto factor = this->getRag3Time() > 0.0f ? CONF<float>("characters/rag3_factor") : 1.0f;
-
-    if (bullet != nullptr && character != nullptr)
-    {
-        if (bullet->getUser() != character)
-        {
-            if (bullet->getUser() != getPlayer())
-            {
-                if (character == getPlayer())
-                {
-                    static auto strength_skill_factor = CONF<float>("characters/strength_skill_factor");
-                    factor = 1.0f / factor;
-                    factor = factor * (strength_skill_factor - getPlayer()->getSkill(Player::Skills::Strength)) /
-                             strength_skill_factor;
-                }
-                else
-                    factor = 1.0f;
-            }
-
-            character->getShot(*bullet, factor);
-
-            float offset = bullet->getRotation() > 0.0f && bullet->getRotation() < 180.0f ? -5.0f : 5.0f;
-            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, offset), bullet->getRotation() + 180.0f,
-                            bullet->getDeadlyFactor() * factor);
-
-            bullet->setDead();
-        }
-        return;
-    }
-
-    auto special = dynamic_cast<Special*>(h_obj);
-
-    if (special != nullptr && character != nullptr && special->isActive())
-    {
-        if (special->getActivation() == Functional::Activation::OnEnter)
-        {
-            auto player = dynamic_cast<Player*>(d_obj);
-            if (special->isUsableByNPC())
-            {
-                special->use(character);
-            }
-            else if (player != nullptr)
-            {
-                special->use(player);
-            }
-        }
-        else if (special->getActivation() == Functional::Activation::OnUse)
-        {
-            character->setCurrentSpecialObject(special);
-        }
-        else
-        {
-            auto player = dynamic_cast<Player*>(d_obj);
-            if (player != nullptr)
-            {
-                spawnSound(RM.getSound("collect"), special->getPosition());
-                player->addSpecialToBackpack(special,
-                                             [this](Functional* functional) { this->registerFunctions(functional); });
-                special_functions_->destroy(special, {}, player);
-            }
-        }
-    }
-
-    auto talkable_area = dynamic_cast<TalkableArea*>(h_obj);
-
-    if (talkable_area != nullptr && character != nullptr)
-    {
-        character->setCurrentTalkableCharacter(talkable_area->getFather());
-    }
-
-    auto explosion = dynamic_cast<Explosion*>(h_obj);
-
-    if (character != nullptr && explosion != nullptr)
-    {
-        explosion->applyForce(character, 1.0f);
-    }
-
-    auto fire = dynamic_cast<Fire*>(h_obj);
-
-    if (character != nullptr && fire != nullptr)
-    {
-        if (fire->getUser() != character)
-            character->setGlobalState(Character::GlobalState::OnFire);
-    }
-
-    auto melee_weapon_area = dynamic_cast<MeleeWeaponArea*>(h_obj);
-
-    if (character != nullptr && melee_weapon_area != nullptr)
-    {
-        if (character != melee_weapon_area->getFather()->getUser())
-        {
-            if (melee_weapon_area->getFather()->getUser() != getPlayer())
-            {
-                if (character == getPlayer())
-                    factor = 1.0f / factor;
-                else
-                    factor = 1.0f;
-            }
-
-            float angle = utils::geo::wrapAngle0_360(std::get<1>(utils::geo::cartesianToPolar(
-                    melee_weapon_area->getFather()->getUser()->getPosition() - character->getPosition())) * 180.0 /
-                                                     M_PI);
-            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, angle > 0 && angle <= 180 ? 5.0 : -5.0),
-                            angle, melee_weapon_area->getFather()->getDeadlyFactor() * factor);
-            spawnSound(RM.getSound("melee_hit"), character->getPosition());
-            melee_weapon_area->setActive(false);
-            character->getCut(*melee_weapon_area->getFather(), factor);
-        }
-    }
-}
-
-void Framework::alertCollision(DynamicObject* d_obj, StaticObject* s_obj)
-{
-    // Nothing to do for now (maybe sounds?)
-}
-
-void Framework::alertCollision(DynamicObject* d_obj_1, DynamicObject* d_obj_2)
-{
-    // Nothing to do for now (maybe sounds?)
-}
-
 Bullet* Framework::spawnNewBullet(Character* user, const std::string& id, const sf::Vector2f& pos, float dir)
 {
     bullets_.emplace_back(std::make_unique<Bullet>(user, pos, id, dir));
@@ -501,29 +543,9 @@ Bullet* Framework::spawnNewBullet(Character* user, const std::string& id, const 
     auto ptr = bullets_.back().get();
 
     registerFunctions(ptr);
-    engine_->registerHoveringObject(ptr);
+    engine_->registerObj<HoveringObject>(ptr);
 
     return ptr;
-}
-
-Fire* Framework::spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
-{
-    auto vector = sf::Vector2f{static_cast<float>(std::cos(dir)), static_cast<float>(std::sin(dir))};
-    return this->spawnNewFire(user, pos + 20.0f * vector, dir);
-}
-
-void Framework::updateFire(float time_elapsed)
-{
-    for (auto it = fire_.begin(); it != fire_.end(); ++it)
-    {
-        if (!(*it)->update(time_elapsed))
-        {
-            engine_->deleteHoveringObject(it->get());
-            auto next_it = std::next(it);
-            fire_.erase(it);
-            it = next_it;
-        }
-    }
 }
 
 Fire* Framework::spawnNewFire(Character* user, const sf::Vector2f& pos, float dir)
@@ -533,7 +555,7 @@ Fire* Framework::spawnNewFire(Character* user, const sf::Vector2f& pos, float di
     auto ptr = fire_.back().get();
 
     registerLight(ptr);
-    engine_->registerHoveringObject(ptr);
+    engine_->registerObj<HoveringObject>(ptr);
 
     return ptr;
 }
@@ -541,7 +563,7 @@ Fire* Framework::spawnNewFire(Character* user, const sf::Vector2f& pos, float di
 ObstacleTile* Framework::spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos)
 {
     auto new_ptr = map_->spawn<ObstacleTile>(pos, 0.0f, id);
-    engine_->registerStaticObject(new_ptr);
+    engine_->registerObj<StaticObject>(new_ptr);
     return new_ptr;
 }
 
@@ -564,93 +586,21 @@ Obstacle* Framework::spawnNewObstacle(const std::string& id, int u_id, const sf:
     }
 
     registerLight(new_ptr);
-    engine_->registerStaticObject(new_ptr);
+    engine_->registerObj<StaticObject>(new_ptr);
 
     registerFunctions(new_ptr);
 
     return new_ptr;
 }
 
-void Framework::findAndDeleteCharacter(Character* ptr)
+void Framework::spawnNull(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
 {
-    auto& npcs = map_->getList<NPC>();
-    for (auto it = npcs.rbegin(); it != npcs.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            ui_->removeArrowIfExists(ptr);
-            auto player_clone = getPlayerClone();
-            if (player_clone != nullptr)
-            {
-                player_clone->removeEnemy(ptr);
-            }
-            engine_->deleteDynamicObject(ptr);
-            auto talkable_area = ptr->getTalkableArea();
-            if (talkable_area != nullptr)
-            {
-                engine_->deleteHoveringObject(talkable_area);
-            }
-            //TODO change to unregisterWeapons
-            for (auto& weapon : ptr->getWeapons())
-            {
-                auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
 
-                if (melee_weapon != nullptr)
-                {
-                    engine_->deleteHoveringObject(melee_weapon->getMeleeWeaponArea());
-                }
-            }
-            npcs.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Framework] Warning - character to delete not found!");
 }
 
-void Framework::findAndDeleteBullet(Bullet* ptr)
+Decoration* Framework::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
 {
-    for (auto it = bullets_.rbegin(); it != bullets_.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            engine_->deleteHoveringObject(ptr);
-            bullets_.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Framework] Warning - bullet to delete not found!");
-}
-
-void Framework::findAndDeleteFire(Fire* ptr)
-{
-    for (auto it = fire_.rbegin(); it != fire_.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            engine_->deleteHoveringObject(ptr);
-            fire_.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Framework] Warning - fire to delete not found!");
-}
-
-void Framework::findAndDeleteDecoration(Decoration* ptr)
-{
-    auto& decorations = map_->getList<Decoration>();
-    for (auto it = decorations.rbegin(); it != decorations.rend(); ++it)
-    {
-        if (it->get() == ptr)
-        {
-            decorations.erase((++it).base());
-            return;
-        }
-    }
-
-    LOG.error("[Framework] Warning - decoration to delete not found!");
+    return this->spawnNewDecoration(name, -1, pos);
 }
 
 Special* Framework::getCurrentSpecialObject() const
@@ -693,11 +643,6 @@ Framework::getSpawningFunction(const std::string& name)
     return std::make_tuple(it->second, swirl);
 }
 
-void Framework::spawnNull(Character* user, const std::string& name, const sf::Vector2f& pos, float dir)
-{
-
-}
-
 const std::list<std::unique_ptr<Fire>>& Framework::getFires() const
 {
     return fire_;
@@ -715,17 +660,12 @@ Decoration* Framework::spawnNewDecoration(const std::string& id, int u_id, const
     return ptr;
 }
 
-Decoration* Framework::spawnDecoration(const sf::Vector2f& pos, const std::string& name)
-{
-    return this->spawnNewDecoration(name, -1, pos);
-}
-
 Special* Framework::spawnNewSpecial(const std::string& id, int u_id,
                                     const sf::Vector2f& pos, Functional::Activation activation,
                                     const j3x::List& funcs, const j3x::List& datas)
 {
     auto ptr = map_->spawn<Special>(pos, 0.0f, id);
-    engine_->registerHoveringObject(ptr);
+    engine_->registerObj<HoveringObject>(ptr);
 
     if (u_id != -1)
     {
@@ -745,14 +685,80 @@ Special* Framework::spawnNewSpecial(const std::string& id, int u_id,
     return ptr;
 }
 
-void Framework::findAndDeleteSpecial(Special* ptr)
+template<>
+void Framework::findAndDelete<Character>(Character* ptr)
+{
+    auto& npcs = map_->getList<NPC>();
+    for (auto it = npcs.rbegin(); it != npcs.rend(); ++it)
+    {
+        if (it->get() == ptr)
+        {
+            this->unregisterCharacter(ptr);
+            npcs.erase((++it).base());
+            return;
+        }
+    }
+
+    LOG.error("[Framework] Warning - character to delete not found!");
+}
+
+template<>
+void Framework::findAndDelete<Bullet>(Bullet* ptr)
+{
+    for (auto it = bullets_.rbegin(); it != bullets_.rend(); ++it)
+    {
+        if (it->get() == ptr)
+        {
+            engine_->unregisterObj<HoveringObject>(ptr);
+            bullets_.erase((++it).base());
+            return;
+        }
+    }
+
+    LOG.error("[Framework] Warning - bullet to delete not found!");
+}
+
+template<>
+void Framework::findAndDelete<Fire>(Fire* ptr)
+{
+    for (auto it = fire_.rbegin(); it != fire_.rend(); ++it)
+    {
+        if (it->get() == ptr)
+        {
+            engine_->unregisterObj<HoveringObject>(ptr);
+            fire_.erase((++it).base());
+            return;
+        }
+    }
+
+    LOG.error("[Framework] Warning - fire to delete not found!");
+}
+
+template<>
+void Framework::findAndDelete<Decoration>(Decoration* ptr)
+{
+    auto& decorations = map_->getList<Decoration>();
+    for (auto it = decorations.rbegin(); it != decorations.rend(); ++it)
+    {
+        if (it->get() == ptr)
+        {
+            decorations.erase((++it).base());
+            return;
+        }
+    }
+
+    LOG.error("[Framework] Warning - decoration to delete not found!");
+}
+
+template<>
+void Framework::findAndDelete<Special>(Special* ptr)
 {
     auto& specials = map_->getList<Special>();
     for (auto it = specials.rbegin(); it != specials.rend(); ++it)
     {
         if (it->get() == ptr)
         {
-            engine_->deleteHoveringObject(ptr);
+            engine_->unregisterObj<HoveringObject>(ptr);
             specials.erase((++it).base());
             return;
         }
@@ -761,7 +767,8 @@ void Framework::findAndDeleteSpecial(Special* ptr)
     LOG.error("[Framework] Warning - special to delete not found!");
 }
 
-void Framework::findAndDeleteDestructionSystem(DestructionSystem* ptr)
+template<>
+void Framework::findAndDelete<DestructionSystem>(DestructionSystem* ptr)
 {
     for (auto it = destruction_systems_.rbegin(); it != destruction_systems_.rend(); ++it)
     {
@@ -773,6 +780,15 @@ void Framework::findAndDeleteDestructionSystem(DestructionSystem* ptr)
     }
 
     LOG.error("[Framework] Warning - destruction system to delete not found!");
+}
+
+void Framework::unregisterTalkableArea(Character* character)
+{
+    auto talkable_area = character->getTalkableArea();
+    if (talkable_area != nullptr)
+    {
+        engine_->unregisterObj<HoveringObject>(talkable_area);
+    }
 }
 
 void Framework::registerWeapons(Character* character)
@@ -793,9 +809,39 @@ void Framework::registerWeapon(AbstractWeapon* weapon)
         auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon);
         if (melee_weapon != nullptr)
         {
-            engine_->registerHoveringObject(melee_weapon->getMeleeWeaponArea());
+            engine_->registerObj<HoveringObject>(melee_weapon->getMeleeWeaponArea());
         }
     }
+}
+
+void Framework::unregisterWeapons(Character* character)
+{
+    for (auto& weapon : character->getWeapons())
+    {
+        auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
+        if (melee_weapon != nullptr)
+        {
+            engine_->unregisterObj<HoveringObject>(melee_weapon->getMeleeWeaponArea());
+        }
+    }
+}
+
+void Framework::unregisterCharacter(Character* character, bool clear_clone)
+{
+    ui_->removeArrowIfExists(character);
+    
+    if (clear_clone)
+    {
+        auto player_clone = getPlayerClone();
+        if (player_clone != nullptr)
+        {
+            player_clone->removeEnemy(character);
+        }
+    }
+
+    engine_->unregisterObj<DynamicObject>(character);
+    this->unregisterTalkableArea(character);
+    this->unregisterWeapons(character);
 }
 
 void Framework::registerFunctions(Functional* functional) const
@@ -815,18 +861,6 @@ void Framework::registerLight(Lightable* lightable) const
     {
         lightable->getLightPoint()->registerGraphics(engine_->getGraphics());
     }
-}
-
-void Framework::updateDestructionSystems(float time_elapsed)
-{
-    utils::eraseIf<std::unique_ptr<DestructionSystem>>(destruction_systems_, [&time_elapsed, this](
-            std::unique_ptr<DestructionSystem>& system) {
-        if (!system->update(time_elapsed))
-        {
-            return true;
-        }
-        return false;
-    });
 }
 
 void Framework::initParams()
@@ -933,6 +967,14 @@ void Framework::forceZoomTo(AbstractPhysicalObject* character)
 
 }
 
+void Framework::killPlayer(Player* player)
+{
+    spawnDecoration(player->getPosition(), "blood");
+    spawnKillEvent(player->getPosition());
+    player->setDead();
+    engine_->unregisterObj<DynamicObject>(player);
+}
+
 NPC* Framework::spawnNewNPC(const std::string& id, int u_id, Functional::Activation activation,
                             const j3x::List& funcs, const j3x::List& datas)
 {
@@ -962,11 +1004,11 @@ void Framework::setGameState(Framework::GameState state)
 void Framework::initObstacles()
 {
     for (auto& obstacle : map_->getList<ObstacleTile>())
-        engine_->registerStaticObject(obstacle.get());
+        engine_->registerObj<StaticObject>(obstacle.get());
 
     for (auto& obstacle : map_->getList<Obstacle>())
     {
-        engine_->registerStaticObject(obstacle.get());
+        engine_->registerObj<StaticObject>(obstacle.get());
         registerLight(obstacle.get());
 
         registerFunctions(obstacle.get());
@@ -1005,7 +1047,7 @@ void Framework::initSpecials()
     for (auto& special : map_->getList<Special>())
     {
         registerLight(special.get());
-        engine_->registerHoveringObject(special.get());
+        engine_->registerObj<HoveringObject>(special.get());
         registerFunctions(special.get());
     }
 }
@@ -1036,6 +1078,12 @@ void Framework::spawnSound(const sf::SoundBuffer& sound, const sf::Vector2f& pos
         engine_->spawnSoundEvent(sound, pos, 100.0f, force_pitch);
 }
 
+void Framework::spawnSound(const sf::SoundBuffer& sound)
+{
+    if (CONF<bool>("sound/sound_on"))
+        engine_->spawnSoundEvent(sound, 100.0f);
+}
+
 DestructionSystem* Framework::spawnSparksEvent2(const sf::Vector2f& pos, float dir, float r)
 {
     return spawnNewDestructionSystem(pos, dir - 90.0f, destruction_params_["debris2"], 1.0f);
@@ -1047,6 +1095,21 @@ float Framework::getTimeManipulationFuel() const
 }
 
 void Framework::respawn(const std::string& map_name)
+{
+
+}
+
+void Framework::finishMap()
+{
+    should_finish_map_ = false;
+}
+
+void Framework::setFinishMap()
+{
+    should_finish_map_ = true;
+}
+
+void Framework::startGame(const std::string& map_name)
 {
 
 }

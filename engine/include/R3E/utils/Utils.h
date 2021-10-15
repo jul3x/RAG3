@@ -9,5 +9,4 @@
 #include "Numeric.h"
 #include "Misc.h"
 
-
 #endif //RAG3_ENGINE_INCLUDE_R3E_UTILS_UTILS_H

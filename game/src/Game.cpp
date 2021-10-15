@@ -223,7 +223,7 @@ void Game::draw(graphics::Graphics& graphics)
                 graphics.drawSorted(*obj);
         };
 
-        auto draw_light = [&graphics, this](auto& list) {
+        auto draw_light = [this](auto& list) {
             for (const auto& obj : list)
             {
                 auto light = obj->getLightPoint();
@@ -257,7 +257,6 @@ void Game::draw(graphics::Graphics& graphics)
         graphics.drawSorted(*weather_);
 
         graphics.drawAlreadySorted(states.shader);
-
 
         lighting_->clear();
 
@@ -669,13 +668,6 @@ float Game::getForcedZoomTime() const
     return forced_zoom_to_time_elapsed_;
 }
 
-void Game::initPlayers()
-{
-    engine_->registerObj<DynamicObject>(player_.get());
-    registerLight(player_.get());
-    registerWeapons(player_.get());
-}
-
 void Game::initNPCs()
 {
     for (auto& character : map_->getList<NPC>())
@@ -712,46 +704,16 @@ void Game::respawn(const std::string& map_name)
 {
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     player_->setName(CONF<std::string>("general/player_name"));
-    ui_->clearThoughts();
     ui_->registerPlayer(player_.get());
     time_manipulation_fuel_ = player_->getMaxTimeManipulation();
-    setRag3Time(0.0f);
 
-    map_->loadMap(map_name.empty() ? map_->getMapName() : map_name);
-    engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
-    agents_manager_ = std::make_unique<ai::AgentsManager>(&map_->getMapBlockage(), ai::AStar::EightNeighbours,
-                                                          CONF<float>("characters/max_time_without_path_recalc"),
-                                                          CONF<float>("characters/min_pos_change_without_path_recalc"),
-                                                          CONF<int>("characters/max_path_search_depth"));
-    engine_->getGraphics().setBgColor(sf::Color(j3x::get<int>(map_->getParams(), "background_color")));
-    lighting_ = std::make_unique<graphics::Lighting>(
-            sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                         static_cast<float>(CONF<int>("graphics/window_height_px"))},
-            sf::Color(j3x::get<int>(map_->getParams(), "lighting_color")));
-    fire_.clear();
-    bullets_.clear();
-    explosions_.clear();
-    desired_explosions_.clear();
-    destruction_systems_.clear();
-
-//    debug_map_blockage_ = std::make_unique<DebugMapBlockage>(&map_->getMapBlockage());
-
-    initObstacles();
-    initDecorations();
-    initPlayers();
-    initNPCs();
-    initWeapons();
-    initSpecials();
+    Framework::respawn(map_name);
 
     this->setStartingPosition();
 
     journal_->clear();
     this->cleanPlayerClone();
     this->loadSave();
-
-    ui_->initializeTutorialArrows();
-    setGameState(Game::GameState::Normal);
-    should_finish_map_ = false;
 }
 
 void Game::setStartingPosition()

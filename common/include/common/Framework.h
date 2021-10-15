@@ -110,7 +110,7 @@ public:
     virtual void startGame(const std::string& map_name = "");
 
     template <class T>
-    void findAndDelete(T* ptr) {}
+    void findAndDelete(T* ptr);
 
     virtual NPC* spawnNewPlayerClone(const std::string& weapon_id);
     virtual NPC* spawnNewNPC(const std::string& id, int u_id, Functional::Activation activation,
@@ -165,7 +165,7 @@ protected:
     virtual void initWeapons();
     virtual void initNPCs();
     virtual void initSpecials();
-    virtual void initPlayers();
+    virtual void initPlayer(Player* player);
 
     std::unique_ptr<Engine> engine_;
     std::unique_ptr<Camera> camera_;

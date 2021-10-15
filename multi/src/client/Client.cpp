@@ -34,6 +34,7 @@ void Client::initialize()
     ui_->registerPlayer(player_.get());
     engine_->registerUI(ui_.get());
 
+    respawn("first_new_map");
     for (auto& special : map_->getList<Special>())
     {
         if (special->getId() == "starting_position")
@@ -130,7 +131,8 @@ void Client::draw(graphics::Graphics& graphics)
     draw_light(fire_);
     draw_light(engine_->getAnimationEvents());
 
-    lighting_->add(*player_->getLightPoint());
+    if (player_->getLightPoint() != nullptr)
+        lighting_->add(*player_->getLightPoint());
     for (auto& player : players_)
     {
         lighting_->add(*player.second->getLightPoint());
@@ -226,7 +228,7 @@ void Client::updatePlayers(float time_elapsed)
     {
         if (player.second->isAlive() && !player.second->update(time_elapsed))
         {
-            this->killPlayer(player.second.get()));
+            this->killPlayer(player.second.get());
         }
     }
 }
@@ -248,7 +250,7 @@ void Client::establishConnection(const sf::IpAddress& ip)
 
     j3x::Parameters data;
     data["name"] = std::string(CONF<std::string>("general/player_name"));
-    data["texture"] = std::string("trevor");
+    data["texture"] = std::string(CONF<std::string>("general/character"));
     PlayerEventPacket packet(PlayerEventPacket::Type::NameChange, data);
     events_socket_.send(packet);
 }
@@ -442,21 +444,12 @@ Player* Client::getPlayer(sf::Uint32 ip)
     if (it == players_.end())
     {
         players_[ip] = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
-        engine_->registerObj<DynamicObject>(players_[ip].get());
-        registerLight(players_[ip].get());
-        registerWeapons(players_[ip].get());
+        initPlayer(players_[ip].get());
 
         return players_[ip].get();
     }
 
     return it->second.get();
-}
-
-void Client::initPlayers()
-{
-    engine_->registerObj<DynamicObject>(player_.get());
-    registerLight(player_.get());
-    registerWeapons(player_.get());
 }
 
 void Client::setGameState(Framework::GameState state)
@@ -480,4 +473,13 @@ void Client::useItem(const std::string& id)
     data["id"] = id;
     auto packet = PlayerEventPacket(PlayerEventPacket::Type::UseBackpackObject, data);
     events_socket_.send(packet);
+}
+
+void Client::respawn(const std::string& map_name)
+{
+    player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
+    player_->setName(CONF<std::string>("general/player_name"));
+    ui_->registerPlayer(player_.get());
+
+    Framework::respawn(map_name);
 }

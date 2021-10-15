@@ -47,6 +47,7 @@ private:
 
     void updatePlayers(float time_elapsed);
     void clearPlayer(Player* player);
+    void respawnPlayer(sf::Uint32 ip);
     void useSpecialObject(Player* player, sf::Uint32 ip);
 
     sf::Uint32 getPlayerIP(Player* player);
@@ -56,7 +57,7 @@ private:
     void sendMessagesToPlayers();
     void sendEventToPlayers(ServerEventPacket& packet);
 
-    std::unordered_map<sf::Uint32, Player> players_;
+    std::unordered_map<sf::Uint32, std::unique_ptr<Player>> players_;
     std::unordered_map<sf::Uint32, PlayerInputPacket> cached_packets_;
     std::vector<ServerEventPacket> cached_events_;
 

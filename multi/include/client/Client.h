@@ -53,11 +53,10 @@ public:
     void useItem(const std::string& id) override;
     void useSpecialObject() override;
     void setGameState(GameState state) override;
+    void respawn(const std::string& map_name) override;
 
 private:
     void updatePlayers(float time_elapsed);
-
-    void initPlayers() override;
 
     void establishConnection(const sf::IpAddress& ip);
     void handleEventsFromServer();

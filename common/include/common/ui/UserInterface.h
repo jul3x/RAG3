@@ -32,6 +32,18 @@ using namespace r3e;
 class UserInterface : public AbstractUserInterface {
 
 public:
+    enum class Keys {
+        Up,
+        Down,
+        Left,
+        Right,
+        Run
+    };
+
+    static constexpr std::array<UserInterface::Keys, 5> IMPLEMENTED_KEYS = {
+            Keys::Up, Keys::Down, Keys::Left, Keys::Right, Keys::Run
+    };
+
     explicit UserInterface(Framework* framework);
 
     UserInterface(const UserInterface&) = delete;
@@ -62,7 +74,7 @@ public:
 
     void draw(graphics::Graphics& graphics) override;
 
-    const std::set<sf::Keyboard::Key>& getKeysPressed();
+    const std::set<UserInterface::Keys>& getKeysPressed();
     bool isLeftMousePressed() const;
 
     void removeArrowIfExists(AbstractPhysicalObject* obj);
@@ -116,7 +128,7 @@ protected:
     Camera* camera_;
     Framework* framework_;
 
-    std::set<sf::Keyboard::Key> keys_pressed_;
+    std::set<UserInterface::Keys> keys_pressed_;
     bool is_left_mouse_pressed_;
 
 };

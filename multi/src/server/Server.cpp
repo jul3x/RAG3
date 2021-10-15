@@ -26,12 +26,6 @@ void Server::initialize()
     ui_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
 
-    for (auto& special : map_->getList<Special>())
-    {
-        if (special->getId() == "starting_position")
-            starting_positions_.emplace_back(special->getPosition());
-    }
-
     // bind sockets
     if (connection_listener_.listen(54000) != sf::Socket::Done)
     {
@@ -44,6 +38,14 @@ void Server::initialize()
     connection_listener_.setBlocking(false);
     data_receiver_socket_.setBlocking(false);
     // TODO maybe sender should be non-blocking?
+
+    respawn("first_new_map");
+
+    for (auto& special : map_->getList<Special>())
+    {
+        if (special->getId() == "starting_position")
+            starting_positions_.emplace_back(special->getPosition());
+    }
 }
 
 void Server::update(float time_elapsed)
@@ -57,7 +59,7 @@ void Server::update(float time_elapsed)
     camera_->update(time_elapsed);
 
     if (!players_.empty())
-        camera_->setPointingTo(players_.begin()->second.getPosition());
+        camera_->setPointingTo(players_.begin()->second->getPosition());
 
     camera_->setZoomTo(1.0f);
     updateMapObjects(time_elapsed);
@@ -69,8 +71,8 @@ void Server::update(float time_elapsed)
 
     for (auto& player : players_)
     {
-        player.second.setCurrentSpecialObject(nullptr);
-        player.second.setCurrentTalkableCharacter(nullptr);
+        player.second->setCurrentSpecialObject(nullptr);
+        player.second->setCurrentTalkableCharacter(nullptr);
     }
 
     time_elapsed_ += time_elapsed;
@@ -91,7 +93,7 @@ void Server::draw(graphics::Graphics& graphics)
     };
 
     for (auto& obj : players_)
-        graphics.drawSorted(obj.second);
+        graphics.drawSorted(*obj.second);
 
     draw(map_->getList<DecorationTile>());
     draw(map_->getList<Decoration>());
@@ -123,9 +125,10 @@ void Server::updatePlayers(float time_elapsed)
 {
     for (auto& player : players_)
     {
-        if (player.second.isAlive() && !player.second.update(time_elapsed))
+        if (player.second->isAlive() && !player.second->update(time_elapsed))
         {
             clearPlayer(player.second.get());
+            // TODO appropriate player death handling
         }
     }
 }
@@ -143,13 +146,7 @@ void Server::checkAwaitingConnections()
             events_socket_[ip] = client;
 
             LOG.info("New connection attempt from: " + sf::IpAddress(ip).toString());
-            players_.emplace(ip, starting_positions_
-                    .at(utils::num::getRandom(0, static_cast<int>(starting_positions_.size() - 1))));
-            engine_->registerObj<DynamicObject>(&players_.at(ip));
-            registerWeapons(&players_.at(ip));
-
-            // Awful but necessary for now
-            players_.at(ip).getLightPoint()->registerGraphics(engine_->getGraphics());
+            respawnPlayer(ip);
 
             for (auto& packet : cached_events_)
             {
@@ -229,41 +226,42 @@ void Server::handleMessagesFromPlayers()
 
             float max_speed;
 
-            if (data.isKey(sf::Keyboard::LShift))
+            // TODO - USE COMMON FUNCTION FROM USER INTERFACE
+            if (data.isKey(UserInterface::Keys::Run))
                 max_speed = RMGET<float>("characters", "player", "max_running_speed");
             else
                 max_speed = RMGET<float>("characters", "player", "max_speed");
 
-            if (data.isKey(sf::Keyboard::A))
+            if (data.isKey(UserInterface::Keys::Left))
             {
                 delta.x -= max_speed;
             }
-            else if (data.isKey(sf::Keyboard::D))
+            else if (data.isKey(UserInterface::Keys::Right))
             {
                 delta.x += max_speed;
             }
 
-            if (data.isKey(sf::Keyboard::W))
+            if (data.isKey(UserInterface::Keys::Up))
             {
                 delta.y -= max_speed;
             }
-            else if (data.isKey(sf::Keyboard::S))
+            else if (data.isKey(UserInterface::Keys::Down))
             {
                 delta.y += max_speed;
             }
 
-            if (player.second.isAlive())
-                player.second.setVelocity(sf::Vector2f{delta.x, delta.y} * player.second.getSpeedFactor());
+            if (player.second->isAlive())
+                player.second->setVelocity(sf::Vector2f{delta.x, delta.y} * player.second->getSpeedFactor());
 
-            player.second.setRotation(data.getRotation());
-            player.second.setRotateTo(data.getRotation());
+            player.second->setRotation(data.getRotation());
+            player.second->setRotateTo(data.getRotation());
 
             if (data.isLeftMousePressed())
             {
-                player.second.shot();
+                player.second->shot();
             }
 
-            player.second.setCurrentWeapon(data.getCurrentWeapon());
+            player.second->setCurrentWeapon(data.getCurrentWeapon());
         }
         else
         {
@@ -317,12 +315,12 @@ void Server::handleEventsFromPlayers()
                     {
                         case PlayerEventPacket::Type::UseObject:
                         {
-                            useSpecialObject(&player_it->second, player_it->first);
+                            useSpecialObject(player_it->second.get(), player_it->first);
                             break;
                         }
                         case PlayerEventPacket::Type::UseBackpackObject:
                         {
-                            player_it->second.useItem(j3x::get<std::string>(packet.getParams(), "id"));
+                            player_it->second->useItem(j3x::get<std::string>(packet.getParams(), "id"));
                             break;
                         }
                         case PlayerEventPacket::Type::NameChange:
@@ -335,7 +333,7 @@ void Server::handleEventsFromPlayers()
                         }
                         case PlayerEventPacket::Type::Exit:
                         {
-                            clearPlayer(&player_it->second);
+                            clearPlayer(player_it->second.get());
                             players_.erase(player_it);
                             break;
                         }
@@ -486,7 +484,7 @@ sf::Uint32 Server::getPlayerIP(Player* player)
 {
     for (const auto& p : players_)
     {
-        if (&p.second == player)
+        if (p.second.get() == player)
         {
             return p.first;
         }
@@ -499,4 +497,11 @@ void Server::obstacleDestroyedEvent(Obstacle* obstacle)
 {
     auto packet = ServerEventPacket(ServerEventPacket::Type::DestroyedObstacle, obstacle->getUniqueId(), 0);
     sendEventToPlayers(packet);
+}
+
+void Server::respawnPlayer(sf::Uint32 ip)
+{
+    players_[ip] = std::make_unique<Player>(starting_positions_.at(utils::num::getRandom(0, static_cast<int>(
+            starting_positions_.size() - 1))));
+    initPlayer(players_.at(ip).get());
 }

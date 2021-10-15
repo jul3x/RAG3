@@ -27,6 +27,8 @@ RightHud::RightHud(const sf::Vector2f& position) :
     level_text_.setFillColor(sf::Color::White);
     level_text_.setPosition(position + sf::Vector2f{LEVEL_X_, LEVEL_Y_}
                                        * CONF<float>("graphics/user_interface_zoom"));
+    auto bound = level_text_.getLocalBounds();
+    level_text_.setOrigin(bound.width, bound.height);
 
     name_.setFillColor(sf::Color::White);
     name_.setPosition(position + sf::Vector2f{NAME_X_, NAME_Y_}

@@ -685,6 +685,11 @@ Special* Framework::spawnNewSpecial(const std::string& id, int u_id,
     return ptr;
 }
 
+template<class T>
+void Framework::findAndDelete(T* ptr)
+{
+}
+
 template<>
 void Framework::findAndDelete<Character>(Character* ptr)
 {
@@ -1037,9 +1042,11 @@ void Framework::initNPCs()
 
 }
 
-void Framework::initPlayers()
+void Framework::initPlayer(Player* player)
 {
-
+    engine_->registerObj<DynamicObject>(player);
+    registerLight(player);
+    registerWeapons(player);
 }
 
 void Framework::initSpecials()
@@ -1096,7 +1103,39 @@ float Framework::getTimeManipulationFuel() const
 
 void Framework::respawn(const std::string& map_name)
 {
+    ui_->clearThoughts();
+    setRag3Time(0.0f);
 
+    map_->loadMap(map_name.empty() ? map_->getMapName() : map_name);
+    engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
+    agents_manager_ = std::make_unique<ai::AgentsManager>(&map_->getMapBlockage(), ai::AStar::EightNeighbours,
+                                                          CONF<float>("characters/max_time_without_path_recalc"),
+                                                          CONF<float>("characters/min_pos_change_without_path_recalc"),
+                                                          CONF<int>("characters/max_path_search_depth"));
+    engine_->getGraphics().setBgColor(sf::Color(j3x::get<int>(map_->getParams(), "background_color")));
+    lighting_ = std::make_unique<graphics::Lighting>(
+            sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
+                         static_cast<float>(CONF<int>("graphics/window_height_px"))},
+            sf::Color(j3x::get<int>(map_->getParams(), "lighting_color")));
+    fire_.clear();
+    bullets_.clear();
+    explosions_.clear();
+    desired_explosions_.clear();
+    destruction_systems_.clear();
+
+    initObstacles();
+    initDecorations();
+
+    auto player = getPlayer();
+    if (player != nullptr)
+        initPlayer(player);
+    initNPCs();
+    initWeapons();
+    initSpecials();
+
+    ui_->initializeTutorialArrows();
+    setGameState(Framework::GameState::Normal);
+    should_finish_map_ = false;
 }
 
 void Framework::finishMap()

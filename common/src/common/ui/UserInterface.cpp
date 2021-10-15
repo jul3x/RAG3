@@ -204,7 +204,7 @@ void UserInterface::handleKeys()
 
     if (sf::Keyboard::isKeyPressed(run_key))
     {
-        keys_pressed_.insert(run_key);
+        keys_pressed_.insert(Keys::Run);
         player_->setRunning(true);
     }
     else
@@ -218,23 +218,23 @@ void UserInterface::handleKeys()
     if (sf::Keyboard::isKeyPressed(left_key))
     {
         delta.x -= max_speed;
-        keys_pressed_.insert(left_key);
+        keys_pressed_.insert(Keys::Left);
     }
     else if (sf::Keyboard::isKeyPressed(right_key))
     {
         delta.x += max_speed;
-        keys_pressed_.insert(right_key);
+        keys_pressed_.insert(Keys::Right);
     }
 
     if (sf::Keyboard::isKeyPressed(up_key))
     {
         delta.y -= max_speed;
-        keys_pressed_.insert(up_key);
+        keys_pressed_.insert(Keys::Up);
     }
     else if (sf::Keyboard::isKeyPressed(down_key))
     {
         delta.y += max_speed;
-        keys_pressed_.insert(down_key);
+        keys_pressed_.insert(Keys::Down);
     }
 
     if (player_->isAlive())
@@ -329,7 +329,7 @@ Framework* UserInterface::getFramework()
     return framework_;
 }
 
-const std::set<sf::Keyboard::Key>& UserInterface::getKeysPressed()
+const std::set<UserInterface::Keys>& UserInterface::getKeysPressed()
 {
     return keys_pressed_;
 }

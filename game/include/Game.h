@@ -89,7 +89,6 @@ private:
     void updateFire(float time_elapsed) override;
     void updateDestructionSystems(float time_elapsed) override;
 
-    void initPlayers() override;
     void initNPCs() override;
     void setStartingPosition();
 

@@ -37,59 +37,8 @@ Menu::Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme*
     windows_[Window::Settings] = std::make_unique<SettingsWindow>(gui, theme, framework);
     windows_[Window::About] = std::make_unique<AboutWindow>(gui, theme);
 
-    elements_ = {{"Start game", [this]() { framework_->startGame(); }},
-                 {"Load game",  [this]() { this->showWindow(Menu::Window::LoadGame); }},
-                 {"Settings",   [this]() { this->showWindow(Menu::Window::Settings); }},
-                 {"About",      [this]() { this->showWindow(Menu::Window::About); }},
-                 {"Exit",       [this]() { framework_->close(); }}};
     RM.getTexture("menu/logo").setSmooth(true);
     RM.getTexture("menu/main_panel").setSmooth(true);
-
-    short int i = 0;
-    for (const auto& elem : elements_)
-    {
-        auto label = tgui::Button::create();
-        label->setRenderer(theme_->getRenderer("MenuButton"));
-        label->setText(elem.first);
-        label->setInheritedFont(RM.getFont("default"));
-        label->setTextSize(CONF<float>("graphics/menu_button_text_size"));
-        label->setPosition(CONF<float>("graphics/menu_button_pos_x"),
-                           CONF<float>("graphics/menu_button_pos_y") +
-                           i * CONF<float>("graphics/menu_button_offset_y"));
-
-        label->connect("mouseentered", [this, i]() {
-            framework_->spawnSound(RM.getSound("ui_hover"));
-            this->buttons_[i]->setText("> " + this->elements_[i].first);
-        });
-        label->connect("mouseleft", [this, i]() {
-            this->buttons_[i]->setText(this->elements_[i].first);
-        });
-        label->connect("pressed", [&elem, this]() {
-            framework_->spawnSound(RM.getSound("ui_upgrade"));
-            elem.second();
-        });
-        gui_->add(label);
-        buttons_.emplace_back(label);
-        ++i;
-    }
-
-    std::vector<std::pair<std::string, sf::Vector2f>> additional_texts =
-            {{"2021",   sf::Vector2f{0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))} +
-                        CONF<sf::Vector2f>("graphics/menu_year_pos")},
-             {"~jul3x", sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                                     static_cast<float>(CONF<int>("graphics/window_height_px"))} +
-                        CONF<sf::Vector2f>("graphics/menu_copyright_pos")}};
-    for (const auto& text : additional_texts)
-    {
-        auto label = tgui::Button::create();
-        label->setRenderer(theme_->getRenderer("MenuButton"));
-        label->setText(text.first);
-        label->setInheritedFont(RM.getFont("default"));
-        label->setTextSize(CONF<float>("graphics/menu_button_text_size"));
-        label->setPosition(text.second);
-        gui_->add(label);
-        buttons_.emplace_back(label);
-    }
 
     opacity_.setForcedState(0.0f);
     opacity_.setState(0.0f);
@@ -194,4 +143,54 @@ bool Menu::isOpen(Menu::Window window) const
 MenuWindow& Menu::getWindow(Menu::Window window)
 {
     return *windows_.at(window);
+}
+
+void Menu::makeMenuElements(const std::vector<std::pair<std::string, std::function<void()>>>& elements)
+{
+    elements_ = elements;
+    short int i = 0;
+    for (const auto& elem : elements_)
+    {
+        auto label = tgui::Button::create();
+        label->setRenderer(theme_->getRenderer("MenuButton"));
+        label->setText(elem.first);
+        label->setInheritedFont(RM.getFont("default"));
+        label->setTextSize(CONF<float>("graphics/menu_button_text_size"));
+        label->setPosition(CONF<float>("graphics/menu_button_pos_x"),
+                           CONF<float>("graphics/menu_button_pos_y") +
+                           i * CONF<float>("graphics/menu_button_offset_y"));
+
+        label->connect("mouseentered", [this, i]() {
+            framework_->spawnSound(RM.getSound("ui_hover"));
+            this->buttons_[i]->setText("> " + elements_[i].first);
+        });
+        label->connect("mouseleft", [this, i]() {
+            this->buttons_[i]->setText(elements_[i].first);
+        });
+        label->connect("pressed", [&elem, this]() {
+            framework_->spawnSound(RM.getSound("ui_upgrade"));
+            elem.second();
+        });
+        gui_->add(label);
+        buttons_.emplace_back(label);
+        ++i;
+    }
+
+    std::vector<std::pair<std::string, sf::Vector2f>> additional_texts =
+            {{"2021",   sf::Vector2f{0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))} +
+                        CONF<sf::Vector2f>("graphics/menu_year_pos")},
+             {"~jul3x", sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
+                                     static_cast<float>(CONF<int>("graphics/window_height_px"))} +
+                        CONF<sf::Vector2f>("graphics/menu_copyright_pos")}};
+    for (const auto& text : additional_texts)
+    {
+        auto label = tgui::Button::create();
+        label->setRenderer(theme_->getRenderer("MenuButton"));
+        label->setText(text.first);
+        label->setInheritedFont(RM.getFont("default"));
+        label->setTextSize(CONF<float>("graphics/menu_button_text_size"));
+        label->setPosition(text.second);
+        gui_->add(label);
+        buttons_.emplace_back(label);
+    }
 }

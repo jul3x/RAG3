@@ -52,6 +52,7 @@ public:
     void useSpecialObject() override;
     void setGameState(GameState state) override;
     void respawn(const std::string& map_name) override;
+    void startGame(const std::string& map_name) override;
 
 private:
     void beforeUpdate(float time_elapsed) override;

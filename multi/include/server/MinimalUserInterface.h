@@ -14,7 +14,7 @@ class MinimalUserInterface : public UserInterface {
 
 public:
     explicit MinimalUserInterface(Server* server);
-
+    void initialize(graphics::Graphics& graphics) override;
     void spawnAchievement(const std::string& title, const std::string& text, const std::string& tex) override;
     void spawnThought(Character* user, const std::string& text) override;
     void spawnBonusText(const sf::Vector2f& pos, const std::string& text) override;

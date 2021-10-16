@@ -2,16 +2,6 @@
 // Created by jul3x on 27.02.19.
 //
 
-#include <iomanip>
-
-#include <R3E/system/Engine.h>
-#include <R3E/utils/Geometry.h>
-#include <R3E/utils/Misc.h>
-
-#include <common/ResourceManager.h>
-#include <common/ui/NoteWindow.h>
-
-#include <common/ui/menu/SettingsWindow.h>
 #include <ui/GameUserInterface.h>
 #include <Game.h>
 
@@ -30,6 +20,17 @@ void GameUserInterface::initialize(graphics::Graphics& graphics)
     }
 
     UserInterface::initialize(graphics);
+    menu_->makeMenuElements({
+        {"Start game", [this]() { framework_->startGame(); }},
+        {"Load game",  [this]() { menu_->showWindow(Menu::Window::LoadGame); }},
+        {"Settings",   [this]() { menu_->showWindow(Menu::Window::Settings); }},
+        {"About",      [this]() { menu_->showWindow(Menu::Window::About); }},
+        {"Exit",       [this]() { framework_->close(); }}
+    });
+
+    full_hud_ = std::make_unique<ExtendedFullHud>(this, framework_,
+                                          sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
+                                                       static_cast<float>(CONF<int>("graphics/window_height_px"))});
     menu_->doShow(true);
 }
 
@@ -46,22 +47,6 @@ void GameUserInterface::spawnNoteWindow(const std::string& text)
 {
     UserInterface::spawnNoteWindow(text);
     game_->setGameState(Game::GameState::Paused);
-}
-
-void GameUserInterface::startGame()
-{
-    menu_->doShow(false);
-    game_->setGameState(Game::GameState::Normal);
-    small_backpack_hud_.doShow(true);
-    menu_->showWindow(Menu::Window::None);
-}
-
-void GameUserInterface::openMenu()
-{
-    menu_->doShow(true);
-    game_->setGameState(Game::GameState::Menu);
-    full_hud_->show(false);
-    small_backpack_hud_.doShow(false);
 }
 
 bool GameUserInterface::canZoomIn(bool mouse_on_widget) const

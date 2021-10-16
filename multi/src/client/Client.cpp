@@ -18,7 +18,6 @@
 
 Client::Client() : Framework(), last_packet_timestamp_(0.0f), last_received_packet_timestamp_(0)
 {
-    setGameState(GameState::Normal);
 }
 
 void Client::initialize()
@@ -27,27 +26,16 @@ void Client::initialize()
     Framework::initialize();
 
     engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
-
     ui_ = std::make_unique<ClientUserInterface>(this);
-
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());
     engine_->registerUI(ui_.get());
-
-    respawn("first_new_map");
-    for (auto& special : map_->getList<Special>())
-    {
-        if (special->getId() == "starting_position")
-            player_->setPosition(special->getPosition());
-    }
 
     if (data_receive_socket_.bind(54002) != sf::Socket::Done)
     {
         LOG.error("[Client] Could not bind receiving socket to desired port.");
     }
     data_receive_socket_.setBlocking(false);
-
-    establishConnection("192.168.0.17");
 }
 
 void Client::beforeUpdate(float time_elapsed)
@@ -383,8 +371,26 @@ Player* Client::getPlayer(sf::Uint32 ip)
 
 void Client::setGameState(Framework::GameState state)
 {
-    // TODO
-    state_ = GameState::Normal;
+    switch (state)
+    {
+        case GameState::Normal:
+            if (state_ == GameState::Menu)
+            {
+                camera_->setZoomTo(1.0f);
+                camera_->setCenter({player_->getPosition().x, player_->getPosition().y, 0.0f});
+            }
+            engine_->turnOnCollisions();
+
+            break;
+        case GameState::Reverse:
+        case GameState::Paused:
+            state = state_;
+            break;
+        default:
+            break;
+    }
+
+    state_ = state;
 }
 
 void Client::close()
@@ -429,4 +435,12 @@ void Client::drawAdditionalPlayersLighting()
     {
         lighting_->add(*player.second->getLightPoint());
     }
+}
+
+void Client::startGame(const std::string& map_name)
+{
+    Framework::startGame(map_name);
+    this->respawn("first_new_map");
+    this->establishConnection("192.168.0.17");
+    ui_->startGame();
 }

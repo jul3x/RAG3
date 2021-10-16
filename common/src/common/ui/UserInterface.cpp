@@ -2,8 +2,6 @@
 // Created by jul3x on 27.02.19.
 //
 
-#include <iomanip>
-
 #include <R3E/system/Engine.h>
 #include <R3E/utils/Geometry.h>
 #include <R3E/utils/Misc.h>
@@ -67,14 +65,10 @@ void UserInterface::initialize(graphics::Graphics& graphics)
         health_bar_.setMaxAmount(player_->getMaxHealth());
         time_bar_.setMaxAmount(CONF<float>("journal_max_time"));
         speed_bar_.setMaxAmount(player_->getMaxRunningFuel());
-
-        full_hud_ = std::make_unique<FullHud>(this, framework_,
-                                              sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                                                           static_cast<float>(CONF<int>("graphics/window_height_px"))});
-        menu_ = std::make_unique<Menu>(framework_, this, gui_.get(), &theme_);
         object_use_text_.setFillColor(sf::Color::White);
         npc_talk_text_.setFillColor(sf::Color::White);
     }
+    menu_ = std::make_unique<Menu>(framework_, this, gui_.get(), &theme_);
 }
 
 void UserInterface::registerPlayer(Player* player)
@@ -194,7 +188,7 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
                 }
                 else if (event.key.code == sf::Keyboard::Escape)
                 {
-                    if (framework_->getGameState() == Framework::GameState::Paused)
+                    if (full_hud_->isShow())
                     {
                         framework_->setGameState(Framework::GameState::Normal);
                         full_hud_->show(false);
@@ -452,12 +446,18 @@ void UserInterface::spawnNoteWindow(const std::string& text)
 
 void UserInterface::openMenu()
 {
-
+    menu_->doShow(true);
+    framework_->setGameState(Framework::GameState::Menu);
+    full_hud_->show(false);
+    small_backpack_hud_.doShow(false);
 }
 
 void UserInterface::startGame()
 {
-
+    menu_->doShow(false);
+    framework_->setGameState(Framework::GameState::Normal);
+    small_backpack_hud_.doShow(true);
+    menu_->showWindow(Menu::Window::None);
 }
 
 tgui::Gui* UserInterface::getGui()

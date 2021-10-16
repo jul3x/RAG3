@@ -28,8 +28,6 @@ public:
     void initialize(graphics::Graphics& graphics) override;
 
     void spawnNoteWindow(const std::string& text) override;
-    void startGame() override;
-    void openMenu() override;
 
 private:
     void updatePlayerStates(float time_elapsed) override;

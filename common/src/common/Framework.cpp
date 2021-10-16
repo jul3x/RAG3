@@ -348,7 +348,7 @@ void Framework::draw(graphics::Graphics& graphics)
                 graphics.drawSorted(*special);
 
         auto player = getPlayer();
-        if (player != nullptr && player->isAlive() && state_ != GameState::Reverse)
+        if (player != nullptr && player->isAlive())
             graphics.drawSorted(*player);
 
         drawAdditionalPlayers(graphics);

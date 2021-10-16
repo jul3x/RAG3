@@ -139,6 +139,8 @@ void Game::updateTimeReversal(float time_elapsed)
 
         if (clone_light != nullptr)
             clone_light->setPosition(player_clone_->getPosition());
+
+        camera_->setPointingTo(getPlayer()->getPosition());
     }
 
     Framework::updateTimeReversal(time_elapsed);
@@ -191,11 +193,6 @@ void Game::killNPC(NPC* npc)
     {
         npc->use(npc);
     }
-}
-
-Player* Game::getPlayer()
-{
-    return player_.get();
 }
 
 PlayerClone* Game::getPlayerClone()
@@ -832,4 +829,9 @@ void Game::setCheckpoint()
 {
     this->saveState(false);
     this->ui_->spawnBonusText(player_->getPosition(), "Checkpoint!");
+}
+
+Player* Game::getPlayer()
+{
+    return player_.get();
 }

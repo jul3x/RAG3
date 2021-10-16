@@ -75,73 +75,6 @@ void Client::update(float time_elapsed)
     time_elapsed_ += time_elapsed;
 }
 
-void Client::draw(graphics::Graphics& graphics)
-{
-    static sf::RenderStates states;
-
-    sf::Shader* curr_shader = &RM.getShader(j3x::get<std::string>(map_->getParams(), "shader"));
-    curr_shader->setUniform("time", this->time_elapsed_);
-    states.shader = curr_shader;
-
-    auto draw = [&graphics](auto& list) {
-        for (auto& obj : list)
-            graphics.drawSorted(*obj);
-    };
-
-    auto draw_light = [this](auto& list) {
-        for (const auto& obj : list)
-        {
-            auto light = obj->getLightPoint();
-            if (light != nullptr)
-                this->lighting_->add(*light);
-        }
-    };
-
-    draw(map_->getList<DecorationTile>());
-    draw(map_->getList<Decoration>());
-    draw(map_->getList<Obstacle>());
-    draw(map_->getList<ObstacleTile>());
-    draw(map_->getList<PlacedWeapon>());
-    draw(destruction_systems_);
-    draw(bullets_);
-    draw(fire_);
-
-    for (auto& special : map_->getList<Special>())
-        if (special->isDrawable())
-            graphics.drawSorted(*special);
-
-    if (player_->isAlive())
-        graphics.drawSorted(*player_);
-
-    for (auto& player : players_)
-    {
-        if (player.second->isAlive())
-            graphics.drawSorted(*player.second);
-    }
-
-    engine_->drawSortedAnimationEvents();
-
-    graphics.drawAlreadySorted(states.shader);
-
-    lighting_->clear();
-
-    draw_light(map_->getList<Obstacle>());
-    draw_light(map_->getList<Decoration>());
-    draw_light(map_->getList<Special>());
-    draw_light(fire_);
-    draw_light(engine_->getAnimationEvents());
-
-    if (player_->getLightPoint() != nullptr)
-        lighting_->add(*player_->getLightPoint());
-    for (auto& player : players_)
-    {
-        lighting_->add(*player.second->getLightPoint());
-    }
-
-    graphics.setStaticView();
-    graphics.draw(*lighting_);
-}
-
 Player* Client::getPlayer()
 {
     return player_.get();
@@ -482,4 +415,22 @@ void Client::respawn(const std::string& map_name)
     ui_->registerPlayer(player_.get());
 
     Framework::respawn(map_name);
+    map_->getList<NPC>().clear();
+}
+
+void Client::drawAdditionalPlayers(graphics::Graphics& graphics)
+{
+    for (auto& player : players_)
+    {
+        if (player.second->isAlive())
+            graphics.drawSorted(*player.second);
+    }
+}
+
+void Client::drawAdditionalPlayersLighting()
+{
+    for (auto& player : players_)
+    {
+        lighting_->add(*player.second->getLightPoint());
+    }
 }

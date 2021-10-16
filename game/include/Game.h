@@ -35,7 +35,6 @@ public:
     // Engine methods
     void initialize() override;
     void update(float time_elapsed) override;
-    void draw(graphics::Graphics& graphics) override;
     void close() override;
 
     // Getters
@@ -90,6 +89,9 @@ private:
     void updateDestructionSystems(float time_elapsed) override;
 
     void initNPCs() override;
+    void extraShaderManipulations(sf::Shader* shader) override;
+    void drawAdditionalPlayers(graphics::Graphics& graphics) override;
+    void drawAdditionalPlayersLighting() override;
     void setStartingPosition();
 
     void killNPC(NPC* npc);

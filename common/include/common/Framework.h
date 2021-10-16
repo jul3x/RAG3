@@ -150,8 +150,6 @@ public:
     [[nodiscard]] Framework::GameState getGameState() const;
 
 protected:
-    virtual void initParams();
-
     virtual void updateMapObjects(float time_elapsed);
     virtual void updateBullets(float time_elapsed);
     virtual void updateFire(float time_elapsed);
@@ -159,7 +157,11 @@ protected:
     virtual void updateDestructionSystems(float time_elapsed);
 
     virtual void obstacleDestroyedEvent(Obstacle* obstacle);
+    virtual void extraShaderManipulations(sf::Shader* shader);
+    virtual void drawAdditionalPlayers(graphics::Graphics& graphics);
+    virtual void drawAdditionalPlayersLighting();
 
+    virtual void initParams();
     virtual void initObstacles();
     virtual void initDecorations();
     virtual void initWeapons();

@@ -80,35 +80,9 @@ void Server::update(float time_elapsed)
 
 void Server::draw(graphics::Graphics& graphics)
 {
-    static sf::RenderStates states;
-
-    sf::Shader* curr_shader = &RM.getShader(j3x::get<std::string>(map_->getParams(), "shader"));
-    curr_shader->setUniform("time", this->time_elapsed_);
-
-    states.shader = curr_shader;
-
-    auto draw = [&graphics](auto& list) {
-        for (auto& obj : list)
-            graphics.drawSorted(*obj);
-    };
-
-    for (auto& obj : players_)
-        graphics.drawSorted(*obj.second);
-
-    draw(map_->getList<DecorationTile>());
-    draw(map_->getList<Decoration>());
-    draw(map_->getList<Obstacle>());
-    draw(map_->getList<ObstacleTile>());
-    draw(map_->getList<PlacedWeapon>());
-    draw(bullets_);
-    draw(fire_);
-
-    for (auto& special : map_->getList<Special>())
-        if (special->isDrawable())
-            graphics.drawSorted(*special);
-
-    engine_->drawSortedAnimationEvents();
-    graphics.drawAlreadySorted(states.shader);
+    static constexpr bool SERVER_DRAWING = true;
+    if (SERVER_DRAWING)
+        Framework::draw(graphics);
 }
 
 void Server::useSpecialObject()
@@ -504,4 +478,22 @@ void Server::respawnPlayer(sf::Uint32 ip)
     players_[ip] = std::make_unique<Player>(starting_positions_.at(utils::num::getRandom(0, static_cast<int>(
             starting_positions_.size() - 1))));
     initPlayer(players_.at(ip).get());
+}
+
+void Server::respawn(const std::string& map_name)
+{
+    Framework::respawn(map_name);
+    map_->getList<NPC>().clear();
+}
+
+void Server::drawAdditionalPlayers(graphics::Graphics& graphics)
+{
+    for (auto& obj : players_)
+        graphics.drawSorted(*obj.second);
+}
+
+void Server::drawAdditionalPlayersLighting()
+{
+    for (auto& player : players_)
+        lighting_->add(*player.second->getLightPoint());
 }

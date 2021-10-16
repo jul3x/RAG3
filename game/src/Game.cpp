@@ -197,86 +197,6 @@ void Game::killNPC(NPC* npc)
     }
 }
 
-void Game::draw(graphics::Graphics& graphics)
-{
-    if (state_ != GameState::Menu)
-    {
-        static sf::RenderStates states;
-
-        sf::Shader* curr_shader = &RM.getShader(j3x::get<std::string>(map_->getParams(), "shader"));
-
-        if (rag3_time_elapsed_ > 0.0f)
-        {
-            curr_shader = &RM.getShader("rag3.frag");
-            curr_shader->setUniform("time", rag3_time_elapsed_);
-            curr_shader->setUniform("rag3_time", CONF<float>("rag3_time"));
-        }
-        else
-        {
-            curr_shader->setUniform("time", this->time_elapsed_);
-        }
-
-        states.shader = curr_shader;
-
-        auto draw = [&graphics](auto& list) {
-            for (auto& obj : list)
-                graphics.drawSorted(*obj);
-        };
-
-        auto draw_light = [this](auto& list) {
-            for (const auto& obj : list)
-            {
-                auto light = obj->getLightPoint();
-                if (light != nullptr)
-                    this->lighting_->add(*light);
-            }
-        };
-
-//        debug_map_blockage_->draw(graphics);
-        draw(map_->getList<DecorationTile>());
-        draw(map_->getList<Decoration>());
-        draw(map_->getList<Obstacle>());
-        draw(map_->getList<ObstacleTile>());
-        draw(map_->getList<NPC>());
-        draw(map_->getList<PlacedWeapon>());
-        draw(destruction_systems_);
-        draw(bullets_);
-        draw(fire_);
-
-        for (auto& special : map_->getList<Special>())
-            if (special->isDrawable())
-                graphics.drawSorted(*special);
-
-        if (player_->isAlive() and state_ != GameState::Reverse)
-            graphics.drawSorted(*player_);
-
-        if (player_clone_ != nullptr)
-            graphics.drawSorted(*player_clone_);
-
-        engine_->drawSortedAnimationEvents();
-        graphics.drawSorted(*weather_);
-
-        graphics.drawAlreadySorted(states.shader);
-
-        lighting_->clear();
-
-        draw_light(map_->getList<NPC>());
-        draw_light(map_->getList<Obstacle>());
-        draw_light(map_->getList<Decoration>());
-        draw_light(map_->getList<Special>());
-        draw_light(fire_);
-        draw_light(engine_->getAnimationEvents());
-
-        if (player_->getLightPoint() != nullptr)
-            lighting_->add(*player_->getLightPoint());
-        if (player_clone_ != nullptr && player_clone_->getLightPoint() != nullptr)
-            lighting_->add(*player_clone_->getLightPoint());
-
-        graphics.setStaticView();
-        graphics.draw(*lighting_);
-    }
-}
-
 Player* Game::getPlayer()
 {
     return player_.get();
@@ -828,4 +748,30 @@ void Game::startGame(const std::string& map_name)
     this->respawn(!is_playing_previous_map_ ? j3x::getObj<std::string>(CONF<j3x::List>("save/maps_unlocked").back()) :
                   map_name);
     ui_->startGame();
+}
+
+void Game::extraShaderManipulations(sf::Shader* shader)
+{
+    if (rag3_time_elapsed_ > 0.0f)
+    {
+        shader = &RM.getShader("rag3.frag");
+        shader->setUniform("time", rag3_time_elapsed_);
+        shader->setUniform("rag3_time", CONF<float>("rag3_time"));
+    }
+    else
+    {
+        Framework::extraShaderManipulations(shader);
+    }
+}
+
+void Game::drawAdditionalPlayers(graphics::Graphics& graphics)
+{
+    if (player_clone_ != nullptr)
+        graphics.drawSorted(*player_clone_);
+}
+
+void Game::drawAdditionalPlayersLighting()
+{
+    if (player_clone_ != nullptr && player_clone_->getLightPoint() != nullptr)
+        lighting_->add(*player_clone_->getLightPoint());
 }

@@ -39,7 +39,6 @@ public:
     // Engine methods
     void initialize() override;
     void update(float time_elapsed) override;
-    void draw(graphics::Graphics& graphics) override;
     void close() override;
 
     void alertCollision(HoveringObject* h_obj, StaticObject* s_obj) override;
@@ -57,6 +56,8 @@ public:
 
 private:
     void updatePlayers(float time_elapsed);
+    void drawAdditionalPlayers(graphics::Graphics& graphics) override;
+    void drawAdditionalPlayersLighting() override;
 
     void establishConnection(const sf::IpAddress& ip);
     void handleEventsFromServer();

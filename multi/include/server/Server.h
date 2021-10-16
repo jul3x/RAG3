@@ -39,12 +39,14 @@ public:
     void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) override;
 
     // UI functions
+    void respawn(const std::string& map_name) override;
     void useSpecialObject() override;
     void setGameState(GameState state) override;
 
 private:
     void obstacleDestroyedEvent(Obstacle* obstacle) override;
-
+    void drawAdditionalPlayers(graphics::Graphics& graphics) override;
+    void drawAdditionalPlayersLighting() override;
     void updatePlayers(float time_elapsed);
     void clearPlayer(Player* player);
     void respawnPlayer(sf::Uint32 ip);

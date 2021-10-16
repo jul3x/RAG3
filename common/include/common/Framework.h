@@ -108,6 +108,7 @@ public:
     virtual void spawnBonusText(const sf::Vector2f& pos, const std::string& text);
     virtual void respawn(const std::string& map_name);
     virtual void startGame(const std::string& map_name = "");
+    virtual void talk();
 
     template <class T>
     void findAndDelete(T* ptr);
@@ -148,6 +149,8 @@ public:
     // State methods
     virtual void setGameState(Framework::GameState state);
     [[nodiscard]] Framework::GameState getGameState() const;
+
+    [[nodiscard]] bool isJournalFreezed();
 
 protected:
     virtual void updateMapObjects(float time_elapsed);

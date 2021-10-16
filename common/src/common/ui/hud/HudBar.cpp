@@ -5,7 +5,7 @@
 #include <R3E/system/Config.h>
 
 #include <common/ResourceManager.h>
-#include <common/ui/HudBar.h>
+#include <common/ui/hud/HudBar.h>
 
 
 HudBar::HudBar(const sf::Vector2f& position, const std::string& name) :

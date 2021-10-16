@@ -65,6 +65,7 @@ void Server::update(float time_elapsed)
     updateMapObjects(time_elapsed);
     updatePlayers(time_elapsed);
     updateBullets(time_elapsed);
+    updateDestructionSystems(time_elapsed);
     updateFire(time_elapsed);
 
     sendMessagesToPlayers();

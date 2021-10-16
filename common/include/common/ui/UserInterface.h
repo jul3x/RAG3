@@ -10,19 +10,24 @@
 #include <R3E/system/Config.h>
 #include <R3E/system/AbstractUserInterface.h>
 
-#include <common/ui/WeaponsBar.h>
-#include <common/ui/HudBar.h>
+#include <common/ui/hud/FullHud.h>
+#include <common/ui/hud/WeaponsBar.h>
+#include <common/ui/hud/HudBar.h>
+#include <common/ui/hud/RightHud.h>
+#include <common/ui/hud/LeftHud.h>
+#include <common/ui/hud/StatsHud.h>
+#include <common/ui/hud/SmallBackpackHud.h>
 #include <common/ui/Crosshair.h>
-#include <common/ui/RightHud.h>
 #include <common/ui/AcceptWindow.h>
 #include <common/ui/Window.h>
+#include <common/ui/Achievement.h>
+#include <common/ui/BloodSplash.h>
+#include <common/ui/menu/Menu.h>
 #include <common/misc/Thought.h>
 #include <common/misc/BonusText.h>
-#include <common/characters/Player.h>
 #include <common/misc/Camera.h>
 #include <common/misc/TutorialArrow.h>
-#include <common/ui/Achievement.h>
-#include <common/ui/SmallBackpackHud.h>
+#include <common/characters/Player.h>
 
 
 class Framework;
@@ -81,12 +86,15 @@ public:
 
 protected:
     virtual void handleEvents(graphics::Graphics& graphics);
-    virtual void handleAdditionalKeyPressed(sf::Keyboard::Key code);
-    virtual void handleKeyReleased(sf::Keyboard::Key code);
     virtual void handleScrolling(float delta);
     virtual void handleKeys();
     virtual void handleMouse(sf::RenderWindow& graphics_window);
     virtual void updatePlayerStates(float time_elapsed);
+
+    virtual bool canZoomIn(bool is_mouse_on_gui) const;
+    virtual bool canZoomOut() const;
+    virtual void zoomIn(const sf::Vector2f& mouse_world_pos);
+    virtual void zoomOut();
 
     static constexpr float ACHIEVEMENTS_MARGIN_ = 20.0f;
 
@@ -112,8 +120,17 @@ protected:
     WeaponsBar weapons_bar_;
     Crosshair crosshair_;
     RightHud right_hud_;
+    LeftHud left_hud_;
     HudBar health_bar_;
+    HudBar time_bar_;
+    HudBar speed_bar_;
     SmallBackpackHud small_backpack_hud_;
+    BloodSplash blood_splash_;
+    StatsHud stats_hud_;
+
+    // MENUS
+    std::unique_ptr<FullHud> full_hud_;
+    std::unique_ptr<Menu> menu_;
 
     // MISC
     std::list<Achievement> achievements_;

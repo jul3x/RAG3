@@ -9,10 +9,10 @@
 #include <common/Framework.h>
 #include <common/ui/UserInterface.h>
 
-#include <ui/menu/AboutWindow.h>
-#include <ui/menu/LoadGameWindow.h>
-#include <ui/menu/SettingsWindow.h>
-#include <ui/menu/Menu.h>
+#include <common/ui/menu/AboutWindow.h>
+#include <common/ui/menu/LoadGameWindow.h>
+#include <common/ui/menu/SettingsWindow.h>
+#include <common/ui/menu/Menu.h>
 
 
 Menu::Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme) :

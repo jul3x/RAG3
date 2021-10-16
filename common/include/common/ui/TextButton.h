@@ -17,7 +17,7 @@ public:
 
     void bindFunction(const std::function<void()>& func);
 
-    void show(bool hide = false);
+    void show(bool show = true);
 
 private:
     Framework* framework_;

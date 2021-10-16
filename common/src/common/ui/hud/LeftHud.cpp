@@ -5,7 +5,7 @@
 #include <R3E/system/Config.h>
 #include <common/ResourceManager.h>
 
-#include <ui/hud/LeftHud.h>
+#include <common/ui/hud/LeftHud.h>
 
 
 LeftHud::LeftHud(const sf::Vector2f& position) :

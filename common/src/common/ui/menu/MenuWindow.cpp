@@ -2,7 +2,7 @@
 // Created by jul3x on 14.08.21.
 //
 
-#include <ui/menu/MenuWindow.h>
+#include <common/ui/menu/MenuWindow.h>
 
 
 MenuWindow::MenuWindow(tgui::Gui* gui, tgui::Theme* theme, const std::string& header) :

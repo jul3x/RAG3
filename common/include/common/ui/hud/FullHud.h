@@ -27,7 +27,7 @@ public:
     explicit BackpackHud(UserInterface* ui, Framework* framework, const sf::Vector2f& pos, int x, int y);
 
     void update(float time_elapsed);
-    void show(bool hide = false);
+    void show(bool show = true);
     void setOpacity(sf::Uint8 a);
 
     void clickPlaceholder(Tooltip& tooltip);
@@ -51,7 +51,7 @@ public:
     explicit SkillsHud(UserInterface* ui, Framework* framework, const sf::Vector2f& pos);
 
     void update(float time_elapsed);
-    void show(bool hide = false);
+    void show(bool show = true);
     void setColor(const sf::Color& color);
 
 private:

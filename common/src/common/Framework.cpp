@@ -1231,3 +1231,16 @@ void Framework::drawAdditionalPlayersLighting()
 {
 
 }
+
+bool Framework::isJournalFreezed()
+{
+    const auto journal = getJournal();
+    if (journal != nullptr)
+        return journal->getDurationSaved() < CONF<float>("journal_min_time");
+    return true;
+}
+
+void Framework::talk()
+{
+
+}

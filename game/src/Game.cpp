@@ -472,11 +472,6 @@ void Game::setGameState(Framework::GameState state)
     state_ = state;
 }
 
-bool Game::isJournalFreezed() const
-{
-    return journal_->getDurationSaved() < CONF<float>("journal_min_time");
-}
-
 void Game::updatePlayerClone(float time_elapsed)
 {
     if (player_clone_ != nullptr)

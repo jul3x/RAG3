@@ -6,7 +6,7 @@
 
 #include <common/Framework.h>
 
-#include <ui/menu/SettingsWindow.h>
+#include <common/ui/menu/SettingsWindow.h>
 
 
 SettingsWindow::SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* framework) :

@@ -5,7 +5,7 @@
 #include <R3E/system/Config.h>
 #include <common/ResourceManager.h>
 
-#include <common/ui/RightHud.h>
+#include <common/ui/hud/RightHud.h>
 
 
 RightHud::RightHud(const sf::Vector2f& position) :

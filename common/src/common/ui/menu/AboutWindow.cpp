@@ -4,7 +4,7 @@
 
 #include <R3E/system/Config.h>
 
-#include <ui/menu/AboutWindow.h>
+#include <common/ui/menu/AboutWindow.h>
 
 
 AboutWindow::AboutWindow(tgui::Gui* gui, tgui::Theme* theme) :

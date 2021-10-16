@@ -195,35 +195,7 @@ void Server::handleMessagesFromPlayers()
             auto delta = sf::Vector2f(0.0f, 0.0f);
             auto& data = cached_packet->second;
 
-            float max_speed;
-
-            // TODO - USE COMMON FUNCTION FROM USER INTERFACE
-            if (data.isKey(UserInterface::Keys::Run))
-                max_speed = RMGET<float>("characters", "player", "max_running_speed");
-            else
-                max_speed = RMGET<float>("characters", "player", "max_speed");
-
-            if (data.isKey(UserInterface::Keys::Left))
-            {
-                delta.x -= max_speed;
-            }
-            else if (data.isKey(UserInterface::Keys::Right))
-            {
-                delta.x += max_speed;
-            }
-
-            if (data.isKey(UserInterface::Keys::Up))
-            {
-                delta.y -= max_speed;
-            }
-            else if (data.isKey(UserInterface::Keys::Down))
-            {
-                delta.y += max_speed;
-            }
-
-            if (player.second->isAlive())
-                player.second->setVelocity(sf::Vector2f{delta.x, delta.y} * player.second->getSpeedFactor());
-
+            UserInterface::applyMovement(player.second.get(), data.getKeys());
             player.second->setRotation(data.getRotation());
             player.second->setRotateTo(data.getRotation());
 

@@ -73,13 +73,15 @@ public:
     virtual void startGame();
     virtual void clearWindows();
 
+    static void applyMovement(Player* player, const std::unordered_set<UserInterface::Keys>& keys_pressed);
+
     tgui::Gui* getGui();
     tgui::Theme* getTheme();
     Framework* getFramework();
 
     void draw(graphics::Graphics& graphics) override;
 
-    const std::set<UserInterface::Keys>& getKeysPressed();
+    const std::unordered_set<UserInterface::Keys>& getKeysPressed();
     bool isLeftMousePressed() const;
 
     void removeArrowIfExists(AbstractPhysicalObject* obj);
@@ -145,7 +147,7 @@ protected:
     Camera* camera_;
     Framework* framework_;
 
-    std::set<UserInterface::Keys> keys_pressed_;
+    std::unordered_set<UserInterface::Keys> keys_pressed_;
     bool is_left_mouse_pressed_;
 
 };

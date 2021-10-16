@@ -17,22 +17,29 @@ class PlayerInputPacket : public sf::Packet {
 public:
     PlayerInputPacket() = default;
 
-    PlayerInputPacket(const std::set<UserInterface::Keys>& keys, bool mouse_pressed, float rotation,
+    PlayerInputPacket(const std::unordered_set<UserInterface::Keys>& keys, bool mouse_pressed, float rotation,
                       short int current_weapon)
     {
         timestamp_ = utils::timeSinceEpochMillisec();
         *this << static_cast<sf::Uint64>(timestamp_);
         for (auto key : UserInterface::IMPLEMENTED_KEYS)
         {
-            keys_[key] = keys.count(key);
-            *this << keys_[key];
+            if (keys.count(key))
+            {
+                keys_.insert(key);
+                *this << true;
+            }
+            else
+            {
+                *this << false;
+            }
         }
         *this << mouse_pressed << rotation << current_weapon;
     }
 
-    [[nodiscard]] bool isKey(UserInterface::Keys key) const
+    [[nodiscard]] const std::unordered_set<UserInterface::Keys>& getKeys() const
     {
-        return keys_.at(key);
+        return keys_;
     }
 
     [[nodiscard]] bool isLeftMousePressed() const
@@ -63,12 +70,16 @@ private:
         *this >> time;
         timestamp_ = static_cast<uint64_t>(time);
         for (auto key : UserInterface::IMPLEMENTED_KEYS)
-            *this >> keys_[key];
-
+        {
+            auto key_pressed = false;
+            *this >> key_pressed;
+            if (key_pressed)
+                keys_.insert(key);
+        }
         *this >> mouse_pressed_ >> rotation_ >> current_weapon_;
     }
 
-    std::unordered_map<UserInterface::Keys, bool> keys_{};
+    std::unordered_set<UserInterface::Keys> keys_{};
     bool mouse_pressed_{};
     float rotation_{};
     short int current_weapon_{};

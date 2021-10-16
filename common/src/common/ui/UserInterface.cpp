@@ -105,6 +105,9 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
     handleMouse(graphics.getWindow());
     handleKeys();
 
+    if (player_ != nullptr)
+        UserInterface::applyMovement(player_, keys_pressed_);
+
     for (auto& arrow : tutorial_arrows_)
         arrow.second.update(time_elapsed);
 
@@ -298,7 +301,6 @@ void UserInterface::handleScrolling(float delta)
 void UserInterface::handleKeys()
 {
     keys_pressed_.clear();
-    auto delta = sf::Vector2f(0.0f, 0.0f);
 
     auto up_key = static_cast<sf::Keyboard::Key>(CONF<int>("controls/up"));
     auto left_key = static_cast<sf::Keyboard::Key>(CONF<int>("controls/left"));
@@ -307,42 +309,17 @@ void UserInterface::handleKeys()
     auto run_key = static_cast<sf::Keyboard::Key>(CONF<int>("controls/run"));
 
     if (sf::Keyboard::isKeyPressed(run_key))
-    {
         keys_pressed_.insert(Keys::Run);
-        player_->setRunning(true);
-    }
-    else
-    {
-        player_->setRunning(false);
-    }
-
-    float max_speed = player_->isRunning() ? RMGET<float>("characters", "player", "max_running_speed") :
-                      RMGET<float>("characters", "player", "max_speed");
 
     if (sf::Keyboard::isKeyPressed(left_key))
-    {
-        delta.x -= max_speed;
         keys_pressed_.insert(Keys::Left);
-    }
     else if (sf::Keyboard::isKeyPressed(right_key))
-    {
-        delta.x += max_speed;
         keys_pressed_.insert(Keys::Right);
-    }
 
     if (sf::Keyboard::isKeyPressed(up_key))
-    {
-        delta.y -= max_speed;
         keys_pressed_.insert(Keys::Up);
-    }
     else if (sf::Keyboard::isKeyPressed(down_key))
-    {
-        delta.y += max_speed;
         keys_pressed_.insert(Keys::Down);
-    }
-
-    if (player_->isAlive())
-        player_->setVelocity(sf::Vector2f{delta.x, delta.y} * player_->getSpeedFactor());
 }
 
 void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
@@ -498,7 +475,7 @@ Framework* UserInterface::getFramework()
     return framework_;
 }
 
-const std::set<UserInterface::Keys>& UserInterface::getKeysPressed()
+const std::unordered_set<UserInterface::Keys>& UserInterface::getKeysPressed()
 {
     return keys_pressed_;
 }
@@ -574,5 +551,42 @@ void UserInterface::zoomOut()
 {
     camera_->setPointingTo(player_->getPosition());
     camera_->setZoomTo(1.0f);
+}
+
+void UserInterface::applyMovement(Player* player, const std::unordered_set<UserInterface::Keys>& keys_pressed)
+{
+    auto delta = sf::Vector2f();
+    if (keys_pressed.count(UserInterface::Keys::Run))
+    {
+        player->setRunning(true);
+    }
+    else
+    {
+        player->setRunning(false);
+    }
+
+    float max_speed = player->isRunning() ? RMGET<float>("characters", "player", "max_running_speed") :
+                      RMGET<float>("characters", "player", "max_speed");
+
+    if (keys_pressed.count(UserInterface::Keys::Left))
+    {
+        delta.x -= max_speed;
+    }
+    else if (keys_pressed.count(UserInterface::Keys::Right))
+    {
+        delta.x += max_speed;
+    }
+
+    if (keys_pressed.count(UserInterface::Keys::Up))
+    {
+        delta.y -= max_speed;
+    }
+    else if (keys_pressed.count(UserInterface::Keys::Down))
+    {
+        delta.y += max_speed;
+    }
+
+    if (player->isAlive())
+        player->setVelocity(sf::Vector2f{delta.x, delta.y} * player->getSpeedFactor());
 }
 

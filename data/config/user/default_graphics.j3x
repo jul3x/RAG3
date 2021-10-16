@@ -1,8 +1,8 @@
 // GRAPHICS SETTINGS
-bool auto_resolution = false
-bool full_screen = false
-int window_width_px = 1700
-int window_height_px = 800
+bool auto_resolution = true
+bool full_screen = true
+int window_width_px = 1920
+int window_height_px = 1080
 
 // LIGHT & SHADOW
 float characters_light_point_size = 150.0

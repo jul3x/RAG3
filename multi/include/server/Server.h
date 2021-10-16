@@ -33,7 +33,6 @@ public:
 
     // Engine methods
     void initialize() override;
-    void update(float time_elapsed) override;
     void draw(graphics::Graphics& graphics) override;
 
     void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) override;
@@ -44,10 +43,15 @@ public:
     void setGameState(GameState state) override;
 
 private:
+    void beforeUpdate(float time_elapsed) override;
+    void afterUpdate(float time_elapsed) override;
+
+    void updateCamera(float time_elapsed) override;
+    void updatePlayers(float time_elapsed) override;
+
     void obstacleDestroyedEvent(Obstacle* obstacle) override;
     void drawAdditionalPlayers(graphics::Graphics& graphics) override;
     void drawAdditionalPlayersLighting() override;
-    void updatePlayers(float time_elapsed);
     void clearPlayer(Player* player);
     void respawnPlayer(sf::Uint32 ip);
     void useSpecialObject(Player* player, sf::Uint32 ip);

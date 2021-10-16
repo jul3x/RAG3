@@ -47,7 +47,77 @@ void Framework::initialize()
     weather_ = std::make_unique<WeatherSystem>(this, weather_params_.get());
 }
 
+void Framework::beforeUpdate(float time_elapsed)
+{
+
+}
+
+void Framework::afterUpdate(float time_elapsed)
+{
+
+}
+
+void Framework::updateSound(float time_elapsed)
+{
+    if (CONF<bool>("sound/sound_on"))
+    {
+        Engine::changeSoundListenerPosition(getPlayer()->getPosition());
+    }
+}
+
+void Framework::updateCamera(float time_elapsed)
+{
+    camera_->update(time_elapsed);
+}
+
+void Framework::updateTimeReversal(float time_elapsed)
+{
+
+}
+
 void Framework::update(float time_elapsed)
+{
+    updateSound(time_elapsed);
+
+    switch (state_)
+    {
+        case GameState::Menu:
+        case GameState::Paused:
+        {
+            break;
+        }
+        case GameState::Normal:
+        {
+            beforeUpdate(time_elapsed);
+
+            updateExplosions();
+            updateMapObjects(time_elapsed);
+            updatePlayers(time_elapsed);
+            updateBullets(time_elapsed);
+            updateFire(time_elapsed);
+            updateDestructionSystems(time_elapsed);
+
+            updateCamera(time_elapsed);
+
+            afterUpdate(time_elapsed);
+
+            if (should_finish_map_)
+                finishMap();
+
+            time_elapsed_ += time_elapsed;
+            break;
+        }
+        case GameState::Reverse:
+        {
+            updateTimeReversal(time_elapsed);
+
+            camera_->update(time_elapsed);
+            break;
+        }
+    }
+}
+
+void Framework::updatePlayers(float time_elapsed)
 {
 
 }

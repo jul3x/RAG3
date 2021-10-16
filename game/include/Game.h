@@ -34,7 +34,6 @@ public:
 
     // Engine methods
     void initialize() override;
-    void update(float time_elapsed) override;
     void close() override;
 
     // Getters
@@ -79,9 +78,14 @@ public:
     void forceZoomTo(AbstractPhysicalObject* obj) override;
 
 private:
+    void beforeUpdate(float time_elapsed) override;
+    void afterUpdate(float time_elapsed) override;
+
+    void updateSound(float time_elapsed) override;
+    void updateCamera(float time_elapsed) override;
+    void updateTimeReversal(float time_elapsed) override;
     void updateMapObjects(float time_elapsed) override;
-    void updatePlayerClone(float time_elapsed);
-    void updatePlayer(float time_elapsed);
+    void updatePlayers(float time_elapsed);
     void updateFire(float time_elapsed) override;
     void updateDestructionSystems(float time_elapsed) override;
 

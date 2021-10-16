@@ -50,29 +50,25 @@ void Client::initialize()
     establishConnection("192.168.0.17");
 }
 
-void Client::update(float time_elapsed)
+void Client::beforeUpdate(float time_elapsed)
 {
+    Framework::beforeUpdate(time_elapsed);
     sendInputs();
     handleEventsFromServer();
     receiveData();
+}
 
-    if (CONF<bool>("sound/sound_on"))
-    {
-        Engine::changeSoundListenerPosition(player_->getPosition());
-    }
+void Client::afterUpdate(float time_elapsed)
+{
+    Framework::afterUpdate(time_elapsed);
+    weather_->update(time_elapsed);
+}
 
-    updateExplosions();
-    updateMapObjects(time_elapsed);
-    updatePlayers(time_elapsed);
-    updateBullets(time_elapsed);
-    updateFire(time_elapsed);
-    updateDestructionSystems(time_elapsed);
-
-    camera_->update(time_elapsed);
+void Client::updateCamera(float time_elapsed)
+{
+    Framework::updateCamera(time_elapsed);
     camera_->setPointingTo(player_->getPosition());
     camera_->setZoomTo(1.0f);
-
-    time_elapsed_ += time_elapsed;
 }
 
 Player* Client::getPlayer()

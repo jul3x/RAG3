@@ -45,113 +45,98 @@ void Game::initialize()
     this->preloadSave();
 }
 
-void Game::update(float time_elapsed)
+void Game::beforeUpdate(float time_elapsed)
 {
+    Framework::beforeUpdate(time_elapsed);
+    agents_manager_->update();
+}
+
+void Game::afterUpdate(float time_elapsed)
+{
+    Framework::afterUpdate(time_elapsed);
+    achievements_->update(time_elapsed);
+    journal_->update(time_elapsed);
+    weather_->update(time_elapsed);
+
+    if (rag3_time_elapsed_ > 0.0f)
+        rag3_time_elapsed_ -= time_elapsed;
+    else if (rag3_time_elapsed_ > -1.0f)
+        setRag3Time(-10.0f);
+
+    if (current_time_factor_ == 1.0f)
+        time_manipulation_fuel_ =
+                std::min(time_manipulation_fuel_ + player_->getTimeManipulationFuelSpeed() * time_elapsed,
+                         player_->getMaxTimeManipulation());
+    else
+        time_manipulation_fuel_ -= CONF<float>("characters/time_manipulation_slow_use_speed") * time_elapsed;
+}
+
+void Game::updateSound(float time_elapsed)
+{
+    Framework::updateSound(time_elapsed);
     if (CONF<bool>("sound/sound_on"))
     {
-        Engine::changeSoundListenerPosition(player_->getPosition());
         music_manager_->update(time_elapsed);
     }
+}
 
-    switch (state_)
+void Game::updateCamera(float time_elapsed)
+{
+    Framework::updateCamera(time_elapsed);
+
+    if (forced_zoom_to_time_elapsed_ > 0.0f)
     {
-        case GameState::Menu:
-        case GameState::Paused:
-        {
-            break;
-        }
-        case GameState::Normal:
-        {
-            updateExplosions();
-
-            agents_manager_->update();
-
-            updateMapObjects(time_elapsed);
-            updatePlayerClone(time_elapsed);
-            updatePlayer(time_elapsed);
-            updateBullets(time_elapsed);
-            updateFire(time_elapsed);
-            updateDestructionSystems(time_elapsed);
-
-            achievements_->update(time_elapsed);
-            journal_->update(time_elapsed);
-            camera_->update(time_elapsed);
-
-            weather_->update(time_elapsed);
-
-            if (rag3_time_elapsed_ > 0.0f)
-                rag3_time_elapsed_ -= time_elapsed;
-            else if (rag3_time_elapsed_ > -1.0f)
-                setRag3Time(-10.0f);
-
-            if (forced_zoom_to_time_elapsed_ > 0.0f)
-            {
-                forced_zoom_to_time_elapsed_ -= time_elapsed;
-                forceZoomTo(current_obj_zoom_);
-            }
-            else if (forced_zoom_to_time_elapsed_ > -1.0f)
-            {
-                camera_->setPointingTo(player_->getPosition());
-                camera_->setZoomTo(1.0f);
-                this->setNormalTime();
-                forced_zoom_to_time_elapsed_ = -10.0f;
-                current_obj_zoom_ = nullptr;
-            }
-
-            if (current_time_factor_ == 1.0f)
-                time_manipulation_fuel_ =
-                        std::min(time_manipulation_fuel_ + player_->getTimeManipulationFuelSpeed() * time_elapsed,
-                                 player_->getMaxTimeManipulation());
-            else
-                time_manipulation_fuel_ -= CONF<float>("characters/time_manipulation_slow_use_speed") * time_elapsed;
-
-            if (should_finish_map_)
-                finishMap();
-
-            time_elapsed_ += time_elapsed;
-            break;
-        }
-        case GameState::Reverse:
-        {
-            time_manipulation_fuel_ -= CONF<float>("time_reversal_speed_factor") * time_elapsed;
-            if (!journal_->executeTimeReversal(CONF<float>("time_reversal_speed_factor") * time_elapsed) ||
-                time_manipulation_fuel_ <= 0.0f)
-            {
-                this->setGameState(GameState::Normal);
-            }
-
-            auto update_lights = [](auto& list) {
-                for (auto& obj : list)
-                {
-                    auto light = obj->getLightPoint();
-
-                    if (light != nullptr)
-                        light->setPosition(obj->getPosition());
-                }
-            };
-
-            update_lights(map_->getList<Obstacle>());
-            update_lights(map_->getList<NPC>());
-            update_lights(map_->getList<Special>());
-            update_lights(map_->getList<Decoration>());
-            update_lights(fire_);
-
-            auto player_light = player_->getLightPoint();
-            if (player_light != nullptr)
-                player_light->setPosition(player_->getPosition());
-
-            if (player_clone_ != nullptr)
-            {
-                auto clone_light = player_clone_->getLightPoint();
-
-                if (clone_light != nullptr)
-                    clone_light->setPosition(player_clone_->getPosition());
-            }
-
-            camera_->update(time_elapsed);
-            break;
-        }
+        forced_zoom_to_time_elapsed_ -= time_elapsed;
+        forceZoomTo(current_obj_zoom_);
     }
+    else if (forced_zoom_to_time_elapsed_ > -1.0f)
+    {
+        camera_->setPointingTo(player_->getPosition());
+        camera_->setZoomTo(1.0f);
+        this->setNormalTime();
+        forced_zoom_to_time_elapsed_ = -10.0f;
+        current_obj_zoom_ = nullptr;
+    }
+}
+
+void Game::updateTimeReversal(float time_elapsed)
+{
+    time_manipulation_fuel_ -= CONF<float>("time_reversal_speed_factor") * time_elapsed;
+    if (!journal_->executeTimeReversal(CONF<float>("time_reversal_speed_factor") * time_elapsed) ||
+        time_manipulation_fuel_ <= 0.0f)
+    {
+        this->setGameState(GameState::Normal);
+    }
+
+    auto update_lights = [](auto& list) {
+        for (auto& obj : list)
+        {
+            auto light = obj->getLightPoint();
+
+            if (light != nullptr)
+                light->setPosition(obj->getPosition());
+        }
+    };
+
+    update_lights(map_->getList<Obstacle>());
+    update_lights(map_->getList<NPC>());
+    update_lights(map_->getList<Special>());
+    update_lights(map_->getList<Decoration>());
+    update_lights(fire_);
+
+    auto player_light = player_->getLightPoint();
+    if (player_light != nullptr)
+        player_light->setPosition(player_->getPosition());
+
+    if (player_clone_ != nullptr)
+    {
+        auto clone_light = player_clone_->getLightPoint();
+
+        if (clone_light != nullptr)
+            clone_light->setPosition(player_clone_->getPosition());
+    }
+
+    Framework::updateTimeReversal(time_elapsed);
 }
 
 void Game::updateMapObjects(float time_elapsed)
@@ -472,8 +457,16 @@ void Game::setGameState(Framework::GameState state)
     state_ = state;
 }
 
-void Game::updatePlayerClone(float time_elapsed)
+void Game::updatePlayers(float time_elapsed)
 {
+    player_->setCurrentSpecialObject(nullptr);
+    player_->setCurrentTalkableCharacter(nullptr);
+    if (player_->isAlive() && !player_->update(time_elapsed))
+    {
+        this->killPlayer(player_.get());
+        music_manager_->setPlaybackPitch(CONF<float>("sound/bullet_time_music_factor"));
+    }
+
     if (player_clone_ != nullptr)
     {
         player_clone_->setCurrentSpecialObject(nullptr);
@@ -504,21 +497,8 @@ void Game::updatePlayerClone(float time_elapsed)
             (*player_weapon)->setState(player_clone_weapon->getState());
 
         player_->setHealth(player_clone_->getHealth());
-
         camera_->setZoomInOut();
-
         this->cleanPlayerClone();
-    }
-}
-
-void Game::updatePlayer(float time_elapsed)
-{
-    player_->setCurrentSpecialObject(nullptr);
-    player_->setCurrentTalkableCharacter(nullptr);
-    if (player_->isAlive() && !player_->update(time_elapsed))
-    {
-        this->killPlayer(player_.get());
-        music_manager_->setPlaybackPitch(CONF<float>("sound/bullet_time_music_factor"));
     }
 }
 

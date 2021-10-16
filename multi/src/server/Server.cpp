@@ -48,35 +48,31 @@ void Server::initialize()
     }
 }
 
-void Server::update(float time_elapsed)
+void Server::beforeUpdate(float time_elapsed)
 {
+    Framework::beforeUpdate(time_elapsed);
     checkAwaitingConnections();
-
     handleMessagesFromPlayers();
     handleEventsFromPlayers();
+}
 
-    updateExplosions();
-    camera_->update(time_elapsed);
-
-    if (!players_.empty())
-        camera_->setPointingTo(players_.begin()->second->getPosition());
-
-    camera_->setZoomTo(1.0f);
-    updateMapObjects(time_elapsed);
-    updatePlayers(time_elapsed);
-    updateBullets(time_elapsed);
-    updateDestructionSystems(time_elapsed);
-    updateFire(time_elapsed);
-
+void Server::afterUpdate(float time_elapsed)
+{
+    Framework::afterUpdate(time_elapsed);
     sendMessagesToPlayers();
-
     for (auto& player : players_)
     {
         player.second->setCurrentSpecialObject(nullptr);
         player.second->setCurrentTalkableCharacter(nullptr);
     }
+}
 
-    time_elapsed_ += time_elapsed;
+void Server::updateCamera(float time_elapsed)
+{
+    Framework::updateCamera(time_elapsed);
+    if (!players_.empty())
+        camera_->setPointingTo(players_.begin()->second->getPosition());
+    camera_->setZoomTo(1.0f);
 }
 
 void Server::draw(graphics::Graphics& graphics)

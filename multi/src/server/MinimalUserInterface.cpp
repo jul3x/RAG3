@@ -6,7 +6,7 @@
 #include <server/MinimalUserInterface.h>
 
 
-MinimalUserInterface::MinimalUserInterface(Server* server) : UserInterface(server)
+MinimalUserInterface::MinimalUserInterface(Server* server) : UserInterface(server), server_(server)
 {
 }
 
@@ -86,4 +86,10 @@ void MinimalUserInterface::spawnNoteWindow(const std::string& text, bool note_in
 
 void MinimalUserInterface::closeWindow(Window* window)
 {
+}
+
+void MinimalUserInterface::openMenu()
+{
+    server_->disconnect();
+    UserInterface::openMenu();
 }

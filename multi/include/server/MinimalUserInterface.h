@@ -24,12 +24,15 @@ public:
 
     void draw(graphics::Graphics& graphics) override;
 
+    void openMenu() override;
+
 protected:
     void handleScrolling(float delta) override;
     void handleKeys() override;
     void handleMouse(sf::RenderWindow& graphics_window) override;
     void updatePlayerStates(float time_elapsed) override;
 
+    Server* server_;
 
 };
 

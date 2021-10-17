@@ -16,7 +16,8 @@
 #include <client/Client.h>
 
 
-Client::Client() : Framework(), last_packet_timestamp_(0.0f), last_received_packet_timestamp_(0)
+Client::Client() : Framework(), last_packet_timestamp_(0.0f), last_received_packet_timestamp_(0),
+                   connection_status_(ConnectionStatus::Off)
 {
 }
 
@@ -30,17 +31,11 @@ void Client::initialize()
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());
     engine_->registerUI(ui_.get());
-
-    if (data_receive_socket_.bind(54002) != sf::Socket::Done)
-    {
-        LOG.error("[Client] Could not bind receiving socket to desired port.");
-    }
-    data_receive_socket_.setBlocking(false);
 }
 
-void Client::beforeUpdate(float time_elapsed)
+void Client::preupdate(float time_elapsed)
 {
-    Framework::beforeUpdate(time_elapsed);
+    Framework::preupdate(time_elapsed);
     sendInputs();
     handleEventsFromServer();
     receiveData();
@@ -165,76 +160,127 @@ bool Client::establishConnection(const sf::IpAddress& ip)
     LOG.info("[Client] Connection with host: " + ip.toString() + " successful!");
     server_ip_ = ip;
 
-    j3x::Parameters data;
-    data["name"] = std::string(CONF<std::string>("general/player_name"));
-    data["texture"] = std::string(CONF<std::string>("general/character"));
-    PlayerEventPacket packet(PlayerEventPacket::Type::NameChange, data);
-    events_socket_.send(packet);
-
+    connection_status_ = ConnectionStatus::InProgress;
     return true;
 }
 
 void Client::handleEventsFromServer()
 {
+    if (connection_status_ == ConnectionStatus::Off)
+        return;
+
     ServerEventPacket packet;
     auto status = events_socket_.receive(packet);
     switch (status)
     {
         case sf::Socket::Done:
         {
-            switch (packet.getType())
+            if (connection_status_ == ConnectionStatus::InProgress)
             {
-                case ServerEventPacket::Type::UseObject:
-                case ServerEventPacket::Type::EnteredObject:
+                switch (packet.getType())
                 {
-                    auto obj = map_->getObjectById<Special>(packet.getUID());
-                    auto player = getPlayer(packet.getIP());
-                    if (obj != nullptr && player != nullptr)
+                    case ServerEventPacket::Type::Connection:
                     {
-                        obj->use(player);
-                    }
-                    break;
-                }
-                case ServerEventPacket::Type::CollectedObject:
-                {
-                    auto obj = map_->getObjectById<Special>(packet.getUID());
-                    auto player = getPlayer(packet.getIP());
-                    if (obj != nullptr && player != nullptr)
-                    {
-                        player->addSpecialToBackpack(
-                                obj->getId(), 1,
-                                [this](Functional* functional) { this->registerFunctions(functional); });
-                        spawnSound(RM.getSound("collect"), obj->getPosition());
-                        special_functions_->destroy(obj, {}, player);
-                    }
-                    break;
-                }
-                case ServerEventPacket::Type::DestroyedObstacle:
-                {
-                    auto obj = map_->getObjectById<Obstacle>(packet.getUID());
-                    if (obj != nullptr)
-                    {
-                        obj->setHealth(-1.0);
-                    }
-                    break;
-                }
-                case ServerEventPacket::Type::NameChange:
-                {
-                    auto player = getPlayer(packet.getIP());
+                        const auto& params = packet.getParams();
 
-                    player->makeLifeBar(j3x::get<std::string>(packet.getParams(), "name"));
-                    player->changePlayerTexture(j3x::get<std::string>(packet.getParams(), "texture"));
-                    break;
+                        if (j3x::get<bool>(params, "s"))
+                        {
+                            j3x::Parameters data;
+                            data["name"] = std::string(CONF<std::string>("general/player_name"));
+                            data["texture"] = std::string(CONF<std::string>("general/character"));
+                            PlayerEventPacket player_packet(PlayerEventPacket::Type::NameChange, data);
+                            events_socket_.send(player_packet);
+
+                            this->respawn(j3x::get<std::string>(params, "map"));
+                            ui_->startGame();
+                            connection_status_ = ConnectionStatus::On;
+                        }
+                        else
+                        {
+                            disconnect();
+                            ui_->spawnNoteWindow("Server connection not allowed. Reason:\n" +
+                                                 j3x::get<std::string>(params, "reason"), false);
+                        }
+                        break;
+                    }
+                    default:
+                        break;
                 }
-                case ServerEventPacket::Type::Exit:
+            }
+            else
+            {
+                switch (packet.getType())
                 {
-//                    clearPlayer(&player_it->second);
-//                    players_.erase(player_it);
-                    break;
-                }
-                default:
-                {
-                    break;
+                    case ServerEventPacket::Type::UseObject:
+                    case ServerEventPacket::Type::EnteredObject:
+                    {
+                        auto obj = map_->getObjectById<Special>(packet.getUID());
+                        auto player = getPlayer(packet.getIP());
+                        if (obj != nullptr && player != nullptr)
+                        {
+                            obj->use(player);
+                        }
+                        break;
+                    }
+                    case ServerEventPacket::Type::CollectedObject:
+                    {
+                        auto obj = map_->getObjectById<Special>(packet.getUID());
+                        auto player = getPlayer(packet.getIP());
+                        if (obj != nullptr && player != nullptr)
+                        {
+                            player->addSpecialToBackpack(
+                                    obj->getId(), 1,
+                                    [this](Functional* functional) { this->registerFunctions(functional); });
+                            spawnSound(RM.getSound("collect"), obj->getPosition());
+                            special_functions_->destroy(obj, {}, player);
+                        }
+                        break;
+                    }
+                    case ServerEventPacket::Type::DestroyedObstacle:
+                    {
+                        auto obj = map_->getObjectById<Obstacle>(packet.getUID());
+                        if (obj != nullptr)
+                        {
+                            obj->setHealth(-1.0);
+                        }
+                        break;
+                    }
+                    case ServerEventPacket::Type::NameChange:
+                    {
+                        auto player = getPlayer(packet.getIP());
+
+                        player->makeLifeBar(j3x::get<std::string>(packet.getParams(), "name"));
+                        player->changePlayerTexture(j3x::get<std::string>(packet.getParams(), "texture"));
+                        break;
+                    }
+                    case ServerEventPacket::Type::PlayerExit:
+                    {
+                        auto player = getPlayer(packet.getIP());
+
+                        if (player != player_.get())
+                        {
+                            killPlayer(player);
+
+                            auto it = players_.find(packet.getIP());
+                            if (it != players_.end())
+                            {
+                                players_.erase(it);
+                            }
+                        }
+
+                        break;
+                    }
+                    case ServerEventPacket::Type::Exit:
+                    {
+                        this->disconnect();
+                        ui_->openMenu();
+                        ui_->spawnNoteWindow("Server connection has been closed.", false);
+                        break;
+                    }
+                    default:
+                    {
+                        break;
+                    }
                 }
             }
             break;
@@ -242,6 +288,12 @@ void Client::handleEventsFromServer()
         case sf::Socket::NotReady:
             break;
         default:
+            if (connection_status_ == ConnectionStatus::InProgress)
+            {
+                ui_->spawnNoteWindow("Connection with server interrupted with unknown reason.", false);
+                connection_status_ = ConnectionStatus::Off;
+            }
+
             LOG.error("Failed connection attempt from: " + server_ip_.toString());
             break;
     }
@@ -249,6 +301,9 @@ void Client::handleEventsFromServer()
 
 void Client::sendInputs()
 {
+    if (connection_status_ != ConnectionStatus::On)
+        return;
+
     static constexpr float packet_time_elapsed = 0.01f;
     static unsigned short port = 54001;
 
@@ -268,6 +323,9 @@ void Client::sendInputs()
 
 void Client::receiveData()
 {
+    if (connection_status_ != ConnectionStatus::On)
+        return;
+
     PlayersStatePacket packet;
     sf::IpAddress sender;
     unsigned short port;
@@ -397,9 +455,7 @@ void Client::setGameState(Framework::GameState state)
 
 void Client::close()
 {
-    PlayerEventPacket packet(PlayerEventPacket::Type::Exit);
-    events_socket_.setBlocking(true);
-    events_socket_.send(packet);
+    disconnect();
     Framework::close();
 }
 
@@ -441,15 +497,38 @@ void Client::drawAdditionalPlayersLighting()
 
 void Client::startGame(const std::string& ip_address)
 {
+    for (auto& player : players_)
+        unregisterCharacter(player.second.get());
+    players_.clear();
+    cached_datas_.clear();
+    data_receive_socket_.unbind();
+    if (data_receive_socket_.bind(54002) != sf::Socket::Done)
+    {
+        LOG.error("[Client] Could not bind receiving socket to desired port.");
+    }
+    data_receive_socket_.setBlocking(false);
+
     auto connection_result = this->establishConnection(ip_address);
 
-    if (connection_result)
-    {
-        this->respawn("first_new_map");
-        ui_->startGame();
-    }
-    else
+    if (!connection_result)
     {
         ui_->spawnNoteWindow("Could not establish connection with desired host.", false);
     }
+}
+
+void Client::disconnect()
+{
+    for (auto& player : players_)
+        unregisterCharacter(player.second.get());
+    players_.clear();
+    cached_datas_.clear();
+
+    PlayerEventPacket packet(PlayerEventPacket::Type::Exit);
+    events_socket_.setBlocking(true);
+    events_socket_.send(packet);
+    events_socket_.disconnect();
+
+    data_receive_socket_.unbind();
+    server_ip_ = {};
+    connection_status_ = ConnectionStatus::Off;
 }

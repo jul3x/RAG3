@@ -57,7 +57,7 @@ void Framework::afterUpdate(float time_elapsed)
 
 }
 
-void Framework::updateSound(float time_elapsed)
+void Framework::preupdate(float time_elapsed)
 {
     if (CONF<bool>("sound/sound_on"))
     {
@@ -77,7 +77,7 @@ void Framework::updateTimeReversal(float time_elapsed)
 
 void Framework::update(float time_elapsed)
 {
-    updateSound(time_elapsed);
+    preupdate(time_elapsed);
 
     switch (state_)
     {

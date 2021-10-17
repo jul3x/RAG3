@@ -14,6 +14,8 @@
 class ServerEventPacket : public sf::Packet {
 public:
     enum class Type {
+        Connection = 7,
+        PlayerExit = 6,
         NameChange = 5,
         DestroyedObstacle = 4,
         CollectedObject = 3,
@@ -27,19 +29,26 @@ public:
 
     ServerEventPacket() = default;
 
-    ServerEventPacket(Type type, int uid, sf::Uint32 player_ip)
+    ServerEventPacket(Type type, int uid, sf::Uint32 player_ip) : type_(type), uid_(uid), player_ip_(player_ip)
     {
-        *this << static_cast<sf::Uint16>(type) << player_ip << uid;
+        *this << static_cast<sf::Int16>(type) << player_ip << uid;
     }
 
-    ServerEventPacket(Type type, const j3x::Parameters& data, sf::Uint32 player_ip)
+    ServerEventPacket(Type type, const j3x::Parameters& data, sf::Uint32 player_ip) :
+            type_(type), data_(std::make_shared<j3x::Parameters>(data)), player_ip_(player_ip)
     {
-        *this << static_cast<sf::Uint16>(type) << player_ip;
+        *this << static_cast<sf::Int16>(type) << player_ip;
 
         std::string params;
         for (const auto& param : data)
             r3e::j3x::serializeAssign(param.first, param.second, params);
         *this << params;
+    }
+
+    [[nodiscard]] bool isCachedForIp(sf::Uint32 ip)
+    {
+        static constexpr std::array<Type, 3> forbidden = {Type::PlayerExit, Type::NameChange, Type::CollectedObject};
+        return ip != this->player_ip_ || !utils::contains(forbidden, this->type_);
     }
 
     [[nodiscard]] Type getType() const
@@ -66,7 +75,7 @@ private:
     void onReceive(const void* data, std::size_t size) override
     {
         append(data, size);
-        sf::Uint16 type;
+        sf::Int16 type;
         *this >> type >> player_ip_;
 
         if (type > STRING_DATA_ABOVE)

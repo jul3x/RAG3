@@ -31,7 +31,7 @@ public:
 
         for (const auto& param : data)
             r3e::j3x::serializeAssign(param.first, param.second, params);
-        *this << static_cast<sf::Uint16>(type) << params;
+        *this << static_cast<sf::Int16>(type) << params;
     }
 
     [[nodiscard]] Type getType() const
@@ -48,7 +48,7 @@ private:
     void onReceive(const void* data, std::size_t size) override
     {
         append(data, size);
-        sf::Uint16 type;
+        sf::Int16 type;
         std::string params;
         *this >> type >> params;
 

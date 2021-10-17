@@ -156,7 +156,7 @@ protected:
     virtual void beforeUpdate(float time_elapsed);
     virtual void afterUpdate(float time_elapsed);
 
-    virtual void updateSound(float time_elapsed);
+    virtual void preupdate(float time_elapsed);
     virtual void updateCamera(float time_elapsed);
     virtual void updateTimeReversal(float time_elapsed);
     virtual void updatePlayers(float time_elapsed);

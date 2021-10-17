@@ -81,7 +81,7 @@ private:
     void beforeUpdate(float time_elapsed) override;
     void afterUpdate(float time_elapsed) override;
 
-    void updateSound(float time_elapsed) override;
+    void preupdate(float time_elapsed) override;
     void updateCamera(float time_elapsed) override;
     void updateTimeReversal(float time_elapsed) override;
     void updateMapObjects(float time_elapsed) override;

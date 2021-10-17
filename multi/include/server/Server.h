@@ -27,6 +27,12 @@ using namespace r3e;
 class Server : public Framework {
 
 public:
+    enum class ConnectionStatus {
+        On,
+        InProgress,
+        Off
+    };
+
     Server();
     Server(const Server&) = delete;
     Server& operator=(const Server&) = delete;
@@ -34,6 +40,7 @@ public:
     // Engine methods
     void initialize() override;
     void draw(graphics::Graphics& graphics) override;
+    void close() override;
 
     void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) override;
 
@@ -42,8 +49,11 @@ public:
     void useSpecialObject() override;
     void setGameState(GameState state) override;
     void startGame(const std::string& map_name) override;
+    void disconnect();
 
 private:
+    static constexpr auto MAX_PLAYERS = 8;
+
     void beforeUpdate(float time_elapsed) override;
     void afterUpdate(float time_elapsed) override;
 
@@ -64,14 +74,16 @@ private:
     void sendMessagesToPlayers();
     void sendEventToPlayers(ServerEventPacket& packet);
 
+    // TODO - wrap into one structure
+    std::unordered_map<sf::Uint32, ConnectionStatus> connection_statuses_;
     std::unordered_map<sf::Uint32, std::unique_ptr<Player>> players_;
     std::unordered_map<sf::Uint32, PlayerInputPacket> cached_packets_;
+    std::unordered_map<sf::Uint32, std::shared_ptr<sf::TcpSocket>> events_socket_;
     std::vector<ServerEventPacket> cached_events_;
 
     std::vector<sf::Vector2f> starting_positions_;
 
     sf::TcpListener connection_listener_;
-    std::unordered_map<sf::Uint32, std::shared_ptr<sf::TcpSocket>> events_socket_;
     sf::UdpSocket data_receiver_socket_;
     sf::UdpSocket data_sender_socket_;
 

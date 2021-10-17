@@ -72,9 +72,9 @@ void Game::afterUpdate(float time_elapsed)
         time_manipulation_fuel_ -= CONF<float>("characters/time_manipulation_slow_use_speed") * time_elapsed;
 }
 
-void Game::updateSound(float time_elapsed)
+void Game::preupdate(float time_elapsed)
 {
-    Framework::updateSound(time_elapsed);
+    Framework::preupdate(time_elapsed);
     if (CONF<bool>("sound/sound_on"))
     {
         music_manager_->update(time_elapsed);

@@ -433,14 +433,17 @@ void UserInterface::closeWindow(Window* window)
         return window_.get() == window;
     });
     framework_->spawnSound(RM.getSound("ui_click"));
+
+    if (framework_->getGameState() == Framework::GameState::Paused)
+        framework_->setGameState(Framework::GameState::Normal);
 }
 
-void UserInterface::spawnNoteWindow(const std::string& text)
+void UserInterface::spawnNoteWindow(const std::string& text, bool note_info)
 {
     windows_.emplace_back(std::make_shared<NoteWindow>(framework_, this, text,
                                                        sf::Vector2f(CONF<int>("graphics/window_width_px"),
                                                                     CONF<int>("graphics/window_height_px")) / 2.0f,
-                                                       CONF<sf::Vector2f>("graphics/popup_size")));
+                                                       CONF<sf::Vector2f>("graphics/popup_size"), note_info));
     framework_->spawnSound(RM.getSound("ui_click"));
 }
 

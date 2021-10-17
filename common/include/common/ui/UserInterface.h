@@ -66,7 +66,7 @@ public:
     virtual void spawnThought(Character* user, const std::string& text);
     virtual void spawnBonusText(const sf::Vector2f& pos, const std::string& text);
     virtual void spawnAcceptWindow(const std::string& text, const std::function<void()>& func);
-    virtual void spawnNoteWindow(const std::string& text);
+    virtual void spawnNoteWindow(const std::string& text, bool note_info = true);
     virtual void clearThoughts();
     virtual void closeWindow(Window* window);
     virtual void openMenu();

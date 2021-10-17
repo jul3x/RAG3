@@ -150,7 +150,7 @@ void Client::updatePlayers(float time_elapsed)
     }
 }
 
-void Client::establishConnection(const sf::IpAddress& ip)
+bool Client::establishConnection(const sf::IpAddress& ip)
 {
     unsigned short port = 54000;
 
@@ -158,7 +158,7 @@ void Client::establishConnection(const sf::IpAddress& ip)
     if (status != sf::Socket::Done)
     {
         LOG.error("[Client] Could not establish connection with host: " + ip.toString());
-        throw std::runtime_error("No server to connect!");
+        return false;
     }
 
     events_socket_.setBlocking(false);
@@ -170,6 +170,8 @@ void Client::establishConnection(const sf::IpAddress& ip)
     data["texture"] = std::string(CONF<std::string>("general/character"));
     PlayerEventPacket packet(PlayerEventPacket::Type::NameChange, data);
     events_socket_.send(packet);
+
+    return true;
 }
 
 void Client::handleEventsFromServer()
@@ -437,10 +439,17 @@ void Client::drawAdditionalPlayersLighting()
     }
 }
 
-void Client::startGame(const std::string& map_name)
+void Client::startGame(const std::string& ip_address)
 {
-    Framework::startGame(map_name);
-    this->respawn("first_new_map");
-    this->establishConnection("192.168.0.17");
-    ui_->startGame();
+    auto connection_result = this->establishConnection(ip_address);
+
+    if (connection_result)
+    {
+        this->respawn("first_new_map");
+        ui_->startGame();
+    }
+    else
+    {
+        ui_->spawnNoteWindow("Could not establish connection with desired host.", false);
+    }
 }

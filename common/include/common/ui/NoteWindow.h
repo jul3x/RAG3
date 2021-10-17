@@ -13,7 +13,7 @@ class Framework;
 class NoteWindow : public Window {
 public:
     NoteWindow(Framework* framework, UserInterface* ui, const std::string& text,
-               const sf::Vector2f& pos, const sf::Vector2f& size);
+               const sf::Vector2f& pos, const sf::Vector2f& size, bool note_info = true);
 
 protected:
     Framework* framework_;

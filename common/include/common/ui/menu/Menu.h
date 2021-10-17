@@ -29,6 +29,7 @@ public:
         LoadGame = 1,
         Settings = 2,
         About = 3,
+        PickServer = 4,
     };
 
     explicit Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme* theme);

@@ -20,7 +20,7 @@ void ClientUserInterface::initialize(graphics::Graphics& graphics)
 
     UserInterface::initialize(graphics);
     menu_->makeMenuElements({
-            {"Connect to server", [this]() { framework_->startGame(); }},
+            {"Connect to server", [this]() { menu_->showWindow(Menu::Window::PickServer); }},
             {"Settings",          [this]() { menu_->showWindow(Menu::Window::Settings); }},
             {"About",             [this]() { menu_->showWindow(Menu::Window::About); }},
             {"Exit",              [this]() { framework_->close(); }}

@@ -43,9 +43,9 @@ void GameUserInterface::updatePlayerStates(float time_elapsed)
 }
 
 
-void GameUserInterface::spawnNoteWindow(const std::string& text)
+void GameUserInterface::spawnNoteWindow(const std::string& text, bool note_info)
 {
-    UserInterface::spawnNoteWindow(text);
+    UserInterface::spawnNoteWindow(text, note_info);
     game_->setGameState(Game::GameState::Paused);
 }
 

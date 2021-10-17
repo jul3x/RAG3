@@ -12,6 +12,7 @@
 #include <common/ui/menu/AboutWindow.h>
 #include <common/ui/menu/LoadGameWindow.h>
 #include <common/ui/menu/SettingsWindow.h>
+#include <common/ui/menu/PickServerWindow.h>
 #include <common/ui/menu/Menu.h>
 
 
@@ -36,6 +37,7 @@ Menu::Menu(Framework* framework, UserInterface* ui, tgui::Gui* gui, tgui::Theme*
     windows_[Window::LoadGame] = std::make_unique<LoadGameWindow>(gui, theme, framework);
     windows_[Window::Settings] = std::make_unique<SettingsWindow>(gui, theme, framework);
     windows_[Window::About] = std::make_unique<AboutWindow>(gui, theme);
+    windows_[Window::PickServer] = std::make_unique<PickServerWindow>(gui, theme, framework);
 
     RM.getTexture("menu/logo").setSmooth(true);
     RM.getTexture("menu/main_panel").setSmooth(true);

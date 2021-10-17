@@ -27,7 +27,7 @@ public:
 
     void initialize(graphics::Graphics& graphics) override;
 
-    void spawnNoteWindow(const std::string& text) override;
+    void spawnNoteWindow(const std::string& text, bool note_info = true) override;
 
 private:
     void updatePlayerStates(float time_elapsed) override;

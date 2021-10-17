@@ -80,7 +80,7 @@ void MinimalUserInterface::spawnAcceptWindow(const std::string& text, const std:
 {
 }
 
-void MinimalUserInterface::spawnNoteWindow(const std::string& text)
+void MinimalUserInterface::spawnNoteWindow(const std::string& text, bool note_info)
 {
 }
 

@@ -7,26 +7,29 @@
 
 
 NoteWindow::NoteWindow(Framework* framework, UserInterface* ui, const std::string& text,
-                       const sf::Vector2f& pos, const sf::Vector2f& size) :
+                       const sf::Vector2f& pos, const sf::Vector2f& size, bool note_info) :
         Window(ui, pos, size),
         framework_(framework)
 {
-    child_->setTitle("Note");
+    child_->setTitle(note_info ? "Note" : "Information");
     child_->connect("closed", [this]() {
-        framework_->setGameState(Framework::GameState::Normal);
         ui_->closeWindow(this);
     });
 
     auto label = tgui::Label::create();
-    label->setRenderer(theme_->getRenderer("TooltipHeader"));
-    label->setText("You are reading a note:");
-    label->setTextSize(CONF<float>("graphics/popup_text_size"));
-    label->setPosition("50% - width / 2", "5%");
-    child_->add(label);
+
+    if (note_info)
+    {
+        label->setRenderer(theme_->getRenderer("TooltipHeader"));
+        label->setText("You are reading a note:");
+        label->setTextSize(CONF<float>("graphics/popup_text_size"));
+        label->setPosition("50% - width / 2", "5%");
+        child_->add(label);
+    }
 
     label = tgui::Label::create();
     label->setRenderer(theme_->getRenderer("TooltipText"));
-    label->setText("\"" + text + "\"");
+    label->setText(note_info ? "\"" + text + "\"" : text);
     label->setTextSize(CONF<float>("graphics/popup_text_size"));
     label->setPosition("50% - width / 2", "15%");
     child_->add(label);
@@ -38,7 +41,6 @@ NoteWindow::NoteWindow(Framework* framework, UserInterface* ui, const std::strin
     ok_->setSize(CONF<sf::Vector2f>("graphics/popup_button_size"));
     ok_->setPosition("50% - width/2", "100% - " + std::to_string(CONF<float>("graphics/popup_button_relative_valign")));
     ok_->connect("pressed", [this]() {
-        framework_->setGameState(Framework::GameState::Normal);
         ui_->closeWindow(this);
     });
     child_->add(ok_);

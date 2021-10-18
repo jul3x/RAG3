@@ -33,9 +33,9 @@ void TextButton::bindFunction(const std::function<void()>& func)
     framework_->getUI()->getGui()->add(button_);
 }
 
-void TextButton::show(bool hide)
+void TextButton::show(bool show)
 {
-    if (!hide)
+    if (show)
         button_->showWithEffect(tgui::ShowAnimationType::Fade, sf::seconds(show_duration_));
     else
         button_->hideWithEffect(tgui::ShowAnimationType::Fade, sf::seconds(show_duration_ / 2.0f));

@@ -7,7 +7,7 @@
 #include <R3E/system/Config.h>
 #include <common/ResourceManager.h>
 
-#include <ui/hud/FullHud.h>
+#include <common/ui/hud/FullHud.h>
 #include <common/ui/UserInterface.h>
 #include <common/Framework.h>
 
@@ -37,7 +37,7 @@ BackpackHud::BackpackHud(UserInterface* ui, Framework* framework, const sf::Vect
     {
         tooltip.bindFunction([this, &tooltip]() { this->clickPlaceholder(tooltip); });
         tooltip.bindGui(ui->getGui());
-        tooltip.show(true);
+        tooltip.show(false);
     }
 }
 
@@ -205,11 +205,11 @@ void BackpackHud::update(float time_elapsed)
     }
 }
 
-void BackpackHud::show(bool hide)
+void BackpackHud::show(bool show)
 {
     for (auto& tooltip : tooltips_)
     {
-        tooltip.show(hide);
+        tooltip.show(show);
     }
 }
 
@@ -306,9 +306,9 @@ void SkillsHud::update(float time_elapsed)
     points_text_.setString("Points: " + std::to_string(framework_->getPlayer()->getSkillPoints()));
 }
 
-void SkillsHud::show(bool hide)
+void SkillsHud::show(bool show)
 {
-    if (!hide)
+    if (show)
     {
         for (auto& line : lines_)
         {
@@ -330,12 +330,12 @@ void SkillsHud::show(bool hide)
             button->setText("+");
         }
 
-        if (hide && button->isVisible())
+        if (!show && button->isVisible())
         {
             button->hideWithEffect(tgui::ShowAnimationType::Fade,
                                    sf::seconds(CONF<float>("graphics/full_hud_show_duration") / 2.0f));
         }
-        else if (!hide && !button->isVisible())
+        else if (show && !button->isVisible())
         {
             button->showWithEffect(tgui::ShowAnimationType::Fade,
                                    sf::seconds(CONF<float>("graphics/full_hud_show_duration")));
@@ -453,15 +453,15 @@ void FullHud::show(bool show)
     {
         for (auto& button : buttons_)
         {
-            button->show(!show);
+            button->show(show);
         }
 
         time_elapsed_ = CONF<float>("graphics/full_hud_show_duration");
         show_ = show;
     }
 
-    skills_hud_.show(!show_);
-    backpack_hud_.show(!show_);
+    skills_hud_.show(show_);
+    backpack_hud_.show(show_);
 }
 
 void FullHud::draw(sf::RenderTarget& target, sf::RenderStates states) const

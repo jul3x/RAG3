@@ -5,13 +5,13 @@
 #include <R3E/system/Config.h>
 
 #include <common/ResourceManager.h>
-#include <ui/BloodSplash.h>
+#include <common/ui/BloodSplash.h>
 
-#include <Game.h>
+#include <common/Framework.h>
 
 
-BloodSplash::BloodSplash(Game* game, const sf::Vector2f& size) :
-        game_(game),
+BloodSplash::BloodSplash(Framework* framework, const sf::Vector2f& size) :
+        framework_(framework),
         dead_(size / 2.0f, size, &RM.getTexture("blood_hud_3")),
         critical_(size / 2.0f, size, &RM.getTexture("blood_hud_2")),
         low_(size / 2.0f, size, &RM.getTexture("blood_hud_1")),
@@ -45,7 +45,7 @@ bool BloodSplash::update(float time_elapsed)
 {
     time_elapsed_ += time_elapsed;
 
-    auto period = game_->getRag3Time() > 0.0f ? CONF<float>("rag3_time") / 5.0f :
+    auto period = framework_->getRag3Time() > 0.0f ? CONF<float>("rag3_time") / 5.0f :
                   CONF<float>("graphics/blood_pulsating_time");
     transparency_ = std::abs(255.0f * std::sin(time_elapsed_ / period * M_PI * 2.0f));
 
@@ -55,16 +55,16 @@ bool BloodSplash::update(float time_elapsed)
     critical_.setColor(255, 255, 255, transparency_);
     low_.setColor(255, 255, 255, transparency_);
 
-    if (game_->getRag3Time() <= 0.0f && player_life_state_ != Player::LifeState::Critical &&
+    if (framework_->getRag3Time() <= 0.0f && player_life_state_ != Player::LifeState::Critical &&
         player_life_state_ != Player::LifeState::Dead)
         time_elapsed_ = 0.0f;
 
-    if (game_->getRag3Time() > 0.0f || player_life_state_ == Player::LifeState::Critical)
+    if (framework_->getRag3Time() > 0.0f || player_life_state_ == Player::LifeState::Critical)
     {
         heartbeat_time_elapsed_ += time_elapsed;
         if (heartbeat_time_elapsed_ > 2.0f)
         {
-            game_->spawnSound(RM.getSound("heartbeat"));
+            framework_->spawnSound(RM.getSound("heartbeat"));
             heartbeat_time_elapsed_ = 0.0f;
         }
     }
@@ -79,7 +79,7 @@ bool BloodSplash::update(float time_elapsed)
 
 void BloodSplash::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    if (game_->getRag3Time() > 0.0f)
+    if (framework_->getRag3Time() > 0.0f)
     {
         target.draw(low_, states);
     }

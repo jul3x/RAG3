@@ -47,7 +47,77 @@ void Framework::initialize()
     weather_ = std::make_unique<WeatherSystem>(this, weather_params_.get());
 }
 
+void Framework::beforeUpdate(float time_elapsed)
+{
+
+}
+
+void Framework::afterUpdate(float time_elapsed)
+{
+
+}
+
+void Framework::updateSound(float time_elapsed)
+{
+    if (CONF<bool>("sound/sound_on"))
+    {
+        Engine::changeSoundListenerPosition(getPlayer()->getPosition());
+    }
+}
+
+void Framework::updateCamera(float time_elapsed)
+{
+    camera_->update(time_elapsed);
+}
+
+void Framework::updateTimeReversal(float time_elapsed)
+{
+
+}
+
 void Framework::update(float time_elapsed)
+{
+    updateSound(time_elapsed);
+
+    switch (state_)
+    {
+        case GameState::Menu:
+        case GameState::Paused:
+        {
+            break;
+        }
+        case GameState::Normal:
+        {
+            beforeUpdate(time_elapsed);
+
+            updateExplosions();
+            updateMapObjects(time_elapsed);
+            updatePlayers(time_elapsed);
+            updateBullets(time_elapsed);
+            updateFire(time_elapsed);
+            updateDestructionSystems(time_elapsed);
+
+            updateCamera(time_elapsed);
+
+            afterUpdate(time_elapsed);
+
+            if (should_finish_map_)
+                finishMap();
+
+            time_elapsed_ += time_elapsed;
+            break;
+        }
+        case GameState::Reverse:
+        {
+            updateTimeReversal(time_elapsed);
+
+            camera_->update(time_elapsed);
+            break;
+        }
+    }
+}
+
+void Framework::updatePlayers(float time_elapsed)
 {
 
 }
@@ -233,6 +303,70 @@ void Framework::updateDestructionSystems(float time_elapsed)
 
 void Framework::draw(graphics::Graphics& graphics)
 {
+    if (state_ != GameState::Menu)
+    {
+        static sf::RenderStates states;
+
+        sf::Shader* curr_shader = &RM.getShader(j3x::get<std::string>(map_->getParams(), "shader"));
+        extraShaderManipulations(curr_shader);
+        states.shader = curr_shader;
+
+        auto draw = [&graphics](auto& list) {
+            for (auto& obj : list)
+                graphics.drawSorted(*obj);
+        };
+
+        auto draw_light = [this](auto& list) {
+            for (const auto& obj : list)
+            {
+                auto light = obj->getLightPoint();
+                if (light != nullptr)
+                    this->lighting_->add(*light);
+            }
+        };
+
+//        debug_map_blockage_->draw(graphics);
+        draw(map_->getList<DecorationTile>());
+        draw(map_->getList<Decoration>());
+        draw(map_->getList<Obstacle>());
+        draw(map_->getList<ObstacleTile>());
+        draw(map_->getList<NPC>());
+        draw(map_->getList<PlacedWeapon>());
+        draw(destruction_systems_);
+        draw(bullets_);
+        draw(fire_);
+
+        for (auto& special : map_->getList<Special>())
+            if (special->isDrawable())
+                graphics.drawSorted(*special);
+
+        auto player = getPlayer();
+        if (player != nullptr && player->isAlive() && state_ != GameState::Reverse)
+            graphics.drawSorted(*player);
+
+        drawAdditionalPlayers(graphics);
+
+        engine_->drawSortedAnimationEvents();
+        graphics.drawSorted(*weather_);
+
+        graphics.drawAlreadySorted(states.shader);
+
+        lighting_->clear();
+
+        draw_light(map_->getList<NPC>());
+        draw_light(map_->getList<Obstacle>());
+        draw_light(map_->getList<Decoration>());
+        draw_light(map_->getList<Special>());
+        draw_light(fire_);
+        draw_light(engine_->getAnimationEvents());
+
+        if (player != nullptr && player->getLightPoint() != nullptr)
+            lighting_->add(*player->getLightPoint());
+        drawAdditionalPlayersLighting();
+
+        graphics.setStaticView();
+        graphics.draw(*lighting_);
+    }
 }
 
 void Framework::start()
@@ -685,6 +819,11 @@ Special* Framework::spawnNewSpecial(const std::string& id, int u_id,
     return ptr;
 }
 
+template<class T>
+void Framework::findAndDelete(T* ptr)
+{
+}
+
 template<>
 void Framework::findAndDelete<Character>(Character* ptr)
 {
@@ -1037,9 +1176,11 @@ void Framework::initNPCs()
 
 }
 
-void Framework::initPlayers()
+void Framework::initPlayer(Player* player)
 {
-
+    engine_->registerObj<DynamicObject>(player);
+    registerLight(player);
+    registerWeapons(player);
 }
 
 void Framework::initSpecials()
@@ -1096,7 +1237,39 @@ float Framework::getTimeManipulationFuel() const
 
 void Framework::respawn(const std::string& map_name)
 {
+    ui_->clearThoughts();
+    setRag3Time(0.0f);
 
+    map_->loadMap(map_name.empty() ? map_->getMapName() : map_name);
+    engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
+    agents_manager_ = std::make_unique<ai::AgentsManager>(&map_->getMapBlockage(), ai::AStar::EightNeighbours,
+                                                          CONF<float>("characters/max_time_without_path_recalc"),
+                                                          CONF<float>("characters/min_pos_change_without_path_recalc"),
+                                                          CONF<int>("characters/max_path_search_depth"));
+    engine_->getGraphics().setBgColor(sf::Color(j3x::get<int>(map_->getParams(), "background_color")));
+    lighting_ = std::make_unique<graphics::Lighting>(
+            sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
+                         static_cast<float>(CONF<int>("graphics/window_height_px"))},
+            sf::Color(j3x::get<int>(map_->getParams(), "lighting_color")));
+    fire_.clear();
+    bullets_.clear();
+    explosions_.clear();
+    desired_explosions_.clear();
+    destruction_systems_.clear();
+
+    initObstacles();
+    initDecorations();
+
+    auto player = getPlayer();
+    if (player != nullptr)
+        initPlayer(player);
+    initNPCs();
+    initWeapons();
+    initSpecials();
+
+    ui_->initializeTutorialArrows();
+    setGameState(Framework::GameState::Normal);
+    should_finish_map_ = false;
 }
 
 void Framework::finishMap()
@@ -1110,6 +1283,34 @@ void Framework::setFinishMap()
 }
 
 void Framework::startGame(const std::string& map_name)
+{
+
+}
+
+void Framework::extraShaderManipulations(sf::Shader* shader)
+{
+    shader->setUniform("time", this->time_elapsed_);
+}
+
+void Framework::drawAdditionalPlayers(graphics::Graphics& graphics)
+{
+
+}
+
+void Framework::drawAdditionalPlayersLighting()
+{
+
+}
+
+bool Framework::isJournalFreezed()
+{
+    const auto journal = getJournal();
+    if (journal != nullptr)
+        return journal->getDurationSaved() < CONF<float>("journal_min_time");
+    return true;
+}
+
+void Framework::talk()
 {
 
 }

@@ -5,7 +5,7 @@
 #include <R3E/system/Config.h>
 #include <common/ResourceManager.h>
 
-#include <common/ui/SmallBackpackHud.h>
+#include <common/ui/hud/SmallBackpackHud.h>
 #include <common/Framework.h>
 
 
@@ -85,7 +85,7 @@ void SmallBackpackHud::registerGui(Framework* framework)
         tooltips_.back().bindText(RMGET<std::string>("specials", NAMES_[i], "tooltip_header"),
                                   RMGET<std::string>("specials", NAMES_[i], "tooltip"));
         tooltips_.back().bindGui(framework->getUI()->getGui());
-        tooltips_.back().show(true);
+        tooltips_.back().show(false);
     }
 }
 
@@ -104,10 +104,10 @@ void SmallBackpackHud::draw(sf::RenderTarget& target, sf::RenderStates states) c
     }
 }
 
-void SmallBackpackHud::doShow(bool hide)
+void SmallBackpackHud::doShow(bool show)
 {
     for (auto& tooltip : tooltips_)
     {
-        tooltip.show(hide);
+        tooltip.show(show);
     }
 }

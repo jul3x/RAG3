@@ -24,7 +24,7 @@ public:
 
     void bindGui(tgui::Gui* gui);
 
-    void show(bool hide = false);
+    void show(bool show = true);
 
     void setActive(bool active);
 

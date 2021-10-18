@@ -13,7 +13,7 @@
 
 #include <common/events/Event.h>
 
-#include <ui/menu/MenuWindow.h>
+#include <common/ui/menu/MenuWindow.h>
 
 
 using namespace r3e;

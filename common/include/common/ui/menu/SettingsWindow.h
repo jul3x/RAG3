@@ -9,7 +9,7 @@
 
 #include <R3E/j3x/J3X.h>
 
-#include <ui/menu/MenuWindow.h>
+#include <common/ui/menu/MenuWindow.h>
 
 
 using namespace r3e;

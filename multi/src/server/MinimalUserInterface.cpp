@@ -61,4 +61,3 @@ void MinimalUserInterface::spawnNoteWindow(const std::string& text)
 void MinimalUserInterface::closeWindow(Window* window)
 {
 }
-

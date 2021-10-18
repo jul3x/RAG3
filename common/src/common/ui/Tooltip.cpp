@@ -65,9 +65,9 @@ void Tooltip::bindGui(tgui::Gui* gui)
     gui->add(button_);
 }
 
-void Tooltip::show(bool hide)
+void Tooltip::show(bool show)
 {
-    button_->setVisible(!hide);
+    button_->setVisible(show);
 }
 
 void Tooltip::setActive(bool active)

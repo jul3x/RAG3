@@ -33,20 +33,27 @@ public:
 
     // Engine methods
     void initialize() override;
-    void update(float time_elapsed) override;
     void draw(graphics::Graphics& graphics) override;
 
     void alertCollision(HoveringObject* h_obj, DynamicObject* d_obj) override;
 
     // UI functions
+    void respawn(const std::string& map_name) override;
     void useSpecialObject() override;
     void setGameState(GameState state) override;
 
 private:
-    void obstacleDestroyedEvent(Obstacle* obstacle) override;
+    void beforeUpdate(float time_elapsed) override;
+    void afterUpdate(float time_elapsed) override;
 
-    void updatePlayers(float time_elapsed);
+    void updateCamera(float time_elapsed) override;
+    void updatePlayers(float time_elapsed) override;
+
+    void obstacleDestroyedEvent(Obstacle* obstacle) override;
+    void drawAdditionalPlayers(graphics::Graphics& graphics) override;
+    void drawAdditionalPlayersLighting() override;
     void clearPlayer(Player* player);
+    void respawnPlayer(sf::Uint32 ip);
     void useSpecialObject(Player* player, sf::Uint32 ip);
 
     sf::Uint32 getPlayerIP(Player* player);
@@ -56,7 +63,7 @@ private:
     void sendMessagesToPlayers();
     void sendEventToPlayers(ServerEventPacket& packet);
 
-    std::unordered_map<sf::Uint32, Player> players_;
+    std::unordered_map<sf::Uint32, std::unique_ptr<Player>> players_;
     std::unordered_map<sf::Uint32, PlayerInputPacket> cached_packets_;
     std::vector<ServerEventPacket> cached_events_;
 

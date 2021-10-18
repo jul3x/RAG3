@@ -6,7 +6,7 @@
 
 #include <common/Framework.h>
 
-#include <ui/menu/LoadGameWindow.h>
+#include <common/ui/menu/LoadGameWindow.h>
 
 
 LoadGameWindow::LoadGameWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* framework) :

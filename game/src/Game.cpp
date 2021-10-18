@@ -45,113 +45,98 @@ void Game::initialize()
     this->preloadSave();
 }
 
-void Game::update(float time_elapsed)
+void Game::beforeUpdate(float time_elapsed)
 {
+    Framework::beforeUpdate(time_elapsed);
+    agents_manager_->update();
+}
+
+void Game::afterUpdate(float time_elapsed)
+{
+    Framework::afterUpdate(time_elapsed);
+    achievements_->update(time_elapsed);
+    journal_->update(time_elapsed);
+    weather_->update(time_elapsed);
+
+    if (rag3_time_elapsed_ > 0.0f)
+        rag3_time_elapsed_ -= time_elapsed;
+    else if (rag3_time_elapsed_ > -1.0f)
+        setRag3Time(-10.0f);
+
+    if (current_time_factor_ == 1.0f)
+        time_manipulation_fuel_ =
+                std::min(time_manipulation_fuel_ + player_->getTimeManipulationFuelSpeed() * time_elapsed,
+                         player_->getMaxTimeManipulation());
+    else
+        time_manipulation_fuel_ -= CONF<float>("characters/time_manipulation_slow_use_speed") * time_elapsed;
+}
+
+void Game::updateSound(float time_elapsed)
+{
+    Framework::updateSound(time_elapsed);
     if (CONF<bool>("sound/sound_on"))
     {
-        Engine::changeSoundListenerPosition(player_->getPosition());
         music_manager_->update(time_elapsed);
     }
+}
 
-    switch (state_)
+void Game::updateCamera(float time_elapsed)
+{
+    Framework::updateCamera(time_elapsed);
+
+    if (forced_zoom_to_time_elapsed_ > 0.0f)
     {
-        case GameState::Menu:
-        case GameState::Paused:
-        {
-            break;
-        }
-        case GameState::Normal:
-        {
-            updateExplosions();
-
-            agents_manager_->update();
-
-            updateMapObjects(time_elapsed);
-            updatePlayerClone(time_elapsed);
-            updatePlayer(time_elapsed);
-            updateBullets(time_elapsed);
-            updateFire(time_elapsed);
-            updateDestructionSystems(time_elapsed);
-
-            achievements_->update(time_elapsed);
-            journal_->update(time_elapsed);
-            camera_->update(time_elapsed);
-
-            weather_->update(time_elapsed);
-
-            if (rag3_time_elapsed_ > 0.0f)
-                rag3_time_elapsed_ -= time_elapsed;
-            else if (rag3_time_elapsed_ > -1.0f)
-                setRag3Time(-10.0f);
-
-            if (forced_zoom_to_time_elapsed_ > 0.0f)
-            {
-                forced_zoom_to_time_elapsed_ -= time_elapsed;
-                forceZoomTo(current_obj_zoom_);
-            }
-            else if (forced_zoom_to_time_elapsed_ > -1.0f)
-            {
-                camera_->setPointingTo(player_->getPosition());
-                camera_->setZoomTo(1.0f);
-                this->setNormalTime();
-                forced_zoom_to_time_elapsed_ = -10.0f;
-                current_obj_zoom_ = nullptr;
-            }
-
-            if (current_time_factor_ == 1.0f)
-                time_manipulation_fuel_ =
-                        std::min(time_manipulation_fuel_ + player_->getTimeManipulationFuelSpeed() * time_elapsed,
-                                 player_->getMaxTimeManipulation());
-            else
-                time_manipulation_fuel_ -= CONF<float>("characters/time_manipulation_slow_use_speed") * time_elapsed;
-
-            if (should_finish_map_)
-                finishMap();
-
-            time_elapsed_ += time_elapsed;
-            break;
-        }
-        case GameState::Reverse:
-        {
-            time_manipulation_fuel_ -= CONF<float>("time_reversal_speed_factor") * time_elapsed;
-            if (!journal_->executeTimeReversal(CONF<float>("time_reversal_speed_factor") * time_elapsed) ||
-                time_manipulation_fuel_ <= 0.0f)
-            {
-                this->setGameState(GameState::Normal);
-            }
-
-            auto update_lights = [](auto& list) {
-                for (auto& obj : list)
-                {
-                    auto light = obj->getLightPoint();
-
-                    if (light != nullptr)
-                        light->setPosition(obj->getPosition());
-                }
-            };
-
-            update_lights(map_->getList<Obstacle>());
-            update_lights(map_->getList<NPC>());
-            update_lights(map_->getList<Special>());
-            update_lights(map_->getList<Decoration>());
-            update_lights(fire_);
-
-            auto player_light = player_->getLightPoint();
-            if (player_light != nullptr)
-                player_light->setPosition(player_->getPosition());
-
-            if (player_clone_ != nullptr)
-            {
-                auto clone_light = player_clone_->getLightPoint();
-
-                if (clone_light != nullptr)
-                    clone_light->setPosition(player_clone_->getPosition());
-            }
-
-            camera_->update(time_elapsed);
-            break;
-        }
+        forced_zoom_to_time_elapsed_ -= time_elapsed;
+        forceZoomTo(current_obj_zoom_);
     }
+    else if (forced_zoom_to_time_elapsed_ > -1.0f)
+    {
+        camera_->setPointingTo(player_->getPosition());
+        camera_->setZoomTo(1.0f);
+        this->setNormalTime();
+        forced_zoom_to_time_elapsed_ = -10.0f;
+        current_obj_zoom_ = nullptr;
+    }
+}
+
+void Game::updateTimeReversal(float time_elapsed)
+{
+    time_manipulation_fuel_ -= CONF<float>("time_reversal_speed_factor") * time_elapsed;
+    if (!journal_->executeTimeReversal(CONF<float>("time_reversal_speed_factor") * time_elapsed) ||
+        time_manipulation_fuel_ <= 0.0f)
+    {
+        this->setGameState(GameState::Normal);
+    }
+
+    auto update_lights = [](auto& list) {
+        for (auto& obj : list)
+        {
+            auto light = obj->getLightPoint();
+
+            if (light != nullptr)
+                light->setPosition(obj->getPosition());
+        }
+    };
+
+    update_lights(map_->getList<Obstacle>());
+    update_lights(map_->getList<NPC>());
+    update_lights(map_->getList<Special>());
+    update_lights(map_->getList<Decoration>());
+    update_lights(fire_);
+
+    auto player_light = player_->getLightPoint();
+    if (player_light != nullptr)
+        player_light->setPosition(player_->getPosition());
+
+    if (player_clone_ != nullptr)
+    {
+        auto clone_light = player_clone_->getLightPoint();
+
+        if (clone_light != nullptr)
+            clone_light->setPosition(player_clone_->getPosition());
+    }
+
+    Framework::updateTimeReversal(time_elapsed);
 }
 
 void Game::updateMapObjects(float time_elapsed)
@@ -194,87 +179,6 @@ void Game::killNPC(NPC* npc)
     if (npc->getActivation() == Functional::Activation::OnKill && npc->isActive())
     {
         npc->use(npc);
-    }
-}
-
-void Game::draw(graphics::Graphics& graphics)
-{
-    if (state_ != GameState::Menu)
-    {
-        static sf::RenderStates states;
-
-        sf::Shader* curr_shader = &RM.getShader(j3x::get<std::string>(map_->getParams(), "shader"));
-
-        if (rag3_time_elapsed_ > 0.0f)
-        {
-            curr_shader = &RM.getShader("rag3.frag");
-            curr_shader->setUniform("time", rag3_time_elapsed_);
-            curr_shader->setUniform("rag3_time", CONF<float>("rag3_time"));
-        }
-        else
-        {
-            curr_shader->setUniform("time", this->time_elapsed_);
-        }
-
-        states.shader = curr_shader;
-
-        auto draw = [&graphics](auto& list) {
-            for (auto& obj : list)
-                graphics.drawSorted(*obj);
-        };
-
-        auto draw_light = [&graphics, this](auto& list) {
-            for (const auto& obj : list)
-            {
-                auto light = obj->getLightPoint();
-                if (light != nullptr)
-                    this->lighting_->add(*light);
-            }
-        };
-
-//        debug_map_blockage_->draw(graphics);
-        draw(map_->getList<DecorationTile>());
-        draw(map_->getList<Decoration>());
-        draw(map_->getList<Obstacle>());
-        draw(map_->getList<ObstacleTile>());
-        draw(map_->getList<NPC>());
-        draw(map_->getList<PlacedWeapon>());
-        draw(destruction_systems_);
-        draw(bullets_);
-        draw(fire_);
-
-        for (auto& special : map_->getList<Special>())
-            if (special->isDrawable())
-                graphics.drawSorted(*special);
-
-        if (player_->isAlive() and state_ != GameState::Reverse)
-            graphics.drawSorted(*player_);
-
-        if (player_clone_ != nullptr)
-            graphics.drawSorted(*player_clone_);
-
-        engine_->drawSortedAnimationEvents();
-        graphics.drawSorted(*weather_);
-
-        graphics.drawAlreadySorted(states.shader);
-
-
-        lighting_->clear();
-
-        draw_light(map_->getList<NPC>());
-        draw_light(map_->getList<Obstacle>());
-        draw_light(map_->getList<Decoration>());
-        draw_light(map_->getList<Special>());
-        draw_light(fire_);
-        draw_light(engine_->getAnimationEvents());
-
-        if (player_->getLightPoint() != nullptr)
-            lighting_->add(*player_->getLightPoint());
-        if (player_clone_ != nullptr && player_clone_->getLightPoint() != nullptr)
-            lighting_->add(*player_clone_->getLightPoint());
-
-        graphics.setStaticView();
-        graphics.draw(*lighting_);
     }
 }
 
@@ -553,13 +457,16 @@ void Game::setGameState(Framework::GameState state)
     state_ = state;
 }
 
-bool Game::isJournalFreezed() const
+void Game::updatePlayers(float time_elapsed)
 {
-    return journal_->getDurationSaved() < CONF<float>("journal_min_time");
-}
+    player_->setCurrentSpecialObject(nullptr);
+    player_->setCurrentTalkableCharacter(nullptr);
+    if (player_->isAlive() && !player_->update(time_elapsed))
+    {
+        this->killPlayer(player_.get());
+        music_manager_->setPlaybackPitch(CONF<float>("sound/bullet_time_music_factor"));
+    }
 
-void Game::updatePlayerClone(float time_elapsed)
-{
     if (player_clone_ != nullptr)
     {
         player_clone_->setCurrentSpecialObject(nullptr);
@@ -590,21 +497,8 @@ void Game::updatePlayerClone(float time_elapsed)
             (*player_weapon)->setState(player_clone_weapon->getState());
 
         player_->setHealth(player_clone_->getHealth());
-
         camera_->setZoomInOut();
-
         this->cleanPlayerClone();
-    }
-}
-
-void Game::updatePlayer(float time_elapsed)
-{
-    player_->setCurrentSpecialObject(nullptr);
-    player_->setCurrentTalkableCharacter(nullptr);
-    if (player_->isAlive() && !player_->update(time_elapsed))
-    {
-        this->killPlayer(player_.get());
-        music_manager_->setPlaybackPitch(CONF<float>("sound/bullet_time_music_factor"));
     }
 }
 
@@ -669,13 +563,6 @@ float Game::getForcedZoomTime() const
     return forced_zoom_to_time_elapsed_;
 }
 
-void Game::initPlayers()
-{
-    engine_->registerObj<DynamicObject>(player_.get());
-    registerLight(player_.get());
-    registerWeapons(player_.get());
-}
-
 void Game::initNPCs()
 {
     for (auto& character : map_->getList<NPC>())
@@ -712,46 +599,16 @@ void Game::respawn(const std::string& map_name)
 {
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     player_->setName(CONF<std::string>("general/player_name"));
-    ui_->clearThoughts();
     ui_->registerPlayer(player_.get());
     time_manipulation_fuel_ = player_->getMaxTimeManipulation();
-    setRag3Time(0.0f);
 
-    map_->loadMap(map_name.empty() ? map_->getMapName() : map_name);
-    engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
-    agents_manager_ = std::make_unique<ai::AgentsManager>(&map_->getMapBlockage(), ai::AStar::EightNeighbours,
-                                                          CONF<float>("characters/max_time_without_path_recalc"),
-                                                          CONF<float>("characters/min_pos_change_without_path_recalc"),
-                                                          CONF<int>("characters/max_path_search_depth"));
-    engine_->getGraphics().setBgColor(sf::Color(j3x::get<int>(map_->getParams(), "background_color")));
-    lighting_ = std::make_unique<graphics::Lighting>(
-            sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                         static_cast<float>(CONF<int>("graphics/window_height_px"))},
-            sf::Color(j3x::get<int>(map_->getParams(), "lighting_color")));
-    fire_.clear();
-    bullets_.clear();
-    explosions_.clear();
-    desired_explosions_.clear();
-    destruction_systems_.clear();
-
-//    debug_map_blockage_ = std::make_unique<DebugMapBlockage>(&map_->getMapBlockage());
-
-    initObstacles();
-    initDecorations();
-    initPlayers();
-    initNPCs();
-    initWeapons();
-    initSpecials();
+    Framework::respawn(map_name);
 
     this->setStartingPosition();
 
     journal_->clear();
     this->cleanPlayerClone();
     this->loadSave();
-
-    ui_->initializeTutorialArrows();
-    setGameState(Game::GameState::Normal);
-    should_finish_map_ = false;
 }
 
 void Game::setStartingPosition()
@@ -866,4 +723,30 @@ void Game::startGame(const std::string& map_name)
     this->respawn(!is_playing_previous_map_ ? j3x::getObj<std::string>(CONF<j3x::List>("save/maps_unlocked").back()) :
                   map_name);
     ui_->startGame();
+}
+
+void Game::extraShaderManipulations(sf::Shader* shader)
+{
+    if (rag3_time_elapsed_ > 0.0f)
+    {
+        shader = &RM.getShader("rag3.frag");
+        shader->setUniform("time", rag3_time_elapsed_);
+        shader->setUniform("rag3_time", CONF<float>("rag3_time"));
+    }
+    else
+    {
+        Framework::extraShaderManipulations(shader);
+    }
+}
+
+void Game::drawAdditionalPlayers(graphics::Graphics& graphics)
+{
+    if (player_clone_ != nullptr)
+        graphics.drawSorted(*player_clone_);
+}
+
+void Game::drawAdditionalPlayersLighting()
+{
+    if (player_clone_ != nullptr && player_clone_->getLightPoint() != nullptr)
+        lighting_->add(*player_clone_->getLightPoint());
 }

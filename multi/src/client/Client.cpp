@@ -34,6 +34,7 @@ void Client::initialize()
     ui_->registerPlayer(player_.get());
     engine_->registerUI(ui_.get());
 
+    respawn("first_new_map");
     for (auto& special : map_->getList<Special>())
     {
         if (special->getId() == "starting_position")
@@ -49,95 +50,25 @@ void Client::initialize()
     establishConnection("192.168.0.17");
 }
 
-void Client::update(float time_elapsed)
+void Client::beforeUpdate(float time_elapsed)
 {
+    Framework::beforeUpdate(time_elapsed);
     sendInputs();
     handleEventsFromServer();
     receiveData();
-
-    if (CONF<bool>("sound/sound_on"))
-    {
-        Engine::changeSoundListenerPosition(player_->getPosition());
-    }
-
-    updateExplosions();
-    updateMapObjects(time_elapsed);
-    updatePlayers(time_elapsed);
-    updateBullets(time_elapsed);
-    updateFire(time_elapsed);
-    updateDestructionSystems(time_elapsed);
-
-    camera_->update(time_elapsed);
-    camera_->setPointingTo(player_->getPosition());
-    camera_->setZoomTo(1.0f);
-
-    time_elapsed_ += time_elapsed;
 }
 
-void Client::draw(graphics::Graphics& graphics)
+void Client::afterUpdate(float time_elapsed)
 {
-    static sf::RenderStates states;
+    Framework::afterUpdate(time_elapsed);
+    weather_->update(time_elapsed);
+}
 
-    sf::Shader* curr_shader = &RM.getShader(j3x::get<std::string>(map_->getParams(), "shader"));
-    curr_shader->setUniform("time", this->time_elapsed_);
-    states.shader = curr_shader;
-
-    auto draw = [&graphics](auto& list) {
-        for (auto& obj : list)
-            graphics.drawSorted(*obj);
-    };
-
-    auto draw_light = [this](auto& list) {
-        for (const auto& obj : list)
-        {
-            auto light = obj->getLightPoint();
-            if (light != nullptr)
-                this->lighting_->add(*light);
-        }
-    };
-
-    draw(map_->getList<DecorationTile>());
-    draw(map_->getList<Decoration>());
-    draw(map_->getList<Obstacle>());
-    draw(map_->getList<ObstacleTile>());
-    draw(map_->getList<PlacedWeapon>());
-    draw(destruction_systems_);
-    draw(bullets_);
-    draw(fire_);
-
-    for (auto& special : map_->getList<Special>())
-        if (special->isDrawable())
-            graphics.drawSorted(*special);
-
-    if (player_->isAlive())
-        graphics.drawSorted(*player_);
-
-    for (auto& player : players_)
-    {
-        if (player.second->isAlive())
-            graphics.drawSorted(*player.second);
-    }
-
-    engine_->drawSortedAnimationEvents();
-
-    graphics.drawAlreadySorted(states.shader);
-
-    lighting_->clear();
-
-    draw_light(map_->getList<Obstacle>());
-    draw_light(map_->getList<Decoration>());
-    draw_light(map_->getList<Special>());
-    draw_light(fire_);
-    draw_light(engine_->getAnimationEvents());
-
-    lighting_->add(*player_->getLightPoint());
-    for (auto& player : players_)
-    {
-        lighting_->add(*player.second->getLightPoint());
-    }
-
-    graphics.setStaticView();
-    graphics.draw(*lighting_);
+void Client::updateCamera(float time_elapsed)
+{
+    Framework::updateCamera(time_elapsed);
+    camera_->setPointingTo(player_->getPosition());
+    camera_->setZoomTo(1.0f);
 }
 
 Player* Client::getPlayer()
@@ -226,7 +157,7 @@ void Client::updatePlayers(float time_elapsed)
     {
         if (player.second->isAlive() && !player.second->update(time_elapsed))
         {
-            this->killPlayer(player.second.get()));
+            this->killPlayer(player.second.get());
         }
     }
 }
@@ -248,7 +179,7 @@ void Client::establishConnection(const sf::IpAddress& ip)
 
     j3x::Parameters data;
     data["name"] = std::string(CONF<std::string>("general/player_name"));
-    data["texture"] = std::string("trevor");
+    data["texture"] = std::string(CONF<std::string>("general/character"));
     PlayerEventPacket packet(PlayerEventPacket::Type::NameChange, data);
     events_socket_.send(packet);
 }
@@ -442,21 +373,12 @@ Player* Client::getPlayer(sf::Uint32 ip)
     if (it == players_.end())
     {
         players_[ip] = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
-        engine_->registerObj<DynamicObject>(players_[ip].get());
-        registerLight(players_[ip].get());
-        registerWeapons(players_[ip].get());
+        initPlayer(players_[ip].get());
 
         return players_[ip].get();
     }
 
     return it->second.get();
-}
-
-void Client::initPlayers()
-{
-    engine_->registerObj<DynamicObject>(player_.get());
-    registerLight(player_.get());
-    registerWeapons(player_.get());
 }
 
 void Client::setGameState(Framework::GameState state)
@@ -480,4 +402,31 @@ void Client::useItem(const std::string& id)
     data["id"] = id;
     auto packet = PlayerEventPacket(PlayerEventPacket::Type::UseBackpackObject, data);
     events_socket_.send(packet);
+}
+
+void Client::respawn(const std::string& map_name)
+{
+    player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
+    player_->setName(CONF<std::string>("general/player_name"));
+    ui_->registerPlayer(player_.get());
+
+    Framework::respawn(map_name);
+    map_->getList<NPC>().clear();
+}
+
+void Client::drawAdditionalPlayers(graphics::Graphics& graphics)
+{
+    for (auto& player : players_)
+    {
+        if (player.second->isAlive())
+            graphics.drawSorted(*player.second);
+    }
+}
+
+void Client::drawAdditionalPlayersLighting()
+{
+    for (auto& player : players_)
+    {
+        lighting_->add(*player.second->getLightPoint());
+    }
 }

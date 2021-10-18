@@ -38,8 +38,6 @@ public:
 
     // Engine methods
     void initialize() override;
-    void update(float time_elapsed) override;
-    void draw(graphics::Graphics& graphics) override;
     void close() override;
 
     void alertCollision(HoveringObject* h_obj, StaticObject* s_obj) override;
@@ -53,11 +51,16 @@ public:
     void useItem(const std::string& id) override;
     void useSpecialObject() override;
     void setGameState(GameState state) override;
+    void respawn(const std::string& map_name) override;
 
 private:
-    void updatePlayers(float time_elapsed);
+    void beforeUpdate(float time_elapsed) override;
+    void afterUpdate(float time_elapsed) override;
 
-    void initPlayers() override;
+    void updateCamera(float time_elapsed) override;
+    void updatePlayers(float time_elapsed) override;
+    void drawAdditionalPlayers(graphics::Graphics& graphics) override;
+    void drawAdditionalPlayersLighting() override;
 
     void establishConnection(const sf::IpAddress& ip);
     void handleEventsFromServer();

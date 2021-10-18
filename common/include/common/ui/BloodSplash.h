@@ -12,11 +12,11 @@
 
 using namespace r3e;
 
-class Game;
+class Framework;
 
 class BloodSplash : public AbstractDrawableObject {
 public:
-    explicit BloodSplash(Game* game, const sf::Vector2f& size);
+    explicit BloodSplash(Framework* framework, const sf::Vector2f& size);
 
     void updateLifeState(Player::LifeState state);
 
@@ -34,7 +34,7 @@ private:
 
     Player::LifeState player_life_state_;
 
-    Game* game_;
+    Framework* framework_;
 
 };
 

@@ -34,8 +34,6 @@ public:
 
     // Engine methods
     void initialize() override;
-    void update(float time_elapsed) override;
-    void draw(graphics::Graphics& graphics) override;
     void close() override;
 
     // Getters
@@ -61,15 +59,12 @@ public:
     Decoration* spawnDecoration(const sf::Vector2f& pos, const std::string& name) override;
 
     // UI functions
-    void talk();
+    void talk() override;
     void useSpecialObject() override;
     bool setBulletTime();
     void setNormalTime();
     void respawn(const std::string& map_name) override;
     void startGame(const std::string& map_name) override;
-
-    // Journal methods
-    [[nodiscard]] bool isJournalFreezed() const;
 
     NPC* spawnNewNPC(const std::string& id, int u_id, Functional::Activation activation,
                      const j3x::List& funcs, const j3x::List& datas) override;
@@ -83,14 +78,21 @@ public:
     void forceZoomTo(AbstractPhysicalObject* obj) override;
 
 private:
+    void beforeUpdate(float time_elapsed) override;
+    void afterUpdate(float time_elapsed) override;
+
+    void updateSound(float time_elapsed) override;
+    void updateCamera(float time_elapsed) override;
+    void updateTimeReversal(float time_elapsed) override;
     void updateMapObjects(float time_elapsed) override;
-    void updatePlayerClone(float time_elapsed);
-    void updatePlayer(float time_elapsed);
+    void updatePlayers(float time_elapsed);
     void updateFire(float time_elapsed) override;
     void updateDestructionSystems(float time_elapsed) override;
 
-    void initPlayers() override;
     void initNPCs() override;
+    void extraShaderManipulations(sf::Shader* shader) override;
+    void drawAdditionalPlayers(graphics::Graphics& graphics) override;
+    void drawAdditionalPlayersLighting() override;
     void setStartingPosition();
 
     void killNPC(NPC* npc);

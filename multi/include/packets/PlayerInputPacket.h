@@ -10,27 +10,36 @@
 #include <SFML/System.hpp>
 #include <SFML/Network.hpp>
 
+#include <common/ui/UserInterface.h>
+
 
 class PlayerInputPacket : public sf::Packet {
 public:
     PlayerInputPacket() = default;
 
-    PlayerInputPacket(const std::set<sf::Keyboard::Key>& keys, bool mouse_pressed, float rotation,
+    PlayerInputPacket(const std::unordered_set<UserInterface::Keys>& keys, bool mouse_pressed, float rotation,
                       short int current_weapon)
     {
         timestamp_ = utils::timeSinceEpochMillisec();
         *this << static_cast<sf::Uint64>(timestamp_);
-        for (auto key : IMPLEMENTED_KEYS)
+        for (auto key : UserInterface::IMPLEMENTED_KEYS)
         {
-            keys_[key] = keys.count(key);
-            *this << keys_[key];
+            if (keys.count(key))
+            {
+                keys_.insert(key);
+                *this << true;
+            }
+            else
+            {
+                *this << false;
+            }
         }
         *this << mouse_pressed << rotation << current_weapon;
     }
 
-    [[nodiscard]] bool isKey(sf::Keyboard::Key key) const
+    [[nodiscard]] const std::unordered_set<UserInterface::Keys>& getKeys() const
     {
-        return keys_.at(key);
+        return keys_;
     }
 
     [[nodiscard]] bool isLeftMousePressed() const
@@ -54,22 +63,23 @@ public:
     }
 
 private:
-    static constexpr auto IMPLEMENTED_KEYS = {sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::A, sf::Keyboard::D,
-                                              sf::Keyboard::LShift};
-
     void onReceive(const void* data, std::size_t size) override
     {
         append(data, size);
         sf::Uint64 time;
         *this >> time;
         timestamp_ = static_cast<uint64_t>(time);
-        for (auto key : IMPLEMENTED_KEYS)
-            *this >> keys_[key];
-
+        for (auto key : UserInterface::IMPLEMENTED_KEYS)
+        {
+            auto key_pressed = false;
+            *this >> key_pressed;
+            if (key_pressed)
+                keys_.insert(key);
+        }
         *this >> mouse_pressed_ >> rotation_ >> current_weapon_;
     }
 
-    std::unordered_map<sf::Keyboard::Key, bool> keys_{};
+    std::unordered_set<UserInterface::Keys> keys_{};
     bool mouse_pressed_{};
     float rotation_{};
     short int current_weapon_{};

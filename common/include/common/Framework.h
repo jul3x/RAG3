@@ -108,9 +108,10 @@ public:
     virtual void spawnBonusText(const sf::Vector2f& pos, const std::string& text);
     virtual void respawn(const std::string& map_name);
     virtual void startGame(const std::string& map_name = "");
+    virtual void talk();
 
     template <class T>
-    void findAndDelete(T* ptr) {}
+    void findAndDelete(T* ptr);
 
     virtual NPC* spawnNewPlayerClone(const std::string& weapon_id);
     virtual NPC* spawnNewNPC(const std::string& id, int u_id, Functional::Activation activation,
@@ -149,9 +150,16 @@ public:
     virtual void setGameState(Framework::GameState state);
     [[nodiscard]] Framework::GameState getGameState() const;
 
-protected:
-    virtual void initParams();
+    [[nodiscard]] bool isJournalFreezed();
 
+protected:
+    virtual void beforeUpdate(float time_elapsed);
+    virtual void afterUpdate(float time_elapsed);
+
+    virtual void updateSound(float time_elapsed);
+    virtual void updateCamera(float time_elapsed);
+    virtual void updateTimeReversal(float time_elapsed);
+    virtual void updatePlayers(float time_elapsed);
     virtual void updateMapObjects(float time_elapsed);
     virtual void updateBullets(float time_elapsed);
     virtual void updateFire(float time_elapsed);
@@ -159,13 +167,17 @@ protected:
     virtual void updateDestructionSystems(float time_elapsed);
 
     virtual void obstacleDestroyedEvent(Obstacle* obstacle);
+    virtual void extraShaderManipulations(sf::Shader* shader);
+    virtual void drawAdditionalPlayers(graphics::Graphics& graphics);
+    virtual void drawAdditionalPlayersLighting();
 
+    virtual void initParams();
     virtual void initObstacles();
     virtual void initDecorations();
     virtual void initWeapons();
     virtual void initNPCs();
     virtual void initSpecials();
-    virtual void initPlayers();
+    virtual void initPlayer(Player* player);
 
     std::unique_ptr<Engine> engine_;
     std::unique_ptr<Camera> camera_;

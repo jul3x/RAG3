@@ -10,9 +10,9 @@
 #include <R3E/system/Config.h>
 #include <R3E/system/AbstractUserInterface.h>
 
-#include <common/ui/WeaponsBar.h>
+#include <common/ui/hud/WeaponsBar.h>
+#include <common/ui/hud/RightHud.h>
 #include <common/ui/Crosshair.h>
-#include <common/ui/RightHud.h>
 #include <common/ui/Achievement.h>
 #include <common/ui/AcceptWindow.h>
 #include <common/ui/Window.h>
@@ -28,18 +28,12 @@ using namespace r3e;
 class Client;
 
 class ClientUserInterface : public UserInterface {
-
 public:
     explicit ClientUserInterface(Client* client);
     ClientUserInterface(const ClientUserInterface&) = delete;
     ClientUserInterface& operator=(const ClientUserInterface&) = delete;
 
     void initialize(graphics::Graphics& graphics) override;
-    void draw(graphics::Graphics& graphics) override;
-
-private:
-    void handleMouse(sf::RenderWindow& graphics_window) override;
-
 
 };
 

@@ -9,7 +9,8 @@
 #include <R3E/utils/Misc.h>
 
 #include <common/ResourceManager.h>
-
+#include <common/misc/Journal.h>
+#include <common/ui/menu/SettingsWindow.h>
 #include <common/ui/UserInterface.h>
 #include <common/ui/NoteWindow.h>
 #include <common/Framework.h>
@@ -26,8 +27,19 @@ UserInterface::UserInterface(Framework* framework) :
         fps_text_("FPS: ", RM.getFont("editor"), 12),
         object_use_text_("Use object", RM.getFont(), CONF<float>("graphics/use_text_size")),
         npc_talk_text_("Talk to NPC", RM.getFont(), CONF<float>("graphics/use_text_size")),
+        left_hud_({0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))}),
         right_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")),
                     static_cast<float>(CONF<int>("graphics/window_height_px"))}),
+        time_bar_({TIME_BAR_X_ * CONF<float>("graphics/user_interface_zoom"),
+                   CONF<int>("graphics/window_height_px") - TIME_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")},
+                  "time_bar"),
+        speed_bar_({SPEED_BAR_X_ * CONF<float>("graphics/user_interface_zoom"),
+                    CONF<int>("graphics/window_height_px") -
+                    SPEED_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")},
+                   "speed_bar"),
+        blood_splash_(framework,
+                      sf::Vector2f(CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_height_px"))),
+        stats_hud_({0.0f, 0.0f}),
         small_backpack_hud_(framework, {static_cast<float>(CONF<int>("graphics/window_width_px")), 0.0f}),
         player_(nullptr),
         camera_(nullptr),
@@ -38,9 +50,6 @@ UserInterface::UserInterface(Framework* framework) :
 
 void UserInterface::initialize(graphics::Graphics& graphics)
 {
-    object_use_text_.setFillColor(sf::Color::White);
-    npc_talk_text_.setFillColor(sf::Color::White);
-
     graphics.getWindow().setMouseCursorVisible(false);
     graphics.getWindow().setKeyRepeatEnabled(false);
     graphics.getCurrentView().zoom(1.0f / CONF<float>("graphics/global_zoom"));
@@ -52,6 +61,20 @@ void UserInterface::initialize(graphics::Graphics& graphics)
 
     tgui::ToolTip::setInitialDelay({});
     tgui::ToolTip::setDistanceToMouse({-tgui::ToolTip::getDistanceToMouse().x, tgui::ToolTip::getDistanceToMouse().y});
+
+    if (player_ != nullptr)
+    {
+        health_bar_.setMaxAmount(player_->getMaxHealth());
+        time_bar_.setMaxAmount(CONF<float>("journal_max_time"));
+        speed_bar_.setMaxAmount(player_->getMaxRunningFuel());
+
+        full_hud_ = std::make_unique<FullHud>(this, framework_,
+                                              sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
+                                                           static_cast<float>(CONF<int>("graphics/window_height_px"))});
+        menu_ = std::make_unique<Menu>(framework_, this, gui_.get(), &theme_);
+        object_use_text_.setFillColor(sf::Color::White);
+        npc_talk_text_.setFillColor(sf::Color::White);
+    }
 }
 
 void UserInterface::registerPlayer(Player* player)
@@ -81,6 +104,9 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
     updatePlayerStates(time_elapsed);
     handleMouse(graphics.getWindow());
     handleKeys();
+
+    if (player_ != nullptr)
+        UserInterface::applyMovement(player_, keys_pressed_);
 
     for (auto& arrow : tutorial_arrows_)
         arrow.second.update(time_elapsed);
@@ -119,6 +145,7 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
         npc_talk_text_.setFillColor(sf::Color::Transparent);
     }
 
+    blood_splash_.update(time_elapsed);
     handleEvents(graphics);
 }
 
@@ -160,14 +187,48 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
                     if (framework_->getGameState() == Framework::GameState::Normal)
                         framework_->useSpecialObject();
                 }
-                else
-                    handleAdditionalKeyPressed(event.key.code);
+                else if (event.key.code == CONF<int>("controls/talk"))
+                {
+                    if (framework_->getGameState() == Framework::GameState::Normal)
+                        framework_->talk();
+                }
+                else if (event.key.code == sf::Keyboard::Escape)
+                {
+                    if (framework_->getGameState() == Framework::GameState::Paused)
+                    {
+                        framework_->setGameState(Framework::GameState::Normal);
+                        full_hud_->show(false);
+                        clearWindows();
+                    }
+                    else if (framework_->getGameState() != Framework::GameState::Menu)
+                    {
+                        framework_->setGameState(Framework::GameState::Paused);
+                        full_hud_->show(true);
+                    }
+                }
+                if (event.key.code == CONF<int>("controls/time_reversal"))
+                {
+                    if (!framework_->isJournalFreezed() && framework_->getGameState() == Framework::GameState::Normal)
+                        framework_->setGameState(Framework::GameState::Reverse);
+                }
 
                 break;
             }
             case sf::Event::KeyReleased:
             {
-                handleKeyReleased(event.key.code);
+                if (framework_->getGameState() == Framework::GameState::Menu && menu_->isOpen(Menu::Window::Settings))
+                {
+                    dynamic_cast<SettingsWindow&>(menu_->getWindow(Menu::Window::Settings)).setKey(event.key.code);
+                }
+                else
+                {
+                    if (event.key.code == CONF<int>("controls/time_reversal"))
+                    {
+                        if (framework_->getJournal() != nullptr &&
+                            framework_->getGameState() == Framework::GameState::Reverse)
+                            framework_->setGameState(Framework::GameState::Normal);
+                    }
+                }
                 break;
             }
             default:
@@ -180,7 +241,53 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
 
 void UserInterface::draw(graphics::Graphics& graphics)
 {
+    if (framework_->getGameState() != Framework::GameState::Menu)
+    {
+        graphics.setCurrentView();
+        graphics.draw(object_use_text_);
+        graphics.draw(npc_talk_text_);
 
+        for (auto& thought : thoughts_)
+            graphics.draw(thought);
+
+        for (auto& bonus_text : bonus_texts_)
+            graphics.draw(bonus_text);
+
+        for (auto& arrow : tutorial_arrows_)
+            graphics.draw(arrow.second);
+    }
+
+    graphics.setStaticView();
+
+    if (framework_->getGameState() != Framework::GameState::Menu)
+    {
+        graphics.draw(blood_splash_);
+
+        //graphics.draw(fps_text_);
+        graphics.draw(left_hud_);
+        graphics.draw(right_hud_);
+        graphics.draw(health_bar_);
+        graphics.draw(time_bar_);
+        graphics.draw(speed_bar_);
+        graphics.draw(weapons_bar_);
+        graphics.draw(*full_hud_);
+        graphics.draw(stats_hud_);
+        graphics.draw(small_backpack_hud_);
+    }
+    else
+    {
+        graphics.draw(*menu_);
+    }
+
+    for (auto& achievement : achievements_)
+    {
+        graphics.draw(achievement);
+    }
+
+    gui_->draw();
+    graphics.draw(crosshair_);
+
+    RM.setFontsSmoothAllowed(false);
 }
 
 void UserInterface::handleScrolling(float delta)
@@ -194,7 +301,6 @@ void UserInterface::handleScrolling(float delta)
 void UserInterface::handleKeys()
 {
     keys_pressed_.clear();
-    auto delta = sf::Vector2f(0.0f, 0.0f);
 
     auto up_key = static_cast<sf::Keyboard::Key>(CONF<int>("controls/up"));
     auto left_key = static_cast<sf::Keyboard::Key>(CONF<int>("controls/left"));
@@ -203,46 +309,68 @@ void UserInterface::handleKeys()
     auto run_key = static_cast<sf::Keyboard::Key>(CONF<int>("controls/run"));
 
     if (sf::Keyboard::isKeyPressed(run_key))
-    {
-        keys_pressed_.insert(run_key);
-        player_->setRunning(true);
-    }
-    else
-    {
-        player_->setRunning(false);
-    }
-
-    float max_speed = player_->isRunning() ? RMGET<float>("characters", "player", "max_running_speed") :
-                      RMGET<float>("characters", "player", "max_speed");
+        keys_pressed_.insert(Keys::Run);
 
     if (sf::Keyboard::isKeyPressed(left_key))
-    {
-        delta.x -= max_speed;
-        keys_pressed_.insert(left_key);
-    }
+        keys_pressed_.insert(Keys::Left);
     else if (sf::Keyboard::isKeyPressed(right_key))
-    {
-        delta.x += max_speed;
-        keys_pressed_.insert(right_key);
-    }
+        keys_pressed_.insert(Keys::Right);
 
     if (sf::Keyboard::isKeyPressed(up_key))
-    {
-        delta.y -= max_speed;
-        keys_pressed_.insert(up_key);
-    }
+        keys_pressed_.insert(Keys::Up);
     else if (sf::Keyboard::isKeyPressed(down_key))
-    {
-        delta.y += max_speed;
-        keys_pressed_.insert(down_key);
-    }
-
-    if (player_->isAlive())
-        player_->setVelocity(sf::Vector2f{delta.x, delta.y} * player_->getSpeedFactor());
+        keys_pressed_.insert(Keys::Down);
 }
 
 void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
 {
+    auto mouse_pos = sf::Mouse::getPosition(graphics_window);
+    auto mouse_world_pos = graphics_window.mapPixelToCoords(mouse_pos);
+    auto player_pos = player_->getPosition() - RMGET<sf::Vector2f>("characters", "player", "map_offset");
+    if (framework_->getGameState() == Framework::GameState::Normal &&
+        utils::geo::circleCircle(mouse_world_pos, 0.0f, player_pos, CONF<float>("characters/crosshair_min_distance")))
+    {
+        mouse_world_pos = player_pos + CONF<float>("characters/crosshair_min_distance")
+                                       * utils::geo::getNormalized(mouse_world_pos - player_pos);
+        mouse_pos = graphics_window.mapCoordsToPixel(mouse_world_pos);
+        sf::Mouse::setPosition(mouse_pos, graphics_window);
+    }
+
+    crosshair_.setPosition(mouse_pos.x, mouse_pos.y);
+
+    bool is_gui = false;
+    is_left_mouse_pressed_ = false;
+
+    for (const auto& widget : gui_->getWidgets())
+    {
+        if (widget->mouseOnWidget({static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y)}) &&
+            widget->isVisible())
+        {
+            is_gui = true;
+            break;
+        }
+    }
+
+    if (player_->isAlive() && framework_->getGameState() == Framework::GameState::Normal)
+    {
+        player_->setWeaponPointing(mouse_world_pos);
+
+        if (!is_gui && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        {
+            is_left_mouse_pressed_ = true;
+            if (player_->shot())
+                camera_->setShaking();
+        }
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && canZoomIn(is_gui))
+        {
+            zoomIn(mouse_world_pos);
+        }
+        else if (canZoomOut())
+        {
+            zoomOut();
+        }
+    }
 }
 
 void UserInterface::updatePlayerStates(float time_elapsed)
@@ -260,6 +388,24 @@ void UserInterface::updatePlayerStates(float time_elapsed)
     health_bar_.setMaxAmount(player_->getMaxHealth());
     health_bar_.update(player_->getHealth(), time_elapsed);
     small_backpack_hud_.update(time_elapsed);
+
+    auto journal = framework_->getJournal();
+    if (journal != nullptr)
+    {
+        time_bar_.setMaxAmount(player_->getMaxTimeManipulation());
+        time_bar_.update(std::min(framework_->getTimeManipulationFuel(), journal->getDurationSaved()),
+                         time_elapsed);
+        time_bar_.setFreeze(
+                framework_->isJournalFreezed() && framework_->getGameState() != Framework::GameState::Reverse);
+    }
+
+    speed_bar_.setMaxAmount(player_->getMaxRunningFuel());
+    speed_bar_.update(player_->getRunningFuel(), time_elapsed);
+    speed_bar_.setFreeze(player_->getRunningFuel() < CONF<float>("running_min_time") && !player_->isRunning());
+    blood_splash_.updateLifeState(player_->getLifeState());
+
+    full_hud_->update(time_elapsed);
+    menu_->update(time_elapsed);
 }
 
 void UserInterface::spawnThought(Character* user, const std::string& text)
@@ -329,7 +475,7 @@ Framework* UserInterface::getFramework()
     return framework_;
 }
 
-const std::set<sf::Keyboard::Key>& UserInterface::getKeysPressed()
+const std::unordered_set<UserInterface::Keys>& UserInterface::getKeysPressed()
 {
     return keys_pressed_;
 }
@@ -337,16 +483,6 @@ const std::set<sf::Keyboard::Key>& UserInterface::getKeysPressed()
 bool UserInterface::isLeftMousePressed() const
 {
     return is_left_mouse_pressed_;
-}
-
-void UserInterface::handleAdditionalKeyPressed(sf::Keyboard::Key code)
-{
-
-}
-
-void UserInterface::handleKeyReleased(sf::Keyboard::Key code)
-{
-
 }
 
 void UserInterface::initializeTutorialArrows()
@@ -391,5 +527,66 @@ void UserInterface::clearThoughts()
 void UserInterface::clearWindows()
 {
     windows_.clear();
+}
+
+bool UserInterface::canZoomIn(bool is_mouse_on_gui) const
+{
+    return !is_mouse_on_gui;
+}
+
+bool UserInterface::canZoomOut() const
+{
+    return true;
+}
+
+void UserInterface::zoomIn(const sf::Vector2f& mouse_world_pos)
+{
+    camera_->setPointingTo(player_->getPosition() +
+                           utils::geo::getNormalized(mouse_world_pos - player_->getPosition()) *
+                           CONF<float>("graphics/camera_right_click_distance_factor"));
+    camera_->setZoomTo(CONF<float>("graphics/camera_right_click_zoom_factor"));
+}
+
+void UserInterface::zoomOut()
+{
+    camera_->setPointingTo(player_->getPosition());
+    camera_->setZoomTo(1.0f);
+}
+
+void UserInterface::applyMovement(Player* player, const std::unordered_set<UserInterface::Keys>& keys_pressed)
+{
+    auto delta = sf::Vector2f();
+    if (keys_pressed.count(UserInterface::Keys::Run))
+    {
+        player->setRunning(true);
+    }
+    else
+    {
+        player->setRunning(false);
+    }
+
+    float max_speed = player->isRunning() ? RMGET<float>("characters", "player", "max_running_speed") :
+                      RMGET<float>("characters", "player", "max_speed");
+
+    if (keys_pressed.count(UserInterface::Keys::Left))
+    {
+        delta.x -= max_speed;
+    }
+    else if (keys_pressed.count(UserInterface::Keys::Right))
+    {
+        delta.x += max_speed;
+    }
+
+    if (keys_pressed.count(UserInterface::Keys::Up))
+    {
+        delta.y -= max_speed;
+    }
+    else if (keys_pressed.count(UserInterface::Keys::Down))
+    {
+        delta.y += max_speed;
+    }
+
+    if (player->isAlive())
+        player->setVelocity(sf::Vector2f{delta.x, delta.y} * player->getSpeedFactor());
 }
 

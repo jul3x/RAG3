@@ -5,7 +5,7 @@
 #include <R3E/system/Config.h>
 #include <common/ResourceManager.h>
 
-#include <ui/hud/StatsHud.h>
+#include <common/ui/hud/StatsHud.h>
 
 
 StatsHud::StatsHud(const sf::Vector2f& position) :

@@ -23,7 +23,7 @@ public:
 
     void registerGui(Framework* framework);
     void update(float time_elapsed);
-    void doShow(bool hide);
+    void doShow(bool show);
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

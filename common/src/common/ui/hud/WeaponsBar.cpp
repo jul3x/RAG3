@@ -10,7 +10,7 @@
 
 #include <common/weapons/MeleeWeapon.h>
 #include <common/weapons/ShootingWeapon.h>
-#include <common/ui/WeaponsBar.h>
+#include <common/ui/hud/WeaponsBar.h>
 
 
 WeaponsBar::WeaponsBar(const sf::Vector2f& position) :

@@ -26,12 +26,6 @@ void Server::initialize()
     ui_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
 
-    for (auto& special : map_->getList<Special>())
-    {
-        if (special->getId() == "starting_position")
-            starting_positions_.emplace_back(special->getPosition());
-    }
-
     // bind sockets
     if (connection_listener_.listen(54000) != sf::Socket::Done)
     {
@@ -44,69 +38,48 @@ void Server::initialize()
     connection_listener_.setBlocking(false);
     data_receiver_socket_.setBlocking(false);
     // TODO maybe sender should be non-blocking?
+
+    respawn("first_new_map");
+
+    for (auto& special : map_->getList<Special>())
+    {
+        if (special->getId() == "starting_position")
+            starting_positions_.emplace_back(special->getPosition());
+    }
 }
 
-void Server::update(float time_elapsed)
+void Server::beforeUpdate(float time_elapsed)
 {
+    Framework::beforeUpdate(time_elapsed);
     checkAwaitingConnections();
-
     handleMessagesFromPlayers();
     handleEventsFromPlayers();
+}
 
-    updateExplosions();
-    camera_->update(time_elapsed);
-
-    if (!players_.empty())
-        camera_->setPointingTo(players_.begin()->second.getPosition());
-
-    camera_->setZoomTo(1.0f);
-    updateMapObjects(time_elapsed);
-    updatePlayers(time_elapsed);
-    updateBullets(time_elapsed);
-    updateFire(time_elapsed);
-
+void Server::afterUpdate(float time_elapsed)
+{
+    Framework::afterUpdate(time_elapsed);
     sendMessagesToPlayers();
-
     for (auto& player : players_)
     {
-        player.second.setCurrentSpecialObject(nullptr);
-        player.second.setCurrentTalkableCharacter(nullptr);
+        player.second->setCurrentSpecialObject(nullptr);
+        player.second->setCurrentTalkableCharacter(nullptr);
     }
+}
 
-    time_elapsed_ += time_elapsed;
+void Server::updateCamera(float time_elapsed)
+{
+    Framework::updateCamera(time_elapsed);
+    if (!players_.empty())
+        camera_->setPointingTo(players_.begin()->second->getPosition());
+    camera_->setZoomTo(1.0f);
 }
 
 void Server::draw(graphics::Graphics& graphics)
 {
-    static sf::RenderStates states;
-
-    sf::Shader* curr_shader = &RM.getShader(j3x::get<std::string>(map_->getParams(), "shader"));
-    curr_shader->setUniform("time", this->time_elapsed_);
-
-    states.shader = curr_shader;
-
-    auto draw = [&graphics](auto& list) {
-        for (auto& obj : list)
-            graphics.drawSorted(*obj);
-    };
-
-    for (auto& obj : players_)
-        graphics.drawSorted(obj.second);
-
-    draw(map_->getList<DecorationTile>());
-    draw(map_->getList<Decoration>());
-    draw(map_->getList<Obstacle>());
-    draw(map_->getList<ObstacleTile>());
-    draw(map_->getList<PlacedWeapon>());
-    draw(bullets_);
-    draw(fire_);
-
-    for (auto& special : map_->getList<Special>())
-        if (special->isDrawable())
-            graphics.drawSorted(*special);
-
-    engine_->drawSortedAnimationEvents();
-    graphics.drawAlreadySorted(states.shader);
+    static constexpr bool SERVER_DRAWING = true;
+    if (SERVER_DRAWING)
+        Framework::draw(graphics);
 }
 
 void Server::useSpecialObject()
@@ -123,9 +96,10 @@ void Server::updatePlayers(float time_elapsed)
 {
     for (auto& player : players_)
     {
-        if (player.second.isAlive() && !player.second.update(time_elapsed))
+        if (player.second->isAlive() && !player.second->update(time_elapsed))
         {
             clearPlayer(player.second.get());
+            // TODO appropriate player death handling
         }
     }
 }
@@ -143,13 +117,7 @@ void Server::checkAwaitingConnections()
             events_socket_[ip] = client;
 
             LOG.info("New connection attempt from: " + sf::IpAddress(ip).toString());
-            players_.emplace(ip, starting_positions_
-                    .at(utils::num::getRandom(0, static_cast<int>(starting_positions_.size() - 1))));
-            engine_->registerObj<DynamicObject>(&players_.at(ip));
-            registerWeapons(&players_.at(ip));
-
-            // Awful but necessary for now
-            players_.at(ip).getLightPoint()->registerGraphics(engine_->getGraphics());
+            respawnPlayer(ip);
 
             for (auto& packet : cached_events_)
             {
@@ -227,43 +195,16 @@ void Server::handleMessagesFromPlayers()
             auto delta = sf::Vector2f(0.0f, 0.0f);
             auto& data = cached_packet->second;
 
-            float max_speed;
-
-            if (data.isKey(sf::Keyboard::LShift))
-                max_speed = RMGET<float>("characters", "player", "max_running_speed");
-            else
-                max_speed = RMGET<float>("characters", "player", "max_speed");
-
-            if (data.isKey(sf::Keyboard::A))
-            {
-                delta.x -= max_speed;
-            }
-            else if (data.isKey(sf::Keyboard::D))
-            {
-                delta.x += max_speed;
-            }
-
-            if (data.isKey(sf::Keyboard::W))
-            {
-                delta.y -= max_speed;
-            }
-            else if (data.isKey(sf::Keyboard::S))
-            {
-                delta.y += max_speed;
-            }
-
-            if (player.second.isAlive())
-                player.second.setVelocity(sf::Vector2f{delta.x, delta.y} * player.second.getSpeedFactor());
-
-            player.second.setRotation(data.getRotation());
-            player.second.setRotateTo(data.getRotation());
+            UserInterface::applyMovement(player.second.get(), data.getKeys());
+            player.second->setRotation(data.getRotation());
+            player.second->setRotateTo(data.getRotation());
 
             if (data.isLeftMousePressed())
             {
-                player.second.shot();
+                player.second->shot();
             }
 
-            player.second.setCurrentWeapon(data.getCurrentWeapon());
+            player.second->setCurrentWeapon(data.getCurrentWeapon());
         }
         else
         {
@@ -317,12 +258,12 @@ void Server::handleEventsFromPlayers()
                     {
                         case PlayerEventPacket::Type::UseObject:
                         {
-                            useSpecialObject(&player_it->second, player_it->first);
+                            useSpecialObject(player_it->second.get(), player_it->first);
                             break;
                         }
                         case PlayerEventPacket::Type::UseBackpackObject:
                         {
-                            player_it->second.useItem(j3x::get<std::string>(packet.getParams(), "id"));
+                            player_it->second->useItem(j3x::get<std::string>(packet.getParams(), "id"));
                             break;
                         }
                         case PlayerEventPacket::Type::NameChange:
@@ -335,7 +276,7 @@ void Server::handleEventsFromPlayers()
                         }
                         case PlayerEventPacket::Type::Exit:
                         {
-                            clearPlayer(&player_it->second);
+                            clearPlayer(player_it->second.get());
                             players_.erase(player_it);
                             break;
                         }
@@ -486,7 +427,7 @@ sf::Uint32 Server::getPlayerIP(Player* player)
 {
     for (const auto& p : players_)
     {
-        if (&p.second == player)
+        if (p.second.get() == player)
         {
             return p.first;
         }
@@ -499,4 +440,29 @@ void Server::obstacleDestroyedEvent(Obstacle* obstacle)
 {
     auto packet = ServerEventPacket(ServerEventPacket::Type::DestroyedObstacle, obstacle->getUniqueId(), 0);
     sendEventToPlayers(packet);
+}
+
+void Server::respawnPlayer(sf::Uint32 ip)
+{
+    players_[ip] = std::make_unique<Player>(starting_positions_.at(utils::num::getRandom(0, static_cast<int>(
+            starting_positions_.size() - 1))));
+    initPlayer(players_.at(ip).get());
+}
+
+void Server::respawn(const std::string& map_name)
+{
+    Framework::respawn(map_name);
+    map_->getList<NPC>().clear();
+}
+
+void Server::drawAdditionalPlayers(graphics::Graphics& graphics)
+{
+    for (auto& obj : players_)
+        graphics.drawSorted(*obj.second);
+}
+
+void Server::drawAdditionalPlayersLighting()
+{
+    for (auto& player : players_)
+        lighting_->add(*player.second->getLightPoint());
 }

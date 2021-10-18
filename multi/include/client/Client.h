@@ -33,9 +33,9 @@ class Client : public Framework {
 
 public:
     enum class ConnectionStatus {
-        On,
-        InProgress,
-        Off
+        On = 2,
+        InProgress = 1,
+        Off = 0
     };
 
     Client();

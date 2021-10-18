@@ -14,7 +14,8 @@ SmallBackpackHud::SmallBackpackHud(Framework* framework, const sf::Vector2f& pos
                                {SIZE_X_ * CONF<float>("graphics/user_interface_zoom"),
                                 SIZE_Y_ * CONF<float>("graphics/user_interface_zoom")},
                                &RM.getTexture("items_hud")),
-        framework_(framework)
+        framework_(framework),
+        blocked_(false)
 {
     this->changeOrigin({SIZE_X_ * CONF<float>("graphics/user_interface_zoom"), 0.0f});
 
@@ -39,6 +40,9 @@ SmallBackpackHud::SmallBackpackHud(Framework* framework, const sf::Vector2f& pos
 
 void SmallBackpackHud::update(float time_elapsed)
 {
+    if (blocked_)
+        return;
+
     auto& backpack = framework_->getPlayer()->getBackpack();
 
     int health = 0, speed = 0, rag3 = 0;
@@ -92,6 +96,9 @@ void SmallBackpackHud::registerGui(Framework* framework)
 
 void SmallBackpackHud::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
+    if (blocked_)
+        return;
+
     target.draw(shape_, states);
     for (auto& object : objects_)
     {
@@ -106,8 +113,16 @@ void SmallBackpackHud::draw(sf::RenderTarget& target, sf::RenderStates states) c
 
 void SmallBackpackHud::doShow(bool show)
 {
+    if (blocked_)
+        return;
+
     for (auto& tooltip : tooltips_)
     {
         tooltip.show(show);
     }
+}
+
+void SmallBackpackHud::setBlocked(bool blocked)
+{
+    blocked_ = blocked;
 }

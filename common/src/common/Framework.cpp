@@ -1314,3 +1314,15 @@ void Framework::talk()
 {
 
 }
+
+void Framework::clearStartingPositions()
+{
+    utils::eraseIf<std::shared_ptr<Special>>(map_->getList<Special>(), [this](std::shared_ptr<Special>& special) {
+        if (special->getId() == "starting_position")
+        {
+            engine_->unregisterObj<HoveringObject>(special.get());
+            return true;
+        }
+        return false;
+    });
+}

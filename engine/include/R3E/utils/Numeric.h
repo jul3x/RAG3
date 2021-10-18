@@ -56,7 +56,7 @@ namespace r3e::utils::num {
     template<class T>
     inline size_t getHash(const T& objs)
     {
-        size_t seed = 0;
+        size_t seed = 0x9e3779b9;
         for (const auto& obj : objs)
         {
             hashCombine(seed, obj);

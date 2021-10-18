@@ -102,8 +102,8 @@ void Server::checkAwaitingConnections()
 
             if (events_socket_.size() >= MAX_PLAYERS)
             {
-                connection_parameters["s"] = false;
-                connection_parameters["reason"] = std::string("Too many players");
+                connection_parameters["s"] = static_cast<int>(ConnectionStatus::Off);
+                connection_parameters["reason"] = std::string("Too many players.");
                 LOG.info("Too many players... Rejecting connection.");
 
                 auto packet = ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters, ip);
@@ -115,20 +115,12 @@ void Server::checkAwaitingConnections()
                 return;
             }
 
-            connection_parameters["s"] = true;
+            connection_parameters["s"] = static_cast<int>(ConnectionStatus::InProgress);
             connection_parameters["map"] = map_->getMapName();
             auto packet = ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters, ip);
             events_socket_[ip]->send(packet);
 
-            respawnPlayer(ip);
-
-            for (auto& packet : cached_events_)
-            {
-                if (packet.isCachedForIp(ip))
-                    events_socket_[ip]->send(packet);
-            }
-
-            connection_statuses_[ip] = ConnectionStatus::On;
+            connection_statuses_[ip] = ConnectionStatus::InProgress;
 
             break;
         }
@@ -311,7 +303,51 @@ void Server::handleEventsFromPlayers()
                 }
                 else
                 {
-                    LOG.error("This player is not registered!");
+                    auto connection_status = connection_statuses_.find(socket.first);
+                    if (connection_status == connection_statuses_.end() ||
+                        connection_status->second == ConnectionStatus::Off)
+                    {
+                        LOG.error("This player is not registered!");
+                        return;
+                    }
+
+                    if (connection_status->second == ConnectionStatus::On ||
+                        packet.getType() != PlayerEventPacket::Type::Connection)
+                        return;
+
+                    j3x::Parameters connection_parameters;
+                    if (packet.getIntData() == map_->getDigest())
+                    {
+                        LOG.info("Connection successful.");
+                        respawnPlayer(socket.first);
+                        connection_parameters["s"] = static_cast<int>(ConnectionStatus::On);
+                        auto server_packet =
+                                ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters,
+                                                  socket.first);
+                        events_socket_[socket.first]->send(server_packet);
+                        connection_statuses_[socket.first] = ConnectionStatus::On;
+
+                        for (auto& cached_packet : cached_events_)
+                        {
+                            if (cached_packet.isCachedForIp(socket.first))
+                                events_socket_[socket.first]->send(cached_packet);
+                        }
+                    }
+                    else
+                    {
+                        LOG.info("Maps does not match... (" + std::to_string(map_->getDigest()) + ", " +
+                                 std::to_string(packet.getIntData()) + ") Rejecting connection.");
+
+                        connection_parameters["s"] = static_cast<int>(ConnectionStatus::Off);
+                        connection_parameters["reason"] = std::string("Maps does not match.");
+                        auto server_packet =
+                                ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters,
+                                                  socket.first);
+                        // TODO - events_socket_ should be cleared after sending
+                        events_socket_[socket.first]->send(server_packet);
+                        connection_statuses_[socket.first] = ConnectionStatus::Off;
+                    }
+
                 }
                 break;
             }
@@ -498,14 +534,7 @@ void Server::respawn(const std::string& map_name)
             starting_positions_.emplace_back(special->getPosition());
     }
 
-    utils::eraseIf<std::shared_ptr<Special>>(map_->getList<Special>(), [this](std::shared_ptr<Special>& special) {
-        if (special->getId() == "starting_position")
-        {
-            engine_->unregisterObj<HoveringObject>(special.get());
-            return true;
-        }
-        return false;
-    });
+    clearStartingPositions();
 }
 
 void Server::drawAdditionalPlayers(graphics::Graphics& graphics)

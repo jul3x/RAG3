@@ -183,24 +183,39 @@ void Client::handleEventsFromServer()
                     {
                         const auto& params = packet.getParams();
 
-                        if (j3x::get<bool>(params, "s"))
+                        switch (j3x::get<int>(params, "s"))
                         {
-                            j3x::Parameters data;
-                            data["name"] = std::string(CONF<std::string>("general/player_name"));
-                            data["texture"] = std::string(CONF<std::string>("general/character"));
-                            PlayerEventPacket player_packet(PlayerEventPacket::Type::NameChange, data);
-                            events_socket_.send(player_packet);
+                            case static_cast<int>(ConnectionStatus::On):
+                            {
+                                j3x::Parameters data;
+                                data["name"] = std::string(CONF<std::string>("general/player_name"));
+                                data["texture"] = std::string(CONF<std::string>("general/character"));
+                                PlayerEventPacket player_packet(PlayerEventPacket::Type::NameChange, data);
+                                events_socket_.send(player_packet);
 
-                            this->respawn(j3x::get<std::string>(params, "map"));
-                            ui_->startGame();
-                            connection_status_ = ConnectionStatus::On;
+                                ui_->startGame();
+                                setGameState(Framework::GameState::Normal);
+
+                                connection_status_ = ConnectionStatus::On;
+                                break;
+                            }
+                            case static_cast<int>(ConnectionStatus::InProgress):
+                            {
+                                this->respawn(j3x::get<std::string>(params, "map"));
+                                setGameState(Framework::GameState::Menu);
+                                PlayerEventPacket player_packet(PlayerEventPacket::Type::Connection, map_->getDigest());
+                                events_socket_.send(player_packet);
+                                break;
+                            }
+                            case static_cast<int>(ConnectionStatus::Off):
+                            {
+                                disconnect();
+                                ui_->spawnNoteWindow("Server connection not allowed. Reason:\n\"" +
+                                                     j3x::get<std::string>(params, "reason") + "\"", false);
+                                break;
+                            }
                         }
-                        else
-                        {
-                            disconnect();
-                            ui_->spawnNoteWindow("Server connection not allowed. Reason:\n" +
-                                                 j3x::get<std::string>(params, "reason"), false);
-                        }
+
                         break;
                     }
                     default:
@@ -476,6 +491,7 @@ void Client::respawn(const std::string& map_name)
 
     Framework::respawn(map_name);
     map_->getList<NPC>().clear();
+    clearStartingPositions();
 }
 
 void Client::drawAdditionalPlayers(graphics::Graphics& graphics)
@@ -497,6 +513,9 @@ void Client::drawAdditionalPlayersLighting()
 
 void Client::startGame(const std::string& ip_address)
 {
+    if (connection_status_ != ConnectionStatus::Off)
+        return;
+
     for (auto& player : players_)
         unregisterCharacter(player.second.get());
     players_.clear();

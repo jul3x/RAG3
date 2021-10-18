@@ -27,6 +27,7 @@ bool Map::clearMap()
     decorations_.clear();
 
     map_name_.clear();
+    digest_ = 0;
 
     return true;
 }
@@ -35,6 +36,7 @@ bool Map::loadMap(const std::string& name)
 {
     try
     {
+        clearMap();
         std::forward_as_tuple(
                 std::tie(obstacles_tiles_, decorations_tiles_,
                          characters_, specials_,
@@ -377,13 +379,17 @@ void Map::markBlocked(ai::Grid& blocked, const sf::Vector2f& pos, const sf::Vect
     }
 }
 
-size_t Map::getDigest() const
+size_t Map::getDigest()
 {
+    if (digest_ != 0)
+        return digest_;
+
     std::list<size_t> hashes;
     static auto addHashes = [&hashes](const auto& objs) {
         for (const auto& obj : objs)
         {
-            size_t seed = utils::num::getHash(std::list<float>({obj->getPosition().x, obj->getPosition().y}));
+            size_t seed = utils::num::getHash(std::list<int>({static_cast<int>(obj->getPosition().x),
+                                                              static_cast<int>(obj->getPosition().y)}));
             utils::num::hashCombine(seed, obj->getId());
             hashes.emplace_back(seed);
         }
@@ -397,7 +403,8 @@ size_t Map::getDigest() const
     addHashes(decorations_);
     addHashes(weapons_);
 
-    return utils::num::getHash(hashes);
+    digest_ = utils::num::getHash(hashes);
+    return digest_;
 }
 
 const std::string& Map::getMapName() const

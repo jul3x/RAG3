@@ -24,6 +24,7 @@ public:
     void registerGui(Framework* framework);
     void update(float time_elapsed);
     void doShow(bool show);
+    void setBlocked(bool blocked);
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -36,6 +37,7 @@ private:
     std::vector<sf::Text> numbers_;
     std::vector<Tooltip> tooltips_;
 
+    bool blocked_;
     Framework* framework_;
 
 };

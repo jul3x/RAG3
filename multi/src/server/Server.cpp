@@ -15,7 +15,6 @@
 
 Server::Server() : Framework(), last_packet_timestamp_(0.0f)
 {
-    setGameState(GameState::Normal);
 }
 
 void Server::initialize()
@@ -25,27 +24,6 @@ void Server::initialize()
     ui_ = std::make_unique<MinimalUserInterface>(this);
     ui_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
-
-    // bind sockets
-    if (connection_listener_.listen(54000) != sf::Socket::Done)
-    {
-        throw std::invalid_argument("[Server] Cannot bind connection socket to desired port!");
-    }
-    if (data_receiver_socket_.bind(54001) != sf::Socket::Done)
-    {
-        throw std::invalid_argument("[Server] Cannot bind data receiver socket to desired port!");
-    }
-    connection_listener_.setBlocking(false);
-    data_receiver_socket_.setBlocking(false);
-    // TODO maybe sender should be non-blocking?
-
-    respawn("first_new_map");
-
-    for (auto& special : map_->getList<Special>())
-    {
-        if (special->getId() == "starting_position")
-            starting_positions_.emplace_back(special->getPosition());
-    }
 }
 
 void Server::beforeUpdate(float time_elapsed)
@@ -236,8 +214,17 @@ void Server::sendMessagesToPlayers()
 
 void Server::setGameState(Framework::GameState state)
 {
-    // TODO
-    state_ = GameState::Normal;
+    switch (state)
+    {
+        case GameState::Reverse:
+        case GameState::Paused:
+            state = state_;
+            break;
+        default:
+            break;
+    }
+
+    state_ = state;
 }
 
 void Server::handleEventsFromPlayers()
@@ -453,6 +440,12 @@ void Server::respawn(const std::string& map_name)
 {
     Framework::respawn(map_name);
     map_->getList<NPC>().clear();
+
+    for (auto& special : map_->getList<Special>())
+    {
+        if (special->getId() == "starting_position")
+            starting_positions_.emplace_back(special->getPosition());
+    }
 }
 
 void Server::drawAdditionalPlayers(graphics::Graphics& graphics)
@@ -465,4 +458,24 @@ void Server::drawAdditionalPlayersLighting()
 {
     for (auto& player : players_)
         lighting_->add(*player.second->getLightPoint());
+}
+
+void Server::startGame(const std::string& map_name)
+{
+    Framework::startGame(map_name);
+    this->respawn(map_name);
+
+    // bind sockets
+    if (connection_listener_.listen(54000) != sf::Socket::Done)
+    {
+        throw std::invalid_argument("[Server] Cannot bind connection socket to desired port!");
+    }
+    if (data_receiver_socket_.bind(54001) != sf::Socket::Done)
+    {
+        throw std::invalid_argument("[Server] Cannot bind data receiver socket to desired port!");
+    }
+    connection_listener_.setBlocking(false);
+    data_receiver_socket_.setBlocking(false);
+    // TODO maybe sender should be non-blocking?
+    ui_->startGame();
 }

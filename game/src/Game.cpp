@@ -24,8 +24,13 @@ void Game::initialize()
 {
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     Framework::initialize();
+
     engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
     ui_ = std::make_unique<GameUserInterface>(this);
+    ui_->registerCamera(camera_.get());
+    ui_->registerPlayer(player_.get());
+    engine_->registerUI(ui_.get());
+
     journal_ = std::make_unique<Journal>(this, CONF<float>("journal_max_time"), CONF<float>("journal_sampling_rate"));
 
     stats_ = std::make_unique<Stats>(this);
@@ -37,10 +42,6 @@ void Game::initialize()
     music_manager_->setVolume(CONF<float>("sound/music_volume"));
     if (CONF<bool>("sound/sound_on"))
         music_manager_->play();
-
-    ui_->registerCamera(camera_.get());
-    ui_->registerPlayer(player_.get());
-    engine_->registerUI(ui_.get());
 
     this->preloadSave();
 }

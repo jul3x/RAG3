@@ -14,12 +14,12 @@ class MinimalUserInterface : public UserInterface {
 
 public:
     explicit MinimalUserInterface(Server* server);
-
+    void initialize(graphics::Graphics& graphics) override;
     void spawnAchievement(const std::string& title, const std::string& text, const std::string& tex) override;
     void spawnThought(Character* user, const std::string& text) override;
     void spawnBonusText(const sf::Vector2f& pos, const std::string& text) override;
     void spawnAcceptWindow(const std::string& text, const std::function<void()>& func) override;
-    void spawnNoteWindow(const std::string& text) override;
+    void spawnNoteWindow(const std::string& text, bool note_info = true) override;
     void closeWindow(Window* window) override;
 
     void draw(graphics::Graphics& graphics) override;

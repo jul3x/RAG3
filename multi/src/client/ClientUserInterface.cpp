@@ -2,12 +2,6 @@
 // Created by jul3x on 16.03.21.
 //
 
-#include <iomanip>
-
-#include <R3E/system/Engine.h>
-
-#include <common/ResourceManager.h>
-
 #include <client/ClientUserInterface.h>
 #include <client/Client.h>
 
@@ -25,7 +19,15 @@ void ClientUserInterface::initialize(graphics::Graphics& graphics)
     }
 
     UserInterface::initialize(graphics);
+    menu_->makeMenuElements({
+            {"Connect to server", [this]() { menu_->showWindow(Menu::Window::PickServer); }},
+            {"Settings",          [this]() { menu_->showWindow(Menu::Window::Settings); }},
+            {"About",             [this]() { menu_->showWindow(Menu::Window::About); }},
+            {"Exit",              [this]() { framework_->close(); }}
+    });
+    full_hud_ = std::make_unique<FullHud>(this, framework_,
+                                          sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
+                                                       static_cast<float>(CONF<int>("graphics/window_height_px"))});
     time_bar_.setFreeze(true);
-    small_backpack_hud_.doShow(true);
-    menu_->doShow(false);
+    menu_->doShow(true);
 }

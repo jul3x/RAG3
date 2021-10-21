@@ -18,7 +18,6 @@
 
 Client::Client() : Framework(), last_packet_timestamp_(0.0f), last_received_packet_timestamp_(0)
 {
-    setGameState(GameState::Normal);
 }
 
 void Client::initialize()
@@ -27,27 +26,16 @@ void Client::initialize()
     Framework::initialize();
 
     engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
-
     ui_ = std::make_unique<ClientUserInterface>(this);
-
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());
     engine_->registerUI(ui_.get());
-
-    respawn("first_new_map");
-    for (auto& special : map_->getList<Special>())
-    {
-        if (special->getId() == "starting_position")
-            player_->setPosition(special->getPosition());
-    }
 
     if (data_receive_socket_.bind(54002) != sf::Socket::Done)
     {
         LOG.error("[Client] Could not bind receiving socket to desired port.");
     }
     data_receive_socket_.setBlocking(false);
-
-    establishConnection("192.168.0.17");
 }
 
 void Client::beforeUpdate(float time_elapsed)
@@ -162,7 +150,7 @@ void Client::updatePlayers(float time_elapsed)
     }
 }
 
-void Client::establishConnection(const sf::IpAddress& ip)
+bool Client::establishConnection(const sf::IpAddress& ip)
 {
     unsigned short port = 54000;
 
@@ -170,7 +158,7 @@ void Client::establishConnection(const sf::IpAddress& ip)
     if (status != sf::Socket::Done)
     {
         LOG.error("[Client] Could not establish connection with host: " + ip.toString());
-        throw std::runtime_error("No server to connect!");
+        return false;
     }
 
     events_socket_.setBlocking(false);
@@ -182,6 +170,8 @@ void Client::establishConnection(const sf::IpAddress& ip)
     data["texture"] = std::string(CONF<std::string>("general/character"));
     PlayerEventPacket packet(PlayerEventPacket::Type::NameChange, data);
     events_socket_.send(packet);
+
+    return true;
 }
 
 void Client::handleEventsFromServer()
@@ -383,8 +373,26 @@ Player* Client::getPlayer(sf::Uint32 ip)
 
 void Client::setGameState(Framework::GameState state)
 {
-    // TODO
-    state_ = GameState::Normal;
+    switch (state)
+    {
+        case GameState::Normal:
+            if (state_ == GameState::Menu)
+            {
+                camera_->setZoomTo(1.0f);
+                camera_->setCenter({player_->getPosition().x, player_->getPosition().y, 0.0f});
+            }
+            engine_->turnOnCollisions();
+
+            break;
+        case GameState::Reverse:
+        case GameState::Paused:
+            state = state_;
+            break;
+        default:
+            break;
+    }
+
+    state_ = state;
 }
 
 void Client::close()
@@ -428,5 +436,20 @@ void Client::drawAdditionalPlayersLighting()
     for (auto& player : players_)
     {
         lighting_->add(*player.second->getLightPoint());
+    }
+}
+
+void Client::startGame(const std::string& ip_address)
+{
+    auto connection_result = this->establishConnection(ip_address);
+
+    if (connection_result)
+    {
+        this->respawn("first_new_map");
+        ui_->startGame();
+    }
+    else
+    {
+        ui_->spawnNoteWindow("Could not establish connection with desired host.", false);
     }
 }

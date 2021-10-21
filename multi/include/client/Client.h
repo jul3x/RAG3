@@ -52,6 +52,7 @@ public:
     void useSpecialObject() override;
     void setGameState(GameState state) override;
     void respawn(const std::string& map_name) override;
+    void startGame(const std::string& ip_address) override;
 
 private:
     void beforeUpdate(float time_elapsed) override;
@@ -62,7 +63,7 @@ private:
     void drawAdditionalPlayers(graphics::Graphics& graphics) override;
     void drawAdditionalPlayersLighting() override;
 
-    void establishConnection(const sf::IpAddress& ip);
+    bool establishConnection(const sf::IpAddress& ip);
     void handleEventsFromServer();
     void sendInputs();
     void receiveData();

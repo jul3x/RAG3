@@ -57,7 +57,7 @@ void Framework::afterUpdate(float time_elapsed)
 
 }
 
-void Framework::updateSound(float time_elapsed)
+void Framework::preupdate(float time_elapsed)
 {
     if (CONF<bool>("sound/sound_on"))
     {
@@ -77,7 +77,7 @@ void Framework::updateTimeReversal(float time_elapsed)
 
 void Framework::update(float time_elapsed)
 {
-    updateSound(time_elapsed);
+    preupdate(time_elapsed);
 
     switch (state_)
     {
@@ -1313,4 +1313,16 @@ bool Framework::isJournalFreezed()
 void Framework::talk()
 {
 
+}
+
+void Framework::clearStartingPositions()
+{
+    utils::eraseIf<std::shared_ptr<Special>>(map_->getList<Special>(), [this](std::shared_ptr<Special>& special) {
+        if (special->getId() == "starting_position")
+        {
+            engine_->unregisterObj<HoveringObject>(special.get());
+            return true;
+        }
+        return false;
+    });
 }

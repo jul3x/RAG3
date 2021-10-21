@@ -7,7 +7,8 @@
 
 
 ClientUserInterface::ClientUserInterface(Client* client) :
-        UserInterface(client)
+        UserInterface(client),
+        client_(client)
 {
 }
 
@@ -30,4 +31,10 @@ void ClientUserInterface::initialize(graphics::Graphics& graphics)
                                                        static_cast<float>(CONF<int>("graphics/window_height_px"))});
     time_bar_.setFreeze(true);
     menu_->doShow(true);
+}
+
+void ClientUserInterface::openMenu()
+{
+    UserInterface::openMenu();
+    client_->disconnect();
 }

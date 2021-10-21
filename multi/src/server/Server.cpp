@@ -77,7 +77,6 @@ void Server::updatePlayers(float time_elapsed)
         if (player.second->isAlive() && !player.second->update(time_elapsed))
         {
             clearPlayer(player.second.get());
-            // TODO appropriate player death handling
         }
     }
 }
@@ -92,17 +91,39 @@ void Server::checkAwaitingConnections()
     switch (status)
     {
         case sf::Socket::Done:
+        {
+            LOG.info("New connection attempt from: " + sf::IpAddress(ip).toString());
+            j3x::Parameters connection_parameters;
+
+            if (connection_statuses_.count(ip) && connection_statuses_[ip] != ConnectionStatus::Off)
+                return;
+
             events_socket_[ip] = client;
 
-            LOG.info("New connection attempt from: " + sf::IpAddress(ip).toString());
-            respawnPlayer(ip);
-
-            for (auto& packet : cached_events_)
+            if (events_socket_.size() >= MAX_PLAYERS)
             {
+                connection_parameters["s"] = static_cast<int>(ConnectionStatus::Off);
+                connection_parameters["reason"] = std::string("Too many players.");
+                LOG.info("Too many players... Rejecting connection.");
+
+                auto packet = ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters, ip);
+
+                // TODO - events_socket_ should be cleared after sending
                 events_socket_[ip]->send(packet);
+                connection_statuses_[ip] = ConnectionStatus::Off;
+
+                return;
             }
 
+            connection_parameters["s"] = static_cast<int>(ConnectionStatus::InProgress);
+            connection_parameters["map"] = map_->getMapName();
+            auto packet = ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters, ip);
+            events_socket_[ip]->send(packet);
+
+            connection_statuses_[ip] = ConnectionStatus::InProgress;
+
             break;
+        }
         case sf::Socket::NotReady:
 //            LOG.info("No connection yet.");
             break;
@@ -129,7 +150,7 @@ void Server::handleMessagesFromPlayers()
         {
             case sf::Socket::Done:
             {
-                LOG.info("New data received from: " + sender.toString());
+                //LOG.info("New data received from: " + sender.toString());
                 auto ip = sender.toInteger();
                 auto player_it = players_.find(ip);
 
@@ -265,6 +286,13 @@ void Server::handleEventsFromPlayers()
                         {
                             clearPlayer(player_it->second.get());
                             players_.erase(player_it);
+                            events_socket_[player_it->first]->disconnect();
+                            connection_statuses_.erase(player_it->first);
+                            events_socket_.erase(player_it->first);
+
+                            ServerEventPacket server_packet(ServerEventPacket::Type::PlayerExit,
+                                                            0, player_it->first);
+                            sendEventToPlayers(server_packet);
                             break;
                         }
                         default:
@@ -275,7 +303,51 @@ void Server::handleEventsFromPlayers()
                 }
                 else
                 {
-                    LOG.error("This player is not registered!");
+                    auto connection_status = connection_statuses_.find(socket.first);
+                    if (connection_status == connection_statuses_.end() ||
+                        connection_status->second == ConnectionStatus::Off)
+                    {
+                        LOG.error("This player is not registered!");
+                        return;
+                    }
+
+                    if (connection_status->second == ConnectionStatus::On ||
+                        packet.getType() != PlayerEventPacket::Type::Connection)
+                        return;
+
+                    j3x::Parameters connection_parameters;
+                    if (packet.getIntData() == map_->getDigest())
+                    {
+                        LOG.info("Connection successful.");
+                        respawnPlayer(socket.first);
+                        connection_parameters["s"] = static_cast<int>(ConnectionStatus::On);
+                        auto server_packet =
+                                ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters,
+                                                  socket.first);
+                        events_socket_[socket.first]->send(server_packet);
+                        connection_statuses_[socket.first] = ConnectionStatus::On;
+
+                        for (auto& cached_packet : cached_events_)
+                        {
+                            if (cached_packet.isCachedForIp(socket.first))
+                                events_socket_[socket.first]->send(cached_packet);
+                        }
+                    }
+                    else
+                    {
+                        LOG.info("Maps does not match... (" + std::to_string(map_->getDigest()) + ", " +
+                                 std::to_string(packet.getIntData()) + ") Rejecting connection.");
+
+                        connection_parameters["s"] = static_cast<int>(ConnectionStatus::Off);
+                        connection_parameters["reason"] = std::string("Maps does not match.");
+                        auto server_packet =
+                                ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters,
+                                                  socket.first);
+                        // TODO - events_socket_ should be cleared after sending
+                        events_socket_[socket.first]->send(server_packet);
+                        connection_statuses_[socket.first] = ConnectionStatus::Off;
+                    }
+
                 }
                 break;
             }
@@ -339,10 +411,22 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     {
         if (special->getActivation() == Functional::Activation::OnEnter)
         {
+            const auto& funcs = special->getFunctions();
+
+            // Necessary hack
+            bool should_send = false;
+            for (size_t i = 0; i < funcs.size(); ++i)
+                if (j3x::getObj<std::string>(funcs, i) == "Destroy")
+                    should_send = true;
+
             auto player = dynamic_cast<Player*>(d_obj);
-            auto packet = ServerEventPacket(ServerEventPacket::Type::EnteredObject,
-                                            special->getUniqueId(), getPlayerIP(player));
-            sendEventToPlayers(packet);
+            if (should_send)
+            {
+                auto packet = ServerEventPacket(ServerEventPacket::Type::EnteredObject,
+                                                special->getUniqueId(), getPlayerIP(player));
+                sendEventToPlayers(packet);
+            }
+
             if (special->isUsableByNPC())
             {
                 special->use(character);
@@ -439,6 +523,9 @@ void Server::respawnPlayer(sf::Uint32 ip)
 void Server::respawn(const std::string& map_name)
 {
     Framework::respawn(map_name);
+    cached_events_.clear();
+    cached_packets_.clear();
+    starting_positions_.clear();
     map_->getList<NPC>().clear();
 
     for (auto& special : map_->getList<Special>())
@@ -446,6 +533,8 @@ void Server::respawn(const std::string& map_name)
         if (special->getId() == "starting_position")
             starting_positions_.emplace_back(special->getPosition());
     }
+
+    clearStartingPositions();
 }
 
 void Server::drawAdditionalPlayers(graphics::Graphics& graphics)
@@ -464,6 +553,12 @@ void Server::startGame(const std::string& map_name)
 {
     Framework::startGame(map_name);
     this->respawn(map_name);
+    events_socket_.clear();
+    connection_statuses_.clear();
+
+    for (auto& player : players_)
+        unregisterCharacter(player.second.get());
+    players_.clear();
 
     // bind sockets
     if (connection_listener_.listen(54000) != sf::Socket::Done)
@@ -478,4 +573,27 @@ void Server::startGame(const std::string& map_name)
     data_receiver_socket_.setBlocking(false);
     // TODO maybe sender should be non-blocking?
     ui_->startGame();
+
+}
+
+void Server::disconnect()
+{
+    for (auto& event : events_socket_)
+        event.second->setBlocking(true);
+    auto packet = ServerEventPacket(ServerEventPacket::Type::Exit, 0, 0);
+    sendEventToPlayers(packet);
+
+    for (auto& event : events_socket_)
+        event.second->disconnect();
+    events_socket_.clear();
+    connection_statuses_.clear();
+    data_receiver_socket_.unbind();
+    data_sender_socket_.unbind();
+    connection_listener_.close();
+}
+
+void Server::close()
+{
+    disconnect();
+    Framework::close();
 }

@@ -34,6 +34,9 @@ public:
     ClientUserInterface& operator=(const ClientUserInterface&) = delete;
 
     void initialize(graphics::Graphics& graphics) override;
+    void openMenu() override;
+private:
+    Client* client_;
 
 };
 

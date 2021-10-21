@@ -6,7 +6,7 @@
 #include <server/MinimalUserInterface.h>
 
 
-MinimalUserInterface::MinimalUserInterface(Server* server) : UserInterface(server)
+MinimalUserInterface::MinimalUserInterface(Server* server) : UserInterface(server), server_(server)
 {
 }
 
@@ -23,6 +23,7 @@ void MinimalUserInterface::initialize(graphics::Graphics& graphics)
                                           sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                                                        static_cast<float>(CONF<int>("graphics/window_height_px"))});
     menu_->doShow(true);
+    small_backpack_hud_.setBlocked(true);
 }
 
 void MinimalUserInterface::draw(graphics::Graphics& graphics)
@@ -86,4 +87,10 @@ void MinimalUserInterface::spawnNoteWindow(const std::string& text, bool note_in
 
 void MinimalUserInterface::closeWindow(Window* window)
 {
+}
+
+void MinimalUserInterface::openMenu()
+{
+    server_->disconnect();
+    UserInterface::openMenu();
 }

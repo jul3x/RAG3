@@ -32,6 +32,12 @@ using namespace r3e;
 class Client : public Framework {
 
 public:
+    enum class ConnectionStatus {
+        On = 2,
+        InProgress = 1,
+        Off = 0
+    };
+
     Client();
     Client(const Client&) = delete;
     Client& operator=(const Client&) = delete;
@@ -53,17 +59,18 @@ public:
     void setGameState(GameState state) override;
     void respawn(const std::string& map_name) override;
     void startGame(const std::string& ip_address) override;
+    bool establishConnection(const sf::IpAddress& ip);
+    void disconnect();
 
 private:
-    void beforeUpdate(float time_elapsed) override;
     void afterUpdate(float time_elapsed) override;
 
+    void preupdate(float time_elapsed) override;
     void updateCamera(float time_elapsed) override;
     void updatePlayers(float time_elapsed) override;
     void drawAdditionalPlayers(graphics::Graphics& graphics) override;
     void drawAdditionalPlayersLighting() override;
 
-    bool establishConnection(const sf::IpAddress& ip);
     void handleEventsFromServer();
     void sendInputs();
     void receiveData();
@@ -78,6 +85,7 @@ private:
     sf::TcpSocket events_socket_;
     sf::IpAddress server_ip_;
 
+    ConnectionStatus connection_status_;
     float last_packet_timestamp_;
     uint64_t last_received_packet_timestamp_;
 

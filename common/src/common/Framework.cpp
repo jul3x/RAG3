@@ -43,8 +43,8 @@ void Framework::initialize()
 
     engine_->registerCamera(camera_.get());
 
-    this->initParams();
-    weather_ = std::make_unique<WeatherSystem>(this, weather_params_.get());
+    this->initParticles();
+    this->initSound(true);
 }
 
 void Framework::beforeUpdate(float time_elapsed)
@@ -1002,7 +1002,7 @@ void Framework::registerLight(Lightable* lightable) const
     }
 }
 
-void Framework::initParams()
+void Framework::initParticles()
 {
     destruction_params_["blood"] = {};
     destruction_params_["debris"] = {};
@@ -1051,6 +1051,7 @@ void Framework::initParams()
     weather_params_->count = CONF<int>("graphics/weather_particles_count");
 
     weather_params_->shader = CONF<std::string>("graphics/weather_shader");
+    weather_ = std::make_unique<WeatherSystem>(this, weather_params_.get());
 }
 
 DestructionSystem*
@@ -1216,13 +1217,13 @@ void Framework::obstacleDestroyedEvent(Obstacle* obstacle)
 void Framework::spawnSound(const sf::SoundBuffer& sound, const sf::Vector2f& pos, bool force_pitch)
 {
     if (CONF<bool>("sound/sound_on") && utils::geo::getDistance(pos, getPlayer()->getPosition()) < 500.0f)
-        engine_->spawnSoundEvent(sound, pos, 100.0f, force_pitch);
+        engine_->spawnSoundEvent(sound, pos, CONF<float>("sound/sound_volume"), force_pitch);
 }
 
 void Framework::spawnSound(const sf::SoundBuffer& sound)
 {
     if (CONF<bool>("sound/sound_on"))
-        engine_->spawnSoundEvent(sound, 100.0f);
+        engine_->spawnSoundEvent(sound, CONF<float>("sound/sound_volume"));
 }
 
 DestructionSystem* Framework::spawnSparksEvent2(const sf::Vector2f& pos, float dir, float r)
@@ -1325,4 +1326,9 @@ void Framework::clearStartingPositions()
         }
         return false;
     });
+}
+
+void Framework::initSound(bool force)
+{
+    engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
 }

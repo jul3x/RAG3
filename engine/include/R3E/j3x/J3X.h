@@ -191,6 +191,8 @@ namespace r3e::j3x {
         return ret;
     }
 
+    bool compare(const j3x::Obj& a, const j3x::Obj& b);
+
 } // namespace r3e::j3x
 
 #endif //RAG3_ENGINE_INCLUDE_R3E_UTILS_PARSER_H

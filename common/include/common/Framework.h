@@ -109,6 +109,8 @@ public:
     virtual void respawn(const std::string& map_name);
     virtual void startGame(const std::string& map_name = "");
     virtual void talk();
+    virtual void initParticles();
+    virtual void initSound(bool force = false);
 
     template <class T>
     void findAndDelete(T* ptr);
@@ -172,7 +174,6 @@ protected:
     virtual void drawAdditionalPlayersLighting();
     void clearStartingPositions();
 
-    virtual void initParams();
     virtual void initObstacles();
     virtual void initDecorations();
     virtual void initWeapons();

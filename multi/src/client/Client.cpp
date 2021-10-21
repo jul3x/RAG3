@@ -26,7 +26,6 @@ void Client::initialize()
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     Framework::initialize();
 
-    engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
     ui_ = std::make_unique<ClientUserInterface>(this);
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());

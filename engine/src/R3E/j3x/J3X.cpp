@@ -9,6 +9,7 @@
 #include <R3E/j3x/Parser.h>
 #include <R3E/j3x/J3XVisitor.h>
 #include <R3E/j3x/J3X.h>
+#include <R3E/utils/Numeric.h>
 
 
 namespace r3e::j3x {
@@ -201,6 +202,41 @@ namespace r3e::j3x {
         else
         {
             throw std::logic_error("[j3x::getType] Not handled data type: " + std::string(obj.type().name()));
+        }
+    }
+
+    bool compare(const j3x::Obj& a, const j3x::Obj& b)
+    {
+        if (a.type() != b.type())
+            return false;
+
+        if (a.type() == typeid(j3x::List))
+        {
+            throw std::logic_error("[j3x::compare] List comparison not handled yet");
+        }
+        else if (a.type() == typeid(int))
+        {
+            return j3x::getObj<int>(a) == j3x::getObj<int>(b);
+        }
+        else if (a.type() == typeid(float))
+        {
+            return utils::num::isNearlyEqual(j3x::getObj<float>(a), j3x::getObj<float>(b));
+        }
+        else if (a.type() == typeid(bool))
+        {
+            return j3x::getObj<bool>(a) == j3x::getObj<bool>(b);
+        }
+        else if (a.type() == typeid(sf::Vector2f))
+        {
+            return utils::num::isNearlyEqual(j3x::getObj<sf::Vector2f>(a), j3x::getObj<sf::Vector2f>(b));
+        }
+        else if (a.type() == typeid(std::string))
+        {
+            return j3x::getObj<std::string>(a) == j3x::getObj<std::string>(b);
+        }
+        else
+        {
+            throw std::logic_error("[j3x::compare] Not handled data type: " + std::string(a.type().name()));
         }
     }
 

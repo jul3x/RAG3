@@ -26,9 +26,9 @@ SettingsWindow::SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
     tabs_->setPosition(pos - sf::Vector2f(0.0, CONF<float>("graphics/menu_settings_tabs_height")));
     tabs_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
     tabs_->getRenderer()->setDistanceToSide(20.0f * CONF<float>("graphics/user_interface_zoom"));
-    for (const auto& tab : {"General", "Controls", "Graphics", "Sound"})
+    for (const auto& tab : {"general", "controls", "graphics", "sound"})
     {
-        tabs_->add(tab);
+        tabs_->add(utils::humanize(tab));
         tab_names_.emplace_back(tab);
     }
 
@@ -57,7 +57,11 @@ SettingsWindow::SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
     restore_button_->connect("pressed", [this, framework]() {
         this->unfocusControlsWidgets();
         this->updateValues();
+        this->saveValues();
         framework->spawnSound(RM.getSound("ui_upgrade"));
+    });
+    restore_button_->connect("mouseentered", [framework]() {
+        framework->spawnSound(RM.getSound("ui_hover"));
     });
     gui->add(restore_button_);
 
@@ -102,9 +106,9 @@ void SettingsWindow::createWidgets()
         auto grid = tgui::Grid::create();
         grid->setAutoSize(true);
 
-        scroll_panel_->add(grid, tab);
+        scroll_panel_->add(grid, utils::humanize(tab));
 
-        auto filename = CONF<std::string>("paths/user_dir") + "/" + r3e::utils::toLower(tab) + ".j3x";
+        auto filename = CONF<std::string>("paths/user_dir") + "/" + tab + ".j3x";
         params_[tab] = r3e::j3x::parseWithVisitor(filename, "");
 
         int i = 0;
@@ -117,20 +121,20 @@ void SettingsWindow::createWidgets()
             auto hash_key = tab + "/" + param;
             const auto& type = types.at(param);
 
-            if (tab == "General" && param == "character")
-                widgets_[hash_key] = std::make_unique<CharacterSettingsWidget>(theme_, param);
-            else if (tab == "Controls")
-                widgets_[hash_key] = std::make_unique<ControlsSettingsWidget>(this, theme_, param);
+            if (tab == "general" && param == "character")
+                widgets_[hash_key] = std::make_unique<CharacterSettingsWidget>(theme_, tab, param);
+            else if (tab == "controls")
+                widgets_[hash_key] = std::make_unique<ControlsSettingsWidget>(this, theme_, tab, param);
             else
             {
                 if (type == "bool")
-                    widgets_[hash_key] = std::make_unique<BoolSettingsWidget>(theme_, param);
+                    widgets_[hash_key] = std::make_unique<BoolSettingsWidget>(theme_, tab, param);
                 else if (type == "int")
-                    widgets_[hash_key] = std::make_unique<SliderSettingsWidget<int>>(theme_, param);
+                    widgets_[hash_key] = std::make_unique<SliderSettingsWidget<int>>(theme_, tab, param);
                 else if (type == "float")
-                    widgets_[hash_key] = std::make_unique<SliderSettingsWidget<float>>(theme_, param);
+                    widgets_[hash_key] = std::make_unique<SliderSettingsWidget<float>>(theme_, tab, param);
                 else if (type == "string")
-                    widgets_[hash_key] = std::make_unique<StringSettingsWidget>(theme_, param);
+                    widgets_[hash_key] = std::make_unique<StringSettingsWidget>(theme_, tab, param);
                 else
                     throw std::runtime_error(
                             "[SettingsWindow::createWidgets] Widgets for type " + type + " not handled yet!");
@@ -151,28 +155,63 @@ void SettingsWindow::updateValues()
 {
     for (const auto& tab : tab_names_)
     {
-        const auto& types = params_[tab]->getTypes();
-        const auto& values = params_[tab]->getParams();
         for (const auto& param : params_[tab]->getVariablesList())
         {
-            widgets_[tab + "/" + param]->updateValue(values);
+            widgets_[tab + "/" + param]->updateValue(CFG.getParameters());
         }
     }
 }
 
 void SettingsWindow::saveValues()
 {
+    bool should_reload_game = false;
+    bool should_reload_sound = false;
+
+    auto buffer = j3x::Parameters();
+    const auto& current_parameters = CFG.getParameters();
     for (const auto& tab : tab_names_)
     {
-        const auto& types = params_[tab]->getTypes();
         std::string out;
         for (const auto& param : params_[tab]->getVariablesList())
         {
-            widgets_[tab + "/" + param]->serializeAndAppend(out);
+            auto hash_key = tab + "/" + param;
+            widgets_[hash_key]->serializeAndAppend(out);
+            auto game_reload_widget = utils::contains(RELOAD_PARAMETERS, hash_key);
+            auto sound_reload_widget = utils::contains(SOUND_RELOAD_PARAMETERS, hash_key);
+
+            if (game_reload_widget || sound_reload_widget)
+            {
+                if (!j3x::compare(widgets_[hash_key]->getValue(), current_parameters.at(hash_key)))
+                {
+                    if (game_reload_widget)
+                    {
+                        should_reload_game = true;
+                        buffer[hash_key] = current_parameters.at(hash_key);
+                    }
+                    if (sound_reload_widget)
+                        should_reload_sound = true;
+                }
+            }
         }
 
-        RM.saveConfigFile("user_dir", r3e::utils::toLower(tab), out);
+        RM.saveConfigFile("user_dir", tab, out);
+        CFG.appendConfig("../data/config/user/" + tab + ".j3x", tab, true);
     }
+
+    // Revoke parameters that forces game to be reloaded
+    if (should_reload_game)
+    {
+        for (const auto& param : buffer)
+        {
+            CFG.set(param.first, param.second);
+        }
+        framework_->getUI()
+                  ->spawnNoteWindow("Graphics settings which controls the game window\nwill be applied after restart.",
+                                    false);
+    }
+
+    framework_->initParticles();
+    framework_->initSound(should_reload_sound);
 }
 
 void SettingsWindow::unfocusControlsWidgets()
@@ -204,7 +243,8 @@ void SettingsWindow::setFocusedControlsWidget(ControlsSettingsWidget* widget)
 
 /* Widgets */
 
-BaseSettingsWidget::BaseSettingsWidget(tgui::Theme* theme, const std::string& name) : name_(name)
+BaseSettingsWidget::BaseSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name) :
+        name_(name), tab_(tab)
 {
     label_ = tgui::Label::create(r3e::utils::humanize(name));
     label_->setRenderer(theme->getRenderer("ItemLabel"));
@@ -222,8 +262,8 @@ BaseSettingsWidget::BaseSettingsWidget(tgui::Theme* theme, const std::string& na
     return tgui::Grid::Alignment::BottomLeft;
 }
 
-BoolSettingsWidget::BoolSettingsWidget(tgui::Theme* theme, const std::string& name) :
-        BaseSettingsWidget(theme, name)
+BoolSettingsWidget::BoolSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name) :
+        BaseSettingsWidget(theme, tab, name)
 {
     checkbox_ = tgui::CheckBox::create("");
     checkbox_->setRenderer(theme->getRenderer("CheckBoxGame"));
@@ -242,12 +282,17 @@ void BoolSettingsWidget::serializeAndAppend(std::string& out) const
 
 void BoolSettingsWidget::updateValue(const j3x::Parameters& values)
 {
-    checkbox_->setChecked(r3e::j3x::get<bool>(values, name_));
+    checkbox_->setChecked(r3e::j3x::get<bool>(values, tab_ + "/" + name_));
+}
+
+j3x::Obj BoolSettingsWidget::getValue() const
+{
+    return checkbox_->isChecked();
 }
 
 
-StringSettingsWidget::StringSettingsWidget(tgui::Theme* theme, const std::string& name) :
-        BaseSettingsWidget(theme, name)
+StringSettingsWidget::StringSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name) :
+        BaseSettingsWidget(theme, tab, name)
 {
     editbox_ = tgui::EditBox::create();
     editbox_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
@@ -268,12 +313,18 @@ void StringSettingsWidget::serializeAndAppend(std::string& out) const
 
 void StringSettingsWidget::updateValue(const j3x::Parameters& values)
 {
-    editbox_->setText(r3e::j3x::get<std::string>(values, name_));
+    editbox_->setText(r3e::j3x::get<std::string>(values, tab_ + "/" + name_));
+}
+
+j3x::Obj StringSettingsWidget::getValue() const
+{
+    return std::string(editbox_->getText());
 }
 
 
-ControlsSettingsWidget::ControlsSettingsWidget(SettingsWindow* window, tgui::Theme* theme, const std::string& name) :
-        BaseSettingsWidget(theme, name)
+ControlsSettingsWidget::ControlsSettingsWidget(SettingsWindow* window, tgui::Theme* theme, const std::string& tab,
+                                               const std::string& name) :
+        BaseSettingsWidget(theme, tab, name)
 {
     button_ = tgui::Button::create();
     button_->setRenderer(theme->getRenderer("ButtonLabel"));
@@ -300,7 +351,7 @@ void ControlsSettingsWidget::serializeAndAppend(std::string& out) const
 void ControlsSettingsWidget::updateValue(const j3x::Parameters& values)
 {
     button_->setText(r3e::utils::keyToString(
-            static_cast<sf::Keyboard::Key>(r3e::j3x::get<int>(values, name_))));
+            static_cast<sf::Keyboard::Key>(r3e::j3x::get<int>(values, tab_ + "/" + name_))));
 }
 
 void ControlsSettingsWidget::setFocus(bool focus)
@@ -315,9 +366,14 @@ void ControlsSettingsWidget::setKey(sf::Keyboard::Key key)
     button_->setText(r3e::utils::keyToString(key));
 }
 
+j3x::Obj ControlsSettingsWidget::getValue() const
+{
+    return static_cast<int>(r3e::utils::stringToKey(button_->getText()));
+}
 
-CharacterSettingsWidget::CharacterSettingsWidget(tgui::Theme* theme, const std::string& name) :
-        BaseSettingsWidget(theme, name)
+
+CharacterSettingsWidget::CharacterSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name) :
+        BaseSettingsWidget(theme, tab, name)
 {
     grid_ = tgui::Grid::create();
     grid_->setAutoSize(true);
@@ -393,7 +449,7 @@ void CharacterSettingsWidget::serializeAndAppend(std::string& out) const
 
 void CharacterSettingsWidget::updateValue(const j3x::Parameters& values)
 {
-    const auto& character = r3e::j3x::get<std::string>(values, name_);
+    const auto& character = r3e::j3x::get<std::string>(values, tab_ + "/" + name_);
 
     auto it = std::find(possible_characters_.begin(), possible_characters_.end(), character);
 
@@ -418,9 +474,15 @@ void CharacterSettingsWidget::change(std::vector<std::string>::iterator new_valu
     current_character_ = new_value;
 }
 
+j3x::Obj CharacterSettingsWidget::getValue() const
+{
+    return *current_character_;
+}
+
+
 template<class T>
-SliderSettingsWidget<T>::SliderSettingsWidget(tgui::Theme* theme, const std::string& name) :
-        BaseSettingsWidget(theme, name)
+SliderSettingsWidget<T>::SliderSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name) :
+        BaseSettingsWidget(theme, tab, name)
 {
     grid_ = tgui::Grid::create();
     grid_->setAutoSize(true);
@@ -468,5 +530,12 @@ void SliderSettingsWidget<T>::serializeAndAppend(std::string& out) const
 template<class T>
 void SliderSettingsWidget<T>::updateValue(const j3x::Parameters& values)
 {
-    slider_->setValue(r3e::j3x::get<T>(values, name_));
+    slider_->setValue(r3e::j3x::get<T>(values, tab_ + "/" + name_));
+    value_->setText(utils::toString<T>(static_cast<T>(slider_->getValue())));
+}
+
+template<class T>
+j3x::Obj SliderSettingsWidget<T>::getValue() const
+{
+    return static_cast<T>(slider_->getValue());
 }

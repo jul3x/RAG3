@@ -54,6 +54,11 @@ namespace r3e {
             return *params_;
         }
 
+        const j3x::Parameters& getParameters() const
+        {
+            return *params_;
+        }
+
     private:
         Config() = default;
 

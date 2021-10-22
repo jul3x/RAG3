@@ -4,9 +4,23 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <R3E/j3x/J3XVisitor.h>
+#include <R3E/j3x/J3X.h>
 
 
 using namespace r3e::j3x;
+
+J3XVisitor::J3XVisitor(std::string ns) : ns_(std::move(ns))
+{
+}
+
+J3XVisitor::J3XVisitor(std::string ns, const j3x::Parameters& context) :
+        ns_(std::move(ns))
+{
+    for (const auto& var : context)
+    {
+        addNewVariable(var.first, var.second, j3x::getType(var.second), -1);
+    }
+}
 
 void J3XVisitor::visitScript(Script* t)
 {

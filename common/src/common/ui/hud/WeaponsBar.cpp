@@ -50,7 +50,7 @@ WeaponsBar::update(const std::vector<std::shared_ptr<AbstractWeapon>>& weapons, 
         if (weapon_cast != nullptr || melee_cast != nullptr)
         {
             size = (i == 0 ? CHOSEN_WEAPON_SIZE_FACTOR_ : 1.0f) * RMGET<sf::Vector2f>("specials", name, "size");
-            weapons_.emplace_back(weapon_pos, size * CONF<float>("graphics/global_zoom"),
+            weapons_.emplace_back(weapon_pos, size * CONF<float>("graphics/GLOBAL_ZOOM"),
                                   &RM.getTexture("specials/" + name));
         }
 

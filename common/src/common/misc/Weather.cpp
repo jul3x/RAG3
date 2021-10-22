@@ -59,8 +59,8 @@ bool WeatherSystem::update(float time_elapsed)
 {
     int i = 0;
     auto pos = framework_->getPlayer()->getPosition();
-    static auto width = CONF<int>("graphics/window_width_px") / CONF<float>("graphics/global_zoom");
-    static auto height = CONF<int>("graphics/window_height_px") / CONF<float>("graphics/global_zoom");
+    static auto width = CONF<int>("graphics/window_width_px") / CONF<float>("graphics/GLOBAL_ZOOM");
+    static auto height = CONF<int>("graphics/window_height_px") / CONF<float>("graphics/GLOBAL_ZOOM");
     this->setPosition(pos);
 
     utils::eraseIf<std::unique_ptr<WeatherParticle>>(particles_,

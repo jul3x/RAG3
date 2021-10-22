@@ -64,6 +64,7 @@ namespace r3e {
 
         [[nodiscard]] float getCurrentFPS() const;
         [[nodiscard]] static sf::Vector2i detectResolution();
+        [[nodiscard]] static float detectZoom(const sf::Vector2i& res);
         [[nodiscard]] graphics::Graphics& getGraphics() const;
         [[nodiscard]] std::list<std::shared_ptr<graphics::AnimationEvent>>& getAnimationEvents();
 

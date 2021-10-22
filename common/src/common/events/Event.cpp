@@ -34,6 +34,6 @@ Event::Event(const sf::Vector2f& position, const std::string& id,
                        RMGET<sf::Vector2f>("animations", id, "map_offset"));
 
     this->makeLightPoint(this->getPosition(),
-                         CONF<float>("graphics/animations_light_point_size") * CONF<float>("graphics/global_zoom"),
+                         CONF<float>("graphics/animations_light_point_size") * CONF<float>("graphics/GLOBAL_ZOOM"),
                          &RM.getTexture("lightpoint"), RMGET<std::string>("animations", id, "light_point"));
 }

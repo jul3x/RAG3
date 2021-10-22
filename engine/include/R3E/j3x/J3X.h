@@ -25,9 +25,11 @@
 
 namespace r3e::j3x {
 
-    std::shared_ptr<J3XVisitor> parseWithVisitor(const std::string& filename, const std::string& ns);
+    std::shared_ptr<J3XVisitor>
+    parseWithVisitor(const std::string& filename, const std::string& ns, const j3x::Parameters& context = {});
 
-    std::shared_ptr<Parameters> parse(const std::string& filename, const std::string& ns);
+    std::shared_ptr<Parameters>
+    parse(const std::string& filename, const std::string& ns, const j3x::Parameters& context = {});
 
     std::shared_ptr<Parameters> parse(const std::string& filename);
 

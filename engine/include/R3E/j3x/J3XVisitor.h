@@ -19,9 +19,8 @@ namespace r3e::j3x {
     class J3XVisitor : public Visitor {
 
     public:
-        explicit J3XVisitor(std::string ns = "") : ns_(std::move(ns))
-        {
-        }
+        explicit J3XVisitor(std::string ns = "");
+        explicit J3XVisitor(std::string ns, const j3x::Parameters& context);
 
         void visitScript(Script* p) override;
         void visitDef(Def* p) override;

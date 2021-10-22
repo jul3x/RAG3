@@ -13,9 +13,9 @@
 
 
 namespace r3e::j3x {
-    std::shared_ptr<J3XVisitor> parseWithVisitor(const std::string& filename, const std::string& ns)
+    std::shared_ptr<J3XVisitor> parseWithVisitor(const std::string& filename, const std::string& ns, const j3x::Parameters& context)
     {
-        auto visitor = std::make_shared<J3XVisitor>(ns);
+        auto visitor = std::make_shared<J3XVisitor>(ns, context);
         FILE* input = fopen(filename.c_str(), "r");
 
         if (input)
@@ -48,9 +48,10 @@ namespace r3e::j3x {
         return visitor;
     }
 
-    std::shared_ptr<Parameters> parse(const std::string& filename, const std::string& ns)
+    std::shared_ptr<Parameters>
+    parse(const std::string& filename, const std::string& ns, const j3x::Parameters& context)
     {
-        return std::make_shared<Parameters>(parseWithVisitor(filename, ns)->getParams());
+        return std::make_shared<Parameters>(parseWithVisitor(filename, ns, context)->getParams());
     }
 
     std::shared_ptr<Parameters> parse(const std::string& filename)

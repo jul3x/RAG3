@@ -37,6 +37,13 @@ namespace r3e {
             j3x::mergeParams(*params_, *new_params, force_update);
         }
 
+        void appendConfig(const std::string& filename, const std::string& ns, const j3x::Parameters& context)
+        {
+            auto new_params = j3x::parse(filename, ns, context);
+
+            j3x::mergeParams(*params_, *new_params);
+        }
+
         template<class T>
         const T& get(const std::string& key, bool ignore_warn = false) const
         {

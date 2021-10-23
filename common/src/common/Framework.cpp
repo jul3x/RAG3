@@ -23,7 +23,7 @@ void Framework::initialize()
     engine_->initializeGraphics(
             sf::Vector2i{CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_height_px")},
             "Codename: Rag3",
-            CONF<bool>("graphics/full_screen") ? sf::Style::Fullscreen : sf::Style::Default,
+            CONF<bool>("graphics/full_screen") ? sf::Style::Fullscreen : (sf::Style::Titlebar | sf::Style::Close),
             sf::Color(CONF<int>("graphics/background_color")));
     engine_->setFPSLimit(60);
 

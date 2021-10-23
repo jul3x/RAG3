@@ -375,9 +375,11 @@ void UserInterface::updatePlayerStates(float time_elapsed)
     if (stats != nullptr)
         right_hud_.update(framework_->getStats()->getLevel(), framework_->getStats()->getExp(), time_elapsed);
 
-    auto player = framework_->getPlayer();
-    if (player != nullptr)
-        right_hud_.setName(player->getName());
+    if (player_ != nullptr)
+    {
+        right_hud_.setName(player_->getName());
+        right_hud_.setCharacter(player_->getId());
+    }
 
     health_bar_.setMaxAmount(player_->getMaxHealth());
     health_bar_.update(player_->getHealth(), time_elapsed);

@@ -66,3 +66,8 @@ void RightHud::setName(const std::string& name)
 
     name_.setString(name);
 }
+
+void RightHud::setCharacter(const std::string& character)
+{
+    face_.changeTexture(&RM.getTexture("characters/" + character + "_face"));
+}

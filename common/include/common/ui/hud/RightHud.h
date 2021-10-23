@@ -18,6 +18,7 @@ public:
     void update(int level, int exp, float time_elapsed);
 
     void setName(const std::string& name);
+    void setCharacter(const std::string& character);
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

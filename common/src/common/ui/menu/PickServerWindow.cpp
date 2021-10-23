@@ -32,6 +32,7 @@ PickServerWindow::PickServerWindow(tgui::Gui* gui, tgui::Theme* theme, Framework
     editbox_->getRenderer()->setFont(RM.getFont("default"));
     editbox_->setPosition(pos - CONF<sf::Vector2f>("graphics/menu_edit_box_size") / 2.0f +
                           sf::Vector2f(0.0f, CONF<sf::Vector2f>("graphics/menu_window_size").y * 0.3f));
+    editbox_->setMaximumCharacters(15);
     gui->add(editbox_);
 
     button_ = tgui::Button::create("Connect");

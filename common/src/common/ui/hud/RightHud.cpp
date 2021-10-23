@@ -61,10 +61,17 @@ void RightHud::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void RightHud::setName(const std::string& name)
 {
+    static constexpr auto max_length = 10;
     auto bound = name_.getLocalBounds();
     name_.setOrigin(bound.width, bound.height);
 
     name_.setString(name);
+
+    auto length = name.length();
+    auto size = CONF<float>("graphics/name_text_size");
+    if (length > max_length)
+        size = max_length / static_cast<float>(length) * size;
+    name_.setCharacterSize(static_cast<int>(size));
 }
 
 void RightHud::setCharacter(const std::string& character)

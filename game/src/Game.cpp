@@ -719,17 +719,18 @@ void Game::startGame(const std::string& map_name)
     ui_->startGame();
 }
 
-void Game::extraShaderManipulations(sf::Shader* shader)
+void Game::extraRenderStatesManipulations(sf::RenderStates& states)
 {
     if (rag3_time_elapsed_ > 0.0f)
     {
-        shader = &RM.getShader("rag3.frag");
+        auto shader = &RM.getShader("rag3.frag");
         shader->setUniform("time", rag3_time_elapsed_);
         shader->setUniform("rag3_time", CONF<float>("rag3_time"));
+        states.shader = shader;
     }
     else
     {
-        Framework::extraShaderManipulations(shader);
+        Framework::extraRenderStatesManipulations(states);
     }
 }
 

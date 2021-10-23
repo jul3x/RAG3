@@ -1,3 +1,14 @@
+Color {
+    BackgroundColor = rgba(0, 0, 0, 255);
+    BackgroundColorHover = rgba(0, 0, 0, 255);
+    BackgroundColorDown = rgba(0, 0, 0, 255);
+    TextColor = rgba(255, 255, 255, 0);
+    TextColorHover = rgba(255, 255, 255, 0);
+    TextColorDown = rgba(255, 255, 255, 0);
+    BorderColor = rgba(255, 255, 255, 215);
+    Borders = (2, 2, 2, 2);
+}
+
 Button {
     BackgroundColor = rgba(90, 90, 90, 215);
     BackgroundColorHover = rgba(200, 40, 40, 215);

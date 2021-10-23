@@ -129,6 +129,8 @@ void SettingsWindow::createWidgets()
             {
                 if (type == "bool")
                     widgets_[hash_key] = std::make_unique<BoolSettingsWidget>(theme_, tab, param);
+                else if (type == "int" && utils::endsWith(param, "color"))
+                    widgets_[hash_key] = std::make_unique<ColorSettingsWidget>(theme_, tab, param);
                 else if (type == "int")
                     widgets_[hash_key] = std::make_unique<SliderSettingsWidget<int>>(theme_, tab, param);
                 else if (type == "float")
@@ -477,6 +479,108 @@ void CharacterSettingsWidget::change(std::vector<std::string>::iterator new_valu
 j3x::Obj CharacterSettingsWidget::getValue() const
 {
     return *current_character_;
+}
+
+
+ColorSettingsWidget::ColorSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name) :
+        BaseSettingsWidget(theme, tab, name)
+{
+    grid_ = tgui::Grid::create();
+    grid_->setAutoSize(true);
+
+    auto grid = tgui::Grid::create();
+    grid->setAutoSize(false);
+    grid->setSize(CONF<sf::Vector2f>("graphics/menu_slider_size").x,
+                  CONF<sf::Vector2f>("graphics/menu_slider_size").y * 12);
+    for (auto i = 0; i < 4; ++i)
+    {
+        sliders_[i] = tgui::Slider::create();
+        sliders_[i]->setRenderer(theme->getRenderer("SliderGame"));
+        sliders_[i]->setSize({CONF<sf::Vector2f>("graphics/menu_slider_size").x * 0.7f,
+                              CONF<sf::Vector2f>("graphics/menu_slider_size").y});
+        values_[i] = tgui::Label::create();
+        values_[i]->setRenderer(theme->getRenderer("ItemLabel"));
+        values_[i]->setTextSize(CONF<float>("graphics/menu_window_text_size"));
+        values_[i]->getRenderer()->setFont(RM.getFont("default"));
+
+        auto label = tgui::Label::create(COMPONENTS[i].data());
+        label->setRenderer(theme->getRenderer("ItemLabel"));
+        label->setTextSize(CONF<float>("graphics/menu_window_text_size"));
+        label->getRenderer()->setFont(RM.getFont("default"));
+        grid->addWidget(label, i, 0);
+        grid->addWidget(sliders_[i], i, 1);
+        grid->addWidget(values_[i], i, 2);
+        grid->setWidgetPadding(label, {0, 0, 0.05f * CONF<sf::Vector2f>("graphics/menu_slider_size").x, 0});
+        grid->setWidgetAlignment(label, tgui::Grid::Alignment::BottomLeft);
+        grid->setWidgetAlignment(sliders_[i], tgui::Grid::Alignment::Bottom);
+        grid->setWidgetAlignment(values_[i], tgui::Grid::Alignment::BottomLeft);
+
+        sliders_[i]->setMinimum(0);
+        sliders_[i]->setMaximum(255);
+
+        sliders_[i]->connect("ValueChanged", [this, i]() {
+            values_[i]->setText(utils::toString<int>(static_cast<int>(sliders_[i]->getValue())));
+            updateColor();
+        });
+    }
+
+    auto placeholder = tgui::Button::create();
+    placeholder->setSize({CONF<sf::Vector2f>("graphics/color_widget_size").x * 2.0f, 0.0f});
+    placeholder->setRenderer(theme->getRenderer("Color"));
+    placeholder->getRenderer()->setBackgroundColor(sf::Color::Transparent);
+
+    color_ = tgui::Button::create();
+    color_->setSize(CONF<sf::Vector2f>("graphics/color_widget_size"));
+    color_->setRenderer(theme->getRenderer("Color"));
+
+    grid_->addWidget(grid, 0, 0);
+    grid_->addWidget(placeholder, 0, 1);
+    grid_->addWidget(color_, 0, 2);
+}
+
+[[nodiscard]] tgui::Widget::Ptr ColorSettingsWidget::getWidget() const
+{
+    return grid_;
+}
+
+void ColorSettingsWidget::serializeAndAppend(std::string& out) const
+{
+    j3x::serializeAssign(name_, static_cast<int>(this->getColor().toInteger()), out);
+}
+
+void ColorSettingsWidget::updateValue(const j3x::Parameters& values)
+{
+    auto color = sf::Color(r3e::j3x::get<int>(values, tab_ + "/" + name_));
+    sliders_[0]->setValue(color.r);
+    sliders_[1]->setValue(color.g);
+    sliders_[2]->setValue(color.b);
+    sliders_[3]->setValue(color.a);
+
+    for (auto i = 0; i < 4; ++i)
+        values_[i]->setText(utils::toString<int>(static_cast<int>(sliders_[i]->getValue())));
+
+    updateColor();
+}
+
+j3x::Obj ColorSettingsWidget::getValue() const
+{
+    return static_cast<int>(this->getColor().toInteger());
+}
+
+sf::Color ColorSettingsWidget::getColor() const
+{
+    return sf::Color(static_cast<sf::Uint8>(sliders_[0]->getValue()),
+                     static_cast<sf::Uint8>(sliders_[1]->getValue()),
+                     static_cast<sf::Uint8>(sliders_[2]->getValue()),
+                     static_cast<sf::Uint8>(sliders_[3]->getValue()));
+}
+
+void ColorSettingsWidget::updateColor()
+{
+    auto color = this->getColor();
+    color_->getRenderer()->setBackgroundColor(color);
+    color_->getRenderer()->setBackgroundColorHover(color);
+    color_->getRenderer()->setBackgroundColorDown(color);
 }
 
 

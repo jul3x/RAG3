@@ -307,9 +307,7 @@ void Framework::draw(graphics::Graphics& graphics)
     {
         static sf::RenderStates states;
 
-        sf::Shader* curr_shader = &RM.getShader(j3x::get<std::string>(map_->getParams(), "shader"));
-        extraShaderManipulations(curr_shader);
-        states.shader = curr_shader;
+        extraRenderStatesManipulations(states);
 
         auto draw = [&graphics](auto& list) {
             for (auto& obj : list)
@@ -1288,9 +1286,11 @@ void Framework::startGame(const std::string& map_name)
 
 }
 
-void Framework::extraShaderManipulations(sf::Shader* shader)
+void Framework::extraRenderStatesManipulations(sf::RenderStates& states)
 {
-    shader->setUniform("time", this->time_elapsed_);
+    sf::Shader* curr_shader = &RM.getShader(j3x::get<std::string>(map_->getParams(), "shader"));
+    curr_shader->setUniform("time", this->time_elapsed_);
+    states.shader = curr_shader;
 }
 
 void Framework::drawAdditionalPlayers(graphics::Graphics& graphics)

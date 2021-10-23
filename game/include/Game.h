@@ -91,7 +91,7 @@ private:
     void updateDestructionSystems(float time_elapsed) override;
 
     void initNPCs() override;
-    void extraShaderManipulations(sf::Shader* shader) override;
+    void extraRenderStatesManipulations(sf::RenderStates& states) override;
     void drawAdditionalPlayers(graphics::Graphics& graphics) override;
     void drawAdditionalPlayersLighting() override;
     void setStartingPosition();

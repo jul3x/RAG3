@@ -44,6 +44,13 @@ namespace r3e::utils {
         return what.rfind(prefix, 0) == 0;
     }
 
+    bool endsWith(const std::string& what, const std::string& suffix)
+    {
+        auto what_size = what.size();
+        auto suffix_size = suffix.size();
+        return what_size >= suffix_size && 0 == what.compare(what_size - suffix_size, suffix_size, suffix);
+    }
+
     std::string humanize(const std::string& word)
     {
         auto out = capitalFirst(word);

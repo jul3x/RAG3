@@ -38,6 +38,8 @@ protected:
     float rotation_;
     float life_;
     float ammo_state_;
+    short int frame_;
+    bool is_moving_;
 
     Character::GlobalState state_;
 

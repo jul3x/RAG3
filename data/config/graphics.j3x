@@ -70,6 +70,7 @@ float fade_in_out_duration = 0.2
 float camera_speed = 4.0
 float camera_zoom_speed = 5.0
 float camera_zoom_inout_speed = 4000.0
+float camera_reverse_zoom_speed = 2000.0
 float camera_reverse_rotation = 400.0
 float camera_rag3_rotation = 100.0
 float camera_reverse_return_rotation = 3.0

@@ -112,8 +112,8 @@ void Camera::update(float time_elapsed)
                      CONF<float>("graphics/camera_reverse_rotation");
 
         auto normalized_size = utils::geo::getNormalized(view_size_);
-        view_size_.x += normalized_size.x * time_elapsed * CONF<float>("graphics/camera_zoom_inout_speed");
-        view_size_.y += normalized_size.y * time_elapsed * CONF<float>("graphics/camera_zoom_inout_speed");
+        view_size_.x += normalized_size.x * time_elapsed * CONF<float>("graphics/camera_reverse_zoom_speed");
+        view_size_.y += normalized_size.y * time_elapsed * CONF<float>("graphics/camera_reverse_zoom_speed");
 
         time_elapsed_ += time_elapsed;
     }

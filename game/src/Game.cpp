@@ -399,6 +399,7 @@ void Game::setGameState(Framework::GameState state)
                 }
 
                 this->spawnTeleportationEvent(player_->getPosition());
+                this->spawnEvent("melee_giorgio_swirl", player_->getPosition());
 
                 journal_->clear();
             }
@@ -413,6 +414,9 @@ void Game::setGameState(Framework::GameState state)
 
             if (rag3_time_elapsed_ < 0.0f)
                 camera_->setNormal();
+
+            if (state_ == GameState::Reverse)
+                camera_->setShaking();
 
             engine_->turnOnCollisions();
             if (CONF<bool>("sound/sound_on"))

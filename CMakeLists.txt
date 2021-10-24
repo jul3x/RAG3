@@ -30,14 +30,26 @@ file(GLOB_RECURSE ENGINE_SRC "engine/src/*.cpp")
 set(R3ENGINE_LIBRARY "R3Engine")
 
 add_library(${R3ENGINE_LIBRARY} STATIC ${ENGINE_SRC})
-target_link_libraries(${R3ENGINE_LIBRARY}
-        stdc++fs
-        ${SFML_GRAPHICS_LIBRARY_RELEASE}
-        ${SFML_WINDOW_LIBRARY_RELEASE}
-        ${SFML_SYSTEM_LIBRARY_RELEASE}
-        ${SFML_AUDIO_LIBRARY_RELEASE}
-        ${SFML_NETWORK_LIBRARY_RELEASE}
-        ${TGUI_LIBRARY_RELEASE})
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_link_libraries(${R3ENGINE_LIBRARY}
+            stdc++fs
+            ${SFML_GRAPHICS_LIBRARY_DEBUG}
+            ${SFML_WINDOW_LIBRARY_DEBUG}
+            ${SFML_SYSTEM_LIBRARY_DEBUG}
+            ${SFML_AUDIO_LIBRARY_DEBUG}
+            ${SFML_NETWORK_LIBRARY_DEBUG}
+            ${TGUI_LIBRARY_DEBUG})
+else()
+    target_link_libraries(${R3ENGINE_LIBRARY}
+            stdc++fs
+            ${SFML_GRAPHICS_LIBRARY_RELEASE}
+            ${SFML_WINDOW_LIBRARY_RELEASE}
+            ${SFML_SYSTEM_LIBRARY_RELEASE}
+            ${SFML_AUDIO_LIBRARY_RELEASE}
+            ${SFML_NETWORK_LIBRARY_RELEASE}
+            ${TGUI_LIBRARY_RELEASE})
+endif()
 
 # Common
 set(LIBRARY_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/build")

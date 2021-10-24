@@ -257,7 +257,6 @@ bool Character::update(float time_elapsed)
     else
         this->setRotation(new_rotation);
 
-
     if (should_respond_)
     {
         talking_time_elapsed_ -= time_elapsed;
@@ -776,4 +775,14 @@ void Character::setDefaultWeapons()
         auto& weapon_str = j3x::getObj<std::string>(weapon);
         weapons_in_backpack_.emplace_back(AbstractWeapon::create(this, weapon_str));
     }
+}
+
+void Character::forceIsMoving(bool is_moving)
+{
+    is_moving_ = is_moving;
+}
+
+bool Character::isMoving() const
+{
+    return is_moving_;
 }

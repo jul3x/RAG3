@@ -88,6 +88,8 @@ private:
     sf::UdpSocket data_receiver_socket_;
     sf::UdpSocket data_sender_socket_;
 
+    sf::IpAddress local_ip_, global_ip_;
+
     float last_packet_timestamp_;
 
 };

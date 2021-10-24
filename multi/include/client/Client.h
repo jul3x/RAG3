@@ -89,6 +89,8 @@ private:
     float last_packet_timestamp_;
     uint64_t last_received_packet_timestamp_;
 
+    sf::IpAddress local_ip_, global_ip_;
+
 };
 
 

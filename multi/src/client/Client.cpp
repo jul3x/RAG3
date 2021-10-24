@@ -30,6 +30,9 @@ void Client::initialize()
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());
     engine_->registerUI(ui_.get());
+
+    local_ip_ = sf::IpAddress::getLocalAddress();
+    global_ip_ = sf::IpAddress::getPublicAddress(sf::seconds(1.0f));
 }
 
 void Client::preupdate(float time_elapsed)
@@ -148,16 +151,17 @@ bool Client::establishConnection(const sf::IpAddress& ip)
 {
     unsigned short port = 54000;
 
+    auto ip_safe = utils::getSafeIP(ip, local_ip_, global_ip_);
     auto status = events_socket_.connect(ip, port);
     if (status != sf::Socket::Done)
     {
-        LOG.error("[Client] Could not establish connection with host: " + ip.toString());
+        LOG.error("[Client] Could not establish connection with host: " + ip_safe.toString());
         return false;
     }
 
     events_socket_.setBlocking(false);
-    LOG.info("[Client] Connection with host: " + ip.toString() + " successful!");
-    server_ip_ = ip;
+    LOG.info("[Client] Connection with host: " + ip_safe.toString() + " successful!");
+    server_ip_ = ip_safe;
 
     connection_status_ = ConnectionStatus::InProgress;
     return true;
@@ -267,6 +271,20 @@ void Client::handleEventsFromServer()
                         player->changePlayerTexture(j3x::get<std::string>(packet.getParams(), "texture"));
                         break;
                     }
+                    case ServerEventPacket::Type::EndOfCachedEvents:
+                    {
+                        auto player = getPlayer(packet.getIP());
+
+                        if (player != nullptr)
+                        {
+                            unregisterWeapons(player);
+                            player->setDefaultWeapons();
+                            registerWeapons(player);
+                            player->getBackpack().clear();
+                        }
+
+                        break;
+                    }
                     case ServerEventPacket::Type::PlayerExit:
                     {
                         auto player = getPlayer(packet.getIP());
@@ -344,6 +362,7 @@ void Client::receiveData()
     sf::IpAddress sender;
     unsigned short port;
     sf::Socket::Status status = data_receive_socket_.receive(packet, sender, port);
+    sender = utils::getSafeIP(sender, local_ip_, global_ip_);
     switch (status)
     {
         case sf::Socket::Done:
@@ -358,7 +377,7 @@ void Client::receiveData()
                 for (const auto& data : packet.getDatas())
                 {
                     Player* player;
-                    if (data.first == sf::IpAddress::getLocalAddress().toInteger())
+                    if (data.first == sf::IpAddress::LocalHost.toInteger())
                     {
                         player = player_.get();
                     }
@@ -415,7 +434,7 @@ void Client::receiveData()
 
     for (const auto& data : cached_datas_)
     {
-        if (data.first != sf::IpAddress::getLocalAddress().toInteger())
+        if (data.first != sf::IpAddress::LocalHost.toInteger())
         {
             auto player = getPlayer(data.first);
 
@@ -427,7 +446,7 @@ void Client::receiveData()
 
 Player* Client::getPlayer(sf::Uint32 ip)
 {
-    if (ip == sf::IpAddress::getLocalAddress().toInteger())
+    if (ip == sf::IpAddress::LocalHost.toInteger())
         return player_.get();
 
     auto it = players_.find(ip);

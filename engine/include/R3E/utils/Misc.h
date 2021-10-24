@@ -11,6 +11,7 @@
 #include <sstream>
 
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Network/IpAddress.hpp>
 
 #include <R3E/j3x/J3X.h>
 
@@ -84,6 +85,7 @@ namespace r3e::utils {
     bool endsWith(const std::string& what, const std::string& suffix);
     std::string keyToString(sf::Keyboard::Key key);
     sf::Keyboard::Key stringToKey(const std::string& str);
+    sf::IpAddress getSafeIP(const sf::IpAddress& ip, const sf::IpAddress& local, const sf::IpAddress& global);
 }
 
 #endif //RAG3_ENGINE_INCLUDE_R3E_UTILS_MISC_H

@@ -56,14 +56,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
 {
     this->changeOrigin(RMGET<sf::Vector2f>("characters", id, "size") / 2.0f +
                        RMGET<sf::Vector2f>("characters", id, "map_offset"));
-
-    for (const auto& weapon : RMGET<j3x::List>("characters", id, "weapons"))
-    {
-        auto& weapon_str = j3x::getObj<std::string>(weapon);
-        weapons_in_backpack_.emplace_back(AbstractWeapon::create(this, weapon_str));
-    }
-
-    current_weapon_ = 0;
+    this->setDefaultWeapons();
 
     if (is_talkable_)
     {
@@ -773,4 +766,14 @@ void Character::clearWeapons()
 void Character::setWeapons(const std::vector<std::shared_ptr<AbstractWeapon>>& weapons)
 {
     weapons_in_backpack_ = weapons;
+}
+
+void Character::setDefaultWeapons()
+{
+    clearWeapons();
+    for (const auto& weapon : RMGET<j3x::List>("characters", this->getId(), "weapons"))
+    {
+        auto& weapon_str = j3x::getObj<std::string>(weapon);
+        weapons_in_backpack_.emplace_back(AbstractWeapon::create(this, weapon_str));
+    }
 }

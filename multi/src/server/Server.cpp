@@ -24,6 +24,9 @@ void Server::initialize()
     ui_ = std::make_unique<MinimalUserInterface>(this);
     ui_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
+
+    local_ip_ = sf::IpAddress::getLocalAddress();
+    global_ip_ = sf::IpAddress::getPublicAddress(sf::seconds(1.0f));
 }
 
 void Server::beforeUpdate(float time_elapsed)
@@ -86,7 +89,7 @@ void Server::checkAwaitingConnections()
     auto client = std::make_shared<sf::TcpSocket>();
     client->setBlocking(false);
     sf::Socket::Status status = connection_listener_.accept(*client);
-    auto ip = client->getRemoteAddress().toInteger();
+    auto ip = utils::getSafeIP(client->getRemoteAddress(), local_ip_, global_ip_).toInteger();
 
     switch (status)
     {
@@ -151,7 +154,7 @@ void Server::handleMessagesFromPlayers()
             case sf::Socket::Done:
             {
                 //LOG.info("New data received from: " + sender.toString());
-                auto ip = sender.toInteger();
+                auto ip = utils::getSafeIP(sender, local_ip_, global_ip_).toInteger();
                 auto player_it = players_.find(ip);
 
                 if (player_it != players_.end())
@@ -332,6 +335,10 @@ void Server::handleEventsFromPlayers()
                             if (cached_packet.isCachedForIp(socket.first))
                                 events_socket_[socket.first]->send(cached_packet);
                         }
+                        auto end_packet = ServerEventPacket(
+                                ServerEventPacket::Type::EndOfCachedEvents, {},
+                                socket.first);
+                        events_socket_[socket.first]->send(end_packet);
                     }
                     else
                     {

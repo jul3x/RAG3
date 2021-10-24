@@ -14,6 +14,7 @@
 class ServerEventPacket : public sf::Packet {
 public:
     enum class Type {
+        EndOfCachedEvents = 8,
         Connection = 7,
         PlayerExit = 6,
         NameChange = 5,
@@ -47,7 +48,7 @@ public:
 
     [[nodiscard]] bool isCachedForIp(sf::Uint32 ip)
     {
-        static constexpr std::array<Type, 3> forbidden = {Type::PlayerExit, Type::NameChange, Type::CollectedObject};
+        static constexpr std::array<Type, 3> forbidden = {Type::PlayerExit, Type::NameChange};
         return ip != this->player_ip_ || !utils::contains(forbidden, this->type_);
     }
 
@@ -93,7 +94,6 @@ private:
     int uid_{-1};
     sf::Uint32 player_ip_{0};
     std::shared_ptr<j3x::Parameters> data_;
-
 };
 
 #endif //RAG3_MULTI_INCLUDE_PACKETS_SERVEREVENTPACKET_H

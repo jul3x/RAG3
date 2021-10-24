@@ -38,6 +38,7 @@ void Client::initialize()
 void Client::preupdate(float time_elapsed)
 {
     Framework::preupdate(time_elapsed);
+    handleTimeout(time_elapsed);
     sendInputs();
     handleEventsFromServer();
     receiveData();
@@ -164,6 +165,7 @@ bool Client::establishConnection(const sf::IpAddress& ip)
     server_ip_ = ip_safe;
 
     connection_status_ = ConnectionStatus::InProgress;
+    server_ping_elapsed_ = 0.0f;
     return true;
 }
 
@@ -178,6 +180,7 @@ void Client::handleEventsFromServer()
     {
         case sf::Socket::Done:
         {
+            server_ping_elapsed_ = 0.0f;
             if (connection_status_ == ConnectionStatus::InProgress)
             {
                 switch (packet.getType())
@@ -370,6 +373,7 @@ void Client::receiveData()
             LOG.info("New data received from: " + sender.toString());
 
             static constexpr auto max_ping = 400;
+            server_ping_elapsed_ = 0.0f;
 
             if (sender == server_ip_ && packet.getTimestamp() >= last_received_packet_timestamp_ /*&&
                 utils::timeSinceEpochMillisec() - packet.getTimestamp() < max_ping*/)
@@ -568,4 +572,21 @@ void Client::disconnect()
     data_receive_socket_.unbind();
     server_ip_ = {};
     connection_status_ = ConnectionStatus::Off;
+}
+
+void Client::handleTimeout(float time_elapsed)
+{
+    static constexpr auto MAX_SERVER_TIMEOUT = 5.0f;
+
+    if (connection_status_ == ConnectionStatus::Off)
+        return;
+
+    server_ping_elapsed_ += time_elapsed;
+
+    if (server_ping_elapsed_ > MAX_SERVER_TIMEOUT)
+    {
+        this->disconnect();
+        ui_->openMenu();
+        ui_->spawnNoteWindow("Server connection timeouted.", false);
+    }
 }

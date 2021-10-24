@@ -71,6 +71,7 @@ private:
     void drawAdditionalPlayers(graphics::Graphics& graphics) override;
     void drawAdditionalPlayersLighting() override;
 
+    void handleTimeout(float time_elapsed);
     void handleEventsFromServer();
     void sendInputs();
     void receiveData();
@@ -88,6 +89,7 @@ private:
     ConnectionStatus connection_status_;
     float last_packet_timestamp_;
     uint64_t last_received_packet_timestamp_;
+    float server_ping_elapsed_;
 
     sf::IpAddress local_ip_, global_ip_;
 

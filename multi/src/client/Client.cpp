@@ -284,6 +284,7 @@ void Client::handleEventsFromServer()
                             player->setDefaultWeapons();
                             registerWeapons(player);
                             player->getBackpack().clear();
+                            ui_->clearThoughts();
                         }
 
                         break;

@@ -953,6 +953,9 @@ void Framework::registerWeapon(AbstractWeapon* weapon)
 
 void Framework::unregisterWeapons(Character* character)
 {
+    if (character == nullptr)
+        return;
+
     for (auto& weapon : character->getWeapons())
     {
         auto melee_weapon = dynamic_cast<MeleeWeapon*>(weapon.get());
@@ -965,6 +968,9 @@ void Framework::unregisterWeapons(Character* character)
 
 void Framework::unregisterCharacter(Character* character, bool clear_clone)
 {
+    if (character == nullptr)
+        return;
+
     ui_->removeArrowIfExists(character);
     
     if (clear_clone)

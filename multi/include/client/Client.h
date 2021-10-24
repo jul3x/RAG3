@@ -32,12 +32,6 @@ using namespace r3e;
 class Client : public Framework {
 
 public:
-    enum class ConnectionStatus {
-        On = 2,
-        InProgress = 1,
-        Off = 0
-    };
-
     Client();
     Client(const Client&) = delete;
     Client& operator=(const Client&) = delete;

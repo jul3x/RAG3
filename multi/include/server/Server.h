@@ -27,12 +27,6 @@ using namespace r3e;
 class Server : public Framework {
 
 public:
-    enum class ConnectionStatus {
-        On = 2,
-        InProgress = 1,
-        Off = 0
-    };
-
     Server();
     Server(const Server&) = delete;
     Server& operator=(const Server&) = delete;
@@ -74,13 +68,12 @@ private:
     void handleEventsFromPlayers();
     void sendMessagesToPlayers();
     void sendEventToPlayers(ServerEventPacket& packet);
+    void handleTimeouts(float time_elapsed);
+    void handleToErase();
 
-    // TODO - wrap into one structure
-    std::unordered_map<sf::Uint32, ConnectionStatus> connection_statuses_;
-    std::unordered_map<sf::Uint32, std::unique_ptr<Player>> players_;
-    std::unordered_map<sf::Uint32, PlayerInputPacket> cached_packets_;
-    std::unordered_map<sf::Uint32, std::shared_ptr<sf::TcpSocket>> events_socket_;
+    std::unordered_map<sf::Uint32, PlayerConnection> connections_;
     std::vector<ServerEventPacket> cached_events_;
+    std::vector<sf::Uint32> to_erase_;
 
     std::vector<sf::Vector2f> starting_positions_;
 

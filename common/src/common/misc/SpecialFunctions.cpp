@@ -239,7 +239,7 @@ void SpecialFunctions::addHealth(Functional* obj, const j3x::Obj& data, Characte
 
     user->setHealth(std::min(user->getHealth() + data_parsed, user->getMaxHealth()));
 
-    framework_->spawnThought(user, "Uff!\nThat's what I needed...");
+    framework_->spawnThought(user, "Uff!\nThat's what\nI needed...");
 }
 
 void SpecialFunctions::addSpeed(Functional* obj, const j3x::Obj& data, Character* user)

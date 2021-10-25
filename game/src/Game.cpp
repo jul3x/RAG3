@@ -437,6 +437,9 @@ void Game::setGameState(Framework::GameState state)
 
             break;
         case GameState::Reverse:
+            if (!this->isNormalGameplay())
+                return;
+
             if (this->isJournalFreezed() || current_time_factor_ != 1.0f || this->getTimeManipulationFuel() <= 0.0f)
                 return;
 
@@ -663,7 +666,7 @@ void Game::loadSave()
             has_any_saved_weapons = true;
     }
 
-    if (has_any_saved_weapons)
+    if (has_any_saved_weapons && this->isNormalGameplay())
     {
         this->unregisterWeapons(player_.get());
         player_->clearWeapons();

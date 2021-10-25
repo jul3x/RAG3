@@ -47,6 +47,7 @@ WeaponsBar::update(const std::vector<std::shared_ptr<AbstractWeapon>>& weapons, 
         sf::Vector2f size = {};
 
         auto weapon_pos = base_position + weapons_positions_.at(i) * CONF<float>("graphics/user_interface_zoom");
+
         if (weapon_cast != nullptr || melee_cast != nullptr)
         {
             size = (i == 0 ? CHOSEN_WEAPON_SIZE_FACTOR_ : 1.0f) * RMGET<sf::Vector2f>("specials", name, "size");

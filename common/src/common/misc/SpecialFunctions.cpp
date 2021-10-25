@@ -213,13 +213,15 @@ void SpecialFunctions::addWeapon(Functional* obj, const j3x::Obj& data, Characte
     LOG.info("[SpecialFunction] Adding weapon.");
 
     auto& data_parsed = j3x::getObj<std::string>(data);
-    std::shared_ptr<AbstractWeapon> weapon = AbstractWeapon::create(user, data_parsed);
+
 
     framework_->spawnSound(RM.getSound("collect"), dynamic_cast<AbstractPhysicalObject*>(obj)->getPosition());
 
-    if (user->addWeaponToBackpack(weapon))
+    if (framework_->isNormalGameplay())
     {
-        framework_->registerWeapon(weapon.get());
+        std::shared_ptr<AbstractWeapon> weapon = AbstractWeapon::create(user, data_parsed);
+        if (user->addWeaponToBackpack(weapon))
+            framework_->registerWeapon(weapon.get());
     }
 }
 

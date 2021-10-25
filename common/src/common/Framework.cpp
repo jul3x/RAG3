@@ -1339,3 +1339,8 @@ void Framework::initSound(bool force)
 {
     engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
 }
+
+bool Framework::isNormalGameplay()
+{
+    return getPlayer() != nullptr && getPlayer()->getId() == "player";
+}

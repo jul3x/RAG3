@@ -161,7 +161,10 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
             case sf::Event::MouseWheelScrolled:
             {
                 if (framework_->getGameState() == Framework::GameState::Normal)
-                    handleScrolling(event.mouseWheelScroll.delta);
+                {
+                    if (framework_->isNormalGameplay())
+                        handleScrolling(event.mouseWheelScroll.delta);
+                }
                 break;
             }
             case sf::Event::KeyPressed:

@@ -4,16 +4,18 @@
 
 #include <common/ResourceManager.h>
 
+#include <common/misc/Journal.h>
+#include <common/misc/JournalEntries.h>
 #include <common/events/Event.h>
 
 
-Event::Event(const sf::Vector2f& position, const std::string& id) :
-        Event(position, id, 0.0f, 1.0f)
+Event::Event(Journal* journal, const sf::Vector2f& position, const std::string& id) :
+        Event(journal, position, id, 0.0f, 1.0f)
 {
 
 }
 
-Event::Event(const sf::Vector2f& position, const std::string& id,
+Event::Event(Journal* journal, const sf::Vector2f& position, const std::string& id,
              float direction,
              float radius) :
         AnimationEvent(&RM.getTexture("animations/" + id),
@@ -23,7 +25,9 @@ Event::Event(const sf::Vector2f& position, const std::string& id,
                        RMGET<float>("animations", id, "frame_duration"),
                        RMGET<int>("animations", id, "frames_number"),
                        RMGET<bool>("animations", id, "animation_type_quadratic") ?
-                       AnimationType::Quadratic : AnimationType::Linear)
+                       AnimationType::Quadratic : AnimationType::Linear),
+        Identifiable(id),
+        journal_(journal)
 {
     shape_.setRotation(direction);
 
@@ -36,4 +40,10 @@ Event::Event(const sf::Vector2f& position, const std::string& id,
     this->makeLightPoint(this->getPosition(),
                          CONF<float>("graphics/animations_light_point_size") * CONF<float>("graphics/GLOBAL_ZOOM"),
                          &RM.getTexture("lightpoint"), RMGET<std::string>("animations", id, "light_point"));
+}
+
+Event::~Event()
+{
+    if (journal_ != nullptr && journal_->getFramework()->getGameState() == Framework::GameState::Normal)
+        journal_->event<AnimationEndedEntry>(this);
 }

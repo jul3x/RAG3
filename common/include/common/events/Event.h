@@ -12,16 +12,23 @@
 
 using namespace r3e;
 
-class Event : public graphics::AnimationEvent {
+class Journal;
+
+class Event : public graphics::AnimationEvent, public Identifiable {
 
 public:
     Event() = delete;
 
-    Event(const sf::Vector2f& position, const std::string& id);
+    ~Event() override;
 
-    Event(const sf::Vector2f& position, const std::string& id,
+    Event(Journal* journal, const sf::Vector2f& position, const std::string& id);
+
+    Event(Journal* journal, const sf::Vector2f& position, const std::string& id,
           float direction,
           float radius);
+
+private:
+    Journal* journal_;
 
 };
 

@@ -87,6 +87,20 @@ void DestroyBullet::executeEntryReversal()
     father_->setUpdatedPtr(ptr_, new_ptr);
 }
 
+AnimationEndedEntry::AnimationEndedEntry(Journal* father, Event* event) :
+        JournalEntry(father), id_(event->getId()), pos_(event->getPosition()),
+        rotation_(event->getRotation()), size_x_(event->getSize().x)
+{
+
+}
+
+void AnimationEndedEntry::executeEntryReversal()
+{
+    auto event = father_->getFramework()->spawnEvent(id_, pos_, rotation_, size_x_, false);
+    event->setReversed(true);
+    event->setSpeedFactor(CONF<float>("time_reversal_speed_factor"));
+}
+
 FireEntry::FireEntry(Journal* father, Fire* fire) : JournalEntry(father), ptr_(fire)
 {
     pos_ = fire->getPosition();

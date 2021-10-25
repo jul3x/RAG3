@@ -94,6 +94,20 @@ private:
 
 };
 
+class AnimationEndedEntry : public JournalEntry {
+public:
+    AnimationEndedEntry(Journal* father, Event* event);
+
+    void executeEntryReversal() override;
+
+private:
+    std::string id_;
+    sf::Vector2f pos_;
+    float size_x_;
+    float rotation_;
+
+};
+
 template<class T>
 class SpawnEntry : public JournalEntry {
 public:

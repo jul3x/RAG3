@@ -581,12 +581,14 @@ Fire* Framework::spawnFire(Character* user, const std::string& name, const sf::V
 }
 
 
-void Framework::spawnEvent(const std::string& name, const sf::Vector2f& pos, float dir, float r)
+Event* Framework::spawnEvent(const std::string& name, const sf::Vector2f& pos, float dir, float r, bool journal)
 {
-    auto event = std::make_shared<Event>(pos, name, dir, r);
+    auto event = std::make_shared<Event>(journal ? this->getJournal() : nullptr, pos, name, dir, r);
     engine_->spawnAnimationEvent(event);
 
     registerLight(event.get());
+
+    return event.get();
 }
 
 DestructionSystem* Framework::spawnSparksEvent(const sf::Vector2f& pos, const float dir, const float r)
@@ -596,26 +598,24 @@ DestructionSystem* Framework::spawnSparksEvent(const sf::Vector2f& pos, const fl
 
 void Framework::spawnExplosionEvent(const sf::Vector2f& pos)
 {
-    auto number = std::to_string(utils::num::getRandom(1, 1));
-    spawnEvent("explosion_" + number, pos, 0.0f, RMGET<sf::Vector2f>("animations", "explosion_" + number, "size").x);
+    spawnEvent("explosion_1", pos, 0.0f, RMGET<sf::Vector2f>("animations", "explosion_1", "size").x);
     spawnSound(RM.getSound("wall_explosion"), pos);
 }
 
 void Framework::spawnKillEvent(const sf::Vector2f& pos)
 {
-    auto number = std::to_string(utils::num::getRandom(1, 1));
-    spawnEvent("explosion_" + number, pos, 0.0f, RMGET<sf::Vector2f>("animations", "explosion_" + number, "size").x);
+    spawnEvent("explosion_1", pos, 0.0f, RMGET<sf::Vector2f>("animations", "explosion_1", "size").x);
 }
 
 void Framework::spawnTeleportationEvent(const sf::Vector2f& pos)
 {
-    spawnEvent("teleportation", pos + sf::Vector2f{0.0f, 10.0f});
+    spawnEvent("teleportation", pos + sf::Vector2f{0.0f, 10.0f}, 0.0f, 1.0f, false);
     spawnSound(RM.getSound("teleportation"), pos);
 }
 
 void Framework::spawnSwirlEvent(const std::string& name, const sf::Vector2f& pos, bool flipped)
 {
-    auto event = std::make_shared<Event>(pos, name + "_swirl");
+    auto event = std::make_shared<Event>(this->getJournal(), pos, name + "_swirl");
     engine_->spawnAnimationEvent(event);
     spawnSound(RM.getSound(name), pos);
 

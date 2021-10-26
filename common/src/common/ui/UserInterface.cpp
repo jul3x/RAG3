@@ -68,6 +68,8 @@ void UserInterface::initialize(graphics::Graphics& graphics)
         object_use_text_.setFillColor(sf::Color::White);
         npc_talk_text_.setFillColor(sf::Color::White);
     }
+
+    gui_->setFont(RM.getFont("default"));
     menu_ = std::make_unique<Menu>(framework_, this, gui_.get(), &theme_);
 }
 
@@ -427,7 +429,8 @@ void UserInterface::spawnAcceptWindow(const std::string& text, const std::functi
                                                                                   CONF<int>(
                                                                                           "graphics/window_height_px")) /
                                                                           2.0f,
-                                                                          CONF<sf::Vector2f>("graphics/popup_size"));
+                                                                          CONF<sf::Vector2f>
+                                                                                  ("graphics/accept_window_size"));
     window->bindFunction(func);
     windows_.emplace_back(window);
 }
@@ -439,7 +442,7 @@ void UserInterface::closeWindow(Window* window)
     });
     framework_->spawnSound(RM.getSound("ui_click"));
 
-    if (framework_->getGameState() == Framework::GameState::Paused)
+    if (framework_->getGameState() == Framework::GameState::Paused && !full_hud_->isShow())
         framework_->setGameState(Framework::GameState::Normal);
 }
 

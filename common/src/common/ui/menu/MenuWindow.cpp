@@ -21,7 +21,6 @@ MenuWindow::MenuWindow(tgui::Gui* gui, tgui::Theme* theme, const std::string& he
     header_ = tgui::Label::create();
     header_->setRenderer(theme_->getRenderer("Header"));
     header_->setText(header);
-    header_->setInheritedFont(RM.getFont("default"));
     header_->setTextSize(CONF<float>("graphics/menu_window_header_size"));
     header_->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
     header_->setPosition(sf::Vector2f{pos.x - CONF<sf::Vector2f>("graphics/menu_window_size").x / 2.0f, pos.y} +

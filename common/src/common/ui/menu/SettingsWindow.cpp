@@ -21,7 +21,6 @@ SettingsWindow::SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
     pos = {pos.x, pos.y + 0.2f * CONF<sf::Vector2f>("graphics/menu_window_size").y};
     tabs_ = tgui::Tabs::create();
     tabs_->setRenderer(theme->getRenderer("TabsGame"));
-    tabs_->getRenderer()->setFont(RM.getFont("default"));
     tabs_->setTabHeight(CONF<float>("graphics/menu_settings_tabs_height"));
     tabs_->setPosition(pos - sf::Vector2f(0.0, CONF<float>("graphics/menu_settings_tabs_height")));
     tabs_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
@@ -34,7 +33,6 @@ SettingsWindow::SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
 
     save_button_ = tgui::Button::create("Save");
     save_button_->setRenderer(theme->getRenderer("ButtonGame"));
-    save_button_->getRenderer()->setFont(RM.getFont("default"));
     save_button_->setPosition(pos - sf::Vector2f(0.0, CONF<float>("graphics/menu_settings_tabs_height")) +
                               CONF<sf::Vector2f>("graphics/menu_save_button_pos"));
     save_button_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
@@ -50,7 +48,6 @@ SettingsWindow::SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
 
     restore_button_ = tgui::Button::create("Restore");
     restore_button_->setRenderer(theme->getRenderer("ButtonGame"));
-    restore_button_->getRenderer()->setFont(RM.getFont("default"));
     restore_button_->setPosition(pos - sf::Vector2f(0.0, CONF<float>("graphics/menu_settings_tabs_height")) +
                                  CONF<sf::Vector2f>("graphics/menu_restore_button_pos"));
     restore_button_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
@@ -251,7 +248,6 @@ BaseSettingsWidget::BaseSettingsWidget(tgui::Theme* theme, const std::string& ta
     label_ = tgui::Label::create(r3e::utils::humanize(name));
     label_->setRenderer(theme->getRenderer("ItemLabel"));
     label_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
-    label_->getRenderer()->setFont(RM.getFont("default"));
 }
 
 [[nodiscard]] tgui::Label::Ptr BaseSettingsWidget::getLabel() const
@@ -300,7 +296,6 @@ StringSettingsWidget::StringSettingsWidget(tgui::Theme* theme, const std::string
     editbox_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
     editbox_->setSize(CONF<sf::Vector2f>("graphics/menu_edit_box_size"));
     editbox_->setRenderer(theme->getRenderer("EditBoxGame"));
-    editbox_->getRenderer()->setFont(RM.getFont("default"));
     editbox_->setMaximumCharacters(100);
 }
 
@@ -332,7 +327,6 @@ ControlsSettingsWidget::ControlsSettingsWidget(SettingsWindow* window, tgui::The
     button_ = tgui::Button::create();
     button_->setRenderer(theme->getRenderer("ButtonLabel"));
     button_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
-    button_->getRenderer()->setFont(RM.getFont("default"));
     button_->setFocusable(true);
 
     button_->connect("mousepressed", [window, this]() {
@@ -387,18 +381,15 @@ CharacterSettingsWidget::CharacterSettingsWidget(tgui::Theme* theme, const std::
     character_ = tgui::Label::create();
     character_->setRenderer(theme->getRenderer("ItemLabel"));
     character_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
-    character_->getRenderer()->setFont(RM.getFont("default"));
 
     left_ = tgui::Button::create("<");
     left_->setRenderer(theme->getRenderer("ButtonLabel"));
     left_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
-    left_->getRenderer()->setFont(RM.getFont("default"));
     left_->setFocusable(true);
 
     right_ = tgui::Button::create(">");
     right_->setRenderer(theme->getRenderer("ButtonLabel"));
     right_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
-    right_->getRenderer()->setFont(RM.getFont("default"));
     right_->setFocusable(true);
 
     grid_->addWidget(left_, 0, 0);
@@ -502,12 +493,10 @@ ColorSettingsWidget::ColorSettingsWidget(tgui::Theme* theme, const std::string& 
         values_[i] = tgui::Label::create();
         values_[i]->setRenderer(theme->getRenderer("ItemLabel"));
         values_[i]->setTextSize(CONF<float>("graphics/menu_window_text_size"));
-        values_[i]->getRenderer()->setFont(RM.getFont("default"));
 
         auto label = tgui::Label::create(COMPONENTS[i].data());
         label->setRenderer(theme->getRenderer("ItemLabel"));
         label->setTextSize(CONF<float>("graphics/menu_window_text_size"));
-        label->getRenderer()->setFont(RM.getFont("default"));
         grid->addWidget(label, i, 0);
         grid->addWidget(sliders_[i], i, 1);
         grid->addWidget(values_[i], i, 2);
@@ -599,7 +588,6 @@ SliderSettingsWidget<T>::SliderSettingsWidget(tgui::Theme* theme, const std::str
     value_ = tgui::Label::create();
     value_->setRenderer(theme->getRenderer("ItemLabel"));
     value_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
-    value_->getRenderer()->setFont(RM.getFont("default"));
 
     grid_->addWidget(slider_, 0, 0);
     grid_->addWidget(value_, 0, 1);

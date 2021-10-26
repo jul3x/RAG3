@@ -19,7 +19,6 @@ LoadGameWindow::LoadGameWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
 
     text_ = tgui::Label::create("Select map which you want to play:");
     text_->setRenderer(theme->getRenderer("Text"));
-    text_->setInheritedFont(RM.getFont("default"));
     text_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
     text_->setPosition(sf::Vector2f{pos.x - CONF<sf::Vector2f>("graphics/menu_window_size").x / 2.0f, pos.y} +
                        CONF<sf::Vector2f>("graphics/menu_window_header_pos"));
@@ -53,7 +52,6 @@ LoadGameWindow::LoadGameWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
         button->setInheritedOpacity(button_opacity);
         label->setRenderer(theme->getRenderer("Text"));
         label->setTextSize(CONF<float>("graphics/menu_window_text_size"));
-        label->setInheritedFont(RM.getFont("default"));
 
         button->setSize(CONF<sf::Vector2f>("graphics/menu_map_screen_size"));
         grid->addWidget(button, (i / 4) * 2, i % 4);

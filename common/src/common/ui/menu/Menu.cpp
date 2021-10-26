@@ -156,7 +156,6 @@ void Menu::makeMenuElements(const std::vector<std::pair<std::string, std::functi
         auto label = tgui::Button::create();
         label->setRenderer(theme_->getRenderer("MenuButton"));
         label->setText(elem.first);
-        label->setInheritedFont(RM.getFont("default"));
         label->setTextSize(CONF<float>("graphics/menu_button_text_size"));
         label->setPosition(CONF<float>("graphics/menu_button_pos_x"),
                            CONF<float>("graphics/menu_button_pos_y") +
@@ -189,7 +188,6 @@ void Menu::makeMenuElements(const std::vector<std::pair<std::string, std::functi
         auto label = tgui::Button::create();
         label->setRenderer(theme_->getRenderer("MenuButton"));
         label->setText(text.first);
-        label->setInheritedFont(RM.getFont("default"));
         label->setTextSize(CONF<float>("graphics/menu_button_text_size"));
         label->setPosition(text.second);
         gui_->add(label);

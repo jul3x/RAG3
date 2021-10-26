@@ -33,17 +33,18 @@ SkillsHud::SkillsHud(UserInterface* ui, Framework* framework, const sf::Vector2f
 
         auto button_pos = texts_.back().getPosition() + sf::Vector2f(texts_.back().getLocalBounds().width, 0)
                           + CONF<sf::Vector2f>("graphics/skills_button_offset");
-        buttons_.emplace_back(tgui::Button::create("i"));
+        buttons_.emplace_back(tgui::Button::create("i\n"));
         buttons_.back()->setRenderer(ui->getTheme()->getRenderer("AddSkillButton"));
         buttons_.back()->setPosition(button_pos);
         buttons_.back()->setSize(CONF<sf::Vector2f>("graphics/skills_button_size"));
+        buttons_.back()->setTextSize(CONF<float>("graphics/skills_button_text_size"));
         buttons_.back()->setVisible(false);
         buttons_.back()->connect("pressed", [this, ui](Player::Skills skill) {
             framework_->spawnSound(RM.getSound("ui_click"));
             if (!framework_->getPlayer()->addSkill(skill))
             {
                 for (auto& button : buttons_)
-                    button->setText("i");
+                    button->setText("i\n");
             }
         }, Player::SKILLS[i]);
         tooltips_.emplace_back(framework_, ui->getTheme(), button_pos,
@@ -100,7 +101,7 @@ void SkillsHud::show(bool show)
     {
         if (framework_->getPlayer()->getSkillPoints() > 0)
         {
-            button->setText("+");
+            button->setText("+\n");
         }
 
         if (!show && button->isVisible())

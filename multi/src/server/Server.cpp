@@ -301,6 +301,16 @@ void Server::handleEventsFromPlayers()
                             sendEventToPlayers(server_packet);
                             break;
                         }
+                        case PlayerEventPacket::Type::Respawn:
+                        {
+                            clearPlayer(player);
+                            respawnPlayer(conn.first);
+
+                            ServerEventPacket server_packet(ServerEventPacket::Type::PlayerRespawn,
+                                                            0, conn.first);
+                            sendEventToPlayers(server_packet);
+                            break;
+                        }
                         case PlayerEventPacket::Type::Exit:
                         {
                             clearPlayer(player);

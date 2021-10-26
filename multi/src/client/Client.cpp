@@ -290,6 +290,7 @@ void Client::handleEventsFromServer()
                         break;
                     }
                     case ServerEventPacket::Type::PlayerExit:
+                    case ServerEventPacket::Type::PlayerRespawn:
                     {
                         auto player = getPlayer(packet.getIP());
 
@@ -590,4 +591,20 @@ void Client::handleTimeout(float time_elapsed)
         ui_->openMenu();
         ui_->spawnNoteWindow("Server connection timeouted.", false);
     }
+}
+
+bool Client::isNormalGameplay()
+{
+    return false;
+}
+
+void Client::respawnWithoutReload()
+{
+    unregisterCharacter(player_.get());
+    player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
+    player_->setName(CONF<std::string>("general/player_name"));
+    ui_->registerPlayer(player_.get());
+    initPlayer(player_.get());
+    PlayerEventPacket player_packet(PlayerEventPacket::Type::Respawn, 0);
+    events_socket_.send(player_packet);
 }

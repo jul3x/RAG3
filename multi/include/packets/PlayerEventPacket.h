@@ -16,6 +16,7 @@
 class PlayerEventPacket : public sf::Packet {
 public:
     enum class Type {
+        Respawn = 5,
         Connection = 4,
         NameChange = 3,
         UseBackpackObject = 2,

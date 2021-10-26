@@ -46,12 +46,13 @@ public:
     // Getters
     [[nodiscard]] Player* getPlayer() override;
     [[nodiscard]] Special* getCurrentSpecialObject() const override;
-
+    [[nodiscard]] bool isNormalGameplay() override;
     // UI functions
     void useItem(const std::string& id) override;
     void useSpecialObject() override;
     void setGameState(GameState state) override;
     void respawn(const std::string& map_name) override;
+    void respawnWithoutReload();
     void startGame(const std::string& ip_address) override;
     bool establishConnection(const sf::IpAddress& ip);
     void disconnect();

@@ -31,6 +31,12 @@ void GameUserInterface::initialize(graphics::Graphics& graphics)
     full_hud_ = std::make_unique<ExtendedFullHud>(this, framework_,
                                           sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                                                        static_cast<float>(CONF<int>("graphics/window_height_px"))});
+    dynamic_cast<ExtendedFullHud*>(full_hud_.get())->bindRespawn([this]() {
+        this->framework_->respawn("");
+        this->clearWindows();
+        this->full_hud_->show(false);
+    });
+
     menu_->doShow(true);
 }
 

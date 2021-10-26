@@ -103,11 +103,6 @@ ExtendedFullHud::ExtendedFullHud(UserInterface* ui, Framework* framework, const 
                                                        center_top +
                                                        CONF<sf::Vector2f>("graphics/respawn_button_pos"),
                                                        button_size, show_duration));
-    buttons_.back()->bindFunction([framework, ui, this]() {
-        framework->respawn("");
-        ui->clearWindows();
-        this->show(false);
-    });
 }
 
 void ExtendedFullHud::update(float time_elapsed)
@@ -155,4 +150,9 @@ void ExtendedFullHud::draw(sf::RenderTarget& target, sf::RenderStates states) co
         target.draw(backpack_hud_, states);
         target.draw(skills_hud_, states);
     }
+}
+
+void ExtendedFullHud::bindRespawn(const std::function<void()>& func)
+{
+    buttons_.back()->bindFunction(func);
 }

@@ -28,6 +28,7 @@ vector menu_edit_box_size = (300.0, 45.0) * user_interface_zoom
 float menu_scrollbar_width = 20.0 * user_interface_zoom
 vector menu_save_button_pos = (700.0, 0.0) * user_interface_zoom
 vector menu_restore_button_pos = (800.0, 0.0) * user_interface_zoom
+vector color_widget_size = (60.0, 60.0) * user_interface_zoom
 
 // COLORS
 int background_color = 286331136

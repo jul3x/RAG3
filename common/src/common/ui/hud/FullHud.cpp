@@ -22,11 +22,11 @@ FullHud::FullHud(UserInterface* ui, Framework* framework, const sf::Vector2f& si
     bg_.setFillColor(bg_color_);
 
     auto button_size = CONF<float>("graphics/menu_button_text_size");
-    auto window_center = sf::Vector2f(CONF<int>("graphics/window_width_px") / 2.0f,
-                                      CONF<int>("graphics/window_height_px"));
+    auto center_bottom =
+            sf::Vector2f(CONF<int>("graphics/window_width_px") / 2.0f, CONF<int>("graphics/window_height_px"));
     auto show_duration = CONF<float>("graphics/full_hud_show_duration");
     buttons_.emplace_back(std::make_unique<TextButton>(framework, "Back to menu",
-                                                       window_center +
+                                                       center_bottom +
                                                        CONF<sf::Vector2f>("graphics/back_to_menu_button_pos"),
                                                        button_size, show_duration));
     buttons_.back()->bindFunction([ui]() { ui->openMenu(); });
@@ -97,14 +97,7 @@ ExtendedFullHud::ExtendedFullHud(UserInterface* ui, Framework* framework, const 
 
     auto button_size = CONF<float>("graphics/menu_button_text_size");
     auto center_top = sf::Vector2f(CONF<int>("graphics/window_width_px") / 2.0f, 0);
-    auto center_bottom = sf::Vector2f(CONF<int>("graphics/window_width_px") / 2.0f,
-                                      CONF<int>("graphics/window_height_px"));
     auto show_duration = CONF<float>("graphics/full_hud_show_duration");
-    buttons_.emplace_back(std::make_unique<TextButton>(framework, "Back to menu",
-                                                       center_bottom +
-                                                       CONF<sf::Vector2f>("graphics/back_to_menu_button_pos"),
-                                                       button_size, show_duration));
-    buttons_.back()->bindFunction([ui]() { ui->openMenu(); });
     buttons_.emplace_back(std::make_unique<TextButton>(framework, "Respawn",
                                                        center_top +
                                                        CONF<sf::Vector2f>("graphics/respawn_button_pos"),

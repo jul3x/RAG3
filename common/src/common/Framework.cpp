@@ -307,9 +307,7 @@ void Framework::draw(graphics::Graphics& graphics)
     {
         static sf::RenderStates states;
 
-        sf::Shader* curr_shader = &RM.getShader(j3x::get<std::string>(map_->getParams(), "shader"));
-        extraShaderManipulations(curr_shader);
-        states.shader = curr_shader;
+        extraRenderStatesManipulations(states);
 
         auto draw = [&graphics](auto& list) {
             for (auto& obj : list)
@@ -1241,7 +1239,8 @@ void Framework::respawn(const std::string& map_name)
     ui_->clearThoughts();
     setRag3Time(0.0f);
 
-    map_->loadMap(map_name.empty() ? map_->getMapName() : map_name);
+    auto map = map_name.empty() ? map_->getMapName() : map_name;
+    map_->loadMap(map);
     engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
     agents_manager_ = std::make_unique<ai::AgentsManager>(&map_->getMapBlockage(), ai::AStar::EightNeighbours,
                                                           CONF<float>("characters/max_time_without_path_recalc"),
@@ -1288,9 +1287,11 @@ void Framework::startGame(const std::string& map_name)
 
 }
 
-void Framework::extraShaderManipulations(sf::Shader* shader)
+void Framework::extraRenderStatesManipulations(sf::RenderStates& states)
 {
-    shader->setUniform("time", this->time_elapsed_);
+    sf::Shader* curr_shader = &RM.getShader(j3x::get<std::string>(map_->getParams(), "shader"));
+    curr_shader->setUniform("time", this->time_elapsed_);
+    states.shader = curr_shader;
 }
 
 void Framework::drawAdditionalPlayers(graphics::Graphics& graphics)

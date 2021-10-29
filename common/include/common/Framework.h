@@ -169,7 +169,7 @@ protected:
     virtual void updateDestructionSystems(float time_elapsed);
 
     virtual void obstacleDestroyedEvent(Obstacle* obstacle);
-    virtual void extraShaderManipulations(sf::Shader* shader);
+    virtual void extraRenderStatesManipulations(sf::RenderStates& shader);
     virtual void drawAdditionalPlayers(graphics::Graphics& graphics);
     virtual void drawAdditionalPlayersLighting();
     void clearStartingPositions();

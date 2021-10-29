@@ -158,6 +158,29 @@ private:
 };
 
 
+class ColorSettingsWidget : public BaseSettingsWidget {
+public:
+    ColorSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name);
+    [[nodiscard]] tgui::Widget::Ptr getWidget() const override;
+    [[nodiscard]] j3x::Obj getValue() const override;
+    void serializeAndAppend(std::string& out) const override;
+    void updateValue(const j3x::Parameters& values) override;
+
+protected:
+    tgui::Grid::Ptr grid_;
+    tgui::Button::Ptr color_;
+    std::array<tgui::Slider::Ptr, 4> sliders_;
+    std::array<tgui::Label::Ptr, 4> values_;
+
+private:
+    static constexpr std::array<std::string_view, 4> COMPONENTS = {"Red", "Green", "Blue", "Alpha"};
+
+    [[nodiscard]] sf::Color getColor() const;
+    void updateColor();
+
+};
+
+
 template<class T>
 class SliderSettingsWidget : public BaseSettingsWidget {
 public:

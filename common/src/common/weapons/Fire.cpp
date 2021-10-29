@@ -33,7 +33,7 @@ Fire::Fire(Character* user,
     this->changeOrigin({r_, r_ / 2.0f});
 
     this->makeLightPoint(this->getPosition(),
-                         CONF<float>("graphics/fire_light_point_size") * CONF<float>("graphics/global_zoom"),
+                         CONF<float>("graphics/fire_light_point_size") * CONF<float>("graphics/GLOBAL_ZOOM"),
                          &RM.getTexture("lightpoint"), "const");
     light_->setColor(255, 255, 255, alpha_);
 

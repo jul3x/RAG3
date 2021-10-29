@@ -140,9 +140,9 @@ Player::addSpecialToBackpack(const std::string& id, int count, const std::functi
 
     backpack_.emplace_back(std::make_pair(Special({}, id), count));
     backpack_.back().first
-             .setSize(CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", id, "size"));
+             .setSize(CONF<float>("graphics/GLOBAL_ZOOM") * RMGET<sf::Vector2f>("specials", id, "size"));
     backpack_.back().first.changeOrigin(
-            CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", id, "size") / 2.0f);
+            CONF<float>("graphics/GLOBAL_ZOOM") * RMGET<sf::Vector2f>("specials", id, "size") / 2.0f);
     backpack_.back().first.removeShadow();
     backpack_.back().first.lightOff();
     register_func(&backpack_.back().first);

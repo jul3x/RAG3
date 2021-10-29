@@ -22,6 +22,12 @@ class ControlsSettingsWidget;
 
 class SettingsWindow : public MenuWindow {
 public:
+    static constexpr std::array<std::string_view, 4>
+            RELOAD_PARAMETERS = {"graphics/auto_resolution", "graphics/full_screen", "graphics/window_width_px",
+                                 "graphics/window_height_px"};
+    static constexpr std::array<std::string_view, 1>
+            SOUND_RELOAD_PARAMETERS = {"sound/sound_on"};
+
     explicit SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* framework);
 
     void doShow(bool show) override;
@@ -38,7 +44,7 @@ private:
     void onTabSelected(tgui::Gui& gui, const std::string& selected_tab)
     {
         for (const auto& tab : tab_names_)
-            gui.get(tab)->setVisible(false);
+            gui.get(utils::humanize(tab))->setVisible(false);
 
         gui.get(selected_tab)->setVisible(true);
         scroll_panel_->setVerticalScrollbarValue(0);
@@ -67,15 +73,16 @@ private:
 
 class BaseSettingsWidget {
 public:
-    BaseSettingsWidget(tgui::Theme* theme, const std::string& name);
+    BaseSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name);
     [[nodiscard]] tgui::Label::Ptr getLabel() const;
     [[nodiscard]] virtual tgui::Grid::Alignment getAlignment() const;
     [[nodiscard]] virtual tgui::Widget::Ptr getWidget() const = 0;
+    [[nodiscard]] virtual j3x::Obj getValue() const = 0;
     virtual void serializeAndAppend(std::string& out) const = 0;
     virtual void updateValue(const j3x::Parameters& values) = 0;
 
 protected:
-    std::string name_;
+    std::string name_, tab_;
 
 private:
     tgui::Label::Ptr label_;
@@ -85,8 +92,9 @@ private:
 
 class BoolSettingsWidget : public BaseSettingsWidget {
 public:
-    BoolSettingsWidget(tgui::Theme* theme, const std::string& name);
+    BoolSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name);
     [[nodiscard]] tgui::Widget::Ptr getWidget() const override;
+    [[nodiscard]] j3x::Obj getValue() const override;
     void serializeAndAppend(std::string& out) const override;
     void updateValue(const j3x::Parameters& values) override;
 
@@ -98,8 +106,9 @@ private:
 
 class StringSettingsWidget : public BaseSettingsWidget {
 public:
-    StringSettingsWidget(tgui::Theme* theme, const std::string& name);
+    StringSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name);
     [[nodiscard]] tgui::Widget::Ptr getWidget() const override;
+    [[nodiscard]] j3x::Obj getValue() const override;
     void serializeAndAppend(std::string& out) const override;
     void updateValue(const j3x::Parameters& values) override;
 
@@ -111,22 +120,26 @@ private:
 
 class ControlsSettingsWidget : public BaseSettingsWidget {
 public:
-    ControlsSettingsWidget(SettingsWindow* window, tgui::Theme* theme, const std::string& name);
+    ControlsSettingsWidget(SettingsWindow* window, tgui::Theme* theme, const std::string& tab, const std::string& name);
     [[nodiscard]] tgui::Widget::Ptr getWidget() const override;
+    [[nodiscard]] j3x::Obj getValue() const override;
     void serializeAndAppend(std::string& out) const override;
     void updateValue(const j3x::Parameters& values) override;
     void setFocus(bool focus);
     void setKey(sf::Keyboard::Key key);
+
 private:
     tgui::Button::Ptr button_;
+
 };
 
 
 class CharacterSettingsWidget : public BaseSettingsWidget {
 public:
-    CharacterSettingsWidget(tgui::Theme* theme, const std::string& name);
+    CharacterSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name);
     [[nodiscard]] tgui::Grid::Alignment getAlignment() const override;
     [[nodiscard]] tgui::Widget::Ptr getWidget() const override;
+    [[nodiscard]] j3x::Obj getValue() const override;
     void serializeAndAppend(std::string& out) const override;
     void updateValue(const j3x::Parameters& values) override;
 
@@ -141,14 +154,16 @@ private:
     tgui::Label::Ptr character_;
     tgui::Panel::Ptr pictures_container_;
     std::unordered_map<std::string, tgui::Picture::Ptr> pictures_;
+
 };
 
 
 template<class T>
 class SliderSettingsWidget : public BaseSettingsWidget {
 public:
-    SliderSettingsWidget(tgui::Theme* theme, const std::string& name);
+    SliderSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name);
     [[nodiscard]] tgui::Widget::Ptr getWidget() const override;
+    [[nodiscard]] j3x::Obj getValue() const override;
     void serializeAndAppend(std::string& out) const override;
     void updateValue(const j3x::Parameters& values) override;
 
@@ -156,6 +171,7 @@ protected:
     tgui::Grid::Ptr grid_;
     tgui::Slider::Ptr slider_;
     tgui::Label::Ptr value_;
+
 };
 
 

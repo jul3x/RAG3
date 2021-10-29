@@ -1,2 +1,3 @@
 bool sound_on=true
+float sound_volume=100.0
 float music_volume=20.0

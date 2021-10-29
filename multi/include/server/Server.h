@@ -50,6 +50,7 @@ public:
     void setGameState(GameState state) override;
     void startGame(const std::string& map_name) override;
     void disconnect();
+    void initSound(bool force = false) override;
 
 private:
     static constexpr auto MAX_PLAYERS = 8;

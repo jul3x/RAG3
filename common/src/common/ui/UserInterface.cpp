@@ -50,7 +50,7 @@ void UserInterface::initialize(graphics::Graphics& graphics)
 {
     graphics.getWindow().setMouseCursorVisible(false);
     graphics.getWindow().setKeyRepeatEnabled(false);
-    graphics.getCurrentView().zoom(1.0f / CONF<float>("graphics/global_zoom"));
+    graphics.getCurrentView().zoom(1.0f / CONF<float>("graphics/GLOBAL_ZOOM"));
     graphics.setCurrentView();
     camera_->setViewNormalSize(graphics.getWindow().getView().getSize());
 

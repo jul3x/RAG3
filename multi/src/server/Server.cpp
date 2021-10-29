@@ -597,3 +597,8 @@ void Server::close()
     disconnect();
     Framework::close();
 }
+
+void Server::initSound(bool force)
+{
+
+}

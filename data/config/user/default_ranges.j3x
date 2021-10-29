@@ -66,3 +66,5 @@ int weather_rag3_color_max = COLOR_MAX
 
 float music_volume_min = 0.0
 float music_volume_max = 100.0
+float sound_volume_min = 0.0
+float sound_volume_max = 100.0

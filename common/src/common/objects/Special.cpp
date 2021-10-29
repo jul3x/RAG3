@@ -50,7 +50,7 @@ Special::Special(const sf::Vector2f& position, const std::string& id,
         this->deactivate();
 
     this->makeLightPoint(this->getPosition(),
-                         CONF<float>("graphics/specials_light_point_size") * CONF<float>("graphics/global_zoom"),
+                         CONF<float>("graphics/specials_light_point_size") * CONF<float>("graphics/GLOBAL_ZOOM"),
                          &RM.getTexture("lightpoint"), RMGET<std::string>("specials", id, "light_point"),
                          RMGET<float>("specials", id, "light_point_data", true));
 

@@ -243,4 +243,13 @@ namespace r3e {
         return animation_events_;
     }
 
+    float Engine::detectZoom(const sf::Vector2i& res)
+    {
+        if (res.x >= 3840) return 4.0f;
+        if (res.x >= 2560) return 3.0f;
+        if (res.x >= 1600) return 2.0f;
+
+        return 1.0f;
+    }
+
 } // namespace r3e

@@ -1,6 +1,5 @@
 // GRAPHICS SETTINGS
-float global_zoom = 2.0
-float user_interface_zoom = global_zoom / 2.0
+float user_interface_zoom = GLOBAL_ZOOM / 2.0
 
 // MENU
 float menu_bar_width_px = 700.0 * user_interface_zoom

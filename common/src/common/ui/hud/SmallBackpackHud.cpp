@@ -28,9 +28,9 @@ SmallBackpackHud::SmallBackpackHud(Framework* framework, const sf::Vector2f& pos
 
     for (auto& object : objects_)
     {
-        object.setSize(CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", object.getId(), "size"));
+        object.setSize(CONF<float>("graphics/GLOBAL_ZOOM") * RMGET<sf::Vector2f>("specials", object.getId(), "size"));
         object.changeOrigin(
-                CONF<float>("graphics/global_zoom") * RMGET<sf::Vector2f>("specials", object.getId(), "size") / 2.0f);
+                CONF<float>("graphics/GLOBAL_ZOOM") * RMGET<sf::Vector2f>("specials", object.getId(), "size") / 2.0f);
         object.removeShadow();
         object.setColor(255, 255, 255, 80);
         numbers_.emplace_back("", RM.getFont(), CONF<float>("graphics/backpack_text_size"));

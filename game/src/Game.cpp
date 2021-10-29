@@ -25,7 +25,6 @@ void Game::initialize()
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     Framework::initialize();
 
-    engine_->initializeSoundManager(CONF<float>("sound/sound_attenuation"));
     ui_ = std::make_unique<GameUserInterface>(this);
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());
@@ -36,12 +35,6 @@ void Game::initialize()
     stats_ = std::make_unique<Stats>(this);
     achievements_ = std::make_unique<Achievements>(dynamic_cast<Stats*>(stats_.get()));
     achievements_->load(CONF<std::string>("paths/achievements"));
-
-    music_manager_ = std::make_unique<audio::MusicManager>();
-    music_manager_->addToQueue(CONF<std::string>("paths/music_dir") + "/menu.ogg");
-    music_manager_->setVolume(CONF<float>("sound/music_volume"));
-    if (CONF<bool>("sound/sound_on"))
-        music_manager_->play();
 
     this->preloadSave();
 }
@@ -750,4 +743,19 @@ void Game::drawAdditionalPlayersLighting()
 {
     if (player_clone_ != nullptr && player_clone_->getLightPoint() != nullptr)
         lighting_->add(*player_clone_->getLightPoint());
+}
+
+void Game::initSound(bool force)
+{
+    Framework::initSound(force);
+
+    if (force)
+    {
+        music_manager_ = std::make_unique<audio::MusicManager>();
+        music_manager_->addToQueue(CONF<std::string>("paths/music_dir") + "/menu.ogg");
+    }
+
+    music_manager_->setVolume(CONF<float>("sound/music_volume"));
+    if (force && CONF<bool>("sound/sound_on"))
+        music_manager_->play();
 }

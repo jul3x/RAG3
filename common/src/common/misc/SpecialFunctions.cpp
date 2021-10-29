@@ -192,7 +192,7 @@ void SpecialFunctions::turnLight(Functional* obj, const j3x::Obj& data, Characte
     {
         light_obj->makeLightPoint(light_obj->getPosition(),
                                   RMGET<float>("decorations", light_obj->getId(), "light_point_radius", true) *
-                                  CONF<float>("graphics/global_zoom"),
+                                  CONF<float>("graphics/GLOBAL_ZOOM"),
                                   &RM.getTexture("lightpoint"),
                                   RMGET<std::string>("decorations", light_obj->getId(), "light_point"),
                                   RMGET<float>("decorations", light_obj->getId(), "light_point_data", true));

@@ -176,7 +176,7 @@ void BackpackHud::update(float time_elapsed)
         {
             weapons_.emplace_back(AbstractDrawableObject{placeholders_[i].getPosition(),
                                                          RMGET<sf::Vector2f>("specials", weapon->getId(), "size") *
-                                                         CONF<float>("graphics/global_zoom"),
+                                                         CONF<float>("graphics/GLOBAL_ZOOM"),
                                                          &RM.getTexture("specials/" + weapon->getId())},
                                   weapon->getId());
 

@@ -28,16 +28,17 @@ int main()
     CFG.appendConfig("../data/config/user/sound.j3x", "sound");
     CFG.appendConfig("../data/config/user/default_ranges.j3x", "ranges");
 
-    CFG.appendConfig("../data/config/graphics.j3x", "graphics");
-    CFG.appendConfig("../data/config/sound.j3x", "sound");
-    CFG.appendConfig("../data/config/characters.j3x", "characters");
-
+    sf::Vector2i res = {CONF<int>("graphics/window_width_px"), CONF<int>("graphics/window_height_px")};
     if (CONF<bool>("graphics/auto_resolution"))
     {
-        sf::Vector2i res = Engine::detectResolution();
+        res = Engine::detectResolution();
         CFG.set<int>("graphics/window_width_px", res.x);
         CFG.set<int>("graphics/window_height_px", res.y);
     }
+    j3x::Parameters graphics_context = {{"GLOBAL_ZOOM", Engine::detectZoom(res)}};
+    CFG.appendConfig("../data/config/graphics.j3x", "graphics", graphics_context);
+    CFG.appendConfig("../data/config/sound.j3x", "sound");
+    CFG.appendConfig("../data/config/characters.j3x", "characters");
 
     RM.lazyLoadTexture("animations/shot");
     RM.lazyLoadTexture("animations/explosion_1");

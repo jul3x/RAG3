@@ -71,7 +71,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
     }
 
     this->makeLightPoint(this->getPosition(),
-                         CONF<float>("graphics/characters_light_point_size") * CONF<float>("graphics/global_zoom"),
+                         CONF<float>("graphics/characters_light_point_size") * CONF<float>("graphics/GLOBAL_ZOOM"),
                          &RM.getTexture("lightpoint"), RMGET<std::string>("characters", id, "light_point"));
 
     auto shadow_pos = this->getPosition();

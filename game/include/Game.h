@@ -65,6 +65,7 @@ public:
     void setNormalTime();
     void respawn(const std::string& map_name) override;
     void startGame(const std::string& map_name) override;
+    void initSound(bool force = false) override;
 
     NPC* spawnNewNPC(const std::string& id, int u_id, Functional::Activation activation,
                      const j3x::List& funcs, const j3x::List& datas) override;

@@ -22,7 +22,7 @@ Decoration::Decoration(const sf::Vector2f& position, const std::string& id, int 
 
     this->makeLightPoint(this->getPosition(),
                          RMGET<float>("decorations", id, "light_point_radius", true) *
-                         CONF<float>("graphics/global_zoom"),
+                         CONF<float>("graphics/GLOBAL_ZOOM"),
                          &RM.getTexture("lightpoint"), RMGET<std::string>("decorations", id, "light_point"),
                          RMGET<float>("decorations", id, "light_point_data", true));
 }

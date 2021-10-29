@@ -9,12 +9,13 @@
 #include <R3E/j3x/Parser.h>
 #include <R3E/j3x/J3XVisitor.h>
 #include <R3E/j3x/J3X.h>
+#include <R3E/utils/Numeric.h>
 
 
 namespace r3e::j3x {
-    std::shared_ptr<J3XVisitor> parseWithVisitor(const std::string& filename, const std::string& ns)
+    std::shared_ptr<J3XVisitor> parseWithVisitor(const std::string& filename, const std::string& ns, const j3x::Parameters& context)
     {
-        auto visitor = std::make_shared<J3XVisitor>(ns);
+        auto visitor = std::make_shared<J3XVisitor>(ns, context);
         FILE* input = fopen(filename.c_str(), "r");
 
         if (input)
@@ -47,9 +48,10 @@ namespace r3e::j3x {
         return visitor;
     }
 
-    std::shared_ptr<Parameters> parse(const std::string& filename, const std::string& ns)
+    std::shared_ptr<Parameters>
+    parse(const std::string& filename, const std::string& ns, const j3x::Parameters& context)
     {
-        return std::make_shared<Parameters>(parseWithVisitor(filename, ns)->getParams());
+        return std::make_shared<Parameters>(parseWithVisitor(filename, ns, context)->getParams());
     }
 
     std::shared_ptr<Parameters> parse(const std::string& filename)
@@ -201,6 +203,41 @@ namespace r3e::j3x {
         else
         {
             throw std::logic_error("[j3x::getType] Not handled data type: " + std::string(obj.type().name()));
+        }
+    }
+
+    bool compare(const j3x::Obj& a, const j3x::Obj& b)
+    {
+        if (a.type() != b.type())
+            return false;
+
+        if (a.type() == typeid(j3x::List))
+        {
+            throw std::logic_error("[j3x::compare] List comparison not handled yet");
+        }
+        else if (a.type() == typeid(int))
+        {
+            return j3x::getObj<int>(a) == j3x::getObj<int>(b);
+        }
+        else if (a.type() == typeid(float))
+        {
+            return utils::num::isNearlyEqual(j3x::getObj<float>(a), j3x::getObj<float>(b));
+        }
+        else if (a.type() == typeid(bool))
+        {
+            return j3x::getObj<bool>(a) == j3x::getObj<bool>(b);
+        }
+        else if (a.type() == typeid(sf::Vector2f))
+        {
+            return utils::num::isNearlyEqual(j3x::getObj<sf::Vector2f>(a), j3x::getObj<sf::Vector2f>(b));
+        }
+        else if (a.type() == typeid(std::string))
+        {
+            return j3x::getObj<std::string>(a) == j3x::getObj<std::string>(b);
+        }
+        else
+        {
+            throw std::logic_error("[j3x::compare] Not handled data type: " + std::string(a.type().name()));
         }
     }
 

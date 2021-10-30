@@ -8,7 +8,7 @@
 #include <common/characters/Character.h>
 
 #include <editor/ChildWindow.h>
-
+#include <editor/SpecialFunctionsWidget.h>
 
 using namespace r3e;
 
@@ -32,8 +32,9 @@ namespace editor {
         tgui::Button::Ptr button_;
 
         tgui::EditBox::Ptr id_box_, act_box_;
-        tgui::TextBox::Ptr fun_box_, data_box_, talk_box_;
-
+        tgui::TextBox::Ptr talk_box_;
+        SpecialFunctionsWidget functions_;
+        
     };
 
 } // namespace editor

@@ -15,7 +15,8 @@ ObstacleObjectWindow::ObstacleObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
                      CONF<sf::Vector2f>("popup_window_size")) / 2.0f,
                     CONF<sf::Vector2f>("popup_window_size"),
                     "obstacle_object_window"),
-        obstacle_(nullptr)
+        obstacle_(nullptr),
+        functions_(theme)
 {
     grid_ = tgui::Grid::create();
     grid_->setPosition("50% - width/2", "40% - height/2");
@@ -41,58 +42,23 @@ ObstacleObjectWindow::ObstacleObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
     label->setText("Activate:");
     label->setTextSize(CONF<float>("label_text_size"));
 
-    grid_->addWidget(label, 0, 1);
+    grid_->addWidget(label, 2, 0);
 
     act_box_ = tgui::EditBox::create();
     act_box_->setRenderer(theme_->getRenderer("EditBox"));
     act_box_->setSize("35%", CONF<float>("text_box_height"));
     act_box_->setTextSize(CONF<float>("label_text_size"));
-    grid_->addWidget(act_box_, 1, 1);
+    grid_->addWidget(act_box_, 3, 0);
 
-    label = tgui::Label::create();
-    label->setRenderer(theme_->getRenderer("Label"));
-    label->setText("Function:");
-    label->setTextSize(CONF<float>("label_text_size"));
-
-    grid_->addWidget(label, 2, 0);
-
-    fun_box_ = tgui::TextBox::create();
-    fun_box_->setRenderer(theme_->getRenderer("TextBox"));
-    fun_box_->setSize("35%", "45%");
-    fun_box_->setTextSize(CONF<float>("label_text_size"));
-    grid_->addWidget(fun_box_, 3, 0);
-
-    label = tgui::Label::create();
-    label->setRenderer(theme_->getRenderer("Label"));
-    label->setText("Function data:");
-    label->setTextSize(CONF<float>("label_text_size"));
-
-    grid_->addWidget(label, 2, 1);
-
-    data_box_ = tgui::TextBox::create();
-    data_box_->setRenderer(theme_->getRenderer("TextBox"));
-    data_box_->setSize("35%", "45%");
-    data_box_->setTextSize(CONF<float>("label_text_size"));
-    grid_->addWidget(data_box_, 3, 1);
+    grid_->addWidget(functions_.getGrid(), 4, 0);
 
     button_ = tgui::Button::create();
     button_->setRenderer(theme_->getRenderer("Button"));
     button_->setText("Save");
     button_->setTextSize(CONF<float>("label_text_size"));
     button_->setSize(CONF<sf::Vector2f>("button_size"));
-    button_->setPosition("50% - width/2", "100% - " + std::to_string(CONF<float>("button_relative_valign")));
 
-    child_->add(button_);
-
-    float padding = CONF<float>("items_padding");
-    grid_->setWidgetPadding(0, 0, {padding, padding});
-    grid_->setWidgetPadding(1, 0, {padding, padding});
-    grid_->setWidgetPadding(0, 1, {padding, padding});
-    grid_->setWidgetPadding(1, 1, {padding, padding});
-    grid_->setWidgetPadding(2, 0, {padding, padding});
-    grid_->setWidgetPadding(3, 0, {padding, padding});
-    grid_->setWidgetPadding(2, 1, {padding, padding});
-    grid_->setWidgetPadding(3, 1, {padding, padding});
+    grid_->addWidget(button_, 5, 0);
 }
 
 void ObstacleObjectWindow::setObjectContent(const std::string& category, Obstacle* obj)
@@ -101,25 +67,24 @@ void ObstacleObjectWindow::setObjectContent(const std::string& category, Obstacl
     child_->setTitle(category + "/" + obstacle_->getId());
     id_box_->setText(std::to_string(obstacle_->getUniqueId()));
     act_box_->setText(obstacle_->getActivationStr());
-    fun_box_->setText(obstacle_->getFunctionsStr());
-    data_box_->setText(obstacle_->getDatasStr());
+    functions_.setObjectContent(obj);
 
     button_->connect("pressed", [this]() {
+        this->obstacle_->setFunctionsStr(this->functions_.getFunctionsStr());
+        this->obstacle_->setDatasStr(this->functions_.getDatasStr());
         this->obstacle_->setActivationStr(this->act_box_->getText());
-        this->obstacle_->setFunctionsStr(this->fun_box_->getText());
-        this->obstacle_->setDatasStr(this->data_box_->getText());
         child_->close();
     });
 }
 
 bool ObstacleObjectWindow::isDataFocused() const
 {
-    return data_box_->isFocused();
+    return functions_.isDataFocused();
 }
 
 void ObstacleObjectWindow::addToData(const std::string& str)
 {
-    data_box_->setText(data_box_->getText() + str);
+    return functions_.addToData(str);
 }
 
 

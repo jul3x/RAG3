@@ -70,7 +70,6 @@ SpecialObjectWindow::SpecialObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
     button_->setText("Save");
     button_->setTextSize(CONF<float>("label_text_size"));
     button_->setSize(CONF<sf::Vector2f>("button_size"));
-    button_->setPosition("50% - width/2", "100% - " + std::to_string(CONF<float>("button_relative_valign")));
 
     grid_->addWidget(button_, 7, 0);
 }
@@ -87,8 +86,8 @@ void SpecialObjectWindow::setObjectContent(const std::string& category, Special*
     button_->connect("pressed", [this]() {
         this->special_->setActivationStr(this->act_box_->getText());
 
-        this->special_->setFunctions(this->functions_.getFunctions());
-        this->special_->setDatas(this->functions_.getDatas());
+        this->special_->setFunctionsStr(this->functions_.getFunctionsStr());
+        this->special_->setDatasStr(this->functions_.getDatasStr());
 
         if (already_active_->getText() == "1")
         {
@@ -105,13 +104,12 @@ void SpecialObjectWindow::setObjectContent(const std::string& category, Special*
 
 bool SpecialObjectWindow::isDataFocused() const
 {
-//    return data_box_->isFocused();
-    return false;
+    return functions_.isDataFocused();
 }
 
 void SpecialObjectWindow::addToData(const std::string& str)
 {
-//    data_box_->setText(data_box_->getText() + str);
+    return functions_.addToData(str);
 }
 
 

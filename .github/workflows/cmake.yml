@@ -9,6 +9,7 @@ on:
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
+  CXX_FLAGS: "-std=c++17 -Wall -pedantic -Werror -Wno-variadic-macros -Wno-long-long -Wno-shadow"
 
 jobs:
   build:
@@ -20,6 +21,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
+    - name: Install dependencies
+      run: sudo apt-get install libudev-dev libvorbis-dev libflac-dev libopenal-dev libfreetype6-dev libx11-dev libxrandr-dev libxcursor-dev
+    
+    - name: Install SFML
+      run: git clone https://github.com/SFML/SFML --branch master && cd SFML && cmake . && make && sudo mv include/* /usr/include/ && sudo mv lib/* /usr/lib/
+
+    - name: Install TGUI
+      run: cd .. && git clone https://github.com/texus/TGUI --branch 0.8 && cd TGUI && cmake . && make -j2 && sudo make install && cd ..
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.

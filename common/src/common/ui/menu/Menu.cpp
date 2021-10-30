@@ -77,7 +77,7 @@ void Menu::update(float time_elapsed)
 
     if (explosion_elapsed_ >= CONF<float>("graphics/menu_explosion_period"))
     {
-        animation_events_.emplace_back(logo_.getPosition() + sf::Vector2f{0.0f, -150.0f}, "explosion_1", 0.0f,
+        animation_events_.emplace_back(nullptr, logo_.getPosition() + sf::Vector2f{0.0f, -150.0f}, "explosion_1", 0.0f,
                                        RMGET<sf::Vector2f>("animations", "explosion_1", "size").x * 4);
         framework_->registerLight(&animation_events_.back());
         explosion_elapsed_ -= CONF<float>("graphics/menu_explosion_period");
@@ -156,7 +156,6 @@ void Menu::makeMenuElements(const std::vector<std::pair<std::string, std::functi
         auto label = tgui::Button::create();
         label->setRenderer(theme_->getRenderer("MenuButton"));
         label->setText(elem.first);
-        label->setInheritedFont(RM.getFont("default"));
         label->setTextSize(CONF<float>("graphics/menu_button_text_size"));
         label->setPosition(CONF<float>("graphics/menu_button_pos_x"),
                            CONF<float>("graphics/menu_button_pos_y") +
@@ -189,7 +188,6 @@ void Menu::makeMenuElements(const std::vector<std::pair<std::string, std::functi
         auto label = tgui::Button::create();
         label->setRenderer(theme_->getRenderer("MenuButton"));
         label->setText(text.first);
-        label->setInheritedFont(RM.getFont("default"));
         label->setTextSize(CONF<float>("graphics/menu_button_text_size"));
         label->setPosition(text.second);
         gui_->add(label);

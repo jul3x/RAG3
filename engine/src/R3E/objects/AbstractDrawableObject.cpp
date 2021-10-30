@@ -10,7 +10,10 @@
 
 namespace r3e {
 
-    AbstractDrawableObject::AbstractDrawableObject() : is_visible_(true), z_index_(0)
+    AbstractDrawableObject::AbstractDrawableObject() :
+            is_visible_(true), z_index_(0), is_flipped_x_(false), is_flipped_y_(false),
+            time_elapsed_(0.0f), current_frame_(0), frame_size_(), animation_source_(),
+            frames_number_(0), frame_duration_(0)
     {
     }
 
@@ -40,7 +43,7 @@ namespace r3e {
             shape_.setTexture(texture);
 
             if (frames_number > 1)
-                shape_.setTextureRect(animation_source_);
+                setCurrentFrame(0);
         }
     }
 
@@ -143,6 +146,8 @@ namespace r3e {
         {
             current_frame_ -= static_cast<short>(current_frame_ / frames_number_) * frames_number_;
         }
+        if (current_frame_ < 0)
+            current_frame_ = frames_number_ - 1;
 
         animation_source_.left = (is_flipped_x_ ? 1 : 0) * frame_size_.x + frame_size_.x * current_frame_;
         animation_source_.top = (is_flipped_y_ ? frame_size_.y : 0);

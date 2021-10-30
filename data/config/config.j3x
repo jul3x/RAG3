@@ -17,7 +17,7 @@ float journal_sampling_rate = 30.0
 float journal_max_time = 10.0
 float journal_min_time = 3.0
 float bullet_time_min_time = 0.4
-float time_reversal_speed_factor = 5.0
+float time_reversal_speed_factor = 3.0
 float player_clone_time_factor = 3.0
 
 // MISC

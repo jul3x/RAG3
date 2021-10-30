@@ -21,7 +21,9 @@ namespace r3e::graphics {
                                    texture, z_index, frames_count, duration_s / static_cast<float>(frames_count)),
             type_(animation_type),
             duration_s_(duration_s),
-            time_elapsed_(0.0f)
+            time_elapsed_(0.0f),
+            speed_factor_(1.0f),
+            reversed_(false)
     {
         shape_.setTextureRect(animation_source_);
     }
@@ -34,11 +36,11 @@ namespace r3e::graphics {
             light_->setColor(255, 255, 255, 255 * (duration_s_ - time_elapsed_) / duration_s_);
         }
 
-        time_elapsed_ += time_elapsed;
+        time_elapsed_ += (reversed_ ? -speed_factor_ : speed_factor_) * time_elapsed;
 
         auto current_frame = static_cast<short int>(time_elapsed_ * frames_number_ / duration_s_);
 
-        if (current_frame >= frames_number_)
+        if (current_frame >= frames_number_ || current_frame < 0)
         {
             return true;
         }
@@ -72,6 +74,21 @@ namespace r3e::graphics {
         shape_.setTextureRect(animation_source_);
 
         return false;
+    }
+
+    void AnimationEvent::setReversed(bool reversed)
+    {
+        reversed_ = reversed;
+
+        if (reversed_)
+            time_elapsed_ = duration_s_;
+        else
+            time_elapsed_ = 0.0f;
+    }
+
+    void AnimationEvent::setSpeedFactor(float factor)
+    {
+        speed_factor_ = factor;
     }
 
 } // namespace r3e::graphics

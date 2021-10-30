@@ -31,14 +31,19 @@ namespace r3e::graphics {
                        float duration_s, short int frames_count,
                        const AnimationType& animation_type = AnimationType::Linear);
 
+        void setReversed(bool reversed);
+        void setSpeedFactor(float factor);
+
         bool update(float time_elapsed);
 
     protected:
         float duration_s_;
+        float speed_factor_;
 
         AnimationType type_;
 
         float time_elapsed_;
+        bool reversed_;
 
     };
 

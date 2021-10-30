@@ -51,10 +51,12 @@ public:
 
     void update(float time_elapsed) override;
     void show(bool show) override;
+    void bindRespawn(const std::function<void()>& func);
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
+    Framework* framework_;
     AbstractDrawableObject player_;
     BackpackHud backpack_hud_;
     SkillsHud skills_hud_;

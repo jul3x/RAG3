@@ -20,7 +20,7 @@ string ai_type="Standard"
 
 int z_index=1
 
-list weapons=["enemy_chaingun"]
+list weapons=["enemy_chaingun"; "null"; "null"; "null"]
 
 bool is_talkable=false
 string light_point=""

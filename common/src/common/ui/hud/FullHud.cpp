@@ -90,7 +90,8 @@ ExtendedFullHud::ExtendedFullHud(UserInterface* ui, Framework* framework, const 
                       size / 2.0f + CONF<sf::Vector2f>("graphics/backpack_offset"),
                       CONF<int>("graphics/backpack_placeholders_x"),
                       CONF<int>("graphics/backpack_placeholders_y")),
-        skills_hud_(ui, framework, size / 2.0f + CONF<sf::Vector2f>("graphics/skills_offset"))
+        skills_hud_(ui, framework, size / 2.0f + CONF<sf::Vector2f>("graphics/skills_offset")),
+        framework_(framework)
 {
     player_.setColor(255, 255, 255, bg_color_.a);
     backpack_hud_.setOpacity(bg_color_.a);
@@ -102,19 +103,18 @@ ExtendedFullHud::ExtendedFullHud(UserInterface* ui, Framework* framework, const 
                                                        center_top +
                                                        CONF<sf::Vector2f>("graphics/respawn_button_pos"),
                                                        button_size, show_duration));
-    buttons_.back()->bindFunction([framework, ui, this]() {
-        framework->respawn("");
-        ui->clearWindows();
-        this->show(false);
-    });
 }
 
 void ExtendedFullHud::update(float time_elapsed)
 {
     FullHud::update(time_elapsed);
 
+    if (!framework_->isNormalGameplay())
+        return;
+
     if (show_ || time_elapsed_ > 0)
     {
+
         skills_hud_.update(time_elapsed);
         backpack_hud_.update(time_elapsed);
     }
@@ -129,6 +129,10 @@ void ExtendedFullHud::update(float time_elapsed)
 void ExtendedFullHud::show(bool show)
 {
     FullHud::show(show);
+
+    if (!framework_->isNormalGameplay())
+        return;
+
     skills_hud_.show(show_);
     backpack_hud_.show(show_);
 }
@@ -138,8 +142,17 @@ void ExtendedFullHud::draw(sf::RenderTarget& target, sf::RenderStates states) co
     if (show_ || time_elapsed_ > 0.0f)
     {
         target.draw(bg_, states);
+
+        if (!framework_->isNormalGameplay())
+            return;
+
         target.draw(player_, states);
         target.draw(backpack_hud_, states);
         target.draw(skills_hud_, states);
     }
+}
+
+void ExtendedFullHud::bindRespawn(const std::function<void()>& func)
+{
+    buttons_.back()->bindFunction(func);
 }

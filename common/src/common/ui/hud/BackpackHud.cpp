@@ -154,6 +154,7 @@ void BackpackHud::update(float time_elapsed)
     auto player = framework_->getPlayer();
     for (auto& special : player->getBackpack())
     {
+
         special.first.setPosition(placeholders_[i].getPosition());
 
         tooltips_[i].bindText(RMGET<std::string>("specials", special.first.getId(), "tooltip_header"),
@@ -174,6 +175,9 @@ void BackpackHud::update(float time_elapsed)
     {
         if (weapon->getId() != "null")
         {
+            if (!RMGET<bool>("specials", weapon->getId(), "is_drawable"))
+                continue;
+            
             weapons_.emplace_back(AbstractDrawableObject{placeholders_[i].getPosition(),
                                                          RMGET<sf::Vector2f>("specials", weapon->getId(), "size") *
                                                          CONF<float>("graphics/GLOBAL_ZOOM"),

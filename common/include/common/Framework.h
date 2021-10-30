@@ -78,6 +78,7 @@ public:
     getSpawningFunction(const std::string& name);
     [[nodiscard]] virtual float getRag3Time() const;
     [[nodiscard]] virtual float getTimeManipulationFuel() const;
+    [[nodiscard]] virtual bool isNormalGameplay();
 
     // Spawn events
     virtual DestructionSystem* spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);
@@ -87,7 +88,8 @@ public:
     virtual void spawnExplosionEvent(const sf::Vector2f& pos);
     virtual void spawnKillEvent(const sf::Vector2f& pos);
     virtual void spawnTeleportationEvent(const sf::Vector2f& pos);
-    virtual void spawnEvent(const std::string& name, const sf::Vector2f& pos, float dir = 0.0f, float r = 0.0f);
+    virtual Event*
+    spawnEvent(const std::string& name, const sf::Vector2f& pos, float dir = 0.0f, float r = 0.0f, bool journal = true);
     virtual void spawnSwirlEvent(const std::string& name, const sf::Vector2f& pos, bool flipped);
     virtual void spawnExplosionForce(const sf::Vector2f& pos, float r);
     virtual void spawnSound(const sf::SoundBuffer& sound, const sf::Vector2f& pos, bool force_pitch = false);
@@ -112,7 +114,7 @@ public:
     virtual void initParticles();
     virtual void initSound(bool force = false);
 
-    template <class T>
+    template<class T>
     void findAndDelete(T* ptr);
 
     virtual NPC* spawnNewPlayerClone(const std::string& weapon_id);

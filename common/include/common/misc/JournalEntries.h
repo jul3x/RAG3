@@ -38,6 +38,8 @@ protected:
     float rotation_;
     float life_;
     float ammo_state_;
+    short int frame_;
+    bool is_moving_;
 
     Character::GlobalState state_;
 
@@ -89,6 +91,20 @@ private:
     sf::Vector2f pos_;
     float direction_;
     Character* user_;
+
+};
+
+class AnimationEndedEntry : public JournalEntry {
+public:
+    AnimationEndedEntry(Journal* father, Event* event);
+
+    void executeEntryReversal() override;
+
+private:
+    std::string id_;
+    sf::Vector2f pos_;
+    float size_x_;
+    float rotation_;
 
 };
 

@@ -20,7 +20,7 @@ bool shadow=true
 string tooltip_header = "Bigger Magazine"
 string tooltip = "Increases your weapon's max ammo amount."
 
-list can_upgrade = ["m4"; "desert_eagle"; "shotgun"]
+list can_upgrade = ["chaingun"; "desert_eagle"; "shotgun"]
 
 float max_ammo_factor = 1.5
 float spawn_timeout_factor = 1.0

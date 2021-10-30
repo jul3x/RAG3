@@ -8,7 +8,7 @@ float frame_duration=0.0
 
 string default_activation="OnEnter"
 list default_functions=["AddWeapon"; "Destroy"]
-list default_datas=["m4"; "null"]
+list default_datas=["chaingun"; "null"]
 
 bool is_drawable=true
 

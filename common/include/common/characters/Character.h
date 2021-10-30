@@ -63,9 +63,11 @@ public:
     int getCurrentWeapon() const;
     void makeOnlyOneWeapon(const std::string& id, float state);
     void clearWeapons();
+    void setDefaultWeapons();
     void setWeapons(const std::vector<std::shared_ptr<AbstractWeapon>>& weapons);
     bool addWeaponToBackpack(const std::shared_ptr<AbstractWeapon>& ptr);
     void addAmmoToWeapon(const std::string& id);
+    void forceIsMoving(bool is_moving);
     virtual void makeLifeBar(const std::string& name);
 
     // Getters
@@ -79,6 +81,7 @@ public:
     Character* getCurrentTalkableCharacter() const;
     bool isAlreadyRotated() const;
     bool isTalkable() const;
+    bool isMoving() const;
     TalkableArea* getTalkableArea() const;
     const std::string& getTalkScenarioStr() const;
     const j3x::List& getTalkScenario() const;

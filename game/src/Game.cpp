@@ -6,6 +6,7 @@
 
 #include <common/ResourceManager.h>
 #include <common/weapons/MeleeWeapon.h>
+#include <common/weapons/NoWeapon.h>
 #include <common/events/Event.h>
 #include <common/misc/JournalEntries.h>
 
@@ -112,11 +113,21 @@ void Game::updateTimeReversal(float time_elapsed)
         }
     };
 
+    auto update_animations = [time_elapsed](auto& list) {
+        for (auto& obj : list)
+        {
+            obj->updateAnimation(time_elapsed, -CONF<float>("time_reversal_speed_factor"));
+        }
+    };
+
     update_lights(map_->getList<Obstacle>());
     update_lights(map_->getList<NPC>());
     update_lights(map_->getList<Special>());
     update_lights(map_->getList<Decoration>());
     update_lights(fire_);
+
+    update_animations(map_->getList<Special>());
+    update_animations(map_->getList<Decoration>());
 
     auto player_light = player_->getLightPoint();
     if (player_light != nullptr)
@@ -398,6 +409,7 @@ void Game::setGameState(Framework::GameState state)
                 }
 
                 this->spawnTeleportationEvent(player_->getPosition());
+                this->spawnEvent("melee_giorgio_swirl", player_->getPosition(), 0.0f, 1.0f, false);
 
                 journal_->clear();
             }
@@ -413,6 +425,9 @@ void Game::setGameState(Framework::GameState state)
             if (rag3_time_elapsed_ < 0.0f)
                 camera_->setNormal();
 
+            if (state_ == GameState::Reverse)
+                camera_->setShaking();
+
             engine_->turnOnCollisions();
             if (CONF<bool>("sound/sound_on"))
             {
@@ -422,6 +437,9 @@ void Game::setGameState(Framework::GameState state)
 
             break;
         case GameState::Reverse:
+            if (!this->isNormalGameplay())
+                return;
+
             if (this->isJournalFreezed() || current_time_factor_ != 1.0f || this->getTimeManipulationFuel() <= 0.0f)
                 return;
 
@@ -629,9 +647,8 @@ void Game::loadSave()
 {
     preloadSave();
 
-    this->unregisterWeapons(player_.get());
-    player_->clearWeapons();
     std::vector<std::shared_ptr<AbstractWeapon>> weapons;
+    bool has_any_saved_weapons = false;
     for (const auto& weapon_data : CONF<j3x::List>("save/weapons"))
     {
         const auto& data = j3x::getObj<j3x::List>(weapon_data);
@@ -644,9 +661,18 @@ void Game::loadSave()
         for (const auto& upgrade : upgrades)
             weapon->upgrade(j3x::getObj<std::string>(upgrade));
         weapons.emplace_back(weapon);
+
+        if (dynamic_cast<NoWeapon*>(weapon.get()) == nullptr)
+            has_any_saved_weapons = true;
     }
-    player_->setWeapons(weapons);
-    this->registerWeapons(player_.get());
+
+    if (has_any_saved_weapons && this->isNormalGameplay())
+    {
+        this->unregisterWeapons(player_.get());
+        player_->clearWeapons();
+        player_->setWeapons(weapons);
+        this->registerWeapons(player_.get());
+    }
 
     for (const auto& item : CONF<j3x::List>("save/backpack"))
     {

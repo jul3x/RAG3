@@ -15,7 +15,6 @@ TextButton::TextButton(Framework* framework, const std::string& text,
     button_ = tgui::Button::create();
     button_->setRenderer(framework_->getUI()->getTheme()->getRenderer("MenuButton"));
     button_->setText(text);
-    button_->setInheritedFont(RM.getFont("default"));
     button_->setTextSize(size);
     button_->setPosition({pos.x - button_->getFullSize().x / 2.0f, pos.y - button_->getFullSize().y / 2.0f});
     button_->setVisible(false);

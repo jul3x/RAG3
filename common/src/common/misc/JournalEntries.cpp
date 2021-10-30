@@ -26,16 +26,20 @@ CharacterEntry::CharacterEntry(Journal* father, Character* ptr) : JournalEntry(f
     life_ = ptr->getHealth();
     ammo_state_ = ptr->getWeapons().at(ptr->getCurrentWeapon())->getState();
     state_ = ptr->getGlobalState();
+    frame_ = ptr->getCurrentFrame();
+    is_moving_ = ptr->isMoving();
 }
 
 void CharacterEntry::executeEntryReversal()
 {
     auto new_ptr = father_->getUpdatedPtr(ptr_);
+    new_ptr->forceIsMoving(is_moving_);
     new_ptr->setPosition(pos_);
     new_ptr->setRotation(rotation_);
     new_ptr->setHealth(life_);
     new_ptr->getWeapons().at(new_ptr->getCurrentWeapon())->setState(ammo_state_);
     new_ptr->setGlobalState(state_);
+    new_ptr->setCurrentFrame(frame_);
 }
 
 DestroyCharacter::DestroyCharacter(Journal* father, Character* ptr) : JournalEntry(father), ptr_(ptr)
@@ -81,6 +85,20 @@ void DestroyBullet::executeEntryReversal()
 
     new_ptr->setRotation(direction_);
     father_->setUpdatedPtr(ptr_, new_ptr);
+}
+
+AnimationEndedEntry::AnimationEndedEntry(Journal* father, Event* event) :
+        JournalEntry(father), id_(event->getId()), pos_(event->getPosition()),
+        rotation_(event->getRotation()), size_x_(event->getSize().x)
+{
+
+}
+
+void AnimationEndedEntry::executeEntryReversal()
+{
+    auto event = father_->getFramework()->spawnEvent(id_, pos_, rotation_, size_x_, false);
+    event->setReversed(true);
+    event->setSpeedFactor(CONF<float>("time_reversal_speed_factor"));
 }
 
 FireEntry::FireEntry(Journal* father, Fire* fire) : JournalEntry(father), ptr_(fire)

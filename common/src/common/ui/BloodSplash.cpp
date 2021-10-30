@@ -56,10 +56,11 @@ bool BloodSplash::update(float time_elapsed)
     low_.setColor(255, 255, 255, transparency_);
 
     if (framework_->getRag3Time() <= 0.0f && player_life_state_ != Player::LifeState::Critical &&
-        player_life_state_ != Player::LifeState::Dead)
+        player_life_state_ != Player::LifeState::Dead && framework_->getGameState() != Framework::GameState::Reverse)
         time_elapsed_ = 0.0f;
 
-    if (framework_->getRag3Time() > 0.0f || player_life_state_ == Player::LifeState::Critical)
+    if (framework_->getRag3Time() > 0.0f || player_life_state_ == Player::LifeState::Critical ||
+        framework_->getGameState() == Framework::GameState::Reverse)
     {
         heartbeat_time_elapsed_ += time_elapsed;
         if (heartbeat_time_elapsed_ > 2.0f)
@@ -79,7 +80,8 @@ bool BloodSplash::update(float time_elapsed)
 
 void BloodSplash::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    if (framework_->getRag3Time() > 0.0f)
+    if (framework_->getRag3Time() > 0.0f ||
+        framework_->getGameState() == Framework::GameState::Reverse)
     {
         target.draw(low_, states);
     }

@@ -17,12 +17,28 @@
 #include <packets/PlayerInputPacket.h>
 
 
+enum class ConnectionStatus {
+    On = 2,
+    InProgress = 1,
+    Off = 0
+};
+
+
+struct PlayerConnection {
+    ConnectionStatus status_;
+    std::unique_ptr<Player> player_;
+    PlayerInputPacket cached_packet_;
+    std::shared_ptr<sf::TcpSocket> events_socket_;
+    float ping_elapsed_;
+};
+
+
 struct PlayerData {
     sf::Vector2f pos_{}, vel_{};
     float rotation_{};
     int current_weapon_{};
     std::vector<float> weapon_state_{};
-    float health_{};
+    float health_{1.0f};
     bool is_shooting_{};
     int current_special_id_{};
     Player::GlobalState state_{Player::GlobalState::Normal};
@@ -33,30 +49,34 @@ class PlayersStatePacket : public sf::Packet {
 public:
     PlayersStatePacket() = default;
 
-    explicit PlayersStatePacket(const std::unordered_map<sf::Uint32, std::unique_ptr<Player>>& players,
-                                std::unordered_map<sf::Uint32, PlayerInputPacket>& cached_packets)
+    explicit PlayersStatePacket(const std::unordered_map<sf::Uint32, PlayerConnection>& connections)
     {
         *this << static_cast<sf::Uint64>(r3e::utils::timeSinceEpochMillisec())
-              << static_cast<short int>(players.size());
-        for (const auto& player : players)
+              << static_cast<short int>(connections.size());
+        for (const auto& conn : connections)
         {
             PlayerData data;
-            data.state_ = player.second->getGlobalState();
-            data.pos_ = player.second->getPosition();
-            data.vel_ = player.second->getVelocity();
-            data.rotation_ = player.second->getRotation();
-            data.current_weapon_ = player.second->getCurrentWeapon();
-            data.health_ = player.second->getHealth();
-            data.is_shooting_ =
-                    cached_packets.count(player.first) != 0 && cached_packets[player.first].isLeftMousePressed();
-            auto special = player.second->getCurrentSpecialObject();
-            data.current_special_id_ = special == nullptr ? -1 : special->getUniqueId();
-            for (const auto& weapon : player.second->getWeapons())
+
+            if (conn.second.player_ != nullptr)
             {
-                data.weapon_state_.emplace_back(weapon->getState());
+                auto player = conn.second.player_.get();
+                const auto& cached_packet = conn.second.cached_packet_;
+                data.state_ = player->getGlobalState();
+                data.pos_ = player->getPosition();
+                data.vel_ = player->getVelocity();
+                data.rotation_ = player->getRotation();
+                data.current_weapon_ = player->getCurrentWeapon();
+                data.health_ = player->getHealth();
+                data.is_shooting_ = cached_packet.isLeftMousePressed();
+                auto special = player->getCurrentSpecialObject();
+                data.current_special_id_ = special == nullptr ? -1 : special->getUniqueId();
+                for (const auto& weapon : player->getWeapons())
+                {
+                    data.weapon_state_.emplace_back(weapon->getState());
+                }
             }
 
-            *this << player.first << sf::Uint8(data.state_) << data.pos_.x << data.pos_.y << data.vel_.x << data.vel_.y
+            *this << conn.first << sf::Uint8(data.state_) << data.pos_.x << data.pos_.y << data.vel_.x << data.vel_.y
                   << data.rotation_ << data.current_weapon_ << data.health_ << data.is_shooting_
                   << data.current_special_id_;
             *this << static_cast<short int>(data.weapon_state_.size());

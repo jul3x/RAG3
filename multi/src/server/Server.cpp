@@ -24,6 +24,9 @@ void Server::initialize()
     ui_ = std::make_unique<MinimalUserInterface>(this);
     ui_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
+
+    local_ip_ = sf::IpAddress::getLocalAddress();
+    global_ip_ = sf::IpAddress::getPublicAddress(sf::seconds(1.0f));
 }
 
 void Server::beforeUpdate(float time_elapsed)
@@ -32,24 +35,34 @@ void Server::beforeUpdate(float time_elapsed)
     checkAwaitingConnections();
     handleMessagesFromPlayers();
     handleEventsFromPlayers();
+    handleTimeouts(time_elapsed);
+    handleToErase();
 }
 
 void Server::afterUpdate(float time_elapsed)
 {
     Framework::afterUpdate(time_elapsed);
     sendMessagesToPlayers();
-    for (auto& player : players_)
+    for (auto& conn : connections_)
     {
-        player.second->setCurrentSpecialObject(nullptr);
-        player.second->setCurrentTalkableCharacter(nullptr);
+        auto player = conn.second.player_.get();
+        if (player != nullptr)
+        {
+            player->setCurrentSpecialObject(nullptr);
+            player->setCurrentTalkableCharacter(nullptr);
+        }
     }
 }
 
 void Server::updateCamera(float time_elapsed)
 {
     Framework::updateCamera(time_elapsed);
-    if (!players_.empty())
-        camera_->setPointingTo(players_.begin()->second->getPosition());
+    if (!connections_.empty())
+    {
+        auto player = connections_.begin()->second.player_.get();
+        if (player != nullptr)
+            camera_->setPointingTo(player->getPosition());
+    }
     camera_->setZoomTo(1.0f);
 }
 
@@ -72,11 +85,12 @@ void Server::useSpecialObject()
 
 void Server::updatePlayers(float time_elapsed)
 {
-    for (auto& player : players_)
+    for (auto& conn : connections_)
     {
-        if (player.second->isAlive() && !player.second->update(time_elapsed))
+        auto player = conn.second.player_.get();
+        if (player != nullptr && player->isAlive() && !player->update(time_elapsed))
         {
-            clearPlayer(player.second.get());
+            clearPlayer(player);
         }
     }
 }
@@ -86,7 +100,7 @@ void Server::checkAwaitingConnections()
     auto client = std::make_shared<sf::TcpSocket>();
     client->setBlocking(false);
     sf::Socket::Status status = connection_listener_.accept(*client);
-    auto ip = client->getRemoteAddress().toInteger();
+    auto ip = utils::getSafeIP(client->getRemoteAddress(), local_ip_, global_ip_).toInteger();
 
     switch (status)
     {
@@ -95,12 +109,14 @@ void Server::checkAwaitingConnections()
             LOG.info("New connection attempt from: " + sf::IpAddress(ip).toString());
             j3x::Parameters connection_parameters;
 
-            if (connection_statuses_.count(ip) && connection_statuses_[ip] != ConnectionStatus::Off)
+            if (connections_.count(ip) && connections_[ip].status_ != ConnectionStatus::Off)
                 return;
 
-            events_socket_[ip] = client;
+            auto [new_connection, placeholder] = connections_.emplace(ip, PlayerConnection());
 
-            if (events_socket_.size() >= MAX_PLAYERS)
+            new_connection->second.events_socket_ = client;
+
+            if (connections_.size() >= MAX_PLAYERS)
             {
                 connection_parameters["s"] = static_cast<int>(ConnectionStatus::Off);
                 connection_parameters["reason"] = std::string("Too many players.");
@@ -108,9 +124,8 @@ void Server::checkAwaitingConnections()
 
                 auto packet = ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters, ip);
 
-                // TODO - events_socket_ should be cleared after sending
-                events_socket_[ip]->send(packet);
-                connection_statuses_[ip] = ConnectionStatus::Off;
+                new_connection->second.events_socket_->send(packet);
+                new_connection->second.status_ = ConnectionStatus::Off;
 
                 return;
             }
@@ -118,9 +133,9 @@ void Server::checkAwaitingConnections()
             connection_parameters["s"] = static_cast<int>(ConnectionStatus::InProgress);
             connection_parameters["map"] = map_->getMapName();
             auto packet = ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters, ip);
-            events_socket_[ip]->send(packet);
+            new_connection->second.events_socket_->send(packet);
 
-            connection_statuses_[ip] = ConnectionStatus::InProgress;
+            new_connection->second.status_ = ConnectionStatus::InProgress;
 
             break;
         }
@@ -129,6 +144,12 @@ void Server::checkAwaitingConnections()
             break;
         default:
             LOG.error("Failed connection attempt from: " + sf::IpAddress(ip).toString());
+            break;
+        case sf::Socket::Partial:
+            break;
+        case sf::Socket::Disconnected:
+            break;
+        case sf::Socket::Error:
             break;
     }
 }
@@ -151,15 +172,15 @@ void Server::handleMessagesFromPlayers()
             case sf::Socket::Done:
             {
                 //LOG.info("New data received from: " + sender.toString());
-                auto ip = sender.toInteger();
-                auto player_it = players_.find(ip);
+                auto ip = utils::getSafeIP(sender, local_ip_, global_ip_).toInteger();
+                auto conn_it = connections_.find(ip);
 
-                if (player_it != players_.end())
+                if (conn_it != connections_.end() && conn_it->second.status_ == ConnectionStatus::On)
                 {
-                    if ((cached_packets_.count(ip) <= 0 ||
-                         packet.getTimestamp() >= cached_packets_[ip].getTimestamp()) /* &&
+                    conn_it->second.ping_elapsed_ = 0.0f;
+                    if ((packet.getTimestamp() >= conn_it->second.cached_packet_.getTimestamp()) /* &&
                         utils::timeSinceEpochMillisec() - packet.getTimestamp() < max_ping */)
-                        cached_packets_[ip] = packet;
+                        conn_it->second.cached_packet_ = packet;
                     else
                         LOG.error("This packet is old or latency is too high!"
                                   "\nPacket timestamp difference: " +
@@ -185,29 +206,24 @@ void Server::handleMessagesFromPlayers()
         }
     }
 
-    for (auto& player : players_)
+    for (auto& conn : connections_)
     {
-        auto cached_packet = cached_packets_.find(player.first);
+        auto& cached_packet = conn.second.cached_packet_;
 
-        if (cached_packet != cached_packets_.end())
+        auto& data = cached_packet;
+        auto player = conn.second.player_.get();
+        if (player != nullptr)
         {
-            auto delta = sf::Vector2f(0.0f, 0.0f);
-            auto& data = cached_packet->second;
-
-            UserInterface::applyMovement(player.second.get(), data.getKeys());
-            player.second->setRotation(data.getRotation());
-            player.second->setRotateTo(data.getRotation());
+            UserInterface::applyMovement(player, data.getKeys());
+            player->setRotation(data.getRotation());
+            player->setRotateTo(data.getRotation());
 
             if (data.isLeftMousePressed())
             {
-                player.second->shot();
+                player->shot();
             }
 
-            player.second->setCurrentWeapon(data.getCurrentWeapon());
-        }
-        else
-        {
-            LOG.error("No input packets received from: " + sf::IpAddress(player.first).toString());
+            player->setCurrentWeapon(data.getCurrentWeapon());
         }
     }
 }
@@ -219,13 +235,13 @@ void Server::sendMessagesToPlayers()
 
     if (time_elapsed_ - last_packet_timestamp_ >= packet_time_elapsed)
     {
-        PlayersStatePacket packet(players_, cached_packets_);
+        PlayersStatePacket packet(connections_);
 
-        for (const auto& player : players_)
+        for (const auto& conn : connections_)
         {
-            if (data_sender_socket_.send(packet, sf::IpAddress(player.first), port) != sf::Socket::Done)
+            if (data_sender_socket_.send(packet, sf::IpAddress(conn.first), port) != sf::Socket::Done)
             {
-                LOG.error("[Server] Could not send data to client: " + sf::IpAddress(player.first).toString());
+                LOG.error("[Server] Could not send data to client: " + sf::IpAddress(conn.first).toString());
             }
         }
 
@@ -250,49 +266,59 @@ void Server::setGameState(Framework::GameState state)
 
 void Server::handleEventsFromPlayers()
 {
-    for (const auto& socket : events_socket_)
+    for (auto& conn : connections_)
     {
+        auto& socket = conn.second.events_socket_;
         PlayerEventPacket packet;
-        auto status = socket.second->receive(packet);
+        auto status = socket->receive(packet);
         switch (status)
         {
             case sf::Socket::Done:
             {
-                auto player_it = players_.find(socket.first);
+                auto player = conn.second.player_.get();
 
-                if (player_it != players_.end())
+                if (player != nullptr)
                 {
+                    conn.second.ping_elapsed_ = 0.0f;
+
                     switch (packet.getType())
                     {
                         case PlayerEventPacket::Type::UseObject:
                         {
-                            useSpecialObject(player_it->second.get(), player_it->first);
+                            useSpecialObject(player, conn.first);
                             break;
                         }
                         case PlayerEventPacket::Type::UseBackpackObject:
                         {
-                            player_it->second->useItem(j3x::get<std::string>(packet.getParams(), "id"));
+                            player->useItem(j3x::get<std::string>(packet.getParams(), "id"));
                             break;
                         }
                         case PlayerEventPacket::Type::NameChange:
                         {
                             ServerEventPacket server_packet(ServerEventPacket::Type::NameChange,
                                                             packet.getParams(),
-                                                            player_it->first);
+                                                            conn.first);
+                            sendEventToPlayers(server_packet);
+                            break;
+                        }
+                        case PlayerEventPacket::Type::Respawn:
+                        {
+                            clearPlayer(player);
+                            respawnPlayer(conn.first);
+
+                            ServerEventPacket server_packet(ServerEventPacket::Type::PlayerRespawn,
+                                                            0, conn.first);
                             sendEventToPlayers(server_packet);
                             break;
                         }
                         case PlayerEventPacket::Type::Exit:
                         {
-                            clearPlayer(player_it->second.get());
-                            players_.erase(player_it);
-                            events_socket_[player_it->first]->disconnect();
-                            connection_statuses_.erase(player_it->first);
-                            events_socket_.erase(player_it->first);
-
+                            clearPlayer(player);
                             ServerEventPacket server_packet(ServerEventPacket::Type::PlayerExit,
-                                                            0, player_it->first);
+                                                            0, conn.first);
                             sendEventToPlayers(server_packet);
+                            socket->disconnect();
+                            to_erase_.emplace_back(conn.first);
                             break;
                         }
                         default:
@@ -303,35 +329,41 @@ void Server::handleEventsFromPlayers()
                 }
                 else
                 {
-                    auto connection_status = connection_statuses_.find(socket.first);
-                    if (connection_status == connection_statuses_.end() ||
-                        connection_status->second == ConnectionStatus::Off)
+                    if (conn.second.status_ == ConnectionStatus::Off)
                     {
                         LOG.error("This player is not registered!");
                         return;
                     }
 
-                    if (connection_status->second == ConnectionStatus::On ||
+                    if (conn.second.status_ == ConnectionStatus::On ||
                         packet.getType() != PlayerEventPacket::Type::Connection)
                         return;
 
                     j3x::Parameters connection_parameters;
+                    auto event_socket = conn.second.events_socket_.get();
+                    conn.second.ping_elapsed_ = 0.0f;
+
                     if (packet.getIntData() == map_->getDigest())
                     {
                         LOG.info("Connection successful.");
-                        respawnPlayer(socket.first);
+                        respawnPlayer(conn.first);
                         connection_parameters["s"] = static_cast<int>(ConnectionStatus::On);
                         auto server_packet =
                                 ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters,
-                                                  socket.first);
-                        events_socket_[socket.first]->send(server_packet);
-                        connection_statuses_[socket.first] = ConnectionStatus::On;
+                                                  conn.first);
+
+                        event_socket->send(server_packet);
+                        conn.second.status_ = ConnectionStatus::On;
 
                         for (auto& cached_packet : cached_events_)
                         {
-                            if (cached_packet.isCachedForIp(socket.first))
-                                events_socket_[socket.first]->send(cached_packet);
+                            if (cached_packet.isCachedForIp(conn.first))
+                                event_socket->send(cached_packet);
                         }
+                        auto end_packet = ServerEventPacket(
+                                ServerEventPacket::Type::EndOfCachedEvents, {},
+                                conn.first);
+                        event_socket->send(end_packet);
                     }
                     else
                     {
@@ -342,10 +374,9 @@ void Server::handleEventsFromPlayers()
                         connection_parameters["reason"] = std::string("Maps does not match.");
                         auto server_packet =
                                 ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters,
-                                                  socket.first);
-                        // TODO - events_socket_ should be cleared after sending
-                        events_socket_[socket.first]->send(server_packet);
-                        connection_statuses_[socket.first] = ConnectionStatus::Off;
+                                                  conn.first);
+                        event_socket->send(server_packet);
+                        conn.second.status_ = ConnectionStatus::Off;
                     }
 
                 }
@@ -354,7 +385,7 @@ void Server::handleEventsFromPlayers()
             case sf::Socket::NotReady:
                 break;
             default:
-                LOG.error("Failed connection attempt from: " + sf::IpAddress(socket.first).toString());
+                LOG.error("Failed connection attempt from: " + sf::IpAddress(conn.first).toString());
                 break;
         }
     }
@@ -362,6 +393,9 @@ void Server::handleEventsFromPlayers()
 
 void Server::clearPlayer(Player* player)
 {
+    if (player == nullptr)
+        return;
+
     player->setDead();
     engine_->unregisterObj<DynamicObject>(player);
     unregisterWeapons(player);
@@ -382,9 +416,9 @@ void Server::sendEventToPlayers(ServerEventPacket& packet)
 {
     cached_events_.emplace_back(packet);
 
-    for (auto& socket : events_socket_)
+    for (auto& conn : connections_)
     {
-        socket.second->send(packet);
+        conn.second.events_socket_->send(packet);
     }
 }
 
@@ -496,11 +530,11 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
 
 sf::Uint32 Server::getPlayerIP(Player* player)
 {
-    for (const auto& p : players_)
+    for (const auto& conn : connections_)
     {
-        if (p.second.get() == player)
+        if (conn.second.player_.get() == player)
         {
-            return p.first;
+            return conn.first;
         }
     }
 
@@ -515,16 +549,16 @@ void Server::obstacleDestroyedEvent(Obstacle* obstacle)
 
 void Server::respawnPlayer(sf::Uint32 ip)
 {
-    players_[ip] = std::make_unique<Player>(starting_positions_.at(utils::num::getRandom(0, static_cast<int>(
+    connections_[ip].player_ = std::make_unique<Player>(starting_positions_.at(utils::num::getRandom(0, static_cast<int>(
             starting_positions_.size() - 1))));
-    initPlayer(players_.at(ip).get());
+    initPlayer(connections_[ip].player_.get());
 }
 
 void Server::respawn(const std::string& map_name)
 {
     Framework::respawn(map_name);
     cached_events_.clear();
-    cached_packets_.clear();
+    connections_.clear();
     starting_positions_.clear();
     map_->getList<NPC>().clear();
 
@@ -539,26 +573,36 @@ void Server::respawn(const std::string& map_name)
 
 void Server::drawAdditionalPlayers(graphics::Graphics& graphics)
 {
-    for (auto& obj : players_)
-        graphics.drawSorted(*obj.second);
+    for (auto& conn : connections_)
+    {
+        auto player = conn.second.player_.get();
+        if (player != nullptr)
+        {
+            graphics.drawSorted(*player);
+        }
+    }
 }
 
 void Server::drawAdditionalPlayersLighting()
 {
-    for (auto& player : players_)
-        lighting_->add(*player.second->getLightPoint());
+    for (auto& conn : connections_)
+    {
+        auto player = conn.second.player_.get();
+        if (player != nullptr)
+        {
+            lighting_->add(*player->getLightPoint());
+        }
+    }
 }
 
 void Server::startGame(const std::string& map_name)
 {
     Framework::startGame(map_name);
     this->respawn(map_name);
-    events_socket_.clear();
-    connection_statuses_.clear();
 
-    for (auto& player : players_)
-        unregisterCharacter(player.second.get());
-    players_.clear();
+    for (auto& conn : connections_)
+        unregisterCharacter(conn.second.player_.get());
+    connections_.clear();
 
     // bind sockets
     if (connection_listener_.listen(54000) != sf::Socket::Done)
@@ -578,15 +622,14 @@ void Server::startGame(const std::string& map_name)
 
 void Server::disconnect()
 {
-    for (auto& event : events_socket_)
-        event.second->setBlocking(true);
+    for (auto& conn : connections_)
+        conn.second.events_socket_->setBlocking(true);
     auto packet = ServerEventPacket(ServerEventPacket::Type::Exit, 0, 0);
     sendEventToPlayers(packet);
 
-    for (auto& event : events_socket_)
-        event.second->disconnect();
-    events_socket_.clear();
-    connection_statuses_.clear();
+    for (auto& conn : connections_)
+        conn.second.events_socket_->disconnect();
+    connections_.clear();
     data_receiver_socket_.unbind();
     data_sender_socket_.unbind();
     connection_listener_.close();
@@ -601,4 +644,31 @@ void Server::close()
 void Server::initSound(bool force)
 {
 
+}
+
+void Server::handleTimeouts(float time_elapsed)
+{
+    static constexpr auto MAX_CLIENT_TIMEOUT = 5.0f;
+
+    for (auto& conn : connections_)
+    {
+        conn.second.ping_elapsed_ += time_elapsed;
+        if (conn.second.ping_elapsed_ > MAX_CLIENT_TIMEOUT)
+        {
+            clearPlayer(conn.second.player_.get());
+            ServerEventPacket server_packet(ServerEventPacket::Type::PlayerExit,
+                                            0, conn.first);
+            sendEventToPlayers(server_packet);
+            conn.second.events_socket_->disconnect();
+            to_erase_.emplace_back(conn.first);
+        }
+    }
+}
+
+void Server::handleToErase()
+{
+    for (auto&& key : to_erase_)
+        connections_.erase(key);
+
+    to_erase_.clear();
 }

@@ -68,6 +68,8 @@ void UserInterface::initialize(graphics::Graphics& graphics)
         object_use_text_.setFillColor(sf::Color::White);
         npc_talk_text_.setFillColor(sf::Color::White);
     }
+
+    gui_->setFont(RM.getFont("default"));
     menu_ = std::make_unique<Menu>(framework_, this, gui_.get(), &theme_);
 }
 
@@ -161,7 +163,10 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
             case sf::Event::MouseWheelScrolled:
             {
                 if (framework_->getGameState() == Framework::GameState::Normal)
-                    handleScrolling(event.mouseWheelScroll.delta);
+                {
+                    if (framework_->isNormalGameplay())
+                        handleScrolling(event.mouseWheelScroll.delta);
+                }
                 break;
             }
             case sf::Event::KeyPressed:
@@ -375,9 +380,11 @@ void UserInterface::updatePlayerStates(float time_elapsed)
     if (stats != nullptr)
         right_hud_.update(framework_->getStats()->getLevel(), framework_->getStats()->getExp(), time_elapsed);
 
-    auto player = framework_->getPlayer();
-    if (player != nullptr)
-        right_hud_.setName(player->getName());
+    if (player_ != nullptr)
+    {
+        right_hud_.setName(player_->getName());
+        right_hud_.setCharacter(player_->getId());
+    }
 
     health_bar_.setMaxAmount(player_->getMaxHealth());
     health_bar_.update(player_->getHealth(), time_elapsed);
@@ -422,7 +429,8 @@ void UserInterface::spawnAcceptWindow(const std::string& text, const std::functi
                                                                                   CONF<int>(
                                                                                           "graphics/window_height_px")) /
                                                                           2.0f,
-                                                                          CONF<sf::Vector2f>("graphics/popup_size"));
+                                                                          CONF<sf::Vector2f>
+                                                                                  ("graphics/accept_window_size"));
     window->bindFunction(func);
     windows_.emplace_back(window);
 }
@@ -434,7 +442,7 @@ void UserInterface::closeWindow(Window* window)
     });
     framework_->spawnSound(RM.getSound("ui_click"));
 
-    if (framework_->getGameState() == Framework::GameState::Paused)
+    if (framework_->getGameState() == Framework::GameState::Paused && !full_hud_->isShow())
         framework_->setGameState(Framework::GameState::Normal);
 }
 

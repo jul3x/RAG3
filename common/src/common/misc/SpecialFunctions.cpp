@@ -531,3 +531,8 @@ void SpecialFunctions::spawnNPC(Functional* obj, const j3x::Obj& data, Character
         framework_->getJournal()->event<SpawnEntry<Character>>(npc);
     }
 }
+
+const SpecialFunctions::Container& SpecialFunctions::getFunctions() const
+{
+    return functions_;
+}

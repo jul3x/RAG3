@@ -6,6 +6,7 @@
 #define RAG3_EDITOR_INCLUDE_EDITOR_SPECIALFUNCTIONSWIDGET_H
 
 #include <common/objects/Special.h>
+#include <common/misc/SpecialFunctions.h>
 
 #include <editor/ChildWindow.h>
 
@@ -34,11 +35,12 @@ namespace editor {
         struct Function {
             unsigned int id;
             tgui::Grid::Ptr grid;
-            tgui::EditBox::Ptr function, data;
+            tgui::ComboBox::Ptr function;
+            tgui::EditBox::Ptr data;
             tgui::Button::Ptr clone, remove;
         };
 
-        void addNewFunction(const std::string& func = "", const std::string& data = "");
+        void addNewFunction(const std::string& func = "null", const std::string& data = "\"null\"");
         void clearFunctions();
         void removeFunction(unsigned int id);
 
@@ -52,6 +54,8 @@ namespace editor {
 
         std::list<Function> functions_;
         unsigned int id_to_get;
+
+        static SpecialFunctions special_functions_;
 
     };
 

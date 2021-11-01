@@ -9,6 +9,8 @@
 
 using namespace editor;
 
+SpecialFunctions SpecialFunctionsWidget::special_functions_{nullptr};
+
 SpecialFunctionsWidget::SpecialFunctionsWidget(tgui::Theme* theme) :
             functional_(nullptr),
             theme_(theme)
@@ -43,7 +45,7 @@ std::string SpecialFunctionsWidget::getFunctionsStr() const
 
     for (const auto& func : functions_)
     {
-        ret.emplace_back(std::string(func.function->getText()));
+        ret.emplace_back(std::string(func.function->getSelectedItem()));
     }
 
     std::string out;
@@ -104,9 +106,16 @@ void SpecialFunctionsWidget::addNewFunction(const std::string& func, const std::
     back.grid = tgui::Grid::create();
     back.grid->setAutoSize(true);
 
-    back.function = tgui::EditBox::create();
-    back.function->setText(func);
-    back.function->setRenderer(theme_->getRenderer("EditBox"));
+    back.function = tgui::ComboBox::create();
+    for (const auto& function : special_functions_.getFunctions())
+    {
+        back.function->addItem(function.first);
+    }
+
+    back.function->setSelectedItem(func);
+
+    back.function->setItemsToDisplay(15);
+    back.function->setRenderer(theme_->getRenderer("ComboBox"));
     back.function->setSize(CONF<float>("functions_width"), CONF<float>("text_box_height"));
     back.function->setTextSize(CONF<float>("label_text_size"));
     back.grid->addWidget(back.function, 0, 0);
@@ -114,7 +123,7 @@ void SpecialFunctionsWidget::addNewFunction(const std::string& func, const std::
     back.data = tgui::EditBox::create();
     back.data->setText(data);
     back.data->setRenderer(theme_->getRenderer("EditBox"));
-    back.data->setSize(CONF<float>("functions_width"), CONF<float>("text_box_height"));
+    back.data->setSize(CONF<float>("functions_width") * 1.5f, CONF<float>("text_box_height"));
     back.data->setTextSize(CONF<float>("label_text_size"));
     back.grid->addWidget(back.data, 0, 1);
 
@@ -135,7 +144,7 @@ void SpecialFunctionsWidget::addNewFunction(const std::string& func, const std::
 
     back.clone->setTextSize(CONF<float>("label_text_size"));
     back.clone->connect("mousepressed", [this, &back]() {
-        this->addNewFunction(back.function->getText(), back.data->getText());
+        this->addNewFunction(back.function->getSelectedItem(), back.data->getText());
     });
     back.grid->addWidget(back.clone, 0, 3);
 

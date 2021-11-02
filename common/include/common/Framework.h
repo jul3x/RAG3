@@ -113,6 +113,7 @@ public:
     virtual void talk();
     virtual void initParticles();
     virtual void initSound(bool force = false);
+    virtual void refreshColors();
 
     template<class T>
     void findAndDelete(T* ptr);

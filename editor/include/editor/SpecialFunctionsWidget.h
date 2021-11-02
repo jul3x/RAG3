@@ -17,7 +17,7 @@ namespace editor {
 
     class SpecialFunctionsWidget {
     public:
-        SpecialFunctionsWidget(tgui::Theme* theme);
+        SpecialFunctionsWidget(tgui::Theme* theme, ChildWindow* father);
 
         void setObjectContent(Functional* functional);
 
@@ -45,6 +45,7 @@ namespace editor {
         void removeFunction(unsigned int id);
 
         tgui::Theme* theme_;
+        ChildWindow* father_;
 
         Functional* functional_;
 

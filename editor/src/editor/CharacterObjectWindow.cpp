@@ -18,13 +18,14 @@ CharacterObjectWindow::CharacterObjectWindow(tgui::Gui* gui, tgui::Theme* theme)
                     CONF<sf::Vector2f>("character_window_size"),
                     "character_object_window"),
         character_(nullptr),
-        functions_(theme)
+        functions_(theme, this)
 {
     float padding = CONF<float>("items_padding");
 
     grid_ = tgui::Grid::create();
-    grid_->setPosition("50% - width/2", "30% - height/2");
-    grid_->setSize("90%", "40%");
+    grid_->setPosition("50% - width/2", "20");
+    grid_->setSize("90%", "100% - 20");
+    grid_->setAutoSize(true);
     child_->add(grid_);
 
     auto label = tgui::Label::create();
@@ -54,19 +55,19 @@ CharacterObjectWindow::CharacterObjectWindow(tgui::Gui* gui, tgui::Theme* theme)
     act_box_->setTextSize(CONF<float>("label_text_size"));
     grid_->addWidget(act_box_, 3, 0);
 
-    grid_->addWidget(functions_.getGrid(), 4, 0);
-    
     label = tgui::Label::create();
     label->setRenderer(theme_->getRenderer("Label"));
     label->setText("Conversation:");
     label->setTextSize(CONF<float>("label_text_size"));
-    grid_->addWidget(label, 5, 0);
+    grid_->addWidget(label, 4, 0);
 
     talk_box_ = tgui::TextBox::create();
     talk_box_->setRenderer(theme_->getRenderer("TextBox"));
-    talk_box_->setSize("90% - " + std::to_string(padding * 2.0f), "35%");
+    talk_box_->setSize("90% - " + std::to_string(padding * 2.0f), CONF<float>("text_box_height") * 5.0f);
     talk_box_->setTextSize(CONF<float>("label_text_size"));
-    grid_->addWidget(talk_box_, 6, 0);
+    grid_->addWidget(talk_box_, 5, 0);
+
+    grid_->addWidget(functions_.getGrid(), 6, 0);
 
     button_ = tgui::Button::create();
     button_->setRenderer(theme_->getRenderer("Button"));
@@ -79,6 +80,8 @@ CharacterObjectWindow::CharacterObjectWindow(tgui::Gui* gui, tgui::Theme* theme)
 
 void CharacterObjectWindow::setObjectContent(const std::string& category, Character* obj)
 {
+    this->setSize(CONF<sf::Vector2f>("popup_window_size"));
+
     character_ = obj;
     child_->setTitle(category + "/" + character_->getId());
     id_box_->setText(std::to_string(character_->getUniqueId()));
@@ -96,6 +99,7 @@ void CharacterObjectWindow::setObjectContent(const std::string& category, Charac
         talk_box_->setText(character_->getTalkScenarioStr());
     }
 
+    button_->disconnectAll();
     button_->connect("pressed", [this]() {
         this->character_->setActivationStr(this->act_box_->getText());
         this->character_->setFunctionsStr(this->functions_.getFunctionsStr());

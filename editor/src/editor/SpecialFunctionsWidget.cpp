@@ -11,8 +11,9 @@ using namespace editor;
 
 SpecialFunctions SpecialFunctionsWidget::special_functions_{nullptr};
 
-SpecialFunctionsWidget::SpecialFunctionsWidget(tgui::Theme* theme) :
+SpecialFunctionsWidget::SpecialFunctionsWidget(tgui::Theme* theme, ChildWindow* father) :
             functional_(nullptr),
+            father_(father),
             theme_(theme)
 {
     grid_ = tgui::Grid::create();
@@ -155,6 +156,8 @@ void SpecialFunctionsWidget::addNewFunction(const std::string& func, const std::
     back.grid->setWidgetPadding(1, 0, {padding, 0});
     back.grid->setWidgetPadding(2, 0, {padding, 0});
     back.grid->setWidgetPadding(3, 0, {padding, 0});
+
+    father_->setSize({father_->getSize().x, father_->getSize().y + CONF<float>("text_box_height")});
 }
 
 tgui::Grid::Ptr SpecialFunctionsWidget::getGrid() const
@@ -207,6 +210,7 @@ void SpecialFunctionsWidget::removeFunction(unsigned int id)
             function.grid->remove(function.clone);
             function.grid->remove(function.remove);
             grid_->remove(function.grid);
+            father_->setSize({father_->getSize().x, father_->getSize().y - CONF<float>("text_box_height")});
             return true;
         }
         return false;

@@ -16,11 +16,11 @@ SpecialObjectWindow::SpecialObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
                     CONF<sf::Vector2f>("popup_window_size"),
                     "special_object_window"),
         special_(nullptr),
-        functions_(theme)
+        functions_(theme, this)
 {
     grid_ = tgui::Grid::create();
     grid_->setPosition("50% - width/2", "20");
-    grid_->setSize("90%", "80%");
+    grid_->setSize("90%", "100% - 20");
     grid_->setAutoSize(true);
     child_->add(grid_);
 
@@ -76,6 +76,8 @@ SpecialObjectWindow::SpecialObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
 
 void SpecialObjectWindow::setObjectContent(const std::string& category, Special* obj)
 {
+    this->setSize(CONF<sf::Vector2f>("popup_window_size"));
+
     special_ = obj;
     child_->setTitle(category + "/" + special_->getId());
     id_box_->setText(std::to_string(special_->getUniqueId()));
@@ -83,6 +85,7 @@ void SpecialObjectWindow::setObjectContent(const std::string& category, Special*
     already_active_->setText(std::to_string(special_->isActive()));
     functions_.setObjectContent(obj);
 
+    button_->disconnectAll();
     button_->connect("pressed", [this]() {
         this->special_->setActivationStr(this->act_box_->getText());
 

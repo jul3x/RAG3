@@ -16,7 +16,7 @@ ChildWindow::ChildWindow(tgui::Gui* gui,
                          std::string title,
                          const sf::Vector2f& pos,
                          const sf::Vector2f& size,
-                         std::string id) :
+                         const std::string& id) :
         gui_(gui), theme_(theme), title_(std::move(title)), pos_(pos)
 {
     child_ = tgui::ChildWindow::create();
@@ -29,4 +29,17 @@ ChildWindow::ChildWindow(tgui::Gui* gui,
     child_->setTitleTextSize(child_->getTitleTextSize() * CONF<float>("user_interface_zoom"));
     child_->connect("closed", [](tgui::ChildWindow::Ptr c) { c->setVisible(false); });
     gui_->add(child_, id);
+}
+
+void ChildWindow::setSize(const sf::Vector2f& size)
+{
+    child_->setSize(size);
+    child_->setMinimumSize(size);
+}
+
+const sf::Vector2f& ChildWindow::getSize() const
+{
+    static sf::Vector2f size;
+    size = child_->getMinimumSize();
+    return size;
 }

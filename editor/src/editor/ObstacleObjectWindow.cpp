@@ -16,11 +16,12 @@ ObstacleObjectWindow::ObstacleObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
                     CONF<sf::Vector2f>("popup_window_size"),
                     "obstacle_object_window"),
         obstacle_(nullptr),
-        functions_(theme)
+        functions_(theme, this)
 {
     grid_ = tgui::Grid::create();
-    grid_->setPosition("50% - width/2", "40% - height/2");
-    grid_->setSize("90%", "50%");
+    grid_->setPosition("50% - width/2", "20");
+    grid_->setSize("90%", "100% - 20");
+    grid_->setAutoSize(false);
     child_->add(grid_);
 
     auto label = tgui::Label::create();
@@ -63,12 +64,15 @@ ObstacleObjectWindow::ObstacleObjectWindow(tgui::Gui* gui, tgui::Theme* theme) :
 
 void ObstacleObjectWindow::setObjectContent(const std::string& category, Obstacle* obj)
 {
+    this->setSize(CONF<sf::Vector2f>("popup_window_size"));
+
     obstacle_ = obj;
     child_->setTitle(category + "/" + obstacle_->getId());
     id_box_->setText(std::to_string(obstacle_->getUniqueId()));
     act_box_->setText(obstacle_->getActivationStr());
     functions_.setObjectContent(obj);
 
+    button_->disconnectAll();
     button_->connect("pressed", [this]() {
         this->obstacle_->setFunctionsStr(this->functions_.getFunctionsStr());
         this->obstacle_->setDatasStr(this->functions_.getDatasStr());

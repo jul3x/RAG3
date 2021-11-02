@@ -17,13 +17,15 @@ CharacterObjectWindow::CharacterObjectWindow(tgui::Gui* gui, tgui::Theme* theme)
                      CONF<sf::Vector2f>("character_window_size")) / 2.0f,
                     CONF<sf::Vector2f>("character_window_size"),
                     "character_object_window"),
-        character_(nullptr)
+        character_(nullptr),
+        functions_(theme, this)
 {
     float padding = CONF<float>("items_padding");
 
     grid_ = tgui::Grid::create();
-    grid_->setPosition("50% - width/2", "30% - height/2");
-    grid_->setSize("90%", "40%");
+    grid_->setPosition("50% - width/2", "20");
+    grid_->setSize("90%", "100% - 20");
+    grid_->setAutoSize(true);
     child_->add(grid_);
 
     auto label = tgui::Label::create();
@@ -45,82 +47,46 @@ CharacterObjectWindow::CharacterObjectWindow(tgui::Gui* gui, tgui::Theme* theme)
     label->setText("Activate:");
     label->setTextSize(CONF<float>("label_text_size"));
 
-    grid_->addWidget(label, 0, 1);
+    grid_->addWidget(label, 2, 0);
 
     act_box_ = tgui::EditBox::create();
     act_box_->setRenderer(theme_->getRenderer("EditBox"));
     act_box_->setSize("35%", CONF<float>("text_box_height"));
     act_box_->setTextSize(CONF<float>("label_text_size"));
-    grid_->addWidget(act_box_, 1, 1);
-
-    label = tgui::Label::create();
-    label->setRenderer(theme_->getRenderer("Label"));
-    label->setText("Function:");
-    label->setTextSize(CONF<float>("label_text_size"));
-
-    grid_->addWidget(label, 2, 0);
-
-    fun_box_ = tgui::TextBox::create();
-    fun_box_->setRenderer(theme_->getRenderer("TextBox"));
-    fun_box_->setSize("35%", "45%");
-    fun_box_->setTextSize(CONF<float>("label_text_size"));
-    grid_->addWidget(fun_box_, 3, 0);
-
-    label = tgui::Label::create();
-    label->setRenderer(theme_->getRenderer("Label"));
-    label->setText("Function data:");
-    label->setTextSize(CONF<float>("label_text_size"));
-
-    grid_->addWidget(label, 2, 1);
-
-    data_box_ = tgui::TextBox::create();
-    data_box_->setRenderer(theme_->getRenderer("TextBox"));
-    data_box_->setSize("35%", "45%");
-    data_box_->setTextSize(CONF<float>("label_text_size"));
-    grid_->addWidget(data_box_, 3, 1);
-
+    grid_->addWidget(act_box_, 3, 0);
 
     label = tgui::Label::create();
     label->setRenderer(theme_->getRenderer("Label"));
     label->setText("Conversation:");
     label->setTextSize(CONF<float>("label_text_size"));
-    label->setPosition("50% - width/2", "50%");
-    child_->add(label);
+    grid_->addWidget(label, 4, 0);
 
     talk_box_ = tgui::TextBox::create();
     talk_box_->setRenderer(theme_->getRenderer("TextBox"));
-    talk_box_->setSize("90% - " + std::to_string(padding * 2.0f), "35%");
-    talk_box_->setPosition("50% - width/2", "55%");
+    talk_box_->setSize("90% - " + std::to_string(padding * 2.0f), CONF<float>("text_box_height") * 5.0f);
     talk_box_->setTextSize(CONF<float>("label_text_size"));
-    child_->add(talk_box_);
+    grid_->addWidget(talk_box_, 5, 0);
+
+    grid_->addWidget(functions_.getGrid(), 6, 0);
 
     button_ = tgui::Button::create();
     button_->setRenderer(theme_->getRenderer("Button"));
     button_->setText("Save");
     button_->setTextSize(CONF<float>("label_text_size"));
     button_->setSize(CONF<sf::Vector2f>("button_size"));
-    button_->setPosition("50% - width/2", "100% - " + std::to_string(CONF<float>("button_relative_valign")));
 
-    child_->add(button_);
-
-    grid_->setWidgetPadding(0, 0, {padding, padding});
-    grid_->setWidgetPadding(1, 0, {padding, padding});
-    grid_->setWidgetPadding(0, 1, {padding, padding});
-    grid_->setWidgetPadding(1, 1, {padding, padding});
-    grid_->setWidgetPadding(2, 0, {padding, padding});
-    grid_->setWidgetPadding(3, 0, {padding, padding});
-    grid_->setWidgetPadding(2, 1, {padding, padding});
-    grid_->setWidgetPadding(3, 1, {padding, padding});
+    grid_->addWidget(button_, 7, 0);
 }
 
 void CharacterObjectWindow::setObjectContent(const std::string& category, Character* obj)
 {
+    this->setSize(CONF<sf::Vector2f>("popup_window_size"));
+
     character_ = obj;
     child_->setTitle(category + "/" + character_->getId());
     id_box_->setText(std::to_string(character_->getUniqueId()));
     act_box_->setText(character_->getActivationStr());
-    fun_box_->setText(character_->getFunctionsStr());
-    data_box_->setText(character_->getDatasStr());
+    functions_.setObjectContent(obj);
 
     if (!character_->isTalkable())
     {
@@ -133,10 +99,11 @@ void CharacterObjectWindow::setObjectContent(const std::string& category, Charac
         talk_box_->setText(character_->getTalkScenarioStr());
     }
 
+    button_->disconnectAll();
     button_->connect("pressed", [this]() {
         this->character_->setActivationStr(this->act_box_->getText());
-        this->character_->setFunctionsStr(this->fun_box_->getText());
-        this->character_->setDatasStr(this->data_box_->getText());
+        this->character_->setFunctionsStr(this->functions_.getFunctionsStr());
+        this->character_->setDatasStr(this->functions_.getDatasStr());
 
         if (this->character_->isTalkable())
             this->character_->setTalkScenarioStr(this->talk_box_->getText());
@@ -146,12 +113,12 @@ void CharacterObjectWindow::setObjectContent(const std::string& category, Charac
 
 bool CharacterObjectWindow::isDataFocused() const
 {
-    return data_box_->isFocused();
+    return functions_.isDataFocused();
 }
 
 void CharacterObjectWindow::addToData(const std::string& str)
 {
-    data_box_->setText(data_box_->getText() + str);
+    return functions_.addToData(str);
 }
 
 

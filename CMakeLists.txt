@@ -7,6 +7,14 @@ project(Rag3)
 
 set(CMAKE_CXX_STANDARD 17)
 
+if (CLANG_TIDY)
+    set(CMAKE_CXX_CLANG_TIDY
+        clang-tidy-12;
+        -header-filter=.;
+        -checks=*;
+        -warnings-as-errors=*;)
+endif()
+
 # Change this if you're working on Windows to your SFML and TGUI path.
 set(SFML_ROOT "C:/SFML-2.5.1")
 set(TGUI_ROOT "C:/TGUI-0.8")

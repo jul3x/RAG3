@@ -18,6 +18,8 @@ class Framework;
 class SpecialFunctions {
 public:
     using SpecialFunction = std::function<void(Functional*, const j3x::Obj&, Character*)>;
+    using Container = std::unordered_map<std::string, std::tuple<SpecialFunction, std::string, bool>>;
+
     explicit SpecialFunctions(Framework* framework);
 
     void mapStart(Functional* obj, const j3x::Obj& data, Character* user);
@@ -69,8 +71,10 @@ public:
     const std::string& bindTextToUse(const std::string& key) const;
     bool isUsableByNPC(const std::string& key) const;
 
+    const SpecialFunctions::Container& getFunctions() const;
+
 private:
-    std::unordered_map<std::string, std::tuple<SpecialFunction, std::string, bool>> functions_;
+    SpecialFunctions::Container functions_;
 
     Framework* framework_;
 

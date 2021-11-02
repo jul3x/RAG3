@@ -7,6 +7,7 @@
 
 #include <common/objects/Obstacle.h>
 
+#include <editor/SpecialFunctionsWidget.h>
 #include <editor/ChildWindow.h>
 
 
@@ -32,7 +33,7 @@ namespace editor {
         tgui::Button::Ptr button_;
 
         tgui::EditBox::Ptr id_box_, act_box_;
-        tgui::TextBox::Ptr fun_box_, data_box_;
+        SpecialFunctionsWidget functions_;
 
     };
 

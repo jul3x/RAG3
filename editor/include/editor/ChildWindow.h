@@ -19,7 +19,10 @@ namespace editor {
                     std::string title,
                     const sf::Vector2f& pos,
                     const sf::Vector2f& size,
-                    std::string id = "");
+                    const std::string& id = "");
+
+        void setSize(const sf::Vector2f& size);
+        const sf::Vector2f& getSize() const;
 
     protected:
         std::string title_;

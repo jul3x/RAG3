@@ -7,6 +7,7 @@
 
 #include <common/objects/Special.h>
 
+#include <editor/SpecialFunctionsWidget.h>
 #include <editor/ChildWindow.h>
 
 
@@ -27,12 +28,13 @@ namespace editor {
     private:
         Special* special_;
 
+        SpecialFunctionsWidget functions_;
+
         tgui::Grid::Ptr grid_;
 
         tgui::Button::Ptr button_;
 
         tgui::EditBox::Ptr id_box_, act_box_;
-        tgui::TextBox::Ptr fun_box_, data_box_;
         tgui::EditBox::Ptr already_active_;
 
     };

@@ -23,7 +23,7 @@ jobs:
     - uses: actions/checkout@v2
     
     - name: Install dependencies
-      run: sudo apt-get install libudev-dev libvorbis-dev libflac-dev libopenal-dev libfreetype6-dev libx11-dev libxrandr-dev libxcursor-dev
+      run: sudo apt-get update && sudo apt-get install libudev-dev libvorbis-dev libflac-dev libopenal-dev libfreetype6-dev libx11-dev libxrandr-dev libxcursor-dev
     
     - name: Install SFML
       run: git clone https://github.com/SFML/SFML --branch master && cd SFML && cmake . && make && sudo mv include/* /usr/include/ && sudo mv lib/* /usr/lib/

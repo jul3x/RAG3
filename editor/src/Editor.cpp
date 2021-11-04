@@ -482,3 +482,13 @@ void Editor::removeMarkedItems()
 
     grid_marked_items_.clear();
 }
+
+const sf::Vector2f& Editor::getMarkingStart() const
+{
+    return grid_mark_start_;
+}
+
+const sf::Vector2f& Editor::getMarkingStop() const
+{
+    return grid_mark_stop_;
+}

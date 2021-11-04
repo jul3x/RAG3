@@ -36,7 +36,8 @@ UserInterface::UserInterface() :
         obstacle_object_window_(&gui_, &gui_theme_),
         parameters_window_(&gui_, &gui_theme_),
         controls_window_(&gui_, &gui_theme_),
-        marked_item_(nullptr)
+        marked_item_(nullptr),
+        grid_mark_()
 {
     gui_.get("save_window")->setVisible(false);
     gui_.get("load_window")->setVisible(false);
@@ -57,6 +58,10 @@ UserInterface::UserInterface() :
     information_a_ = 0.0f;
 
     gui_.setFont(RM.getFont("editor"));
+
+    grid_mark_.setFillColor(sf::Color(0, 180, 60, 40));
+    grid_mark_.setOutlineColor(sf::Color::White);
+    grid_mark_.setOutlineThickness(CONF<float>("user_interface_zoom"));
 }
 
 void UserInterface::generateMenuBar(sf::RenderWindow& window)
@@ -368,12 +373,24 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
             }
         }
     }
+
+    if (is_grid_marking_)
+    {
+        grid_mark_.setPosition(Editor::get().getMarkingStart());
+        grid_mark_.setSize(crosshair_.getPosition() - Editor::get().getMarkingStart());
+    }
 }
 
 void UserInterface::draw(graphics::Graphics& graphics)
 {
     graphics.setCurrentView();
     graphics.draw(crosshair_);
+
+    if (is_grid_marking_)
+    {
+        graphics.draw(grid_mark_);
+    }
+
     graphics.setStaticView();
     graphics.draw(logo_);
     graphics.getWindow().draw(information_);
@@ -415,6 +432,7 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window, float 
             mouse_on_widget_ = true;
 
     if (!mouse_on_widget_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) &&
+        !sf::Keyboard::isKeyPressed(sf::Keyboard::M) &&
         Editor::get().getCurrentItem().first.find("tile") != std::string::npos)
     {
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -426,6 +444,8 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window, float 
             Editor::get().removeItem(crosshair_.getPosition());
         }
     }
+
+    is_grid_marking_ = sf::Keyboard::isKeyPressed(sf::Keyboard::M) && sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
     if (marked_item_ != nullptr)
     {

@@ -66,6 +66,8 @@ namespace editor {
         [[nodiscard]] AbstractDrawableObject* getMarkedItem();
         void markCurrentItem(const sf::Vector2f& pos);
 
+        const sf::Vector2f& getMarkingStart() const;
+        const sf::Vector2f& getMarkingStop() const;
         void setMarkingStart(const sf::Vector2f& pos);
         void setMarkingStop(const sf::Vector2f& pos);
         void setGridMarked(bool marked);

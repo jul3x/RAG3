@@ -404,13 +404,11 @@ UserInterface& Editor::getUI()
 void Editor::setMarkingStart(const sf::Vector2f& pos)
 {
     grid_mark_start_ = pos;
-    LOG.info("Start marking");
 }
 
 void Editor::setMarkingStop(const sf::Vector2f& pos)
 {
     grid_mark_stop_ = pos;
-    LOG.info("Stop marking");
 }
 
 void Editor::setGridMarked(bool marked)
@@ -444,7 +442,6 @@ void Editor::setGridMarked(bool marked)
         mark_items(map_->getList<Special>());
         mark_items(map_->getList<NPC>());
         mark_items(map_->getList<PlacedWeapon>());
-        LOG.error("Marked items");
     }
     else
     {
@@ -452,7 +449,6 @@ void Editor::setGridMarked(bool marked)
             items->setColor(255, 255, 255, 255);
 
         grid_marked_items_.clear();
-        LOG.error("Unmarked items");
     }
 }
 
@@ -491,4 +487,20 @@ const sf::Vector2f& Editor::getMarkingStart() const
 const sf::Vector2f& Editor::getMarkingStop() const
 {
     return grid_mark_stop_;
+}
+
+bool Editor::isGridMarked() const
+{
+    return is_grid_marked_;
+}
+
+void Editor::setGridMarkedPositions(const sf::Vector2f& pos_offset)
+{
+    if (!isGridMarked())
+        return;
+
+    for (auto ptr : grid_marked_items_)
+    {
+        ptr->setPosition(ptr->getPosition() + pos_offset);
+    }
 }

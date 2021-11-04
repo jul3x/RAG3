@@ -68,10 +68,12 @@ namespace editor {
 
         const sf::Vector2f& getMarkingStart() const;
         const sf::Vector2f& getMarkingStop() const;
+        bool isGridMarked() const;
         void setMarkingStart(const sf::Vector2f& pos);
         void setMarkingStop(const sf::Vector2f& pos);
         void setGridMarked(bool marked);
         void removeMarkedItems();
+        void setGridMarkedPositions(const sf::Vector2f& pos_offset);
 
         int readItemInfo(const sf::Vector2f& pos, bool read_uid = false);
         void placeItem(const sf::Vector2f& pos, float direction = 0.0f);
@@ -88,7 +90,6 @@ namespace editor {
         void saveConfig(const std::string& category, const std::string& id, const std::string& content);
 
         void spawnError(const std::string& err);
-
     private:
         Editor();
 

@@ -22,7 +22,7 @@ ControlsWindow::ControlsWindow(tgui::Gui* gui, tgui::Theme* theme) :
 
     grid_ = tgui::Grid::create();
     grid_->setPosition("50% - width/2", "20");
-    grid_->setSize("90%", "80%");
+    grid_->setSize("100%", "100% - 20");
     grid_->setAutoSize(true);
     child_->add(grid_);
 
@@ -30,13 +30,21 @@ ControlsWindow::ControlsWindow(tgui::Gui* gui, tgui::Theme* theme) :
     label->setRenderer(theme_->getRenderer("Label"));
     label->setText("E - Edit object's parameters\nQ - Clear cursor\n"
                    "F1 - Paste cursor's current coordinates\nF2 - Paste hovered object's UID\n"
-                   "ESC - Close all windows\nLEFT SHIFT - Align object to the grid\n"
-                   "LEFT ALT - Align object to the 0.25 grid size\nLEFT MOUSE BUTTON - Place object\n"
-                   "RIGHT MOUSE BUTTON - Remove object\nMIDDLE MOUSE BUTTON - Move object\n"
-                   "CTRL + MOUSE - Move camera\nMOUSE WHEEL - Zoom\nM + MOUSE - Mark objects");
+                   "ESC - Close all windows / deselect\nLSHIFT - Align object to the grid\n"
+                   "LALT - Align object to the 0.25 grid size");
     label->setTextSize(CONF<float>("label_text_size"));
     grid_->addWidget(label, 0, 0);
 
+    label = tgui::Label::create();
+    label->setRenderer(theme_->getRenderer("Label"));
+    label->setText("LMOUSE BUTTON - Place object\n"
+                   "RMOUSE BUTTON - Remove object\nMMOUSE BUTTON - Move object\n"
+                   "LCTRL + MOUSE - Move camera\nMOUSE WHEEL - Zoom\nM + MOUSE - Mark objects\n"
+                   "DELETE - Delete marked objects\nARROWS - Move marked objects");
+    label->setTextSize(CONF<float>("label_text_size"));
+    grid_->addWidget(label, 0, 1);
+
     float padding = CONF<float>("items_padding");
     grid_->setWidgetPadding(0, 0, {padding, padding});
+    grid_->setWidgetPadding(0, 1, {padding, padding});
 }

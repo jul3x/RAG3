@@ -414,6 +414,38 @@ void UserInterface::spawnError(const std::string& msg)
 
 inline void UserInterface::handleKeys()
 {
+    static constexpr auto frequency_constant = 10;
+    static auto timer = 0;
+
+    if (!Editor::get().isGridMarked())
+        return;
+
+    auto delta = sf::Vector2f();
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+    {
+        delta.x = -DecorationTile::SIZE_X_;
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+    {
+        delta.x = DecorationTile::SIZE_X_;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    {
+        delta.y = -DecorationTile::SIZE_Y_;
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+    {
+        delta.y = DecorationTile::SIZE_Y_;
+    }
+
+    if (timer % frequency_constant == 0)
+    {
+        Editor::get().setGridMarkedPositions(delta);
+        timer = 0;
+    }
+
+    ++timer;
 }
 
 inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window, float time_elapsed)

@@ -33,7 +33,7 @@ ControlsWindow::ControlsWindow(tgui::Gui* gui, tgui::Theme* theme) :
                    "ESC - Close all windows\nLEFT SHIFT - Align object to the grid\n"
                    "LEFT ALT - Align object to the 0.25 grid size\nLEFT MOUSE BUTTON - Place object\n"
                    "RIGHT MOUSE BUTTON - Remove object\nMIDDLE MOUSE BUTTON - Move object\n"
-                   "CTRL + MOUSE - Move camera\nMOUSE WHEEL - Zoom");
+                   "CTRL + MOUSE - Move camera\nMOUSE WHEEL - Zoom\nM + MOUSE - Mark objects");
     label->setTextSize(CONF<float>("label_text_size"));
     grid_->addWidget(label, 0, 0);
 

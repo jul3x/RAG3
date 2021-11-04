@@ -241,6 +241,8 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
             {
                 if (event.key.code == sf::Keyboard::E)
                 {
+                    Editor::get().setGridMarked(false);
+
                     if (!mouse_on_widget_)
                         Editor::get().readItemInfo(crosshair_.getPosition());
                 }
@@ -283,10 +285,17 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
                     gui_.get("obstacle_object_window")->setVisible(false);
                     gui_.get("parameters_window")->setVisible(false);
                     gui_.get("controls_window")->setVisible(false);
+                    Editor::get().setGridMarked(false);
+                }
+                else if (event.key.code == sf::Keyboard::Delete)
+                {
+                    Editor::get().removeMarkedItems();
+                    Editor::get().setGridMarked(false);
                 }
                 else if (event.key.code == sf::Keyboard::Q)
                 {
                     Editor::get().setCurrentItem("", "");
+                    Editor::get().setGridMarked(false);
                 }
             }
             case sf::Event::MouseButtonPressed:
@@ -305,18 +314,27 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
                 if (!mouse_on_widget_)
                 {
                     if (event.mouseButton.button == sf::Mouse::Left &&
+                        sf::Keyboard::isKeyPressed(sf::Keyboard::Key::M))
+                    {
+                        Editor::get().setGridMarked(false);
+                        Editor::get().setMarkingStart(crosshair_.getPosition());
+                    }
+                    else if (event.mouseButton.button == sf::Mouse::Left &&
                         !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl))
                     {
+                        Editor::get().setGridMarked(false);
                         if (Editor::get().getCurrentItem().first != "weapons")
                             Editor::get().placeItem(crosshair_.getPosition());
                     }
                     else if (event.mouseButton.button == sf::Mouse::Right &&
                              !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl))
                     {
+                        Editor::get().setGridMarked(false);
                         Editor::get().removeItem(crosshair_.getPosition());
                     }
                     else if (event.mouseButton.button == sf::Mouse::Middle)
                     {
+                        Editor::get().setGridMarked(false);
                         marked_item_ = Editor::get().getMarkedItem();
                     }
                 }
@@ -328,6 +346,12 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
                 if (event.mouseButton.button == sf::Mouse::Middle)
                 {
                     marked_item_ = nullptr;
+                }
+                else if (event.mouseButton.button == sf::Mouse::Left &&
+                         sf::Keyboard::isKeyPressed(sf::Keyboard::Key::M))
+                {
+                    Editor::get().setMarkingStop(crosshair_.getPosition());
+                    Editor::get().setGridMarked(true);
                 }
                 else if (event.mouseButton.button == sf::Mouse::Left &&
                          !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && !mouse_on_widget_)

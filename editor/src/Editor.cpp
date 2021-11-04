@@ -16,6 +16,7 @@ Editor::Editor() : grid_(CONF<int>("window_width_px"), CONF<int>("window_height_
 {
     engine_ = std::make_unique<Engine>();
     engine_->registerGame(this);
+    setGridMarked(false);
 }
 
 void Editor::initialize()
@@ -323,10 +324,11 @@ void Editor::saveConfig(const std::string& category, const std::string& id, cons
 void Editor::markCurrentItem(const sf::Vector2f& pos)
 {
     marked_item_ = nullptr;
-    auto clean = [](auto& list) {
+    auto clean = [this](auto& list) {
         for (auto& obj : list)
         {
-            obj->setColor(255, 255, 255, 255);
+            if (!grid_marked_items_.count(obj.get()))
+                obj->setColor(255, 255, 255, 255);
         }
     };
 
@@ -334,6 +336,9 @@ void Editor::markCurrentItem(const sf::Vector2f& pos)
         static auto mark_color = sf::Color(255, 0, 60, 180);
         if (ptr != nullptr)
         {
+            if (grid_marked_items_.count(ptr))
+                return;
+
             ptr->setColor(mark_color.r, mark_color.g, mark_color.b, mark_color.a);
 
             if (add_to_marked_item)
@@ -394,4 +399,86 @@ Map& Editor::getMap()
 UserInterface& Editor::getUI()
 {
     return *ui_;
+}
+
+void Editor::setMarkingStart(const sf::Vector2f& pos)
+{
+    grid_mark_start_ = pos;
+    LOG.info("Start marking");
+}
+
+void Editor::setMarkingStop(const sf::Vector2f& pos)
+{
+    grid_mark_stop_ = pos;
+    LOG.info("Stop marking");
+}
+
+void Editor::setGridMarked(bool marked)
+{
+    is_grid_marked_ = marked;
+
+    if (marked)
+    {
+        auto z_index = ui_->getZIndex();
+        auto grid_pos = sf::Vector2f(std::min(grid_mark_start_.x, grid_mark_stop_.x),
+                                     std::min(grid_mark_start_.y, grid_mark_stop_.y));
+        auto grid_size = sf::Vector2f(std::abs(grid_mark_start_.x - grid_mark_stop_.x),
+                                      std::abs(grid_mark_start_.y - grid_mark_stop_.y));
+
+        auto mark_items = [this, &grid_pos, &grid_size, z_index](auto& container) {
+            for (const auto& item : container)
+            {
+                const auto& pos = item->getPosition();
+                if (item->getZIndex() <= z_index && utils::geo::isPointInRectangle(pos, grid_pos, grid_size))
+                {
+                    grid_marked_items_.insert(item.get());
+                    item->setColor(0, 255, 60, 180);
+                }
+            }
+        };
+
+        mark_items(map_->getList<DecorationTile>());
+        mark_items(map_->getList<ObstacleTile>());
+        mark_items(map_->getList<Obstacle>());
+        mark_items(map_->getList<Decoration>());
+        mark_items(map_->getList<Special>());
+        mark_items(map_->getList<NPC>());
+        mark_items(map_->getList<PlacedWeapon>());
+        LOG.error("Marked items");
+    }
+    else
+    {
+        for (auto items : grid_marked_items_)
+            items->setColor(255, 255, 255, 255);
+
+        grid_marked_items_.clear();
+        LOG.error("Unmarked items");
+    }
+}
+
+void Editor::removeMarkedItems()
+{
+    utils::eraseIf<std::shared_ptr<DecorationTile>>(map_->getList<DecorationTile>(), [this](auto& item) {
+        return grid_marked_items_.count(item.get());
+    });
+    utils::eraseIf<std::shared_ptr<ObstacleTile>>(map_->getList<ObstacleTile>(), [this](auto& item) {
+        return grid_marked_items_.count(item.get());
+    });
+    utils::eraseIf<std::shared_ptr<Obstacle>>(map_->getList<Obstacle>(), [this](auto& item) {
+        return grid_marked_items_.count(item.get());
+    });
+    utils::eraseIf<std::shared_ptr<Decoration>>(map_->getList<Decoration>(), [this](auto& item) {
+        return grid_marked_items_.count(item.get());
+    });
+    utils::eraseIf<std::shared_ptr<Special>>(map_->getList<Special>(), [this](auto& item) {
+        return grid_marked_items_.count(item.get());
+    });
+    utils::eraseIf<std::shared_ptr<NPC>>(map_->getList<NPC>(), [this](auto& item) {
+        return grid_marked_items_.count(item.get());
+    });
+    utils::eraseIf<std::shared_ptr<PlacedWeapon>>(map_->getList<PlacedWeapon>(), [this](auto& item) {
+        return grid_marked_items_.count(item.get());
+    });
+
+    grid_marked_items_.clear();
 }

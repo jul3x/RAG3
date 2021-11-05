@@ -66,6 +66,15 @@ namespace editor {
         [[nodiscard]] AbstractDrawableObject* getMarkedItem();
         void markCurrentItem(const sf::Vector2f& pos);
 
+        const sf::Vector2f& getMarkingStart() const;
+        const sf::Vector2f& getMarkingStop() const;
+        bool isGridMarked() const;
+        void setMarkingStart(const sf::Vector2f& pos);
+        void setMarkingStop(const sf::Vector2f& pos);
+        void setGridMarked(bool marked);
+        void removeMarkedItems();
+        void setGridMarkedPositions(const sf::Vector2f& pos_offset);
+
         int readItemInfo(const sf::Vector2f& pos, bool read_uid = false);
         void placeItem(const sf::Vector2f& pos, float direction = 0.0f);
         void removeItem(const sf::Vector2f& pos);
@@ -81,7 +90,6 @@ namespace editor {
         void saveConfig(const std::string& category, const std::string& id, const std::string& content);
 
         void spawnError(const std::string& err);
-
     private:
         Editor();
 
@@ -98,6 +106,10 @@ namespace editor {
         int randomizing_value_;
         std::pair<std::string, std::string> current_item_;
         AbstractDrawableObject* marked_item_;
+
+        sf::Vector2f grid_mark_start_, grid_mark_stop_;
+        std::unordered_set<AbstractDrawableObject*> grid_marked_items_;
+        bool is_grid_marked_;
 
         bool is_lighting_on_;
 

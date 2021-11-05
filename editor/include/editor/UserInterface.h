@@ -98,10 +98,12 @@ namespace editor {
         float information_a_;
 
         bool mouse_on_widget_;
+        bool is_grid_marking_;
+        sf::RectangleShape grid_mark_;
+
         sf::Vector2f previous_mouse_world_pos_;
         std::deque<sf::Vector2f> mouse_camera_center_vectors_;
         AbstractDrawableObject* marked_item_;
-
         int max_z_index_;
 
     };

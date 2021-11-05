@@ -36,7 +36,8 @@ UserInterface::UserInterface() :
         obstacle_object_window_(&gui_, &gui_theme_),
         parameters_window_(&gui_, &gui_theme_),
         controls_window_(&gui_, &gui_theme_),
-        marked_item_(nullptr)
+        marked_item_(nullptr),
+        grid_mark_()
 {
     gui_.get("save_window")->setVisible(false);
     gui_.get("load_window")->setVisible(false);
@@ -57,6 +58,10 @@ UserInterface::UserInterface() :
     information_a_ = 0.0f;
 
     gui_.setFont(RM.getFont("editor"));
+
+    grid_mark_.setFillColor(sf::Color(0, 180, 60, 40));
+    grid_mark_.setOutlineColor(sf::Color::White);
+    grid_mark_.setOutlineThickness(CONF<float>("user_interface_zoom"));
 }
 
 void UserInterface::generateMenuBar(sf::RenderWindow& window)
@@ -241,6 +246,8 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
             {
                 if (event.key.code == sf::Keyboard::E)
                 {
+                    Editor::get().setGridMarked(false);
+
                     if (!mouse_on_widget_)
                         Editor::get().readItemInfo(crosshair_.getPosition());
                 }
@@ -283,10 +290,17 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
                     gui_.get("obstacle_object_window")->setVisible(false);
                     gui_.get("parameters_window")->setVisible(false);
                     gui_.get("controls_window")->setVisible(false);
+                    Editor::get().setGridMarked(false);
+                }
+                else if (event.key.code == sf::Keyboard::Delete)
+                {
+                    Editor::get().removeMarkedItems();
+                    Editor::get().setGridMarked(false);
                 }
                 else if (event.key.code == sf::Keyboard::Q)
                 {
                     Editor::get().setCurrentItem("", "");
+                    Editor::get().setGridMarked(false);
                 }
             }
             case sf::Event::MouseButtonPressed:
@@ -305,18 +319,27 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
                 if (!mouse_on_widget_)
                 {
                     if (event.mouseButton.button == sf::Mouse::Left &&
+                        sf::Keyboard::isKeyPressed(sf::Keyboard::Key::M))
+                    {
+                        Editor::get().setGridMarked(false);
+                        Editor::get().setMarkingStart(crosshair_.getPosition());
+                    }
+                    else if (event.mouseButton.button == sf::Mouse::Left &&
                         !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl))
                     {
+                        Editor::get().setGridMarked(false);
                         if (Editor::get().getCurrentItem().first != "weapons")
                             Editor::get().placeItem(crosshair_.getPosition());
                     }
                     else if (event.mouseButton.button == sf::Mouse::Right &&
                              !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl))
                     {
+                        Editor::get().setGridMarked(false);
                         Editor::get().removeItem(crosshair_.getPosition());
                     }
                     else if (event.mouseButton.button == sf::Mouse::Middle)
                     {
+                        Editor::get().setGridMarked(false);
                         marked_item_ = Editor::get().getMarkedItem();
                     }
                 }
@@ -328,6 +351,12 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
                 if (event.mouseButton.button == sf::Mouse::Middle)
                 {
                     marked_item_ = nullptr;
+                }
+                else if (event.mouseButton.button == sf::Mouse::Left &&
+                         sf::Keyboard::isKeyPressed(sf::Keyboard::Key::M))
+                {
+                    Editor::get().setMarkingStop(crosshair_.getPosition());
+                    Editor::get().setGridMarked(true);
                 }
                 else if (event.mouseButton.button == sf::Mouse::Left &&
                          !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && !mouse_on_widget_)
@@ -344,12 +373,24 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
             }
         }
     }
+
+    if (is_grid_marking_)
+    {
+        grid_mark_.setPosition(Editor::get().getMarkingStart());
+        grid_mark_.setSize(crosshair_.getPosition() - Editor::get().getMarkingStart());
+    }
 }
 
 void UserInterface::draw(graphics::Graphics& graphics)
 {
     graphics.setCurrentView();
     graphics.draw(crosshair_);
+
+    if (is_grid_marking_)
+    {
+        graphics.draw(grid_mark_);
+    }
+
     graphics.setStaticView();
     graphics.draw(logo_);
     graphics.getWindow().draw(information_);
@@ -373,6 +414,38 @@ void UserInterface::spawnError(const std::string& msg)
 
 inline void UserInterface::handleKeys()
 {
+    static constexpr auto frequency_constant = 10;
+    static auto timer = 0;
+
+    if (!Editor::get().isGridMarked())
+        return;
+
+    auto delta = sf::Vector2f();
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+    {
+        delta.x = -DecorationTile::SIZE_X_;
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+    {
+        delta.x = DecorationTile::SIZE_X_;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    {
+        delta.y = -DecorationTile::SIZE_Y_;
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+    {
+        delta.y = DecorationTile::SIZE_Y_;
+    }
+
+    if (timer % frequency_constant == 0)
+    {
+        Editor::get().setGridMarkedPositions(delta);
+        timer = 0;
+    }
+
+    ++timer;
 }
 
 inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window, float time_elapsed)
@@ -391,6 +464,7 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window, float 
             mouse_on_widget_ = true;
 
     if (!mouse_on_widget_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) &&
+        !sf::Keyboard::isKeyPressed(sf::Keyboard::M) &&
         Editor::get().getCurrentItem().first.find("tile") != std::string::npos)
     {
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -402,6 +476,8 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window, float 
             Editor::get().removeItem(crosshair_.getPosition());
         }
     }
+
+    is_grid_marking_ = sf::Keyboard::isKeyPressed(sf::Keyboard::M) && sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
     if (marked_item_ != nullptr)
     {

@@ -674,6 +674,7 @@ void SpecialFunctions::removeObstacle(Functional* obj, const j3x::Obj& data, Cha
     LOG.info("[SpecialFunction] Removing obstacle.");
     auto obstacle_id = j3x::getObj<int>(data);
     auto obstacle = framework_->getMap()->getObjectById<Obstacle>(obstacle_id);
+
     if (obstacle == nullptr)
     {
         LOG.error("Obstacle to remove not found");

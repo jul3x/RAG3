@@ -1248,7 +1248,7 @@ void Framework::respawn(const std::string& map_name)
     auto map = map_name.empty() ? map_->getMapName() : map_name;
     map_->loadMap(map);
     engine_->initializeCollisions(map_->getSize(), CONF<float>("collision_grid_size"));
-    agents_manager_ = std::make_unique<ai::AgentsManager>(&map_->getMapBlockage(), ai::AStar::EightNeighbours,
+    agents_manager_ = std::make_shared<ai::AgentsManager>(&map_->getMapBlockage(), ai::AStar::EightNeighbours,
                                                           CONF<float>("characters/max_time_without_path_recalc"),
                                                           CONF<float>("characters/min_pos_change_without_path_recalc"),
                                                           CONF<int>("characters/max_path_search_depth"));

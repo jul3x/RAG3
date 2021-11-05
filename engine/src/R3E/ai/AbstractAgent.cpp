@@ -10,13 +10,13 @@
 
 namespace r3e {
     namespace ai {
-        AbstractAgent::AbstractAgent() : manager_(nullptr)
+        AbstractAgent::AbstractAgent() : manager_()
         {
         }
 
-        void AbstractAgent::registerAgentsManager(AgentsManager* manager)
+        void AbstractAgent::registerAgentsManager(std::shared_ptr<AgentsManager> manager)
         {
-            manager_ = manager;
+            manager_ = std::move(manager);
             manager_->registerAgent(this);
 
             this->setNoGoal();

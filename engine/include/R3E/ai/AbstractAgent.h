@@ -6,6 +6,7 @@
 #define RAG3_ENGINE_INCLUDE_R3E_AI_ABSTRACTAGENT_H
 
 #include <chrono>
+#include <memory>
 
 #include <SFML/System/Vector2.hpp>
 
@@ -22,7 +23,7 @@ namespace r3e::ai {
 
         virtual ~AbstractAgent();
 
-        void registerAgentsManager(AgentsManager* manager);
+        void registerAgentsManager(std::shared_ptr<AgentsManager> manager);
 
         void setCurrentGoal(const ai::Goal& goal);
         void setNoGoal();
@@ -35,7 +36,7 @@ namespace r3e::ai {
         [[nodiscard]] sf::Vector2f generateVelocityForPath() const;
 
     private:
-        AgentsManager* manager_;
+        std::shared_ptr<AgentsManager> manager_;
 
         ai::Timestamp latest_wander_point_time_;
         sf::Vector2f wandering_direction_;

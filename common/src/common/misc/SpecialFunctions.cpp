@@ -50,6 +50,7 @@ SpecialFunctions::SpecialFunctions(Framework* framework) : framework_(framework)
     init("Explode", &SpecialFunctions::explode);
     init("RemoveDecoration", &SpecialFunctions::removeDecoration);
     init("RemoveSpecial", &SpecialFunctions::removeSpecial);
+    init("RemoveObstacle", &SpecialFunctions::removeObstacle);
     init("SpawnLava", &SpecialFunctions::spawnLava);
     init("SpawnExplosionEvent", &SpecialFunctions::spawnExplosionEvent);
     init("SpawnMiniLava", &SpecialFunctions::spawnMiniLava);
@@ -60,6 +61,7 @@ SpecialFunctions::SpecialFunctions(Framework* framework) : framework_(framework)
     init("SpawnAnimationEvent", &SpecialFunctions::spawnAnimationEvent, "", true);
     init("SpawnSound", &SpecialFunctions::spawnSound, "", true);
     init("SpawnNPC", &SpecialFunctions::spawnNPC, "", false);
+    init("SpawnDebris", &SpecialFunctions::spawnDebris);
     init("null", &SpecialFunctions::nullFunc, "", true);
     init("Deactivate", &SpecialFunctions::deactivate, "", true);
     init("Destroy", &SpecialFunctions::destroy, "", true);
@@ -556,4 +558,19 @@ void SpecialFunctions::spawnNPC(Functional* obj, const j3x::Obj& data, Character
 const SpecialFunctions::Container& SpecialFunctions::getFunctions() const
 {
     return functions_;
+}
+
+void SpecialFunctions::spawnDebris(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Spawning debris.");
+    auto pos = j3x::getObj<sf::Vector2f>(data);
+    framework_->spawnDecoration(pos, "destroyed_wall_" + std::to_string(utils::num::getRandom(1, 3)));
+}
+
+void SpecialFunctions::removeObstacle(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Removing obstacle.");
+    auto obstacle_id = j3x::getObj<int>(data);
+    auto obstacle = framework_->getMap()->getObjectById<Obstacle>(obstacle_id);
+    obstacle->deactivate();
 }

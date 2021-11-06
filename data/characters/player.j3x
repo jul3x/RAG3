@@ -29,3 +29,5 @@ bool is_talkable=false
 string light_point="const"
 
 bool show_health_bar=false
+
+bool can_avoid_fluid = true

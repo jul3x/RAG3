@@ -10,7 +10,7 @@
 
 namespace r3e {
     namespace ai {
-        AbstractAgent::AbstractAgent() : manager_()
+        AbstractAgent::AbstractAgent() : manager_(), can_avoid_specials_(true)
         {
         }
 
@@ -80,6 +80,16 @@ namespace r3e {
             sf::Vector2f point = utils::geo::getNearestForwardPointToPath(pos, path);
 
             return utils::geo::getNormalized(point - pos);
+        }
+
+        void AbstractAgent::setCanAvoidSpecials(bool can)
+        {
+            can_avoid_specials_ = can;
+        }
+
+        bool AbstractAgent::canAvoidSpecials() const
+        {
+            return can_avoid_specials_;
         }
 
     } // namespace ai

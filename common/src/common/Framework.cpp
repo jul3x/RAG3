@@ -192,6 +192,7 @@ void Framework::updateMapObjects(float time_elapsed)
                 this->getJournal()->event<DestroySpecial>(it->get());
             auto next_it = std::next(it);
             engine_->unregisterObj<HoveringObject>(it->get());
+            Map::markFluid(map_->getMapBlockage().blockage_, (*it)->getPosition(), (*it)->getId(), false);
 
             specials.erase(it);
             it = next_it;
@@ -814,6 +815,8 @@ Special* Framework::spawnNewSpecial(const std::string& id, int u_id,
     registerLight(ptr);
     registerFunctions(ptr);
 
+    Map::markFluid(map_->getMapBlockage().blockage_, pos, id, true);
+
     return ptr;
 }
 
@@ -896,6 +899,7 @@ void Framework::findAndDelete<Special>(Special* ptr)
         if (it->get() == ptr)
         {
             engine_->unregisterObj<HoveringObject>(ptr);
+            Map::markFluid(map_->getMapBlockage().blockage_, ptr->getPosition(), ptr->getId(), false);
             specials.erase((++it).base());
             return;
         }
@@ -1259,6 +1263,7 @@ void Framework::respawn(const std::string& map_name)
     desired_explosions_.clear();
     destruction_systems_.clear();
 
+//    debug_map_blockage_ = std::make_unique<DebugMapBlockage>(&map_->getMapBlockage());
     initObstacles();
     initDecorations();
 

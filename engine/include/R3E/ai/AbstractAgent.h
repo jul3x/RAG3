@@ -25,6 +25,7 @@ namespace r3e::ai {
 
         void registerAgentsManager(std::shared_ptr<AgentsManager> manager);
 
+        void setCanAvoidSpecials(bool can);
         void setCurrentGoal(const ai::Goal& goal);
         void setNoGoal();
 
@@ -32,6 +33,7 @@ namespace r3e::ai {
         [[nodiscard]] const ai::Goal& getCurrentGoal() const;
         [[nodiscard]] virtual const sf::Vector2f& getStartPosition() const = 0;
         [[nodiscard]] const ai::Path& getPath() const;
+        [[nodiscard]] bool canAvoidSpecials() const;
 
         [[nodiscard]] sf::Vector2f generateVelocityForPath() const;
 
@@ -40,6 +42,7 @@ namespace r3e::ai {
 
         ai::Timestamp latest_wander_point_time_;
         sf::Vector2f wandering_direction_;
+        bool can_avoid_specials_;
 
     };
 

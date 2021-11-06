@@ -68,6 +68,7 @@ public:
     void setMapName(const std::string& map);
 
     static void markBlocked(ai::Grid& blocked, const sf::Vector2f& pos, const sf::Vector2f& size, float value);
+    static void markFluid(ai::Grid& blocked, const sf::Vector2f& pos, const std::string& name, bool is_fluid);
 
 private:
     template<class T>

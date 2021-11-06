@@ -48,18 +48,21 @@ namespace r3e::ai {
 
         static Path
         getSmoothedPath(const MapBlockage& map_blockage, const sf::Vector2f& start, const sf::Vector2f& goal,
-                        const NeighbourFunction& func, size_t limit = 1e12);
+                        const NeighbourFunction& func, size_t limit = 1e12, bool can_avoid_specials = true);
 
-        static NeighboursVec EightNeighbours(const Grid& grid, const sf::Vector2<size_t>& pos);
+        static NeighboursVec EightNeighbours(const Grid& grid, const sf::Vector2<size_t>& pos, bool can_avoid_specials);
 
-        static NeighboursVec FourNeighbours(const Grid& grid, const sf::Vector2<size_t>& pos);
+        static NeighboursVec FourNeighbours(const Grid& grid, const sf::Vector2<size_t>& pos, bool can_avoid_specials);
 
     private:
+        static bool isBlocked(float value, bool can_avoid_specials);
+
         static void getSmoothedPath_(Path& path);
 
         static std::vector<Node>
         getPath(const std::vector<std::vector<float>>& grid, const sf::Vector2<size_t>& start,
-                const sf::Vector2<size_t>& goal, const NeighbourFunction& func, size_t limit);
+                const sf::Vector2<size_t>& goal, const NeighbourFunction& func, size_t limit,
+                bool can_avoid_specials = true);
 
         static float heuristic(const Node& start, const Node& goal);
 

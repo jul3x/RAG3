@@ -55,7 +55,7 @@ namespace r3e {
                 auto& data = AgentsManager::getAgentData(agent);
                 std::get<0>(data) = ai::AStar::getSmoothedPath(*map_blockage_, agent->getStartPosition(),
                                                                std::get<1>(data), neighbour_function_,
-                                                               max_path_search_limit_);
+                                                               max_path_search_limit_, agent->canAvoidSpecials());
                 std::get<2>(data) = std::chrono::system_clock::now();
             }
             catch (const std::runtime_error& e)

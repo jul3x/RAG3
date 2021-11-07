@@ -1072,6 +1072,7 @@ Framework::spawnNewDestructionSystem(const sf::Vector2f& pos, float dir, const D
 
 void Framework::close()
 {
+    this->engine_->getAnimationEvents().clear();
     this->engine_->getGraphics().getWindow().close();
 }
 
@@ -1353,4 +1354,9 @@ void Framework::refreshColors()
             sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                          static_cast<float>(CONF<int>("graphics/window_height_px"))},
             sf::Color(j3x::get<int>(map_->getParams(), "lighting_color")));
+}
+
+Framework::~Framework()
+{
+    this->engine_->getAnimationEvents().clear();
 }

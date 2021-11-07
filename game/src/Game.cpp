@@ -327,6 +327,11 @@ void Game::cleanPlayerClone()
     if (player_clone_ != nullptr)
     {
         this->unregisterCharacter(player_clone_.get(), false);
+
+        for (auto& enemy : map_->getList<NPC>())
+        {
+            enemy->removeEnemy(player_clone_.get());
+        }
         player_clone_.reset();
     }
 }
@@ -460,7 +465,7 @@ void Game::setGameState(Framework::GameState state)
 
             // Needs to be done to avoid segfault
             this->cleanPlayerClone();
-            for (auto character : map_->getList<NPC>())
+            for (const auto& character : map_->getList<NPC>())
                 this->unregisterCharacter(character.get());
             map_->getList<NPC>().clear();
 

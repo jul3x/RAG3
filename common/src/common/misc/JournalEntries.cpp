@@ -246,3 +246,13 @@ void ObjectDeactivated::executeEntryReversal()
     auto new_ptr = father_->getUpdatedPtr(ptr_);
     new_ptr->activate();
 }
+
+ChangeMapParams::ChangeMapParams(Journal* father, j3x::Parameters* params) : JournalEntry(father), params_(*params)
+{
+}
+
+void ChangeMapParams::executeEntryReversal()
+{
+    auto data = j3x::List({params_["shader"], params_["background_color"], params_["lighting_color"]});
+    father_->getFramework()->getSpecialFunctions()->changeMapParams(nullptr, data, nullptr);
+}

@@ -112,6 +112,10 @@ void SpecialFunctions::changeMapParams(Functional* obj, const j3x::Obj& data, Ch
 {
     LOG.info("[SpecialFunction] Change map params.");
 
+    if (user != nullptr && framework_->getJournal() != nullptr)
+        framework_->getJournal()
+                  ->event<ChangeMapParams>(const_cast<j3x::Parameters*>(&framework_->getMap()->getParams()));
+
     auto& list = j3x::getObj<j3x::List>(data);
     auto& shader = j3x::getObj<std::string>(list, 0);
     auto& bg_color = j3x::getObj<int>(list, 1);

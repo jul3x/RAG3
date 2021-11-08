@@ -25,6 +25,7 @@ SpecialFunctions::SpecialFunctions(Framework* framework) : framework_(framework)
     };
 
     init("MapStart", &SpecialFunctions::mapStart, "Start new map");
+    init("ChangeMapParams", &SpecialFunctions::changeMapParams, "");
     init("MapEnd", &SpecialFunctions::mapEnd, "End this map");
     init("TurnLight", &SpecialFunctions::turnLight, "Press", true);
     init("PourWater", &SpecialFunctions::pourWater, "Pour water on yourself", true);
@@ -105,6 +106,25 @@ bool SpecialFunctions::isUsableByNPC(const std::string& key) const
 void SpecialFunctions::mapStart(Functional* obj, const j3x::Obj& data, Character* user)
 {
     // empty
+}
+
+void SpecialFunctions::changeMapParams(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Change map params.");
+
+    if (user != nullptr && framework_->getJournal() != nullptr)
+        framework_->getJournal()
+                  ->event<ChangeMapParams>(const_cast<j3x::Parameters*>(&framework_->getMap()->getParams()));
+
+    auto& list = j3x::getObj<j3x::List>(data);
+    auto& shader = j3x::getObj<std::string>(list, 0);
+    auto& bg_color = j3x::getObj<int>(list, 1);
+    auto& light_color = j3x::getObj<int>(list, 2);
+    j3x::Parameters new_parameters = {{"shader",           shader},
+                                      {"background_color", bg_color},
+                                      {"lighting_color",   light_color}};
+    framework_->getMap()->setParams(new_parameters);
+    framework_->refreshColors();
 }
 
 void SpecialFunctions::mapEnd(Functional* obj, const j3x::Obj& data, Character* user)
@@ -527,7 +547,8 @@ void SpecialFunctions::spawnNPC(Functional* obj, const j3x::Obj& data, Character
                                        RMGET<j3x::List>("characters", character, "default_datas"));
     npc->setPosition(pos);
 
-    if (framework_->getJournal() != nullptr) {
+    if (framework_->getJournal() != nullptr)
+    {
         framework_->getJournal()->event<SpawnEntry<Character>>(npc);
     }
 }

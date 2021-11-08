@@ -260,6 +260,17 @@ private:
 
 };
 
+class ChangeMapParams : public JournalEntry {
+public:
+    ChangeMapParams(Journal* father, j3x::Parameters* params);
+
+    void executeEntryReversal() override;
+
+private:
+    j3x::Parameters params_;
+
+};
+
 class ChangeOpenState : public JournalEntry {
 public:
     ChangeOpenState(Journal* father, Special* ptr);

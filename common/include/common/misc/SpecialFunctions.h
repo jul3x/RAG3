@@ -23,6 +23,7 @@ public:
     explicit SpecialFunctions(Framework* framework);
 
     void mapStart(Functional* obj, const j3x::Obj& data, Character* user);
+    void changeMapParams(Functional* obj, const j3x::Obj& data, Character* user);
     void mapEnd(Functional* obj, const j3x::Obj& data, Character* user);
 
     void payRespect(Functional* obj, const j3x::Obj& data, Character* user);

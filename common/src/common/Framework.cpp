@@ -1252,11 +1252,7 @@ void Framework::respawn(const std::string& map_name)
                                                           CONF<float>("characters/max_time_without_path_recalc"),
                                                           CONF<float>("characters/min_pos_change_without_path_recalc"),
                                                           CONF<int>("characters/max_path_search_depth"));
-    engine_->getGraphics().setBgColor(sf::Color(j3x::get<int>(map_->getParams(), "background_color")));
-    lighting_ = std::make_unique<graphics::Lighting>(
-            sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
-                         static_cast<float>(CONF<int>("graphics/window_height_px"))},
-            sf::Color(j3x::get<int>(map_->getParams(), "lighting_color")));
+    this->refreshColors();
     fire_.clear();
     bullets_.clear();
     explosions_.clear();
@@ -1343,4 +1339,13 @@ void Framework::initSound(bool force)
 bool Framework::isNormalGameplay()
 {
     return getPlayer() != nullptr && getPlayer()->getId() == "player";
+}
+
+void Framework::refreshColors()
+{
+    engine_->getGraphics().setBgColor(sf::Color(j3x::get<int>(map_->getParams(), "background_color")));
+    lighting_ = std::make_unique<graphics::Lighting>(
+            sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
+                         static_cast<float>(CONF<int>("graphics/window_height_px"))},
+            sf::Color(j3x::get<int>(map_->getParams(), "lighting_color")));
 }

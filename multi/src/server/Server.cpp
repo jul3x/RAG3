@@ -112,7 +112,7 @@ void Server::checkAwaitingConnections()
             if (connections_.count(ip) && connections_[ip].status_ != ConnectionStatus::Off)
                 return;
 
-            auto [new_connection, placeholder] = connections_.emplace(ip, PlayerConnection());
+            auto[new_connection, placeholder] = connections_.emplace(ip, PlayerConnection());
 
             new_connection->second.events_socket_ = client;
 
@@ -549,8 +549,9 @@ void Server::obstacleDestroyedEvent(Obstacle* obstacle)
 
 void Server::respawnPlayer(sf::Uint32 ip)
 {
-    connections_[ip].player_ = std::make_unique<Player>(starting_positions_.at(utils::num::getRandom(0, static_cast<int>(
-            starting_positions_.size() - 1))));
+    connections_[ip].player_ =
+            std::make_unique<Player>(starting_positions_.at(utils::num::getRandom(0, static_cast<int>(
+                    starting_positions_.size() - 1))));
     initPlayer(connections_[ip].player_.get());
 }
 
@@ -641,11 +642,6 @@ void Server::close()
     Framework::close();
 }
 
-void Server::initSound(bool force)
-{
-
-}
-
 void Server::handleTimeouts(float time_elapsed)
 {
     static constexpr auto MAX_CLIENT_TIMEOUT = 5.0f;
@@ -671,4 +667,8 @@ void Server::handleToErase()
         connections_.erase(key);
 
     to_erase_.clear();
+}
+
+void Server::preupdate(float time_elapsed)
+{
 }

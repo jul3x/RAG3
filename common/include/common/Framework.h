@@ -48,6 +48,7 @@ public:
     using AnimationSpawningFunction = std::function<void(const std::string&, const sf::Vector2f&, float, bool)>;
 
     Framework();
+    virtual ~Framework();
 
     // Engine methods
     void start();

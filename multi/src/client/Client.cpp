@@ -593,11 +593,6 @@ void Client::handleTimeout(float time_elapsed)
     }
 }
 
-bool Client::isNormalGameplay()
-{
-    return false;
-}
-
 void Client::respawnWithoutReload()
 {
     unregisterCharacter(player_.get());

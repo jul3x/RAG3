@@ -3,6 +3,8 @@
 #
 
 cmake_minimum_required(VERSION 3.8)
+project(Rag3Tests)
+
 set(CMAKE_CXX_STANDARD 17)
 
 # Download and unpack googletest at configure time
@@ -42,13 +44,17 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../cmake_modules" ${CMAKE_MODULE_PATH
 
 # Change this if you're working on Windows to your SFML path.
 set(SFML_ROOT "C:/SFML-2.5.1")
+set(TGUI_ROOT "C:/TGUI-0.8")
 
-find_package(SFML 2 REQUIRED COMPONENTS graphics window system audio)
+find_package(SFML 2 REQUIRED COMPONENTS graphics window system audio network)
+find_package(TGUI 0.8 REQUIRED)
 
 include_directories(../engine/include)
 include_directories(../common/include)
+include_directories(../editor/include)
 include_directories(../game/include)
-include_directories(${SFML_INCLUDE_DIR})
+include_directories(../multi/include)
+include_directories(${SFML_INCLUDE_DIR} ${TGUI_INCLUDE_DIR})
 
 set(EXECUTABLE_NAME "Rag3Test")
 set(J3X_TEST "J3xTest")
@@ -68,14 +74,18 @@ target_link_libraries(${EXECUTABLE_NAME} gtest
         ${SFML_GRAPHICS_LIBRARY}
         ${SFML_WINDOW_LIBRARY}
         ${SFML_SYSTEM_LIBRARY}
-        ${SFML_AUDIO_LIBRARY})
+        ${SFML_NETWORK_LIBRARY}
+        ${SFML_AUDIO_LIBRARY}
+        ${TGUI_LIBRARY})
 
 target_link_libraries(${J3X_TEST} stdc++fs)
 target_link_libraries(${J3X_TEST}
         ${SFML_GRAPHICS_LIBRARY}
         ${SFML_WINDOW_LIBRARY}
         ${SFML_SYSTEM_LIBRARY}
-        ${SFML_AUDIO_LIBRARY})
+        ${SFML_NETWORK_LIBRARY}
+        ${SFML_AUDIO_LIBRARY}
+        ${TGUI_LIBRARY})
 
 add_test(NAME ${EXECUTABLE_NAME} COMMAND ${EXECUTABLE_NAME})
 add_test(NAME ${J3X_TEST} COMMAND "src/engine/j3x/semantic_checker_test.sh")

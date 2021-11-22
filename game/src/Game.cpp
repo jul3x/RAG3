@@ -276,7 +276,7 @@ NPC* Game::spawnNewNPC(const std::string& id, int u_id, Functional::Activation a
     engine_->registerObj<DynamicObject>(ptr);
     registerLight(ptr);
 
-    ptr->registerAgentsManager(agents_manager_.get());
+    ptr->registerAgentsManager(agents_manager_);
     ptr->registerEnemy(player_.get());
 
     if (player_clone_ != nullptr)
@@ -306,7 +306,7 @@ NPC* Game::spawnNewPlayerClone(const std::string& weapon_id)
     engine_->registerObj<DynamicObject>(player_clone_.get());
     registerLight(player_clone_.get());
 
-    player_clone_->registerAgentsManager(agents_manager_.get());
+    player_clone_->registerAgentsManager(agents_manager_);
     player_clone_->registerMapBlockage(&map_->getMapBlockage());
 
     for (auto& enemy : map_->getList<NPC>())
@@ -458,6 +458,12 @@ void Game::setGameState(Framework::GameState state)
                 music_manager_->setPlaybackPitch(1.0f);
             }
 
+            // Needs to be done to avoid segfault
+            this->cleanPlayerClone();
+            for (auto character : map_->getList<NPC>())
+                this->unregisterCharacter(character.get());
+            map_->getList<NPC>().clear();
+
             break;
         case GameState::Paused:
             if (state_ != GameState::Paused)
@@ -582,7 +588,7 @@ void Game::initNPCs()
         character->clearEnemies();
         engine_->registerObj<DynamicObject>(character.get());
         registerLight(character.get());
-        character->registerAgentsManager(agents_manager_.get());
+        character->registerAgentsManager(agents_manager_);
         character->registerEnemy(player_.get());
         character->registerMapBlockage(&map_->getMapBlockage());
         registerFunctions(character.get());

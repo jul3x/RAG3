@@ -112,6 +112,22 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
                     j3x::getObj<int>(get_param("weapons_uid"), i)));
         }
 
+        specials.clear();
+        static const auto fluid_specials = std::set<std::string>({"lava", "mini_lava", "water", "mini_water"});
+        for (size_t i = 0; i < get_param("specials_id").size(); ++i)
+        {
+            const auto& name = j3x::getObj<std::string>(get_param("specials_id"), i);
+            const auto& pos = j3x::getObj<sf::Vector2f>(get_param("specials_pos"), i);
+            specials.emplace_back(std::make_shared<Special>(pos, name,
+                                                            j3x::getObj<std::string>(get_param("specials_activation"), i),
+                                                            j3x::getObj<j3x::List>(get_param("specials_funcs"), i),
+                                                            j3x::getObj<j3x::List>(get_param("specials_datas"), i),
+                                                            j3x::getObj<bool>(get_param("specials_is_active"), i),
+                                                            j3x::getObj<int>(get_param("specials_uid"), i)));
+
+            Map::markFluid(blocked, pos, name, true);
+        }
+
         obstacles.clear();
         for (size_t i = 0; i < get_param("obstacles_id").size(); ++i)
         {
@@ -140,19 +156,6 @@ std::tuple<Map::Data, Map::TileMap>& ResourceManager::getMap(const std::string& 
                     j3x::getObj<j3x::List>(get_param("characters_datas"), i),
                     j3x::getObj<int>(get_param("characters_uid"), i)));
             characters.back()->setTalkScenario(j3x::getObj<j3x::List>(get_param("characters_talks"), i));
-        }
-
-        specials.clear();
-        for (size_t i = 0; i < get_param("specials_id").size(); ++i)
-        {
-            specials.emplace_back(std::make_shared<Special>(
-                    j3x::getObj<sf::Vector2f>(get_param("specials_pos"), i),
-                    j3x::getObj<std::string>(get_param("specials_id"), i),
-                    j3x::getObj<std::string>(get_param("specials_activation"), i),
-                    j3x::getObj<j3x::List>(get_param("specials_funcs"), i),
-                    j3x::getObj<j3x::List>(get_param("specials_datas"), i),
-                    j3x::getObj<bool>(get_param("specials_is_active"), i),
-                    j3x::getObj<int>(get_param("specials_uid"), i)));
         }
     }
     catch (const std::out_of_range& e)

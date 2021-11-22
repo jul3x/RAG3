@@ -13,7 +13,6 @@ using namespace editor;
 int main()
 {
     LOG.setLogStatus(Logger::LogStatus::Full);
-
     CFG.initialize("../data/config/editor_config.j3x");
     CFG.appendConfig("../data/config/config.j3x", "");
 

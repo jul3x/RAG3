@@ -31,17 +31,17 @@ namespace r3e::ai {
         const ai::Path& getPath(const AbstractAgent* agent) const;
         const Goal& getCurrentGoal(const AbstractAgent* agent) const;
 
-        void setCurrentGoal(AbstractAgent* agent, const ai::Goal& new_goal);
-        void setNoGoal(AbstractAgent* agent);
+        void setCurrentGoal(const AbstractAgent* agent, const ai::Goal& new_goal);
+        void setNoGoal(const AbstractAgent* agent);
         void setMapBlockage(ai::MapBlockage* map_blockage);
 
-        void registerAgent(AbstractAgent* agent);
-        void deleteAgent(AbstractAgent* agent);
+        void registerAgent(const AbstractAgent* agent);
+        void deleteAgent(const AbstractAgent* agent);
 
 
     private:
-        inline std::tuple<ai::Path, ai::Goal, ai::Timestamp>& getAgentData(AbstractAgent* agent);
-        inline const std::tuple<ai::Path, ai::Goal, ai::Timestamp>& getAgentData(AbstractAgent* agent) const;
+        inline std::tuple<ai::Path, ai::Goal, ai::Timestamp>& getAgentData(const AbstractAgent* agent);
+        inline const std::tuple<ai::Path, ai::Goal, ai::Timestamp>& getAgentData(const AbstractAgent* agent) const;
         static inline bool isGoalValid(const Goal& goal);
 
         float max_time_without_ms_, min_threshold_goal_;
@@ -49,10 +49,10 @@ namespace r3e::ai {
         ai::MapBlockage* map_blockage_;
         ai::NeighbourFunction neighbour_function_;
 
-        std::unordered_map<AbstractAgent*, std::tuple<ai::Path, ai::Goal, ai::Timestamp>> agents_map_;
+        std::unordered_map<const AbstractAgent*, std::tuple<ai::Path, ai::Goal, ai::Timestamp>> agents_map_;
 
-        std::queue<AbstractAgent*> agents_to_update_;
-        std::unordered_set<AbstractAgent*> agents_to_update_set_;
+        std::queue<const AbstractAgent*> agents_to_update_;
+        std::unordered_set<const AbstractAgent*> agents_to_update_set_;
     };
 } // namespace r3e::ai
 

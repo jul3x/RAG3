@@ -50,6 +50,7 @@ SpecialFunctions::SpecialFunctions(Framework* framework) : framework_(framework)
     init("Explode", &SpecialFunctions::explode);
     init("RemoveDecoration", &SpecialFunctions::removeDecoration);
     init("RemoveSpecial", &SpecialFunctions::removeSpecial);
+    init("RemoveObstacle", &SpecialFunctions::removeObstacle);
     init("SpawnLava", &SpecialFunctions::spawnLava);
     init("SpawnExplosionEvent", &SpecialFunctions::spawnExplosionEvent);
     init("SpawnMiniLava", &SpecialFunctions::spawnMiniLava);
@@ -60,6 +61,7 @@ SpecialFunctions::SpecialFunctions(Framework* framework) : framework_(framework)
     init("SpawnAnimationEvent", &SpecialFunctions::spawnAnimationEvent, "", true);
     init("SpawnSound", &SpecialFunctions::spawnSound, "", true);
     init("SpawnNPC", &SpecialFunctions::spawnNPC, "", false);
+    init("SpawnDebris", &SpecialFunctions::spawnDebris);
     init("null", &SpecialFunctions::nullFunc, "", true);
     init("Deactivate", &SpecialFunctions::deactivate, "", true);
     init("Destroy", &SpecialFunctions::destroy, "", true);
@@ -137,6 +139,13 @@ void SpecialFunctions::openDoor(Functional* obj, const j3x::Obj& data, Character
 {
     LOG.info("[SpecialFunction] Open door.");
     auto door = framework_->getMap()->getObjectById<Obstacle>(j3x::getObj<int>(data));
+
+    if (door == nullptr)
+    {
+        LOG.error("Door to open not found");
+        return;
+    }
+
     float endurance = 0.0f;
     if (door->getCollisionArea().getType() == collision::Area::Type::None)
     {
@@ -171,6 +180,12 @@ void SpecialFunctions::changeOpenState(Functional* obj, const j3x::Obj& data, Ch
 
     auto special_obj = framework_->getMap()->getObjectById<Special>(obj->getUniqueId());
 
+    if (special_obj == nullptr)
+    {
+        LOG.error("Special object to change state not found");
+        return;
+    }
+
     if (special_obj->getAdditionalBooleanData())
     {
         special_obj->changeTexture(&RM.getTexture("specials/" + obj->getId()));
@@ -203,6 +218,12 @@ void SpecialFunctions::turnLight(Functional* obj, const j3x::Obj& data, Characte
     LOG.info("[SpecialFunction] Turn light.");
 
     auto light_obj = framework_->getMap()->getObjectById<Decoration>(j3x::getObj<int>(data));
+
+    if (light_obj == nullptr)
+    {
+        LOG.error("Light object to change state not found");
+        return;
+    }
 
     if (light_obj->getLightPoint() != nullptr)
     {
@@ -337,6 +358,13 @@ void SpecialFunctions::removeDecoration(Functional* obj, const j3x::Obj& data, C
     LOG.info("[SpecialFunction] Removing decoration.");
     auto decoration_id = j3x::getObj<int>(data);
     auto decoration = framework_->getMap()->getObjectById<Decoration>(decoration_id);
+
+    if (decoration == nullptr)
+    {
+        LOG.error("Decoration to remove not found");
+        return;
+    }
+
     decoration->deactivate();
 }
 
@@ -450,6 +478,11 @@ void SpecialFunctions::activateWeapon(Functional* obj, const j3x::Obj& data, Cha
     LOG.info("[SpecialFunction] Activating weapon.");
     auto weapon_id = j3x::getObj<int>(data);
     auto weapon = framework_->getMap()->getObjectById<PlacedWeapon>(weapon_id);
+    if (weapon == nullptr)
+    {
+        LOG.error("Weapon to activate not found");
+        return;
+    }
     weapon->setActive(!weapon->getActive());
 
     if (framework_->getJournal() != nullptr)
@@ -469,6 +502,13 @@ void SpecialFunctions::removeSpecial(Functional* obj, const j3x::Obj& data, Char
     LOG.info("[SpecialFunction] Removing special.");
     auto special_id = j3x::getObj<int>(data);
     auto special = framework_->getMap()->getObjectById<Special>(special_id);
+
+    if (special == nullptr)
+    {
+        LOG.error("Object to remove not found");
+        return;
+    }
+
     special->destroy();
 }
 
@@ -477,6 +517,11 @@ void SpecialFunctions::activateSpecial(Functional* obj, const j3x::Obj& data, Ch
     LOG.info("[SpecialFunction] Activating special.");
     auto special_id = j3x::getObj<int>(data);
     auto special = framework_->getMap()->getObjectById<Special>(special_id);
+    if (special == nullptr)
+    {
+        LOG.error("Special to activate not found");
+        return;
+    }
     special->activate();
 }
 
@@ -506,6 +551,13 @@ void SpecialFunctions::zoomTo(Functional* obj, const j3x::Obj& data, Character* 
     LOG.info("[SpecialFunction] Zooming to.");
 
     auto npc = framework_->getMap()->getObjectById<NPC>(j3x::getObj<int>(data));
+
+    if (npc == nullptr)
+    {
+        LOG.error("NPC to zoom to not found");
+        return;
+    }
+
     framework_->forceZoomTo(npc);
 }
 
@@ -556,4 +608,25 @@ void SpecialFunctions::spawnNPC(Functional* obj, const j3x::Obj& data, Character
 const SpecialFunctions::Container& SpecialFunctions::getFunctions() const
 {
     return functions_;
+}
+
+void SpecialFunctions::spawnDebris(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Spawning debris.");
+    auto pos = j3x::getObj<sf::Vector2f>(data);
+    framework_->spawnDecoration(pos, "destroyed_wall_" + std::to_string(utils::num::getRandom(1, 3)));
+}
+
+void SpecialFunctions::removeObstacle(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Removing obstacle.");
+    auto obstacle_id = j3x::getObj<int>(data);
+    auto obstacle = framework_->getMap()->getObjectById<Obstacle>(obstacle_id);
+    if (obstacle == nullptr)
+    {
+        LOG.error("Obstacle to remove not found");
+        return;
+    }
+
+    obstacle->deactivate();
 }

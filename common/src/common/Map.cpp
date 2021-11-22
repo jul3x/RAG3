@@ -454,3 +454,15 @@ const j3x::List& Map::getPreviousMapsAndCurrent() const
 
     return ret;
 }
+
+void Map::markFluid(ai::Grid& blocked, const sf::Vector2f& pos, const std::string& name, bool is_fluid)
+{
+    static const auto fluid_specials = std::set<std::string>({"lava", "mini_lava", "water", "mini_water"});
+
+    if (utils::contains(fluid_specials, name))
+    {
+        Map::markBlocked(blocked, pos + RMGET<sf::Vector2f>("specials", name, "collision_offset"),
+                         RMGET<sf::Vector2f>("specials", name, "collision_size"),
+                         is_fluid ? -1.0f : 0.0f);
+    }
+}

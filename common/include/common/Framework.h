@@ -188,7 +188,7 @@ protected:
     std::unique_ptr<Camera> camera_;
     std::unique_ptr<graphics::Lighting> lighting_;
     std::unique_ptr<UserInterface> ui_;
-    std::unique_ptr<ai::AgentsManager> agents_manager_;
+    std::shared_ptr<ai::AgentsManager> agents_manager_;
 
     std::unique_ptr<AbstractStats> stats_;
     std::unique_ptr<SpecialFunctions> special_functions_;

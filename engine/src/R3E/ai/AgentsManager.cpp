@@ -55,7 +55,7 @@ namespace r3e {
                 auto& data = AgentsManager::getAgentData(agent);
                 std::get<0>(data) = ai::AStar::getSmoothedPath(*map_blockage_, agent->getStartPosition(),
                                                                std::get<1>(data), neighbour_function_,
-                                                               max_path_search_limit_);
+                                                               max_path_search_limit_, agent->canAvoidSpecials());
                 std::get<2>(data) = std::chrono::system_clock::now();
             }
             catch (const std::runtime_error& e)
@@ -72,7 +72,7 @@ namespace r3e {
             return std::get<0>(this->getAgentData(const_cast<AbstractAgent*>(agent)));
         }
 
-        void AgentsManager::setCurrentGoal(AbstractAgent* agent, const ai::Goal& new_goal)
+        void AgentsManager::setCurrentGoal(const AbstractAgent* agent, const ai::Goal& new_goal)
         {
             if (!utils::num::isNearlyEqual(this->getCurrentGoal(agent), new_goal, min_threshold_goal_))
             {
@@ -86,7 +86,7 @@ namespace r3e {
             }
         }
 
-        void AgentsManager::setNoGoal(AbstractAgent* agent)
+        void AgentsManager::setNoGoal(const AbstractAgent* agent)
         {
             std::get<1>(this->getAgentData(agent)) = {ai::NO_GOAL_, ai::NO_GOAL_};
 
@@ -94,13 +94,13 @@ namespace r3e {
             std::get<0>(data) = {};
         }
 
-        void AgentsManager::registerAgent(AbstractAgent* agent)
+        void AgentsManager::registerAgent(const AbstractAgent* agent)
         {
             agents_map_.emplace(agent, std::tuple<ai::Path, ai::Goal, ai::Timestamp>());
             LOG.info("[AgentsManager] Agent registered!");
         }
 
-        void AgentsManager::deleteAgent(AbstractAgent* agent)
+        void AgentsManager::deleteAgent(const AbstractAgent* agent)
         {
             auto it = agents_map_.find(agent);
 
@@ -112,11 +112,11 @@ namespace r3e {
 
         const ai::Goal& AgentsManager::getCurrentGoal(const AbstractAgent* agent) const
         {
-            return std::get<1>(this->getAgentData(const_cast<AbstractAgent*>(agent)));
+            return std::get<1>(this->getAgentData(agent));
         }
 
         std::tuple<ai::Path, ai::Goal, ai::Timestamp>&
-        AgentsManager::getAgentData(AbstractAgent* agent)
+        AgentsManager::getAgentData(const AbstractAgent* agent)
         {
             auto it = agents_map_.find(agent);
 
@@ -126,7 +126,7 @@ namespace r3e {
         }
 
         const std::tuple<ai::Path, ai::Goal, ai::Timestamp>&
-        AgentsManager::getAgentData(AbstractAgent* agent) const
+        AgentsManager::getAgentData(const AbstractAgent* agent) const
         {
             auto it = agents_map_.find(agent);
 

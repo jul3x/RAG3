@@ -27,3 +27,5 @@ string light_point=""
 
 bool show_health_bar=false
 int enemy_kill_exp = 100
+
+bool can_avoid_fluid = true

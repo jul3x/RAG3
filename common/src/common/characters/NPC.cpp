@@ -31,18 +31,14 @@ NPC::NPC(const sf::Vector2f& position, const std::string& id,
          const j3x::List& datas, int u_id) :
         Character(position, id, activation, functions, datas, u_id)
 {
+    this->setCanAvoidSpecials(RMGET<bool>("characters", id, "can_avoid_fluid"));
+
     if (RMGET<std::string>("characters", id, "ai_type") == "Standard")
-    {
         ai_function_ = &NPC::standardAI;
-    }
     else if (RMGET<std::string>("characters", id, "ai_type") == "MeleeAttack")
-    {
         ai_function_ = &NPC::meleeAttackAI;
-    }
     else
-    {
         ai_function_ = &NPC::noneAI;
-    }
 
     // (sic!) - issues with LightPoints
     AbstractPhysicalObject::setPosition(position);

@@ -37,7 +37,7 @@ namespace r3e {
 
         ai::Path
         AStar::getSmoothedPath(const MapBlockage& map_blockage, const sf::Vector2f& start, const sf::Vector2f& goal,
-                               const NeighbourFunction& func, size_t limit)
+                               const NeighbourFunction& func, size_t limit, bool can_avoid_specials)
         {
             int start_x = std::round(start.x / map_blockage.scale_x_);
             int start_y = std::round(start.y / map_blockage.scale_y_);
@@ -60,7 +60,7 @@ namespace r3e {
             std::vector<ai::AStar::Node> path = ai::AStar::getPath(map_blockage.blockage_,
                                                                    sf::Vector2<size_t>(start_x, start_y),
                                                                    sf::Vector2<size_t>(goal_x, goal_y),
-                                                                   func, limit);
+                                                                   func, limit, can_avoid_specials);
             ai::Path ret;
 
             for (const auto& node : path)
@@ -107,7 +107,8 @@ namespace r3e {
 
         std::vector<AStar::Node>
         AStar::getPath(const std::vector<std::vector<float>>& grid, const sf::Vector2<size_t>& start,
-                       const sf::Vector2<size_t>& goal, const NeighbourFunction& func, size_t limit)
+                       const sf::Vector2<size_t>& goal, const NeighbourFunction& func, size_t limit,
+                       bool can_avoid_specials)
         {
             std::unordered_set<Node, NodeHash> closed_set;
             std::unordered_set<Node, NodeHash> open_set;
@@ -139,7 +140,7 @@ namespace r3e {
 
                 closed_set.insert(x);
 
-                auto neighbours = func(grid, sf::Vector2<size_t>(x.cord_.first, x.cord_.second));
+                auto neighbours = func(grid, sf::Vector2<size_t>(x.cord_.first, x.cord_.second), can_avoid_specials);
 
                 for (const auto& neigh : neighbours)
                 {
@@ -193,7 +194,7 @@ namespace r3e {
             return {};
         }
 
-        NeighboursVec AStar::EightNeighbours(const Grid& grid, const sf::Vector2<size_t>& pos)
+        NeighboursVec AStar::EightNeighbours(const Grid& grid, const sf::Vector2<size_t>& pos, bool can_avoid_specials)
         {
             static std::vector<sf::Vector2i> neighbours = {
                     {-1, 0},
@@ -218,7 +219,7 @@ namespace r3e {
                 if (cord_x < 0 || cord_x >= grid.size() || cord_y < 0 || cord_y >= grid.at(0).size())
                     continue;
 
-                if (grid[cord_x][cord_y])
+                if (isBlocked(grid[cord_x][cord_y], can_avoid_specials))
                     continue;
 
                 ret.emplace_back(cord_x, cord_y);
@@ -232,10 +233,11 @@ namespace r3e {
                 if (cord_x < 0 || cord_x >= grid.size() || cord_y < 0 || cord_y >= grid.at(0).size())
                     continue;
 
-                if (grid[cord_x][cord_y])
+                if (isBlocked(grid[cord_x][cord_y], can_avoid_specials))
                     continue;
 
-                if (grid[pos.x][cord_y] || grid[cord_x][pos.y])
+                if (isBlocked(grid[pos.x][cord_y], can_avoid_specials) ||
+                    isBlocked(grid[cord_x][pos.y], can_avoid_specials))
                     continue;
 
                 ret.emplace_back(cord_x, cord_y);
@@ -244,7 +246,7 @@ namespace r3e {
             return ret;
         }
 
-        NeighboursVec AStar::FourNeighbours(const Grid& grid, const sf::Vector2<size_t>& pos)
+        NeighboursVec AStar::FourNeighbours(const Grid& grid, const sf::Vector2<size_t>& pos, bool can_avoid_specials)
         {
             static std::vector<sf::Vector2i> neighbours = {
                     {-1, 0},
@@ -262,13 +264,18 @@ namespace r3e {
                 if (cord_x < 0 || cord_x >= grid.size() || cord_y < 0 || cord_y >= grid.at(0).size())
                     continue;
 
-                if (grid[cord_x][cord_y])
+                if (isBlocked(grid[cord_x][cord_y], can_avoid_specials))
                     continue;
 
                 ret.emplace_back(cord_x, cord_y);
             }
 
             return ret;
+        }
+
+        bool AStar::isBlocked(float value, bool can_avoid_specials)
+        {
+            return can_avoid_specials ? value != 0.0f : value > 0.0f;
         }
     } // namespace ai
 } // namespace r3e

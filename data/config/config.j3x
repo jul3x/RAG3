@@ -1,5 +1,5 @@
 // CHEATS
-bool god_mode = false
+bool god_mode = true
 bool no_clip_mode = false
 
 // COLLISION DETECTION SETTINGS

@@ -383,7 +383,7 @@ void Client::receiveData()
                 for (const auto& data : packet.getDatas())
                 {
                     Player* player;
-                    if (data.first == sf::IpAddress::LocalHost.toInteger())
+                    if (isMe(data.first))
                     {
                         player = player_.get();
                     }
@@ -440,7 +440,7 @@ void Client::receiveData()
 
     for (const auto& data : cached_datas_)
     {
-        if (data.first != sf::IpAddress::LocalHost.toInteger())
+        if (!isMe(data.first))
         {
             auto player = getPlayer(data.first);
 
@@ -452,7 +452,7 @@ void Client::receiveData()
 
 Player* Client::getPlayer(sf::Uint32 ip)
 {
-    if (ip == sf::IpAddress::LocalHost.toInteger())
+    if (isMe(ip))
         return player_.get();
 
     auto it = players_.find(ip);
@@ -602,4 +602,9 @@ void Client::respawnWithoutReload()
     initPlayer(player_.get());
     PlayerEventPacket player_packet(PlayerEventPacket::Type::Respawn, 0);
     events_socket_.send(player_packet);
+}
+
+bool Client::isMe(sf::Uint32 ip)
+{
+    return ip == global_ip_.toInteger() || ip == local_ip_.toInteger() || ip == sf::IpAddress::LocalHost.toInteger();
 }

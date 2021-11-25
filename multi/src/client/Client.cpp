@@ -32,7 +32,6 @@ void Client::initialize()
     engine_->registerUI(ui_.get());
 
     local_ip_ = sf::IpAddress::getLocalAddress();
-    global_ip_ = sf::IpAddress::getPublicAddress(sf::seconds(1.0f));
 }
 
 void Client::preupdate(float time_elapsed)
@@ -152,7 +151,7 @@ bool Client::establishConnection(const sf::IpAddress& ip)
 {
     unsigned short port = 54000;
 
-    auto ip_safe = utils::getSafeIP(ip, local_ip_, global_ip_);
+    auto ip_safe = utils::getSafeIP(ip, local_ip_);
     auto status = events_socket_.connect(ip, port);
     if (status != sf::Socket::Done)
     {
@@ -208,6 +207,7 @@ void Client::handleEventsFromServer()
                             case static_cast<int>(ConnectionStatus::InProgress):
                             {
                                 this->respawn(j3x::get<std::string>(params, "map"));
+                                ip_on_server_ = sf::IpAddress(static_cast<sf::Uint32>(j3x::get<int>(params, "ip")));
                                 setGameState(Framework::GameState::Menu);
                                 PlayerEventPacket player_packet(PlayerEventPacket::Type::Connection, map_->getDigest());
                                 events_socket_.send(player_packet);
@@ -367,7 +367,7 @@ void Client::receiveData()
     sf::IpAddress sender;
     unsigned short port;
     sf::Socket::Status status = data_receive_socket_.receive(packet, sender, port);
-    sender = utils::getSafeIP(sender, local_ip_, global_ip_);
+    sender = utils::getSafeIP(sender, local_ip_);
     switch (status)
     {
         case sf::Socket::Done:
@@ -606,5 +606,5 @@ void Client::respawnWithoutReload()
 
 bool Client::isMe(sf::Uint32 ip)
 {
-    return ip == global_ip_.toInteger() || ip == local_ip_.toInteger() || ip == sf::IpAddress::LocalHost.toInteger();
+    return ip == ip_on_server_.toInteger();
 }

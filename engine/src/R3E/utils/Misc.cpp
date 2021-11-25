@@ -484,9 +484,9 @@ namespace r3e::utils {
         }
     }
 
-    sf::IpAddress getSafeIP(const sf::IpAddress& ip, const sf::IpAddress& local, const sf::IpAddress& global)
+    sf::IpAddress getSafeIP(const sf::IpAddress& ip, const sf::IpAddress& local)
     {
-        if (ip == local || ip == global)
+        if (ip == local)
             return sf::IpAddress::LocalHost;
         return ip;
     }

@@ -26,7 +26,6 @@ void Server::initialize()
     engine_->registerUI(ui_.get());
 
     local_ip_ = sf::IpAddress::getLocalAddress();
-    global_ip_ = sf::IpAddress::getPublicAddress(sf::seconds(1.0f));
 }
 
 void Server::beforeUpdate(float time_elapsed)
@@ -100,7 +99,7 @@ void Server::checkAwaitingConnections()
     auto client = std::make_shared<sf::TcpSocket>();
     client->setBlocking(false);
     sf::Socket::Status status = connection_listener_.accept(*client);
-    auto ip = utils::getSafeIP(client->getRemoteAddress(), local_ip_, global_ip_).toInteger();
+    auto ip = utils::getSafeIP(client->getRemoteAddress(), local_ip_).toInteger();
 
     switch (status)
     {
@@ -132,6 +131,7 @@ void Server::checkAwaitingConnections()
 
             connection_parameters["s"] = static_cast<int>(ConnectionStatus::InProgress);
             connection_parameters["map"] = map_->getMapName();
+            connection_parameters["ip"] = static_cast<int>(ip);
             auto packet = ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters, ip);
             new_connection->second.events_socket_->send(packet);
 
@@ -172,7 +172,7 @@ void Server::handleMessagesFromPlayers()
             case sf::Socket::Done:
             {
                 //LOG.info("New data received from: " + sender.toString());
-                auto ip = utils::getSafeIP(sender, local_ip_, global_ip_).toInteger();
+                auto ip = utils::getSafeIP(sender, local_ip_).toInteger();
                 auto conn_it = connections_.find(ip);
 
                 if (conn_it != connections_.end() && conn_it->second.status_ == ConnectionStatus::On)

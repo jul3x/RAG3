@@ -578,7 +578,7 @@ void Client::disconnect()
 
 void Client::handleTimeout(float time_elapsed)
 {
-    static constexpr auto MAX_SERVER_TIMEOUT = 5.0f;
+    static constexpr auto MAX_SERVER_TIMEOUT = 2.5f;
 
     if (connection_status_ == ConnectionStatus::Off)
         return;

@@ -99,7 +99,7 @@ void Server::checkAwaitingConnections()
     auto client = std::make_shared<sf::TcpSocket>();
     client->setBlocking(false);
     sf::Socket::Status status = connection_listener_.accept(*client);
-    auto ip = utils::getSafeIP(client->getRemoteAddress(), local_ip_).toInteger();
+    auto ip = client->getRemoteAddress().toInteger();
 
     switch (status)
     {
@@ -156,13 +156,13 @@ void Server::checkAwaitingConnections()
 
 void Server::handleMessagesFromPlayers()
 {
-    PlayerInputPacket packet;
     sf::IpAddress sender;
     unsigned short port;
     bool all_messages = false;
 
     while (!all_messages)
     {
+        PlayerInputPacket packet;
         sf::Socket::Status status = data_receiver_socket_.receive(packet, sender, port);
 
         static constexpr auto max_ping = 400;
@@ -172,7 +172,7 @@ void Server::handleMessagesFromPlayers()
             case sf::Socket::Done:
             {
                 //LOG.info("New data received from: " + sender.toString());
-                auto ip = utils::getSafeIP(sender, local_ip_).toInteger();
+                auto ip = sender.toInteger();
                 auto conn_it = connections_.find(ip);
 
                 if (conn_it != connections_.end() && conn_it->second.status_ == ConnectionStatus::On)
@@ -212,6 +212,7 @@ void Server::handleMessagesFromPlayers()
 
         auto& data = cached_packet;
         auto player = conn.second.player_.get();
+
         if (player != nullptr)
         {
             UserInterface::applyMovement(player, data.getKeys());
@@ -295,6 +296,8 @@ void Server::handleEventsFromPlayers()
                         }
                         case PlayerEventPacket::Type::NameChange:
                         {
+                            conn.second.name_ = j3x::get<std::string>(packet.getParams(), "name");
+                            conn.second.character_ = j3x::get<std::string>(packet.getParams(), "texture");
                             ServerEventPacket server_packet(ServerEventPacket::Type::NameChange,
                                                             packet.getParams(),
                                                             conn.first);
@@ -309,6 +312,12 @@ void Server::handleEventsFromPlayers()
                             ServerEventPacket server_packet(ServerEventPacket::Type::PlayerRespawn,
                                                             0, conn.first);
                             sendEventToPlayers(server_packet);
+
+                            j3x::Parameters data = {{"name", conn.second.name_}, {"texture", conn.second.character_}};
+                            ServerEventPacket change_name_packet(ServerEventPacket::Type::NameChange,
+                                                                 data,
+                                                                 conn.first);
+                            sendEventToPlayers(change_name_packet);
                             break;
                         }
                         case PlayerEventPacket::Type::Exit:

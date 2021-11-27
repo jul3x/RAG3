@@ -29,6 +29,8 @@ struct PlayerConnection {
     std::unique_ptr<Player> player_;
     PlayerInputPacket cached_packet_;
     std::shared_ptr<sf::TcpSocket> events_socket_;
+    std::string name_;
+    std::string character_;
     float ping_elapsed_;
 };
 

@@ -638,7 +638,11 @@ void Server::disconnect()
     sendEventToPlayers(packet);
 
     for (auto& conn : connections_)
+    {
         conn.second.events_socket_->disconnect();
+        clearPlayer(conn.second.player_.get());
+    }
+
     connections_.clear();
     data_receiver_socket_.unbind();
     data_sender_socket_.unbind();

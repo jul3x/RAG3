@@ -52,4 +52,6 @@ void ClientUserInterface::spawnThought(Character* user, const std::string& text)
 
 void ClientUserInterface::spawnNoteWindow(const std::string& text, bool note_info)
 {
+    if (!note_info)
+        UserInterface::spawnNoteWindow(text, note_info);
 }

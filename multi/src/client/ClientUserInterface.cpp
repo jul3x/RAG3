@@ -45,3 +45,11 @@ void ClientUserInterface::openMenu()
     UserInterface::openMenu();
     client_->disconnect();
 }
+
+void ClientUserInterface::spawnThought(Character* user, const std::string& text)
+{
+}
+
+void ClientUserInterface::spawnNoteWindow(const std::string& text, bool note_info)
+{
+}

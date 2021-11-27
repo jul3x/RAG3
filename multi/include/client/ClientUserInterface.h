@@ -35,6 +35,10 @@ public:
 
     void initialize(graphics::Graphics& graphics) override;
     void openMenu() override;
+
+    void spawnThought(Character* user, const std::string& text) override;
+    void spawnNoteWindow(const std::string& text, bool note_info = true) override;
+
 private:
     Client* client_;
 

@@ -337,7 +337,8 @@ void Client::handleEventsFromServer()
                 connection_status_ = ConnectionStatus::Off;
             }
 
-            LOG.error("Failed TCP connection attempt from: " + server_ip_.toString());
+            LOG.error("[Client::handleEventsFromServer] Failed TCP connection attempt from: "
+                      + server_ip_.toString() + " [status: " + utils::toString(status) + "]");
             break;
     }
 }
@@ -438,7 +439,9 @@ void Client::receiveData()
         }
         default:
         {
-            LOG.error("Failed UDP connection attempt from: " + sender.toString());
+            LOG.error("[Client::receiveData] Failed UDP connection attempt from: "
+                      + sender.toString() + " [status: " + utils::toString(status) + "]");
+
             break;
         }
     }

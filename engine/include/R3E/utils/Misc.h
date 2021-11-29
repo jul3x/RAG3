@@ -12,6 +12,7 @@
 
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Network/IpAddress.hpp>
+#include <SFML/Network/Socket.hpp>
 
 #include <R3E/j3x/J3X.h>
 
@@ -73,6 +74,26 @@ namespace r3e::utils {
         out.precision(PRECISION);
         out << std::fixed << v;
         return out.str();
+    }
+
+    template<>
+    inline std::string toString<sf::Socket::Status>(sf::Socket::Status status)
+    {
+        switch (status)
+        {
+            case sf::Socket::Disconnected:
+                return "Disconnected";
+            case sf::Socket::Done:
+                return "Done";
+            case sf::Socket::Error:
+                return "Error";
+            case sf::Socket::NotReady:
+                return "NotReady";
+            case sf::Socket::Partial:
+                return "Partial";
+            default:
+                return "Unknown";
+        }
     }
 
     uint64_t timeSinceEpochMillisec();

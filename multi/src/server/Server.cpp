@@ -143,13 +143,8 @@ void Server::checkAwaitingConnections()
 //            LOG.info("No connection yet.");
             break;
         default:
-            LOG.error("Failed connection attempt from: " + sf::IpAddress(ip).toString());
-            break;
-        case sf::Socket::Partial:
-            break;
-        case sf::Socket::Disconnected:
-            break;
-        case sf::Socket::Error:
+            LOG.error("[Server::checkAwaitingConnections] Failed connection attempt from: "
+                      + sf::IpAddress(ip).toString() + " [status: " + utils::toString(status) + "]");
             break;
     }
 }
@@ -200,7 +195,8 @@ void Server::handleMessagesFromPlayers()
             default:
             {
                 all_messages = true;
-                LOG.error("Failed connection attempt from: " + sender.toString());
+                LOG.error("[Server::handleMessagesFromPlayer] Failed connection attempt from: "
+                          + sender.toString() + " [status: " + utils::toString(status) + "]");
                 break;
             }
         }
@@ -313,7 +309,8 @@ void Server::handleEventsFromPlayers()
                                                             0, conn.first);
                             sendEventToPlayers(server_packet);
 
-                            j3x::Parameters data = {{"name", conn.second.name_}, {"texture", conn.second.character_}};
+                            j3x::Parameters data = {{"name",    conn.second.name_},
+                                                    {"texture", conn.second.character_}};
                             ServerEventPacket change_name_packet(ServerEventPacket::Type::NameChange,
                                                                  data,
                                                                  conn.first);
@@ -394,7 +391,8 @@ void Server::handleEventsFromPlayers()
             case sf::Socket::NotReady:
                 break;
             default:
-                LOG.error("Failed connection attempt from: " + sf::IpAddress(conn.first).toString());
+                LOG.error("[Server::handleEventsFromPlayers] Failed connection attempt from: "
+                          + sf::IpAddress(conn.first).toString() + " [status: " + utils::toString(status) + "]");
                 break;
         }
     }

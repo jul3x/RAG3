@@ -398,6 +398,7 @@ void Client::receiveData()
                         player = getPlayer(data.first);
                         player->setRotation(data.second.rotation_);
                         player->setRotateTo(data.second.rotation_);
+                        player->setCurrentWeapon(data.second.current_weapon_);
                     }
 
                     if (data.second.current_special_id_ != -1)
@@ -410,7 +411,6 @@ void Client::receiveData()
                     player->setForcedVelocity(data.second.vel_);
                     player->setHealth(data.second.health_);
                     player->setGlobalState(data.second.state_);
-                    player->setCurrentWeapon(data.second.current_weapon_);
 
                     size_t i = 0;
                     for (auto state : data.second.weapon_state_)

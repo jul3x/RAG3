@@ -87,7 +87,7 @@ private:
     uint64_t last_received_packet_timestamp_;
     float server_ping_elapsed_;
 
-    sf::IpAddress local_ip_, ip_on_server_;
+    sf::IpAddress ip_on_server_;
 
 };
 

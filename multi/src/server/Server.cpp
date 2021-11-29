@@ -24,8 +24,6 @@ void Server::initialize()
     ui_ = std::make_unique<MinimalUserInterface>(this);
     ui_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
-
-    local_ip_ = sf::IpAddress::getLocalAddress();
 }
 
 void Server::beforeUpdate(float time_elapsed)

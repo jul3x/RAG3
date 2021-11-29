@@ -30,8 +30,6 @@ void Client::initialize()
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());
     engine_->registerUI(ui_.get());
-
-    local_ip_ = sf::IpAddress::getLocalAddress();
 }
 
 void Client::preupdate(float time_elapsed)

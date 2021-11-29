@@ -151,10 +151,12 @@ bool Client::establishConnection(const sf::IpAddress& ip)
 {
     unsigned short port = 54000;
 
-    auto status = events_socket_.connect(ip, port);
+    events_socket_.setBlocking(true);
+    auto status = events_socket_.connect(ip, port, sf::seconds(2.0f));
     if (status != sf::Socket::Done)
     {
-        LOG.error("[Client] Could not establish connection with host: " + ip.toString());
+        LOG.error("[Client] Could not establish connection with host: " + ip.toString()
+                  + " [status: " + utils::toString(status) + "]");
         return false;
     }
 

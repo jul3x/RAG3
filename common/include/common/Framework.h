@@ -101,7 +101,7 @@ public:
     virtual void spawnNull(Character* user, const std::string& name, const sf::Vector2f& pos, float dir);
     virtual Fire* spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir);
     virtual Bullet* spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir);
-    virtual Special* spawnSpecial(const sf::Vector2f& pos, const std::string& name);
+    virtual Special* spawnSpecial(const sf::Vector2f& pos, const std::string& name, int uid = -1);
     virtual Decoration* spawnDecoration(const sf::Vector2f& pos, const std::string& name);
 
     // UI functions
@@ -151,6 +151,7 @@ public:
     virtual void setRag3Time(float duration);
     virtual void forceZoomTo(AbstractPhysicalObject* obj);
     virtual void killPlayer(Player* player);
+    virtual void addToDestroyedSpecials(const std::string& id, const sf::Vector2f& pos);
 
     // State methods
     virtual void setGameState(Framework::GameState state);

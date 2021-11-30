@@ -34,6 +34,7 @@ void Server::beforeUpdate(float time_elapsed)
     handleEventsFromPlayers();
     handleTimeouts(time_elapsed);
     handleToErase();
+    handlePeriodicalSpecials();
 }
 
 void Server::afterUpdate(float time_elapsed)
@@ -680,4 +681,28 @@ void Server::handleToErase()
 
 void Server::preupdate(float time_elapsed)
 {
+}
+
+void Server::addToDestroyedSpecials(const std::string& id, const sf::Vector2f& pos)
+{
+    destroyed_specials_.emplace_back(id, pos, time_elapsed_);
+}
+
+void Server::handlePeriodicalSpecials()
+{
+    utils::eraseIf<PeriodicalSpecial>(destroyed_specials_, [this](auto& special) {
+        static const auto spawn_time = CONF<float>("periodical_spawn_time");
+
+        if (std::get<2>(special) + spawn_time < time_elapsed_)
+        {
+            auto obj = this->spawnSpecial(std::get<1>(special), std::get<0>(special));
+            ServerEventPacket server_packet(ServerEventPacket::Type::SpecialSpawn,
+                                            {{"uid", obj->getUniqueId()},
+                                             {"id",  std::get<0>(special)},
+                                             {"pos", std::get<1>(special)}}, 0);
+            sendEventToPlayers(server_packet);
+            return true;
+        }
+        return false;
+    });
 }

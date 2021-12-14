@@ -14,6 +14,7 @@
 class ServerEventPacket : public sf::Packet {
 public:
     enum class Type {
+        SpecialSpawn = 10,
         PlayerRespawn = 9,
         EndOfCachedEvents = 8,
         Connection = 7,

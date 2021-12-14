@@ -635,9 +635,9 @@ void Framework::spawnFadeInOut()
     ));
 }
 
-Special* Framework::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
+Special* Framework::spawnSpecial(const sf::Vector2f& pos, const std::string& name, int uid)
 {
-    return this->spawnNewSpecial(name, -1, pos, Functional::Activation::None, {}, {});
+    return this->spawnNewSpecial(name, uid, pos, Functional::Activation::None, {}, {});
 }
 
 void Framework::spawnShotEvent(const std::string& name, const sf::Vector2f& pos, float dir)
@@ -1366,4 +1366,9 @@ void Framework::refreshColors()
 Framework::~Framework()
 {
     this->engine_->getAnimationEvents().clear();
+}
+
+void Framework::addToDestroyedSpecials(const std::string& id, const sf::Vector2f& pos)
+{
+
 }

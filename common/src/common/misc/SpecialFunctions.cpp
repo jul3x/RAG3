@@ -468,7 +468,10 @@ void SpecialFunctions::deactivate(Functional* obj, const j3x::Obj& data, Charact
 void SpecialFunctions::destroy(Functional* obj, const j3x::Obj& data, Character* user)
 {
     LOG.info("[SpecialFunction] Destroying " + std::to_string(obj->getUniqueId()) + ".");
-    framework_->spawnEvent("dust", dynamic_cast<AbstractPhysicalObject*>(obj)->getPosition());
+
+    const auto& position = dynamic_cast<AbstractPhysicalObject*>(obj)->getPosition();
+    framework_->spawnEvent("dust", position);
+    framework_->addToDestroyedSpecials(obj->getId(), position);
     user->setCurrentSpecialObject(nullptr);
     obj->destroy();
 }

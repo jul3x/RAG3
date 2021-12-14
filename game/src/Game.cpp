@@ -232,9 +232,9 @@ void Game::spawnAchievement(const j3x::Parameters& params)
     );
 }
 
-Special* Game::spawnSpecial(const sf::Vector2f& pos, const std::string& name)
+Special* Game::spawnSpecial(const sf::Vector2f& pos, const std::string& name, int uid)
 {
-    auto ptr = Framework::spawnSpecial(pos, name);
+    auto ptr = Framework::spawnSpecial(pos, name, uid);
     journal_->event<SpawnEntry<Special>>(ptr);
     return ptr;
 }

@@ -55,7 +55,7 @@ public:
     // Spawn objects for journal
     Fire* spawnFire(Character* user, const std::string& name, const sf::Vector2f& pos, float dir) override;
     Bullet* spawnBullet(Character* user, const std::string& name, const sf::Vector2f& pos, float dir) override;
-    Special* spawnSpecial(const sf::Vector2f& pos, const std::string& name) override;
+    Special* spawnSpecial(const sf::Vector2f& pos, const std::string& name, int uid = -1) override;
     Decoration* spawnDecoration(const sf::Vector2f& pos, const std::string& name) override;
 
     // UI functions

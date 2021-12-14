@@ -273,6 +273,15 @@ void Client::handleEventsFromServer()
                         player->changePlayerTexture(j3x::get<std::string>(packet.getParams(), "texture"));
                         break;
                     }
+                    case ServerEventPacket::Type::SpecialSpawn:
+                    {
+                        const auto& pos = j3x::get<sf::Vector2f>(packet.getParams(), "pos");
+                        this->spawnSpecial(pos,
+                                           j3x::get<std::string>(packet.getParams(), "id"),
+                                           j3x::get<int>(packet.getParams(), "uid"));
+                        this->spawnEvent("dust", pos);
+                        break;
+                    }
                     case ServerEventPacket::Type::EndOfCachedEvents:
                     {
                         auto player = getPlayer(packet.getIP());

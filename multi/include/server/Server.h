@@ -45,7 +45,11 @@ public:
     void startGame(const std::string& map_name) override;
     void disconnect();
 
+    // Misc
+    void addToDestroyedSpecials(const std::string& id, const sf::Vector2f& pos) override;
+
 private:
+    using PeriodicalSpecial = std::tuple<std::string, sf::Vector2f, float>;
     static constexpr auto MAX_PLAYERS = 8;
 
     void preupdate(float time_elapsed) override;
@@ -76,6 +80,7 @@ private:
     std::vector<sf::Uint32> to_erase_;
 
     std::vector<sf::Vector2f> starting_positions_;
+    std::list<PeriodicalSpecial> destroyed_specials_;
 
     sf::TcpListener connection_listener_;
     sf::UdpSocket data_receiver_socket_;
@@ -83,6 +88,7 @@ private:
 
     float last_packet_timestamp_;
 
+    void handlePeriodicalSpecials();
 };
 
 #endif //RAG3_MULTI_INCLUDE_SERVER_H

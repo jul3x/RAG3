@@ -325,7 +325,7 @@ void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
 {
     auto mouse_pos = sf::Mouse::getPosition(graphics_window);
     auto mouse_world_pos = graphics_window.mapPixelToCoords(mouse_pos);
-    auto player_pos = player_->getPosition() - RMGET<sf::Vector2f>("characters", "player", "map_offset");
+    auto player_pos = player_->getPosition() - RMGET<sf::Vector2f>("characters", "henry", "map_offset");
     if (framework_->getGameState() == Framework::GameState::Normal &&
         utils::geo::circleCircle(mouse_world_pos, 0.0f, player_pos, CONF<float>("characters/crosshair_min_distance")))
     {
@@ -576,8 +576,8 @@ void UserInterface::applyMovement(Player* player, const std::unordered_set<UserI
         player->setRunning(false);
     }
 
-    float max_speed = player->isRunning() ? RMGET<float>("characters", "player", "max_running_speed") :
-                      RMGET<float>("characters", "player", "max_speed");
+    float max_speed = player->isRunning() ? RMGET<float>("characters", "henry", "max_running_speed") :
+                      RMGET<float>("characters", "henry", "max_speed");
 
     if (keys_pressed.count(UserInterface::Keys::Left))
     {

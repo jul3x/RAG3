@@ -77,6 +77,7 @@ public:
     void finishMap() override;
     void setRag3Time(float time_elapsed) override;
     void forceZoomTo(AbstractPhysicalObject* obj) override;
+    bool isMulti() const override;
 
 private:
     void beforeUpdate(float time_elapsed) override;

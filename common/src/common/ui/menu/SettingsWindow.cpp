@@ -404,16 +404,14 @@ CharacterSettingsWidget::CharacterSettingsWidget(tgui::Theme* theme, const std::
     grid_->setWidgetPadding(pictures_container_,
                             tgui::Padding{0, 0.1f * CONF<sf::Vector2f>("graphics/face_size").y, 0, 0});
 
-    for (const auto& character : RM.getListOfObjects(CONF<std::string>("paths/characters")))
+    for (const auto& character : CONF<j3x::List>("characters_to_play"))
     {
-        if (utils::contains(CONF<j3x::List>("forbidden_characters_to_play"), character))
-            continue;
-
-        possible_characters_.emplace_back(character);
-        pictures_[character] = tgui::Picture::create(RM.getTexture("characters/" + character + "_face"));
-        pictures_[character]->setSize(CONF<sf::Vector2f>("graphics/face_size"));
-        pictures_[character]->setVisible(false);
-        pictures_container_->add(pictures_[character]);
+        const auto& str = j3x::getObj<std::string>(character);
+        possible_characters_.emplace_back(str);
+        pictures_[str] = tgui::Picture::create(RM.getTexture("characters/" + str + "_face"));
+        pictures_[str]->setSize(CONF<sf::Vector2f>("graphics/face_size"));
+        pictures_[str]->setVisible(false);
+        pictures_container_->add(pictures_[str]);
     }
 
     current_character_ = possible_characters_.begin();
@@ -448,8 +446,12 @@ void CharacterSettingsWidget::updateValue(const j3x::Parameters& values)
     auto it = std::find(possible_characters_.begin(), possible_characters_.end(), character);
 
     if (it == possible_characters_.end())
-        throw std::runtime_error("[CharacterSettingsWidget::updateValue] Character " +
-                                 character + " is forbidden!");
+    {
+        LOG.error("[CharacterSettingsWidget::updateValue] Character " +
+                  character + " is forbidden!");
+        it = possible_characters_.begin();
+    }
+
     change(it);
 }
 
@@ -460,7 +462,7 @@ void CharacterSettingsWidget::change(std::vector<std::string>::iterator new_valu
     if (new_value >= possible_characters_.end())
         new_value = possible_characters_.begin();
 
-    character_->setText(utils::humanize(*new_value));
+    character_->setText(std::move(utils::humanize(*new_value)));
 
     for (auto& picture : pictures_)
         picture.second->setVisible(false);

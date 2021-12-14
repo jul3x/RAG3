@@ -797,3 +797,8 @@ void Game::initSound(bool force)
     if (force && CONF<bool>("sound/sound_on"))
         music_manager_->play();
 }
+
+bool Game::isMulti() const
+{
+    return false;
+}

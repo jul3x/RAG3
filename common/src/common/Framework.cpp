@@ -45,6 +45,9 @@ void Framework::initialize()
 
     this->initParticles();
     this->initSound(true);
+
+    if (!utils::contains(CONF<j3x::List>("characters_to_play"), CONF<std::string>("general/character")))
+        CFG.set("general/character", j3x::getObj<std::string>(CONF<j3x::List>("characters_to_play"), 0));
 }
 
 void Framework::beforeUpdate(float time_elapsed)
@@ -1351,7 +1354,7 @@ void Framework::initSound(bool force)
 
 bool Framework::isNormalGameplay()
 {
-    return getPlayer() != nullptr && getPlayer()->getId() == "player";
+    return getPlayer() != nullptr && (getPlayer()->getId() == "henry" || this->isMulti());
 }
 
 void Framework::refreshColors()
@@ -1371,4 +1374,9 @@ Framework::~Framework()
 void Framework::addToDestroyedSpecials(const std::string& id, const sf::Vector2f& pos)
 {
 
+}
+
+bool Framework::isMulti() const
+{
+    return true;
 }

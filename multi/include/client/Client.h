@@ -71,6 +71,7 @@ private:
     void sendInputs();
     void receiveData();
     Player* getPlayer(sf::Uint32 ip);
+    bool isMe(sf::Uint32 ip);
 
     std::unordered_map<sf::Uint32, std::unique_ptr<Player>> players_;
     std::unordered_map<sf::Uint32, PlayerData> cached_datas_;
@@ -86,7 +87,7 @@ private:
     uint64_t last_received_packet_timestamp_;
     float server_ping_elapsed_;
 
-    sf::IpAddress local_ip_, global_ip_;
+    sf::IpAddress ip_on_server_;
 
 };
 

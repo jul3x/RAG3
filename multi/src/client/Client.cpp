@@ -30,9 +30,6 @@ void Client::initialize()
     ui_->registerCamera(camera_.get());
     ui_->registerPlayer(player_.get());
     engine_->registerUI(ui_.get());
-
-    local_ip_ = sf::IpAddress::getLocalAddress();
-    global_ip_ = sf::IpAddress::getPublicAddress(sf::seconds(1.0f));
 }
 
 void Client::preupdate(float time_elapsed)
@@ -152,17 +149,18 @@ bool Client::establishConnection(const sf::IpAddress& ip)
 {
     unsigned short port = 54000;
 
-    auto ip_safe = utils::getSafeIP(ip, local_ip_, global_ip_);
-    auto status = events_socket_.connect(ip, port);
+    events_socket_.setBlocking(true);
+    auto status = events_socket_.connect(ip, port, sf::seconds(2.0f));
     if (status != sf::Socket::Done)
     {
-        LOG.error("[Client] Could not establish connection with host: " + ip_safe.toString());
+        LOG.error("[Client] Could not establish connection with host: " + ip.toString()
+                  + " [status: " + utils::toString(status) + "]");
         return false;
     }
 
     events_socket_.setBlocking(false);
-    LOG.info("[Client] Connection with host: " + ip_safe.toString() + " successful!");
-    server_ip_ = ip_safe;
+    LOG.info("[Client] Connection with host: " + ip.toString() + " successful!");
+    server_ip_ = ip;
 
     connection_status_ = ConnectionStatus::InProgress;
     server_ping_elapsed_ = 0.0f;
@@ -208,6 +206,7 @@ void Client::handleEventsFromServer()
                             case static_cast<int>(ConnectionStatus::InProgress):
                             {
                                 this->respawn(j3x::get<std::string>(params, "map"));
+                                ip_on_server_ = sf::IpAddress(static_cast<sf::Uint32>(j3x::get<int>(params, "ip")));
                                 setGameState(Framework::GameState::Menu);
                                 PlayerEventPacket player_packet(PlayerEventPacket::Type::Connection, map_->getDigest());
                                 events_socket_.send(player_packet);
@@ -304,6 +303,13 @@ void Client::handleEventsFromServer()
                                 players_.erase(it);
                             }
                         }
+                        else if (packet.getType() == ServerEventPacket::Type::PlayerRespawn) // we are respawning
+                        {
+                            unregisterCharacter(player_.get());
+                            player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
+                            ui_->registerPlayer(player_.get());
+                            initPlayer(player_.get());
+                        }
 
                         break;
                     }
@@ -331,7 +337,8 @@ void Client::handleEventsFromServer()
                 connection_status_ = ConnectionStatus::Off;
             }
 
-            LOG.error("Failed connection attempt from: " + server_ip_.toString());
+            LOG.error("[Client::handleEventsFromServer] Failed TCP connection attempt from: "
+                      + server_ip_.toString() + " [status: " + utils::toString(status) + "]");
             break;
     }
 }
@@ -367,7 +374,6 @@ void Client::receiveData()
     sf::IpAddress sender;
     unsigned short port;
     sf::Socket::Status status = data_receive_socket_.receive(packet, sender, port);
-    sender = utils::getSafeIP(sender, local_ip_, global_ip_);
     switch (status)
     {
         case sf::Socket::Done:
@@ -383,7 +389,7 @@ void Client::receiveData()
                 for (const auto& data : packet.getDatas())
                 {
                     Player* player;
-                    if (data.first == sf::IpAddress::LocalHost.toInteger())
+                    if (isMe(data.first))
                     {
                         player = player_.get();
                     }
@@ -392,6 +398,7 @@ void Client::receiveData()
                         player = getPlayer(data.first);
                         player->setRotation(data.second.rotation_);
                         player->setRotateTo(data.second.rotation_);
+                        player->setCurrentWeapon(data.second.current_weapon_);
                     }
 
                     if (data.second.current_special_id_ != -1)
@@ -404,7 +411,6 @@ void Client::receiveData()
                     player->setForcedVelocity(data.second.vel_);
                     player->setHealth(data.second.health_);
                     player->setGlobalState(data.second.state_);
-                    player->setCurrentWeapon(data.second.current_weapon_);
 
                     size_t i = 0;
                     for (auto state : data.second.weapon_state_)
@@ -433,14 +439,16 @@ void Client::receiveData()
         }
         default:
         {
-            LOG.error("Failed connection attempt from: " + sender.toString());
+            LOG.error("[Client::receiveData] Failed UDP connection attempt from: "
+                      + sender.toString() + " [status: " + utils::toString(status) + "]");
+
             break;
         }
     }
 
     for (const auto& data : cached_datas_)
     {
-        if (data.first != sf::IpAddress::LocalHost.toInteger())
+        if (!isMe(data.first))
         {
             auto player = getPlayer(data.first);
 
@@ -452,7 +460,7 @@ void Client::receiveData()
 
 Player* Client::getPlayer(sf::Uint32 ip)
 {
-    if (ip == sf::IpAddress::LocalHost.toInteger())
+    if (isMe(ip))
         return player_.get();
 
     auto it = players_.find(ip);
@@ -578,7 +586,7 @@ void Client::disconnect()
 
 void Client::handleTimeout(float time_elapsed)
 {
-    static constexpr auto MAX_SERVER_TIMEOUT = 5.0f;
+    auto MAX_SERVER_TIMEOUT = connection_status_ == ConnectionStatus::InProgress ? 2.0f : 5.0f;
 
     if (connection_status_ == ConnectionStatus::Off)
         return;
@@ -595,11 +603,11 @@ void Client::handleTimeout(float time_elapsed)
 
 void Client::respawnWithoutReload()
 {
-    unregisterCharacter(player_.get());
-    player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
-    player_->setName(CONF<std::string>("general/player_name"));
-    ui_->registerPlayer(player_.get());
-    initPlayer(player_.get());
     PlayerEventPacket player_packet(PlayerEventPacket::Type::Respawn, 0);
     events_socket_.send(player_packet);
+}
+
+bool Client::isMe(sf::Uint32 ip)
+{
+    return ip == ip_on_server_.toInteger();
 }

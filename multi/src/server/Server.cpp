@@ -24,9 +24,6 @@ void Server::initialize()
     ui_ = std::make_unique<MinimalUserInterface>(this);
     ui_->registerCamera(camera_.get());
     engine_->registerUI(ui_.get());
-
-    local_ip_ = sf::IpAddress::getLocalAddress();
-    global_ip_ = sf::IpAddress::getPublicAddress(sf::seconds(1.0f));
 }
 
 void Server::beforeUpdate(float time_elapsed)
@@ -100,7 +97,7 @@ void Server::checkAwaitingConnections()
     auto client = std::make_shared<sf::TcpSocket>();
     client->setBlocking(false);
     sf::Socket::Status status = connection_listener_.accept(*client);
-    auto ip = utils::getSafeIP(client->getRemoteAddress(), local_ip_, global_ip_).toInteger();
+    auto ip = client->getRemoteAddress().toInteger();
 
     switch (status)
     {
@@ -132,6 +129,7 @@ void Server::checkAwaitingConnections()
 
             connection_parameters["s"] = static_cast<int>(ConnectionStatus::InProgress);
             connection_parameters["map"] = map_->getMapName();
+            connection_parameters["ip"] = static_cast<int>(ip);
             auto packet = ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters, ip);
             new_connection->second.events_socket_->send(packet);
 
@@ -143,26 +141,21 @@ void Server::checkAwaitingConnections()
 //            LOG.info("No connection yet.");
             break;
         default:
-            LOG.error("Failed connection attempt from: " + sf::IpAddress(ip).toString());
-            break;
-        case sf::Socket::Partial:
-            break;
-        case sf::Socket::Disconnected:
-            break;
-        case sf::Socket::Error:
+            LOG.error("[Server::checkAwaitingConnections] Failed connection attempt from: "
+                      + sf::IpAddress(ip).toString() + " [status: " + utils::toString(status) + "]");
             break;
     }
 }
 
 void Server::handleMessagesFromPlayers()
 {
-    PlayerInputPacket packet;
     sf::IpAddress sender;
     unsigned short port;
     bool all_messages = false;
 
     while (!all_messages)
     {
+        PlayerInputPacket packet;
         sf::Socket::Status status = data_receiver_socket_.receive(packet, sender, port);
 
         static constexpr auto max_ping = 400;
@@ -172,7 +165,7 @@ void Server::handleMessagesFromPlayers()
             case sf::Socket::Done:
             {
                 //LOG.info("New data received from: " + sender.toString());
-                auto ip = utils::getSafeIP(sender, local_ip_, global_ip_).toInteger();
+                auto ip = sender.toInteger();
                 auto conn_it = connections_.find(ip);
 
                 if (conn_it != connections_.end() && conn_it->second.status_ == ConnectionStatus::On)
@@ -200,7 +193,8 @@ void Server::handleMessagesFromPlayers()
             default:
             {
                 all_messages = true;
-                LOG.error("Failed connection attempt from: " + sender.toString());
+                LOG.error("[Server::handleMessagesFromPlayer] Failed connection attempt from: "
+                          + sender.toString() + " [status: " + utils::toString(status) + "]");
                 break;
             }
         }
@@ -212,6 +206,7 @@ void Server::handleMessagesFromPlayers()
 
         auto& data = cached_packet;
         auto player = conn.second.player_.get();
+
         if (player != nullptr)
         {
             UserInterface::applyMovement(player, data.getKeys());
@@ -295,6 +290,8 @@ void Server::handleEventsFromPlayers()
                         }
                         case PlayerEventPacket::Type::NameChange:
                         {
+                            conn.second.name_ = j3x::get<std::string>(packet.getParams(), "name");
+                            conn.second.character_ = j3x::get<std::string>(packet.getParams(), "texture");
                             ServerEventPacket server_packet(ServerEventPacket::Type::NameChange,
                                                             packet.getParams(),
                                                             conn.first);
@@ -309,6 +306,13 @@ void Server::handleEventsFromPlayers()
                             ServerEventPacket server_packet(ServerEventPacket::Type::PlayerRespawn,
                                                             0, conn.first);
                             sendEventToPlayers(server_packet);
+
+                            j3x::Parameters data = {{"name",    conn.second.name_},
+                                                    {"texture", conn.second.character_}};
+                            ServerEventPacket change_name_packet(ServerEventPacket::Type::NameChange,
+                                                                 data,
+                                                                 conn.first);
+                            sendEventToPlayers(change_name_packet);
                             break;
                         }
                         case PlayerEventPacket::Type::Exit:
@@ -385,7 +389,8 @@ void Server::handleEventsFromPlayers()
             case sf::Socket::NotReady:
                 break;
             default:
-                LOG.error("Failed connection attempt from: " + sf::IpAddress(conn.first).toString());
+                LOG.error("[Server::handleEventsFromPlayers] Failed connection attempt from: "
+                          + sf::IpAddress(conn.first).toString() + " [status: " + utils::toString(status) + "]");
                 break;
         }
     }
@@ -629,7 +634,11 @@ void Server::disconnect()
     sendEventToPlayers(packet);
 
     for (auto& conn : connections_)
+    {
         conn.second.events_socket_->disconnect();
+        clearPlayer(conn.second.player_.get());
+    }
+
     connections_.clear();
     data_receiver_socket_.unbind();
     data_sender_socket_.unbind();

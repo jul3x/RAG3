@@ -12,6 +12,7 @@
 
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Network/IpAddress.hpp>
+#include <SFML/Network/Socket.hpp>
 
 #include <R3E/j3x/J3X.h>
 
@@ -75,6 +76,26 @@ namespace r3e::utils {
         return out.str();
     }
 
+    template<>
+    inline std::string toString<sf::Socket::Status>(sf::Socket::Status status)
+    {
+        switch (status)
+        {
+            case sf::Socket::Disconnected:
+                return "Disconnected";
+            case sf::Socket::Done:
+                return "Done";
+            case sf::Socket::Error:
+                return "Error";
+            case sf::Socket::NotReady:
+                return "NotReady";
+            case sf::Socket::Partial:
+                return "Partial";
+            default:
+                return "Unknown";
+        }
+    }
+
     uint64_t timeSinceEpochMillisec();
 
     std::string capitalFirst(const std::string& word);
@@ -85,7 +106,7 @@ namespace r3e::utils {
     bool endsWith(const std::string& what, const std::string& suffix);
     std::string keyToString(sf::Keyboard::Key key);
     sf::Keyboard::Key stringToKey(const std::string& str);
-    sf::IpAddress getSafeIP(const sf::IpAddress& ip, const sf::IpAddress& local, const sf::IpAddress& global);
+    sf::IpAddress getSafeIP(const sf::IpAddress& ip, const sf::IpAddress& local);
 }
 
 #endif //RAG3_ENGINE_INCLUDE_R3E_UTILS_MISC_H

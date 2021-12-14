@@ -1225,8 +1225,15 @@ void Framework::obstacleDestroyedEvent(Obstacle* obstacle)
 
 void Framework::spawnSound(const sf::SoundBuffer& sound, const sf::Vector2f& pos, bool force_pitch)
 {
-    if (CONF<bool>("sound/sound_on") && utils::geo::getDistance(pos, getPlayer()->getPosition()) < 500.0f)
+    if (!CONF<bool>("sound/sound_on"))
+        return;
+
+    auto player = getPlayer();
+
+    if (player != nullptr && utils::geo::getDistance(pos, player->getPosition()) < 500.0f)
         engine_->spawnSoundEvent(sound, pos, CONF<float>("sound/sound_volume"), force_pitch);
+    else if (player == nullptr)
+        engine_->spawnSoundEvent(sound, CONF<float>("sound/sound_volume"));
 }
 
 void Framework::spawnSound(const sf::SoundBuffer& sound)

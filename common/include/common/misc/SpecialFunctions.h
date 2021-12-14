@@ -51,6 +51,8 @@ public:
 
     void removeDecoration(Functional* obj, const j3x::Obj& data, Character* user);
     void removeObstacle(Functional* obj, const j3x::Obj& data, Character* user);
+    void removeDecorationTile(Functional* obj, const j3x::Obj& data, Character* user);
+    void removeObstacleTile(Functional* obj, const j3x::Obj& data, Character* user);
     void removeSpecial(Functional* obj, const j3x::Obj& data, Character* user);
     void spawnExplosionEvent(Functional* obj, const j3x::Obj& data, Character* user);
     void spawnThought(Functional* obj, const j3x::Obj& data, Character* user);
@@ -62,6 +64,8 @@ public:
     void spawnFlame(Functional* obj, const j3x::Obj& data, Character* user);
     void spawnCrystal(Functional* obj, const j3x::Obj& data, Character* user);
     void spawnAnimationEvent(Functional* obj, const j3x::Obj& data, Character* user);
+    void spawnDecorationTile(Functional* obj, const j3x::Obj& data, Character* user);
+    void spawnObstacleTile(Functional* obj, const j3x::Obj& data, Character* user);
     void spawnSound(Functional* obj, const j3x::Obj& data, Character* user);
     void spawnNPC(Functional* obj, const j3x::Obj& data, Character* user);
     void spawnDebris(Functional* obj, const j3x::Obj& data, Character* user);

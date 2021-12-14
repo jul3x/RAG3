@@ -131,6 +131,7 @@ public:
     spawnNewObstacle(const std::string& id, int u_id, const sf::Vector2f& pos, Functional::Activation activation,
                      const j3x::List& funcs, const j3x::List& datas);
     virtual ObstacleTile* spawnNewObstacleTile(const std::string& id, const sf::Vector2f& pos);
+    virtual DecorationTile* spawnNewDecorationTile(const std::string& id, const sf::Vector2f& pos);
     virtual Decoration* spawnNewDecoration(const std::string& id, int u_id, const sf::Vector2f& pos);
     virtual DestructionSystem*
     spawnNewDestructionSystem(const sf::Vector2f& pos, float dir, const DestructionParams& params,

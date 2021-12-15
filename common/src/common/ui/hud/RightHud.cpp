@@ -15,7 +15,7 @@ RightHud::RightHud(const sf::Vector2f& position) :
                                &RM.getTexture("hud_right")),
         face_(position + sf::Vector2f{FACE_OFFSET_X_, FACE_OFFSET_Y_} * CONF<float>("graphics/user_interface_zoom"),
               CONF<sf::Vector2f>("graphics/face_size"),
-              &RM.getTexture("characters/henry_face")),
+              &RM.getTexture("characters/henry/face")),
         level_(CONF<float>("graphics/inertial_states_change_speed")),
         exp_(CONF<float>("graphics/inertial_states_change_speed")),
         level_text_("level: 0, experience: 0", RM.getFont(), CONF<float>("graphics/level_text_size")),
@@ -76,5 +76,5 @@ void RightHud::setName(const std::string& name)
 
 void RightHud::setCharacter(const std::string& character)
 {
-    face_.changeTexture(&RM.getTexture("characters/" + character + "_face"));
+    face_.changeTexture(&RM.getTexture("characters/" + character + "/face"));
 }

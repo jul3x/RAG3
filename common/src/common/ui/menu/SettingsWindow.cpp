@@ -408,7 +408,7 @@ CharacterSettingsWidget::CharacterSettingsWidget(tgui::Theme* theme, const std::
     {
         const auto& str = j3x::getObj<std::string>(character);
         possible_characters_.emplace_back(str);
-        pictures_[str] = tgui::Picture::create(RM.getTexture("characters/" + str + "_face"));
+        pictures_[str] = tgui::Picture::create(RM.getTexture("characters/" + str + "/face"));
         pictures_[str]->setSize(CONF<sf::Vector2f>("graphics/face_size"));
         pictures_[str]->setVisible(false);
         pictures_container_->add(pictures_[str]);

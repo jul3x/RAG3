@@ -33,7 +33,7 @@ MeleeWeapon::MeleeWeapon(Character* user, const std::string& id) :
             shadow_pos, RMGET<sf::Vector2f>("weapons", this->getId(), "use_size"),
             CONF<float>("graphics/shadow_direction"),
             CONF<float>("graphics/shadow_length_factor"),
-            &RM.getTexture("weapons/" + user_->getId() + "_" + this->getId()),
+            &RM.getTexture("weapons/melee/" + user_->getId() + "_" + this->getId()),
             sf::Color(CONF<int>("graphics/shadow_color")),
             z_index_,
             RMGET<int>("weapons", id, "frames_number"),
@@ -44,7 +44,7 @@ sf::Vector2f MeleeWeapon::use()
 {
     if (time_elapsed_ < 0.0f)
     {
-        auto texture_name = "weapons/" + user_->getId() + "_" + this->getId();
+        auto texture_name = "weapons/melee/" + user_->getId() + "_" + this->getId();
         bool flipped = saved_rotation_ > 90.0f && saved_rotation_ <= 270.0f;
         bool front = saved_rotation_ > 0.0f && saved_rotation_ <= 180.0f;
         if (!front)

@@ -54,6 +54,9 @@ void Server::afterUpdate(float time_elapsed)
 
 void Server::updateCamera(float time_elapsed)
 {
+    if (!CONF<bool>("draw_server"))
+        return;
+
     Framework::updateCamera(time_elapsed);
     if (!connections_.empty())
     {
@@ -66,19 +69,8 @@ void Server::updateCamera(float time_elapsed)
 
 void Server::draw(graphics::Graphics& graphics)
 {
-    static constexpr bool SERVER_DRAWING = true;
-    if (SERVER_DRAWING)
+    if (CONF<bool>("draw_server"))
         Framework::draw(graphics);
-}
-
-void Server::useSpecialObject()
-{
-    // TODO
-//    auto curr = player_->getCurrentSpecialObject();
-//    if (curr != nullptr)
-//    {
-//        curr->use(player_.get());
-//    }
 }
 
 void Server::updatePlayers(float time_elapsed)
@@ -526,8 +518,6 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             float angle = utils::geo::wrapAngle0_360(std::get<1>(utils::geo::cartesianToPolar(
                     melee_weapon_area->getFather()->getUser()->getPosition() - character->getPosition())) * 180.0 /
                                                      M_PI);
-            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, angle > 0 && angle <= 180 ? 5.0 : -5.0),
-                            angle, melee_weapon_area->getFather()->getDeadlyFactor());
             melee_weapon_area->setActive(false);
             character->getCut(*melee_weapon_area->getFather(), factor);
         }

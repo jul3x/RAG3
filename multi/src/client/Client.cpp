@@ -149,7 +149,7 @@ void Client::updatePlayers(float time_elapsed)
 
 bool Client::establishConnection(const sf::IpAddress& ip)
 {
-    unsigned short port = 54000;
+    static unsigned short port = CONF<int>("tcp_port");
 
     events_socket_.setBlocking(true);
     auto status = events_socket_.connect(ip, port, sf::seconds(2.0f));
@@ -360,7 +360,7 @@ void Client::sendInputs()
         return;
 
     static constexpr float packet_time_elapsed = 0.01f;
-    static unsigned short port = 54001;
+    static unsigned short port = CONF<int>("udp_client_port");
 
     if (time_elapsed_ - last_packet_timestamp_ >= packet_time_elapsed)
     {
@@ -564,7 +564,7 @@ void Client::startGame(const std::string& ip_address)
     players_.clear();
     cached_datas_.clear();
     data_receive_socket_.unbind();
-    if (data_receive_socket_.bind(54002) != sf::Socket::Done)
+    if (data_receive_socket_.bind(CONF<int>("udp_server_port")) != sf::Socket::Done)
     {
         LOG.error("[Client] Could not bind receiving socket to desired port.");
     }

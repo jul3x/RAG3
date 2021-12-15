@@ -227,7 +227,7 @@ void Server::handleMessagesFromPlayers()
 void Server::sendMessagesToPlayers()
 {
     static constexpr float packet_time_elapsed = 0.04f;
-    static unsigned short port = 54002;
+    static unsigned short port = CONF<int>("udp_server_port");
 
     if (time_elapsed_ - last_packet_timestamp_ >= packet_time_elapsed)
     {
@@ -612,11 +612,11 @@ void Server::startGame(const std::string& map_name)
     connections_.clear();
 
     // bind sockets
-    if (connection_listener_.listen(54000) != sf::Socket::Done)
+    if (connection_listener_.listen(CONF<int>("tcp_port")) != sf::Socket::Done)
     {
         throw std::invalid_argument("[Server] Cannot bind connection socket to desired port!");
     }
-    if (data_receiver_socket_.bind(54001) != sf::Socket::Done)
+    if (data_receiver_socket_.bind(CONF<int>("udp_client_port")) != sf::Socket::Done)
     {
         throw std::invalid_argument("[Server] Cannot bind data receiver socket to desired port!");
     }

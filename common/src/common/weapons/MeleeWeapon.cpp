@@ -44,7 +44,7 @@ sf::Vector2f MeleeWeapon::use()
 {
     if (time_elapsed_ < 0.0f)
     {
-        auto texture_name = "weapons/melee/" + user_->getId() + "_" + this->getId();
+        auto texture_name = "weapons/melee/" + user_->getTextureName() + "_" + this->getId();
         bool flipped = saved_rotation_ > 90.0f && saved_rotation_ <= 270.0f;
         bool front = saved_rotation_ > 0.0f && saved_rotation_ <= 180.0f;
         if (!front)

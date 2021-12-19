@@ -49,7 +49,7 @@ public:
 
 private:
     using PeriodicalSpecial = std::tuple<std::string, sf::Vector2f, float>;
-    static constexpr auto MAX_PLAYERS = 8;
+    static constexpr auto MAX_PLAYERS = 12;
 
     void preupdate(float time_elapsed) override;
     void beforeUpdate(float time_elapsed) override;

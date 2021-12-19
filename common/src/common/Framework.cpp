@@ -1150,8 +1150,8 @@ void Framework::killPlayer(Player* player)
     spawnDecoration(player->getPosition(), "blood");
     spawnKillEvent(player->getPosition());
     spawnSound(RM.getSound("henry_dead"), player->getPosition());
+    unregisterCharacter(player);
     player->setDead();
-    engine_->unregisterObj<DynamicObject>(player);
 }
 
 NPC* Framework::spawnNewNPC(const std::string& id, int u_id, Functional::Activation activation,

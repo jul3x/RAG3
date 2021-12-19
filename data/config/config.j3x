@@ -27,7 +27,9 @@ float achievements_update_time = 0.4
 float forced_zoom_to_time = 0.4
 float running_min_time = 1.0
 string about_text = "Lorem ipsum dolor sit amet. \nTODO..."
-list forbidden_characters_to_play = ["slave"]
+list characters_to_play = ["henry"; "rat"; "cultist"; "trevor"; "chupacabra"; "time_addict"; "giorgio"]
+list multi_to_play = ["henry"; "green_bastard"; "gray_oldman"; "rusty_fooley"; "pink_floyd"; "hazy_potter";
+                      "slippery_amigo"]
 float periodical_spawn_time = 120.0
 
 // FIRE MECHANICS

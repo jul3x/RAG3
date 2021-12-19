@@ -33,7 +33,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
                       collision::Box(RMGET<sf::Vector2f>("characters", id, "collision_size").x,
                                      RMGET<sf::Vector2f>("characters", id, "collision_size").y,
                                      RMGET<sf::Vector2f>("characters", id, "collision_offset")),
-                      &RM.getTexture("characters/" + id),
+                      &RM.getTexture("characters/" + id + "/f"),
                       RMGET<int>("characters", id, "z_index"),
                       RMGET<int>("characters", id, "frames_number"),
                       RMGET<float>("characters", id, "frame_duration"),
@@ -71,7 +71,7 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
     static_shadow_ = std::make_unique<graphics::TransformedTextureShadow>(
             shadow_pos, this->getSize(), CONF<float>("graphics/shadow_direction"),
             CONF<float>("graphics/shadow_length_factor"),
-            &RM.getTexture("characters/" + id), sf::Color(CONF<int>("graphics/shadow_color")),
+            &RM.getTexture("characters/" + id + "/f"), sf::Color(CONF<int>("graphics/shadow_color")),
             z_index_,
             RMGET<int>("characters", id, "frames_number"),
             RMGET<float>("characters", id, "frame_duration"));
@@ -347,12 +347,12 @@ void Character::setRotation(float theta)
     static std::string added_name;
     if (!is_moving_)
     {
-        added_name = "_standing";
+        added_name = "/s";
         this->setCurrentFrame(0);
     }
     else
     {
-        added_name = "";
+        added_name = "/";
     }
 
     static std::string weapon_added_name;
@@ -365,6 +365,7 @@ void Character::setRotation(float theta)
         case 1:
         {
             weapon_added_name = "_back";
+            added_name += "f";
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
             this->setFlipX(false);
@@ -381,6 +382,7 @@ void Character::setRotation(float theta)
         case 11:
         {
             weapon_added_name = "_back";
+            added_name += "f";
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
             this->setFlipX(false);
@@ -396,9 +398,11 @@ void Character::setRotation(float theta)
         }
         case 2:
         {
+            added_name += "f";
+            weapon_added_name = "_back";
+
             this->setFlipX(true);
             static_shadow_->setFlipX(true);
-            weapon_added_name = "_back";
             gun_offset_.x = -gun_offset_.x;
 
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);
@@ -413,11 +417,12 @@ void Character::setRotation(float theta)
         }
         case 21:
         {
+            added_name += "f";
+            weapon_added_name = "_back";
+
             this->setFlipX(true);
             static_shadow_->setFlipX(true);
-            weapon_added_name = "_back";
             gun_offset_.x = -gun_offset_.x;
-
             weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
 
             if (new_quarter == 2 && theta < 135.0f - CONF<float>("characters/rotating_hysteresis"))
@@ -430,11 +435,11 @@ void Character::setRotation(float theta)
         }
         case 3:
         {
-            added_name += "_4";
+            added_name += "b";
+
             this->setFlipX(true);
             static_shadow_->setFlipX(true);
             gun_offset_.x = -gun_offset_.x;
-
             weapons_in_backpack_.at(current_weapon_)->setFlipY(true);
 
             if (new_quarter == 4 && theta >= 270.0f + CONF<float>("characters/rotating_hysteresis"))
@@ -447,7 +452,8 @@ void Character::setRotation(float theta)
         }
         case 4:
         {
-            added_name += "_4";
+            added_name += "b";
+
             this->setFlipX(false);
             static_shadow_->setFlipX(false);
             weapons_in_backpack_.at(current_weapon_)->setFlipY(false);

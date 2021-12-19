@@ -258,7 +258,7 @@ void SpecialFunctions::addWeapon(Functional* obj, const j3x::Obj& data, Characte
     framework_->spawnSound(RM.getSound("collect"), dynamic_cast<AbstractPhysicalObject*>(obj)->getPosition());
 
     // sic!
-    if (user->getId() == "player")
+    if (framework_->isNormalGameplay() || framework_->isMulti())
     {
         std::shared_ptr<AbstractWeapon> weapon = AbstractWeapon::create(user, data_parsed);
         if (user->addWeaponToBackpack(weapon))

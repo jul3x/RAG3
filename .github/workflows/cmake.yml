@@ -26,7 +26,7 @@ jobs:
       run: sudo apt-get update && sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev libudev-dev libvorbis-dev libflac-dev libopenal-dev libfreetype6-dev libx11-dev libxrandr-dev libxcursor-dev
     
     - name: Install SFML
-      run: git clone https://github.com/SFML/SFML --branch master && cd SFML && cmake . && make && sudo mv include/* /usr/include/ && sudo mv lib/* /usr/lib/
+      run: git clone https://github.com/SFML/SFML --branch master && cd SFML && git checkout ef8fee53567af3e47026f6485164d4f95a2be5da && cmake . && make && sudo mv include/* /usr/include/ && sudo mv lib/* /usr/lib/
 
     - name: Install TGUI
       run: cd .. && git clone https://github.com/texus/TGUI --branch 0.8 && cd TGUI && cmake . && make -j2 && sudo make install && cd ..

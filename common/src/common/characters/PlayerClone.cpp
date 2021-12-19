@@ -11,7 +11,7 @@
 
 
 PlayerClone::PlayerClone(const sf::Vector2f& position, const Player* player, float life_time) :
-        NPC(position, "player"),
+        NPC(position, "henry"),
         player_(player),
         life_time_(life_time)
 {

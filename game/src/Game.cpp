@@ -503,6 +503,7 @@ void Game::updatePlayers(float time_elapsed)
             this->cleanPlayerClone();
 
             player_->setHealth(0); // player clone is dead - so do player
+            spawnSound(RM.getSound(player_->getId() + "_dead"), player_->getPosition());
         }
     }
 
@@ -796,4 +797,9 @@ void Game::initSound(bool force)
     music_manager_->setVolume(CONF<float>("sound/music_volume"));
     if (force && CONF<bool>("sound/sound_on"))
         music_manager_->play();
+}
+
+bool Game::isMulti() const
+{
+    return false;
 }

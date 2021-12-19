@@ -46,7 +46,7 @@ bool Player::sideStep(Player::SideStepDir dir)
     if (side_stepping_freeze_time_ <= 0.0f)
     {
         this->addSteeringForce(this->getSpeedFactor() *
-                               utils::geo::polarToCartesian(RMGET<float>("characters", "player", "side_step_speed"),
+                               utils::geo::polarToCartesian(RMGET<float>("characters", "henry", "side_step_speed"),
                                                             (this->getRotation() + static_cast<int>(dir) * 90.0f) *
                                                             M_PI / 180.0f),
                                CONF<float>("side_step_force_duration"));
@@ -234,7 +234,7 @@ std::list<std::pair<Special, int>>& Player::getBackpack()
 void Player::changePlayerTexture(const std::string& name)
 {
     this->setTextureName(name);
-    this->changeTexture(&RM.getTexture("characters/" + name), true);
+    this->changeTexture(&RM.getTexture("characters/" + name + "/f"), true);
     this->setSize(RMGET<sf::Vector2f>("characters", name, "size"));
     static_shadow_->setSize(RMGET<sf::Vector2f>("characters", name, "size"));
 }

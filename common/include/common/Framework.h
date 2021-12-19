@@ -152,6 +152,7 @@ public:
     virtual void forceZoomTo(AbstractPhysicalObject* obj);
     virtual void killPlayer(Player* player);
     virtual void addToDestroyedSpecials(const std::string& id, const sf::Vector2f& pos);
+    virtual bool isMulti() const;
 
     // State methods
     virtual void setGameState(Framework::GameState state);

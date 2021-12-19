@@ -75,9 +75,18 @@ void ListWindow::initialize(const std::vector<std::string>& tabs, const std::vec
                 size.y = DecorationTile::SIZE_Y_;
             }
 
-            auto full_name =
-                    !RMHAS<bool>(tab_name, item, "is_drawable") || RMGET<bool>(tab_name, item, "is_drawable", false) ?
-                    tab_name + "/" + item : "specials/special_event";
+            std::string full_name;
+            if (tab_name == "characters")
+            {
+                full_name = tab_name + "/" + item + "/f";
+            }
+            else
+            {
+                full_name =
+                        !RMHAS<bool>(tab_name, item, "is_drawable") ||
+                        RMGET<bool>(tab_name, item, "is_drawable", false) ?
+                        tab_name + "/" + item : "specials/special_event";
+            }
 
             if (RMGET<int>(tab_name, item, "frames_number", true) == 1)
                 button_textures_[full_name].load(RM.getTexture(full_name));

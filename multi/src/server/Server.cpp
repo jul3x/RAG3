@@ -19,6 +19,7 @@ Server::Server() : Framework(), last_packet_timestamp_(0.0f)
 
 void Server::initialize()
 {
+    CFG.set("characters_to_play", CONF<j3x::List>("multi_to_play"));
     Framework::initialize();
 
     ui_ = std::make_unique<MinimalUserInterface>(this);
@@ -612,6 +613,7 @@ void Server::startGame(const std::string& map_name)
     }
     connection_listener_.setBlocking(false);
     data_receiver_socket_.setBlocking(false);
+    data_sender_socket_.setBlocking(false);
     // TODO maybe sender should be non-blocking?
     ui_->startGame();
 

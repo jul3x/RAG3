@@ -16,7 +16,8 @@ TextButton::TextButton(Framework* framework, const std::string& text,
     button_->setRenderer(framework_->getUI()->getTheme()->getRenderer("MenuButton"));
     button_->setText(text);
     button_->setTextSize(size);
-    button_->setPosition({pos.x - button_->getFullSize().x / 2.0f, pos.y - button_->getFullSize().y / 2.0f});
+    button_->setSize({text.length() * size, size});
+    button_->setPosition({pos.x - button_->getSize().x / 2.0f, pos.y - button_->getSize().y / 2.0f});
     button_->setVisible(false);
     button_->connect("mouseentered", [this]() {
         framework_->spawnSound(RM.getSound("ui_hover"));

@@ -42,16 +42,16 @@ public:
 
     template<class T>
     T* spawn(const sf::Vector2f& pos, float direction, const std::string& id, bool check = false,
-             int max_z_index = std::numeric_limits<int>::infinity());
+             int max_z_index = std::numeric_limits<int>::max());
 
-    void removeTile(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
-    void removeObject(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
+    void removeTile(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::max());
+    void removeObject(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::max());
 
     std::tuple<std::string, std::string, int>
-    getObjectInfo(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
+    getObjectInfo(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::max());
 
     template<class T>
-    T* getObjectByPos(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::infinity());
+    T* getObjectByPos(const sf::Vector2f& pos, int max_z_index = std::numeric_limits<int>::max());
 
     template<class T>
     T* getObjectById(int id);
@@ -73,7 +73,7 @@ public:
 private:
     template<class T>
     inline bool checkCollisions(const sf::Vector2f& pos, std::list<T>& objs, bool erase = false,
-                                int max_z_index = std::numeric_limits<int>::infinity())
+                                int max_z_index = std::numeric_limits<int>::max())
     {
         std::list<typename std::list<T>::iterator> found;
         for (auto it = objs.begin(); it != objs.end(); ++it)
@@ -98,7 +98,7 @@ private:
 
     template<class T>
     T* getItemInfo(const sf::Vector2f& pos, std::list<std::shared_ptr<T>>& objs,
-                   int max_z_index = std::numeric_limits<int>::infinity())
+                   int max_z_index = std::numeric_limits<int>::max())
     {
         std::list<typename std::list<std::shared_ptr<T>>::iterator> found;
 
@@ -133,7 +133,7 @@ private:
     }
 
     inline bool checkCollisionsObjects(const sf::Vector2f& pos, bool erase = false,
-                                       int max_z_index = std::numeric_limits<int>::infinity())
+                                       int max_z_index = std::numeric_limits<int>::max())
     {
         return (!this->checkCollisions(pos, characters_, erase, max_z_index) &&
                 !this->checkCollisions(pos, specials_, erase, max_z_index) &&

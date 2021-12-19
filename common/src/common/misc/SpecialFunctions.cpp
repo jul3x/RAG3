@@ -48,6 +48,10 @@ SpecialFunctions::SpecialFunctions(Framework* framework) : framework_(framework)
     init("ActivateWeapon", &SpecialFunctions::activateWeapon);
     init("SetOnFire", &SpecialFunctions::setOnFire); // TODO maybe true for npcs?
     init("Explode", &SpecialFunctions::explode);
+    init("SpawnDecorationTile", &SpecialFunctions::spawnDecorationTile);
+    init("SpawnObstacleTile", &SpecialFunctions::spawnObstacleTile);
+    init("RemoveDecorationTile", &SpecialFunctions::removeDecorationTile);
+    init("RemoveObstacleTile", &SpecialFunctions::removeObstacleTile);
     init("RemoveDecoration", &SpecialFunctions::removeDecoration);
     init("RemoveSpecial", &SpecialFunctions::removeSpecial);
     init("RemoveObstacle", &SpecialFunctions::removeObstacle);
@@ -264,6 +268,45 @@ void SpecialFunctions::addWeapon(Functional* obj, const j3x::Obj& data, Characte
         if (user->addWeaponToBackpack(weapon))
             framework_->registerWeapon(weapon.get());
     }
+}
+
+void SpecialFunctions::removeDecorationTile(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Removing tile.");
+    auto tile_pos = j3x::getObj<sf::Vector2f>(data);
+    framework_->getMap()->removeTile(tile_pos);
+}
+
+void SpecialFunctions::removeObstacleTile(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Removing tile.");
+    auto tile_pos = j3x::getObj<sf::Vector2f>(data);
+    auto* tile = framework_->getMap()->getObjectByPos<ObstacleTile>(tile_pos);
+    framework_->findAndDelete(tile);
+}
+
+void SpecialFunctions::spawnDecorationTile(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Spawning decoration tile.");
+    const auto& data_list = j3x::getObj<j3x::List>(data);
+    const auto& id = j3x::getObj<std::string>(data_list, 0);
+    const auto& pos = j3x::getObj<sf::Vector2f>(data_list, 1);
+
+    framework_->spawnNewDecorationTile(id, pos);
+    auto& blockage = framework_->getMap()->getMapBlockage();
+    Map::markBlocked(blockage.blockage_, pos, {}, 0.0f);
+}
+
+void SpecialFunctions::spawnObstacleTile(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Spawning obstacle tile.");
+    const auto& data_list = j3x::getObj<j3x::List>(data);
+    const auto& id = j3x::getObj<std::string>(data_list, 0);
+    const auto& pos = j3x::getObj<sf::Vector2f>(data_list, 1);
+
+    framework_->spawnNewObstacleTile(id, pos);
+    auto& blockage = framework_->getMap()->getMapBlockage();
+    Map::markBlocked(blockage.blockage_, pos, {}, 9999999.0f);
 }
 
 void SpecialFunctions::addAmmo(Functional* obj, const j3x::Obj& data, Character* user)

@@ -703,6 +703,12 @@ ObstacleTile* Framework::spawnNewObstacleTile(const std::string& id, const sf::V
     return new_ptr;
 }
 
+DecorationTile* Framework::spawnNewDecorationTile(const std::string& id, const sf::Vector2f& pos)
+{
+    auto new_ptr = map_->spawn<DecorationTile>(pos, 0.0f, id);
+    return new_ptr;
+}
+
 Obstacle* Framework::spawnNewObstacle(const std::string& id, int u_id, const sf::Vector2f& pos,
                                       Functional::Activation activation,
                                       const j3x::List& funcs, const j3x::List& datas)
@@ -909,6 +915,26 @@ void Framework::findAndDelete<Special>(Special* ptr)
     }
 
     LOG.error("[Framework] Warning - special to delete not found!");
+}
+
+template<>
+void Framework::findAndDelete<ObstacleTile>(ObstacleTile* ptr)
+{
+    auto& tiles = map_->getList<ObstacleTile>();
+    for (auto it = tiles.rbegin(); it != tiles.rend(); ++it)
+    {
+        if (it->get() == ptr)
+        {
+            engine_->unregisterObj<ObstacleTile>(ptr);
+
+            auto& blockage = map_->getMapBlockage();
+            Map::markBlocked(blockage.blockage_, ptr->getPosition(), {}, 0.0f);
+            tiles.erase((++it).base());
+            return;
+        }
+    }
+
+    LOG.error("[Framework] Warning - obstacle tile to delete not found!");
 }
 
 template<>

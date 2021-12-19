@@ -59,9 +59,11 @@ float side_step_force_duration = 0.1
 int crystal_pick_exp = 50
 
 // MAPS
-list maps_order = ["first_new_map"; "map_new"]
+list maps_order = ["intro"; "first_new_map"; "map_new"; "multi_map"]
+string map_name_intro = "Intro"
 string map_name_first_new_map = "Tutorial"
 string map_name_map_new = "Test map"
+string map_name_multi_map = "Arena"
 
 // MULTI
 float periodical_spawn_time = 120.0

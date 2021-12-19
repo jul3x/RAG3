@@ -110,8 +110,11 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
     auto special_object = framework_->getCurrentSpecialObject();
     if (special_object != nullptr)
     {
+        auto text = special_object->getTextToUse();
+        if (text.empty())
+            text = "Use object";
         object_use_text_.setString("[" + utils::keyToString(static_cast<sf::Keyboard::Key>(CONF<int>("controls/use")))
-                                   + "] " + special_object->getTextToUse());
+                                   + "] " + text);
         auto object_use_text_rect = object_use_text_.getLocalBounds();
         object_use_text_.setOrigin(object_use_text_rect.left + object_use_text_rect.width / 2.0f,
                                    object_use_text_rect.top + object_use_text_rect.height / 2.0f);

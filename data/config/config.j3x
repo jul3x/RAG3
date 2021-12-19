@@ -63,3 +63,10 @@ int crystal_pick_exp = 50
 list maps_order = ["first_new_map"; "map_new"]
 string map_name_first_new_map = "Tutorial"
 string map_name_map_new = "Test map"
+
+// MULTI
+float periodical_spawn_time = 120.0
+int tcp_port = 54000
+int udp_client_port = 54001
+int udp_server_port = 54002
+bool draw_server = true

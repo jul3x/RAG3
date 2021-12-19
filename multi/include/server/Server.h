@@ -40,7 +40,6 @@ public:
 
     // UI functions
     void respawn(const std::string& map_name) override;
-    void useSpecialObject() override;
     void setGameState(GameState state) override;
     void startGame(const std::string& map_name) override;
     void disconnect();

@@ -54,6 +54,9 @@ void Server::afterUpdate(float time_elapsed)
 
 void Server::updateCamera(float time_elapsed)
 {
+    if (!CONF<bool>("draw_server"))
+        return;
+
     Framework::updateCamera(time_elapsed);
     if (!connections_.empty())
     {
@@ -66,19 +69,8 @@ void Server::updateCamera(float time_elapsed)
 
 void Server::draw(graphics::Graphics& graphics)
 {
-    static constexpr bool SERVER_DRAWING = true;
-    if (SERVER_DRAWING)
+    if (CONF<bool>("draw_server"))
         Framework::draw(graphics);
-}
-
-void Server::useSpecialObject()
-{
-    // TODO
-//    auto curr = player_->getCurrentSpecialObject();
-//    if (curr != nullptr)
-//    {
-//        curr->use(player_.get());
-//    }
 }
 
 void Server::updatePlayers(float time_elapsed)
@@ -227,7 +219,7 @@ void Server::handleMessagesFromPlayers()
 void Server::sendMessagesToPlayers()
 {
     static constexpr float packet_time_elapsed = 0.04f;
-    static unsigned short port = 54002;
+    static unsigned short port = CONF<int>("udp_server_port");
 
     if (time_elapsed_ - last_packet_timestamp_ >= packet_time_elapsed)
     {
@@ -526,8 +518,6 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             float angle = utils::geo::wrapAngle0_360(std::get<1>(utils::geo::cartesianToPolar(
                     melee_weapon_area->getFather()->getUser()->getPosition() - character->getPosition())) * 180.0 /
                                                      M_PI);
-            spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, angle > 0 && angle <= 180 ? 5.0 : -5.0),
-                            angle, melee_weapon_area->getFather()->getDeadlyFactor());
             melee_weapon_area->setActive(false);
             character->getCut(*melee_weapon_area->getFather(), factor);
         }
@@ -612,11 +602,11 @@ void Server::startGame(const std::string& map_name)
     connections_.clear();
 
     // bind sockets
-    if (connection_listener_.listen(54000) != sf::Socket::Done)
+    if (connection_listener_.listen(CONF<int>("tcp_port")) != sf::Socket::Done)
     {
         throw std::invalid_argument("[Server] Cannot bind connection socket to desired port!");
     }
-    if (data_receiver_socket_.bind(54001) != sf::Socket::Done)
+    if (data_receiver_socket_.bind(CONF<int>("udp_client_port")) != sf::Socket::Done)
     {
         throw std::invalid_argument("[Server] Cannot bind data receiver socket to desired port!");
     }

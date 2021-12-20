@@ -46,6 +46,7 @@ public:
 
     // Misc
     void addToDestroyedSpecials(const std::string& id, const sf::Vector2f& pos) override;
+    const std::unordered_map<sf::Uint32, PlayerConnection>& getConnections() const;
 
 private:
     using PeriodicalSpecial = std::tuple<std::string, sf::Vector2f, float>;

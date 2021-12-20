@@ -50,8 +50,9 @@ public:
 
     [[nodiscard]] bool isCachedForIp(sf::Uint32 ip)
     {
-        static constexpr std::array<Type, 3> forbidden = {Type::PlayerExit, Type::NameChange};
-        static constexpr std::array<Type, 1> always_forbidden = {Type::PlayerRespawn};
+        static constexpr std::array<Type, 1> forbidden = {Type::NameChange};
+        static constexpr std::array<Type, 4>
+                always_forbidden = {Type::Exit, Type::Connection, Type::PlayerExit, Type::PlayerRespawn};
 
         return !utils::contains(always_forbidden, type_) &&
                (ip != this->player_ip_ || !utils::contains(forbidden, this->type_));

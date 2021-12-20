@@ -32,6 +32,12 @@ using namespace r3e;
 class Client : public Framework {
 
 public:
+    struct ConnectedPlayer {
+        std::unique_ptr<Player> player;
+        bool still_playing{true};
+        PlayerData cached_data;
+    };
+
     Client();
     Client(const Client&) = delete;
     Client& operator=(const Client&) = delete;
@@ -56,6 +62,8 @@ public:
     void startGame(const std::string& ip_address) override;
     bool establishConnection(const sf::IpAddress& ip);
     void disconnect();
+    const std::unordered_map<sf::Uint32, ConnectedPlayer>& getPlayers() const;
+    ConnectionStatus getConnectionStatus() const;
 
 private:
     void afterUpdate(float time_elapsed) override;
@@ -73,8 +81,7 @@ private:
     Player* getPlayer(sf::Uint32 ip);
     bool isMe(sf::Uint32 ip);
 
-    std::unordered_map<sf::Uint32, std::unique_ptr<Player>> players_;
-    std::unordered_map<sf::Uint32, PlayerData> cached_datas_;
+    std::unordered_map<sf::Uint32, ConnectedPlayer> conns_;
     std::unique_ptr<Player> player_;
 
     sf::UdpSocket data_send_socket_;

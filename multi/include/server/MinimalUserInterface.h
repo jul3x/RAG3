@@ -22,6 +22,7 @@ public:
     void spawnNoteWindow(const std::string& text, bool note_info = true) override;
     void closeWindow(Window* window) override;
 
+    void update(graphics::Graphics& graphics, float time_elapsed) override;
     void draw(graphics::Graphics& graphics) override;
 
     void openMenu() override;
@@ -33,6 +34,8 @@ protected:
     void updatePlayerStates(float time_elapsed) override;
 
     Server* server_;
+
+    sf::Text debug_info_;
 
 };
 

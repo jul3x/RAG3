@@ -47,6 +47,7 @@ float fire_collision_offset = 16.0
 float explosion_hurt_factor = 30.0
 float explosion_velocity_factor = 1280.0
 float explosion_force_duration = 0.2
+float explosion_max_distance = 600.0
 
 // MELEE
 float melee_weapon_range = 20.0

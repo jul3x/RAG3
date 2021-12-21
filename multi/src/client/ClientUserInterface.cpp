@@ -39,9 +39,9 @@ void ClientUserInterface::initialize(graphics::Graphics& graphics)
     time_bar_.setFreeze(true);
     menu_->doShow(true);
 
-    debug_info_.setFont(RM.getFont());
-    debug_info_.setCharacterSize(36);
-    debug_info_.setPosition(100, 200);
+//    debug_info_.setFont(RM.getFont());
+//    debug_info_.setCharacterSize(36);
+//    debug_info_.setPosition(100, 200);
 }
 
 void ClientUserInterface::openMenu()
@@ -64,23 +64,22 @@ void ClientUserInterface::update(graphics::Graphics& graphics, float time_elapse
 {
     UserInterface::update(graphics, time_elapsed);
 
-    std::string new_debug_info =
-            "Current status: " + utils::toString(static_cast<int>(client_->getConnectionStatus())) +
-            " Other players:\n";
-
-    for (const auto& conn : client_->getPlayers())
-    {
-        const auto* player = conn.second.player.get();
-        new_debug_info += sf::IpAddress(conn.first).toString() + ": " + player->getName() + ", health: " +
-                          utils::toString(player->getHealth()) + "/" +
-                          utils::toString(player->getMaxHealth()) + "\n";
-    }
-
-    debug_info_.setString(new_debug_info);
+//    std::string new_debug_info =
+//            "Current status: " + utils::toString(static_cast<int>(client_->getConnectionStatus())) +
+//            " Other players:\n";
+//
+//    for (const auto& conn : client_->getPlayers())
+//    {
+//        const auto* player = conn.second.player.get();
+//        new_debug_info += sf::IpAddress(conn.first).toString() + ": " + player->getName() + ", health: " +
+//                          utils::toString(player->getHealth()) + "/" +
+//                          utils::toString(player->getMaxHealth()) + "\n";
+//    }
+//    debug_info_.setString(new_debug_info);
 }
 
 void ClientUserInterface::draw(graphics::Graphics& graphics)
 {
     UserInterface::draw(graphics);
-    graphics.draw(debug_info_);
+//    graphics.draw(debug_info_);
 }

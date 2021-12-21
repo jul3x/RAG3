@@ -44,7 +44,7 @@ public:
 private:
     Client* client_;
 
-    sf::Text debug_info_;
+//    sf::Text debug_info_;
 
 };
 

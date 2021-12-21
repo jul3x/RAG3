@@ -25,9 +25,9 @@ void MinimalUserInterface::initialize(graphics::Graphics& graphics)
     menu_->doShow(true);
     small_backpack_hud_.setBlocked(true);
 
-    debug_info_.setFont(RM.getFont());
-    debug_info_.setCharacterSize(36);
-    debug_info_.setPosition(100, 200);
+//    debug_info_.setFont(RM.getFont());
+//    debug_info_.setCharacterSize(36);
+//    debug_info_.setPosition(100, 200);
 }
 
 void MinimalUserInterface::draw(graphics::Graphics& graphics)
@@ -44,7 +44,7 @@ void MinimalUserInterface::draw(graphics::Graphics& graphics)
     }
 
     gui_->draw();
-    graphics.draw(debug_info_);
+//    graphics.draw(debug_info_);
     graphics.draw(crosshair_);
 
     RM.setFontsSmoothAllowed(false);
@@ -104,14 +104,14 @@ void MinimalUserInterface::update(graphics::Graphics& graphics, float time_elaps
 {
     UserInterface::update(graphics, time_elapsed);
 
-    std::string new_debug_info = "Connections:\n";
-
-    for (const auto& connection : server_->getConnections())
-    {
-        new_debug_info += sf::IpAddress(connection.first).toString() + ": " + connection.second.name_ + ", status: " +
-                          utils::toString(static_cast<int>(connection.second.status_)) + ", " +
-                          utils::toString(connection.second.ping_elapsed_) + "\n";
-    }
-
-    debug_info_.setString(new_debug_info);
+//    std::string new_debug_info = "Connections:\n";
+//
+//    for (const auto& connection : server_->getConnections())
+//    {
+//        new_debug_info += sf::IpAddress(connection.first).toString() + ": " + connection.second.name_ + ", status: " +
+//                          utils::toString(static_cast<int>(connection.second.status_)) + ", " +
+//                          utils::toString(connection.second.ping_elapsed_) + "\n";
+//    }
+//
+//    debug_info_.setString(new_debug_info);
 }

@@ -24,7 +24,7 @@ bool Explosion::update(float time_elapsed)
 void Explosion::applyForce(Character* obj, float factor_) const
 {
     auto vector = utils::geo::cartesianToPolar(obj->getPosition() - this->getPosition());
-    auto factor = factor_ * r_ / std::get<0>(vector);
+    auto factor = factor_ * r_ / std::max(std::get<0>(vector), 32.0f);
     auto& theta = std::get<1>(vector);
     obj->setHealth(obj->getHealth() - CONF<float>("explosion_hurt_factor") * factor);
 

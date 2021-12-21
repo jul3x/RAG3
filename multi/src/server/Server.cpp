@@ -411,9 +411,10 @@ void Server::useSpecialObject(Player* player, sf::Uint32 ip)
     }
 }
 
-void Server::sendEventToPlayers(ServerEventPacket& packet)
+void Server::sendEventToPlayers(ServerEventPacket& packet, bool cache)
 {
-    cached_events_.emplace_back(packet);
+    if (cache)
+        cached_events_.emplace_back(packet);
 
     for (auto& conn : connections_)
     {
@@ -448,16 +449,23 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
 
             // Necessary hack
             bool should_send = false;
+            bool should_cache = false;
             for (size_t i = 0; i < funcs.size(); ++i)
-                if (j3x::getObj<std::string>(funcs, i) == "Destroy")
+            {
+                const auto& func = j3x::getObj<std::string>(funcs, i);
+                if (func == "Destroy")
+                    should_cache = true;
+
+                if (should_cache || func == "Teleport")
                     should_send = true;
+            }
 
             auto player = dynamic_cast<Player*>(d_obj);
             if (should_send)
             {
                 auto packet = ServerEventPacket(ServerEventPacket::Type::EnteredObject,
                                                 special->getUniqueId(), getPlayerIP(player));
-                sendEventToPlayers(packet);
+                sendEventToPlayers(packet, should_cache);
             }
 
             if (special->isUsableByNPC())

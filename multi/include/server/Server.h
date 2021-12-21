@@ -71,7 +71,7 @@ private:
     void handleMessagesFromPlayers();
     void handleEventsFromPlayers();
     void sendMessagesToPlayers();
-    void sendEventToPlayers(ServerEventPacket& packet);
+    void sendEventToPlayers(ServerEventPacket& packet, bool cache = true);
     void handleTimeouts(float time_elapsed);
     void handleToErase();
 

@@ -488,6 +488,8 @@ void Game::updatePlayers(float time_elapsed)
     {
         this->killPlayer(player_.get());
         music_manager_->setPlaybackPitch(CONF<float>("sound/bullet_time_music_factor"));
+        setGameState(Framework::GameState::Paused);
+        ui_->showFullHud(true);
     }
 
     if (player_clone_ != nullptr)

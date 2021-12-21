@@ -136,7 +136,11 @@ void Client::useSpecialObject()
 void Client::updatePlayers(float time_elapsed)
 {
     if (player_->isAlive() && !player_->update(time_elapsed))
+    {
         this->killPlayer(player_.get());
+        setGameState(Framework::GameState::Paused);
+        ui_->showFullHud(true);
+    }
 
     for (auto& conn : conns_)
     {
@@ -324,6 +328,9 @@ void Client::handleEventsFromServer()
                             ui_->registerPlayer(player_.get());
                             initPlayer(player_.get());
                         }
+
+                        // To omit every UDP packet which was sent before respawn
+                        last_received_packet_timestamp_ = packet.getTimestamp();
 
                         break;
                     }

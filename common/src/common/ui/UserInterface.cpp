@@ -196,7 +196,8 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
                 }
                 else if (event.key.code == sf::Keyboard::Escape)
                 {
-                    if (full_hud_->isShow())
+                    auto player_alive = framework_->getPlayer() == nullptr || framework_->getPlayer()->isAlive();
+                    if (full_hud_->isShow() && player_alive)
                     {
                         framework_->setGameState(Framework::GameState::Normal);
                         full_hud_->show(false);
@@ -602,5 +603,10 @@ void UserInterface::applyMovement(Player* player, const std::unordered_set<UserI
 
     if (player->isAlive())
         player->setVelocity(sf::Vector2f{delta.x, delta.y} * player->getSpeedFactor());
+}
+
+void UserInterface::showFullHud(bool show)
+{
+    full_hud_->show(show);
 }
 

@@ -41,7 +41,7 @@ SkillsHud::SkillsHud(UserInterface* ui, Framework* framework, const sf::Vector2f
         buttons_.back()->setVisible(false);
         buttons_.back()->connect("pressed", [this, ui](Player::Skills skill) {
             framework_->spawnSound(RM.getSound("ui_click"));
-            if (!framework_->getPlayer()->addSkill(skill))
+            if (framework_->getPlayer()->isAlive() && !framework_->getPlayer()->addSkill(skill))
             {
                 for (auto& button : buttons_)
                     button->setText("i\n");
@@ -99,9 +99,13 @@ void SkillsHud::show(bool show)
 
     for (auto& button : buttons_)
     {
-        if (framework_->getPlayer()->getSkillPoints() > 0)
+        if (framework_->getPlayer()->isAlive() && framework_->getPlayer()->getSkillPoints() > 0)
         {
             button->setText("+\n");
+        }
+        else
+        {
+            button->setText("i\n");
         }
 
         if (!show && button->isVisible())

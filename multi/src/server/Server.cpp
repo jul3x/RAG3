@@ -82,6 +82,9 @@ void Server::updatePlayers(float time_elapsed)
         if (player != nullptr && player->isAlive() && !player->update(time_elapsed))
         {
             clearPlayer(player);
+
+            LOG.info("[Server] Player (" + sf::IpAddress(conn.first).toString() +
+                     ") is dead. Death cause: \n" + std::to_string(static_cast<int>(player->getPossibleDeathCause())));
         }
     }
 }
@@ -425,15 +428,15 @@ void Server::sendEventToPlayers(ServerEventPacket& packet, bool cache)
 void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
 {
     auto bullet = dynamic_cast<Bullet*>(h_obj);
-    auto character = dynamic_cast<Character*>(d_obj);
+    auto player = dynamic_cast<Player*>(d_obj);
 
     auto factor = 1.0f;
 
-    if (bullet != nullptr && character != nullptr)
+    if (bullet != nullptr && player != nullptr)
     {
-        if (bullet->getUser() != character)
+        if (bullet->getUser() != player)
         {
-            character->getShot(*bullet, factor);
+            player->getShot(*bullet, factor);
             bullet->setDead();
         }
         return;
@@ -441,7 +444,7 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
 
     auto special = dynamic_cast<Special*>(h_obj);
 
-    if (special != nullptr && character != nullptr && special->isActive())
+    if (special != nullptr && player != nullptr && special->isActive())
     {
         if (special->getActivation() == Functional::Activation::OnEnter)
         {
@@ -460,7 +463,6 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
                     should_send = true;
             }
 
-            auto player = dynamic_cast<Player*>(d_obj);
             if (should_send)
             {
                 auto packet = ServerEventPacket(ServerEventPacket::Type::EnteredObject,
@@ -468,22 +470,14 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
                 sendEventToPlayers(packet, should_cache);
             }
 
-            if (special->isUsableByNPC())
-            {
-                special->use(character);
-            }
-            else if (player != nullptr)
-            {
-                special->use(player);
-            }
+            special->use(player);
         }
         else if (special->getActivation() == Functional::Activation::OnUse)
         {
-            character->setCurrentSpecialObject(special);
+            player->setCurrentSpecialObject(special);
         }
         else
         {
-            auto player = dynamic_cast<Player*>(d_obj);
             auto packet = ServerEventPacket(ServerEventPacket::Type::CollectedObject,
                                             special->getUniqueId(), getPlayerIP(player));
             sendEventToPlayers(packet);
@@ -496,36 +490,29 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         }
     }
 
-    auto talkable_area = dynamic_cast<TalkableArea*>(h_obj);
-
-    if (talkable_area != nullptr && character != nullptr)
-    {
-        character->setCurrentTalkableCharacter(talkable_area->getFather());
-    }
-
     auto explosion = dynamic_cast<Explosion*>(h_obj);
 
-    if (character != nullptr && explosion != nullptr)
+    if (player != nullptr && explosion != nullptr)
     {
-        explosion->applyForce(character, 1.0f);
+        explosion->applyForce(player, 1.0f);
     }
 
     auto fire = dynamic_cast<Fire*>(h_obj);
 
-    if (character != nullptr && fire != nullptr)
+    if (player != nullptr && fire != nullptr)
     {
-        if (fire->getUser() != character)
-            character->setGlobalState(Character::GlobalState::OnFire);
+        if (fire->getUser() != player)
+            player->setGlobalState(Character::GlobalState::OnFire);
     }
 
     auto melee_weapon_area = dynamic_cast<MeleeWeaponArea*>(h_obj);
 
-    if (character != nullptr && melee_weapon_area != nullptr)
+    if (player != nullptr && melee_weapon_area != nullptr)
     {
-        if (character != melee_weapon_area->getFather()->getUser())
+        if (player != melee_weapon_area->getFather()->getUser())
         {
             melee_weapon_area->setActive(false);
-            character->getCut(*melee_weapon_area->getFather(), factor);
+            player->getCut(*melee_weapon_area->getFather(), factor);
         }
     }
 }
@@ -662,6 +649,9 @@ void Server::handleTimeouts(float time_elapsed)
         if (conn.second.ping_elapsed_ > MAX_CLIENT_TIMEOUT)
         {
             clearPlayer(conn.second.player_.get());
+            LOG.info("[Server] Player (" + sf::IpAddress(conn.first).toString() +
+                     ") has been kicked out due to the timeout");
+
             ServerEventPacket server_packet(ServerEventPacket::Type::PlayerExit,
                                             0, conn.first);
             sendEventToPlayers(server_packet);

@@ -476,11 +476,13 @@ void SpecialFunctions::kill(Functional* obj, const j3x::Obj& data, Character* us
         else
         {
             user->setHealth(0);
+            user->setPossibleDeathCause(DeathCause::Drown, nullptr);
         }
     }
     else
     {
         user->setHealth(0);
+        user->setPossibleDeathCause(DeathCause::Unknown, nullptr);
     }
 //     Game::get().spawnAnimationEvent(data);
 }

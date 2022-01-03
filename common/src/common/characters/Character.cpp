@@ -52,7 +52,9 @@ Character::Character(const sf::Vector2f& position, const std::string& id,
         is_moving_(false),
         talk_moment_(0),
         is_talkable_(RMGET<bool>("characters", id, "is_talkable")),
-        previous_pos_(position), current_pos_(position)
+        previous_pos_(position), current_pos_(position),
+        possible_death_cause_(DeathCause::Unknown),
+        possible_killer_(nullptr)
 {
     this->changeOrigin(RMGET<sf::Vector2f>("characters", id, "size") / 2.0f +
                        RMGET<sf::Vector2f>("characters", id, "map_offset"));
@@ -102,7 +104,7 @@ void Character::getShot(const Bullet& bullet, float factor)
     this->addSteeringForce(utils::geo::getNormalized(bullet.getVelocity()) *
                            static_cast<float>(bullet.getDeadlyFactor()) *
                            CONF<float>("get_shot_factor") * factor, CONF<float>("shot_force_duration"));
-
+    this->setPossibleDeathCause(DeathCause::OtherCharacterBullet, bullet.getUser());
 }
 
 void Character::getCut(const MeleeWeapon& weapon, float factor)
@@ -110,6 +112,7 @@ void Character::getCut(const MeleeWeapon& weapon, float factor)
     //Engine::spawnBloodAnimation();
     life_ -= weapon.getDeadlyFactor() * factor;
     life_ = life_ < 0 ? 0 : life_;
+    this->setPossibleDeathCause(DeathCause::OtherCharacterMelee, weapon.getUser());
 }
 
 int Character::getCurrentWeapon() const
@@ -185,7 +188,6 @@ Character::LifeState Character::getLifeState() const
 {
     return this->life_state_;
 }
-
 
 void Character::switchWeapon(int relative_position_backpack)
 {
@@ -585,7 +587,7 @@ void Character::handleGlobalState(float time_elapsed)
         case GlobalState::OnFire:
             life_ -= time_elapsed * CONF<float>("on_fire_hurt_speed");
             on_fire_time_ -= time_elapsed;
-
+            this->setPossibleDeathCause(DeathCause::Fire, possible_killer_);
             if (on_fire_time_ <= 0.0f)
                 setGlobalState(GlobalState::Normal);
             break;
@@ -791,4 +793,20 @@ void Character::forceIsMoving(bool is_moving)
 bool Character::isMoving() const
 {
     return is_moving_;
+}
+
+void Character::setPossibleDeathCause(DeathCause cause, const Character* killer)
+{
+    possible_death_cause_ = cause;
+    possible_killer_ = killer;
+}
+
+const Character* Character::getPossibleKiller() const
+{
+    return possible_killer_;
+}
+
+DeathCause Character::getPossibleDeathCause() const
+{
+    return possible_death_cause_;
 }

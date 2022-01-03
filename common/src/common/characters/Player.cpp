@@ -107,6 +107,7 @@ void Player::handleGlobalState(float time_elapsed)
             if (!CONF<bool>("god_mode"))
             {
                 life_ -= time_elapsed * CONF<float>("on_fire_hurt_speed");
+                this->setPossibleDeathCause(DeathCause::Fire, possible_killer_);
             }
             on_fire_time_ -= time_elapsed;
 
@@ -367,5 +368,3 @@ const j3x::List& Player::getWeaponsToSerialize()
             });
         });
 }
-
-

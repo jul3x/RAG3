@@ -1,14 +1,13 @@
 vector size=(34.0,42.0)
 vector map_offset=(0.0,0.0)
-vector collision_offset=(0.0,0.0)
-float collision_radius=13.0
+vector collision_offset=(0.0,-13.0)
+float collision_size_x=16.0
+float collision_size_y=6.0
 
 int frames_number=6
 float frame_duration=0.085
 
 int z_index=1
-
-
 
 string default_activation="OnEnter"
 list default_functions=["SetOnFire"]

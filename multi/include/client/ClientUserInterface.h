@@ -34,6 +34,8 @@ public:
     ClientUserInterface& operator=(const ClientUserInterface&) = delete;
 
     void initialize(graphics::Graphics& graphics) override;
+    void update(graphics::Graphics& graphics, float time_elapsed) override;
+    void draw(graphics::Graphics& graphics) override;
     void openMenu() override;
 
     void spawnThought(Character* user, const std::string& text) override;
@@ -41,6 +43,8 @@ public:
 
 private:
     Client* client_;
+
+//    sf::Text debug_info_;
 
 };
 

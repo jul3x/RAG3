@@ -136,13 +136,20 @@ void Client::useSpecialObject()
 void Client::updatePlayers(float time_elapsed)
 {
     if (player_->isAlive() && !player_->update(time_elapsed))
-        this->killPlayer(player_.get());
-
-    for (auto& player : players_)
     {
-        if (player.second->isAlive() && !player.second->update(time_elapsed))
+        this->killPlayer(player_.get());
+        setGameState(Framework::GameState::Paused);
+        ui_->showFullHud(true);
+    }
+
+    for (auto& conn : conns_)
+    {
+        if (conn.second.player == nullptr)
+            continue;
+
+        if (conn.second.player->isAlive() && !conn.second.player->update(time_elapsed))
         {
-            this->killPlayer(player.second.get());
+            this->killPlayer(conn.second.player.get());
         }
     }
 }
@@ -308,10 +315,10 @@ void Client::handleEventsFromServer()
                         {
                             killPlayer(player);
 
-                            auto it = players_.find(packet.getIP());
-                            if (it != players_.end())
+                            auto it = conns_.find(packet.getIP());
+                            if (it != conns_.end())
                             {
-                                players_.erase(it);
+                                conns_.erase(it);
                             }
                         }
                         else if (packet.getType() == ServerEventPacket::Type::PlayerRespawn) // we are respawning
@@ -321,6 +328,9 @@ void Client::handleEventsFromServer()
                             ui_->registerPlayer(player_.get());
                             initPlayer(player_.get());
                         }
+
+                        // To omit every UDP packet which was sent before respawn
+                        last_received_packet_timestamp_ = packet.getTimestamp();
 
                         break;
                     }
@@ -424,13 +434,19 @@ void Client::receiveData()
                     player->setGlobalState(data.second.state_);
 
                     size_t i = 0;
-                    for (auto state : data.second.weapon_state_)
+
+                    if (data.second.weapon_state_.size() ==
+                        player->getWeapons().size())  // to avoid possible race conditions with old packets
                     {
-                        player->getWeapons().at(i)->setState(state);
-                        ++i;
+                        for (auto state : data.second.weapon_state_)
+                        {
+                            player->getWeapons().at(i)->setState(state);
+                            ++i;
+                        }
                     }
 
-                    cached_datas_[data.first] = data.second;
+                    if (!isMe(data.first))
+                        conns_[data.first].cached_data = data.second;
                 }
             }
             else
@@ -457,15 +473,26 @@ void Client::receiveData()
         }
     }
 
-    for (const auto& data : cached_datas_)
+    std::vector<sf::Uint32> to_remove(conns_.size());
+    for (const auto& conn : conns_)
     {
-        if (!isMe(data.first))
+        if (!isMe(conn.first))
         {
-            auto player = getPlayer(data.first);
-
-            if (data.second.is_shooting_)
-                player->shot();
+            if (conn.second.cached_data.is_shooting_)
+                conn.second.player->shot();
         }
+
+        // kill players which are not playing anymore
+        if (!conn.second.still_playing)
+        {
+            to_remove.emplace_back(conn.first);
+            killPlayer(conn.second.player.get());
+        }
+    }
+
+    for (const auto& obj : to_remove)
+    {
+        conns_.erase(obj);
     }
 }
 
@@ -474,17 +501,20 @@ Player* Client::getPlayer(sf::Uint32 ip)
     if (isMe(ip))
         return player_.get();
 
-    auto it = players_.find(ip);
+    auto it = conns_.find(ip);
 
-    if (it == players_.end())
+    if (it == conns_.end())
     {
-        players_[ip] = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
-        initPlayer(players_[ip].get());
+        conns_[ip] = {};
+        conns_[ip].player = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
+        conns_[ip].still_playing = true;
+        initPlayer(conns_[ip].player.get());
 
-        return players_[ip].get();
+        return conns_[ip].player.get();
     }
 
-    return it->second.get();
+    it->second.still_playing = true;
+    return it->second.player.get();
 }
 
 void Client::setGameState(Framework::GameState state)
@@ -539,18 +569,19 @@ void Client::respawn(const std::string& map_name)
 
 void Client::drawAdditionalPlayers(graphics::Graphics& graphics)
 {
-    for (auto& player : players_)
+    for (auto& conn : conns_)
     {
-        if (player.second->isAlive())
-            graphics.drawSorted(*player.second);
+        if (conn.second.player->getHealth() > 0.0f)
+            graphics.drawSorted(*conn.second.player);
     }
 }
 
 void Client::drawAdditionalPlayersLighting()
 {
-    for (auto& player : players_)
+    for (auto& conn : conns_)
     {
-        lighting_->add(*player.second->getLightPoint());
+        if (conn.second.player->getHealth() > 0.0f)
+            lighting_->add(*conn.second.player->getLightPoint());
     }
 }
 
@@ -559,10 +590,9 @@ void Client::startGame(const std::string& ip_address)
     if (connection_status_ != ConnectionStatus::Off)
         return;
 
-    for (auto& player : players_)
-        unregisterCharacter(player.second.get());
-    players_.clear();
-    cached_datas_.clear();
+    for (auto& conn : conns_)
+        unregisterCharacter(conn.second.player.get());
+    conns_.clear();
     data_receive_socket_.unbind();
     if (data_receive_socket_.bind(CONF<int>("udp_server_port")) != sf::Socket::Done)
     {
@@ -580,10 +610,9 @@ void Client::startGame(const std::string& ip_address)
 
 void Client::disconnect()
 {
-    for (auto& player : players_)
-        unregisterCharacter(player.second.get());
-    players_.clear();
-    cached_datas_.clear();
+    for (auto& conn : conns_)
+        unregisterCharacter(conn.second.player.get());
+    conns_.clear();
 
     PlayerEventPacket packet(PlayerEventPacket::Type::Exit);
     events_socket_.setBlocking(true);
@@ -621,4 +650,14 @@ void Client::respawnWithoutReload()
 bool Client::isMe(sf::Uint32 ip)
 {
     return ip == ip_on_server_.toInteger();
+}
+
+const std::unordered_map<sf::Uint32, Client::ConnectedPlayer>& Client::getPlayers() const
+{
+    return conns_;
+}
+
+ConnectionStatus Client::getConnectionStatus() const
+{
+    return connection_status_;
 }

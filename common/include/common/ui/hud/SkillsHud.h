@@ -34,12 +34,16 @@ private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     std::string texts_tooltips_[4] = {"More intelligence comes with better understanding.\n"
-                                      "Increases your ability of using RAG3 crystals to manipulate time.",
+                                      "Increases your ability of using RAG3 crystals\n"
+                                      "to manipulate time.",
                                       "Stronger heart can improve your endurance.\n"
                                       "Increases your maximum health.",
-                                      "Stronger muscles are very desired in abandoned world...\n"
-                                      "Higher number of this skill improves your melee damage\n"
-                                      "and decreases your body effects after shots and hits.",
+                                      "Stronger muscles are very desired\n"
+                                      "in abandoned world...\n\n"
+                                      "Higher number of this skill\n"
+                                      "improves your melee damage\n"
+                                      "and decreases your body effects\n"
+                                      "after shots and hits.",
                                       "Faster you run, more likely you survive.\n"
                                       "Improves your running skills."};
 

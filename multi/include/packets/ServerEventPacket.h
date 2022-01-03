@@ -34,13 +34,15 @@ public:
 
     ServerEventPacket(Type type, int uid, sf::Uint32 player_ip) : type_(type), uid_(uid), player_ip_(player_ip)
     {
-        *this << static_cast<sf::Int16>(type) << player_ip << uid;
+        *this << static_cast<sf::Uint64>(r3e::utils::timeSinceEpochMillisec()) <<
+              static_cast<sf::Int16>(type) << player_ip << uid;
     }
 
     ServerEventPacket(Type type, const j3x::Parameters& data, sf::Uint32 player_ip) :
             type_(type), data_(std::make_shared<j3x::Parameters>(data)), player_ip_(player_ip)
     {
-        *this << static_cast<sf::Int16>(type) << player_ip;
+        *this << static_cast<sf::Uint64>(r3e::utils::timeSinceEpochMillisec()) <<
+              static_cast<sf::Int16>(type) << player_ip;
 
         std::string params;
         for (const auto& param : data)
@@ -50,8 +52,9 @@ public:
 
     [[nodiscard]] bool isCachedForIp(sf::Uint32 ip)
     {
-        static constexpr std::array<Type, 3> forbidden = {Type::PlayerExit, Type::NameChange};
-        static constexpr std::array<Type, 1> always_forbidden = {Type::PlayerRespawn};
+        static constexpr std::array<Type, 1> forbidden = {Type::NameChange};
+        static constexpr std::array<Type, 4>
+                always_forbidden = {Type::Exit, Type::Connection, Type::PlayerExit, Type::PlayerRespawn};
 
         return !utils::contains(always_forbidden, type_) &&
                (ip != this->player_ip_ || !utils::contains(forbidden, this->type_));
@@ -77,12 +80,19 @@ public:
         return player_ip_;
     }
 
+    [[nodiscard]] uint64_t getTimestamp() const
+    {
+        return timestamp_;
+    }
+
 private:
     void onReceive(const void* data, std::size_t size) override
     {
         append(data, size);
         sf::Int16 type;
-        *this >> type >> player_ip_;
+        sf::Uint64 time;
+        *this >> time >> type >> player_ip_;
+        timestamp_ = static_cast<uint64_t>(time);
 
         if (type > STRING_DATA_ABOVE)
         {
@@ -99,6 +109,7 @@ private:
     int uid_{-1};
     sf::Uint32 player_ip_{0};
     std::shared_ptr<j3x::Parameters> data_;
+    uint64_t timestamp_{};
 };
 
 #endif //RAG3_MULTI_INCLUDE_PACKETS_SERVEREVENTPACKET_H

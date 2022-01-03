@@ -89,10 +89,10 @@ void BackpackHud::combineBackpackItems(size_t first, size_t second)
             }
         }
 
-        if (can_upgrade)
+        if (can_upgrade && framework_->getPlayer()->isAlive())
         {
             ui_->spawnAcceptWindow(
-                    "Do you want to upgrade \"" +
+                    "Do you want to upgrade\n\"" +
                     RMGET<std::string>("specials", weapon_id, "tooltip_header") + "\" with \"" +
                     RMGET<std::string>("specials", special_id, "tooltip_header") + "\"?",
                     std::bind([this](const std::string& w, const std::string& s) {

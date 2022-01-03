@@ -44,9 +44,10 @@ float fire_collision_factor = 0.5
 float fire_collision_offset = 16.0
 
 // EXPLOSIONS
-float explosion_hurt_factor = 30.0
+float explosion_hurt_factor = 20.0
 float explosion_velocity_factor = 1280.0
 float explosion_force_duration = 0.2
+float explosion_max_distance = 600.0
 
 // MELEE
 float melee_weapon_range = 20.0
@@ -59,12 +60,14 @@ float side_step_force_duration = 0.1
 int crystal_pick_exp = 50
 
 // MAPS
-list maps_order = ["first_new_map"; "map_new"]
+list maps_order = ["intro"; "first_new_map"; "map_new"; "multi_map"]
+string map_name_intro = "Intro"
 string map_name_first_new_map = "Tutorial"
 string map_name_map_new = "Test map"
+string map_name_multi_map = "Arena"
 
 // MULTI
-float periodical_spawn_time = 120.0
+float periodical_spawn_time = 60.0 // TODO - extract to server settings (with max players, and stats to finish gameplay)
 int tcp_port = 54000
 int udp_client_port = 54001
 int udp_server_port = 54002

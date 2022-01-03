@@ -411,9 +411,10 @@ void Server::useSpecialObject(Player* player, sf::Uint32 ip)
     }
 }
 
-void Server::sendEventToPlayers(ServerEventPacket& packet)
+void Server::sendEventToPlayers(ServerEventPacket& packet, bool cache)
 {
-    cached_events_.emplace_back(packet);
+    if (cache)
+        cached_events_.emplace_back(packet);
 
     for (auto& conn : connections_)
     {
@@ -448,16 +449,23 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
 
             // Necessary hack
             bool should_send = false;
+            bool should_cache = false;
             for (size_t i = 0; i < funcs.size(); ++i)
-                if (j3x::getObj<std::string>(funcs, i) == "Destroy")
+            {
+                const auto& func = j3x::getObj<std::string>(funcs, i);
+                if (func == "Destroy")
+                    should_cache = true;
+
+                if (should_cache || func == "Teleport")
                     should_send = true;
+            }
 
             auto player = dynamic_cast<Player*>(d_obj);
             if (should_send)
             {
                 auto packet = ServerEventPacket(ServerEventPacket::Type::EnteredObject,
                                                 special->getUniqueId(), getPlayerIP(player));
-                sendEventToPlayers(packet);
+                sendEventToPlayers(packet, should_cache);
             }
 
             if (special->isUsableByNPC())
@@ -516,9 +524,6 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     {
         if (character != melee_weapon_area->getFather()->getUser())
         {
-            float angle = utils::geo::wrapAngle0_360(std::get<1>(utils::geo::cartesianToPolar(
-                    melee_weapon_area->getFather()->getUser()->getPosition() - character->getPosition())) * 180.0 /
-                                                     M_PI);
             melee_weapon_area->setActive(false);
             character->getCut(*melee_weapon_area->getFather(), factor);
         }
@@ -558,6 +563,7 @@ void Server::respawn(const std::string& map_name)
     cached_events_.clear();
     connections_.clear();
     starting_positions_.clear();
+    destroyed_specials_.clear();
     map_->getList<NPC>().clear();
 
     for (auto& special : map_->getList<Special>())
@@ -601,6 +607,7 @@ void Server::startGame(const std::string& map_name)
     for (auto& conn : connections_)
         unregisterCharacter(conn.second.player_.get());
     connections_.clear();
+    destroyed_specials_.clear();
 
     // bind sockets
     if (connection_listener_.listen(CONF<int>("tcp_port")) != sf::Socket::Done)
@@ -633,6 +640,7 @@ void Server::disconnect()
     }
 
     connections_.clear();
+    destroyed_specials_.clear();
     data_receiver_socket_.unbind();
     data_sender_socket_.unbind();
     connection_listener_.close();
@@ -697,4 +705,9 @@ void Server::handlePeriodicalSpecials()
         }
         return false;
     });
+}
+
+const std::unordered_map<sf::Uint32, PlayerConnection>& Server::getConnections() const
+{
+    return connections_;
 }

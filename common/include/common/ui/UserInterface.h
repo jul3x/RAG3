@@ -72,6 +72,7 @@ public:
     virtual void openMenu();
     virtual void startGame();
     virtual void clearWindows();
+    virtual void showFullHud(bool show);
 
     static void applyMovement(Player* player, const std::unordered_set<UserInterface::Keys>& keys_pressed);
 

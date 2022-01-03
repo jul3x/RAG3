@@ -46,10 +46,11 @@ public:
 
     // Misc
     void addToDestroyedSpecials(const std::string& id, const sf::Vector2f& pos) override;
+    const std::unordered_map<sf::Uint32, PlayerConnection>& getConnections() const;
 
 private:
     using PeriodicalSpecial = std::tuple<std::string, sf::Vector2f, float>;
-    static constexpr auto MAX_PLAYERS = 8;
+    static constexpr auto MAX_PLAYERS = 12;
 
     void preupdate(float time_elapsed) override;
     void beforeUpdate(float time_elapsed) override;
@@ -70,7 +71,7 @@ private:
     void handleMessagesFromPlayers();
     void handleEventsFromPlayers();
     void sendMessagesToPlayers();
-    void sendEventToPlayers(ServerEventPacket& packet);
+    void sendEventToPlayers(ServerEventPacket& packet, bool cache = true);
     void handleTimeouts(float time_elapsed);
     void handleToErase();
 

@@ -285,7 +285,12 @@ void Framework::updateExplosions()
 
     for (const auto& desired_explosion : desired_explosions_)
     {
-        camera_->setShaking(1.5f);
+        auto* player = this->getPlayer();
+        if (player != nullptr && utils::num::isNearlyEqual(desired_explosion.first, player->getPosition(),
+                                                           CONF<float>("explosion_max_distance")))
+        {
+            camera_->setShaking(1.5f);
+        }
         explosions_.emplace_back(std::make_unique<Explosion>(desired_explosion.first, desired_explosion.second));
         engine_->registerObj<HoveringObject>(explosions_.back().get());
     }
@@ -1005,7 +1010,7 @@ void Framework::unregisterCharacter(Character* character, bool clear_clone)
         return;
 
     ui_->removeArrowIfExists(character);
-    
+
     if (clear_clone)
     {
         auto player_clone = getPlayerClone();
@@ -1150,8 +1155,8 @@ void Framework::killPlayer(Player* player)
     spawnDecoration(player->getPosition(), "blood");
     spawnKillEvent(player->getPosition());
     spawnSound(RM.getSound("henry_dead"), player->getPosition());
+    unregisterCharacter(player);
     player->setDead();
-    engine_->unregisterObj<DynamicObject>(player);
 }
 
 NPC* Framework::spawnNewNPC(const std::string& id, int u_id, Functional::Activation activation,

@@ -79,6 +79,7 @@ private:
     void sendInputs();
     void receiveData();
     Player* getPlayer(sf::Uint32 ip);
+    const std::string& getPlayerName(sf::Uint32 ip);
     bool isMe(sf::Uint32 ip);
 
     std::unordered_map<sf::Uint32, ConnectedPlayer> conns_;

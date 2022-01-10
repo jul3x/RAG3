@@ -83,3 +83,23 @@ void ClientUserInterface::draw(graphics::Graphics& graphics)
     UserInterface::draw(graphics);
 //    graphics.draw(debug_info_);
 }
+
+std::string ClientUserInterface::generateMessage(MessageType type, const j3x::Parameters& params)
+{
+    switch (type)
+    {
+        case MessageType::Death:
+            // TODO - why and by who?
+            return "Player " + j3x::get<std::string>(params, "name") + " has been destroyed.";
+        case MessageType::Respawn:
+            return "Player " + j3x::get<std::string>(params, "name") + " returned from the ashes.";
+        case MessageType::Left:
+            return "Player " + j3x::get<std::string>(params, "name") + " cannot do this anymore.";
+        case MessageType::Connection:
+            return "Player " + j3x::get<std::string>(params, "name") + " comes to life!";
+        case MessageType::Talk:
+            return "Player " + j3x::get<std::string>(params, "name") + " says: " + j3x::get<std::string>(params, "msg");
+        default:
+            return "Unknown message";
+    }
+}

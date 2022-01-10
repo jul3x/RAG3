@@ -22,6 +22,8 @@
 #include <common/misc/Camera.h>
 #include <common/ui/UserInterface.h>
 
+#include <packets/PlayersStatePacket.h>
+
 
 using namespace r3e;
 
@@ -41,11 +43,12 @@ public:
     void spawnThought(Character* user, const std::string& text) override;
     void spawnNoteWindow(const std::string& text, bool note_info = true) override;
 
+    static std::string generateMessage(MessageType type, const j3x::Parameters& params);
+
 private:
     Client* client_;
 
 //    sf::Text debug_info_;
-
 };
 
 

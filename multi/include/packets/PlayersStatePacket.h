@@ -47,6 +47,16 @@ struct PlayerData {
 };
 
 
+enum class MessageType {
+    Death = 5,
+    Respawn = 4,
+    Left = 3,
+    Connection = 2,
+    Talk = 1,
+    None = 0
+};
+
+
 class PlayersStatePacket : public sf::Packet {
 public:
     PlayersStatePacket() = default;

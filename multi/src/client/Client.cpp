@@ -280,6 +280,10 @@ void Client::handleEventsFromServer()
 
                         player->makeLifeBar(j3x::get<std::string>(packet.getParams(), "name"));
                         player->changePlayerTexture(j3x::get<std::string>(packet.getParams(), "texture"));
+
+                        j3x::Parameters msg_params = {{"name", getPlayerName(packet.getIP())}};
+                        ui_->spawnMessage(ClientUserInterface::generateMessage(MessageType::Connection, msg_params));
+
                         break;
                     }
                     case ServerEventPacket::Type::SpecialSpawn:
@@ -310,6 +314,10 @@ void Client::handleEventsFromServer()
                     case ServerEventPacket::Type::PlayerRespawn:
                     {
                         auto player = getPlayer(packet.getIP());
+                        j3x::Parameters msg_params = {{"name", getPlayerName(packet.getIP())}};
+
+                        if (packet.getType() == ServerEventPacket::Type::PlayerExit)
+                            ui_->spawnMessage(ClientUserInterface::generateMessage(MessageType::Left, msg_params));
 
                         if (player != player_.get())
                         {
@@ -515,6 +523,20 @@ Player* Client::getPlayer(sf::Uint32 ip)
 
     it->second.still_playing = true;
     return it->second.player.get();
+}
+
+const std::string& Client::getPlayerName(sf::Uint32 ip)
+{
+    if (isMe(ip))
+        return player_->getName();
+
+    auto it = conns_.find(ip);
+
+    if (it != conns_.end())
+        return it->second.player->getName();
+
+    throw std::runtime_error(
+            "[Client] Trying to get name of a player that does not exist: " + sf::IpAddress(ip).toString());
 }
 
 void Client::setGameState(Framework::GameState state)

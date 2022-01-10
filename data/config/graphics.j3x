@@ -60,6 +60,7 @@ float popup_text_size = 20 * user_interface_zoom
 float menu_button_text_size = 44 * user_interface_zoom
 float menu_window_header_size = 44 * user_interface_zoom
 float menu_window_text_size = 36 * user_interface_zoom
+float message_font_size = 24 * user_interface_zoom
 
 // FIRE GRAPHICS
 int fire_color = -1
@@ -95,6 +96,10 @@ list tutorial_arrows = ["talkables"; "note"; "note_open"]
 float tutorial_arrow_offset = -12.0
 float tutorial_arrow_amplitude = 3.0
 vector face_size = (109.0, 99.0) * user_interface_zoom
+float message_timeout = 15.0
+int message_font_color = -1
+vector messages_base_pos = (50.0, 150.0) * user_interface_zoom
+int messages_max_count = 5
 
 // ACHIEVEMENT POPUPS
 float achievement_show_speed = 4.0

@@ -210,6 +210,23 @@ void Client::handleEventsFromServer()
                                 setGameState(Framework::GameState::Normal);
 
                                 connection_status_ = ConnectionStatus::On;
+
+                                // Set stats
+                                for (const auto& stats : j3x::get<j3x::List>(params, "stats"))
+                                {
+                                    const auto& stats_obj = j3x::getObj<j3x::List>(stats);
+                                    sf::Uint32 ip = j3x::getObj<int>(stats_obj, 0);
+                                    int kills = j3x::getObj<int>(stats_obj, 1);
+                                    int deaths = j3x::getObj<int>(stats_obj, 2);
+
+                                    auto conn_it = conns_.find(ip);
+                                    if (conn_it != conns_.end())
+                                    {
+                                        conn_it->second.kills_ = kills;
+                                        conn_it->second.deaths_ = deaths;
+                                    }
+                                }
+
                                 break;
                             }
                             case static_cast<int>(ConnectionStatus::InProgress):
@@ -339,6 +356,30 @@ void Client::handleEventsFromServer()
 
                         // To omit every UDP packet which was sent before respawn
                         last_received_packet_timestamp_ = packet.getTimestamp();
+
+                        break;
+                    }
+                    case ServerEventPacket::Type::PlayerDeath:
+                    {
+                        // Only for information / stats purposes
+                        const auto& params = packet.getParams();
+                        sf::Uint32 killer_ip = j3x::get<int>(params, "k");
+                        const auto& killer_name = getPlayerName(killer_ip);
+                        int cause = j3x::get<int>(params, "c");
+                        j3x::Parameters msg_params =
+                                {{"name",   getPlayerName(packet.getIP())},
+                                 {"killer", killer_name},
+                                 {"cause",  cause}};
+
+                        ui_->spawnMessage(ClientUserInterface::generateMessage(MessageType::Death, msg_params));
+
+                        auto dead_it = conns_.find(packet.getIP());
+                        if (dead_it != conns_.end())
+                            ++dead_it->second.deaths_;
+
+                        auto killer_it = conns_.find(killer_ip);
+                        if (killer_it != conns_.end())
+                            ++killer_it->second.kills_;
 
                         break;
                     }
@@ -527,6 +568,7 @@ Player* Client::getPlayer(sf::Uint32 ip)
 
 const std::string& Client::getPlayerName(sf::Uint32 ip)
 {
+    static const std::string ERR = "";
     if (isMe(ip))
         return player_->getName();
 
@@ -535,8 +577,9 @@ const std::string& Client::getPlayerName(sf::Uint32 ip)
     if (it != conns_.end())
         return it->second.player->getName();
 
-    throw std::runtime_error(
-            "[Client] Trying to get name of a player that does not exist: " + sf::IpAddress(ip).toString());
+    LOG.info("[Client] Trying to get name of a player that does not exist: " + sf::IpAddress(ip).toString());
+
+    return ERR;
 }
 
 void Client::setGameState(Framework::GameState state)

@@ -62,11 +62,11 @@ private:
     void obstacleDestroyedEvent(Obstacle* obstacle) override;
     void drawAdditionalPlayers(graphics::Graphics& graphics) override;
     void drawAdditionalPlayersLighting() override;
-    void clearPlayer(Player* player);
+    void clearPlayer(sf::Uint32 ip, PlayerConnection& conn);
     void respawnPlayer(sf::Uint32 ip);
     void useSpecialObject(Player* player, sf::Uint32 ip);
 
-    sf::Uint32 getPlayerIP(Player* player);
+    sf::Uint32 getPlayerIP(const Character* player);
     void checkAwaitingConnections();
     void handleMessagesFromPlayers();
     void handleEventsFromPlayers();

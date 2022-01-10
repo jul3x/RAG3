@@ -86,19 +86,36 @@ void ClientUserInterface::draw(graphics::Graphics& graphics)
 
 std::string ClientUserInterface::generateMessage(MessageType type, const j3x::Parameters& params)
 {
+    DeathCause death_cause;
     switch (type)
     {
         case MessageType::Death:
-            // TODO - why and by who?
-            return "Player " + j3x::get<std::string>(params, "name") + " has been destroyed.";
+            death_cause = static_cast<DeathCause>(j3x::get<int>(params, "cause"));
+            switch (death_cause)
+            {
+                case DeathCause::Drown:
+                    return j3x::get<std::string>(params, "name") + " cannot swim :(.";
+                case DeathCause::Fire:
+                    return j3x::get<std::string>(params, "name") + " smells like fried chicken.";
+                case DeathCause::Explosion:
+                    return j3x::get<std::string>(params, "name") + " broke into pieces.";
+                case DeathCause::OtherCharacterBullet:
+                    return j3x::get<std::string>(params, "killer") + " shot " + j3x::get<std::string>(params, "name") +
+                           ".";
+                case DeathCause::OtherCharacterMelee:
+                    return j3x::get<std::string>(params, "killer") + " cut " + j3x::get<std::string>(params, "name") +
+                           ".";
+                default:
+                    return j3x::get<std::string>(params, "name") + " died with unknown reason.";
+            }
         case MessageType::Respawn:
-            return "Player " + j3x::get<std::string>(params, "name") + " returned from the ashes.";
+            return j3x::get<std::string>(params, "name") + " returned from the ashes.";
         case MessageType::Left:
-            return "Player " + j3x::get<std::string>(params, "name") + " cannot do this anymore.";
+            return j3x::get<std::string>(params, "name") + " cannot do this anymore.";
         case MessageType::Connection:
-            return "Player " + j3x::get<std::string>(params, "name") + " comes to life!";
+            return j3x::get<std::string>(params, "name") + " comes to life!";
         case MessageType::Talk:
-            return "Player " + j3x::get<std::string>(params, "name") + " says: " + j3x::get<std::string>(params, "msg");
+            return j3x::get<std::string>(params, "name") + " says: " + j3x::get<std::string>(params, "msg");
         default:
             return "Unknown message";
     }

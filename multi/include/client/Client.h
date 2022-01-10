@@ -36,6 +36,7 @@ public:
         std::unique_ptr<Player> player;
         bool still_playing{true};
         PlayerData cached_data;
+        int kills_, deaths_;
     };
 
     Client();

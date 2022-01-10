@@ -32,6 +32,8 @@ struct PlayerConnection {
     std::string name_;
     std::string character_;
     float ping_elapsed_;
+
+    int kills_, deaths_;
 };
 
 

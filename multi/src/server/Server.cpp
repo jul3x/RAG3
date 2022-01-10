@@ -81,7 +81,7 @@ void Server::updatePlayers(float time_elapsed)
         auto player = conn.second.player_.get();
         if (player != nullptr && player->isAlive() && !player->update(time_elapsed))
         {
-            clearPlayer(player);
+            clearPlayer(conn.first, conn.second);
 
             LOG.info("[Server] Player (" + sf::IpAddress(conn.first).toString() +
                      ") is dead. Death cause: \n" + std::to_string(static_cast<int>(player->getPossibleDeathCause())));
@@ -297,7 +297,9 @@ void Server::handleEventsFromPlayers()
                         }
                         case PlayerEventPacket::Type::Respawn:
                         {
-                            clearPlayer(player);
+                            if (conn.second.player_ != nullptr)
+                                conn.second.player_->setPossibleDeathCause(DeathCause::Unknown, nullptr);
+                            clearPlayer(conn.first, conn.second);
                             respawnPlayer(conn.first);
 
                             ServerEventPacket server_packet(ServerEventPacket::Type::PlayerRespawn,
@@ -314,7 +316,9 @@ void Server::handleEventsFromPlayers()
                         }
                         case PlayerEventPacket::Type::Exit:
                         {
-                            clearPlayer(player);
+                            if (conn.second.player_ != nullptr)
+                                conn.second.player_->setPossibleDeathCause(DeathCause::Unknown, nullptr);
+                            clearPlayer(conn.first, conn.second);
                             ServerEventPacket server_packet(ServerEventPacket::Type::PlayerExit,
                                                             0, conn.first);
                             sendEventToPlayers(server_packet);
@@ -349,6 +353,16 @@ void Server::handleEventsFromPlayers()
                         LOG.info("Connection successful.");
                         respawnPlayer(conn.first);
                         connection_parameters["s"] = static_cast<int>(ConnectionStatus::On);
+                        auto all_stats = j3x::List();
+
+                        for (const auto& connection : connections_)
+                        {
+                            auto stats = j3x::List({static_cast<int>(connection.first), connection.second.kills_,
+                                                    connection.second.deaths_});
+                            all_stats.emplace_back(stats);
+                        }
+
+                        connection_parameters["stats"] = std::move(all_stats);
                         auto server_packet =
                                 ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters,
                                                   conn.first);
@@ -393,14 +407,36 @@ void Server::handleEventsFromPlayers()
     }
 }
 
-void Server::clearPlayer(Player* player)
+void Server::clearPlayer(sf::Uint32 ip, PlayerConnection& conn)
 {
-    if (player == nullptr)
+    if (conn.player_ == nullptr)
         return;
 
-    player->setDead();
-    engine_->unregisterObj<DynamicObject>(player);
-    unregisterWeapons(player);
+    if (conn.player_->isAlive())
+    {
+        ++conn.deaths_;
+        sf::Uint32 killer_ip = 0;
+        auto killer = conn.player_->getPossibleKiller();
+        auto cause = conn.player_->getPossibleDeathCause();
+        if (killer != nullptr)
+        {
+            killer_ip = getPlayerIP(killer);
+            auto conn_it = connections_.find(killer_ip);
+
+            if (conn_it != connections_.end())
+            {
+                ++conn_it->second.kills_;
+            }
+        }
+
+        ServerEventPacket packet = {ServerEventPacket::Type::PlayerDeath,
+                                    {{"k", static_cast<int>(killer_ip)}, {"c", static_cast<int>(cause)}}, ip};
+        sendEventToPlayers(packet, false);
+    }
+
+    conn.player_->setDead();
+    engine_->unregisterObj<DynamicObject>(conn.player_.get());
+    unregisterWeapons(conn.player_.get());
 }
 
 void Server::useSpecialObject(Player* player, sf::Uint32 ip)
@@ -481,12 +517,9 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             auto packet = ServerEventPacket(ServerEventPacket::Type::CollectedObject,
                                             special->getUniqueId(), getPlayerIP(player));
             sendEventToPlayers(packet);
-            if (player != nullptr)
-            {
-                player->addSpecialToBackpack(special->getId(), 1,
-                                             [this](Functional* functional) { this->registerFunctions(functional); });
-                special_functions_->destroy(special, {}, player);
-            }
+            player->addSpecialToBackpack(special->getId(), 1,
+                                         [this](Functional* functional) { this->registerFunctions(functional); });
+            special_functions_->destroy(special, {}, player);
         }
     }
 
@@ -517,7 +550,7 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     }
 }
 
-sf::Uint32 Server::getPlayerIP(Player* player)
+sf::Uint32 Server::getPlayerIP(const Character* player)
 {
     for (const auto& conn : connections_)
     {
@@ -623,7 +656,10 @@ void Server::disconnect()
     for (auto& conn : connections_)
     {
         conn.second.events_socket_->disconnect();
-        clearPlayer(conn.second.player_.get());
+
+        if (conn.second.player_ != nullptr)
+            conn.second.player_->setPossibleDeathCause(DeathCause::Unknown, nullptr);
+        clearPlayer(conn.first, conn.second);
     }
 
     connections_.clear();
@@ -648,7 +684,9 @@ void Server::handleTimeouts(float time_elapsed)
         conn.second.ping_elapsed_ += time_elapsed;
         if (conn.second.ping_elapsed_ > MAX_CLIENT_TIMEOUT)
         {
-            clearPlayer(conn.second.player_.get());
+            if (conn.second.player_ != nullptr)
+                conn.second.player_->setPossibleDeathCause(DeathCause::Unknown, nullptr);
+            clearPlayer(conn.first, conn.second);
             LOG.info("[Server] Player (" + sf::IpAddress(conn.first).toString() +
                      ") has been kicked out due to the timeout");
 

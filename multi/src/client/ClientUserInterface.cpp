@@ -117,3 +117,10 @@ std::string ClientUserInterface::generateMessage(MessageType type, const j3x::Pa
             return "Unknown message";
     }
 }
+
+void ClientUserInterface::updatePlayerStates(float time_elapsed)
+{
+    UserInterface::updatePlayerStates(time_elapsed);
+
+    stats_hud_.update(client_->getMyStats().kills_, client_->getMyStats().deaths_, time_elapsed);
+}

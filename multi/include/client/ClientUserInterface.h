@@ -46,6 +46,8 @@ public:
     static std::string generateMessage(MessageType type, const j3x::Parameters& params);
 
 private:
+    void updatePlayerStates(float time_elapsed) override;
+
     Client* client_;
 
 //    sf::Text debug_info_;

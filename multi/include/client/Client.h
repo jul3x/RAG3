@@ -61,6 +61,7 @@ public:
     void disconnect();
     const std::unordered_map<sf::Uint32, ConnectedPlayer>& getPlayers() const;
     ConnectionStatus getConnectionStatus() const;
+    const PlayerStats& getMyStats() const;
 
 private:
     void afterUpdate(float time_elapsed) override;

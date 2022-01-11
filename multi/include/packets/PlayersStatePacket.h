@@ -35,7 +35,7 @@ struct PlayerData {
 };
 
 struct PlayerStats {
-    int kills_, deaths_;
+    int kills_{}, deaths_{};
 };
 
 // Server

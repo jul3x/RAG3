@@ -742,3 +742,8 @@ PlayerStats& Client::getStats(sf::Uint32 ip)
 
     return it->second.stats;
 }
+
+const PlayerStats& Client::getMyStats() const
+{
+    return my_stats_;
+}

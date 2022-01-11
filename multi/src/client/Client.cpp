@@ -13,11 +13,12 @@
 #include <packets/PlayersStatePacket.h>
 #include <packets/PlayerEventPacket.h>
 #include <packets/ServerEventPacket.h>
+#include <client/ClientFullHud.h>
 #include <client/Client.h>
 
 
 Client::Client() : Framework(), last_packet_timestamp_(0.0f), last_received_packet_timestamp_(0),
-                   connection_status_(ConnectionStatus::Off)
+                   connection_status_(ConnectionStatus::Off), stats_(nullptr), server_ping_elapsed_(0.0f)
 {
 }
 
@@ -219,13 +220,11 @@ void Client::handleEventsFromServer()
                                     int kills = j3x::getObj<int>(stats_obj, 1);
                                     int deaths = j3x::getObj<int>(stats_obj, 2);
 
-                                    auto conn_it = conns_.find(ip);
-                                    if (conn_it != conns_.end())
-                                    {
-                                        conn_it->second.kills_ = kills;
-                                        conn_it->second.deaths_ = deaths;
-                                    }
+                                    auto& stats_to_update = getStats(ip);
+                                    stats_to_update.kills_ = kills;
+                                    stats_to_update.deaths_ = deaths;
                                 }
+                                stats_->update(player_->getName(), my_stats_, conns_);
 
                                 break;
                             }
@@ -373,13 +372,10 @@ void Client::handleEventsFromServer()
 
                         ui_->spawnMessage(ClientUserInterface::generateMessage(MessageType::Death, msg_params));
 
-                        auto dead_it = conns_.find(packet.getIP());
-                        if (dead_it != conns_.end())
-                            ++dead_it->second.deaths_;
+                        getStats(packet.getIP()).deaths_++;
+                        getStats(killer_ip).kills_++;
 
-                        auto killer_it = conns_.find(killer_ip);
-                        if (killer_it != conns_.end())
-                            ++killer_it->second.kills_;
+                        stats_->update(player_->getName(), my_stats_, conns_);
 
                         break;
                     }
@@ -652,6 +648,7 @@ void Client::drawAdditionalPlayersLighting()
 
 void Client::startGame(const std::string& ip_address)
 {
+    my_stats_ = {};
     if (connection_status_ != ConnectionStatus::Off)
         return;
 
@@ -717,7 +714,7 @@ bool Client::isMe(sf::Uint32 ip)
     return ip == ip_on_server_.toInteger();
 }
 
-const std::unordered_map<sf::Uint32, Client::ConnectedPlayer>& Client::getPlayers() const
+const std::unordered_map<sf::Uint32, ConnectedPlayer>& Client::getPlayers() const
 {
     return conns_;
 }
@@ -725,4 +722,23 @@ const std::unordered_map<sf::Uint32, Client::ConnectedPlayer>& Client::getPlayer
 ConnectionStatus Client::getConnectionStatus() const
 {
     return connection_status_;
+}
+
+void Client::setMultiStats(MultiStats* stats)
+{
+    stats_ = stats;
+}
+
+PlayerStats& Client::getStats(sf::Uint32 ip)
+{
+    static auto stats = PlayerStats();
+    if (isMe(ip))
+        return my_stats_;
+
+    auto it = conns_.find(ip);
+
+    if (it == conns_.end())
+        return stats;
+
+    return it->second.stats;
 }

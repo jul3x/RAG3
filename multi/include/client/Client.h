@@ -29,16 +29,11 @@
 
 using namespace r3e;
 
+class MultiStats;
+
 class Client : public Framework {
 
 public:
-    struct ConnectedPlayer {
-        std::unique_ptr<Player> player;
-        bool still_playing{true};
-        PlayerData cached_data;
-        int kills_, deaths_;
-    };
-
     Client();
     Client(const Client&) = delete;
     Client& operator=(const Client&) = delete;
@@ -58,6 +53,7 @@ public:
     void useItem(const std::string& id) override;
     void useSpecialObject() override;
     void setGameState(GameState state) override;
+    void setMultiStats(MultiStats* stats);
     void respawn(const std::string& map_name) override;
     void respawnWithoutReload();
     void startGame(const std::string& ip_address) override;
@@ -79,6 +75,7 @@ private:
     void handleEventsFromServer();
     void sendInputs();
     void receiveData();
+    PlayerStats& getStats(sf::Uint32 ip);
     Player* getPlayer(sf::Uint32 ip);
     const std::string& getPlayerName(sf::Uint32 ip);
     bool isMe(sf::Uint32 ip);
@@ -97,6 +94,9 @@ private:
     float server_ping_elapsed_;
 
     sf::IpAddress ip_on_server_;
+
+    PlayerStats my_stats_;
+    MultiStats* stats_;
 
 };
 

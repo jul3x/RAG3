@@ -60,6 +60,8 @@ float popup_text_size = 20 * user_interface_zoom
 float menu_button_text_size = 44 * user_interface_zoom
 float menu_window_header_size = 44 * user_interface_zoom
 float menu_window_text_size = 36 * user_interface_zoom
+float multi_stats_text_size = 36 * user_interface_zoom
+float multi_stats_header_text_size = 44 * user_interface_zoom
 float message_font_size = 24 * user_interface_zoom
 
 // FIRE GRAPHICS
@@ -156,6 +158,9 @@ float popup_button_relative_valign = 40.0 * user_interface_zoom
 vector popup_button_size = (50.0, 20.0) * user_interface_zoom
 vector popup_size = (450.0, 250.0) * user_interface_zoom
 vector accept_window_size = (450.0, 200.0) * user_interface_zoom
+float multi_stats_width = 700.0 * user_interface_zoom
+vector multi_stats_offset = (-multi_stats_width / user_interface_zoom / 2.0, -260.0) * user_interface_zoom
+float multi_stats_row_height = 40.0 * user_interface_zoom
 
 // DESTRUCTION SYSTEM
 float blood_system_vel = 400.0

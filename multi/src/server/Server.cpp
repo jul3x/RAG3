@@ -357,8 +357,8 @@ void Server::handleEventsFromPlayers()
 
                         for (const auto& connection : connections_)
                         {
-                            auto stats = j3x::List({static_cast<int>(connection.first), connection.second.kills_,
-                                                    connection.second.deaths_});
+                            auto stats = j3x::List({static_cast<int>(connection.first), connection.second.stats_.kills_,
+                                                    connection.second.stats_.deaths_});
                             all_stats.emplace_back(stats);
                         }
 
@@ -414,7 +414,7 @@ void Server::clearPlayer(sf::Uint32 ip, PlayerConnection& conn)
 
     if (conn.player_->isAlive())
     {
-        ++conn.deaths_;
+        ++conn.stats_.deaths_;
         sf::Uint32 killer_ip = 0;
         auto killer = conn.player_->getPossibleKiller();
         auto cause = conn.player_->getPossibleDeathCause();
@@ -425,7 +425,7 @@ void Server::clearPlayer(sf::Uint32 ip, PlayerConnection& conn)
 
             if (conn_it != connections_.end())
             {
-                ++conn_it->second.kills_;
+                ++conn_it->second.stats_.kills_;
             }
         }
 

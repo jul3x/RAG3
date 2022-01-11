@@ -23,20 +23,6 @@ enum class ConnectionStatus {
     Off = 0
 };
 
-
-struct PlayerConnection {
-    ConnectionStatus status_;
-    std::unique_ptr<Player> player_;
-    PlayerInputPacket cached_packet_;
-    std::shared_ptr<sf::TcpSocket> events_socket_;
-    std::string name_;
-    std::string character_;
-    float ping_elapsed_;
-
-    int kills_, deaths_;
-};
-
-
 struct PlayerData {
     sf::Vector2f pos_{}, vel_{};
     float rotation_{};
@@ -48,6 +34,30 @@ struct PlayerData {
     Player::GlobalState state_{Player::GlobalState::Normal};
 };
 
+struct PlayerStats {
+    int kills_, deaths_;
+};
+
+// Server
+struct PlayerConnection {
+    ConnectionStatus status_;
+    std::unique_ptr<Player> player_;
+    PlayerInputPacket cached_packet_;
+    std::shared_ptr<sf::TcpSocket> events_socket_;
+    std::string name_;
+    std::string character_;
+    float ping_elapsed_;
+
+    PlayerStats stats_;
+};
+
+// Client
+struct ConnectedPlayer {
+    std::unique_ptr<Player> player;
+    bool still_playing{true};
+    PlayerData cached_data;
+    PlayerStats stats;
+};
 
 enum class MessageType {
     Death = 5,

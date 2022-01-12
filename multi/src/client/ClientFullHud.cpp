@@ -26,13 +26,7 @@ void MultiStats::update(const std::string& player_name, const PlayerStats& stats
         to_sort.emplace_back(item.second.player->getName(), item.second.stats.kills_, item.second.stats.deaths_);
     }
 
-    std::sort(to_sort.begin(), to_sort.end(),
-              [](const auto& a, const auto& b) {
-                  // Kills first, then deaths
-                  if (std::get<1>(a) == std::get<1>(b))
-                      return std::get<2>(a) < std::get<2>(b);
-                  return std::get<1>(a) > std::get<1>(b);
-              });
+    sortPlayersResult(to_sort);
 
     size_t i = 0;
     auto* theme = client_->getUI()->getTheme();
@@ -94,9 +88,11 @@ ClientFullHud::ClientFullHud(UserInterface* ui, Client* client, const sf::Vector
                                                        CONF<sf::Vector2f>("graphics/respawn_button_pos"),
                                                        button_size, show_duration));
     buttons_.back()->bindFunction([this, ui]() {
-        client_->respawnWithoutReload();
-        ui->clearWindows();
-        this->show(false);
+        if (client_->respawnWithoutReload())
+        {
+            ui->clearWindows();
+            this->show(false);
+        }
     });
 }
 

@@ -113,6 +113,8 @@ std::string ClientUserInterface::generateMessage(MessageType type, const j3x::Pa
             return j3x::get<std::string>(params, "name") + " comes to life!";
         case MessageType::Talk:
             return j3x::get<std::string>(params, "name") + " says: " + j3x::get<std::string>(params, "msg");
+        case MessageType::GameEnd:
+            return j3x::get<std::string>(params, "winners") + " wins this game!";
         default:
             return "Unknown message";
     }

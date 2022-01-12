@@ -18,7 +18,8 @@
 
 
 Client::Client() : Framework(), last_packet_timestamp_(0.0f), last_received_packet_timestamp_(0),
-                   connection_status_(ConnectionStatus::Off), stats_(nullptr), server_ping_elapsed_(0.0f)
+                   connection_status_(ConnectionStatus::Off), stats_(nullptr), server_ping_elapsed_(0.0f),
+                   is_game_ended_(false)
 {
 }
 
@@ -379,6 +380,30 @@ void Client::handleEventsFromServer()
 
                         break;
                     }
+                    case ServerEventPacket::Type::GameEnd:
+                    {
+                        const auto& params = packet.getParams();
+                        const auto& winners = j3x::get<j3x::List>(params, "winners");
+
+                        std::string winners_str;
+                        for (const auto& winner : winners)
+                        {
+                            const auto& winner_name = getPlayerName(j3x::getObj<int>(winner));
+                            winners_str += winner_name + ", ";
+                        }
+                        winners_str.pop_back();
+                        winners_str.pop_back();
+
+                        j3x::Parameters msg_params = {{"winners", winners_str}};
+
+                        ui_->spawnMessage(ClientUserInterface::generateMessage(MessageType::GameEnd, msg_params));
+
+                        setGameState(Framework::GameState::Paused);
+                        ui_->showFullHud(true);
+                        is_game_ended_ = true;
+
+                        break;
+                    }
                     case ServerEventPacket::Type::Exit:
                     {
                         this->disconnect();
@@ -668,6 +693,8 @@ void Client::startGame(const std::string& ip_address)
     {
         ui_->spawnNoteWindow("Could not establish connection with desired host.", false);
     }
+
+    is_game_ended_ = false;
 }
 
 void Client::disconnect()
@@ -703,10 +730,15 @@ void Client::handleTimeout(float time_elapsed)
     }
 }
 
-void Client::respawnWithoutReload()
+bool Client::respawnWithoutReload()
 {
+    if (is_game_ended_)
+        return false;
+
     PlayerEventPacket player_packet(PlayerEventPacket::Type::Respawn, 0);
     events_socket_.send(player_packet);
+
+    return true;
 }
 
 bool Client::isMe(sf::Uint32 ip)

@@ -13,14 +13,14 @@
 #include <server/Server.h>
 
 
-Server::Server() : Framework(), last_packet_timestamp_(0.0f)
+Server::Server() : Framework(), last_packet_timestamp_(0.0f), is_game_finished_(false)
 {
 }
 
 void Server::initialize()
 {
     CFG.set("characters_to_play", CONF<j3x::List>("multi_to_play"));
-    CFG.set("settings_tabs",  CONF<j3x::List>("server_settings_tabs"));
+    CFG.set("settings_tabs", CONF<j3x::List>("server_settings_tabs"));
 
     Framework::initialize();
 
@@ -32,7 +32,10 @@ void Server::initialize()
 void Server::beforeUpdate(float time_elapsed)
 {
     Framework::beforeUpdate(time_elapsed);
-    checkAwaitingConnections();
+
+    if (!is_game_finished_)
+        checkAwaitingConnections();
+
     handleMessagesFromPlayers();
     handleEventsFromPlayers();
     handleTimeouts(time_elapsed);
@@ -43,6 +46,7 @@ void Server::beforeUpdate(float time_elapsed)
 void Server::afterUpdate(float time_elapsed)
 {
     Framework::afterUpdate(time_elapsed);
+
     sendMessagesToPlayers();
     for (auto& conn : connections_)
     {
@@ -53,6 +57,11 @@ void Server::afterUpdate(float time_elapsed)
             player->setCurrentTalkableCharacter(nullptr);
         }
     }
+
+    if (is_game_finished_)
+        return;
+
+    endGameIfNeeded(time_elapsed);
 }
 
 void Server::updateCamera(float time_elapsed)
@@ -112,7 +121,7 @@ void Server::checkAwaitingConnections()
 
             new_connection->second.events_socket_ = client;
 
-            if (connections_.size() >= MAX_PLAYERS)
+            if (connections_.size() >= CONF<int>("server/max_players"))
             {
                 connection_parameters["s"] = static_cast<int>(ConnectionStatus::Off);
                 connection_parameters["reason"] = std::string("Too many players.");
@@ -595,6 +604,9 @@ void Server::respawn(const std::string& map_name)
     }
 
     clearStartingPositions();
+
+    game_start_timestamp_ = 0.0f;
+    is_game_finished_ = false;
 }
 
 void Server::drawAdditionalPlayers(graphics::Graphics& graphics)
@@ -645,7 +657,6 @@ void Server::startGame(const std::string& map_name)
     data_sender_socket_.setBlocking(false);
     // TODO maybe sender should be non-blocking?
     ui_->startGame();
-
 }
 
 void Server::disconnect()
@@ -740,4 +751,62 @@ void Server::handlePeriodicalSpecials()
 const std::unordered_map<sf::Uint32, PlayerConnection>& Server::getConnections() const
 {
     return connections_;
+}
+
+void Server::endGameIfNeeded(float time_elapsed)
+{
+    if (!connections_.empty())
+        game_start_timestamp_ += time_elapsed;
+
+    bool end = false;
+    if (CONF<std::string>("server/end_type") == "time")
+    {
+        if (game_start_timestamp_ >= CONF<float>("server/end_time"))
+            end = true;
+    }
+    else if (CONF<std::string>("server/end_type") == "kills")
+    {
+        for (const auto& conn : connections_)
+            if (conn.second.stats_.kills_ >= CONF<int>("server/end_kills"))
+                end = true;
+    }
+    else if (CONF<std::string>("server/end_type") == "deaths")
+    {
+        for (const auto& conn : connections_)
+            if (conn.second.stats_.deaths_ >= CONF<int>("server/end_deaths"))
+                end = true;
+    }
+
+    if (end)
+    {
+        // Get winners (there may be draws)
+        std::vector<std::tuple<sf::Uint32, int, int>> to_sort;
+        for (const auto& item : connections_)
+        {
+            to_sort.emplace_back(item.first, item.second.stats_.kills_, item.second.stats_.deaths_);
+        }
+
+        sortPlayersResult(to_sort);
+
+        j3x::List winners;
+        winners.push_back(static_cast<int>(std::get<0>(to_sort.front())));
+
+        for (size_t i = 1; i < to_sort.size(); ++i)
+        {
+            if (std::get<1>(to_sort[i]) != std::get<1>(to_sort[i - 1]) ||
+                std::get<2>(to_sort[i]) != std::get<2>(to_sort[i - 1]))
+                break;
+
+            winners.push_back(static_cast<int>(std::get<0>(to_sort[i])));
+        }
+
+        ServerEventPacket server_packet(ServerEventPacket::Type::GameEnd,
+                                        {{"winners", winners}}, 0);
+        sendEventToPlayers(server_packet);
+
+        LOG.info("[Server] Player (" + sf::IpAddress(j3x::getObj<int>(winners.front())).toString() +
+                 ") and other players (" + utils::toString(winners.size() - 1) + ") wins the game");
+
+        is_game_finished_ = true;
+    }
 }

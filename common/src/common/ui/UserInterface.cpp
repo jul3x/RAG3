@@ -341,7 +341,7 @@ void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
     auto mouse_pos = sf::Mouse::getPosition(graphics_window);
     auto mouse_world_pos = graphics_window.mapPixelToCoords(mouse_pos);
     auto player_pos = player_->getPosition() - RMGET<sf::Vector2f>("characters", "henry", "map_offset");
-    if (!full_hud_->isShow() &&
+    if (!full_hud_->isShow() && framework_->getGameState() != Framework::GameState::Menu &&
         utils::geo::circleCircle(mouse_world_pos, 0.0f, player_pos, CONF<float>("characters/crosshair_min_distance")))
     {
         mouse_world_pos = player_pos + CONF<float>("characters/crosshair_min_distance")

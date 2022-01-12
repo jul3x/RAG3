@@ -60,6 +60,7 @@ struct ConnectedPlayer {
 };
 
 enum class MessageType {
+    GameEnd = 6,
     Death = 5,
     Respawn = 4,
     Left = 3,
@@ -67,6 +68,19 @@ enum class MessageType {
     Talk = 1,
     None = 0
 };
+
+
+template<class T>
+void sortPlayersResult(std::vector<std::tuple<T, int, int>>& to_sort)
+{
+    std::sort(to_sort.begin(), to_sort.end(),
+              [](const auto& a, const auto& b) {
+                  // Kills first, then deaths
+                  if (std::get<1>(a) == std::get<1>(b))
+                      return std::get<2>(a) < std::get<2>(b);
+                  return std::get<1>(a) > std::get<1>(b);
+              });
+}
 
 
 class PlayersStatePacket : public sf::Packet {

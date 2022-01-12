@@ -55,7 +55,7 @@ public:
     void setGameState(GameState state) override;
     void setMultiStats(MultiStats* stats);
     void respawn(const std::string& map_name) override;
-    void respawnWithoutReload();
+    bool respawnWithoutReload();
     void startGame(const std::string& ip_address) override;
     bool establishConnection(const sf::IpAddress& ip);
     void disconnect();
@@ -95,6 +95,7 @@ private:
     float server_ping_elapsed_;
 
     sf::IpAddress ip_on_server_;
+    bool is_game_ended_;
 
     PlayerStats my_stats_;
     MultiStats* stats_;

@@ -60,3 +60,4 @@ data/config/user/graphics.j3x
 data/config/user/sound.j3x
 data/config/user/general.j3x
 data/config/user/save.j3x
+data/config/user/server.j3x

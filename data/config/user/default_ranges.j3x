@@ -68,3 +68,13 @@ float music_volume_min = 0.0
 float music_volume_max = 100.0
 float sound_volume_min = 0.0
 float sound_volume_max = 100.0
+
+int max_players_min = 1
+int max_players_max = 16
+float end_time_min = 1.0
+float end_time_max = 3600.0
+int end_deaths_min = 1
+int end_deaths_max = 100
+int end_kills_min = 1
+int end_kills_max = 100
+list end_type_choices = ["time"; "kills"; "deaths"]

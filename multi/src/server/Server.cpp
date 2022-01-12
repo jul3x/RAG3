@@ -20,6 +20,8 @@ Server::Server() : Framework(), last_packet_timestamp_(0.0f)
 void Server::initialize()
 {
     CFG.set("characters_to_play", CONF<j3x::List>("multi_to_play"));
+    CFG.set("settings_tabs",  CONF<j3x::List>("server_settings_tabs"));
+
     Framework::initialize();
 
     ui_ = std::make_unique<MinimalUserInterface>(this);

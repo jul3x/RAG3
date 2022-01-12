@@ -141,6 +141,11 @@ ItemLabel {
     Scrollbar = &Scrollbar;
 }
 
+ItemLabelDisabled {
+    TextColor = rgba(100, 100, 100, 215);
+    Scrollbar = &Scrollbar;
+}
+
 StatsHeader {
     TextColor = rgba(255, 255, 255, 255);
     Scrollbar = &Scrollbar;

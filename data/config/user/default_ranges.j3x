@@ -78,3 +78,6 @@ int end_deaths_max = 100
 int end_kills_min = 1
 int end_kills_max = 100
 list end_type_choices = ["time"; "kills"; "deaths"]
+list end_type_hints = ["Game ends after given\nperiod of time";
+                       "Game ends when first player\nachieves given number of kills";
+                       "Game ends when first player\ndies given number of times"]

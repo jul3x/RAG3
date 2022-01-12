@@ -60,6 +60,7 @@ float popup_text_size = 20 * user_interface_zoom
 float menu_button_text_size = 44 * user_interface_zoom
 float menu_window_header_size = 44 * user_interface_zoom
 float menu_window_text_size = 36 * user_interface_zoom
+float menu_window_hint_text_size = 24 * user_interface_zoom
 float multi_stats_text_size = 36 * user_interface_zoom
 float multi_stats_header_text_size = 44 * user_interface_zoom
 float message_font_size = 24 * user_interface_zoom

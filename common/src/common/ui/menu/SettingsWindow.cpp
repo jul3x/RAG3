@@ -722,6 +722,11 @@ SelectSettingsWidget::SelectSettingsWidget(tgui::Theme* theme, const std::string
     value_->setRenderer(theme->getRenderer("ItemLabel"));
     value_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
 
+    hint_ = tgui::Label::create();
+    hint_->setRenderer(theme->getRenderer("ItemLabel"));
+    hint_->setTextSize(CONF<float>("graphics/menu_window_hint_text_size"));
+    hint_->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
+
     left_ = tgui::Button::create("<");
     left_->setRenderer(theme->getRenderer("ButtonLabel"));
     left_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
@@ -734,6 +739,7 @@ SelectSettingsWidget::SelectSettingsWidget(tgui::Theme* theme, const std::string
 
     grid_->addWidget(left_, 0, 0);
     grid_->addWidget(value_, 0, 1);
+    grid_->addWidget(hint_, 1, 1);
     grid_->addWidget(right_, 0, 2);
 
     grid_->setWidgetAlignment(left_, tgui::Grid::Alignment::Bottom);
@@ -743,6 +749,13 @@ SelectSettingsWidget::SelectSettingsWidget(tgui::Theme* theme, const std::string
     {
         const auto& str = j3x::getObj<std::string>(value);
         possible_values_.emplace_back(str);
+    }
+
+    const auto& hints = CONF<j3x::List>("ranges/" + name + "_hints", true);
+    for (const auto& hint : hints)
+    {
+        const auto& str = j3x::getObj<std::string>(hint);
+        hints_.emplace_back(str);
     }
 
     current_value_ = possible_values_.begin();
@@ -796,7 +809,7 @@ void SelectSettingsWidget::change(std::vector<std::string>::iterator new_value)
     value_->setText(utils::humanize(*new_value));
 
     current_value_ = new_value;
-
+    hint_->setText(hints_.at(std::distance(possible_values_.begin(), new_value)));
     on_change_(*current_value_);
 }
 

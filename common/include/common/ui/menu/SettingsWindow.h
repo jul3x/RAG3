@@ -230,11 +230,12 @@ private:
     std::function<void(const std::string&)> on_change_;
 
     std::vector<std::string> possible_values_;
+    std::vector<std::string> hints_;
     std::vector<std::string>::iterator current_value_;
 
     tgui::Grid::Ptr grid_;
     tgui::Button::Ptr left_, right_;
-    tgui::Label::Ptr value_;
+    tgui::Label::Ptr value_, hint_;
 
 };
 

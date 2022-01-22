@@ -1,0 +1,5 @@
+int max_players = 12
+string end_type = "time"
+float end_time = 900.0
+int end_kills = 10
+int end_deaths = 10

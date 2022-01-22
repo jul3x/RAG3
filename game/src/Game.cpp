@@ -505,6 +505,7 @@ void Game::updatePlayers(float time_elapsed)
             this->cleanPlayerClone();
 
             player_->setHealth(0); // player clone is dead - so do player
+            player_->setPossibleDeathCause(DeathCause::PlayerCloneDeath, nullptr);
             spawnSound(RM.getSound(player_->getId() + "_dead"), player_->getPosition());
         }
     }

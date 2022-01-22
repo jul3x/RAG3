@@ -13,13 +13,15 @@
 #include <server/Server.h>
 
 
-Server::Server() : Framework(), last_packet_timestamp_(0.0f)
+Server::Server() : Framework(), last_packet_timestamp_(0.0f), is_game_finished_(false)
 {
 }
 
 void Server::initialize()
 {
     CFG.set("characters_to_play", CONF<j3x::List>("multi_to_play"));
+    CFG.set("settings_tabs", CONF<j3x::List>("server_settings_tabs"));
+
     Framework::initialize();
 
     ui_ = std::make_unique<MinimalUserInterface>(this);
@@ -30,7 +32,10 @@ void Server::initialize()
 void Server::beforeUpdate(float time_elapsed)
 {
     Framework::beforeUpdate(time_elapsed);
-    checkAwaitingConnections();
+
+    if (!is_game_finished_)
+        checkAwaitingConnections();
+
     handleMessagesFromPlayers();
     handleEventsFromPlayers();
     handleTimeouts(time_elapsed);
@@ -41,6 +46,7 @@ void Server::beforeUpdate(float time_elapsed)
 void Server::afterUpdate(float time_elapsed)
 {
     Framework::afterUpdate(time_elapsed);
+
     sendMessagesToPlayers();
     for (auto& conn : connections_)
     {
@@ -51,6 +57,11 @@ void Server::afterUpdate(float time_elapsed)
             player->setCurrentTalkableCharacter(nullptr);
         }
     }
+
+    if (is_game_finished_)
+        return;
+
+    endGameIfNeeded(time_elapsed);
 }
 
 void Server::updateCamera(float time_elapsed)
@@ -81,7 +92,10 @@ void Server::updatePlayers(float time_elapsed)
         auto player = conn.second.player_.get();
         if (player != nullptr && player->isAlive() && !player->update(time_elapsed))
         {
-            clearPlayer(player);
+            clearPlayer(conn.first, conn.second);
+
+            LOG.info("[Server] Player (" + sf::IpAddress(conn.first).toString() +
+                     ") is dead. Death cause: \n" + std::to_string(static_cast<int>(player->getPossibleDeathCause())));
         }
     }
 }
@@ -107,7 +121,7 @@ void Server::checkAwaitingConnections()
 
             new_connection->second.events_socket_ = client;
 
-            if (connections_.size() >= MAX_PLAYERS)
+            if (connections_.size() >= CONF<int>("server/max_players"))
             {
                 connection_parameters["s"] = static_cast<int>(ConnectionStatus::Off);
                 connection_parameters["reason"] = std::string("Too many players.");
@@ -294,7 +308,9 @@ void Server::handleEventsFromPlayers()
                         }
                         case PlayerEventPacket::Type::Respawn:
                         {
-                            clearPlayer(player);
+                            if (conn.second.player_ != nullptr)
+                                conn.second.player_->setPossibleDeathCause(DeathCause::Unknown, nullptr);
+                            clearPlayer(conn.first, conn.second);
                             respawnPlayer(conn.first);
 
                             ServerEventPacket server_packet(ServerEventPacket::Type::PlayerRespawn,
@@ -311,7 +327,9 @@ void Server::handleEventsFromPlayers()
                         }
                         case PlayerEventPacket::Type::Exit:
                         {
-                            clearPlayer(player);
+                            if (conn.second.player_ != nullptr)
+                                conn.second.player_->setPossibleDeathCause(DeathCause::Unknown, nullptr);
+                            clearPlayer(conn.first, conn.second);
                             ServerEventPacket server_packet(ServerEventPacket::Type::PlayerExit,
                                                             0, conn.first);
                             sendEventToPlayers(server_packet);
@@ -346,6 +364,16 @@ void Server::handleEventsFromPlayers()
                         LOG.info("Connection successful.");
                         respawnPlayer(conn.first);
                         connection_parameters["s"] = static_cast<int>(ConnectionStatus::On);
+                        auto all_stats = j3x::List();
+
+                        for (const auto& connection : connections_)
+                        {
+                            auto stats = j3x::List({static_cast<int>(connection.first), connection.second.stats_.kills_,
+                                                    connection.second.stats_.deaths_});
+                            all_stats.emplace_back(stats);
+                        }
+
+                        connection_parameters["stats"] = std::move(all_stats);
                         auto server_packet =
                                 ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters,
                                                   conn.first);
@@ -390,14 +418,36 @@ void Server::handleEventsFromPlayers()
     }
 }
 
-void Server::clearPlayer(Player* player)
+void Server::clearPlayer(sf::Uint32 ip, PlayerConnection& conn)
 {
-    if (player == nullptr)
+    if (conn.player_ == nullptr)
         return;
 
-    player->setDead();
-    engine_->unregisterObj<DynamicObject>(player);
-    unregisterWeapons(player);
+    if (conn.player_->isAlive())
+    {
+        ++conn.stats_.deaths_;
+        sf::Uint32 killer_ip = 0;
+        auto killer = conn.player_->getPossibleKiller();
+        auto cause = conn.player_->getPossibleDeathCause();
+        if (killer != nullptr)
+        {
+            killer_ip = getPlayerIP(killer);
+            auto conn_it = connections_.find(killer_ip);
+
+            if (conn_it != connections_.end())
+            {
+                ++conn_it->second.stats_.kills_;
+            }
+        }
+
+        ServerEventPacket packet = {ServerEventPacket::Type::PlayerDeath,
+                                    {{"k", static_cast<int>(killer_ip)}, {"c", static_cast<int>(cause)}}, ip};
+        sendEventToPlayers(packet, false);
+    }
+
+    conn.player_->setDead();
+    engine_->unregisterObj<DynamicObject>(conn.player_.get());
+    unregisterWeapons(conn.player_.get());
 }
 
 void Server::useSpecialObject(Player* player, sf::Uint32 ip)
@@ -425,15 +475,15 @@ void Server::sendEventToPlayers(ServerEventPacket& packet, bool cache)
 void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
 {
     auto bullet = dynamic_cast<Bullet*>(h_obj);
-    auto character = dynamic_cast<Character*>(d_obj);
+    auto player = dynamic_cast<Player*>(d_obj);
 
     auto factor = 1.0f;
 
-    if (bullet != nullptr && character != nullptr)
+    if (bullet != nullptr && player != nullptr)
     {
-        if (bullet->getUser() != character)
+        if (bullet->getUser() != player)
         {
-            character->getShot(*bullet, factor);
+            player->getShot(*bullet, factor);
             bullet->setDead();
         }
         return;
@@ -441,7 +491,7 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
 
     auto special = dynamic_cast<Special*>(h_obj);
 
-    if (special != nullptr && character != nullptr && special->isActive())
+    if (special != nullptr && player != nullptr && special->isActive())
     {
         if (special->getActivation() == Functional::Activation::OnEnter)
         {
@@ -460,7 +510,6 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
                     should_send = true;
             }
 
-            auto player = dynamic_cast<Player*>(d_obj);
             if (should_send)
             {
                 auto packet = ServerEventPacket(ServerEventPacket::Type::EnteredObject,
@@ -468,69 +517,51 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
                 sendEventToPlayers(packet, should_cache);
             }
 
-            if (special->isUsableByNPC())
-            {
-                special->use(character);
-            }
-            else if (player != nullptr)
-            {
-                special->use(player);
-            }
+            special->use(player);
         }
         else if (special->getActivation() == Functional::Activation::OnUse)
         {
-            character->setCurrentSpecialObject(special);
+            player->setCurrentSpecialObject(special);
         }
         else
         {
-            auto player = dynamic_cast<Player*>(d_obj);
             auto packet = ServerEventPacket(ServerEventPacket::Type::CollectedObject,
                                             special->getUniqueId(), getPlayerIP(player));
             sendEventToPlayers(packet);
-            if (player != nullptr)
-            {
-                player->addSpecialToBackpack(special->getId(), 1,
-                                             [this](Functional* functional) { this->registerFunctions(functional); });
-                special_functions_->destroy(special, {}, player);
-            }
+            player->addSpecialToBackpack(special->getId(), 1,
+                                         [this](Functional* functional) { this->registerFunctions(functional); });
+            special_functions_->destroy(special, {}, player);
         }
-    }
-
-    auto talkable_area = dynamic_cast<TalkableArea*>(h_obj);
-
-    if (talkable_area != nullptr && character != nullptr)
-    {
-        character->setCurrentTalkableCharacter(talkable_area->getFather());
     }
 
     auto explosion = dynamic_cast<Explosion*>(h_obj);
 
-    if (character != nullptr && explosion != nullptr)
+    if (player != nullptr && explosion != nullptr)
     {
-        explosion->applyForce(character, 1.0f);
+        explosion->applyForce(player, 1.0f);
     }
 
     auto fire = dynamic_cast<Fire*>(h_obj);
 
-    if (character != nullptr && fire != nullptr)
+    if (player != nullptr && fire != nullptr)
     {
-        if (fire->getUser() != character)
-            character->setGlobalState(Character::GlobalState::OnFire);
+        if (fire->getUser() != player)
+            player->setGlobalState(Character::GlobalState::OnFire);
     }
 
     auto melee_weapon_area = dynamic_cast<MeleeWeaponArea*>(h_obj);
 
-    if (character != nullptr && melee_weapon_area != nullptr)
+    if (player != nullptr && melee_weapon_area != nullptr)
     {
-        if (character != melee_weapon_area->getFather()->getUser())
+        if (player != melee_weapon_area->getFather()->getUser())
         {
             melee_weapon_area->setActive(false);
-            character->getCut(*melee_weapon_area->getFather(), factor);
+            player->getCut(*melee_weapon_area->getFather(), factor);
         }
     }
 }
 
-sf::Uint32 Server::getPlayerIP(Player* player)
+sf::Uint32 Server::getPlayerIP(const Character* player)
 {
     for (const auto& conn : connections_)
     {
@@ -573,6 +604,9 @@ void Server::respawn(const std::string& map_name)
     }
 
     clearStartingPositions();
+
+    game_start_timestamp_ = 0.0f;
+    is_game_finished_ = false;
 }
 
 void Server::drawAdditionalPlayers(graphics::Graphics& graphics)
@@ -623,7 +657,6 @@ void Server::startGame(const std::string& map_name)
     data_sender_socket_.setBlocking(false);
     // TODO maybe sender should be non-blocking?
     ui_->startGame();
-
 }
 
 void Server::disconnect()
@@ -636,7 +669,10 @@ void Server::disconnect()
     for (auto& conn : connections_)
     {
         conn.second.events_socket_->disconnect();
-        clearPlayer(conn.second.player_.get());
+
+        if (conn.second.player_ != nullptr)
+            conn.second.player_->setPossibleDeathCause(DeathCause::Unknown, nullptr);
+        clearPlayer(conn.first, conn.second);
     }
 
     connections_.clear();
@@ -661,7 +697,12 @@ void Server::handleTimeouts(float time_elapsed)
         conn.second.ping_elapsed_ += time_elapsed;
         if (conn.second.ping_elapsed_ > MAX_CLIENT_TIMEOUT)
         {
-            clearPlayer(conn.second.player_.get());
+            if (conn.second.player_ != nullptr)
+                conn.second.player_->setPossibleDeathCause(DeathCause::Unknown, nullptr);
+            clearPlayer(conn.first, conn.second);
+            LOG.info("[Server] Player (" + sf::IpAddress(conn.first).toString() +
+                     ") has been kicked out due to the timeout");
+
             ServerEventPacket server_packet(ServerEventPacket::Type::PlayerExit,
                                             0, conn.first);
             sendEventToPlayers(server_packet);
@@ -710,4 +751,62 @@ void Server::handlePeriodicalSpecials()
 const std::unordered_map<sf::Uint32, PlayerConnection>& Server::getConnections() const
 {
     return connections_;
+}
+
+void Server::endGameIfNeeded(float time_elapsed)
+{
+    if (!connections_.empty())
+        game_start_timestamp_ += time_elapsed;
+
+    bool end = false;
+    if (CONF<std::string>("server/end_type") == "time")
+    {
+        if (game_start_timestamp_ >= CONF<float>("server/end_time"))
+            end = true;
+    }
+    else if (CONF<std::string>("server/end_type") == "kills")
+    {
+        for (const auto& conn : connections_)
+            if (conn.second.stats_.kills_ >= CONF<int>("server/end_kills"))
+                end = true;
+    }
+    else if (CONF<std::string>("server/end_type") == "deaths")
+    {
+        for (const auto& conn : connections_)
+            if (conn.second.stats_.deaths_ >= CONF<int>("server/end_deaths"))
+                end = true;
+    }
+
+    if (end)
+    {
+        // Get winners (there may be draws)
+        std::vector<std::tuple<sf::Uint32, int, int>> to_sort;
+        for (const auto& item : connections_)
+        {
+            to_sort.emplace_back(item.first, item.second.stats_.kills_, item.second.stats_.deaths_);
+        }
+
+        sortPlayersResult(to_sort);
+
+        j3x::List winners;
+        winners.push_back(static_cast<int>(std::get<0>(to_sort.front())));
+
+        for (size_t i = 1; i < to_sort.size(); ++i)
+        {
+            if (std::get<1>(to_sort[i]) != std::get<1>(to_sort[i - 1]) ||
+                std::get<2>(to_sort[i]) != std::get<2>(to_sort[i - 1]))
+                break;
+
+            winners.push_back(static_cast<int>(std::get<0>(to_sort[i])));
+        }
+
+        ServerEventPacket server_packet(ServerEventPacket::Type::GameEnd,
+                                        {{"winners", winners}}, 0);
+        sendEventToPlayers(server_packet);
+
+        LOG.info("[Server] Player (" + sf::IpAddress(j3x::getObj<int>(winners.front())).toString() +
+                 ") and other players (" + utils::toString(winners.size() - 1) + ") wins the game");
+
+        is_game_finished_ = true;
+    }
 }

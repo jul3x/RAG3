@@ -2,6 +2,7 @@
 // Created by jul3x on 16.03.21.
 //
 
+#include <client/ClientFullHud.h>
 #include <client/ClientUserInterface.h>
 #include <client/Client.h>
 
@@ -26,16 +27,12 @@ void ClientUserInterface::initialize(graphics::Graphics& graphics)
                                     {"About",             [this]() { menu_->showWindow(Menu::Window::About); }},
                                     {"Exit",              [this]() { framework_->close(); }}
                             });
-    full_hud_ = std::make_unique<ExtendedFullHud>(this, framework_,
-                                                  sf::Vector2f{
-                                                          static_cast<float>(CONF<int>("graphics/window_width_px")),
-                                                          static_cast<float>(CONF<int>("graphics/window_height_px"))});
-    dynamic_cast<ExtendedFullHud*>(full_hud_.get())->bindRespawn([this]() {
-        this->client_->respawnWithoutReload();
-        this->clearWindows();
-        this->full_hud_->show(false);
-    });
-
+    full_hud_ = std::make_unique<ClientFullHud>(this, client_,
+                                                sf::Vector2f{
+                                                        static_cast<float>(CONF<int>("graphics/window_width_px")),
+                                                        static_cast<float>(CONF<int>("graphics/window_height_px"))});
+    // Blah...
+    client_->setMultiStats(dynamic_cast<ClientFullHud*>(full_hud_.get())->getStats());
     time_bar_.setFreeze(true);
     menu_->doShow(true);
 
@@ -82,4 +79,50 @@ void ClientUserInterface::draw(graphics::Graphics& graphics)
 {
     UserInterface::draw(graphics);
 //    graphics.draw(debug_info_);
+}
+
+std::string ClientUserInterface::generateMessage(MessageType type, const j3x::Parameters& params)
+{
+    DeathCause death_cause;
+    switch (type)
+    {
+        case MessageType::Death:
+            death_cause = static_cast<DeathCause>(j3x::get<int>(params, "cause"));
+            switch (death_cause)
+            {
+                case DeathCause::Drown:
+                    return j3x::get<std::string>(params, "name") + " cannot swim :(.";
+                case DeathCause::Fire:
+                    return j3x::get<std::string>(params, "name") + " smells like fried chicken.";
+                case DeathCause::Explosion:
+                    return j3x::get<std::string>(params, "name") + " broke into pieces.";
+                case DeathCause::OtherCharacterBullet:
+                    return j3x::get<std::string>(params, "killer") + " shot " + j3x::get<std::string>(params, "name") +
+                           ".";
+                case DeathCause::OtherCharacterMelee:
+                    return j3x::get<std::string>(params, "killer") + " cut " + j3x::get<std::string>(params, "name") +
+                           ".";
+                default:
+                    return j3x::get<std::string>(params, "name") + " died with unknown reason.";
+            }
+        case MessageType::Respawn:
+            return j3x::get<std::string>(params, "name") + " returned from the ashes.";
+        case MessageType::Left:
+            return j3x::get<std::string>(params, "name") + " cannot do this anymore.";
+        case MessageType::Connection:
+            return j3x::get<std::string>(params, "name") + " comes to life!";
+        case MessageType::Talk:
+            return j3x::get<std::string>(params, "name") + " says: " + j3x::get<std::string>(params, "msg");
+        case MessageType::GameEnd:
+            return j3x::get<std::string>(params, "winners") + " wins this game!";
+        default:
+            return "Unknown message";
+    }
+}
+
+void ClientUserInterface::updatePlayerStates(float time_elapsed)
+{
+    UserInterface::updatePlayerStates(time_elapsed);
+
+    stats_hud_.update(client_->getMyStats().kills_, client_->getMyStats().deaths_, time_elapsed);
 }

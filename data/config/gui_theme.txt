@@ -141,6 +141,21 @@ ItemLabel {
     Scrollbar = &Scrollbar;
 }
 
+ItemLabelDisabled {
+    TextColor = rgba(100, 100, 100, 215);
+    Scrollbar = &Scrollbar;
+}
+
+StatsHeader {
+    TextColor = rgba(255, 255, 255, 255);
+    Scrollbar = &Scrollbar;
+}
+
+StatsLabel {
+    TextColor = rgba(200, 0, 80, 255);
+    Scrollbar = &Scrollbar;
+}
+
 ScrollablePanel {
     BackgroundColor = rgba(50, 50, 50, 215);
     Scrollbar = &Scrollbar;

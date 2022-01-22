@@ -23,18 +23,6 @@ enum class ConnectionStatus {
     Off = 0
 };
 
-
-struct PlayerConnection {
-    ConnectionStatus status_;
-    std::unique_ptr<Player> player_;
-    PlayerInputPacket cached_packet_;
-    std::shared_ptr<sf::TcpSocket> events_socket_;
-    std::string name_;
-    std::string character_;
-    float ping_elapsed_;
-};
-
-
 struct PlayerData {
     sf::Vector2f pos_{}, vel_{};
     float rotation_{};
@@ -45,6 +33,54 @@ struct PlayerData {
     int current_special_id_{};
     Player::GlobalState state_{Player::GlobalState::Normal};
 };
+
+struct PlayerStats {
+    int kills_{}, deaths_{};
+};
+
+// Server
+struct PlayerConnection {
+    ConnectionStatus status_;
+    std::unique_ptr<Player> player_;
+    PlayerInputPacket cached_packet_;
+    std::shared_ptr<sf::TcpSocket> events_socket_;
+    std::string name_;
+    std::string character_;
+    float ping_elapsed_;
+
+    PlayerStats stats_;
+};
+
+// Client
+struct ConnectedPlayer {
+    std::unique_ptr<Player> player;
+    bool still_playing{true};
+    PlayerData cached_data;
+    PlayerStats stats;
+};
+
+enum class MessageType {
+    GameEnd = 6,
+    Death = 5,
+    Respawn = 4,
+    Left = 3,
+    Connection = 2,
+    Talk = 1,
+    None = 0
+};
+
+
+template<class T>
+void sortPlayersResult(std::vector<std::tuple<T, int, int>>& to_sort)
+{
+    std::sort(to_sort.begin(), to_sort.end(),
+              [](const auto& a, const auto& b) {
+                  // Kills first, then deaths
+                  if (std::get<1>(a) == std::get<1>(b))
+                      return std::get<2>(a) < std::get<2>(b);
+                  return std::get<1>(a) > std::get<1>(b);
+              });
+}
 
 
 class PlayersStatePacket : public sf::Packet {

@@ -94,6 +94,14 @@ void UserInterface::spawnAchievement(const std::string& title, const std::string
 void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
 {
     utils::eraseIfUpdated<Achievement>(achievements_, time_elapsed);
+    utils::eraseIf<Message>(messages_, [this, time_elapsed](Message& msg) {
+        if (!msg.update(time_elapsed))
+        {
+            rollMessagesUp();
+            return true;
+        }
+        return false;
+    });
     utils::eraseIfUpdated<Thought>(thoughts_, time_elapsed);
     utils::eraseIfUpdated<BonusText>(bonus_texts_, time_elapsed);
 
@@ -276,6 +284,9 @@ void UserInterface::draw(graphics::Graphics& graphics)
         graphics.draw(*full_hud_);
         graphics.draw(stats_hud_);
         graphics.draw(small_backpack_hud_);
+
+        for (auto& msg : messages_)
+            graphics.draw(msg);
     }
     else
     {
@@ -330,7 +341,7 @@ void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
     auto mouse_pos = sf::Mouse::getPosition(graphics_window);
     auto mouse_world_pos = graphics_window.mapPixelToCoords(mouse_pos);
     auto player_pos = player_->getPosition() - RMGET<sf::Vector2f>("characters", "henry", "map_offset");
-    if (framework_->getGameState() == Framework::GameState::Normal &&
+    if (!full_hud_->isShow() && framework_->getGameState() != Framework::GameState::Menu &&
         utils::geo::circleCircle(mouse_world_pos, 0.0f, player_pos, CONF<float>("characters/crosshair_min_distance")))
     {
         mouse_world_pos = player_pos + CONF<float>("characters/crosshair_min_distance")
@@ -608,5 +619,29 @@ void UserInterface::applyMovement(Player* player, const std::unordered_set<UserI
 void UserInterface::showFullHud(bool show)
 {
     full_hud_->show(show);
+}
+
+void UserInterface::spawnMessage(const std::string& text)
+{
+    static const auto base_pos = CONF<sf::Vector2f>("graphics/messages_base_pos");
+    static const auto max_msgs = CONF<int>("graphics/messages_max_count");
+
+    if (messages_.size() >= max_msgs)
+    {
+        messages_.erase(messages_.begin());
+        rollMessagesUp();
+    }
+
+    messages_.emplace_back(
+            base_pos + sf::Vector2f(0.0f, messages_.size() * CONF<float>("graphics/message_font_size") * 1.5f),
+            text);
+}
+
+void UserInterface::rollMessagesUp()
+{
+    for (auto& msg : messages_)
+    {
+        msg.setPosition(msg.getPosition() - sf::Vector2f(0.0f, CONF<float>("graphics/message_font_size") * 1.5f));
+    }
 }
 

@@ -24,9 +24,20 @@
 #include <common/misc/TalkableArea.h>
 #include <common/weapons/MeleeWeapon.h>
 #include <common/characters/LifeBar.h>
+#include <common/characters/Character.h>
 
 
 using namespace r3e;
+
+enum class DeathCause {
+    PlayerCloneDeath = 6,
+    Drown = 5,
+    Fire = 4,
+    Explosion = 3,
+    OtherCharacterBullet = 2,
+    OtherCharacterMelee = 1,
+    Unknown = 0
+};
 
 class Character : public DynamicObject, public Shootable, public Lightable, public Functional {
 public:
@@ -89,6 +100,8 @@ public:
     float getRotateTo() const;
     const sf::Vector2f& getGunOffset() const;
     const std::string& getTextureName() const;
+    const Character* getPossibleKiller() const;
+    DeathCause getPossibleDeathCause() const;
 
     // Setters
     void setMaxHealth(float health);
@@ -106,6 +119,7 @@ public:
     void setCurrentTalkableCharacter(Character* obj);
     void setTalkScenarioStr(const std::string& str);
     void setTalkScenario(const j3x::List& str);
+    void setPossibleDeathCause(DeathCause cause, const Character* ptr);
     void changeTexture(sf::Texture* texture, bool reset = false) override;
     void setTextureName(const std::string& name);
 
@@ -139,6 +153,8 @@ protected:
     bool is_moving_;
     bool should_respond_;
 
+    DeathCause possible_death_cause_;
+    const Character* possible_killer_;
     std::string texture_name_;
 
 private:

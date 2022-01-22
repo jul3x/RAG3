@@ -50,7 +50,6 @@ public:
 
 private:
     using PeriodicalSpecial = std::tuple<std::string, sf::Vector2f, float>;
-    static constexpr auto MAX_PLAYERS = 12;
 
     void preupdate(float time_elapsed) override;
     void beforeUpdate(float time_elapsed) override;
@@ -59,20 +58,22 @@ private:
     void updateCamera(float time_elapsed) override;
     void updatePlayers(float time_elapsed) override;
 
+    void endGameIfNeeded(float time_elapsed);
     void obstacleDestroyedEvent(Obstacle* obstacle) override;
     void drawAdditionalPlayers(graphics::Graphics& graphics) override;
     void drawAdditionalPlayersLighting() override;
-    void clearPlayer(Player* player);
+    void clearPlayer(sf::Uint32 ip, PlayerConnection& conn);
     void respawnPlayer(sf::Uint32 ip);
     void useSpecialObject(Player* player, sf::Uint32 ip);
 
-    sf::Uint32 getPlayerIP(Player* player);
+    sf::Uint32 getPlayerIP(const Character* player);
     void checkAwaitingConnections();
     void handleMessagesFromPlayers();
     void handleEventsFromPlayers();
     void sendMessagesToPlayers();
     void sendEventToPlayers(ServerEventPacket& packet, bool cache = true);
     void handleTimeouts(float time_elapsed);
+    void handlePeriodicalSpecials();
     void handleToErase();
 
     std::unordered_map<sf::Uint32, PlayerConnection> connections_;
@@ -87,8 +88,9 @@ private:
     sf::UdpSocket data_sender_socket_;
 
     float last_packet_timestamp_;
+    float game_start_timestamp_;
+    bool is_game_finished_;
 
-    void handlePeriodicalSpecials();
 };
 
 #endif //RAG3_MULTI_INCLUDE_SERVER_H

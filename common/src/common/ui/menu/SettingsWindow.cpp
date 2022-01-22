@@ -8,6 +8,8 @@
 
 #include <common/ui/menu/SettingsWindow.h>
 
+#include <utility>
+
 
 SettingsWindow::SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* framework) :
         MenuWindow(gui, theme, "> Settings"),
@@ -25,10 +27,11 @@ SettingsWindow::SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
     tabs_->setPosition(pos - sf::Vector2f(0.0, CONF<float>("graphics/menu_settings_tabs_height")));
     tabs_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
     tabs_->getRenderer()->setDistanceToSide(20.0f * CONF<float>("graphics/user_interface_zoom"));
-    for (const auto& tab : {"general", "controls", "graphics", "sound"})
+    for (const auto& tab : CONF<j3x::List>("settings_tabs"))
     {
-        tabs_->add(utils::humanize(tab));
-        tab_names_.emplace_back(tab);
+        const auto& str = j3x::getObj<std::string>(tab);
+        tabs_->add(utils::humanize(str));
+        tab_names_.emplace_back(str);
     }
 
     save_button_ = tgui::Button::create("Save");
@@ -120,6 +123,17 @@ void SettingsWindow::createWidgets()
 
             if (tab == "general" && param == "character")
                 widgets_[hash_key] = std::make_unique<CharacterSettingsWidget>(theme_, tab, param);
+            else if (tab == "server" && param == "end_type")
+            {
+                auto widget = std::make_unique<SelectSettingsWidget>(theme_, tab, param);
+                widget->bindChange([this](const std::string& value) {
+                    for (const auto& type : CONF<j3x::List>("ranges/end_type_choices"))
+                        widgets_["server/end_" + j3x::getObj<std::string>(type)]->disable();
+
+                    widgets_["server/end_" + value]->enable();
+                });
+                widgets_[hash_key] = std::move(widget);
+            }
             else if (tab == "controls")
                 widgets_[hash_key] = std::make_unique<ControlsSettingsWidget>(this, theme_, tab, param);
             else
@@ -128,10 +142,16 @@ void SettingsWindow::createWidgets()
                     widgets_[hash_key] = std::make_unique<BoolSettingsWidget>(theme_, tab, param);
                 else if (type == "int" && utils::endsWith(param, "color"))
                     widgets_[hash_key] = std::make_unique<ColorSettingsWidget>(theme_, tab, param);
+                else if (type == "int" && utils::endsWith(param, "time"))
+                    widgets_[hash_key] = std::make_unique<TimeSettingsWidget<int>>(theme_, tab, param);
+                else if (type == "float" && utils::endsWith(param, "time"))
+                    widgets_[hash_key] = std::make_unique<TimeSettingsWidget<float>>(theme_, tab, param);
                 else if (type == "int")
                     widgets_[hash_key] = std::make_unique<SliderSettingsWidget<int>>(theme_, tab, param);
                 else if (type == "float")
                     widgets_[hash_key] = std::make_unique<SliderSettingsWidget<float>>(theme_, tab, param);
+                else if (type == "string" && utils::endsWith(param, "type"))
+                    widgets_[hash_key] = std::make_unique<SelectSettingsWidget>(theme_, tab, param);
                 else if (type == "string")
                     widgets_[hash_key] = std::make_unique<StringSettingsWidget>(theme_, tab, param);
                 else
@@ -242,10 +262,10 @@ void SettingsWindow::setFocusedControlsWidget(ControlsSettingsWidget* widget)
 
 /* Widgets */
 
-BaseSettingsWidget::BaseSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name) :
-        name_(name), tab_(tab)
+BaseSettingsWidget::BaseSettingsWidget(tgui::Theme* theme, std::string tab, std::string name) :
+        name_(std::move(name)), tab_(std::move(tab)), theme_(theme)
 {
-    label_ = tgui::Label::create(r3e::utils::humanize(name));
+    label_ = tgui::Label::create(r3e::utils::humanize(name_));
     label_->setRenderer(theme->getRenderer("ItemLabel"));
     label_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
 }
@@ -258,6 +278,20 @@ BaseSettingsWidget::BaseSettingsWidget(tgui::Theme* theme, const std::string& ta
 [[nodiscard]] tgui::Grid::Alignment BaseSettingsWidget::getAlignment() const
 {
     return tgui::Grid::Alignment::BottomLeft;
+}
+
+void BaseSettingsWidget::enable()
+{
+    label_->setRenderer(theme_->getRenderer("ItemLabel"));
+    getWidget()->setEnabled(true);
+    getWidget()->setInheritedOpacity(1.0f);
+}
+
+void BaseSettingsWidget::disable()
+{
+    label_->setRenderer(theme_->getRenderer("ItemLabelDisabled"));
+    getWidget()->setEnabled(false);
+    getWidget()->setInheritedOpacity(0.5f);
 }
 
 BoolSettingsWidget::BoolSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name) :
@@ -462,7 +496,7 @@ void CharacterSettingsWidget::change(std::vector<std::string>::iterator new_valu
     if (new_value >= possible_characters_.end())
         new_value = possible_characters_.begin();
 
-    character_->setText(std::move(utils::humanize(*new_value)));
+    character_->setText(utils::humanize(*new_value));
 
     for (auto& picture : pictures_)
         picture.second->setVisible(false);
@@ -633,4 +667,158 @@ template<class T>
 j3x::Obj SliderSettingsWidget<T>::getValue() const
 {
     return static_cast<T>(slider_->getValue());
+}
+
+
+template<class T>
+TimeSettingsWidget<T>::TimeSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name) :
+        SliderSettingsWidget<T>(theme, tab, name)
+{
+    SliderSettingsWidget<T>::slider_->disconnectAll();
+    SliderSettingsWidget<T>::slider_->connect("ValueChanged", [this]() {
+        SliderSettingsWidget<T>::value_->setText(
+                TimeSettingsWidget<T>::convertToString(static_cast<T>(SliderSettingsWidget<T>::slider_->getValue())));
+    });
+}
+
+template<class T>
+void TimeSettingsWidget<T>::updateValue(const j3x::Parameters& values)
+{
+    SliderSettingsWidget<T>::slider_
+            ->setValue(r3e::j3x::get<T>(values, SliderSettingsWidget<T>::tab_ + "/" + SliderSettingsWidget<T>::name_));
+    SliderSettingsWidget<T>::value_->setText(
+            TimeSettingsWidget<T>::convertToString(static_cast<T>(SliderSettingsWidget<T>::slider_->getValue())));
+}
+
+template<class T>
+std::string TimeSettingsWidget<T>::convertToString(T seconds_val)
+{
+    if (seconds_val < 60)
+        return utils::toString(seconds_val) + "s";
+
+    int minutes = seconds_val / 60;
+    int seconds = static_cast<int>(seconds_val) % 60;
+    int hours = minutes / 60;
+    minutes = minutes % 60;
+
+    std::string out;
+
+    if (hours > 0)
+        out = utils::toString(hours) + "h ";
+    if (minutes > 0)
+        out += utils::toString(minutes) + "m ";
+
+    out += utils::toString(seconds) + "s";
+    return out;
+}
+
+SelectSettingsWidget::SelectSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name) :
+        BaseSettingsWidget(theme, tab, name)
+{
+    grid_ = tgui::Grid::create();
+    grid_->setAutoSize(true);
+
+    value_ = tgui::Label::create();
+    value_->setRenderer(theme->getRenderer("ItemLabel"));
+    value_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
+
+    hint_ = tgui::Label::create();
+    hint_->setRenderer(theme->getRenderer("ItemLabel"));
+    hint_->setTextSize(CONF<float>("graphics/menu_window_hint_text_size"));
+    hint_->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
+
+    left_ = tgui::Button::create("<");
+    left_->setRenderer(theme->getRenderer("ButtonLabel"));
+    left_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
+    left_->setFocusable(true);
+
+    right_ = tgui::Button::create(">");
+    right_->setRenderer(theme->getRenderer("ButtonLabel"));
+    right_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
+    right_->setFocusable(true);
+
+    grid_->addWidget(left_, 0, 0);
+    grid_->addWidget(value_, 0, 1);
+    grid_->addWidget(hint_, 1, 1);
+    grid_->addWidget(right_, 0, 2);
+
+    grid_->setWidgetAlignment(left_, tgui::Grid::Alignment::Bottom);
+    grid_->setWidgetAlignment(right_, tgui::Grid::Alignment::Bottom);
+
+    for (const auto& value : CONF<j3x::List>("ranges/" + name + "_choices"))
+    {
+        const auto& str = j3x::getObj<std::string>(value);
+        possible_values_.emplace_back(str);
+    }
+
+    const auto& hints = CONF<j3x::List>("ranges/" + name + "_hints", true);
+    for (const auto& hint : hints)
+    {
+        const auto& str = j3x::getObj<std::string>(hint);
+        hints_.emplace_back(str);
+    }
+
+    current_value_ = possible_values_.begin();
+
+    left_->connect("mousepressed", [this]() {
+        this->change(--this->current_value_);
+    });
+    right_->connect("mousepressed", [this]() {
+        this->change(++this->current_value_);
+    });
+}
+
+[[nodiscard]] tgui::Grid::Alignment SelectSettingsWidget::getAlignment() const
+{
+    return tgui::Grid::Alignment::BottomLeft;
+}
+
+[[nodiscard]] tgui::Widget::Ptr SelectSettingsWidget::getWidget() const
+{
+    return grid_;
+}
+
+void SelectSettingsWidget::serializeAndAppend(std::string& out) const
+{
+    j3x::serializeAssign(name_, *current_value_, out);
+}
+
+void SelectSettingsWidget::updateValue(const j3x::Parameters& values)
+{
+    const auto& value = r3e::j3x::get<std::string>(values, tab_ + "/" + name_);
+
+    auto it = std::find(possible_values_.begin(), possible_values_.end(), value);
+
+    if (it == possible_values_.end())
+    {
+        LOG.error("[SelectSettingsWidget::updateValue] Value " +
+                          value + " is forbidden for parameter " + name_ + "!");
+        it = possible_values_.begin();
+    }
+
+    change(it);
+}
+
+void SelectSettingsWidget::change(std::vector<std::string>::iterator new_value)
+{
+    if (new_value < possible_values_.begin())
+        new_value = possible_values_.end() - 1;
+    if (new_value >= possible_values_.end())
+        new_value = possible_values_.begin();
+
+    value_->setText(utils::humanize(*new_value));
+
+    current_value_ = new_value;
+    hint_->setText(hints_.at(std::distance(possible_values_.begin(), new_value)));
+    on_change_(*current_value_);
+}
+
+j3x::Obj SelectSettingsWidget::getValue() const
+{
+    return *current_value_;
+}
+
+void SelectSettingsWidget::bindChange(std::function<void(const std::string&)> func)
+{
+    on_change_ = func;
 }

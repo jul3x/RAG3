@@ -30,6 +30,7 @@ void Explosion::applyForce(Character* obj, float factor_) const
 
     obj->addSteeringForce(CONF<float>("explosion_velocity_factor") * factor *
                           sf::Vector2f{std::cos(theta), std::sin(theta)}, CONF<float>("explosion_force_duration"));
+    obj->setPossibleDeathCause(DeathCause::Explosion, obj->getPossibleKiller());
 }
 
 void Explosion::applyForce(Obstacle* obj) const

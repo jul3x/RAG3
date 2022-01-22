@@ -73,7 +73,7 @@ private:
 
 class BaseSettingsWidget {
 public:
-    BaseSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name);
+    BaseSettingsWidget(tgui::Theme* theme, std::string tab, std::string name);
     [[nodiscard]] tgui::Label::Ptr getLabel() const;
     [[nodiscard]] virtual tgui::Grid::Alignment getAlignment() const;
     [[nodiscard]] virtual tgui::Widget::Ptr getWidget() const = 0;
@@ -81,11 +81,15 @@ public:
     virtual void serializeAndAppend(std::string& out) const = 0;
     virtual void updateValue(const j3x::Parameters& values) = 0;
 
+    virtual void enable();
+    virtual void disable();
+
 protected:
     std::string name_, tab_;
 
 private:
     tgui::Label::Ptr label_;
+    tgui::Theme* theme_;
 
 };
 
@@ -194,6 +198,44 @@ protected:
     tgui::Grid::Ptr grid_;
     tgui::Slider::Ptr slider_;
     tgui::Label::Ptr value_;
+
+};
+
+
+template<class T>
+class TimeSettingsWidget : public SliderSettingsWidget<T> {
+public:
+    TimeSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name);
+    void updateValue(const j3x::Parameters& values) override;
+
+private:
+    static inline std::string convertToString(T value);
+
+};
+
+
+class SelectSettingsWidget : public BaseSettingsWidget {
+public:
+    SelectSettingsWidget(tgui::Theme* theme, const std::string& tab, const std::string& name);
+    [[nodiscard]] tgui::Grid::Alignment getAlignment() const override;
+    [[nodiscard]] tgui::Widget::Ptr getWidget() const override;
+    [[nodiscard]] j3x::Obj getValue() const override;
+    void serializeAndAppend(std::string& out) const override;
+    void updateValue(const j3x::Parameters& values) override;
+    void bindChange(std::function<void(const std::string&)> func);
+
+private:
+    void change(std::vector<std::string>::iterator new_value);
+
+    std::function<void(const std::string&)> on_change_;
+
+    std::vector<std::string> possible_values_;
+    std::vector<std::string> hints_;
+    std::vector<std::string>::iterator current_value_;
+
+    tgui::Grid::Ptr grid_;
+    tgui::Button::Ptr left_, right_;
+    tgui::Label::Ptr value_, hint_;
 
 };
 

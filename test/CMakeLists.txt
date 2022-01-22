@@ -47,7 +47,7 @@ set(SFML_ROOT "C:/SFML-2.5.1")
 set(TGUI_ROOT "C:/TGUI-0.8")
 
 find_package(SFML 2 REQUIRED COMPONENTS graphics window system audio network)
-find_package(TGUI 0.8 REQUIRED)
+find_package(TGUI 0.8.9 REQUIRED)
 
 include_directories(../engine/include)
 include_directories(../common/include)

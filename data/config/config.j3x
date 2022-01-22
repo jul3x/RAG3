@@ -30,6 +30,8 @@ string about_text = "Lorem ipsum dolor sit amet. \nTODO..."
 list characters_to_play = ["henry"; "rat"; "cultist"; "trevor"; "chupacabra"; "time_addict"; "giorgio"]
 list multi_to_play = ["henry"; "green_bastard"; "gray_oldman"; "rusty_fooley"; "pink_floyd"; "hazy_potter";
                       "slippery_amigo"]
+list settings_tabs = ["general"; "controls"; "graphics"; "sound"]
+list server_settings_tabs = ["server"; "graphics"; "sound"]
 
 // FIRE MECHANICS
 float on_fire_hurt_speed = 10.0

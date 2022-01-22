@@ -21,6 +21,7 @@
 #include <common/ui/AcceptWindow.h>
 #include <common/ui/Window.h>
 #include <common/ui/Achievement.h>
+#include <common/ui/Message.h>
 #include <common/ui/BloodSplash.h>
 #include <common/ui/menu/Menu.h>
 #include <common/misc/Thought.h>
@@ -67,6 +68,7 @@ public:
     virtual void spawnBonusText(const sf::Vector2f& pos, const std::string& text);
     virtual void spawnAcceptWindow(const std::string& text, const std::function<void()>& func);
     virtual void spawnNoteWindow(const std::string& text, bool note_info = true);
+    virtual void spawnMessage(const std::string& text);
     virtual void clearThoughts();
     virtual void closeWindow(Window* window);
     virtual void openMenu();
@@ -98,6 +100,8 @@ protected:
     virtual bool canZoomOut() const;
     virtual void zoomIn(const sf::Vector2f& mouse_world_pos);
     virtual void zoomOut();
+
+    virtual void rollMessagesUp();
 
     static constexpr float ACHIEVEMENTS_MARGIN_ = 20.0f;
 
@@ -139,6 +143,7 @@ protected:
     std::list<Achievement> achievements_;
     std::list<Thought> thoughts_;
     std::list<BonusText> bonus_texts_;
+    std::list<Message> messages_;
     std::unordered_map<AbstractPhysicalObject*, TutorialArrow> tutorial_arrows_;
     std::list<std::shared_ptr<Window>> windows_;
     sf::Text fps_text_;

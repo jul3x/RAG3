@@ -4,6 +4,7 @@
 
 cmake_minimum_required(VERSION 3.8)
 project(Rag3)
+cmake_policy(SET CMP0074 NEW)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -22,7 +23,7 @@ set(TGUI_ROOT "C:/TGUI-0.8")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/build")
 find_package(SFML 2 REQUIRED COMPONENTS graphics window system audio network)
-find_package(TGUI 0.8 REQUIRED)
+find_package(TGUI 0.8.9 REQUIRED)
 
 include_directories(${CMAKE_SOURCE_DIR}/engine/include)
 include_directories(${CMAKE_SOURCE_DIR}/common/include)

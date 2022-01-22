@@ -15,6 +15,7 @@ void MinimalUserInterface::initialize(graphics::Graphics& graphics)
     UserInterface::initialize(graphics);
     menu_->makeMenuElements({
                                     {"Start server", [this]() { menu_->showWindow(Menu::Window::LoadGame); }},
+                                    {"Settings",     [this]() { menu_->showWindow(Menu::Window::Settings); }},
                                     {"About",        [this]() { menu_->showWindow(Menu::Window::About); }},
                                     {"Exit",         [this]() { framework_->close(); }}
                             });

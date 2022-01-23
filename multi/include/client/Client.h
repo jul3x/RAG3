@@ -54,6 +54,7 @@ public:
     void useSpecialObject() override;
     void setGameState(GameState state) override;
     void setMultiStats(MultiStats* stats);
+    bool canRespawn() const;
     void respawn(const std::string& map_name) override;
     bool respawnWithoutReload();
     void startGame(const std::string& ip_address) override;

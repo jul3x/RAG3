@@ -88,11 +88,18 @@ ClientFullHud::ClientFullHud(UserInterface* ui, Client* client, const sf::Vector
                                                        CONF<sf::Vector2f>("graphics/respawn_button_pos"),
                                                        button_size, show_duration));
     buttons_.back()->bindFunction([this, ui]() {
-        if (client_->respawnWithoutReload())
-        {
-            ui->clearWindows();
-            this->show(false);
-        }
+        if (!client_->canRespawn())
+            return;
+
+        ui->spawnAcceptWindow(
+            "Are you sure you want to respawn?",
+            [this, ui]() {
+                if (client_->respawnWithoutReload())
+                {
+                    this->show(false);
+                    ui->clearWindows();
+                }
+            });
     });
 }
 
@@ -106,6 +113,8 @@ void ClientFullHud::show(bool show)
     if (show != show_)
         multi_stats_.show(show);
     FullHud::show(show);
+
+    buttons_.back()->setEnabled(client_->canRespawn());
 }
 
 void ClientFullHud::draw(sf::RenderTarget& target, sf::RenderStates states) const

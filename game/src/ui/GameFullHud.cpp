@@ -29,10 +29,15 @@ GameFullHud::GameFullHud(UserInterface* ui, Framework* framework, const sf::Vect
                                                        center_top +
                                                        CONF<sf::Vector2f>("graphics/respawn_button_pos"),
                                                        button_size, show_duration));
-    buttons_.back()->bindFunction([this, ui]() {
-        this->framework_->respawn("");
-        ui->clearWindows();
-        this->show(false);
+    buttons_.back()->bindFunction([this, framework, ui]() {
+        ui->spawnAcceptWindow(
+            "Are you sure you want to respawn?\n"
+            "Current progress on the map will be lost.",
+            [this, framework, ui]() {
+                framework->respawn("");
+                this->show(false);
+                ui->clearWindows();
+            });
     });
 }
 

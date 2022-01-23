@@ -29,7 +29,14 @@ FullHud::FullHud(UserInterface* ui, Framework* framework, const sf::Vector2f& si
                                                        center_bottom +
                                                        CONF<sf::Vector2f>("graphics/back_to_menu_button_pos"),
                                                        button_size, show_duration));
-    buttons_.back()->bindFunction([ui]() { ui->openMenu(); });
+    buttons_.back()->bindFunction([ui]() {
+        ui->spawnAcceptWindow(
+            "Are you sure you want to go back to menu?\n"
+            "Current progress on this map will be lost.",
+            [ui]() {
+                ui->openMenu(); 
+            });
+    });
 }
 
 void FullHud::update(float time_elapsed)

@@ -40,3 +40,8 @@ void TextButton::show(bool show)
     else
         button_->hideWithEffect(tgui::ShowAnimationType::Fade, sf::seconds(show_duration_ / 2.0f));
 }
+
+void TextButton::setEnabled(bool enabled)
+{
+    button_->setEnabled(enabled);
+}

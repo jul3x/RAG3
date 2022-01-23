@@ -83,15 +83,7 @@ void MinimalUserInterface::spawnBonusText(const sf::Vector2f& pos, const std::st
 {
 }
 
-void MinimalUserInterface::spawnAcceptWindow(const std::string& text, const std::function<void()>& func)
-{
-}
-
 void MinimalUserInterface::spawnNoteWindow(const std::string& text, bool note_info)
-{
-}
-
-void MinimalUserInterface::closeWindow(Window* window)
 {
 }
 
@@ -104,7 +96,6 @@ void MinimalUserInterface::openMenu()
 void MinimalUserInterface::update(graphics::Graphics& graphics, float time_elapsed)
 {
     UserInterface::update(graphics, time_elapsed);
-
 //    std::string new_debug_info = "Connections:\n";
 //
 //    for (const auto& connection : server_->getConnections())

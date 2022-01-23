@@ -213,8 +213,16 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
                     }
                     else if (framework_->getGameState() != Framework::GameState::Menu)
                     {
-                        framework_->setGameState(Framework::GameState::Paused);
-                        full_hud_->show(true);
+                        if (!windows_.empty())
+                        {
+                            clearWindows();
+                            framework_->setGameState(Framework::GameState::Normal);
+                        }
+                        else
+                        {
+                            framework_->setGameState(Framework::GameState::Paused);
+                            full_hud_->show(true);
+                        }
                     }
                 }
                 if (event.key.code == CONF<int>("controls/time_reversal"))
@@ -341,7 +349,7 @@ void UserInterface::handleMouse(sf::RenderWindow& graphics_window)
     auto mouse_pos = sf::Mouse::getPosition(graphics_window);
     auto mouse_world_pos = graphics_window.mapPixelToCoords(mouse_pos);
     auto player_pos = player_->getPosition() - RMGET<sf::Vector2f>("characters", "henry", "map_offset");
-    if (!full_hud_->isShow() && framework_->getGameState() != Framework::GameState::Menu &&
+    if (!full_hud_->isShow() && framework_->getGameState() == Framework::GameState::Normal &&
         utils::geo::circleCircle(mouse_world_pos, 0.0f, player_pos, CONF<float>("characters/crosshair_min_distance")))
     {
         mouse_world_pos = player_pos + CONF<float>("characters/crosshair_min_distance")

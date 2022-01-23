@@ -129,8 +129,6 @@ namespace r3e {
 
             if (sound_manager_ != nullptr)
                 sound_manager_->update(time_scale_factor_ * frame_time_);
-
-            std::cout << "FPS: " << 1.0f / frame_time_ << std::endl;
         }
     }
 

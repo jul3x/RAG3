@@ -25,7 +25,7 @@ void Framework::initialize()
             "Codename: Rag3",
             CONF<bool>("graphics/full_screen") ? sf::Style::Fullscreen : (sf::Style::Titlebar | sf::Style::Close),
             sf::Color(CONF<int>("graphics/background_color")));
-    engine_->setFPSLimit(60);
+    // engine_->setFPSLimit(60);
 
     spawning_func_["bullet"] = [this](Character* user, const std::string& name, const sf::Vector2f& pos, float dir) {
         this->spawnBullet(user, name, pos, dir);

@@ -15,6 +15,7 @@
 #include <R3E/objects/AbstractPhysicalObject.h>
 #include <R3E/ai/DataTypes.h>
 
+#include <R3E/utils/Numeric.h>
 
 namespace r3e::utils::geo {
     float getDistance(const sf::Vector2f& a, const sf::Vector2f& b);

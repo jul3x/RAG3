@@ -5,6 +5,9 @@
 #ifndef RAG3_ENGINE_INCLUDE_R3E_UTILS_NUMERIC_H
 #define RAG3_ENGINE_INCLUDE_R3E_UTILS_NUMERIC_H
 
+#define likely(x)       __builtin_expect((x),1)
+#define unlikely(x)     __builtin_expect((x),0)
+
 #include <random>
 #include <cmath>
 

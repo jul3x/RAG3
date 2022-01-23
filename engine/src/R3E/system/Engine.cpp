@@ -240,6 +240,11 @@ namespace r3e {
         return *graphics_;
     }
 
+    Collisions& Engine::getCollisions() const
+    {
+        return *collisions_;
+    }
+
     std::list<std::shared_ptr<graphics::AnimationEvent>>& Engine::getAnimationEvents()
     {
         return animation_events_;

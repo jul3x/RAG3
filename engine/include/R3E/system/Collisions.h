@@ -22,6 +22,8 @@ namespace r3e {
 
         void initialize(const sf::Vector2f& size, float grid);
 
+        void setWindowedCollisionCheck(AbstractPhysicalObject* obj, float bounds);
+
         void update(AbstractGame* game);
 
         void insert(StaticObject* obj);
@@ -154,9 +156,29 @@ namespace r3e {
                      std::make_pair(1,  0),
                      std::make_pair(-1, 0),
                      std::make_pair(1,  1)};
-            for (size_t i = 0; i < grid_size_x_; ++i)
+
+            size_t grid_x_min, grid_x_max, grid_y_min, grid_y_max;
+
+            if (following_obj_ != nullptr)
             {
-                for (size_t j = 0; j < grid_size_y_; ++j)
+                grid_x_min = std::max(0, static_cast<int>((following_obj_->getPosition().x - bounds_) / grid_));
+                grid_x_max = std::min(static_cast<int>(grid_size_x_),
+                                      static_cast<int>((following_obj_->getPosition().x + bounds_) / grid_));
+                grid_y_min = std::max(0, static_cast<int>((following_obj_->getPosition().y - bounds_) / grid_));
+                grid_y_max = std::min(static_cast<int>(grid_size_y_),
+                                      static_cast<int>((following_obj_->getPosition().y + bounds_) / grid_));
+            }
+            else
+            {
+                grid_x_min = 0;
+                grid_x_max = grid_size_x_;
+                grid_y_min = 0;
+                grid_y_max = grid_size_y_;
+            }            
+            
+            for (size_t i = grid_x_min; i < grid_x_max; ++i)
+            {
+                for (size_t j = grid_y_min; j < grid_y_max; ++j)
                 {
                     for (const auto& grid : grids_to_check)
                     {
@@ -212,6 +234,9 @@ namespace r3e {
 
         float grid_;
         size_t grid_size_x_, grid_size_y_;
+
+        AbstractPhysicalObject* following_obj_;
+        float bounds_;
 
     };
 

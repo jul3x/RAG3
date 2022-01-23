@@ -591,6 +591,7 @@ void Server::respawnPlayer(sf::Uint32 ip)
 void Server::respawn(const std::string& map_name)
 {
     Framework::respawn(map_name);
+    engine_->getCollisions().setWindowedCollisionCheck(nullptr, 0.0f);
     cached_events_.clear();
     connections_.clear();
     starting_positions_.clear();

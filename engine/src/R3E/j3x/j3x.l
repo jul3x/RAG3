@@ -69,6 +69,5 @@ IDENT [a-zA-Z0-9'_]
 <YYINITIAL>[ \t\r\n\f]      	 /* ignore white space. */;
 <YYINITIAL>.      	 return _ERROR_;
 %%
-int initialize_lexer(FILE *inp) { yyrestart(inp); BEGIN YYINITIAL; }
+void initialize_lexer(FILE *inp) { yyrestart(inp); BEGIN YYINITIAL; }
 int yywrap(void) { return 1; }
-

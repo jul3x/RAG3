@@ -70,7 +70,6 @@ string map_name_map_new = "Test map"
 string map_name_multi_map = "Arena"
 
 // MULTI
-float periodical_spawn_time = 60.0 // TODO - extract to server settings (with max players, and stats to finish gameplay)
 int tcp_port = 54000
 int udp_client_port = 54001
 int udp_server_port = 54002

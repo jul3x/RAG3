@@ -39,10 +39,15 @@ SettingsWindow::SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
     save_button_->setPosition(pos - sf::Vector2f(0.0, CONF<float>("graphics/menu_settings_tabs_height")) +
                               CONF<sf::Vector2f>("graphics/menu_save_button_pos"));
     save_button_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
+
     save_button_->connect("pressed", [this, framework]() {
         this->unfocusControlsWidgets();
-        this->saveValues();
         framework->spawnSound(RM.getSound("ui_upgrade"));
+        framework->getUI()->spawnAcceptWindow(
+            "Are you sure you want to save settings?",
+            [this]() {
+                this->saveValues();
+            });
     });
     save_button_->connect("mouseentered", [framework]() {
         framework->spawnSound(RM.getSound("ui_hover"));
@@ -55,10 +60,15 @@ SettingsWindow::SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
                                  CONF<sf::Vector2f>("graphics/menu_restore_button_pos"));
     restore_button_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
     restore_button_->connect("pressed", [this, framework]() {
-        this->unfocusControlsWidgets();
-        this->updateValues();
-        this->saveValues();
         framework->spawnSound(RM.getSound("ui_upgrade"));
+        this->unfocusControlsWidgets();
+        framework->getUI()->spawnAcceptWindow(
+            "Are you sure you want to restore settings?\n"
+            "Previous values will be lost.",
+            [this]() {
+                this->updateValues();
+                this->saveValues();
+            });
     });
     restore_button_->connect("mouseentered", [framework]() {
         framework->spawnSound(RM.getSound("ui_hover"));

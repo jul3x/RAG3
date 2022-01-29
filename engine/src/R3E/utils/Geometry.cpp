@@ -10,17 +10,19 @@ namespace r3e {
         namespace geo {
             float getDistance(const sf::Vector2f& a, const sf::Vector2f& b)
             {
-                return std::hypot(b.x - a.x, b.y - a.y);
+                // Not using std::hypot because given values are considered not too big to cause overflow
+                float x = b.x - a.x;
+                float y = b.y - a.y;
+
+                return std::sqrt(x*x + y*y);
             }
 
             sf::Vector2f polarToCartesian(float r, float theta_rad)
             {
-                if (r < 0.0f)
-                {
+                if (unlikely(r < 0.0f))
                     throw std::invalid_argument("[Utils::polarToCartesian] Radius cannot be negative!");
-                }
 
-                return {r * std::cos(theta_rad), r * std::sin(theta_rad)};
+                return r * sf::Vector2f{std::cos(theta_rad), std::sin(theta_rad)};
             }
 
             std::tuple<float, float> cartesianToPolar(const sf::Vector2f& vector)
@@ -28,25 +30,20 @@ namespace r3e {
                 float r = std::hypot(vector.x, vector.y);
                 float theta_rad = std::atan2(vector.y, vector.x);
 
-                return std::make_tuple(r, theta_rad);
+                return {r, theta_rad};
             }
 
             sf::Vector2f vectorLengthLimit(const sf::Vector2f& vector_in, float max_length)
             {
-                if (max_length < 0.0f)
-                {
+                if (unlikely(max_length < 0.0f))
                     throw std::invalid_argument("[utils::vectorLengthLimit] max_length cannot be negative!");
-                }
 
                 float length = std::hypot(vector_in.x, vector_in.y);
 
                 sf::Vector2f out = vector_in;
 
                 if (length > max_length)
-                {
-                    out.x = out.x / length * max_length;
-                    out.y = out.y / length * max_length;
-                }
+                    out *= max_length / length;
 
                 return out;
             }
@@ -60,10 +57,8 @@ namespace r3e {
             bool
             isPointInRectangle(const sf::Vector2f& p, const sf::Vector2f& rect_pos, const sf::Vector2f& rect_size)
             {
-                if (rect_size.x < 0.0f || rect_size.y < 0.0f)
-                {
+                if (unlikely(rect_size.x < 0.0f || rect_size.y < 0.0f))
                     throw std::invalid_argument("[isPointInRectangle] Size of rectangle cannot be negative!");
-                }
 
                 return p.x >= rect_pos.x && p.x < rect_pos.x + rect_size.x && p.y >= rect_pos.y &&
                        p.y < rect_pos.y + rect_size.y;
@@ -164,7 +159,7 @@ namespace r3e {
             bool circleCircle(const sf::Vector2f& a_origin, float a_r,
                               const sf::Vector2f& b_origin, float b_r)
             {
-                return (utils::geo::getDistance(a_origin, b_origin) < a_r + b_r);
+                return utils::geo::getDistance(a_origin, b_origin) < a_r + b_r;
             }
 
             short int ABCircle(const sf::Vector2f& a_origin, const sf::Vector2f& a_size,
@@ -250,13 +245,13 @@ namespace r3e {
 
             float dotProduct(const sf::Vector2f& a, const sf::Vector2f& b)
             {
-                return (a.x * b.x + a.y * b.y);
+                return a.x * b.x + a.y * b.y;
             }
 
             float getAngle(const sf::Vector2f& a, const sf::Vector2f& b)
             {
                 float dot = utils::geo::dotProduct(utils::geo::getNormalized(a), utils::geo::getNormalized(b));
-                dot = (dot < -1.0 ? -1.0 : (dot > 1.0 ? 1.0 : dot));
+                dot = dot < -1.0 ? -1.0 : (dot > 1.0 ? 1.0 : dot);
 
                 return std::acos(dot);
             }

@@ -66,6 +66,7 @@ namespace r3e {
         [[nodiscard]] static sf::Vector2i detectResolution();
         [[nodiscard]] static float detectZoom(const sf::Vector2i& res);
         [[nodiscard]] graphics::Graphics& getGraphics() const;
+        [[nodiscard]] Collisions& getCollisions() const;
         [[nodiscard]] std::list<std::shared_ptr<graphics::AnimationEvent>>& getAnimationEvents();
 
         void setTimeScaleFactor(float factor);

@@ -19,6 +19,8 @@ public:
 
     void show(bool show = true);
 
+    void setEnabled(bool enabled = true);
+
 private:
     Framework* framework_;
     tgui::Button::Ptr button_;

@@ -151,6 +151,12 @@ void Game::updateMapObjects(float time_elapsed)
 
     for (auto it = npcs.begin(); it != npcs.end();)
     {
+        if (!(*it)->isVisible())
+        {
+            ++it;
+            continue;
+        }
+
         bool do_increment = true;
         (*it)->setCurrentSpecialObject(nullptr);
         (*it)->setCurrentTalkableCharacter(nullptr);
@@ -630,6 +636,7 @@ void Game::respawn(const std::string& map_name)
     time_manipulation_fuel_ = player_->getMaxTimeManipulation();
 
     Framework::respawn(map_name);
+    engine_->getCollisions().setWindowedCollisionCheck(player_.get(), CONF<float>("collision_bounds_size"));
 
     this->setStartingPosition();
 

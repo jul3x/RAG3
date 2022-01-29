@@ -352,6 +352,8 @@ void Client::handleEventsFromServer()
                             player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
                             ui_->registerPlayer(player_.get());
                             initPlayer(player_.get());
+                            engine_->getCollisions().setWindowedCollisionCheck(player_.get(), 
+                                CONF<float>("collision_bounds_size"));
                         }
 
                         // To omit every UDP packet which was sent before respawn
@@ -642,6 +644,11 @@ void Client::useItem(const std::string& id)
     events_socket_.send(packet);
 }
 
+bool Client::canRespawn() const
+{
+    return !is_game_ended_;
+}
+
 void Client::respawn(const std::string& map_name)
 {
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
@@ -649,6 +656,9 @@ void Client::respawn(const std::string& map_name)
     ui_->registerPlayer(player_.get());
 
     Framework::respawn(map_name);
+    engine_->getCollisions().setWindowedCollisionCheck(player_.get(),
+        CONF<float>("collision_bounds_size"));
+
     map_->getList<NPC>().clear();
     clearStartingPositions();
 }
@@ -732,7 +742,7 @@ void Client::handleTimeout(float time_elapsed)
 
 bool Client::respawnWithoutReload()
 {
-    if (is_game_ended_)
+    if (!canRespawn())
         return false;
 
     PlayerEventPacket player_packet(PlayerEventPacket::Type::Respawn, 0);

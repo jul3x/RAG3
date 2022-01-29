@@ -31,6 +31,12 @@ namespace r3e {
         }
     }
 
+    void Collisions::setWindowedCollisionCheck(AbstractPhysicalObject* obj, float bounds)
+    {
+        following_obj_ = obj;
+        bounds_ = bounds;
+    }
+
     void Collisions::update(AbstractGame* game)
     {
         // s_grid_ does not need to be updated - only erasing and adding new objects is going on there

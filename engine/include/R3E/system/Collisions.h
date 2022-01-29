@@ -22,6 +22,8 @@ namespace r3e {
 
         void initialize(const sf::Vector2f& size, float grid);
 
+        void setWindowedCollisionCheck(AbstractPhysicalObject* obj, float bounds);
+
         void update(AbstractGame* game);
 
         void insert(StaticObject* obj);
@@ -40,11 +42,11 @@ namespace r3e {
         {
             for (size_t i = 0; i < grid_size_x_; ++i)
             {
-                auto& col = cont.at(i);
+                auto& col = cont[i];
 
                 for (size_t j = 0; j < grid_size_y_; ++j)
                 {
-                    for (auto it = col.at(j).begin(); it != col.at(j).end();)
+                    for (auto it = col[j].begin(); it != col[j].end();)
                     {
                         bool do_increment = true;
                         auto old_grid_pos = (*it)->grid_position_;
@@ -69,19 +71,19 @@ namespace r3e {
         template<class T>
         inline void insert(T* obj, std::vector<std::vector<std::list<T*>>>& cont)
         {
-            cont.at(obj->grid_position_.x).at(obj->grid_position_.y).push_back(obj);
+            cont[obj->grid_position_.x][obj->grid_position_.y].emplace_back(obj);
         }
 
         template<class T>
         inline void eraseIfExists(T* obj, std::vector<std::vector<std::list<T*>>>& cont)
         {
-            auto& obj_list = cont.at(obj->grid_position_.x).at(obj->grid_position_.y);
+            auto& obj_list = cont[obj->grid_position_.x][obj->grid_position_.y];
             for (auto it = obj_list.begin(); it != obj_list.end(); ++it)
             {
                 if (*it == obj)
                 {
                     obj_list.erase(it);
-                    break;
+                    return;
                 }
             }
         }
@@ -92,58 +94,46 @@ namespace r3e {
             const auto& a = obj_1.getCollisionArea().getType();
             const auto& b = obj_2.getCollisionArea().getType();
 
-            if (a == collision::Area::Type::None || b == collision::Area::Type::None)
+            if (unlikely(a == collision::Area::Type::None || b == collision::Area::Type::None))
                 return false;
 
             if (a == collision::Area::Type::Circle)
             {
                 if (b == collision::Area::Type::Circle)
                     return Collisions::circleCircleResponse(obj_1, obj_2);
-                else if (b == collision::Area::Type::Box)
-                    return Collisions::circleABResponse(obj_1, obj_2);
+
+                // Circle - Box response
+                return Collisions::circleABResponse(obj_1, obj_2);
             }
 
-            if (a == collision::Area::Type::Box)
-            {
-                if (b == collision::Area::Type::Circle)
-                    return Collisions::ABCircleResponse(obj_1, obj_2);
-                else if (b == collision::Area::Type::Box)
-                    return Collisions::AABBResponse(obj_1, obj_2);
-            }
-
-            throw std::invalid_argument("[Collisions - Response] This collision type (" +
-                                        std::to_string(static_cast<int>(a)) + "," +
-                                        std::to_string(static_cast<int>(b)) + ") is not handled yet!");
+            // Box - Circle or Box - Box response
+            if (b == collision::Area::Type::Circle)
+                return Collisions::ABCircleResponse(obj_1, obj_2);
+            return Collisions::AABBResponse(obj_1, obj_2);
         }
 
         template<class T, class K>
-        inline static bool isCollision(const T& obj_1, const K& obj_2)
+        inline static bool isCollision(T& obj_1, K& obj_2)
         {
             const auto& a = obj_1.getCollisionArea().getType();
             const auto& b = obj_2.getCollisionArea().getType();
 
-            if (a == collision::Area::Type::None || b == collision::Area::Type::None)
+            if (unlikely(a == collision::Area::Type::None || b == collision::Area::Type::None))
                 return false;
 
             if (a == collision::Area::Type::Circle)
             {
                 if (b == collision::Area::Type::Circle)
                     return Collisions::circleCircle(obj_1, obj_2);
-                else if (b == collision::Area::Type::Box)
-                    return static_cast<bool>(Collisions::ABCircle(obj_2, obj_1));
+
+                // Circle - Box
+                return static_cast<bool>(Collisions::ABCircle(obj_2, obj_1));
             }
 
-            if (a == collision::Area::Type::Box)
-            {
-                if (b == collision::Area::Type::Circle)
-                    return static_cast<bool>(Collisions::ABCircle(obj_1, obj_2));
-                else if (b == collision::Area::Type::Box)
-                    return static_cast<bool>(Collisions::AABB(obj_1, obj_2));
-            }
-
-            throw std::invalid_argument("[Collisions] This collision type (" +
-                                        std::to_string(static_cast<int>(a)) + "," +
-                                        std::to_string(static_cast<int>(b)) + ") is not handled yet!");
+            // Box - Circle or Box - Box
+            if (b == collision::Area::Type::Circle)
+                return static_cast<bool>(Collisions::ABCircle(obj_1, obj_2));
+            return static_cast<bool>(Collisions::AABB(obj_1, obj_2));
         }
 
         template<class T, class K>
@@ -152,40 +142,61 @@ namespace r3e {
                                     std::vector<std::vector<std::list<K*>>>& cont_2,
                                     bool respond = false)
         {
-            static std::vector<sf::Vector2<int>> grids_to_check =
-                    {{-1, -1},
-                     {-1, 1},
-                     {1,  -1},
-                     {0,  -1},
-                     {0,  1},
-                     {0,  0},
-                     {1,  0},
-                     {-1, 0},
-                     {1,  1}};
-            for (size_t i = 0; i < grid_size_x_; ++i)
+            std::function<bool(T&, K&)> collision_func = Collisions::isCollision<T, K>;
+            if (respond)
+                collision_func = Collisions::ifCollideRespond<T, K>; 
+
+            static constexpr std::array<std::pair<int, int>, 9> grids_to_check =
+                    {std::make_pair(-1, -1),
+                     std::make_pair(-1, 1),
+                     std::make_pair(1,  -1),
+                     std::make_pair(0,  -1),
+                     std::make_pair(0,  1),
+                     std::make_pair(0,  0),
+                     std::make_pair(1,  0),
+                     std::make_pair(-1, 0),
+                     std::make_pair(1,  1)};
+
+            size_t grid_x_min, grid_x_max, grid_y_min, grid_y_max;
+
+            if (following_obj_ != nullptr)
             {
-                for (size_t j = 0; j < grid_size_y_; ++j)
+                grid_x_min = std::max(0, static_cast<int>((following_obj_->getPosition().x - bounds_) / grid_));
+                grid_x_max = std::min(static_cast<int>(grid_size_x_),
+                                      static_cast<int>((following_obj_->getPosition().x + bounds_) / grid_));
+                grid_y_min = std::max(0, static_cast<int>((following_obj_->getPosition().y - bounds_) / grid_));
+                grid_y_max = std::min(static_cast<int>(grid_size_y_),
+                                      static_cast<int>((following_obj_->getPosition().y + bounds_) / grid_));
+            }
+            else
+            {
+                grid_x_min = 0;
+                grid_x_max = grid_size_x_;
+                grid_y_min = 0;
+                grid_y_max = grid_size_y_;
+            }            
+            
+            for (size_t i = grid_x_min; i < grid_x_max; ++i)
+            {
+                for (size_t j = grid_y_min; j < grid_y_max; ++j)
                 {
                     for (const auto& grid : grids_to_check)
                     {
-                        size_t x = grid.x + i;
-                        size_t y = grid.y + j;
+                        size_t x = grid.first + i;
+                        size_t y = grid.second + j;
 
                         if (x < 0 || x >= grid_size_x_ || y < 0 || y >= grid_size_y_)
                             continue;
 
-                        for (const auto& el1 : cont_1.at(i).at(j))
+                        for (const auto& el1 : cont_1[i][j])
                         {
-                            for (const auto& el2 : cont_2.at(x).at(y))
+                            for (const auto& el2 : cont_2[x][y])
                             {
-                                if (x == i && y == j && el1 == el2)
+                                if (el1 == el2)
                                     continue;
 
-                                if ((respond && Collisions::ifCollideRespond(*el1, *el2)) ||
-                                    Collisions::isCollision(*el1, *el2))
-                                {
+                                if (collision_func(*el1, *el2))
                                     game->alertCollision(el1, el2);
-                                }
                             }
                         }
                     }
@@ -223,6 +234,9 @@ namespace r3e {
 
         float grid_;
         size_t grid_size_x_, grid_size_y_;
+
+        AbstractPhysicalObject* following_obj_;
+        float bounds_;
 
     };
 

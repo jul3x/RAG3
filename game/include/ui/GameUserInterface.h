@@ -36,7 +36,6 @@ private:
     bool canZoomOut() const override;
     void zoomOut() override;
 
-
     Game* game_;
 
 };

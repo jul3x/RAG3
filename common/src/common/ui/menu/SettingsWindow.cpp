@@ -96,7 +96,10 @@ SettingsWindow::SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
     });
     tabs_->select(0);
 
-    doShow(false);
+    save_button_->setVisible(false);
+    restore_button_->setVisible(false);
+    tabs_->setVisible(false);
+    scroll_panel_->setVisible(false);
 }
 
 void SettingsWindow::doShow(bool show)

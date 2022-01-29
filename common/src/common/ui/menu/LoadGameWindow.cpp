@@ -73,7 +73,8 @@ LoadGameWindow::LoadGameWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
         ++i;
     }
 
-    doShow(false);
+    scroll_panel_->setVisible(false);
+    text_->setVisible(false);
 }
 
 void LoadGameWindow::doShow(bool show)

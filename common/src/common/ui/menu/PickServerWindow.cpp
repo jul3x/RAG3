@@ -46,7 +46,9 @@ PickServerWindow::PickServerWindow(tgui::Gui* gui, tgui::Theme* theme, Framework
     });
     gui->add(button_);
 
-    doShow(false);
+    text_->setVisible(false);
+    editbox_->setVisible(false);
+    button_->setVisible(false);
 }
 
 void PickServerWindow::doShow(bool show)

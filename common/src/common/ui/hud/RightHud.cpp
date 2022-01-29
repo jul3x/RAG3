@@ -37,8 +37,8 @@ RightHud::RightHud(const sf::Vector2f& position) :
 
 void RightHud::update(int level, int exp, float time_elapsed)
 {
-    level_.setState(level);
-    exp_.setState(exp);
+    level_.setState(static_cast<float>(level));
+    exp_.setState(static_cast<float>(exp));
 
     level_.update(time_elapsed);
     exp_.update(time_elapsed);

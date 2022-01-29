@@ -2,10 +2,6 @@
 // Created by jul3x on 30.03.2021.
 //
 
-//
-// Created by jul3x on 12.11.2020.
-//
-
 #include <common/Framework.h>
 #include <common/ui/Tooltip.h>
 

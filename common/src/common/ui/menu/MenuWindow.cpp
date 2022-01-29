@@ -27,8 +27,7 @@ MenuWindow::MenuWindow(tgui::Gui* gui, tgui::Theme* theme, const std::string& he
                          CONF<sf::Vector2f>("graphics/menu_window_header_pos"));
 
     gui_->add(header_);
-
-    doShow(false);
+    header_->setVisible(false);
 }
 
 void MenuWindow::doShow(bool show)

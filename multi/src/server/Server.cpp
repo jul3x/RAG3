@@ -21,6 +21,7 @@ void Server::initialize()
 {
     CFG.set("characters_to_play", CONF<j3x::List>("multi_to_play"));
     CFG.set("settings_tabs", CONF<j3x::List>("server_settings_tabs"));
+    CFG.set("maps_order", CONF<j3x::List>("multi_maps_order"));
 
     Framework::initialize();
 

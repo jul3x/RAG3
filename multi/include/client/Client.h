@@ -63,6 +63,7 @@ public:
     const std::unordered_map<sf::Uint32, ConnectedPlayer>& getPlayers() const;
     ConnectionStatus getConnectionStatus() const;
     const PlayerStats& getMyStats() const;
+    void sendMessage(const std::string& msg);
 
 private:
     void afterUpdate(float time_elapsed) override;

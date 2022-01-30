@@ -23,6 +23,7 @@ public:
 
     static ResourceManager& getInstance();
 
+    static const std::string& getSafeRegex();
     std::vector<std::string>& getListOfObjects(const std::string& dir);
     std::vector<std::string>& getFreshListOfObjects(const std::string& dir);
     const j3x::Parameters& getObjectParams(const std::string& category, const std::string& id);

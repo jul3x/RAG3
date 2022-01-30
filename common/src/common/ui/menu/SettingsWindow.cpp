@@ -340,6 +340,7 @@ StringSettingsWidget::StringSettingsWidget(tgui::Theme* theme, const std::string
         BaseSettingsWidget(theme, tab, name)
 {
     editbox_ = tgui::EditBox::create();
+    editbox_->setInputValidator(RM.getSafeRegex());
     editbox_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
     editbox_->setSize(CONF<sf::Vector2f>("graphics/menu_edit_box_size"));
     editbox_->setRenderer(theme->getRenderer("EditBoxGame"));

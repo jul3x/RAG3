@@ -272,149 +272,156 @@ void Server::handleEventsFromPlayers()
 {
     for (auto& conn : connections_)
     {
-        auto& socket = conn.second.events_socket_;
-        PlayerEventPacket packet;
-        auto status = socket->receive(packet);
-        switch (status)
-        {
-            case sf::Socket::Done:
-            {
-                auto player = conn.second.player_.get();
+        try {
+            auto &socket = conn.second.events_socket_;
+            PlayerEventPacket packet;
+            auto status = socket->receive(packet);
+            switch (status) {
+                case sf::Socket::Done: {
+                    auto player = conn.second.player_.get();
 
-                if (player != nullptr)
-                {
-                    conn.second.ping_elapsed_ = 0.0f;
+                    if (player != nullptr) {
+                        conn.second.ping_elapsed_ = 0.0f;
 
-                    switch (packet.getType())
-                    {
-                        case PlayerEventPacket::Type::UseObject:
-                        {
-                            useSpecialObject(player, conn.first);
-                            break;
+                        switch (packet.getType()) {
+                            case PlayerEventPacket::Type::UseObject: {
+                                useSpecialObject(player, conn.first);
+                                break;
+                            }
+                            case PlayerEventPacket::Type::UseBackpackObject: {
+                                player->useItem(j3x::get<std::string>(packet.getParams(), "id"));
+                                break;
+                            }
+                            case PlayerEventPacket::Type::NameChange: {
+                                conn.second.name_ = j3x::get<std::string>(packet.getParams(), "name");
+                                conn.second.character_ = j3x::get<std::string>(packet.getParams(), "texture");
+                                ServerEventPacket server_packet(ServerEventPacket::Type::NameChange,
+                                                                packet.getParams(),
+                                                                conn.first);
+                                sendEventToPlayers(server_packet);
+                                break;
+                            }
+                            case PlayerEventPacket::Type::Message: {
+                                ServerEventPacket server_packet(ServerEventPacket::Type::Message,
+                                                                packet.getParams(),
+                                                                conn.first);
+                                sendEventToPlayers(server_packet);
+                                break;
+                            }
+                            case PlayerEventPacket::Type::Respawn: {
+                                if (conn.second.player_ != nullptr)
+                                    conn.second.player_->setPossibleDeathCause(DeathCause::Unknown, nullptr);
+                                clearPlayer(conn.first, conn.second);
+                                respawnPlayer(conn.first);
+
+                                ServerEventPacket server_packet(ServerEventPacket::Type::PlayerRespawn,
+                                                                0, conn.first);
+                                sendEventToPlayers(server_packet);
+
+                                j3x::Parameters data = {{"name",    conn.second.name_},
+                                                        {"texture", conn.second.character_}};
+                                ServerEventPacket change_name_packet(ServerEventPacket::Type::NameChange,
+                                                                     data,
+                                                                     conn.first);
+                                sendEventToPlayers(change_name_packet);
+                                break;
+                            }
+                            case PlayerEventPacket::Type::Exit: {
+                                if (conn.second.player_ != nullptr)
+                                    conn.second.player_->setPossibleDeathCause(DeathCause::Unknown, nullptr);
+                                clearPlayer(conn.first, conn.second);
+                                ServerEventPacket server_packet(ServerEventPacket::Type::PlayerExit,
+                                                                0, conn.first);
+                                sendEventToPlayers(server_packet);
+                                socket->disconnect();
+                                to_erase_.emplace_back(conn.first);
+                                break;
+                            }
+                            default: {
+                                break;
+                            }
                         }
-                        case PlayerEventPacket::Type::UseBackpackObject:
-                        {
-                            player->useItem(j3x::get<std::string>(packet.getParams(), "id"));
-                            break;
+                    } else {
+                        if (conn.second.status_ == ConnectionStatus::Off) {
+                            LOG.error("This player is not registered!");
+                            return;
                         }
-                        case PlayerEventPacket::Type::NameChange:
-                        {
-                            conn.second.name_ = j3x::get<std::string>(packet.getParams(), "name");
-                            conn.second.character_ = j3x::get<std::string>(packet.getParams(), "texture");
-                            ServerEventPacket server_packet(ServerEventPacket::Type::NameChange,
-                                                            packet.getParams(),
-                                                            conn.first);
-                            sendEventToPlayers(server_packet);
-                            break;
-                        }
-                        case PlayerEventPacket::Type::Respawn:
-                        {
-                            if (conn.second.player_ != nullptr)
-                                conn.second.player_->setPossibleDeathCause(DeathCause::Unknown, nullptr);
-                            clearPlayer(conn.first, conn.second);
+
+                        if (conn.second.status_ == ConnectionStatus::On ||
+                            packet.getType() != PlayerEventPacket::Type::Connection)
+                            return;
+
+                        j3x::Parameters connection_parameters;
+                        auto event_socket = conn.second.events_socket_.get();
+                        conn.second.ping_elapsed_ = 0.0f;
+
+                        if (packet.getIntData() == map_->getDigest()) {
+                            LOG.info("Connection successful.");
                             respawnPlayer(conn.first);
+                            connection_parameters["s"] = static_cast<int>(ConnectionStatus::On);
+                            auto all_stats = j3x::List();
 
-                            ServerEventPacket server_packet(ServerEventPacket::Type::PlayerRespawn,
-                                                            0, conn.first);
-                            sendEventToPlayers(server_packet);
+                            for (const auto &connection: connections_) {
+                                auto stats = j3x::List(
+                                        {static_cast<int>(connection.first), connection.second.stats_.kills_,
+                                         connection.second.stats_.deaths_});
+                                all_stats.emplace_back(stats);
+                            }
 
-                            j3x::Parameters data = {{"name",    conn.second.name_},
-                                                    {"texture", conn.second.character_}};
-                            ServerEventPacket change_name_packet(ServerEventPacket::Type::NameChange,
-                                                                 data,
-                                                                 conn.first);
-                            sendEventToPlayers(change_name_packet);
-                            break;
+                            connection_parameters["stats"] = std::move(all_stats);
+                            auto server_packet =
+                                    ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters,
+                                                      conn.first);
+
+                            event_socket->send(server_packet);
+                            conn.second.status_ = ConnectionStatus::On;
+
+                            for (auto &cached_packet: cached_events_) {
+                                if (cached_packet.isCachedForIp(conn.first))
+                                    event_socket->send(cached_packet);
+                            }
+                            auto end_packet = ServerEventPacket(
+                                    ServerEventPacket::Type::EndOfCachedEvents, {},
+                                    conn.first);
+                            event_socket->send(end_packet);
+                        } else {
+                            LOG.info("Maps does not match... (" + std::to_string(map_->getDigest()) + ", " +
+                                     std::to_string(packet.getIntData()) + ") Rejecting connection.");
+
+                            connection_parameters["s"] = static_cast<int>(ConnectionStatus::Off);
+                            connection_parameters["reason"] = std::string("Maps does not match.");
+                            auto server_packet =
+                                    ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters,
+                                                      conn.first);
+                            event_socket->send(server_packet);
+                            conn.second.status_ = ConnectionStatus::Off;
                         }
-                        case PlayerEventPacket::Type::Exit:
-                        {
-                            if (conn.second.player_ != nullptr)
-                                conn.second.player_->setPossibleDeathCause(DeathCause::Unknown, nullptr);
-                            clearPlayer(conn.first, conn.second);
-                            ServerEventPacket server_packet(ServerEventPacket::Type::PlayerExit,
-                                                            0, conn.first);
-                            sendEventToPlayers(server_packet);
-                            socket->disconnect();
-                            to_erase_.emplace_back(conn.first);
-                            break;
-                        }
-                        default:
-                        {
-                            break;
-                        }
+
                     }
+                    break;
                 }
-                else
-                {
-                    if (conn.second.status_ == ConnectionStatus::Off)
-                    {
-                        LOG.error("This player is not registered!");
-                        return;
-                    }
-
-                    if (conn.second.status_ == ConnectionStatus::On ||
-                        packet.getType() != PlayerEventPacket::Type::Connection)
-                        return;
-
-                    j3x::Parameters connection_parameters;
-                    auto event_socket = conn.second.events_socket_.get();
-                    conn.second.ping_elapsed_ = 0.0f;
-
-                    if (packet.getIntData() == map_->getDigest())
-                    {
-                        LOG.info("Connection successful.");
-                        respawnPlayer(conn.first);
-                        connection_parameters["s"] = static_cast<int>(ConnectionStatus::On);
-                        auto all_stats = j3x::List();
-
-                        for (const auto& connection : connections_)
-                        {
-                            auto stats = j3x::List({static_cast<int>(connection.first), connection.second.stats_.kills_,
-                                                    connection.second.stats_.deaths_});
-                            all_stats.emplace_back(stats);
-                        }
-
-                        connection_parameters["stats"] = std::move(all_stats);
-                        auto server_packet =
-                                ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters,
-                                                  conn.first);
-
-                        event_socket->send(server_packet);
-                        conn.second.status_ = ConnectionStatus::On;
-
-                        for (auto& cached_packet : cached_events_)
-                        {
-                            if (cached_packet.isCachedForIp(conn.first))
-                                event_socket->send(cached_packet);
-                        }
-                        auto end_packet = ServerEventPacket(
-                                ServerEventPacket::Type::EndOfCachedEvents, {},
-                                conn.first);
-                        event_socket->send(end_packet);
-                    }
-                    else
-                    {
-                        LOG.info("Maps does not match... (" + std::to_string(map_->getDigest()) + ", " +
-                                 std::to_string(packet.getIntData()) + ") Rejecting connection.");
-
-                        connection_parameters["s"] = static_cast<int>(ConnectionStatus::Off);
-                        connection_parameters["reason"] = std::string("Maps does not match.");
-                        auto server_packet =
-                                ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters,
-                                                  conn.first);
-                        event_socket->send(server_packet);
-                        conn.second.status_ = ConnectionStatus::Off;
-                    }
-
-                }
-                break;
+                case sf::Socket::NotReady:
+                    break;
+                default:
+                    LOG.error("[Server::handleEventsFromPlayers] Failed connection attempt from: "
+                              + sf::IpAddress(conn.first).toString() + " [status: " + utils::toString(status) + "]");
+                    break;
             }
-            case sf::Socket::NotReady:
-                break;
-            default:
-                LOG.error("[Server::handleEventsFromPlayers] Failed connection attempt from: "
-                          + sf::IpAddress(conn.first).toString() + " [status: " + utils::toString(status) + "]");
-                break;
+        }
+        catch (std::exception& e) // broad exception because none client should have ability to crash the server
+        {
+            LOG.error("[Server] Exception occured during handling events from players.");
+            LOG.error(e.what());
+
+            clearPlayer(conn.first, conn.second);
+            LOG.info("[Server] Player (" + sf::IpAddress(conn.first).toString() +
+                     ") has been kicked out because of the server crash attempt");
+
+            ServerEventPacket server_packet(ServerEventPacket::Type::PlayerExit,
+                                            0, conn.first);
+            sendEventToPlayers(server_packet);
+            conn.second.events_socket_->disconnect();
+            to_erase_.emplace_back(conn.first);
         }
     }
 }

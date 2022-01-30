@@ -41,7 +41,18 @@ void Client::preupdate(float time_elapsed)
     Framework::preupdate(time_elapsed);
     handleTimeout(time_elapsed);
     sendInputs();
-    handleEventsFromServer();
+
+    try
+    {
+        handleEventsFromServer();
+    }
+    catch (std::exception& e) // broad exception because none server should have ability to crash the client
+    {
+        LOG.error("[Client] Exception occured during handling events from server.");
+        LOG.error(e.what());
+        disconnect();
+    }
+
     receiveData();
 }
 
@@ -161,6 +172,10 @@ bool Client::establishConnection(const sf::IpAddress& ip)
     static unsigned short port = CONF<int>("tcp_port");
 
     events_socket_.setBlocking(true);
+
+    if (ip == sf::IpAddress::None)
+        return false;
+
     auto status = events_socket_.connect(ip, port, sf::seconds(2.0f));
     if (status != sf::Socket::Done)
     {
@@ -403,6 +418,16 @@ void Client::handleEventsFromServer()
                         setGameState(Framework::GameState::Paused);
                         ui_->showFullHud(true);
                         is_game_ended_ = true;
+
+                        break;
+                    }
+                    case ServerEventPacket::Type::Message:
+                    {
+                        j3x::Parameters msg_params =
+                                {{"name", getPlayerName(packet.getIP())},
+                                 {"msg", j3x::get<std::string>(packet.getParams(), "msg")}};
+
+                        ui_->spawnMessage(ClientUserInterface::generateMessage(MessageType::Talk, msg_params));
 
                         break;
                     }
@@ -788,4 +813,10 @@ PlayerStats& Client::getStats(sf::Uint32 ip)
 const PlayerStats& Client::getMyStats() const
 {
     return my_stats_;
+}
+
+void Client::sendMessage(const std::string &msg)
+{
+    PlayerEventPacket player_packet(PlayerEventPacket::Type::Message, {{"msg", msg}});
+    events_socket_.send(player_packet);
 }

@@ -102,6 +102,8 @@ protected:
     virtual void zoomOut();
 
     virtual void rollMessagesUp();
+    virtual void setTalking(bool is_talking);
+    virtual void enterTalking();
 
     static constexpr float ACHIEVEMENTS_MARGIN_ = 20.0f;
 
@@ -154,7 +156,7 @@ protected:
     Framework* framework_;
 
     std::unordered_set<UserInterface::Keys> keys_pressed_;
-    bool is_left_mouse_pressed_;
+    bool is_left_mouse_pressed_, is_talking_;
 
 };
 

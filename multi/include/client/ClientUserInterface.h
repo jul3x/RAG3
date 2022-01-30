@@ -24,6 +24,8 @@
 
 #include <packets/PlayersStatePacket.h>
 
+#include <client/TalkBox.h>
+
 
 using namespace r3e;
 
@@ -47,8 +49,13 @@ public:
 
 private:
     void updatePlayerStates(float time_elapsed) override;
+    void setTalking(bool is_talking) override;
+    void enterTalking() override;
 
     Client* client_;
+
+    std::unique_ptr<TalkBox> talk_box_;
+
 
 //    sf::Text debug_info_;
 };

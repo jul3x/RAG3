@@ -5,6 +5,7 @@
 #include <R3E/system/Config.h>
 
 #include <common/characters/Character.h>
+#include <common/ResourceManager.h>
 
 #include <editor/CharacterObjectWindow.h>
 

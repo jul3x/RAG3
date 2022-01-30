@@ -259,7 +259,8 @@ void SpecialFunctions::addWeapon(Functional* obj, const j3x::Obj& data, Characte
 
     auto& data_parsed = j3x::getObj<std::string>(data);
 
-    framework_->spawnSound(RM.getSound("collect"), dynamic_cast<AbstractPhysicalObject*>(obj)->getPosition());
+    framework_->spawnSound(RM.getSound("collect"),
+                           dynamic_cast<AbstractPhysicalObject*>(obj)->getPosition());
 
     // sic!
     if (framework_->isNormalGameplay() || framework_->isMulti())

@@ -76,3 +76,4 @@ int udp_client_port = 54001
 int udp_server_port = 54002
 bool draw_server = true
 int max_player_message_length = 50
+list kill_thoughts = ["Gotcha!"; "Well, isn't that lovely?"; "This had to be done..."; "Pwn3d!"; "}:->"]

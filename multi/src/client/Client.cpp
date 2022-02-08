@@ -367,8 +367,8 @@ void Client::handleEventsFromServer()
                             player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
                             ui_->registerPlayer(player_.get());
                             initPlayer(player_.get());
-                            engine_->getCollisions().setWindowedCollisionCheck(player_.get(), 
-                                CONF<float>("collision_bounds_size"));
+                            engine_->getCollisions().setWindowedCollisionCheck(player_.get(),
+                                                                               CONF<float>("collision_bounds_size"));
                         }
 
                         // To omit every UDP packet which was sent before respawn
@@ -392,6 +392,17 @@ void Client::handleEventsFromServer()
 
                         getStats(packet.getIP()).deaths_++;
                         getStats(killer_ip).kills_++;
+
+                        auto player = getPlayer(killer_ip, false);
+                        if (player && player->isAlive())
+                        {
+                            static const auto& kill_thoughts = CONF<j3x::List>("kill_thoughts");
+                            ui_->spawnThought(player, j3x::getObj<std::string>(kill_thoughts,
+                                                                               utils::num::getRandom<size_t>(0,
+                                                                                                             kill_thoughts
+                                                                                                                     .size() -
+                                                                                                             1)));
+                        }
 
                         stats_->update(player_->getName(), my_stats_, conns_);
 
@@ -426,12 +437,11 @@ void Client::handleEventsFromServer()
                         const auto& msg = j3x::get<std::string>(packet.getParams(), "msg");
                         j3x::Parameters msg_params =
                                 {{"name", getPlayerName(packet.getIP())},
-                                 {"msg", msg}};
+                                 {"msg",  msg}};
 
                         ui_->spawnMessage(ClientUserInterface::generateMessage(MessageType::Talk, msg_params));
 
                         auto player = getPlayer(packet.getIP(), false);
-
                         if (player && player->isAlive())
                             ui_->spawnThought(player, msg);
 
@@ -693,7 +703,7 @@ void Client::respawn(const std::string& map_name)
 
     Framework::respawn(map_name);
     engine_->getCollisions().setWindowedCollisionCheck(player_.get(),
-        CONF<float>("collision_bounds_size"));
+                                                       CONF<float>("collision_bounds_size"));
 
     map_->getList<NPC>().clear();
     clearStartingPositions();
@@ -826,7 +836,7 @@ const PlayerStats& Client::getMyStats() const
     return my_stats_;
 }
 
-void Client::sendMessage(const std::string &msg)
+void Client::sendMessage(const std::string& msg)
 {
     PlayerEventPacket player_packet(PlayerEventPacket::Type::Message, {{"msg", msg}});
     events_socket_.send(player_packet);

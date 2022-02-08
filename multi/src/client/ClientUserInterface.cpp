@@ -36,10 +36,6 @@ void ClientUserInterface::initialize(graphics::Graphics& graphics)
     time_bar_.setFreeze(true);
     menu_->doShow(true);
 
-//    debug_info_.setFont(RM.getFont());
-//    debug_info_.setCharacterSize(36);
-//    debug_info_.setPosition(100, 200);
-
     talk_box_ = std::make_unique<TalkBox>(gui_.get(), &theme_,
                                           sf::Vector2f{CONF<int>("graphics/window_width_px") / 2.0f,
                                                        CONF<float>("graphics/talk_box_pos")});
@@ -49,10 +45,6 @@ void ClientUserInterface::openMenu()
 {
     UserInterface::openMenu();
     client_->disconnect();
-}
-
-void ClientUserInterface::spawnThought(Character* user, const std::string& text)
-{
 }
 
 void ClientUserInterface::spawnNoteWindow(const std::string& text, bool note_info)
@@ -65,25 +57,11 @@ void ClientUserInterface::update(graphics::Graphics& graphics, float time_elapse
 {
     UserInterface::update(graphics, time_elapsed);
     talk_box_->update(is_talking_);
-
-//    std::string new_debug_info =
-//            "Current status: " + utils::toString(static_cast<int>(client_->getConnectionStatus())) +
-//            " Other players:\n";
-//
-//    for (const auto& conn : client_->getPlayers())
-//    {
-//        const auto* player = conn.second.player.get();
-//        new_debug_info += sf::IpAddress(conn.first).toString() + ": " + player->getName() + ", health: " +
-//                          utils::toString(player->getHealth()) + "/" +
-//                          utils::toString(player->getMaxHealth()) + "\n";
-//    }
-//    debug_info_.setString(new_debug_info);
 }
 
 void ClientUserInterface::draw(graphics::Graphics& graphics)
 {
     UserInterface::draw(graphics);
-//    graphics.draw(debug_info_);
 }
 
 std::string ClientUserInterface::generateMessage(MessageType type, const j3x::Parameters& params)

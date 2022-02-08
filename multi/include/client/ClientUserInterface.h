@@ -42,7 +42,6 @@ public:
     void draw(graphics::Graphics& graphics) override;
     void openMenu() override;
 
-    void spawnThought(Character* user, const std::string& text) override;
     void spawnNoteWindow(const std::string& text, bool note_info = true) override;
 
     static std::string generateMessage(MessageType type, const j3x::Parameters& params);
@@ -55,9 +54,6 @@ private:
     Client* client_;
 
     std::unique_ptr<TalkBox> talk_box_;
-
-
-//    sf::Text debug_info_;
 };
 
 

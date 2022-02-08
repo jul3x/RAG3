@@ -423,11 +423,17 @@ void Client::handleEventsFromServer()
                     }
                     case ServerEventPacket::Type::Message:
                     {
+                        const auto& msg = j3x::get<std::string>(packet.getParams(), "msg");
                         j3x::Parameters msg_params =
                                 {{"name", getPlayerName(packet.getIP())},
-                                 {"msg", j3x::get<std::string>(packet.getParams(), "msg")}};
+                                 {"msg", msg}};
 
                         ui_->spawnMessage(ClientUserInterface::generateMessage(MessageType::Talk, msg_params));
+
+                        auto player = getPlayer(packet.getIP(), false);
+
+                        if (player && player->isAlive())
+                            ui_->spawnThought(player, msg);
 
                         break;
                     }
@@ -593,14 +599,14 @@ void Client::receiveData()
     }
 }
 
-Player* Client::getPlayer(sf::Uint32 ip)
+Player* Client::getPlayer(sf::Uint32 ip, bool spawn_if_not_found)
 {
     if (isMe(ip))
         return player_.get();
 
     auto it = conns_.find(ip);
 
-    if (it == conns_.end())
+    if (it == conns_.end() && spawn_if_not_found)
     {
         conns_[ip] = {};
         conns_[ip].player = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
@@ -610,8 +616,13 @@ Player* Client::getPlayer(sf::Uint32 ip)
         return conns_[ip].player.get();
     }
 
-    it->second.still_playing = true;
-    return it->second.player.get();
+    if (it != conns_.end())
+    {
+        it->second.still_playing = true;
+        return it->second.player.get();
+    }
+
+    return nullptr;
 }
 
 const std::string& Client::getPlayerName(sf::Uint32 ip)

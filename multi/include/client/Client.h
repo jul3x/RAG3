@@ -79,7 +79,7 @@ private:
     void sendInputs();
     void receiveData();
     PlayerStats& getStats(sf::Uint32 ip);
-    Player* getPlayer(sf::Uint32 ip);
+    Player* getPlayer(sf::Uint32 ip, bool spawn_if_not_found = true);
     const std::string& getPlayerName(sf::Uint32 ip);
     bool isMe(sf::Uint32 ip);
 

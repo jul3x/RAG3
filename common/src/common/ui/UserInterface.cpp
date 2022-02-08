@@ -458,6 +458,11 @@ void UserInterface::spawnThought(Character* user, const std::string& text)
     thoughts_.emplace_back(user, text, CONF<float>("thought_duration"));
 }
 
+void UserInterface::clearThought(Character* user)
+{
+    utils::eraseIf<Thought>(thoughts_, [user](Thought& thought) { return thought.getFather() == user; });
+}
+
 void UserInterface::spawnBonusText(const sf::Vector2f& pos, const std::string& text)
 {
     bonus_texts_.emplace_back(pos, text);

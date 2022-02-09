@@ -516,7 +516,7 @@ char* yytext;
 extern int yy_mylinenumber;
 static char YY_PARSED_STRING[YY_BUFFER_LENGTH];
 
-static void YY_BUFFER_APPEND(char* s)
+static void YY_BUFFER_APPEND(const char* s)
 {
     strcat(YY_PARSED_STRING, s); //Do something better here!
 }
@@ -2059,7 +2059,7 @@ void yyfree(void* ptr)
 
 #line 71 "j3x.l"
 
-int initialize_lexer(FILE* inp)
+void initialize_lexer(FILE* inp)
 {
     yyrestart(inp);
     BEGIN YYINITIAL;

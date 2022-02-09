@@ -81,3 +81,5 @@ list end_type_choices = ["time"; "kills"; "deaths"]
 list end_type_hints = ["Game ends after given\nperiod of time";
                        "Game ends when first player\nachieves given number of kills";
                        "Game ends when first player\ndies given number of times"]
+float object_spawn_time_min = 1.0
+float object_spawn_time_max = 900.0

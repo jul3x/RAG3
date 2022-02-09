@@ -123,6 +123,19 @@ EditBox {
     CaretColor = rgba(255, 255, 255, 105);
 }
 
+TalkBox {
+    BackgroundColor = rgba(50, 50, 50, 0);
+    BackgroundColorHover = rgba(60, 60, 60, 0);
+    TextColor = rgba(255, 255, 255, 255);
+    BorderColor = rgba(255, 255, 255, 255);
+    Borders = (0, 0, 0, 0);
+    SelectedTextColor = rgba(255, 255, 255, 255);
+    SelectedTextBackgroundColor = rgba(200, 40, 40, 0);
+    DefaultTextColor = rgba(255, 255, 255, 255);
+    CaretColor = rgba(255, 255, 255, 0);
+    Padding = (0, 0, 0, 0);
+}
+
 Header {
     TextColor = rgba(255, 255, 255, 255);
 }
@@ -132,12 +145,12 @@ Text {
 }
 
 Label {
-    TextColor = rgba(255, 255, 255, 215);
+    TextColor = rgba(255, 255, 255, 255);
     Scrollbar = &Scrollbar;
 }
 
 ItemLabel {
-    TextColor = rgba(255, 255, 255, 215);
+    TextColor = rgba(255, 255, 255, 255);
     Scrollbar = &Scrollbar;
 }
 

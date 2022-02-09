@@ -24,6 +24,8 @@
 
 #include <packets/PlayersStatePacket.h>
 
+#include <client/TalkBox.h>
+
 
 using namespace r3e;
 
@@ -40,17 +42,18 @@ public:
     void draw(graphics::Graphics& graphics) override;
     void openMenu() override;
 
-    void spawnThought(Character* user, const std::string& text) override;
     void spawnNoteWindow(const std::string& text, bool note_info = true) override;
 
     static std::string generateMessage(MessageType type, const j3x::Parameters& params);
 
 private:
     void updatePlayerStates(float time_elapsed) override;
+    void setTalking(bool is_talking) override;
+    void enterTalking() override;
 
     Client* client_;
 
-//    sf::Text debug_info_;
+    std::unique_ptr<TalkBox> talk_box_;
 };
 
 

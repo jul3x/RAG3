@@ -150,13 +150,25 @@ namespace r3e::j3x {
         {
             auto str = j3x::getObj<std::string>(data);
 
-            while (true)
+            for (const auto& c : {std::make_pair('\n', "\\n"),
+                                               std::make_pair('\"', "\'"),
+                                               std::make_pair('\\', " ")})
             {
-                auto pos = str.find('\n');
-                if (pos == std::string::npos)
-                    break;
+                while (true)
+                {
+                    auto pos = str.find(c.first);
+                    if (pos == std::string::npos)
+                        break;
 
-                str.replace(pos, 1, "\\n");
+                    str.replace(pos, 1, c.second);
+                }
+            }
+
+            // Remove non-ASCII characters
+            for (auto& c : str)
+            {
+                if (static_cast<int>(c) < 0 || static_cast<int>(c) >= 128)
+                    c = ' ';
             }
 
             out += "\"" + str + "\"";

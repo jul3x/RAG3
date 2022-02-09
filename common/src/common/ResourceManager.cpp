@@ -409,3 +409,10 @@ ResourceManager::ResourceManager() :
 {
 
 }
+
+const std::string& ResourceManager::getSafeRegex()
+{
+    static const std::string regex =
+            R"([a-zA-Z0-9\!\@\#\$\%\^\&\*\(\)\-\_\=\+\[\]\\\{\}\|\;\'\:\"\,\.\/\<\>\? ]*)";
+    return regex;
+}

@@ -21,9 +21,8 @@ AboutWindow::AboutWindow(tgui::Gui* gui, tgui::Theme* theme) :
     text_->setPosition(sf::Vector2f{pos.x - CONF<sf::Vector2f>("graphics/menu_window_size").x / 2.0f, pos.y} +
                        CONF<sf::Vector2f>("graphics/menu_window_header_pos"));
 
+    text_->setVisible(false);
     gui->add(text_);
-
-    doShow(false);
 }
 
 void AboutWindow::doShow(bool show)

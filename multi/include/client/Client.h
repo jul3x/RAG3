@@ -63,6 +63,7 @@ public:
     const std::unordered_map<sf::Uint32, ConnectedPlayer>& getPlayers() const;
     ConnectionStatus getConnectionStatus() const;
     const PlayerStats& getMyStats() const;
+    void sendMessage(const std::string& msg);
 
 private:
     void afterUpdate(float time_elapsed) override;
@@ -78,7 +79,7 @@ private:
     void sendInputs();
     void receiveData();
     PlayerStats& getStats(sf::Uint32 ip);
-    Player* getPlayer(sf::Uint32 ip);
+    Player* getPlayer(sf::Uint32 ip, bool spawn_if_not_found = true);
     const std::string& getPlayerName(sf::Uint32 ip);
     bool isMe(sf::Uint32 ip);
 

@@ -41,7 +41,8 @@ UserInterface::UserInterface(Framework* framework) :
         small_backpack_hud_(framework, {static_cast<float>(CONF<int>("graphics/window_width_px")), 0.0f}),
         player_(nullptr),
         camera_(nullptr),
-        theme_("../data/config/gui_theme.txt")
+        theme_("../data/config/gui_theme.txt"),
+        is_talking_(false)
 {
     health_bar_.setReversed(true);
 }
@@ -182,53 +183,63 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
             }
             case sf::Event::KeyPressed:
             {
-                if (event.key.code == CONF<int>("controls/health"))
-                    framework_->useItem("health");
-                else if (event.key.code == CONF<int>("controls/more_speed"))
-                    framework_->useItem("more_speed");
-                else if (event.key.code == CONF<int>("controls/rag3"))
-                    framework_->useItem("rag3");
-                else if (event.key.code == CONF<int>("controls/dodge_left"))
-                    framework_->getPlayer()->sideStep(Player::SideStepDir::Left);
-                else if (event.key.code == CONF<int>("controls/dodge_right"))
-                    framework_->getPlayer()->sideStep(Player::SideStepDir::Right);
-                else if (event.key.code == CONF<int>("controls/use"))
+                if (!is_talking_)
                 {
-                    if (framework_->getGameState() == Framework::GameState::Normal)
-                        framework_->useSpecialObject();
-                }
-                else if (event.key.code == CONF<int>("controls/talk"))
-                {
-                    if (framework_->getGameState() == Framework::GameState::Normal)
-                        framework_->talk();
-                }
-                else if (event.key.code == sf::Keyboard::Escape)
-                {
-                    auto player_alive = framework_->getPlayer() == nullptr || framework_->getPlayer()->isAlive();
-                    if (full_hud_->isShow() && player_alive)
+                    if (event.key.code == CONF<int>("controls/health"))
+                        framework_->useItem("health");
+                    else if (event.key.code == CONF<int>("controls/more_speed"))
+                        framework_->useItem("more_speed");
+                    else if (event.key.code == CONF<int>("controls/rag3"))
+                        framework_->useItem("rag3");
+                    else if (event.key.code == CONF<int>("controls/dodge_left"))
+                        framework_->getPlayer()->sideStep(Player::SideStepDir::Left);
+                    else if (event.key.code == CONF<int>("controls/dodge_right"))
+                        framework_->getPlayer()->sideStep(Player::SideStepDir::Right);
+                    else if (event.key.code == CONF<int>("controls/use"))
                     {
-                        framework_->setGameState(Framework::GameState::Normal);
-                        full_hud_->show(false);
-                        clearWindows();
+                        if (framework_->getGameState() == Framework::GameState::Normal)
+                            framework_->useSpecialObject();
                     }
-                    else if (framework_->getGameState() != Framework::GameState::Menu)
+                    else if (event.key.code == CONF<int>("controls/talk"))
                     {
-                        if (!windows_.empty())
+                        if (!framework_->isMulti() && framework_->getGameState() == Framework::GameState::Normal)
+                            framework_->talk();
+                    }
+                    else if (event.key.code == sf::Keyboard::Escape)
+                    {
+                        auto player_alive = framework_->getPlayer() == nullptr || framework_->getPlayer()->isAlive();
+                        if (full_hud_->isShow() && player_alive)
                         {
-                            clearWindows();
                             framework_->setGameState(Framework::GameState::Normal);
+                            full_hud_->show(false);
+                            clearWindows();
                         }
-                        else
+                        else if (framework_->getGameState() != Framework::GameState::Menu)
                         {
-                            framework_->setGameState(Framework::GameState::Paused);
-                            full_hud_->show(true);
+                            if (!windows_.empty())
+                            {
+                                clearWindows();
+                                framework_->setGameState(Framework::GameState::Normal);
+                            }
+                            else
+                            {
+                                framework_->setGameState(Framework::GameState::Paused);
+                                full_hud_->show(true);
+                            }
                         }
                     }
+                    if (event.key.code == CONF<int>("controls/time_reversal"))
+                    {
+                        if (!framework_->isJournalFreezed() && framework_->getGameState() == Framework::GameState::Normal)
+                            framework_->setGameState(Framework::GameState::Reverse);
+                    }
                 }
-                if (event.key.code == CONF<int>("controls/time_reversal"))
+                else // is_talking
                 {
-                    if (!framework_->isJournalFreezed() && framework_->getGameState() == Framework::GameState::Normal)
-                        framework_->setGameState(Framework::GameState::Reverse);
+                    if (event.key.code == sf::Keyboard::Escape)
+                        setTalking(false);
+                    else if (event.key.code == sf::Keyboard::Enter)
+                        enterTalking();
                 }
 
                 break;
@@ -241,7 +252,12 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
                 }
                 else
                 {
-                    if (event.key.code == CONF<int>("controls/time_reversal"))
+                    if (event.key.code == CONF<int>("controls/talk"))
+                    {
+                        if (!is_talking_ && framework_->isMulti())
+                            setTalking(true);
+                    }
+                    else if (event.key.code == CONF<int>("controls/time_reversal"))
                     {
                         if (framework_->getJournal() != nullptr &&
                             framework_->getGameState() == Framework::GameState::Reverse)
@@ -323,6 +339,9 @@ void UserInterface::handleScrolling(float delta)
 void UserInterface::handleKeys()
 {
     keys_pressed_.clear();
+
+    if (is_talking_)
+        return;
 
     auto up_key = static_cast<sf::Keyboard::Key>(CONF<int>("controls/up"));
     auto left_key = static_cast<sf::Keyboard::Key>(CONF<int>("controls/left"));
@@ -437,6 +456,11 @@ void UserInterface::spawnThought(Character* user, const std::string& text)
     utils::eraseIf<Thought>(thoughts_, [user](Thought& thought) { return thought.getFather() == user; });
 
     thoughts_.emplace_back(user, text, CONF<float>("thought_duration"));
+}
+
+void UserInterface::clearThought(Character* user)
+{
+    utils::eraseIf<Thought>(thoughts_, [user](Thought& thought) { return thought.getFather() == user; });
 }
 
 void UserInterface::spawnBonusText(const sf::Vector2f& pos, const std::string& text)
@@ -653,3 +677,13 @@ void UserInterface::rollMessagesUp()
     }
 }
 
+void UserInterface::setTalking(bool is_talking)
+{
+    if (framework_->getGameState() == Framework::GameState::Normal)
+        is_talking_ = is_talking;
+}
+
+void UserInterface::enterTalking()
+{
+
+}

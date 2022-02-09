@@ -14,6 +14,7 @@
 class ServerEventPacket : public sf::Packet {
 public:
     enum class Type {
+        Message = 13,
         GameEnd = 12,
         PlayerDeath = 11,
         SpecialSpawn = 10,
@@ -55,8 +56,8 @@ public:
     [[nodiscard]] bool isCachedForIp(sf::Uint32 ip)
     {
         static constexpr std::array<Type, 1> forbidden = {Type::NameChange};
-        static constexpr std::array<Type, 4>
-                always_forbidden = {Type::Exit, Type::Connection, Type::PlayerExit, Type::PlayerRespawn};
+        static constexpr std::array<Type, 5>
+                always_forbidden = {Type::Exit, Type::Connection, Type::PlayerExit, Type::PlayerRespawn, Type::Message};
 
         return !utils::contains(always_forbidden, type_) &&
                (ip != this->player_ip_ || !utils::contains(forbidden, this->type_));

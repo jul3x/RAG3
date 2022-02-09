@@ -16,8 +16,9 @@
 class PlayerEventPacket : public sf::Packet {
 public:
     enum class Type {
-        Respawn = 5,
-        Connection = 4,
+        Respawn = 6,
+        Connection = 5,
+        Message = 4,
         NameChange = 3,
         UseBackpackObject = 2,
         UseObject = 1,
@@ -25,7 +26,7 @@ public:
         None = 0
     };
 
-    static constexpr auto INT_DATA_ABOVE = 3;
+    static constexpr auto INT_DATA_ABOVE = 4;
 
     PlayerEventPacket() = default;
 

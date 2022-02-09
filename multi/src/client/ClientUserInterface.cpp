@@ -36,19 +36,15 @@ void ClientUserInterface::initialize(graphics::Graphics& graphics)
     time_bar_.setFreeze(true);
     menu_->doShow(true);
 
-//    debug_info_.setFont(RM.getFont());
-//    debug_info_.setCharacterSize(36);
-//    debug_info_.setPosition(100, 200);
+    talk_box_ = std::make_unique<TalkBox>(gui_.get(), &theme_,
+                                          sf::Vector2f{CONF<int>("graphics/window_width_px") / 2.0f,
+                                                       CONF<float>("graphics/talk_box_pos")});
 }
 
 void ClientUserInterface::openMenu()
 {
     UserInterface::openMenu();
     client_->disconnect();
-}
-
-void ClientUserInterface::spawnThought(Character* user, const std::string& text)
-{
 }
 
 void ClientUserInterface::spawnNoteWindow(const std::string& text, bool note_info)
@@ -60,25 +56,12 @@ void ClientUserInterface::spawnNoteWindow(const std::string& text, bool note_inf
 void ClientUserInterface::update(graphics::Graphics& graphics, float time_elapsed)
 {
     UserInterface::update(graphics, time_elapsed);
-
-//    std::string new_debug_info =
-//            "Current status: " + utils::toString(static_cast<int>(client_->getConnectionStatus())) +
-//            " Other players:\n";
-//
-//    for (const auto& conn : client_->getPlayers())
-//    {
-//        const auto* player = conn.second.player.get();
-//        new_debug_info += sf::IpAddress(conn.first).toString() + ": " + player->getName() + ", health: " +
-//                          utils::toString(player->getHealth()) + "/" +
-//                          utils::toString(player->getMaxHealth()) + "\n";
-//    }
-//    debug_info_.setString(new_debug_info);
+    talk_box_->update(is_talking_);
 }
 
 void ClientUserInterface::draw(graphics::Graphics& graphics)
 {
     UserInterface::draw(graphics);
-//    graphics.draw(debug_info_);
 }
 
 std::string ClientUserInterface::generateMessage(MessageType type, const j3x::Parameters& params)
@@ -112,7 +95,7 @@ std::string ClientUserInterface::generateMessage(MessageType type, const j3x::Pa
         case MessageType::Connection:
             return j3x::get<std::string>(params, "name") + " comes to life!";
         case MessageType::Talk:
-            return j3x::get<std::string>(params, "name") + " says: " + j3x::get<std::string>(params, "msg");
+            return j3x::get<std::string>(params, "name") + ": " + j3x::get<std::string>(params, "msg");
         case MessageType::GameEnd:
             return j3x::get<std::string>(params, "winners") + " wins this game!";
         default:
@@ -125,4 +108,24 @@ void ClientUserInterface::updatePlayerStates(float time_elapsed)
     UserInterface::updatePlayerStates(time_elapsed);
 
     stats_hud_.update(client_->getMyStats().kills_, client_->getMyStats().deaths_, time_elapsed);
+}
+
+void ClientUserInterface::setTalking(bool is_talking)
+{
+    if (framework_->getGameState() != Framework::GameState::Normal)
+        return;
+
+    if (is_talking != is_talking_)
+    {
+        talk_box_->show(is_talking);
+    }
+
+    UserInterface::setTalking(is_talking);
+}
+
+void ClientUserInterface::enterTalking()
+{
+    if (!talk_box_->isEmpty())
+        client_->sendMessage(talk_box_->getText());
+    setTalking(false);
 }

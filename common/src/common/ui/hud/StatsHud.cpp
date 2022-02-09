@@ -31,8 +31,8 @@ StatsHud::StatsHud(const sf::Vector2f& position) :
 
 void StatsHud::update(int deaths, int crystals, float time_elapsed)
 {
-    deaths_.setState(deaths);
-    crystals_.setState(crystals);
+    deaths_.setState(static_cast<float>(deaths));
+    crystals_.setState(static_cast<float>(crystals));
 
     deaths_.update(time_elapsed);
     crystals_.update(time_elapsed);

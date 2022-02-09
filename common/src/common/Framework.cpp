@@ -1010,6 +1010,7 @@ void Framework::unregisterCharacter(Character* character, bool clear_clone)
         return;
 
     ui_->removeArrowIfExists(character);
+    ui_->clearThought(character);
 
     if (clear_clone)
     {
@@ -1023,6 +1024,7 @@ void Framework::unregisterCharacter(Character* character, bool clear_clone)
     engine_->unregisterObj<DynamicObject>(character);
     this->unregisterTalkableArea(character);
     this->unregisterWeapons(character);
+
 }
 
 void Framework::registerFunctions(Functional* functional) const

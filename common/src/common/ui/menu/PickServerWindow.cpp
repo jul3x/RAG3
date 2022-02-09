@@ -25,6 +25,7 @@ PickServerWindow::PickServerWindow(tgui::Gui* gui, tgui::Theme* theme, Framework
     gui->add(text_);
 
     editbox_ = tgui::EditBox::create();
+    editbox_->setInputValidator(RM.getSafeRegex());
     editbox_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
     editbox_->setSize(CONF<sf::Vector2f>("graphics/menu_edit_box_size"));
     editbox_->setRenderer(theme->getRenderer("EditBoxGame"));
@@ -46,7 +47,9 @@ PickServerWindow::PickServerWindow(tgui::Gui* gui, tgui::Theme* theme, Framework
     });
     gui->add(button_);
 
-    doShow(false);
+    text_->setVisible(false);
+    editbox_->setVisible(false);
+    button_->setVisible(false);
 }
 
 void PickServerWindow::doShow(bool show)

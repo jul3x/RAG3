@@ -63,15 +63,17 @@ float side_step_force_duration = 0.1
 int crystal_pick_exp = 50
 
 // MAPS
-list maps_order = ["intro"; "first_new_map"; "map_new"; "multi_map"]
+list maps_order = ["first_new_map"; "map_new"]
+list multi_maps_order = ["intro"; "multi_map"]
 string map_name_intro = "Intro"
 string map_name_first_new_map = "Tutorial"
 string map_name_map_new = "Test map"
 string map_name_multi_map = "Arena"
 
 // MULTI
-float periodical_spawn_time = 60.0 // TODO - extract to server settings (with max players, and stats to finish gameplay)
 int tcp_port = 54000
 int udp_client_port = 54001
 int udp_server_port = 54002
 bool draw_server = true
+int max_player_message_length = 50
+list kill_thoughts = ["Gotcha!"; "Well, isn't that lovely?"; "This had to be done..."; "Pwn3d!"; "}:->"]

@@ -123,6 +123,7 @@ vector thought_size_center = (128.0, 8.0)
 vector thought_size_top = (128.0, 8.0)
 vector thought_offset = (16.0, -42.0)
 float thought_text_margin = 4.0
+int thought_max_line_length = 20
 
 // BONUS TEXT
 float bonus_text_duration = 0.6
@@ -162,6 +163,9 @@ vector accept_window_size = (450.0, 200.0) * user_interface_zoom
 float multi_stats_width = 700.0 * user_interface_zoom
 vector multi_stats_offset = (-multi_stats_width / user_interface_zoom / 2.0, -260.0) * user_interface_zoom
 float multi_stats_row_height = 40.0 * user_interface_zoom
+float talk_box_pos = 30.0 * user_interface_zoom
+float talk_box_box_offset = 35.0 * user_interface_zoom
+vector talk_box_size = (470.0, 26.0) * user_interface_zoom
 
 // DESTRUCTION SYSTEM
 float blood_system_vel = 400.0

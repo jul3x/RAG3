@@ -41,7 +41,18 @@ void Client::preupdate(float time_elapsed)
     Framework::preupdate(time_elapsed);
     handleTimeout(time_elapsed);
     sendInputs();
-    handleEventsFromServer();
+
+    try
+    {
+        handleEventsFromServer();
+    }
+    catch (std::exception& e) // broad exception because none server should have ability to crash the client
+    {
+        LOG.error("[Client] Exception occured during handling events from server.");
+        LOG.error(e.what());
+        disconnect();
+    }
+
     receiveData();
 }
 
@@ -161,6 +172,10 @@ bool Client::establishConnection(const sf::IpAddress& ip)
     static unsigned short port = CONF<int>("tcp_port");
 
     events_socket_.setBlocking(true);
+
+    if (ip == sf::IpAddress::None)
+        return false;
+
     auto status = events_socket_.connect(ip, port, sf::seconds(2.0f));
     if (status != sf::Socket::Done)
     {
@@ -352,8 +367,8 @@ void Client::handleEventsFromServer()
                             player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
                             ui_->registerPlayer(player_.get());
                             initPlayer(player_.get());
-                            engine_->getCollisions().setWindowedCollisionCheck(player_.get(), 
-                                CONF<float>("collision_bounds_size"));
+                            engine_->getCollisions().setWindowedCollisionCheck(player_.get(),
+                                                                               CONF<float>("collision_bounds_size"));
                         }
 
                         // To omit every UDP packet which was sent before respawn
@@ -377,6 +392,17 @@ void Client::handleEventsFromServer()
 
                         getStats(packet.getIP()).deaths_++;
                         getStats(killer_ip).kills_++;
+
+                        auto player = getPlayer(killer_ip, false);
+                        if (player && player->isAlive())
+                        {
+                            static const auto& kill_thoughts = CONF<j3x::List>("kill_thoughts");
+                            ui_->spawnThought(player, j3x::getObj<std::string>(kill_thoughts,
+                                                                               utils::num::getRandom<size_t>(0,
+                                                                                                             kill_thoughts
+                                                                                                                     .size() -
+                                                                                                             1)));
+                        }
 
                         stats_->update(player_->getName(), my_stats_, conns_);
 
@@ -403,6 +429,21 @@ void Client::handleEventsFromServer()
                         setGameState(Framework::GameState::Paused);
                         ui_->showFullHud(true);
                         is_game_ended_ = true;
+
+                        break;
+                    }
+                    case ServerEventPacket::Type::Message:
+                    {
+                        const auto& msg = j3x::get<std::string>(packet.getParams(), "msg");
+                        j3x::Parameters msg_params =
+                                {{"name", getPlayerName(packet.getIP())},
+                                 {"msg",  msg}};
+
+                        ui_->spawnMessage(ClientUserInterface::generateMessage(MessageType::Talk, msg_params));
+
+                        auto player = getPlayer(packet.getIP(), false);
+                        if (player && player->isAlive())
+                            ui_->spawnThought(player, msg);
 
                         break;
                     }
@@ -568,14 +609,14 @@ void Client::receiveData()
     }
 }
 
-Player* Client::getPlayer(sf::Uint32 ip)
+Player* Client::getPlayer(sf::Uint32 ip, bool spawn_if_not_found)
 {
     if (isMe(ip))
         return player_.get();
 
     auto it = conns_.find(ip);
 
-    if (it == conns_.end())
+    if (it == conns_.end() && spawn_if_not_found)
     {
         conns_[ip] = {};
         conns_[ip].player = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
@@ -585,8 +626,13 @@ Player* Client::getPlayer(sf::Uint32 ip)
         return conns_[ip].player.get();
     }
 
-    it->second.still_playing = true;
-    return it->second.player.get();
+    if (it != conns_.end())
+    {
+        it->second.still_playing = true;
+        return it->second.player.get();
+    }
+
+    return nullptr;
 }
 
 const std::string& Client::getPlayerName(sf::Uint32 ip)
@@ -657,7 +703,7 @@ void Client::respawn(const std::string& map_name)
 
     Framework::respawn(map_name);
     engine_->getCollisions().setWindowedCollisionCheck(player_.get(),
-        CONF<float>("collision_bounds_size"));
+                                                       CONF<float>("collision_bounds_size"));
 
     map_->getList<NPC>().clear();
     clearStartingPositions();
@@ -788,4 +834,10 @@ PlayerStats& Client::getStats(sf::Uint32 ip)
 const PlayerStats& Client::getMyStats() const
 {
     return my_stats_;
+}
+
+void Client::sendMessage(const std::string& msg)
+{
+    PlayerEventPacket player_packet(PlayerEventPacket::Type::Message, {{"msg", msg}});
+    events_socket_.send(player_packet);
 }

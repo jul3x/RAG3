@@ -127,6 +127,7 @@ int thought_max_line_length = 20
 
 // BONUS TEXT
 float bonus_text_duration = 0.6
+float level_up_bonus_text_time = 3.0
 vector bonus_text_offset = (0.0, -30.0)
 vector bonus_text_velocity = (0.0, -40.0)
 

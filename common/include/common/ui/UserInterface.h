@@ -65,7 +65,7 @@ public:
 
     virtual void spawnAchievement(const std::string& title, const std::string& text, const std::string& tex);
     virtual void spawnThought(Character* user, const std::string& text);
-    virtual void spawnBonusText(const sf::Vector2f& pos, const std::string& text);
+    virtual void spawnBonusText(const sf::Vector2f& pos, const std::string& text, float time = 0.0f);
     virtual void spawnAcceptWindow(const std::string& text, const std::function<void()>& func);
     virtual void spawnNoteWindow(const std::string& text, bool note_info = true);
     virtual void spawnMessage(const std::string& text);

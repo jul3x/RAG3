@@ -463,9 +463,9 @@ void UserInterface::clearThought(Character* user)
     utils::eraseIf<Thought>(thoughts_, [user](Thought& thought) { return thought.getFather() == user; });
 }
 
-void UserInterface::spawnBonusText(const sf::Vector2f& pos, const std::string& text)
+void UserInterface::spawnBonusText(const sf::Vector2f& pos, const std::string& text, float time)
 {
-    bonus_texts_.emplace_back(pos, text);
+    bonus_texts_.emplace_back(pos, text, time);
 }
 
 void UserInterface::spawnAcceptWindow(const std::string& text, const std::function<void()>& func)

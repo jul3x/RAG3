@@ -12,14 +12,14 @@ using namespace r3e;
 
 class BonusText : public sf::Drawable {
 public:
-    BonusText(const sf::Vector2f& pos, const std::string& text);
+    BonusText(const sf::Vector2f& pos, const std::string& text, float time = 0.0f);
 
     bool update(float time_elapsed);
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    float time_elapsed_;
+    float time_elapsed_, full_time_;
     sf::Text text_;
 
 };

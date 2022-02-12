@@ -80,6 +80,7 @@ public:
     [[nodiscard]] virtual float getRag3Time() const;
     [[nodiscard]] virtual float getTimeManipulationFuel() const;
     [[nodiscard]] virtual bool isNormalGameplay();
+    [[nodiscard]] virtual bool canUpgradeSkills();
 
     // Spawn events
     virtual DestructionSystem* spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);

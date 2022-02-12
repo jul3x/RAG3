@@ -25,6 +25,9 @@ UserInterface::UserInterface(Framework* framework) :
         fps_text_("FPS: ", RM.getFont("editor"), 12),
         object_use_text_("Use object", RM.getFont(), CONF<float>("graphics/use_text_size")),
         npc_talk_text_("Talk to NPC", RM.getFont(), CONF<float>("graphics/use_text_size")),
+        upgrade_text_("You can now upgrade your skills.", sf::Vector2f{CONF<int>("graphics/window_width_px") / 2.0f,
+                                                                       CONF<float>("graphics/can_upgrade_text_offset")},
+                      CONF<float>("graphics/skills_text_size")),
         left_hud_({0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))}),
         right_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")),
                     static_cast<float>(CONF<int>("graphics/window_height_px"))}),
@@ -111,7 +114,11 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
     handleKeys();
 
     if (player_ != nullptr)
+    {
+        upgrade_text_.update(time_elapsed);
+        upgrade_text_.show(framework_->canUpgradeSkills());
         UserInterface::applyMovement(player_, keys_pressed_);
+    }
 
     for (auto& arrow : tutorial_arrows_)
         arrow.second.update(time_elapsed);
@@ -230,7 +237,8 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
                     }
                     if (event.key.code == CONF<int>("controls/time_reversal"))
                     {
-                        if (!framework_->isJournalFreezed() && framework_->getGameState() == Framework::GameState::Normal)
+                        if (!framework_->isJournalFreezed() &&
+                            framework_->getGameState() == Framework::GameState::Normal)
                             framework_->setGameState(Framework::GameState::Reverse);
                     }
                 }
@@ -308,6 +316,7 @@ void UserInterface::draw(graphics::Graphics& graphics)
         graphics.draw(*full_hud_);
         graphics.draw(stats_hud_);
         graphics.draw(small_backpack_hud_);
+        graphics.draw(upgrade_text_);
 
         for (auto& msg : messages_)
             graphics.draw(msg);

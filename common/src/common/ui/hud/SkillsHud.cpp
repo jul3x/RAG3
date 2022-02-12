@@ -99,7 +99,7 @@ void SkillsHud::show(bool show)
 
     for (auto& button : buttons_)
     {
-        if (framework_->getPlayer()->isAlive() && framework_->getPlayer()->getSkillPoints() > 0)
+        if (framework_->canUpgradeSkills())
         {
             button->setText("+\n");
         }

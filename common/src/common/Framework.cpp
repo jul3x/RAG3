@@ -1414,3 +1414,8 @@ bool Framework::isMulti() const
 {
     return true;
 }
+
+bool Framework::canUpgradeSkills()
+{
+    return !isMulti() && isNormalGameplay() && getPlayer()->isAlive() && getPlayer()->getSkillPoints() > 0;
+}

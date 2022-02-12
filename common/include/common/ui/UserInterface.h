@@ -23,6 +23,7 @@
 #include <common/ui/Achievement.h>
 #include <common/ui/Message.h>
 #include <common/ui/BloodSplash.h>
+#include <common/ui/FadeText.h>
 #include <common/ui/menu/Menu.h>
 #include <common/misc/Thought.h>
 #include <common/misc/BonusText.h>
@@ -152,6 +153,7 @@ protected:
     sf::Text fps_text_;
     sf::Text object_use_text_;
     sf::Text npc_talk_text_;
+    FadeText upgrade_text_;
     Player* player_;
     Camera* camera_;
     Framework* framework_;

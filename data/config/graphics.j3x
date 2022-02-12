@@ -169,6 +169,7 @@ float talk_box_box_offset = 35.0 * user_interface_zoom
 vector talk_box_size = (470.0, 26.0) * user_interface_zoom
 float can_upgrade_text_offset = talk_box_pos
 float fade_text_speed = 2.0
+float fast_fade_text_speed = 10.0
 
 // DESTRUCTION SYSTEM
 float blood_system_vel = 400.0

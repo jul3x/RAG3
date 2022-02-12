@@ -13,10 +13,11 @@ using namespace r3e;
 
 class FadeText : public sf::Drawable {
 public:
-    explicit FadeText(const std::string& text, const sf::Vector2f& position, float size);
+    explicit FadeText(const std::string& text, const sf::Vector2f& position, float size, float time = 0.0f);
 
     void show(bool show = true);
-
+    void setString(const std::string& str);
+    void setPosition(const sf::Vector2f& pos);
     void update(float time_elapsed);
 
 private:

@@ -7,14 +7,15 @@
 #include <common/misc/BonusText.h>
 
 
-BonusText::BonusText(const sf::Vector2f& pos, const std::string& text) :
+BonusText::BonusText(const sf::Vector2f& pos, const std::string& text, float time) :
         text_(text, RM.getFont(), CONF<float>("graphics/bonus_text_size")),
-        time_elapsed_(CONF<float>("graphics/bonus_text_duration"))
+        time_elapsed_(time == 0.0f ? CONF<float>("graphics/bonus_text_duration") : time)
 {
     text_.setFillColor(sf::Color::White);
     text_.setPosition(pos + CONF<sf::Vector2f>("graphics/bonus_text_offset"));
 
     text_.setOrigin(text_.getLocalBounds().width / 2.0f, 0.0f);
+    full_time_ = time_elapsed_;
 }
 
 bool BonusText::update(float time_elapsed)
@@ -22,7 +23,7 @@ bool BonusText::update(float time_elapsed)
     time_elapsed_ -= time_elapsed;
 
     text_.setPosition(text_.getPosition() + CONF<sf::Vector2f>("graphics/bonus_text_velocity") * time_elapsed);
-    text_.setFillColor(sf::Color(255, 255, 255, time_elapsed_ / CONF<float>("graphics/bonus_text_duration") * 255));
+    text_.setFillColor(sf::Color(255, 255, 255, time_elapsed_ / full_time_ * 255));
 
     return time_elapsed_ > 0.0f;
 }

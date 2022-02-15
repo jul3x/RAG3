@@ -80,6 +80,7 @@ public:
     [[nodiscard]] virtual float getRag3Time() const;
     [[nodiscard]] virtual float getTimeManipulationFuel() const;
     [[nodiscard]] virtual bool isNormalGameplay();
+    [[nodiscard]] virtual bool canUpgradeSkills();
 
     // Spawn events
     virtual DestructionSystem* spawnSparksEvent(const sf::Vector2f& pos, float dir, float r);
@@ -108,7 +109,7 @@ public:
     virtual void useItem(const std::string& id);
     virtual void useSpecialObject();
     virtual void spawnThought(Character* user, const std::string& text);
-    virtual void spawnBonusText(const sf::Vector2f& pos, const std::string& text);
+    virtual void spawnBonusText(const sf::Vector2f& pos, const std::string& text, float time = 0.0f);
     virtual void respawn(const std::string& map_name);
     virtual void startGame(const std::string& map_name = "");
     virtual void talk();

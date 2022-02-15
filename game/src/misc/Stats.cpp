@@ -63,6 +63,9 @@ void Stats::checkLevel()
         ++level_;
 
         game_->getPlayer()->addSkillPoints(CONF<int>("characters/skill_points_per_level"));
+        game_->spawnBonusText(game_->getPlayer()->getPosition(), "Level up!",
+                              CONF<float>("graphics/level_up_bonus_text_time"));
+        game_->spawnSound(RM.getSound("level_up"));
     }
 }
 

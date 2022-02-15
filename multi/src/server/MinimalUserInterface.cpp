@@ -79,7 +79,7 @@ void MinimalUserInterface::spawnThought(Character* user, const std::string& text
 {
 }
 
-void MinimalUserInterface::spawnBonusText(const sf::Vector2f& pos, const std::string& text)
+void MinimalUserInterface::spawnBonusText(const sf::Vector2f& pos, const std::string& text, float time)
 {
 }
 

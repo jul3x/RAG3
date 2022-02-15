@@ -1117,9 +1117,9 @@ void Framework::spawnThought(Character* user, const std::string& text)
     ui_->spawnThought(user, text);
 }
 
-void Framework::spawnBonusText(const sf::Vector2f& pos, const std::string& text)
+void Framework::spawnBonusText(const sf::Vector2f& pos, const std::string& text, float time)
 {
-    ui_->spawnBonusText(pos, text);
+    ui_->spawnBonusText(pos, text, time);
 }
 
 UserInterface* Framework::getUI()
@@ -1413,4 +1413,9 @@ void Framework::addToDestroyedSpecials(const std::string& id, const sf::Vector2f
 bool Framework::isMulti() const
 {
     return true;
+}
+
+bool Framework::canUpgradeSkills()
+{
+    return !isMulti() && isNormalGameplay() && getPlayer()->isAlive() && getPlayer()->getSkillPoints() > 0;
 }

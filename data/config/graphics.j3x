@@ -127,6 +127,7 @@ int thought_max_line_length = 20
 
 // BONUS TEXT
 float bonus_text_duration = 0.6
+float level_up_bonus_text_time = 3.0
 vector bonus_text_offset = (0.0, -30.0)
 vector bonus_text_velocity = (0.0, -40.0)
 
@@ -166,6 +167,9 @@ float multi_stats_row_height = 40.0 * user_interface_zoom
 float talk_box_pos = 30.0 * user_interface_zoom
 float talk_box_box_offset = 35.0 * user_interface_zoom
 vector talk_box_size = (470.0, 26.0) * user_interface_zoom
+float can_upgrade_text_offset = talk_box_pos
+float fade_text_speed = 2.0
+float fast_fade_text_speed = 10.0
 
 // DESTRUCTION SYSTEM
 float blood_system_vel = 400.0

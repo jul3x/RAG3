@@ -23,8 +23,13 @@ UserInterface::UserInterface(Framework* framework) :
                  CONF<int>("graphics/window_height_px") - HEALTH_BAR_Y_ * CONF<float>("graphics/user_interface_zoom")},
                 "health_bar"),
         fps_text_("FPS: ", RM.getFont("editor"), 12),
-        object_use_text_("Use object", RM.getFont(), CONF<float>("graphics/use_text_size")),
-        npc_talk_text_("Talk to NPC", RM.getFont(), CONF<float>("graphics/use_text_size")),
+        object_use_text_("Use object", {}, CONF<float>("graphics/use_text_size"),
+                         CONF<float>("graphics/fast_fade_text_speed")),
+        npc_talk_text_("Talk to NPC", {}, CONF<float>("graphics/use_text_size"),
+                       CONF<float>("graphics/fast_fade_text_speed")),
+        upgrade_text_("You can now upgrade your skills.", sf::Vector2f{CONF<int>("graphics/window_width_px") / 2.0f,
+                                                                       CONF<float>("graphics/can_upgrade_text_offset")},
+                      CONF<float>("graphics/skills_text_size")),
         left_hud_({0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))}),
         right_hud_({static_cast<float>(CONF<int>("graphics/window_width_px")),
                     static_cast<float>(CONF<int>("graphics/window_height_px"))}),
@@ -66,8 +71,6 @@ void UserInterface::initialize(graphics::Graphics& graphics)
         health_bar_.setMaxAmount(player_->getMaxHealth());
         time_bar_.setMaxAmount(CONF<float>("journal_max_time"));
         speed_bar_.setMaxAmount(player_->getMaxRunningFuel());
-        object_use_text_.setFillColor(sf::Color::White);
-        npc_talk_text_.setFillColor(sf::Color::White);
     }
 
     gui_->setFont(RM.getFont("default"));
@@ -111,46 +114,44 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
     handleKeys();
 
     if (player_ != nullptr)
+    {
+        upgrade_text_.update(time_elapsed);
+        upgrade_text_.show(framework_->canUpgradeSkills());
         UserInterface::applyMovement(player_, keys_pressed_);
+    }
 
     for (auto& arrow : tutorial_arrows_)
         arrow.second.update(time_elapsed);
 
+    object_use_text_.update(time_elapsed);
+    npc_talk_text_.update(time_elapsed);
     auto special_object = framework_->getCurrentSpecialObject();
     if (special_object != nullptr)
     {
+        object_use_text_.show(true);
         auto text = special_object->getTextToUse();
         if (text.empty())
             text = "Use object";
         object_use_text_.setString("[" + utils::keyToString(static_cast<sf::Keyboard::Key>(CONF<int>("controls/use")))
                                    + "] " + text);
-        auto object_use_text_rect = object_use_text_.getLocalBounds();
-        object_use_text_.setOrigin(object_use_text_rect.left + object_use_text_rect.width / 2.0f,
-                                   object_use_text_rect.top + object_use_text_rect.height / 2.0f);
-
         object_use_text_.setPosition(special_object->getPosition() - sf::Vector2f{0.0f, OBJECT_USE_TEXT_OFFSET_Y_});
-        object_use_text_.setFillColor(sf::Color::White);
     }
     else
     {
-        object_use_text_.setFillColor(sf::Color::Transparent);
+        object_use_text_.show(false);
     }
 
     auto npc_talk = framework_->getCurrentTalkableCharacter();
     if (npc_talk != nullptr)
     {
+        npc_talk_text_.show(true);
         npc_talk_text_.setString("[" + utils::keyToString(static_cast<sf::Keyboard::Key>(CONF<int>("controls/talk")))
                                  + "] Talk to NPC");
-        auto npc_talk_text_rect = npc_talk_text_.getLocalBounds();
-        npc_talk_text_.setOrigin(npc_talk_text_rect.left + npc_talk_text_rect.width / 2.0f,
-                                 npc_talk_text_rect.top + npc_talk_text_rect.height / 2.0f);
-
         npc_talk_text_.setPosition(npc_talk->getPosition() - sf::Vector2f{0.0f, TALK_TEXT_OFFSET_Y_});
-        npc_talk_text_.setFillColor(sf::Color::White);
     }
     else
     {
-        npc_talk_text_.setFillColor(sf::Color::Transparent);
+        npc_talk_text_.show(false);
     }
 
     blood_splash_.update(time_elapsed);
@@ -230,7 +231,8 @@ void UserInterface::handleEvents(graphics::Graphics& graphics)
                     }
                     if (event.key.code == CONF<int>("controls/time_reversal"))
                     {
-                        if (!framework_->isJournalFreezed() && framework_->getGameState() == Framework::GameState::Normal)
+                        if (!framework_->isJournalFreezed() &&
+                            framework_->getGameState() == Framework::GameState::Normal)
                             framework_->setGameState(Framework::GameState::Reverse);
                     }
                 }
@@ -308,6 +310,7 @@ void UserInterface::draw(graphics::Graphics& graphics)
         graphics.draw(*full_hud_);
         graphics.draw(stats_hud_);
         graphics.draw(small_backpack_hud_);
+        graphics.draw(upgrade_text_);
 
         for (auto& msg : messages_)
             graphics.draw(msg);
@@ -463,9 +466,9 @@ void UserInterface::clearThought(Character* user)
     utils::eraseIf<Thought>(thoughts_, [user](Thought& thought) { return thought.getFather() == user; });
 }
 
-void UserInterface::spawnBonusText(const sf::Vector2f& pos, const std::string& text)
+void UserInterface::spawnBonusText(const sf::Vector2f& pos, const std::string& text, float time)
 {
-    bonus_texts_.emplace_back(pos, text);
+    bonus_texts_.emplace_back(pos, text, time);
 }
 
 void UserInterface::spawnAcceptWindow(const std::string& text, const std::function<void()>& func)

@@ -23,6 +23,7 @@
 #include <common/ui/Achievement.h>
 #include <common/ui/Message.h>
 #include <common/ui/BloodSplash.h>
+#include <common/ui/FadeText.h>
 #include <common/ui/menu/Menu.h>
 #include <common/misc/Thought.h>
 #include <common/misc/BonusText.h>
@@ -65,7 +66,7 @@ public:
 
     virtual void spawnAchievement(const std::string& title, const std::string& text, const std::string& tex);
     virtual void spawnThought(Character* user, const std::string& text);
-    virtual void spawnBonusText(const sf::Vector2f& pos, const std::string& text);
+    virtual void spawnBonusText(const sf::Vector2f& pos, const std::string& text, float time = 0.0f);
     virtual void spawnAcceptWindow(const std::string& text, const std::function<void()>& func);
     virtual void spawnNoteWindow(const std::string& text, bool note_info = true);
     virtual void spawnMessage(const std::string& text);
@@ -120,8 +121,8 @@ protected:
     static constexpr float FPS_X_ = 150.0f;
     static constexpr float FPS_Y_ = 300.0f;
 
-    static constexpr float OBJECT_USE_TEXT_OFFSET_Y_ = 20.0f;
-    static constexpr float TALK_TEXT_OFFSET_Y_ = 40.0f;
+    static constexpr float OBJECT_USE_TEXT_OFFSET_Y_ = 30.0f;
+    static constexpr float TALK_TEXT_OFFSET_Y_ = 50.0f;
 
     std::unique_ptr<tgui::Gui> gui_;
     tgui::Theme theme_;
@@ -150,8 +151,9 @@ protected:
     std::unordered_map<AbstractPhysicalObject*, TutorialArrow> tutorial_arrows_;
     std::list<std::shared_ptr<Window>> windows_;
     sf::Text fps_text_;
-    sf::Text object_use_text_;
-    sf::Text npc_talk_text_;
+    FadeText object_use_text_;
+    FadeText npc_talk_text_;
+    FadeText upgrade_text_;
     Player* player_;
     Camera* camera_;
     Framework* framework_;

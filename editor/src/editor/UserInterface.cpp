@@ -325,7 +325,13 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
                         Editor::get().setMarkingStart(crosshair_.getPosition());
                     }
                     else if (event.mouseButton.button == sf::Mouse::Left &&
-                        !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl))
+                             sf::Keyboard::isKeyPressed(sf::Keyboard::Key::N))
+                    {
+                        Editor::get().setGridMarked(false);
+                        Editor::get().setMarkingStart(crosshair_.getPosition());
+                    }
+                    else if (event.mouseButton.button == sf::Mouse::Left &&
+                             !sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl))
                     {
                         Editor::get().setGridMarked(false);
                         if (Editor::get().getCurrentItem().first != "weapons")
@@ -356,6 +362,13 @@ void UserInterface::update(graphics::Graphics& graphics, float time_elapsed)
                          sf::Keyboard::isKeyPressed(sf::Keyboard::Key::M))
                 {
                     Editor::get().setMarkingStop(crosshair_.getPosition());
+                    Editor::get().setGridMarked(true);
+                }
+                else if (event.mouseButton.button == sf::Mouse::Left &&
+                         sf::Keyboard::isKeyPressed(sf::Keyboard::Key::N))
+                {
+                    Editor::get().setMarkingStop(crosshair_.getPosition());
+                    Editor::get().placeItemOnMarked();
                     Editor::get().setGridMarked(true);
                 }
                 else if (event.mouseButton.button == sf::Mouse::Left &&
@@ -450,6 +463,10 @@ inline void UserInterface::handleKeys()
 
 inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window, float time_elapsed)
 {
+    is_grid_marking_ =
+            (sf::Keyboard::isKeyPressed(sf::Keyboard::M) || sf::Keyboard::isKeyPressed(sf::Keyboard::N)) &&
+            sf::Mouse::isButtonPressed(sf::Mouse::Left);
+
     auto mouse_pos = sf::Mouse::getPosition(graphics_window);
     auto mouse_world_pos = graphics_window.mapPixelToCoords(mouse_pos);
 
@@ -469,15 +486,14 @@ inline void UserInterface::handleMouse(sf::RenderWindow& graphics_window, float 
     {
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {
-            Editor::get().placeItem(crosshair_.getPosition());
+            if (!is_grid_marking_)
+                Editor::get().placeItem(crosshair_.getPosition());
         }
         else if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
         {
             Editor::get().removeItem(crosshair_.getPosition());
         }
     }
-
-    is_grid_marking_ = sf::Keyboard::isKeyPressed(sf::Keyboard::M) && sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
     if (marked_item_ != nullptr)
     {
@@ -555,7 +571,7 @@ inline void UserInterface::handleCrosshair(sf::RenderWindow& graphics_window, co
         std::string crosshair_texture_name;
         if (current_item.first == "characters")
         {
-            crosshair_texture_name =  current_item.first + "/" + current_item.second + "/f";
+            crosshair_texture_name = current_item.first + "/" + current_item.second + "/f";
         }
         else
         {

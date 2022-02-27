@@ -40,7 +40,7 @@ ControlsWindow::ControlsWindow(tgui::Gui* gui, tgui::Theme* theme) :
     label->setText("LMOUSE BUTTON - Place object\n"
                    "RMOUSE BUTTON - Remove object\nMMOUSE BUTTON - Move object\n"
                    "LCTRL + MOUSE - Move camera\nMOUSE WHEEL - Zoom\nM + MOUSE - Mark objects\n"
-                   "DELETE - Delete marked objects\nARROWS - Move marked objects");
+                   "N + MOUSE - Place multiple objects\nDELETE - Delete marked objects\nARROWS - Move marked objects");
     label->setTextSize(CONF<float>("label_text_size"));
     grid_->addWidget(label, 0, 1);
 

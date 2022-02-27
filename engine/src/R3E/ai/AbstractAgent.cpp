@@ -24,8 +24,7 @@ namespace r3e {
 
         AbstractAgent::~AbstractAgent()
         {
-            if (manager_ != nullptr)
-                manager_->deleteAgent(this);
+            this->unregisterAgentsManager();
         }
 
         void AbstractAgent::setCurrentGoal(const sf::Vector2f& goal)
@@ -90,6 +89,12 @@ namespace r3e {
         bool AbstractAgent::canAvoidSpecials() const
         {
             return can_avoid_specials_;
+        }
+
+        void AbstractAgent::unregisterAgentsManager()
+        {
+            if (manager_ != nullptr)
+                manager_->deleteAgent(this);
         }
 
     } // namespace ai

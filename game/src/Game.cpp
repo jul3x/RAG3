@@ -163,7 +163,6 @@ void Game::updateMapObjects(float time_elapsed)
         if (!(*it)->update(time_elapsed))
         {
             this->killNPC(it->get());
-
             auto next_it = std::next(it);
             npcs.erase(it);
             it = next_it;
@@ -180,6 +179,7 @@ void Game::killNPC(NPC* npc)
     journal_->event<DestroyCharacter>(npc);
     stats_->killEnemy(npc->getId(), npc->getPosition());
 
+    npc->unregisterAgentsManager();
     this->unregisterCharacter(npc);
 
     // draw on this place destruction
@@ -332,6 +332,7 @@ void Game::cleanPlayerClone()
 {
     if (player_clone_ != nullptr)
     {
+        player_clone_->unregisterAgentsManager();
         this->unregisterCharacter(player_clone_.get(), false);
 
         for (auto& enemy : map_->getList<NPC>())

@@ -24,6 +24,7 @@ namespace r3e::ai {
         virtual ~AbstractAgent();
 
         void registerAgentsManager(std::shared_ptr<AgentsManager> manager);
+        void unregisterAgentsManager();
 
         void setCanAvoidSpecials(bool can);
         void setCurrentGoal(const ai::Goal& goal);

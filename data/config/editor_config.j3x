@@ -4,7 +4,7 @@ bool full_screen = false
 int window_width_px = 1800
 int window_height_px = 900
 int background_color = 858993408
-float user_interface_zoom = 1.0
+float user_interface_zoom = 2.0
 
 // CAMERA SETTINGS
 float camera_moving_factor = 2.0

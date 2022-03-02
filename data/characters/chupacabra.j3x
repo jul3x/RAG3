@@ -1,7 +1,7 @@
-float max_speed=100.0
+float max_speed=150.0
 float standby_speed=72.0
 
-float max_health=4
+float max_health=7
 float min_attack_distance=40.0
 
 vector size=(48.0,30.0)

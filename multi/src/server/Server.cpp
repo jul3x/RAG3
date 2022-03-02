@@ -567,6 +567,14 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             player->getCut(*melee_weapon_area->getFather(), factor);
         }
     }
+
+    auto activation_area = dynamic_cast<ActivationArea*>(h_obj);
+    if (activation_area != nullptr && player != nullptr)
+    {
+        activation_area->setActive(true);
+        activation_area->getFather()->setActive(true);
+        return;
+    }
 }
 
 sf::Uint32 Server::getPlayerIP(const Character* player)

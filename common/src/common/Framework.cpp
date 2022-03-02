@@ -571,6 +571,18 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
         }
         return;
     }
+
+    auto activation_area = dynamic_cast<ActivationArea*>(h_obj);
+    if (activation_area != nullptr && character != nullptr)
+    {
+        auto player = dynamic_cast<Player*>(d_obj);
+        if (player != nullptr)
+        {
+            activation_area->setActive(true);
+            activation_area->getFather()->setActive(true);
+        }
+        return;
+    }
 }
 
 void Framework::alertCollision(DynamicObject* d_obj, StaticObject* s_obj)
@@ -1215,6 +1227,12 @@ void Framework::initWeapons()
     {
         auto func = this->getSpawningFunction(RMGET<std::string>("weapons", weapon->getId(), "spawn_func"));
         weapon->registerSpawningFunction(std::get<0>(func), std::get<1>(func));
+
+        auto activation_area = weapon->getActivationArea();
+        if (activation_area != nullptr)
+        {
+            engine_->registerObj<HoveringObject>(activation_area);
+        }
     }
 }
 

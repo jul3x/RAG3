@@ -4,6 +4,8 @@
 
 #include <R3E/system/Config.h>
 
+#include <common/objects/PlacedWeapon.h>
+
 #include <editor/WeaponWindow.h>
 #include <Editor.h>
 
@@ -20,7 +22,7 @@ WeaponWindow::WeaponWindow(tgui::Gui* gui, tgui::Theme* theme) :
 {
     grid_ = tgui::Grid::create();
     grid_->setPosition("50% - width/2", "40% - height/2");
-    grid_->setSize("90%", "50%");
+    grid_->setSize("90%", "80%");
     child_->add(grid_);
 
     auto label = tgui::Label::create();
@@ -44,10 +46,16 @@ WeaponWindow::WeaponWindow(tgui::Gui* gui, tgui::Theme* theme) :
 
     grid_->addWidget(label, 2, 0);
 
-    fun_box_ = tgui::TextBox::create();
-    fun_box_->setRenderer(theme_->getRenderer("TextBox"));
-    fun_box_->setSize("35%", "45%");
+    fun_box_ = tgui::ComboBox::create();
+    fun_box_->setRenderer(theme_->getRenderer("ComboBox"));
+    fun_box_->setSize(CONF<float>("functions_width"), CONF<float>("text_box_height"));
     fun_box_->setTextSize(CONF<float>("label_text_size"));
+
+    for (const auto& text : PlacedWeapon::ACTIVATIONS)
+    {
+        fun_box_->addItem(std::string(text));
+    }
+
     grid_->addWidget(fun_box_, 3, 0);
 
     label = tgui::Label::create();
@@ -86,14 +94,14 @@ void WeaponWindow::setObjectContent(const std::string& category, PlacedWeapon* o
     weapon_ = obj;
     child_->setTitle(category + "/" + weapon_->getId());
     id_box_->setText(std::to_string(weapon_->getUniqueId()));
-    fun_box_->setText(weapon_->getUsageStr());
+    fun_box_->setSelectedItem(weapon_->getUsageStr());
     data_box_->setText(std::to_string(weapon_->getData()));
 
     button_->connect("pressed", [this]() {
         try
         {
             std::string data_str = this->data_box_->getText();
-            this->weapon_->setUsageStr(this->fun_box_->getText());
+            this->weapon_->setUsageStr(this->fun_box_->getSelectedItem());
             this->weapon_->setData(std::stof(data_str));
             child_->close();
         }

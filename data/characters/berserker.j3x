@@ -1,7 +1,7 @@
 float max_speed=250.0
 float standby_speed=120.0
 
-float max_health=40
+float max_health=10
 
 vector size=(44.0,64.0)
 vector collision_size=(28.0,36.0)

@@ -1,4 +1,4 @@
-float max_speed=128.0
+float max_speed=150.0
 float standby_speed=64.0
 
 float max_health=100

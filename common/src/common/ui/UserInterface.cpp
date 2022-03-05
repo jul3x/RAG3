@@ -690,3 +690,8 @@ void UserInterface::enterTalking()
 {
 
 }
+
+void UserInterface::clearMessages()
+{
+    messages_.clear();
+}

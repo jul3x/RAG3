@@ -19,6 +19,9 @@ MultiStats::MultiStats(Client* client) : client_(client)
 void MultiStats::update(const std::string& player_name, const PlayerStats& stats,
                         const std::unordered_map<sf::Uint32, ConnectedPlayer>& other_players)
 {
+    if (client_->isGameEnded())
+        return;
+
     std::vector<std::tuple<std::string, int, int>> to_sort;
     to_sort.emplace_back(player_name, stats.kills_, stats.deaths_);
     for (const auto& item : other_players)

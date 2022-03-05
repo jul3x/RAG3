@@ -228,20 +228,6 @@ void Client::handleEventsFromServer()
 
                                 connection_status_ = ConnectionStatus::On;
 
-                                // Set stats
-                                for (const auto& stats : j3x::get<j3x::List>(params, "stats"))
-                                {
-                                    const auto& stats_obj = j3x::getObj<j3x::List>(stats);
-                                    sf::Uint32 ip = j3x::getObj<int>(stats_obj, 0);
-                                    int kills = j3x::getObj<int>(stats_obj, 1);
-                                    int deaths = j3x::getObj<int>(stats_obj, 2);
-
-                                    auto& stats_to_update = getStats(ip);
-                                    stats_to_update.kills_ = kills;
-                                    stats_to_update.deaths_ = deaths;
-                                }
-                                stats_->update(player_->getName(), my_stats_, conns_);
-
                                 break;
                             }
                             case static_cast<int>(ConnectionStatus::InProgress):
@@ -276,7 +262,7 @@ void Client::handleEventsFromServer()
                     case ServerEventPacket::Type::EnteredObject:
                     {
                         auto obj = map_->getObjectById<Special>(packet.getUID());
-                        auto player = getPlayer(packet.getIP());
+                        auto player = getPlayer(packet.getIP(), false);
                         if (obj != nullptr && player != nullptr)
                         {
                             obj->use(player);
@@ -286,7 +272,7 @@ void Client::handleEventsFromServer()
                     case ServerEventPacket::Type::CollectedObject:
                     {
                         auto obj = map_->getObjectById<Special>(packet.getUID());
-                        auto player = getPlayer(packet.getIP());
+                        auto player = getPlayer(packet.getIP(), false);
                         if (obj != nullptr && player != nullptr)
                         {
                             player->addSpecialToBackpack(
@@ -316,6 +302,8 @@ void Client::handleEventsFromServer()
                         j3x::Parameters msg_params = {{"name", getPlayerName(packet.getIP())}};
                         ui_->spawnMessage(ClientUserInterface::generateMessage(MessageType::Connection, msg_params));
 
+                        stats_->update(player_->getName(), my_stats_, conns_);
+
                         break;
                     }
                     case ServerEventPacket::Type::SpecialSpawn:
@@ -331,6 +319,20 @@ void Client::handleEventsFromServer()
                     {
                         auto player = getPlayer(packet.getIP());
 
+                        // Set stats
+                        for (const auto& stats : j3x::get<j3x::List>(packet.getParams(), "stats"))
+                        {
+                            const auto& stats_obj = j3x::getObj<j3x::List>(stats);
+                            sf::Uint32 ip = j3x::getObj<int>(stats_obj, 0);
+                            int kills = j3x::getObj<int>(stats_obj, 1);
+                            int deaths = j3x::getObj<int>(stats_obj, 2);
+
+                            auto& stats_to_update = getStats(ip);
+                            stats_to_update.kills_ = kills;
+                            stats_to_update.deaths_ = deaths;
+                        }
+                        stats_->update(player_->getName(), my_stats_, conns_);
+
                         if (player != nullptr)
                         {
                             unregisterWeapons(player);
@@ -338,6 +340,7 @@ void Client::handleEventsFromServer()
                             registerWeapons(player);
                             player->getBackpack().clear();
                             ui_->clearThoughts();
+                            ui_->clearMessages();
                         }
 
                         break;
@@ -345,7 +348,11 @@ void Client::handleEventsFromServer()
                     case ServerEventPacket::Type::PlayerExit:
                     case ServerEventPacket::Type::PlayerRespawn:
                     {
-                        auto player = getPlayer(packet.getIP());
+                        auto player = getPlayer(packet.getIP(), false);
+
+                        if (player == nullptr)
+                            break;
+
                         j3x::Parameters msg_params = {{"name", getPlayerName(packet.getIP())}};
 
                         if (packet.getType() == ServerEventPacket::Type::PlayerExit)
@@ -828,6 +835,16 @@ PlayerStats& Client::getStats(sf::Uint32 ip)
     if (it == conns_.end())
         return stats;
 
+    if (it == conns_.end())
+    {
+        conns_[ip] = {};
+        conns_[ip].player = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
+        conns_[ip].still_playing = true;
+        initPlayer(conns_[ip].player.get());
+
+        return conns_[ip].stats;
+    }
+
     return it->second.stats;
 }
 
@@ -840,4 +857,9 @@ void Client::sendMessage(const std::string& msg)
 {
     PlayerEventPacket player_packet(PlayerEventPacket::Type::Message, {{"msg", msg}});
     events_socket_.send(player_packet);
+}
+
+bool Client::isGameEnded() const
+{
+    return is_game_ended_;
 }

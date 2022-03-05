@@ -48,6 +48,7 @@ public:
     // Getters
     [[nodiscard]] Player* getPlayer() override;
     [[nodiscard]] Special* getCurrentSpecialObject() const override;
+    [[nodiscard]] bool isGameEnded() const;
 
     // UI functions
     void useItem(const std::string& id) override;

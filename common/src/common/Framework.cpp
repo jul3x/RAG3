@@ -1166,9 +1166,13 @@ void Framework::forceZoomTo(AbstractPhysicalObject* character)
 
 void Framework::killPlayer(Player* player)
 {
-    spawnDecoration(player->getPosition(), "blood");
-    spawnKillEvent(player->getPosition());
-    spawnSound(RM.getSound("henry_dead"), player->getPosition());
+    if (player->isAlive())
+    {
+        spawnDecoration(player->getPosition(), "blood");
+        spawnKillEvent(player->getPosition());
+        spawnSound(RM.getSound("henry_dead"), player->getPosition());
+    }
+
     unregisterCharacter(player);
     player->setDead();
 }

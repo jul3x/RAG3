@@ -345,7 +345,6 @@ void Client::handleEventsFromServer()
 
                         break;
                     }
-                    case ServerEventPacket::Type::PlayerExit:
                     case ServerEventPacket::Type::PlayerRespawn:
                     {
                         auto player = getPlayer(packet.getIP(), false);
@@ -353,22 +352,14 @@ void Client::handleEventsFromServer()
                         if (player == nullptr)
                             break;
 
-                        j3x::Parameters msg_params = {{"name", getPlayerName(packet.getIP())}};
-
-                        if (packet.getType() == ServerEventPacket::Type::PlayerExit)
-                            ui_->spawnMessage(ClientUserInterface::generateMessage(MessageType::Left, msg_params));
-
                         if (player != player_.get())
                         {
                             killPlayer(player);
-
-                            auto it = conns_.find(packet.getIP());
-                            if (it != conns_.end())
-                            {
-                                conns_.erase(it);
-                            }
+                            conns_[packet.getIP()].player = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
+                            conns_[packet.getIP()].still_playing = true;
+                            initPlayer(conns_[packet.getIP()].player.get());
                         }
-                        else if (packet.getType() == ServerEventPacket::Type::PlayerRespawn) // we are respawning
+                        else // we are respawning
                         {
                             unregisterCharacter(player_.get());
                             player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
@@ -381,6 +372,29 @@ void Client::handleEventsFromServer()
                         // To omit every UDP packet which was sent before respawn
                         last_received_packet_timestamp_ = packet.getTimestamp();
 
+                        break;
+                    }
+                    case ServerEventPacket::Type::PlayerExit:
+                    {
+                        auto player = getPlayer(packet.getIP(), false);
+
+                        if (player == nullptr)
+                            break;
+
+                        j3x::Parameters msg_params = {{"name", getPlayerName(packet.getIP())}};
+                        ui_->spawnMessage(ClientUserInterface::generateMessage(MessageType::Left, msg_params));
+
+                        if (player != player_.get())
+                        {
+                            killPlayer(player);
+
+                            auto it = conns_.find(packet.getIP());
+                            if (it != conns_.end())
+                                conns_.erase(it);
+                        }
+
+                        // To omit every UDP packet which was sent before respawn
+                        last_received_packet_timestamp_ = packet.getTimestamp();
                         break;
                     }
                     case ServerEventPacket::Type::PlayerDeath:

@@ -23,6 +23,10 @@ void Server::initialize()
     CFG.set("settings_tabs", CONF<j3x::List>("server_settings_tabs"));
     CFG.set("maps_order", CONF<j3x::List>("multi_maps_order"));
 
+    // Mockup to load parameters
+    RMGET<float>("characters", "henry", "max_health");
+    RMSET<float>("characters", "henry", "max_health", CONF<float>("multi_max_health"));
+
     Framework::initialize();
 
     ui_ = std::make_unique<MinimalUserInterface>(this);

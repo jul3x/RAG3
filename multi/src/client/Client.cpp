@@ -25,6 +25,10 @@ Client::Client() : Framework(), last_packet_timestamp_(0.0f), last_received_pack
 
 void Client::initialize()
 {
+    // Mockup to load parameters
+    RMGET<float>("characters", "henry", "max_health");
+    RMSET<float>("characters", "henry", "max_health", CONF<float>("multi_max_health"));
+
     player_ = std::make_unique<Player>(sf::Vector2f{0.0f, 0.0f});
     CFG.set("characters_to_play", CONF<j3x::List>("multi_to_play"));
 

@@ -69,14 +69,14 @@ namespace r3e {
             return manager_->getCurrentGoal(this);
         }
 
-        sf::Vector2f AbstractAgent::generateVelocityForPath() const
+        sf::Vector2f AbstractAgent::generateVelocityForPath(const sf::Vector2f& offset) const
         {
             const sf::Vector2f& pos = this->getStartPosition();
             const ai::Path& path = manager_->getPath(this);
             if (path.empty())
                 return {};
 
-            sf::Vector2f point = utils::geo::getNearestForwardPointToPath(pos, path);
+            sf::Vector2f point = utils::geo::getNearestForwardPointToPath(pos, path) - offset;
 
             return utils::geo::getNormalized(point - pos);
         }

@@ -1427,7 +1427,7 @@ Framework::~Framework()
     this->engine_->getAnimationEvents().clear();
 }
 
-void Framework::addToDestroyedSpecials(const std::string& id, const sf::Vector2f& pos)
+void Framework::addToDestroyedSpecials(const std::string& id, int uid, const sf::Vector2f& pos)
 {
 
 }

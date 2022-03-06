@@ -153,7 +153,7 @@ public:
     virtual void setRag3Time(float duration);
     virtual void forceZoomTo(AbstractPhysicalObject* obj);
     virtual void killPlayer(Player* player);
-    virtual void addToDestroyedSpecials(const std::string& id, const sf::Vector2f& pos);
+    virtual void addToDestroyedSpecials(const std::string& id, int uid, const sf::Vector2f& pos);
     virtual bool isMulti() const;
 
     // State methods

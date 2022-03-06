@@ -752,7 +752,10 @@ void Game::finishMap()
         if (!new_map.empty())
         {
             this->saveState(true);
-            this->respawn(map_->getNextMapName());
+
+            // For now this remains
+            ui_->openMenu();
+//            this->respawn(map_->getNextMapName());
         }
     }
 }

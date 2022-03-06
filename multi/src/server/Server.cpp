@@ -23,6 +23,10 @@ void Server::initialize()
     CFG.set("settings_tabs", CONF<j3x::List>("server_settings_tabs"));
     CFG.set("maps_order", CONF<j3x::List>("multi_maps_order"));
 
+    // Mockup to load parameters
+    RMGET<float>("characters", "henry", "max_health");
+    RMSET<float>("characters", "henry", "max_health", CONF<float>("multi_max_health"));
+
     Framework::initialize();
 
     ui_ = std::make_unique<MinimalUserInterface>(this);
@@ -359,16 +363,7 @@ void Server::handleEventsFromPlayers()
                             LOG.info("Connection successful.");
                             respawnPlayer(conn.first);
                             connection_parameters["s"] = static_cast<int>(ConnectionStatus::On);
-                            auto all_stats = j3x::List();
 
-                            for (const auto &connection: connections_) {
-                                auto stats = j3x::List(
-                                        {static_cast<int>(connection.first), connection.second.stats_.kills_,
-                                         connection.second.stats_.deaths_});
-                                all_stats.emplace_back(stats);
-                            }
-
-                            connection_parameters["stats"] = std::move(all_stats);
                             auto server_packet =
                                     ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters,
                                                       conn.first);
@@ -380,8 +375,17 @@ void Server::handleEventsFromPlayers()
                                 if (cached_packet.isCachedForIp(conn.first))
                                     event_socket->send(cached_packet);
                             }
+
+                            auto all_stats = j3x::List();
+                            for (const auto &connection: connections_) {
+                                auto stats = j3x::List(
+                                        {static_cast<int>(connection.first), connection.second.stats_.kills_,
+                                         connection.second.stats_.deaths_});
+                                all_stats.emplace_back(stats);
+                            }
+
                             auto end_packet = ServerEventPacket(
-                                    ServerEventPacket::Type::EndOfCachedEvents, {},
+                                    ServerEventPacket::Type::EndOfCachedEvents, {{"stats", std::move(all_stats)}},
                                     conn.first);
                             event_socket->send(end_packet);
                         } else {

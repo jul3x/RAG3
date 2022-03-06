@@ -71,6 +71,7 @@ public:
     virtual void spawnNoteWindow(const std::string& text, bool note_info = true);
     virtual void spawnMessage(const std::string& text);
     virtual void clearThoughts();
+    virtual void clearMessages();
     virtual void clearThought(Character* user);
     virtual void closeWindow(Window* window);
     virtual void openMenu();

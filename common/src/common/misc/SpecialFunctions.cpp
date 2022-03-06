@@ -517,7 +517,7 @@ void SpecialFunctions::destroy(Functional* obj, const j3x::Obj& data, Character*
 
     const auto& position = dynamic_cast<AbstractPhysicalObject*>(obj)->getPosition();
     framework_->spawnEvent("dust", position);
-    framework_->addToDestroyedSpecials(obj->getId(), position);
+    framework_->addToDestroyedSpecials(obj->getId(), obj->getUniqueId(), position);
     user->setCurrentSpecialObject(nullptr);
     obj->destroy();
 }

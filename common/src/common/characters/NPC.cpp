@@ -327,8 +327,10 @@ void NPC::standardAI(float time_elapsed)
 {
     handleActionState();
 
-    auto& enemy_position = current_enemy_->getPosition();
-    auto velocity = RMGET<float>("characters", this->getId(), "max_speed") * this->generateVelocityForPath();
+    auto enemy_position =
+            current_enemy_->getPosition() + RMGET<sf::Vector2f>("characters", current_enemy_->getId(), "map_offset");
+    auto velocity = RMGET<float>("characters", this->getId(), "max_speed") *
+                    this->generateVelocityForPath(RMGET<sf::Vector2f>("characters", this->getId(), "map_offset"));
 
     switch (action_state_)
     {
@@ -404,8 +406,10 @@ void NPC::meleeAttackAI(float time_elapsed)
 {
     handleActionMeleeState();
 
-    auto& enemy_position = current_enemy_->getPosition();
-    auto velocity = RMGET<float>("characters", this->getId(), "max_speed") * this->generateVelocityForPath();
+    auto enemy_position =
+            current_enemy_->getPosition() + RMGET<sf::Vector2f>("characters", current_enemy_->getId(), "map_offset");
+    auto velocity = RMGET<float>("characters", this->getId(), "max_speed") *
+                    this->generateVelocityForPath(RMGET<sf::Vector2f>("characters", this->getId(), "map_offset"));
 
     switch (action_state_)
     {

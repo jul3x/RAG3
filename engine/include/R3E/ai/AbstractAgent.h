@@ -36,7 +36,7 @@ namespace r3e::ai {
         [[nodiscard]] const ai::Path& getPath() const;
         [[nodiscard]] bool canAvoidSpecials() const;
 
-        [[nodiscard]] sf::Vector2f generateVelocityForPath() const;
+        [[nodiscard]] sf::Vector2f generateVelocityForPath(const sf::Vector2f& offset = {}) const;
 
     private:
         std::shared_ptr<AgentsManager> manager_;

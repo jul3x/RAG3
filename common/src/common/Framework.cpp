@@ -1441,3 +1441,8 @@ bool Framework::canUpgradeSkills()
 {
     return !isMulti() && isNormalGameplay() && getPlayer()->isAlive() && getPlayer()->getSkillPoints() > 0;
 }
+
+void Framework::setCheckpoint()
+{
+
+}

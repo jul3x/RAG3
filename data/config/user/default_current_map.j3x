@@ -1,4 +1,3 @@
-list maps_unlocked = ["first_new_map"]
 list achievements_unlocked = []
 int exp = 0
 int level = 0

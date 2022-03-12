@@ -22,6 +22,7 @@ int main()
     RM.copyFileIfNotExist("../data/config/user/default_controls.j3x", "../data/config/user/controls.j3x");
     RM.copyFileIfNotExist("../data/config/user/default_general.j3x", "../data/config/user/general.j3x");
     RM.copyFileIfNotExist("../data/config/user/default_save.j3x", "../data/config/user/save.j3x");
+    RM.copyFileIfNotExist("../data/config/user/default_current_map.j3x", "../data/config/user/current_map.j3x");
 
     CFG.appendConfig("../data/config/user/general.j3x", "general");
     CFG.appendConfig("../data/config/user/controls.j3x", "controls");

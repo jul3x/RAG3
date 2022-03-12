@@ -75,6 +75,7 @@ public:
 
     // Misc
     void finishMap() override;
+    void setCheckpoint() override;
     void setRag3Time(float time_elapsed) override;
     void forceZoomTo(AbstractPhysicalObject* obj) override;
     bool isMulti() const override;
@@ -100,8 +101,8 @@ private:
     void killNPC(NPC* npc);
     void cleanPlayerClone();
     void preloadSave();
-    void loadSave();
-    void saveState(bool presave);
+    void loadSave(bool full_save);
+    void saveState(bool map_end);
 
     std::unique_ptr<audio::MusicManager> music_manager_;
 

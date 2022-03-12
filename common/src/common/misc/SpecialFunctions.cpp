@@ -27,6 +27,7 @@ SpecialFunctions::SpecialFunctions(Framework* framework) : framework_(framework)
     init("MapStart", &SpecialFunctions::mapStart, "Start new map");
     init("ChangeMapParams", &SpecialFunctions::changeMapParams, "");
     init("MapEnd", &SpecialFunctions::mapEnd, "End this map");
+    init("Checkpoint", &SpecialFunctions::checkpoint, "Save state");
     init("TurnLight", &SpecialFunctions::turnLight, "Press", true);
     init("PourWater", &SpecialFunctions::pourWater, "Pour water on yourself", true);
     init("OpenDoor", &SpecialFunctions::openDoor, "", true);
@@ -137,6 +138,12 @@ void SpecialFunctions::mapEnd(Functional* obj, const j3x::Obj& data, Character* 
 {
     LOG.info("[SpecialFunction] Map end.");
     framework_->setFinishMap();
+}
+
+void SpecialFunctions::checkpoint(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Checkpoint.");
+    framework_->setCheckpoint();
 }
 
 void SpecialFunctions::openDoor(Functional* obj, const j3x::Obj& data, Character* user)

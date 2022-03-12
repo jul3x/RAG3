@@ -150,6 +150,7 @@ public:
     // Misc
     virtual void setFinishMap();
     virtual void finishMap();
+    virtual void setCheckpoint();
     virtual void setRag3Time(float duration);
     virtual void forceZoomTo(AbstractPhysicalObject* obj);
     virtual void killPlayer(Player* player);

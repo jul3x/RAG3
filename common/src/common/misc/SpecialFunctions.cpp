@@ -39,7 +39,7 @@ SpecialFunctions::SpecialFunctions(Framework* framework) : framework_(framework)
     init("TakeRag3", &SpecialFunctions::takeRag3, "Pick to take");
     init("PickCrystal", &SpecialFunctions::pickCrystal, "Pick crystal");
     init("PayRespect", &SpecialFunctions::payRespect, "Pay respect");
-    init("SpawnThought", &SpecialFunctions::spawnThought, "", true);
+    init("SpawnThought", &SpecialFunctions::spawnThought, "");
     init("SpawnPlayerThought", &SpecialFunctions::spawnPlayerThought, "", true);
     init("ChangeOpenState", &SpecialFunctions::changeOpenState, "Pull the trigger", true);
     init("Teleport", &SpecialFunctions::teleport, "", true);

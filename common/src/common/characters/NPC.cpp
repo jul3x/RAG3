@@ -29,7 +29,8 @@ NPC::NPC(const sf::Vector2f& position, const std::string& id, int u_id) :
 NPC::NPC(const sf::Vector2f& position, const std::string& id,
          const std::string& activation, const j3x::List& functions,
          const j3x::List& datas, int u_id) :
-        Character(position, id, activation, functions, datas, u_id)
+        Character(position, id, activation, functions, datas, u_id),
+        max_hit_distance_(RMGET<float>("characters", id, "max_hit_distance"))
 {
     this->setCanAvoidSpecials(RMGET<bool>("characters", id, "can_avoid_fluid"));
 
@@ -149,13 +150,12 @@ void NPC::handleVisibilityState()
         if (walls_between > CONF<float>("characters/walls_between_far_ai"))
             break;
     }
-
-    if (utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition()) >
-        CONF<float>("characters/max_distance_ai"))
+    auto distance = utils::geo::getDistance(current_enemy_->getPosition(), this->getPosition());
+    if (distance > CONF<float>("characters/max_distance_ai"))
         visibility_state_ = VisibilityState::OutOfRange;
-    else if (walls_between <= CONF<float>("characters/walls_between_close_ai"))
+    else if (walls_between <= CONF<float>("characters/walls_between_close_ai") && distance <= max_hit_distance_)
         visibility_state_ = VisibilityState::Close;
-    else if (walls_between <= CONF<float>("characters/walls_between_far_ai"))
+    else if (walls_between <= CONF<float>("characters/walls_between_far_ai") && distance <= max_hit_distance_)
         visibility_state_ = VisibilityState::Far;
     else
         visibility_state_ = VisibilityState::TooFar;

@@ -1,0 +1,11 @@
+vector size=(9.0,11.0)
+vector map_offset=(0.0,0.0)
+
+int frames_number=6
+float frame_duration=0.085
+
+int z_index=1
+
+string light_point="const"
+float light_point_radius=92.0
+float light_point_data=1

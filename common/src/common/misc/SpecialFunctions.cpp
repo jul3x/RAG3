@@ -211,6 +211,7 @@ void SpecialFunctions::changeOpenState(Functional* obj, const j3x::Obj& data, Ch
     if (user != nullptr)
     {
         framework_->spawnEvent("dust", special_obj->getPosition() + sf::Vector2f{0.0f, 10.0f});
+        framework_->spawnSound(RM.getSound("lever"), special_obj->getPosition());
         if (framework_->getJournal() != nullptr)
             framework_->getJournal()->event<ChangeOpenState>(special_obj);
     }

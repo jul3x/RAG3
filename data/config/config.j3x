@@ -33,6 +33,10 @@ list multi_to_play = ["henry"; "green_bastard"; "gray_oldman"; "rusty_fooley"; "
                       "slippery_amigo"]
 list settings_tabs = ["general"; "controls"; "graphics"; "sound"]
 list server_settings_tabs = ["server"; "graphics"; "sound"]
+float easy_difficulty_factor = 0.6
+float normal_difficulty_factor = 1.0
+float hard_difficulty_factor = 1.5
+float impossible_difficulty_factor = 3.0
 
 // FIRE MECHANICS
 float on_fire_hurt_speed = 10.0

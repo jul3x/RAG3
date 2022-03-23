@@ -181,6 +181,9 @@ void SettingsWindow::createWidgets()
             ++i;
         }
     }
+
+    if (framework_->isMulti() && widgets_.count("general/game_type"))
+        widgets_["general/game_type"]->disable();
 }
 
 void SettingsWindow::updateValues()
@@ -824,7 +827,9 @@ void SelectSettingsWidget::change(std::vector<std::string>::iterator new_value)
 
     current_value_ = new_value;
     hint_->setText(hints_.at(std::distance(possible_values_.begin(), new_value)));
-    on_change_(*current_value_);
+
+    if (on_change_)
+        on_change_(*current_value_);
 }
 
 j3x::Obj SelectSettingsWidget::getValue() const

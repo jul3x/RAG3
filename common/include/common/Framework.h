@@ -190,6 +190,8 @@ protected:
     virtual void initSpecials();
     virtual void initPlayer(Player* player);
 
+    [[nodiscard]] float setupDifficultyFactor() const;
+
     std::unique_ptr<Engine> engine_;
     std::unique_ptr<Camera> camera_;
     std::unique_ptr<graphics::Lighting> lighting_;
@@ -216,6 +218,7 @@ protected:
     Framework::GameState state_;
     bool should_finish_map_;
 
+    float difficulty_factor_;
 };
 
 

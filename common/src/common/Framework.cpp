@@ -463,6 +463,7 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     {
         if (bullet->getUser() != character)
         {
+            auto difficulty_factor = difficulty_factor_;
             if (bullet->getUser() != getPlayer())
             {
                 if (character == getPlayer())
@@ -471,12 +472,13 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
                     factor = 1.0f / factor;
                     factor = factor * (strength_skill_factor - getPlayer()->getSkill(Player::Skills::Strength)) /
                              strength_skill_factor;
+                    difficulty_factor = 1.0f / difficulty_factor;
                 }
                 else
                     factor = 1.0f;
             }
 
-            character->getShot(*bullet, factor);
+            character->getShot(*bullet, factor / difficulty_factor);
 
             float offset = bullet->getRotation() > 0.0f && bullet->getRotation() < 180.0f ? -5.0f : 5.0f;
             spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, offset), bullet->getRotation() + 180.0f,
@@ -552,10 +554,14 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     {
         if (character != melee_weapon_area->getFather()->getUser())
         {
+            auto difficulty_factor = difficulty_factor_;
             if (melee_weapon_area->getFather()->getUser() != getPlayer())
             {
                 if (character == getPlayer())
+                {
                     factor = 1.0f / factor;
+                    difficulty_factor = 1.0f / difficulty_factor;
+                }
                 else
                     factor = 1.0f;
             }
@@ -567,7 +573,7 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
                             angle, melee_weapon_area->getFather()->getDeadlyFactor() * factor);
             spawnSound(RM.getSound("melee_hit"), character->getPosition());
             melee_weapon_area->setActive(false);
-            character->getCut(*melee_weapon_area->getFather(), factor);
+            character->getCut(*melee_weapon_area->getFather(), factor / difficulty_factor);
         }
         return;
     }
@@ -1344,6 +1350,7 @@ void Framework::respawn(const std::string& map_name)
     ui_->initializeTutorialArrows();
     setGameState(Framework::GameState::Normal);
     should_finish_map_ = false;
+    difficulty_factor_ = setupDifficultyFactor();
 }
 
 void Framework::finishMap()
@@ -1445,4 +1452,10 @@ bool Framework::canUpgradeSkills()
 void Framework::setCheckpoint()
 {
 
+}
+
+float Framework::setupDifficultyFactor() const
+{
+    const auto& difficulty = CONF<std::string>("general/game_type");
+    return CONF<float>(difficulty + "_difficulty_factor");
 }

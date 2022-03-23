@@ -2,10 +2,10 @@ string default_activation="OnEnter"
 list default_functions=["Teleport"]
 list default_datas=[(0,0)]
 
-vector size=(64.0,32.0)
+vector size=(64.0,80.0)
 vector collision_offset=(0.0,0.0)
 vector map_offset=(0.0,8.0)
-float collision_radius=16.0
+float collision_radius=24.0
 
 int frames_number=1
 float frame_duration=0.0

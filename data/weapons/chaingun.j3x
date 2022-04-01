@@ -1,5 +1,5 @@
 float recoil=640.0
-int max_ammo=150
+int max_ammo=50
 int ammo_portion=10
 
 string spawn_func="bullet"

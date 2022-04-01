@@ -25,7 +25,7 @@ int max_path_search_depth = 1000
 
 // LEVELS
 list levels_experience = [100; 250; 1500; 5000; 15000; 30000; 100000; 250000]
-int skill_points_per_level = 10
+int skill_points_per_level = 5
 int max_skills_count = 100
 float strength_skill_factor = 50.0
 float health_skill_factor = 25.0

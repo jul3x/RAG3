@@ -1,6 +1,6 @@
 float recoil=2880.0
-int max_ammo=5
-int ammo_portion=2
+int max_ammo=1
+int ammo_portion=1
 
 vector size=(40.0,32.0)
 vector offset=(8.0,0.0)

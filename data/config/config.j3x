@@ -39,7 +39,7 @@ float hard_difficulty_factor = 1.5
 float impossible_difficulty_factor = 3.0
 
 // FIRE MECHANICS
-float on_fire_hurt_speed = 10.0
+float on_fire_hurt_speed = 5.0
 float on_fire_time = 3.0
 float fire_life = 1.0
 float fire_speed = 200.0

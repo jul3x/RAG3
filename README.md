@@ -5,20 +5,30 @@
 # RAG3
 
 Have you ever wondered what would you do if you could turn back time? **RAG3** makes impossible things possible. 
-Join to adventure and help main character in preventing the tragic events.
+Join to the adventure and help main character in preventing the tragic events.
 
 -----
 
 ## Description
 
-**RAG3** is 2D top-down shooter game (currently in early development phase). The gameplay consists of skillful levelling,
+**RAG3** is 2D top-down shooter game (currently in demo phase). The gameplay consists of skillful levelling,
  with elimination of all obstacles encountered (enemies and inanimate things as well) along the way. 
- The basic feature of the game is the significant dynamics, most of the time requiring the considerable concentration. 
- The game's goal is providing sensations and joy from battles with various creatures while wandering through many types of locations (from mazes to open worlds).        
+ The basic feature of the game is the significant **dynamics**, most of the time requiring the considerable concentration. 
+ The game's goal is providing sensations and joy from battles with various creatures while wandering through many types of locations (from mazes to open worlds).  
+
+ One of the most distinguishing features of the game is **real-time** time manipulation mechanics.
+ Player is allowed to slow down the gameplay for a short period of time (**bullet time**) and is able to travel **back to the past**.
+ This feature is strictly integrated with battles and can be used in a fully dynamic way.  
+
+ The plot of the game can be discovered only directly through the gameplay.
+ If you want to learn more about RAG3 world - download demo version [here](https://j3x.dev/rag3) or compile game by yourself using steps from **Build** section.
+ You can play in **multiplayer mode** with your friends as well!  
+
+ Beware! Travelling in time comes with consequences. Be careful when you meet your past self!
 
 ## Control
 
-Due to an early phase of the game, steering can be changed in future. For now:  
+Steering can be changed by user. By default it is:  
 
 - *WSAD* for movement. *LShift* changes moving to running.
 - *Mouse* used for aiming, *LeftButton* uses current weapon, *MouseWheel* changes weapon, *RightButton* triggers bullet time.
@@ -26,11 +36,23 @@ Due to an early phase of the game, steering can be changed in future. For now:
 - *F* triggers object activation if player is somewhere near and *T* talks to the talkable NPC.
 - *R* triggers time reversal. 
 
-## Configuration
-Game's architecture is created in a very flexible way. One can easily modify game objects, maps, characters and add new ones.
-Every object used in a game is described in `*.j3x` file in `data/` directory. Syntax of files is self-describing. 
-Repository provides **RAG3Editor** as an additional application for easy map making and environment edition. 
-Usage of this tool will be later described in *RAG3Editor* section.
+## Contribution
+Every volunteer is strongly encouraged to take part in a development process.  
+
+If you are not a software developer - piece of cake. You don't need to modify the code to change the game.  
+
+Game has been created with potential extensions and modifications in mind. 
+Core architecture is designed in a very flexible way. 
+One can easily modify game objects, maps, characters and add new ones.
+A lot of game's behaviors and actions is parametrized and is editable via configuration files.
+Every object used in a game is described in `*.j3x` files in `data/` directory. Syntax of files is self-describing. RAG3 provides dedicated map/game editor **RAG3Editor** as an additional application for easy map making and environment edition.  
+
+Usage of this tool is described in [RAG3Editor Instruction](/Rag3EditorInstruction.md).
+
+## Screens
+
+![Screen1](/graphics_dev/2.jpg?raw=true "Screen 1") ![Screen2](/graphics_dev/7.jpg?raw=true "Screen 2")
+![Screen3](/graphics_dev/3.jpg?raw=true "Screen 3") ![Screen4](/graphics_dev/4.jpg?raw=true "Screen 4")
 
 -----
 
@@ -55,12 +77,6 @@ Package uses **C++17** language, so you need a compatible compiler. Tested on **
     - Use `build_and_run.bash` script to build game and editor.
     - Use `build_and_run_tests.bash` script to build tests. GTest from the latest commit on master branch required.
   
------
-
-## RAG3Editor
-
-TBA
-
 -----
 
 ## Changelog

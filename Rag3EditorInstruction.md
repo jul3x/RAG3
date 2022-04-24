@@ -1,4 +1,4 @@
-# RAG3EditorInstruction
+# RAG3Editor Instruction
 
 ![RAG3Editor](/graphics_dev/8.jpg?raw=true "RAG3Editor")
 

@@ -1,6 +1,6 @@
 # RAG3EditorInstruction
 
-* `Editor](/graphics_dev/8.jpg?raw: ![RAG3`
+![RAG3Editor](/graphics_dev/8.jpg?raw=true "RAG3Editor")
 
 ## Description
 

@@ -26,9 +26,12 @@ NoteWindow::NoteWindow(Framework* framework, UserInterface* ui, const std::strin
         child_->add(label);
     }
 
+    std::string to_print = text;
+    std::replace(to_print.begin(), to_print.end(), ';', '\n');
+
     label = tgui::Label::create();
     label->setRenderer(theme_->getRenderer("TooltipText"));
-    label->setText(note_info ? "\"" + text + "\"" : text);
+    label->setText(note_info ? "\"" + to_print + "\"" : to_print);
     label->setTextSize(CONF<float>("graphics/popup_text_size"));
     label->setPosition("50% - width / 2", "15%");
     child_->add(label);

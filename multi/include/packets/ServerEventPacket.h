@@ -57,7 +57,7 @@ public:
     {
         static constexpr std::array<Type, 1> forbidden = {Type::NameChange};
         static constexpr std::array<Type, 5>
-                always_forbidden = {Type::Exit, Type::Connection, Type::PlayerExit, Type::PlayerRespawn, Type::Message};
+                always_forbidden = {Type::Exit, Type::Connection, Type::PlayerExit, Type::Message};
 
         return !utils::contains(always_forbidden, type_) &&
                (ip != this->player_ip_ || !utils::contains(forbidden, this->type_));

@@ -71,6 +71,7 @@ protected:
     ActionState action_state_;
 
     std::function<void(NPC*, float)> ai_function_;
+    float max_hit_distance_;
 
 };
 

@@ -83,3 +83,6 @@ list end_type_hints = ["Game ends after given\nperiod of time";
                        "Game ends when first player\ndies given number of times"]
 float object_spawn_time_min = 1.0
 float object_spawn_time_max = 900.0
+
+list game_type_choices = ["easy"; "normal"; "hard"; "impossible"]
+list game_type_hints = ["Game for babies..."; "Time to grow up"; "Only for veterans"; "Are you sure?"]

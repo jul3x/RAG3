@@ -1,5 +1,5 @@
 float recoil=640.0
-int max_ammo=150
+int max_ammo=50
 int ammo_portion=10
 
 string spawn_func="bullet"
@@ -20,3 +20,5 @@ int z_index=1
 
 string default_usage="Const"
 float default_data=0.0
+
+float activation_area_radius=100.0

@@ -32,6 +32,12 @@ Obstacle::Obstacle(const sf::Vector2f& position, const std::string& id, const st
         Shootable(RMGET<float>("obstacles", id, "endurance") *
                   CONF<float>("obstacles_endurance_factor"))
 {
+    if (RMGET<sf::Vector2f>("obstacles", id, "collision_size").x == 0.0f &&
+        RMGET<sf::Vector2f>("obstacles", id, "collision_size").y == 0.0f)
+    {
+        this->changeCollisionArea(collision::None());
+    }
+
     this->changeOrigin(RMGET<sf::Vector2f>("obstacles", id, "size") / 2.0f +
                        RMGET<sf::Vector2f>("obstacles", id, "map_offset"));
 

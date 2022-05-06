@@ -223,14 +223,12 @@ void Editor::placeItem(const sf::Vector2f& pos, float direction)
             if (ptr->getLightPoint() != nullptr)
                 ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
         }
-
         else if (current_item_.first == "decorations")
         {
             auto ptr = map_->spawn<Decoration>(pos, direction, current_item_.second, false, max_z_index);
             if (ptr->getLightPoint() != nullptr)
                 ptr->getLightPoint()->registerGraphics(engine_->getGraphics());
         }
-
         else if (current_item_.first == "obstacles")
         {
             auto ptr = map_->spawn<Obstacle>(pos, direction, current_item_.second, false, max_z_index);
@@ -243,6 +241,22 @@ void Editor::placeItem(const sf::Vector2f& pos, float direction)
     catch (const std::logic_error& err)
     {
         spawnError("Object to place not found!");
+    }
+}
+
+void Editor::placeItemOnMarked()
+{
+    auto grid_beginning = sf::Vector2f(std::min(grid_mark_start_.x, grid_mark_stop_.x),
+                                 std::min(grid_mark_start_.y, grid_mark_stop_.y));
+    auto grid_end = sf::Vector2f(std::max(grid_mark_start_.x, grid_mark_stop_.x),
+                                  std::max(grid_mark_start_.y, grid_mark_stop_.y));
+
+    for (int x = grid_beginning.x; x < grid_end.x; x += DecorationTile::SIZE_X_)
+    {
+        for (int y = grid_beginning.y; y < grid_end.y; y += DecorationTile::SIZE_X_)
+        {
+            placeItem(sf::Vector2f{static_cast<float>(x), static_cast<float>(y)});
+        }
     }
 }
 
@@ -264,6 +278,8 @@ void Editor::clearMap()
         camera_->setPointingTo({});
         ui_->spawnInfo("Map cleared!");
         current_map_name_ = "";
+        grid_marked_items_.clear();
+        is_grid_marked_ = false;
     }
     else
     {
@@ -278,6 +294,8 @@ void Editor::loadMap(const std::string& name)
         camera_->setPointingTo({});
         ui_->spawnInfo("Map " + name + " succesfully loaded!");
         current_map_name_ = name;
+        grid_marked_items_.clear();
+        is_grid_marked_ = false;
 
         auto init_light = [this](auto& list) {
             for (auto& obj : list)

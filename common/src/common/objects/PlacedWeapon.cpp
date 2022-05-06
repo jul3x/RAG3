@@ -29,17 +29,19 @@ PlacedWeapon::PlacedWeapon(const sf::Vector2f& position, float direction, const 
     this->setPosition(position, {});
     this->setRotation(direction);
 
-    if (usage == "Const")
+    auto function_index = std::find(ACTIVATIONS.begin(), ACTIVATIONS.end(), usage);
+
+    if (function_index != ACTIVATIONS.end())
     {
-        usage_func_ = std::bind(&PlacedWeapon::constUse, this, std::placeholders::_1);
-    }
-    else if (usage == "Single")
-    {
-        usage_func_ = std::bind(&PlacedWeapon::singleUse, this, std::placeholders::_1);
-    }
-    else if (usage == "Interrupted")
-    {
-        usage_func_ = std::bind(&PlacedWeapon::interruptedUse, this, std::placeholders::_1);
+        usage_func_ = std::bind(FUNCTIONS.at(std::distance(ACTIVATIONS.begin(), function_index)), this,
+                                std::placeholders::_1);
+
+        if (utils::startsWith(usage, "Near"))
+        {
+            activation_area_ =
+                    std::make_unique<ActivationArea>(this, RMGET<float>("weapons", id, "activation_area_radius"));
+            activation_area_->setPosition(this->getPosition());
+        }
     }
     else
     {
@@ -52,8 +54,13 @@ void PlacedWeapon::update(float time_elapsed)
     this->setState(1.0f); // never ending ammo
     AbstractWeapon::update(time_elapsed);
 
-    if (active_)
-        usage_func_(time_elapsed);
+    usage_func_(time_elapsed);
+
+    if (activation_area_ != nullptr)
+    {
+        activation_area_->setActive(false);
+        active_ = false;
+    }
 }
 
 float PlacedWeapon::getData() const
@@ -88,30 +95,64 @@ bool PlacedWeapon::getActive() const
 
 void PlacedWeapon::constUse(float time_elapsed)
 {
-    use();
+    if (active_)
+        use();
 }
 
 void PlacedWeapon::singleUse(float time_elapsed)
 {
-    time_elapsed_ += time_elapsed;
+    if (active_)
+    {
+        time_elapsed_ += time_elapsed;
 
-    if (time_elapsed_ >= data_)
-        time_elapsed_ = data_;
-    else
-        use();
+        if (time_elapsed_ >= data_)
+            time_elapsed_ = data_;
+        else
+            use();
+    }
 }
 
 void PlacedWeapon::interruptedUse(float time_elapsed)
 {
-    time_elapsed_ += time_elapsed;
-
-    if (time_elapsed_ >= 2 * data_)
-        time_elapsed_ = 0.0f;
-    else if (time_elapsed_ >= data_)
+    if (active_)
     {
-        // nothing
+        time_elapsed_ += time_elapsed;
+
+        if (time_elapsed_ >= 2 * data_)
+            time_elapsed_ = 0.0f;
+        else if (time_elapsed_ >= data_)
+        {
+            // nothing
+        }
+        else
+            use();
     }
+}
+
+void PlacedWeapon::nearConstUse(float time_elapsed)
+{
+    if (activation_area_->isActive())
+        constUse(time_elapsed);
+}
+
+void PlacedWeapon::nearSingleUse(float time_elapsed)
+{
+    if (activation_area_->isActive())
+        singleUse(time_elapsed);
     else
-        use();
+        time_elapsed_ = 0.0f;
+}
+
+void PlacedWeapon::nearInterruptedUse(float time_elapsed)
+{
+    if (activation_area_->isActive())
+        interruptedUse(time_elapsed);
+    else
+        time_elapsed_ = 0.0f;
+}
+
+ActivationArea* PlacedWeapon::getActivationArea() const
+{
+    return activation_area_.get();
 }
 

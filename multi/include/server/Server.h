@@ -45,7 +45,7 @@ public:
     void disconnect();
 
     // Misc
-    void addToDestroyedSpecials(const std::string& id, const sf::Vector2f& pos) override;
+    void addToDestroyedSpecials(const std::string& id, int uid, const sf::Vector2f& pos) override;
     const std::unordered_map<sf::Uint32, PlayerConnection>& getConnections() const;
 
 private:
@@ -82,6 +82,7 @@ private:
 
     std::vector<sf::Vector2f> starting_positions_;
     std::list<PeriodicalSpecial> destroyed_specials_;
+    std::unordered_set<int> forbidden_destroyed_specials_;
 
     sf::TcpListener connection_listener_;
     sf::UdpSocket data_receiver_socket_;

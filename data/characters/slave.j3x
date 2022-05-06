@@ -1,4 +1,5 @@
 float max_speed=-10.0
+float max_hit_distance=600.0
 
 float max_health=3
 

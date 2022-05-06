@@ -23,6 +23,10 @@ void Server::initialize()
     CFG.set("settings_tabs", CONF<j3x::List>("server_settings_tabs"));
     CFG.set("maps_order", CONF<j3x::List>("multi_maps_order"));
 
+    // Mockup to load parameters
+    RMGET<float>("characters", "henry", "max_health");
+    RMSET<float>("characters", "henry", "max_health", CONF<float>("multi_max_health"));
+
     Framework::initialize();
 
     ui_ = std::make_unique<MinimalUserInterface>(this);
@@ -272,27 +276,35 @@ void Server::handleEventsFromPlayers()
 {
     for (auto& conn : connections_)
     {
-        try {
-            auto &socket = conn.second.events_socket_;
+        try
+        {
+            auto& socket = conn.second.events_socket_;
             PlayerEventPacket packet;
             auto status = socket->receive(packet);
-            switch (status) {
-                case sf::Socket::Done: {
+            switch (status)
+            {
+                case sf::Socket::Done:
+                {
                     auto player = conn.second.player_.get();
 
-                    if (player != nullptr) {
+                    if (player != nullptr)
+                    {
                         conn.second.ping_elapsed_ = 0.0f;
 
-                        switch (packet.getType()) {
-                            case PlayerEventPacket::Type::UseObject: {
+                        switch (packet.getType())
+                        {
+                            case PlayerEventPacket::Type::UseObject:
+                            {
                                 useSpecialObject(player, conn.first);
                                 break;
                             }
-                            case PlayerEventPacket::Type::UseBackpackObject: {
+                            case PlayerEventPacket::Type::UseBackpackObject:
+                            {
                                 player->useItem(j3x::get<std::string>(packet.getParams(), "id"));
                                 break;
                             }
-                            case PlayerEventPacket::Type::NameChange: {
+                            case PlayerEventPacket::Type::NameChange:
+                            {
                                 conn.second.name_ = j3x::get<std::string>(packet.getParams(), "name");
                                 conn.second.character_ = j3x::get<std::string>(packet.getParams(), "texture");
                                 ServerEventPacket server_packet(ServerEventPacket::Type::NameChange,
@@ -301,14 +313,16 @@ void Server::handleEventsFromPlayers()
                                 sendEventToPlayers(server_packet);
                                 break;
                             }
-                            case PlayerEventPacket::Type::Message: {
+                            case PlayerEventPacket::Type::Message:
+                            {
                                 ServerEventPacket server_packet(ServerEventPacket::Type::Message,
                                                                 packet.getParams(),
                                                                 conn.first);
                                 sendEventToPlayers(server_packet);
                                 break;
                             }
-                            case PlayerEventPacket::Type::Respawn: {
+                            case PlayerEventPacket::Type::Respawn:
+                            {
                                 if (conn.second.player_ != nullptr)
                                     conn.second.player_->setPossibleDeathCause(DeathCause::Unknown, nullptr);
                                 clearPlayer(conn.first, conn.second);
@@ -326,7 +340,8 @@ void Server::handleEventsFromPlayers()
                                 sendEventToPlayers(change_name_packet);
                                 break;
                             }
-                            case PlayerEventPacket::Type::Exit: {
+                            case PlayerEventPacket::Type::Exit:
+                            {
                                 if (conn.second.player_ != nullptr)
                                     conn.second.player_->setPossibleDeathCause(DeathCause::Unknown, nullptr);
                                 clearPlayer(conn.first, conn.second);
@@ -337,12 +352,16 @@ void Server::handleEventsFromPlayers()
                                 to_erase_.emplace_back(conn.first);
                                 break;
                             }
-                            default: {
+                            default:
+                            {
                                 break;
                             }
                         }
-                    } else {
-                        if (conn.second.status_ == ConnectionStatus::Off) {
+                    }
+                    else
+                    {
+                        if (conn.second.status_ == ConnectionStatus::Off)
+                        {
                             LOG.error("This player is not registered!");
                             return;
                         }
@@ -355,20 +374,12 @@ void Server::handleEventsFromPlayers()
                         auto event_socket = conn.second.events_socket_.get();
                         conn.second.ping_elapsed_ = 0.0f;
 
-                        if (packet.getIntData() == map_->getDigest()) {
+                        if (packet.getIntData() == map_->getDigest())
+                        {
                             LOG.info("Connection successful.");
                             respawnPlayer(conn.first);
                             connection_parameters["s"] = static_cast<int>(ConnectionStatus::On);
-                            auto all_stats = j3x::List();
 
-                            for (const auto &connection: connections_) {
-                                auto stats = j3x::List(
-                                        {static_cast<int>(connection.first), connection.second.stats_.kills_,
-                                         connection.second.stats_.deaths_});
-                                all_stats.emplace_back(stats);
-                            }
-
-                            connection_parameters["stats"] = std::move(all_stats);
                             auto server_packet =
                                     ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters,
                                                       conn.first);
@@ -376,15 +387,28 @@ void Server::handleEventsFromPlayers()
                             event_socket->send(server_packet);
                             conn.second.status_ = ConnectionStatus::On;
 
-                            for (auto &cached_packet: cached_events_) {
+                            for (auto& cached_packet: cached_events_)
+                            {
                                 if (cached_packet.isCachedForIp(conn.first))
                                     event_socket->send(cached_packet);
                             }
+
+                            auto all_stats = j3x::List();
+                            for (const auto& connection: connections_)
+                            {
+                                auto stats = j3x::List(
+                                        {static_cast<int>(connection.first), connection.second.stats_.kills_,
+                                         connection.second.stats_.deaths_});
+                                all_stats.emplace_back(stats);
+                            }
+
                             auto end_packet = ServerEventPacket(
-                                    ServerEventPacket::Type::EndOfCachedEvents, {},
+                                    ServerEventPacket::Type::EndOfCachedEvents, {{"stats", std::move(all_stats)}},
                                     conn.first);
                             event_socket->send(end_packet);
-                        } else {
+                        }
+                        else
+                        {
                             LOG.info("Maps does not match... (" + std::to_string(map_->getDigest()) + ", " +
                                      std::to_string(packet.getIntData()) + ") Rejecting connection.");
 
@@ -451,6 +475,23 @@ void Server::clearPlayer(sf::Uint32 ip, PlayerConnection& conn)
         ServerEventPacket packet = {ServerEventPacket::Type::PlayerDeath,
                                     {{"k", static_cast<int>(killer_ip)}, {"c", static_cast<int>(cause)}}, ip};
         sendEventToPlayers(packet, false);
+
+        for (const auto& weapon : conn.player_->getWeapons())
+        {
+            if (!weapon->getId().empty() && weapon->getId() != "null")
+            {
+                float x = utils::num::getRandom(-CONF<float>("characters/weapons_drop_offset"),
+                                                CONF<float>("characters/weapons_drop_offset"));
+                float y = utils::num::getRandom(-CONF<float>("characters/weapons_drop_offset"),
+                                                CONF<float>("characters/weapons_drop_offset"));
+                auto special = this->spawnSpecial(conn.player_->getPosition() + sf::Vector2f(x, y), weapon->getId());
+                forbidden_destroyed_specials_.insert(special->getUniqueId());
+                packet = ServerEventPacket(ServerEventPacket::Type::SpecialSpawn, {{"uid", special->getUniqueId()},
+                                                                                   {"id",  special->getId()},
+                                                                                   {"pos", special->getPosition()}}, 0);
+                sendEventToPlayers(packet);
+            }
+        }
     }
 
     conn.player_->setDead();
@@ -566,6 +607,14 @@ void Server::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
             melee_weapon_area->setActive(false);
             player->getCut(*melee_weapon_area->getFather(), factor);
         }
+    }
+
+    auto activation_area = dynamic_cast<ActivationArea*>(h_obj);
+    if (activation_area != nullptr && player != nullptr)
+    {
+        activation_area->setActive(true);
+        activation_area->getFather()->setActive(true);
+        return;
     }
 }
 
@@ -733,9 +782,12 @@ void Server::preupdate(float time_elapsed)
 {
 }
 
-void Server::addToDestroyedSpecials(const std::string& id, const sf::Vector2f& pos)
+void Server::addToDestroyedSpecials(const std::string& id, int uid, const sf::Vector2f& pos)
 {
-    destroyed_specials_.emplace_back(id, pos, time_elapsed_);
+    if (forbidden_destroyed_specials_.count(uid))
+        forbidden_destroyed_specials_.erase(uid);
+    else
+        destroyed_specials_.emplace_back(id, pos, time_elapsed_);
 }
 
 void Server::handlePeriodicalSpecials()

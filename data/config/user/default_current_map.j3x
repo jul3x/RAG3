@@ -1,0 +1,16 @@
+list achievements_unlocked = []
+int exp = 0
+int level = 0
+int kills = 0
+int crystals = 0
+int explosions = 0
+int skill_points = 0
+list skills = []
+
+// List of tuples [name; ammo; list of upgrades]
+list weapons = [["null";1.0;[]]; ["null";1.0;[]]; ["null";1.0;[]]; ["null";1.0;[]]]
+list backpack = []
+
+bool is_checkpoint = false
+vector position = (0.0, 0.0)
+float health = 0

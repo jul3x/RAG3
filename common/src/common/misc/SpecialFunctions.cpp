@@ -27,6 +27,7 @@ SpecialFunctions::SpecialFunctions(Framework* framework) : framework_(framework)
     init("MapStart", &SpecialFunctions::mapStart, "Start new map");
     init("ChangeMapParams", &SpecialFunctions::changeMapParams, "");
     init("MapEnd", &SpecialFunctions::mapEnd, "End this map");
+    init("Checkpoint", &SpecialFunctions::checkpoint, "Save state");
     init("TurnLight", &SpecialFunctions::turnLight, "Press", true);
     init("PourWater", &SpecialFunctions::pourWater, "Pour water on yourself", true);
     init("OpenDoor", &SpecialFunctions::openDoor, "", true);
@@ -38,7 +39,7 @@ SpecialFunctions::SpecialFunctions(Framework* framework) : framework_(framework)
     init("TakeRag3", &SpecialFunctions::takeRag3, "Pick to take");
     init("PickCrystal", &SpecialFunctions::pickCrystal, "Pick crystal");
     init("PayRespect", &SpecialFunctions::payRespect, "Pay respect");
-    init("SpawnThought", &SpecialFunctions::spawnThought, "", true);
+    init("SpawnThought", &SpecialFunctions::spawnThought, "");
     init("SpawnPlayerThought", &SpecialFunctions::spawnPlayerThought, "", true);
     init("ChangeOpenState", &SpecialFunctions::changeOpenState, "Pull the trigger", true);
     init("Teleport", &SpecialFunctions::teleport, "", true);
@@ -139,6 +140,12 @@ void SpecialFunctions::mapEnd(Functional* obj, const j3x::Obj& data, Character* 
     framework_->setFinishMap();
 }
 
+void SpecialFunctions::checkpoint(Functional* obj, const j3x::Obj& data, Character* user)
+{
+    LOG.info("[SpecialFunction] Checkpoint.");
+    framework_->setCheckpoint();
+}
+
 void SpecialFunctions::openDoor(Functional* obj, const j3x::Obj& data, Character* user)
 {
     LOG.info("[SpecialFunction] Open door.");
@@ -204,6 +211,7 @@ void SpecialFunctions::changeOpenState(Functional* obj, const j3x::Obj& data, Ch
     if (user != nullptr)
     {
         framework_->spawnEvent("dust", special_obj->getPosition() + sf::Vector2f{0.0f, 10.0f});
+        framework_->spawnSound(RM.getSound("lever"), special_obj->getPosition());
         if (framework_->getJournal() != nullptr)
             framework_->getJournal()->event<ChangeOpenState>(special_obj);
     }
@@ -517,7 +525,7 @@ void SpecialFunctions::destroy(Functional* obj, const j3x::Obj& data, Character*
 
     const auto& position = dynamic_cast<AbstractPhysicalObject*>(obj)->getPosition();
     framework_->spawnEvent("dust", position);
-    framework_->addToDestroyedSpecials(obj->getId(), position);
+    framework_->addToDestroyedSpecials(obj->getId(), obj->getUniqueId(), position);
     user->setCurrentSpecialObject(nullptr);
     obj->destroy();
 }
@@ -674,6 +682,7 @@ void SpecialFunctions::removeObstacle(Functional* obj, const j3x::Obj& data, Cha
     LOG.info("[SpecialFunction] Removing obstacle.");
     auto obstacle_id = j3x::getObj<int>(data);
     auto obstacle = framework_->getMap()->getObjectById<Obstacle>(obstacle_id);
+
     if (obstacle == nullptr)
     {
         LOG.error("Obstacle to remove not found");

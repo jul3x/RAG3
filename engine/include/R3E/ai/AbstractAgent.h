@@ -24,6 +24,7 @@ namespace r3e::ai {
         virtual ~AbstractAgent();
 
         void registerAgentsManager(std::shared_ptr<AgentsManager> manager);
+        void unregisterAgentsManager();
 
         void setCanAvoidSpecials(bool can);
         void setCurrentGoal(const ai::Goal& goal);
@@ -35,7 +36,7 @@ namespace r3e::ai {
         [[nodiscard]] const ai::Path& getPath() const;
         [[nodiscard]] bool canAvoidSpecials() const;
 
-        [[nodiscard]] sf::Vector2f generateVelocityForPath() const;
+        [[nodiscard]] sf::Vector2f generateVelocityForPath(const sf::Vector2f& offset = {}) const;
 
     private:
         std::shared_ptr<AgentsManager> manager_;

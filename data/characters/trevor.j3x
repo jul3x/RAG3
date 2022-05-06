@@ -1,5 +1,6 @@
 float max_speed=200.0
 float standby_speed=120.0
+float max_hit_distance=600.0
 
 float max_health=12
 

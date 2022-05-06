@@ -1,5 +1,6 @@
 float max_speed=200.0
 float max_running_speed=300.0
+float max_hit_distance=600.0
 
 float standby_speed=100.0
 float side_step_speed=4480.0

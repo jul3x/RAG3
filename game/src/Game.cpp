@@ -163,7 +163,6 @@ void Game::updateMapObjects(float time_elapsed)
         if (!(*it)->update(time_elapsed))
         {
             this->killNPC(it->get());
-
             auto next_it = std::next(it);
             npcs.erase(it);
             it = next_it;
@@ -180,6 +179,7 @@ void Game::killNPC(NPC* npc)
     journal_->event<DestroyCharacter>(npc);
     stats_->killEnemy(npc->getId(), npc->getPosition());
 
+    npc->unregisterAgentsManager();
     this->unregisterCharacter(npc);
 
     // draw on this place destruction
@@ -332,6 +332,7 @@ void Game::cleanPlayerClone()
 {
     if (player_clone_ != nullptr)
     {
+        player_clone_->unregisterAgentsManager();
         this->unregisterCharacter(player_clone_.get(), false);
 
         for (auto& enemy : map_->getList<NPC>())
@@ -642,7 +643,10 @@ void Game::respawn(const std::string& map_name)
 
     journal_->clear();
     this->cleanPlayerClone();
-    this->loadSave();
+    this->loadSave(!map_name.empty());
+
+    if (!map_name.empty())
+        RM.saveConfigFile("user_dir", "current_map", RM.getConfigContent("user_dir", "save"));
 }
 
 void Game::setStartingPosition()
@@ -665,8 +669,10 @@ void Game::preloadSave()
     achievements_->rotate();
 }
 
-void Game::loadSave()
+void Game::loadSave(bool full_save)
 {
+    const std::string which_config = full_save ? "save" : "current_map";
+    CFG.appendConfig("../data/config/user/" + which_config + ".j3x", "save", true);
     preloadSave();
 
     std::vector<std::shared_ptr<AbstractWeapon>> weapons;
@@ -713,17 +719,29 @@ void Game::loadSave()
         const auto& state = j3x::getObj<int>(data, 1);
         player_->setSkill(id, state);
     }
+
+    if (!full_save && CONF<bool>("save/is_checkpoint"))
+    {
+        player_->setHealth(CONF<float>("save/health"));
+        player_->setPosition(CONF<sf::Vector2f>("save/position"));
+    }
 }
 
-void Game::saveState(bool presave)
+void Game::saveState(bool map_end)
 {
     std::string out;
     const auto& maps = CONF<j3x::List>("maps_order");
 
     auto previous_maps = map_->getPreviousMapsAndCurrent();
-    if (presave)
+    if (map_end && !map_->getNextMapName().empty())
         previous_maps.emplace_back(map_->getNextMapName());
-    r3e::j3x::serializeAssign("maps_unlocked", previous_maps, out);
+
+    r3e::j3x::serializeAssign("position", player_->getPosition(), out);
+    r3e::j3x::serializeAssign("health", player_->getHealth(), out);
+    r3e::j3x::serializeAssign("is_checkpoint", !map_end, out);
+
+    r3e::j3x::serializeAssign("maps_unlocked",
+                              is_playing_previous_map_ ? CONF<j3x::List>("save/maps_unlocked") : previous_maps, out);
     r3e::j3x::serializeAssign("achievements_unlocked", achievements_->getAchievementsUnlocked(), out);
     r3e::j3x::serializeAssign("exp", stats_->getExp(), out);
     r3e::j3x::serializeAssign("level", stats_->getLevel(), out);
@@ -735,25 +753,21 @@ void Game::saveState(bool presave)
     r3e::j3x::serializeAssign("weapons", player_->getWeaponsToSerialize(), out);
     r3e::j3x::serializeAssign("backpack", player_->getBackpackToSerialize(), out);
 
-    RM.saveConfigFile("user_dir", "save", out);
-    CFG.appendConfig("../data/config/user/save.j3x", "save", true);
+    if (map_end)
+    {
+        RM.saveConfigFile("user_dir", "save", out);
+    }
+    RM.saveConfigFile("user_dir", "current_map", out);
+    const std::string which_config = map_end ? "save" : "current_map";
+    CFG.appendConfig("../data/config/user/" + which_config + ".j3x", "save", true);
 }
 
 void Game::finishMap()
 {
     Framework::finishMap();
 
-    if (is_playing_previous_map_)
-        ui_->openMenu();
-    else
-    {
-        const auto& new_map = map_->getNextMapName();
-        if (!new_map.empty())
-        {
-            this->saveState(true);
-            this->respawn(map_->getNextMapName());
-        }
-    }
+    this->saveState(true);
+    ui_->openMenu();
 }
 
 void Game::startGame(const std::string& map_name)
@@ -812,4 +826,10 @@ void Game::initSound(bool force)
 bool Game::isMulti() const
 {
     return false;
+}
+
+void Game::setCheckpoint()
+{
+    this->saveState(false);
+    this->ui_->spawnBonusText(player_->getPosition(), "Checkpoint!");
 }

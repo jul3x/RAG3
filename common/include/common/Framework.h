@@ -150,10 +150,11 @@ public:
     // Misc
     virtual void setFinishMap();
     virtual void finishMap();
+    virtual void setCheckpoint();
     virtual void setRag3Time(float duration);
     virtual void forceZoomTo(AbstractPhysicalObject* obj);
     virtual void killPlayer(Player* player);
-    virtual void addToDestroyedSpecials(const std::string& id, const sf::Vector2f& pos);
+    virtual void addToDestroyedSpecials(const std::string& id, int uid, const sf::Vector2f& pos);
     virtual bool isMulti() const;
 
     // State methods
@@ -189,6 +190,8 @@ protected:
     virtual void initSpecials();
     virtual void initPlayer(Player* player);
 
+    [[nodiscard]] float setupDifficultyFactor() const;
+
     std::unique_ptr<Engine> engine_;
     std::unique_ptr<Camera> camera_;
     std::unique_ptr<graphics::Lighting> lighting_;
@@ -215,6 +218,7 @@ protected:
     Framework::GameState state_;
     bool should_finish_map_;
 
+    float difficulty_factor_;
 };
 
 

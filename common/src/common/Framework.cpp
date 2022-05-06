@@ -463,6 +463,7 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     {
         if (bullet->getUser() != character)
         {
+            auto difficulty_factor = difficulty_factor_;
             if (bullet->getUser() != getPlayer())
             {
                 if (character == getPlayer())
@@ -471,12 +472,13 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
                     factor = 1.0f / factor;
                     factor = factor * (strength_skill_factor - getPlayer()->getSkill(Player::Skills::Strength)) /
                              strength_skill_factor;
+                    difficulty_factor = 1.0f / difficulty_factor;
                 }
                 else
                     factor = 1.0f;
             }
 
-            character->getShot(*bullet, factor);
+            character->getShot(*bullet, factor / difficulty_factor);
 
             float offset = bullet->getRotation() > 0.0f && bullet->getRotation() < 180.0f ? -5.0f : 5.0f;
             spawnBloodEvent(character->getPosition() + sf::Vector2f(0.0f, offset), bullet->getRotation() + 180.0f,
@@ -552,10 +554,14 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
     {
         if (character != melee_weapon_area->getFather()->getUser())
         {
+            auto difficulty_factor = difficulty_factor_;
             if (melee_weapon_area->getFather()->getUser() != getPlayer())
             {
                 if (character == getPlayer())
+                {
                     factor = 1.0f / factor;
+                    difficulty_factor = 1.0f / difficulty_factor;
+                }
                 else
                     factor = 1.0f;
             }
@@ -567,7 +573,19 @@ void Framework::alertCollision(HoveringObject* h_obj, DynamicObject* d_obj)
                             angle, melee_weapon_area->getFather()->getDeadlyFactor() * factor);
             spawnSound(RM.getSound("melee_hit"), character->getPosition());
             melee_weapon_area->setActive(false);
-            character->getCut(*melee_weapon_area->getFather(), factor);
+            character->getCut(*melee_weapon_area->getFather(), factor / difficulty_factor);
+        }
+        return;
+    }
+
+    auto activation_area = dynamic_cast<ActivationArea*>(h_obj);
+    if (activation_area != nullptr && character != nullptr)
+    {
+        auto player = dynamic_cast<Player*>(d_obj);
+        if (player != nullptr)
+        {
+            activation_area->setActive(true);
+            activation_area->getFather()->setActive(true);
         }
         return;
     }
@@ -1154,9 +1172,13 @@ void Framework::forceZoomTo(AbstractPhysicalObject* character)
 
 void Framework::killPlayer(Player* player)
 {
-    spawnDecoration(player->getPosition(), "blood");
-    spawnKillEvent(player->getPosition());
-    spawnSound(RM.getSound("henry_dead"), player->getPosition());
+    if (player->isAlive())
+    {
+        spawnDecoration(player->getPosition(), "blood");
+        spawnKillEvent(player->getPosition());
+        spawnSound(RM.getSound("henry_dead"), player->getPosition());
+    }
+
     unregisterCharacter(player);
     player->setDead();
 }
@@ -1215,6 +1237,12 @@ void Framework::initWeapons()
     {
         auto func = this->getSpawningFunction(RMGET<std::string>("weapons", weapon->getId(), "spawn_func"));
         weapon->registerSpawningFunction(std::get<0>(func), std::get<1>(func));
+
+        auto activation_area = weapon->getActivationArea();
+        if (activation_area != nullptr)
+        {
+            engine_->registerObj<HoveringObject>(activation_area);
+        }
     }
 }
 
@@ -1322,6 +1350,7 @@ void Framework::respawn(const std::string& map_name)
     ui_->initializeTutorialArrows();
     setGameState(Framework::GameState::Normal);
     should_finish_map_ = false;
+    difficulty_factor_ = setupDifficultyFactor();
 }
 
 void Framework::finishMap()
@@ -1405,7 +1434,7 @@ Framework::~Framework()
     this->engine_->getAnimationEvents().clear();
 }
 
-void Framework::addToDestroyedSpecials(const std::string& id, const sf::Vector2f& pos)
+void Framework::addToDestroyedSpecials(const std::string& id, int uid, const sf::Vector2f& pos)
 {
 
 }
@@ -1418,4 +1447,15 @@ bool Framework::isMulti() const
 bool Framework::canUpgradeSkills()
 {
     return !isMulti() && isNormalGameplay() && getPlayer()->isAlive() && getPlayer()->getSkillPoints() > 0;
+}
+
+void Framework::setCheckpoint()
+{
+
+}
+
+float Framework::setupDifficultyFactor() const
+{
+    const auto& difficulty = CONF<std::string>("general/game_type");
+    return CONF<float>(difficulty + "_difficulty_factor");
 }

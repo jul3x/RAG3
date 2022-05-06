@@ -25,6 +25,7 @@ public:
     void mapStart(Functional* obj, const j3x::Obj& data, Character* user);
     void changeMapParams(Functional* obj, const j3x::Obj& data, Character* user);
     void mapEnd(Functional* obj, const j3x::Obj& data, Character* user);
+    void checkpoint(Functional* obj, const j3x::Obj& data, Character* user);
 
     void payRespect(Functional* obj, const j3x::Obj& data, Character* user);
     void turnLight(Functional* obj, const j3x::Obj& data, Character* user);

@@ -28,14 +28,18 @@ float achievements_update_time = 0.4
 float forced_zoom_to_time = 0.4
 float running_min_time = 1.0
 string about_text = "Lorem ipsum dolor sit amet. \nTODO..."
-list characters_to_play = ["henry"; "rat"; "cultist"; "trevor"; "chupacabra"; "time_addict"; "giorgio"]
+list characters_to_play = ["henry"; "rat"; "cultist"; "trevor"; "berserker"; "chupacabra"; "time_addict"; "giorgio"]
 list multi_to_play = ["henry"; "green_bastard"; "gray_oldman"; "rusty_fooley"; "pink_floyd"; "hazy_potter";
                       "slippery_amigo"]
 list settings_tabs = ["general"; "controls"; "graphics"; "sound"]
 list server_settings_tabs = ["server"; "graphics"; "sound"]
+float easy_difficulty_factor = 0.6
+float normal_difficulty_factor = 1.0
+float hard_difficulty_factor = 1.5
+float impossible_difficulty_factor = 3.0
 
 // FIRE MECHANICS
-float on_fire_hurt_speed = 10.0
+float on_fire_hurt_speed = 5.0
 float on_fire_time = 3.0
 float fire_life = 1.0
 float fire_speed = 200.0
@@ -63,8 +67,8 @@ float side_step_force_duration = 0.1
 int crystal_pick_exp = 50
 
 // MAPS
-list maps_order = ["first_new_map"; "map_new"]
-list multi_maps_order = ["intro"; "multi_map"]
+list maps_order = ["first_new_map"]
+list multi_maps_order = ["multi_map"]
 string map_name_intro = "Intro"
 string map_name_first_new_map = "Tutorial"
 string map_name_map_new = "Test map"
@@ -77,3 +81,4 @@ int udp_server_port = 54002
 bool draw_server = true
 int max_player_message_length = 50
 list kill_thoughts = ["Gotcha!"; "Well, isn't that lovely?"; "This had to be done..."; "Pwn3d!"; "}:->"]
+float multi_max_health = 25

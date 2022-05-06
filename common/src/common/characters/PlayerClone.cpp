@@ -41,9 +41,13 @@ bool PlayerClone::update(float time_elapsed)
     handleVisibilityState();
     handleActionState();
 
-    auto enemy_position = current_enemy_ == nullptr ? sf::Vector2f{} : current_enemy_->getPosition();
+    auto enemy_position = current_enemy_ == nullptr ? sf::Vector2f{} : current_enemy_->getPosition() +
+                                                                       RMGET<sf::Vector2f>("characters",
+                                                                                           current_enemy_->getId(),
+                                                                                           "map_offset");
     auto velocity = RMGET<float>("characters", this->getId(), "max_speed") *
-                    this->getSpeedFactor() * this->generateVelocityForPath();
+                    this->getSpeedFactor() *
+                    this->generateVelocityForPath(RMGET<sf::Vector2f>("characters", this->getId(), "map_offset"));
 
     switch (action_state_)
     {

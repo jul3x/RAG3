@@ -7,6 +7,7 @@ float crosshair_min_distance = 50.0
 // IT SHOULD PROBABLY BE IN PARTICULAR CHARACTER DESCRIPTION
 int ammo_dropped = 3
 float ammo_drop_offset = 14.0
+float weapons_drop_offset = 20.0
 float bullet_starting_offset = 0.0
 
 // TALKING
@@ -26,10 +27,10 @@ int max_path_search_depth = 1000
 list levels_experience = [100; 250; 1500; 5000; 15000; 30000; 100000; 250000]
 int skill_points_per_level = 10
 int max_skills_count = 100
-float strength_skill_factor = 50.0
-float health_skill_factor = 25.0
-float agility_skill_factor = 25.0
-float intelligence_skill_factor = 25.0
+float strength_skill_factor = 25.0
+float health_skill_factor = 15.0
+float agility_skill_factor = 15.0
+float intelligence_skill_factor = 20.0
 float max_base_time_manipulation = 2.5
 float time_manipulation_fuel_speed = 0.2
 float time_manipulation_slow_use_speed = 4.0

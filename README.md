@@ -36,6 +36,19 @@ Steering can be changed by user. By default it is:
 - *F* triggers object activation if player is somewhere near and *T* talks to the talkable NPC.
 - *R* triggers time reversal. 
 
+## Multiplayer
+
+Currently game provides only self-hosted multiplayer architecture.
+The gameplay resembles a dynamic deathmatch from old times of gaming. 
+To play with your friends you need to start **Rag3Server** on one of your computers or on dedicated machine.
+There are several settings which can be adjusted before starting the server.
+Last thing to do is to pick map and start the game.  
+
+Every player should be able to reach server host on the game TCP/UDP ports (54000, 54001, 54002 by default).
+Computers should be connected via LAN or (if playing via Internet) Virtual LAN (*ZeroTier*, *Hamachi* etc.).
+To connect to the server each player should run **Rag3Client**, pick his nickname and skin (there are plenty of them)
+and enter server's IP address. Easy-peasy. 
+
 ## Contribution
 Every volunteer is strongly encouraged to take part in a development process.  
 

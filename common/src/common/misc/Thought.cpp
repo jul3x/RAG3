@@ -2,8 +2,6 @@
 // Created by jul3x on 01.04.20.
 //
 
-#include <cassert>
-
 #include <common/ResourceManager.h>
 
 #include <common/misc/Thought.h>
@@ -23,7 +21,8 @@ Thought::Thought(AbstractPhysicalObject* father, std::string text, float duratio
     top_.changeOrigin({0.0f, CONF<sf::Vector2f>("graphics/thought_size_top").y});
     text_.setFillColor(sf::Color::White);
 
-    auto wrapped_text = Thought::wrapText(std::move(text));
+    static const auto max_length_per_line = CONF<int>("graphics/thought_max_line_length");
+    auto wrapped_text = utils::wrapText(std::move(text), max_length_per_line);
     text_.setFont(RM.getFont());
     text_.setString(wrapped_text);
     text_.setCharacterSize(CONF<float>("graphics/thought_text_size"));
@@ -87,38 +86,4 @@ void Thought::draw(sf::RenderTarget& target, sf::RenderStates states) const
 AbstractPhysicalObject* Thought::getFather() const
 {
     return father_;
-}
-
-std::string Thought::wrapText(std::string text)
-{
-    static const auto max_length_per_line = CONF<int>("graphics/thought_max_line_length");
-    assert(max_length_per_line > 3);
-
-    int previous_space = -1;
-    for (int i = 0, line_i = 0; i < text.length(); ++i, ++line_i)
-    {
-        if (text[i] == ' ')
-            previous_space = i;
-
-        if (text[i] == '\n')
-            line_i = -1;
-
-        if (line_i >= max_length_per_line)
-        {
-            if (previous_space != -1)
-            {
-                text[previous_space] = '\n';
-                i = previous_space;
-                previous_space = -1;
-            }
-            else
-            {
-                text[i - 1] = text[i - 2] = text[i - 3] = '.';
-                text[i] = '\n';
-            }
-            line_i = -1;
-        }
-    }
-
-    return text;
 }

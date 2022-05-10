@@ -2,6 +2,8 @@
 // Created by jul3x on 22.03.21.
 //
 
+#include <cassert>
+
 #include <SFML/Window/Keyboard.hpp>
 
 #include <R3E/utils/Misc.h>
@@ -37,6 +39,39 @@ namespace r3e::utils {
         std::transform(out.begin(), out.end(), out.begin(),
                        [](unsigned char c) { return std::toupper(c); });
         return out;
+    }
+
+    std::string wrapText(std::string text, int max_length_per_line)
+    {
+        assert(max_length_per_line > 3);
+
+        int previous_space = -1;
+        for (int i = 0, line_i = 0; i < text.length(); ++i, ++line_i)
+        {
+            if (text[i] == ' ')
+                previous_space = i;
+
+            if (text[i] == '\n')
+                line_i = -1;
+
+            if (line_i >= max_length_per_line)
+            {
+                if (previous_space != -1)
+                {
+                    text[previous_space] = '\n';
+                    i = previous_space;
+                    previous_space = -1;
+                }
+                else
+                {
+                    text[i - 1] = text[i - 2] = text[i - 3] = '.';
+                    text[i] = '\n';
+                }
+                line_i = -1;
+            }
+        }
+
+        return text;
     }
 
     bool startsWith(const std::string& what, const std::string& prefix)

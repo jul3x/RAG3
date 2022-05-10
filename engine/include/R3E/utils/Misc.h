@@ -102,6 +102,7 @@ namespace r3e::utils {
     std::string toLower(const std::string& word);
     std::string toUpper(const std::string& word);
     std::string humanize(const std::string& word);
+    std::string wrapText(std::string text, int max_chars);
     bool startsWith(const std::string& what, const std::string& prefix);
     bool endsWith(const std::string& what, const std::string& suffix);
     std::string keyToString(sf::Keyboard::Key key);

@@ -19,7 +19,6 @@ public:
     Thought(AbstractPhysicalObject* father, std::string text, float duration);
 
     bool update(float time_elapsed) override;
-    static inline std::string wrapText(std::string text);
 
     AbstractPhysicalObject* getFather() const;
 

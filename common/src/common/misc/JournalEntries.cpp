@@ -16,7 +16,6 @@ TimeReversal::TimeReversal(Journal* father, void* placeholder) : JournalEntry(fa
 void TimeReversal::executeEntryReversal()
 {
     auto new_ptr = father_->getFramework()->spawnNewPlayerClone(picked_weapon_);
-    //father_->setUpdatedPtr(father_->getFramework()->getPlayer(), new_ptr);
 }
 
 CharacterEntry::CharacterEntry(Journal* father, Character* ptr) : JournalEntry(father), ptr_(ptr)

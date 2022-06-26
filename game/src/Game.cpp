@@ -502,32 +502,17 @@ void Game::updatePlayers(float time_elapsed)
         player_clone_->setCurrentTalkableCharacter(nullptr);
         if (!player_clone_->update(time_elapsed))
         {
-            // draw on this place destruction
             spawnDecoration(player_clone_->getPosition(), "blood");
             spawnKillEvent(player_clone_->getPosition());
+            spawnSound(RM.getSound(player_clone_->getId() + "_dead"), player_clone_->getPosition());
 
             this->cleanPlayerClone();
-
-            player_->setHealth(0); // player clone is dead - so do player
-            player_->setPossibleDeathCause(DeathCause::PlayerCloneDeath, nullptr);
-            spawnSound(RM.getSound(player_->getId() + "_dead"), player_->getPosition());
         }
     }
 
     if (player_clone_ != nullptr && !player_clone_->isLifeTime())
     {
         this->spawnTeleportationEvent(player_clone_->getPosition());
-
-        const auto& player_clone_weapon = player_clone_->getWeapons().at(player_clone_->getCurrentWeapon());
-        auto player_weapon = std::find_if(player_->getWeapons().begin(), player_->getWeapons().end(),
-                                          [&player_clone_weapon](const auto& it) {
-                                              return player_clone_weapon->getId() == it->getId();
-                                          });
-
-        if (player_weapon != player_->getWeapons().end())
-            (*player_weapon)->setState(player_clone_weapon->getState());
-
-        player_->setHealth(player_clone_->getHealth());
         camera_->setZoomInOut();
         this->cleanPlayerClone();
     }

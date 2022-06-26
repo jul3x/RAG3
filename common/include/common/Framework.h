@@ -182,6 +182,7 @@ protected:
     virtual void drawAdditionalPlayers(graphics::Graphics& graphics);
     virtual void drawAdditionalPlayersLighting();
     void clearStartingPositions();
+    void killCharacter(Character* character);
 
     virtual void initObstacles();
     virtual void initDecorations();

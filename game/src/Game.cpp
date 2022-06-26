@@ -184,10 +184,7 @@ void Game::killNPC(NPC* npc)
     npc->unregisterAgentsManager();
     this->unregisterCharacter(npc);
 
-    // draw on this place destruction
-    spawnDecoration(npc->getPosition(), "blood");
-    spawnKillEvent(npc->getPosition());
-    spawnSound(RM.getSound(npc->getId() + "_dead"), npc->getPosition());
+    this->killCharacter(npc);
 
     if (npc->getActivation() == Functional::Activation::OnKill && npc->isActive())
     {
@@ -502,10 +499,7 @@ void Game::updatePlayers(float time_elapsed)
         player_clone_->setCurrentTalkableCharacter(nullptr);
         if (!player_clone_->update(time_elapsed))
         {
-            spawnDecoration(player_clone_->getPosition(), "blood");
-            spawnKillEvent(player_clone_->getPosition());
-            spawnSound(RM.getSound(player_clone_->getId() + "_dead"), player_clone_->getPosition());
-
+            this->killCharacter(player_clone_.get());
             this->cleanPlayerClone();
         }
     }

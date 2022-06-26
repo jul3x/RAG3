@@ -1042,7 +1042,6 @@ void Framework::unregisterCharacter(Character* character, bool clear_clone)
     engine_->unregisterObj<DynamicObject>(character);
     this->unregisterTalkableArea(character);
     this->unregisterWeapons(character);
-
 }
 
 void Framework::registerFunctions(Functional* functional) const
@@ -1174,9 +1173,7 @@ void Framework::killPlayer(Player* player)
 {
     if (player->isAlive())
     {
-        spawnDecoration(player->getPosition(), "blood");
-        spawnKillEvent(player->getPosition());
-        spawnSound(RM.getSound("henry_dead"), player->getPosition());
+        this->killCharacter(player);
     }
 
     unregisterCharacter(player);
@@ -1458,4 +1455,11 @@ float Framework::setupDifficultyFactor() const
 {
     const auto& difficulty = CONF<std::string>("general/game_type");
     return CONF<float>(difficulty + "_difficulty_factor");
+}
+
+void Framework::killCharacter(Character* character)
+{
+    spawnDecoration(character->getPosition(), "blood");
+    spawnKillEvent(character->getPosition());
+    spawnSound(RM.getSound(character->getId() + "_dead"), character->getPosition());
 }

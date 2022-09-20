@@ -139,6 +139,8 @@ void Game::updateTimeReversal(float time_elapsed)
 
         if (clone_light != nullptr)
             clone_light->setPosition(player_clone_->getPosition());
+
+        camera_->setPointingTo(getPlayer()->getPosition());
     }
 
     Framework::updateTimeReversal(time_elapsed);
@@ -182,20 +184,12 @@ void Game::killNPC(NPC* npc)
     npc->unregisterAgentsManager();
     this->unregisterCharacter(npc);
 
-    // draw on this place destruction
-    spawnDecoration(npc->getPosition(), "blood");
-    spawnKillEvent(npc->getPosition());
-    spawnSound(RM.getSound(npc->getId() + "_dead"), npc->getPosition());
+    this->killCharacter(npc);
 
     if (npc->getActivation() == Functional::Activation::OnKill && npc->isActive())
     {
         npc->use(npc);
     }
-}
-
-Player* Game::getPlayer()
-{
-    return player_.get();
 }
 
 PlayerClone* Game::getPlayerClone()
@@ -505,32 +499,14 @@ void Game::updatePlayers(float time_elapsed)
         player_clone_->setCurrentTalkableCharacter(nullptr);
         if (!player_clone_->update(time_elapsed))
         {
-            // draw on this place destruction
-            spawnDecoration(player_clone_->getPosition(), "blood");
-            spawnKillEvent(player_clone_->getPosition());
-
+            this->killCharacter(player_clone_.get());
             this->cleanPlayerClone();
-
-            player_->setHealth(0); // player clone is dead - so do player
-            player_->setPossibleDeathCause(DeathCause::PlayerCloneDeath, nullptr);
-            spawnSound(RM.getSound(player_->getId() + "_dead"), player_->getPosition());
         }
     }
 
     if (player_clone_ != nullptr && !player_clone_->isLifeTime())
     {
         this->spawnTeleportationEvent(player_clone_->getPosition());
-
-        const auto& player_clone_weapon = player_clone_->getWeapons().at(player_clone_->getCurrentWeapon());
-        auto player_weapon = std::find_if(player_->getWeapons().begin(), player_->getWeapons().end(),
-                                          [&player_clone_weapon](const auto& it) {
-                                              return player_clone_weapon->getId() == it->getId();
-                                          });
-
-        if (player_weapon != player_->getWeapons().end())
-            (*player_weapon)->setState(player_clone_weapon->getState());
-
-        player_->setHealth(player_clone_->getHealth());
         camera_->setZoomInOut();
         this->cleanPlayerClone();
     }
@@ -832,4 +808,9 @@ void Game::setCheckpoint()
 {
     this->saveState(false);
     this->ui_->spawnBonusText(player_->getPosition(), "Checkpoint!");
+}
+
+Player* Game::getPlayer()
+{
+    return player_.get();
 }

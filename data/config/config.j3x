@@ -85,11 +85,11 @@ int crystal_pick_exp = 50
 
 // MAPS
 list maps_order = ["first_new_map"]
-list multi_maps_order = ["multi_map"]
+list multi_maps_order = ["multi"]
 string map_name_intro = "Intro"
 string map_name_first_new_map = "Tutorial"
 string map_name_map_new = "Test map"
-string map_name_multi_map = "Arena"
+string map_name_multi = "Arena"
 
 // MULTI
 int tcp_port = 54000

@@ -1,0 +1,21 @@
+vector size=(32.0,32.0)
+vector collision_offset=(0.0,0.0)
+vector map_offset=(0.0,0.0)
+float collision_radius=16.0
+
+
+
+int frames_number=1
+float frame_duration=0.0
+
+string default_activation="OnEnter"
+list default_functions=["Teleport"; "SpawnSound"; "SpawnAnimationEvent"]
+list default_datas=[(0,0); ["fall"; (0,0)]; ["melee_giorgio_swirl"; (0,0)]]
+
+bool is_drawable=true
+
+int z_index=1
+
+string light_point=""
+bool shadow=true
+bool default_active=true

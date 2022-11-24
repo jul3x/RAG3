@@ -1,7 +1,7 @@
 vector size=(32.0,32.0)
-vector collision_offset=(0.0,0.0)
+vector collision_offset=(0.0,-16.0)
 vector map_offset=(0.0,0.0)
-float collision_radius=16.0
+float collision_radius=8.0
 
 
 

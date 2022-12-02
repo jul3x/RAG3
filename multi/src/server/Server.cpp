@@ -24,8 +24,12 @@ void Server::initialize()
     CFG.set("maps_order", CONF<j3x::List>("multi_maps_order"));
 
     // Mockup to load parameters
-    RMGET<float>("characters", "henry", "max_health");
-    RMSET<float>("characters", "henry", "max_health", CONF<float>("multi_max_health"));
+    for (const auto& skin : CONF<j3x::List>("multi_to_play"))
+    {
+        auto skin_str = j3x::getObj<std::string>(skin);
+        RMGET<float>("characters", skin_str, "max_health");
+        RMSET<float>("characters", skin_str, "max_health", CONF<float>("multi_max_health"));
+    }
 
     Framework::initialize();
 

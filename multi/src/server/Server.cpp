@@ -126,15 +126,29 @@ void Server::checkAwaitingConnections()
             if (connections_.count(ip) && connections_[ip].status_ != ConnectionStatus::Off)
                 return;
 
-            auto[new_connection, placeholder] = connections_.emplace(ip, PlayerConnection());
+            auto [new_connection, placeholder] = connections_.emplace(ip, PlayerConnection());
 
             new_connection->second.events_socket_ = client;
 
-            if (connections_.size() >= CONF<int>("server/max_players"))
+            auto too_many_players = connections_.size() > CONF<int>("server/max_players");
+            auto too_many_cached_events = cached_events_.size() > 75;
+
+            if (too_many_players || too_many_cached_events)
             {
                 connection_parameters["s"] = static_cast<int>(ConnectionStatus::Off);
-                connection_parameters["reason"] = std::string("Too many players.");
-                LOG.info("Too many players... Rejecting connection.");
+
+                if (too_many_players)
+                {
+                    connection_parameters["reason"] = std::string("Too many players.");
+                    LOG.info("Too many players... Rejecting connection.");
+                }
+                else if (too_many_cached_events)
+                {
+                    connection_parameters["reason"] = std::string(
+                        "Players are already playing..."
+                    );
+                    LOG.info("Too many cached events... Rejecting connection.");
+                }
 
                 auto packet = ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters, ip);
 
@@ -299,12 +313,14 @@ void Server::handleEventsFromPlayers()
                         {
                             case PlayerEventPacket::Type::UseObject:
                             {
-                                useSpecialObject(player, conn.first);
+                                if (player->isAlive())
+                                    useSpecialObject(player, conn.first);
                                 break;
                             }
                             case PlayerEventPacket::Type::UseBackpackObject:
                             {
-                                player->useItem(j3x::get<std::string>(packet.getParams(), "id"));
+                                if (player->isAlive())
+                                    player->useItem(j3x::get<std::string>(packet.getParams(), "id"));
                                 break;
                             }
                             case PlayerEventPacket::Type::NameChange:
@@ -797,7 +813,7 @@ void Server::addToDestroyedSpecials(const std::string& id, int uid, const sf::Ve
 void Server::handlePeriodicalSpecials()
 {
     utils::eraseIf<PeriodicalSpecial>(destroyed_specials_, [this](auto& special) {
-        static const auto spawn_time = CONF<float>("server/object_spawn_time");
+        const auto spawn_time = CONF<float>("server/object_spawn_time");
 
         if (std::get<2>(special) + spawn_time < time_elapsed_)
         {

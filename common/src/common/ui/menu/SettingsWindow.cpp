@@ -347,7 +347,7 @@ StringSettingsWidget::StringSettingsWidget(tgui::Theme* theme, const std::string
     editbox_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
     editbox_->setSize(CONF<sf::Vector2f>("graphics/menu_edit_box_size"));
     editbox_->setRenderer(theme->getRenderer("EditBoxGame"));
-    editbox_->setMaximumCharacters(100);
+    editbox_->setMaximumCharacters(16);
 }
 
 [[nodiscard]] tgui::Widget::Ptr StringSettingsWidget::getWidget() const

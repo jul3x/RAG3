@@ -146,7 +146,7 @@ Special* Client::getCurrentSpecialObject() const
 void Client::useSpecialObject()
 {
     auto curr = player_->getCurrentSpecialObject();
-    if (curr != nullptr)
+    if (curr != nullptr && player_->isAlive())
     {
         PlayerEventPacket packet(PlayerEventPacket::Type::UseObject);
         events_socket_.send(packet);
@@ -712,6 +712,9 @@ void Client::close()
 
 void Client::useItem(const std::string& id)
 {
+    if (player_ == nullptr || !player_->isAlive())
+        return;
+
     Framework::useItem(id);
     j3x::Parameters data;
     data["id"] = id;

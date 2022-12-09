@@ -1273,7 +1273,7 @@ float Framework::getRag3Time() const
 void Framework::useItem(const std::string& id)
 {
     auto player = getPlayer();
-    if (player != nullptr)
+    if (player != nullptr && player->isAlive())
     {
         player->useItem(id);
         spawnSound(RM.getSound("ui_click"), player->getPosition());

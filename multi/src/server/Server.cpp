@@ -130,11 +130,25 @@ void Server::checkAwaitingConnections()
 
             new_connection->second.events_socket_ = client;
 
-            if (connections_.size() > CONF<int>("server/max_players"))
+            auto too_many_players = connections_.size() > CONF<int>("server/max_players");
+            auto too_many_cached_events = cached_events_.size() > 75;
+
+            if (too_many_players || too_many_cached_events)
             {
                 connection_parameters["s"] = static_cast<int>(ConnectionStatus::Off);
-                connection_parameters["reason"] = std::string("Too many players.");
-                LOG.info("Too many players... Rejecting connection.");
+
+                if (too_many_players)
+                {
+                    connection_parameters["reason"] = std::string("Too many players.");
+                    LOG.info("Too many players... Rejecting connection.");
+                }
+                else if (too_many_cached_events)
+                {
+                    connection_parameters["reason"] = std::string(
+                        "Players are already playing..."
+                    );
+                    LOG.info("Too many cached events... Rejecting connection.");
+                }
 
                 auto packet = ServerEventPacket(ServerEventPacket::Type::Connection, connection_parameters, ip);
 
@@ -299,12 +313,14 @@ void Server::handleEventsFromPlayers()
                         {
                             case PlayerEventPacket::Type::UseObject:
                             {
-                                useSpecialObject(player, conn.first);
+                                if (player->isAlive())
+                                    useSpecialObject(player, conn.first);
                                 break;
                             }
                             case PlayerEventPacket::Type::UseBackpackObject:
                             {
-                                player->useItem(j3x::get<std::string>(packet.getParams(), "id"));
+                                if (player->isAlive())
+                                    player->useItem(j3x::get<std::string>(packet.getParams(), "id"));
                                 break;
                             }
                             case PlayerEventPacket::Type::NameChange:

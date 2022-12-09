@@ -139,7 +139,9 @@ Player::addSpecialToBackpack(const std::string& id, int count, const std::functi
         }
     }
 
-    backpack_.emplace_back(std::make_pair(Special({}, id), count));
+    backpack_.emplace_back(std::make_pair(
+        Special({std::numeric_limits<float>::max(), std::numeric_limits<float>::max()}, id), count)
+    );
     backpack_.back().first
              .setSize(CONF<float>("graphics/GLOBAL_ZOOM") * RMGET<sf::Vector2f>("specials", id, "size"));
     backpack_.back().first.changeOrigin(

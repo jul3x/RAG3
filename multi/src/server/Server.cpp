@@ -126,11 +126,11 @@ void Server::checkAwaitingConnections()
             if (connections_.count(ip) && connections_[ip].status_ != ConnectionStatus::Off)
                 return;
 
-            auto[new_connection, placeholder] = connections_.emplace(ip, PlayerConnection());
+            auto [new_connection, placeholder] = connections_.emplace(ip, PlayerConnection());
 
             new_connection->second.events_socket_ = client;
 
-            if (connections_.size() >= CONF<int>("server/max_players"))
+            if (connections_.size() > CONF<int>("server/max_players"))
             {
                 connection_parameters["s"] = static_cast<int>(ConnectionStatus::Off);
                 connection_parameters["reason"] = std::string("Too many players.");

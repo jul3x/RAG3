@@ -797,7 +797,7 @@ void Server::addToDestroyedSpecials(const std::string& id, int uid, const sf::Ve
 void Server::handlePeriodicalSpecials()
 {
     utils::eraseIf<PeriodicalSpecial>(destroyed_specials_, [this](auto& special) {
-        static const auto spawn_time = CONF<float>("server/object_spawn_time");
+        const auto spawn_time = CONF<float>("server/object_spawn_time");
 
         if (std::get<2>(special) + spawn_time < time_elapsed_)
         {

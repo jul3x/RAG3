@@ -2,6 +2,6 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 cd $DIR
-cmake CMakeLists.txt
+cmake CMakeLists.txt -DCMAKE_BUILD_TYPE=Release
 make
 ./run.bash

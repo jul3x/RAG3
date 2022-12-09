@@ -93,6 +93,33 @@ Package uses **C++17** language, so you need a compatible compiler. Tested on **
 -----
 
 ## Changelog
+* 9-12-2022 Rag3 DEMO Release (v0.1.0)
+    - Full mechanics with fully adjustable self-made game engine
+    - Systems for:
+        * graphics
+        * sound
+        * dynamic music
+        * networking
+        * time manipulation
+        * physics
+        * `*.j3x` config iterpretation
+        * AI
+        * UI
+        * particles
+        * skills
+        * weapon upgrades
+        * conversations
+        * events
+        * achievements
+        * statistics
+        * state saving
+    - Complete first map for single player
+    - Full multiplayer mechanics
+    - Complete arena for multiplayer deathmatch
+    - Stable release for Windows and Linux
+    - Stable map and game editor for Windows and Linux
+    - Game trailer with website
+    - Original soundtrack
 * 30-09-2019 Rag3 v0.0.0
     - Beginning of work
 
@@ -100,4 +127,4 @@ Package uses **C++17** language, so you need a compatible compiler. Tested on **
 
 ~jul3x
 
-[VERSION]: https://img.shields.io/badge/version-0.0.0-blue.svg
+[VERSION]: https://img.shields.io/badge/version-0.1.0-blue.svg

@@ -25,6 +25,10 @@ Join to the adventure and help main character in preventing the tragic events.
  You can play in **multiplayer mode** with your friends as well!  
 
  Beware! Travelling in time comes with consequences. Be careful when you meet your past self!
+ 
+## Teaser
+
+https://www.youtube.com/watch?v=OUkuwZWQWeQ
 
 ## Control
 

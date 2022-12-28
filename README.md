@@ -78,7 +78,7 @@ Usage of this tool is described in [RAG3Editor Instruction](/Rag3EditorInstructi
 Package uses **C++17** language, so you need a compatible compiler. Tested on **g++9** and **MinGW64 6.0**.
 
 * **Windows**
-    - Download **SFML @165b715d020e39264d35862aeb15e9139f059575** and **TGUI 0.8.9** from their homepages.
+    - Download **SFML 2,6** and **TGUI 0.8.9** from their homepages.
     - Change lines below in `CMakeLists.txt`  file to appropriate paths:
         ```
         set(SFML_ROOT "C:/SFML-2.5.1")
@@ -90,7 +90,7 @@ Package uses **C++17** language, so you need a compatible compiler. Tested on **
     GTest from the latest commit on master branch required.
     
 * **Linux**
-    - Download **SFML @165b715d020e39264d35862aeb15e9139f059575** and **TGUI 0.8.9** using your package manager (instructions on their site).
+    - Download **SFML 2,6** and **TGUI 0.8.9** using your package manager (instructions on their site).
     - Use `build_and_run.bash` script to build game and editor.
     - Use `build_and_run_tests.bash` script to build tests. GTest from the latest commit on master branch required.
   

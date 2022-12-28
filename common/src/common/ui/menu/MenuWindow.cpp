@@ -19,7 +19,7 @@ MenuWindow::MenuWindow(tgui::Gui* gui, tgui::Theme* theme, const std::string& he
         CONF<int>("graphics/window_height_px") / 2.0f
     };
 
-    background_.setFillColor(sf::Color(0, 0, 0, 160));
+    background_.setFillColor(sf::Color(0, 0, 0, 210));
     background_.setOutlineColor(sf::Color(255, 255, 255, 200));
     background_.setOutlineThickness(2.0f * CONF<float>("graphics/user_interface_zoom"));
     background_.setPosition(pos_);

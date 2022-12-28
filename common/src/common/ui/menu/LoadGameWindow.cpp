@@ -13,22 +13,17 @@ LoadGameWindow::LoadGameWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
         MenuWindow(gui, theme, "> Load game"),
         framework_(framework)
 {
-    auto pos = CONF<sf::Vector2f>("graphics/menu_window_pos") +
-               sf::Vector2f((CONF<float>("graphics/menu_bar_width_px") + CONF<int>("graphics/window_width_px")) / 2.0f,
-                            CONF<float>("graphics/menu_window_header_size") * 2.0f);
-
+    auto pos = pos_ + sf::Vector2f(0.0f, CONF<float>("graphics/menu_window_header_size") * 2.0f);
     text_ = tgui::Label::create("Select map which you want to play:");
     text_->setRenderer(theme->getRenderer("Text"));
     text_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
-    text_->setPosition(sf::Vector2f{pos.x - CONF<sf::Vector2f>("graphics/menu_window_size").x / 2.0f, pos.y} +
+    text_->setPosition(sf::Vector2f{pos.x - size_.x, pos.y - size_.y / 2.0f} +
                        CONF<sf::Vector2f>("graphics/menu_window_header_pos"));
 
     gui->add(text_);
 
-    scroll_panel_ = tgui::ScrollablePanel::create({CONF<sf::Vector2f>("graphics/menu_window_size").x,
-                                                   CONF<sf::Vector2f>("graphics/menu_window_size").y * 0.7f});
-    scroll_panel_->setPosition(pos + sf::Vector2f{-CONF<sf::Vector2f>("graphics/menu_window_size").x * 0.5f,
-                                                  CONF<float>("graphics/menu_window_header_size") * 2.0f});
+    scroll_panel_ = tgui::ScrollablePanel::create({size_.x, size_.y * 0.7f});
+    scroll_panel_->setPosition(pos + sf::Vector2f{-size_.x, -size_.y / 2.0f + CONF<float>("graphics/menu_window_header_size") * 2.0f});
     scroll_panel_->setHorizontalScrollbarPolicy(tgui::Scrollbar::Policy::Never);
     scroll_panel_->setVerticalScrollAmount(100);
     scroll_panel_->setRenderer(theme->getRenderer("ScrollablePanelGame"));

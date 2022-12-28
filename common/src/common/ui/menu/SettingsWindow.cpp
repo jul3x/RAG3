@@ -16,11 +16,7 @@ SettingsWindow::SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
         framework_(framework), theme_(theme), gui_(gui),
         focused_controls_widget_(nullptr)
 {
-    auto pos = CONF<sf::Vector2f>("graphics/menu_window_pos") +
-               sf::Vector2f((CONF<float>("graphics/menu_bar_width_px") + CONF<int>("graphics/window_width_px") -
-                             CONF<sf::Vector2f>("graphics/menu_window_size").x) / 2.0f, 0.0f);
-
-    pos = {pos.x, pos.y + 0.2f * CONF<sf::Vector2f>("graphics/menu_window_size").y};
+    auto pos = sf::Vector2f{pos_.x - size_.x, pos_.y - 0.3f * size_.y};
     tabs_ = tgui::Tabs::create();
     tabs_->setRenderer(theme->getRenderer("TabsGame"));
     tabs_->setTabHeight(CONF<float>("graphics/menu_settings_tabs_height"));
@@ -75,8 +71,7 @@ SettingsWindow::SettingsWindow(tgui::Gui* gui, tgui::Theme* theme, Framework* fr
     });
     gui->add(restore_button_);
 
-    scroll_panel_ = tgui::ScrollablePanel::create({CONF<sf::Vector2f>("graphics/menu_window_size").x,
-                                                   0.8f * CONF<sf::Vector2f>("graphics/menu_window_size").y});
+    scroll_panel_ = tgui::ScrollablePanel::create({size_.x, 0.8f * size_.y});
     scroll_panel_->setPosition(pos);
     scroll_panel_->setHorizontalScrollbarPolicy(tgui::Scrollbar::Policy::Never);
     scroll_panel_->setVerticalScrollAmount(100);

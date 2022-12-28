@@ -24,6 +24,7 @@ public:
 
 protected:
     bool is_visible_;
+    sf::Vector2f pos_, size_;
 
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override

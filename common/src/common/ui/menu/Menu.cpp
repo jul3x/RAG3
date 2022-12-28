@@ -174,6 +174,7 @@ void Menu::makeMenuElements(const std::vector<std::pair<std::string, std::functi
         });
         gui_->add(label);
         buttons_.emplace_back(label);
+        label->moveToFront();
         ++i;
     }
 
@@ -190,7 +191,10 @@ void Menu::makeMenuElements(const std::vector<std::pair<std::string, std::functi
         label->setText(text.first);
         label->setTextSize(CONF<float>("graphics/menu_button_text_size"));
         label->setPosition(text.second);
+        label->setFocusable(false);
+        label->setEnabled(false);
         gui_->add(label);
+        label->moveToBack();
         buttons_.emplace_back(label);
     }
 }

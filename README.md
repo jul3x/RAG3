@@ -97,6 +97,12 @@ Package uses **C++17** language, so you need a compatible compiler. Tested on **
 -----
 
 ## Changelog
+* 28-12-2022 Rag3 DEMO Fixes (v0.1.1)
+    - Decreased screen shake and added possibility to set it according to own taste
+    - Better responsiveness of menu for lower resolutions
+    - Displays with lower resolutions run RAG3 with more suitable zoom
+    - Better visibility for messages and windows with transparent backgrounds
+    - Minor user interface fixes
 * 9-12-2022 Rag3 DEMO Release (v0.1.0)
     - Full mechanics with fully adjustable self-made game engine
     - Systems for:
@@ -131,4 +137,4 @@ Package uses **C++17** language, so you need a compatible compiler. Tested on **
 
 ~jul3x
 
-[VERSION]: https://img.shields.io/badge/version-0.1.0-blue.svg
+[VERSION]: https://img.shields.io/badge/version-0.1.1-blue.svg

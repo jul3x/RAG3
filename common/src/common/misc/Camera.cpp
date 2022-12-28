@@ -71,13 +71,13 @@ void Camera::update(float time_elapsed)
             }
         }
 
-        center_.z = element->first * CONF<float>("graphics/camera_rotation_recoil") *
+        center_.z = element->first * CONF<float>("graphics/camera_rotation_recoil") * CONF<float>("general/screen_shake") *
                     std::sin(
                             element->first * time_elapsed_ / CONF<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
-        center_.x += element->first * time_elapsed * CONF<float>("graphics/camera_position_recoil") *
+        center_.x += element->first * time_elapsed * CONF<float>("graphics/camera_position_recoil") * CONF<float>("general/screen_shake") *
                      std::cos(element->first * time_elapsed_ / CONF<float>("graphics/camera_shaking_time") * M_PI *
                               2.0f);
-        center_.y -= element->first * time_elapsed * CONF<float>("graphics/camera_position_recoil") *
+        center_.y -= element->first * time_elapsed * CONF<float>("graphics/camera_position_recoil") * CONF<float>("general/screen_shake") *
                      std::cos(element->first * time_elapsed_ / CONF<float>("graphics/camera_shaking_time") * M_PI *
                               2.0f);
 
@@ -91,11 +91,11 @@ void Camera::update(float time_elapsed)
     }
     else if (state_ == State::ZoomInOut)
     {
-        center_.z = CONF<float>("graphics/camera_rotation_recoil") *
+        center_.z = CONF<float>("graphics/camera_rotation_recoil") * CONF<float>("general/screen_shake") *
                     std::sin(time_elapsed_ / CONF<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
-        center_.x += time_elapsed * CONF<float>("graphics/camera_position_recoil") *
+        center_.x += time_elapsed * CONF<float>("graphics/camera_position_recoil") * CONF<float>("general/screen_shake") *
                      std::sin(time_elapsed_ / CONF<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
-        center_.y += time_elapsed * CONF<float>("graphics/camera_position_recoil") *
+        center_.y += time_elapsed * CONF<float>("graphics/camera_position_recoil") * CONF<float>("general/screen_shake") *
                      std::sin(time_elapsed_ / CONF<float>("graphics/camera_shaking_time") * M_PI * 2.0f);
 
         auto normalized_size = utils::geo::getNormalized(view_size_);

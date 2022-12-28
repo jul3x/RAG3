@@ -27,7 +27,7 @@ float side_stepping_freeze_time = 0.5
 float achievements_update_time = 0.4
 float forced_zoom_to_time = 0.4
 float running_min_time = 1.0
-int about_text_max_chars_per_line = 70
+int about_text_max_chars_per_line = 68
 string about_text = "
 Have you ever wondered what would you do if you could turn back time? RAG3 makes impossible things possible. Join to the adventure and help main character in preventing the tragic events.\n\n
 

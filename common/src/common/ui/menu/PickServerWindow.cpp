@@ -13,14 +13,12 @@ PickServerWindow::PickServerWindow(tgui::Gui* gui, tgui::Theme* theme, Framework
         MenuWindow(gui, theme, "> Pick server"),
         framework_(framework)
 {
-    auto pos = CONF<sf::Vector2f>("graphics/menu_window_pos") +
-               sf::Vector2f((CONF<float>("graphics/menu_bar_width_px") + CONF<int>("graphics/window_width_px")) / 2.0f,
-                            CONF<float>("graphics/menu_window_header_size") * 2.0f);
+    auto pos = pos_ + sf::Vector2f(0.0f, CONF<float>("graphics/menu_window_header_size") * 2.0f);
 
     text_ = tgui::Label::create("Enter IP address or network name:");
     text_->setRenderer(theme->getRenderer("Text"));
     text_->setTextSize(CONF<float>("graphics/menu_window_text_size"));
-    text_->setPosition(sf::Vector2f{pos.x - CONF<sf::Vector2f>("graphics/menu_window_size").x / 2.0f, pos.y} +
+    text_->setPosition(sf::Vector2f{pos.x - size_.x, pos.y - size_.y / 2.0f} +
                        CONF<sf::Vector2f>("graphics/menu_window_header_pos"));
     gui->add(text_);
 
@@ -30,7 +28,7 @@ PickServerWindow::PickServerWindow(tgui::Gui* gui, tgui::Theme* theme, Framework
     editbox_->setSize(CONF<sf::Vector2f>("graphics/menu_edit_box_size"));
     editbox_->setRenderer(theme->getRenderer("EditBoxGame"));
     editbox_->setPosition(pos - CONF<sf::Vector2f>("graphics/menu_edit_box_size") / 2.0f +
-                          sf::Vector2f(0.0f, CONF<sf::Vector2f>("graphics/menu_window_size").y * 0.3f));
+                          sf::Vector2f(-size_.x / 2.0f, -size_.y * 0.2f));
     editbox_->setMaximumCharacters(15);
     gui->add(editbox_);
 
@@ -41,7 +39,7 @@ PickServerWindow::PickServerWindow(tgui::Gui* gui, tgui::Theme* theme, Framework
     button_->setFocusable(true);
     button_->setSize(CONF<sf::Vector2f>("graphics/menu_connect_button_size"));
     button_->setPosition(pos - CONF<sf::Vector2f>("graphics/menu_connect_button_size") / 2.0f +
-                         sf::Vector2f(0.0f, CONF<sf::Vector2f>("graphics/menu_window_size").y * 0.5f));
+                         sf::Vector2f(-size_.x / 2.0f, -size_.y * 0.1f));
     button_->connect("mousereleased", [this]() {
         framework_->startGame(editbox_->getText());
     });

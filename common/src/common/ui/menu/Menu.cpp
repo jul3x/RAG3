@@ -52,6 +52,7 @@ void Menu::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(shape_, states);
     target.draw(bar_, states);
+    target.draw(logo_, states);
 
     for (auto& window : windows_)
     {
@@ -63,7 +64,6 @@ void Menu::draw(sf::RenderTarget& target, sf::RenderStates states) const
         target.draw(event, states);
     }
 
-    target.draw(logo_, states);
 }
 
 void Menu::update(float time_elapsed)
@@ -174,6 +174,7 @@ void Menu::makeMenuElements(const std::vector<std::pair<std::string, std::functi
         });
         gui_->add(label);
         buttons_.emplace_back(label);
+        label->moveToFront();
         ++i;
     }
 
@@ -190,7 +191,10 @@ void Menu::makeMenuElements(const std::vector<std::pair<std::string, std::functi
         label->setText(text.first);
         label->setTextSize(CONF<float>("graphics/menu_button_text_size"));
         label->setPosition(text.second);
+        label->setFocusable(false);
+        label->setEnabled(false);
         gui_->add(label);
+        label->moveToBack();
         buttons_.emplace_back(label);
     }
 }

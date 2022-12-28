@@ -1,3 +1,5 @@
 string player_name = "jul3x"
 string character = "henry"
 string game_type = "normal"
+
+float screen_shake = 5.0

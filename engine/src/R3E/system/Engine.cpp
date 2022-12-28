@@ -252,7 +252,7 @@ namespace r3e {
     {
         if (res.x >= 3840) return 4.0f;
         if (res.x >= 2560) return 3.0f;
-        if (res.x >= 1600) return 2.0f;
+        if (res.x >= 1360) return 2.0f;
 
         return 1.0f;
     }

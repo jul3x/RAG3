@@ -13,6 +13,7 @@ MenuWindow::MenuWindow(tgui::Gui* gui, tgui::Theme* theme, const std::string& he
     float right_margin = std::max(
         2.0f * CONF<float>("graphics/user_interface_zoom"),
         CONF<int>("graphics/window_width_px") / 2.0f - size_.x / 2.0f - CONF<float>("graphics/menu_bar_width_px") / 2.0f);
+
     pos_ = {
         CONF<int>("graphics/window_width_px") - right_margin,
         CONF<int>("graphics/window_height_px") / 2.0f

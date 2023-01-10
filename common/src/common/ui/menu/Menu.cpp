@@ -179,7 +179,7 @@ void Menu::makeMenuElements(const std::vector<std::pair<std::string, std::functi
     }
 
     std::vector<std::pair<std::string, sf::Vector2f>> additional_texts =
-            {{"2022",   sf::Vector2f{0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))} +
+            {{"2023",   sf::Vector2f{0.0f, static_cast<float>(CONF<int>("graphics/window_height_px"))} +
                         CONF<sf::Vector2f>("graphics/menu_year_pos")},
              {"~jul3x", sf::Vector2f{static_cast<float>(CONF<int>("graphics/window_width_px")),
                                      static_cast<float>(CONF<int>("graphics/window_height_px"))} +

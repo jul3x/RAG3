@@ -97,6 +97,8 @@ Package uses **C++17** language, so you need a compatible compiler. Tested on **
 -----
 
 ## Changelog
+* 10-01-2023 Rag3 DEMO Fixes (v0.1.2)
+    - Better behavior of Future Henry agent
 * 28-12-2022 Rag3 DEMO Fixes (v0.1.1)
     - Decreased screen shake and added possibility to set it according to own taste
     - Better responsiveness of menu for lower resolutions
@@ -137,4 +139,4 @@ Package uses **C++17** language, so you need a compatible compiler. Tested on **
 
 ~jul3x
 
-[VERSION]: https://img.shields.io/badge/version-0.1.1-blue.svg
+[VERSION]: https://img.shields.io/badge/version-0.1.2-blue.svg

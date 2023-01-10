@@ -10,12 +10,14 @@
 TimeReversal::TimeReversal(Journal* father, void* placeholder) : JournalEntry(father)
 {
     auto player = father_->getFramework()->getPlayer();
-    picked_weapon_ = player->getWeapons().at(player->getCurrentWeapon())->getId();
+    auto weapon = player->getWeapons().at(player->getCurrentWeapon());
+    picked_weapon_ = weapon->getId();
+    weapon_state_ = weapon->getState();
 }
 
 void TimeReversal::executeEntryReversal()
 {
-    auto new_ptr = father_->getFramework()->spawnNewPlayerClone(picked_weapon_);
+    auto new_ptr = father_->getFramework()->spawnNewPlayerClone(picked_weapon_, weapon_state_);
 }
 
 CharacterEntry::CharacterEntry(Journal* father, Character* ptr) : JournalEntry(father), ptr_(ptr)

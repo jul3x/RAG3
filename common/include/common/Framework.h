@@ -120,7 +120,7 @@ public:
     template<class T>
     void findAndDelete(T* ptr);
 
-    virtual NPC* spawnNewPlayerClone(const std::string& weapon_id);
+    virtual NPC* spawnNewPlayerClone(const std::string& weapon_id, float weapon_state);
     virtual NPC* spawnNewNPC(const std::string& id, int u_id, Functional::Activation activation,
                              const j3x::List& funcs, const j3x::List& datas);
     virtual Special*

@@ -1186,7 +1186,7 @@ NPC* Framework::spawnNewNPC(const std::string& id, int u_id, Functional::Activat
     return nullptr;
 }
 
-NPC* Framework::spawnNewPlayerClone(const std::string& weapon_id)
+NPC* Framework::spawnNewPlayerClone(const std::string& weapon_id, float weapon_state)
 {
     return nullptr;
 }

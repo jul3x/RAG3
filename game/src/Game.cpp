@@ -136,7 +136,6 @@ void Game::updateTimeReversal(float time_elapsed)
     if (player_clone_ != nullptr)
     {
         auto clone_light = player_clone_->getLightPoint();
-
         if (clone_light != nullptr)
             clone_light->setPosition(player_clone_->getPosition());
 
@@ -293,7 +292,7 @@ NPC* Game::spawnNewNPC(const std::string& id, int u_id, Functional::Activation a
     return ptr;
 }
 
-NPC* Game::spawnNewPlayerClone(const std::string& weapon_id)
+NPC* Game::spawnNewPlayerClone(const std::string& weapon_id, float weapon_state)
 {
     if (player_clone_ != nullptr)
     {
@@ -316,7 +315,7 @@ NPC* Game::spawnNewPlayerClone(const std::string& weapon_id)
         enemy->registerEnemy(player_clone_.get());
     }
 
-    player_clone_->makeOnlyOneWeapon(weapon_id, 0.0f);
+    player_clone_->makeOnlyOneWeapon(weapon_id, weapon_state);
     registerWeapons(player_clone_.get());
 
     return player_clone_.get();

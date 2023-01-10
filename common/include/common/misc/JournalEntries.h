@@ -20,6 +20,7 @@ public:
     void executeEntryReversal() override;
 private:
     std::string picked_weapon_;
+    float weapon_state_;
 
 };
 
